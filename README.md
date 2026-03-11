@@ -14,6 +14,23 @@
 - 你如何做技术判断
 - 你适合承担什么样的工程职责
 
+## 页面入口
+
+当前站点的主要 page 入口如下：
+
+- `Home`：`/`
+- `Projects`：`/projects/`
+- `Engine Notes`：`/engine-notes/`
+- `Problem Solving`：`/problem-solving/`
+- `Essays`：`/essays/`
+- `About`：`/about/`
+
+如果以 GitHub Pages 项目站点方式部署，这些路径会挂在：
+
+```text
+https://twoeggdu.github.io/twoegg-tech-stack/
+```
+
 ## Site Positioning
 
 站点标题：`TwoEgg Tech Stack`
@@ -81,7 +98,7 @@ hugo --gc --minify
 如果你的仓库名不是 `username.github.io`，而是像 `twoegg-tech-stack` 这种项目站点，线上地址通常会是：
 
 ```text
-https://<your-github-username>.github.io/twoegg-tech-stack/
+https://twoeggdu.github.io/twoegg-tech-stack/
 ```
 
 工作流会在构建时自动注入正确的 `baseURL`，所以不需要手动改发布路径。
