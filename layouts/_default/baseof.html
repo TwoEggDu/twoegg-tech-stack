@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default `zh-cn` }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+    {{ $pageDescription := "" }}
+    {{ with .Params.description }}
+      {{ $pageDescription = . }}
+    {{ else }}
+      {{ with .Summary }}
+        {{ $pageDescription = . | plainify | truncate 140 }}
+      {{ else }}
+        {{ $pageDescription = site.Params.description }}
+      {{ end }}
+    {{ end }}
+    <meta name="description" content="{{ $pageDescription }}">
+    <link rel="stylesheet" href="{{ `css/site.css` | relURL }}">
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="brand" href="{{ `/` | relURL }}">
+          <span class="brand-mark">TE</span>
+          <span>
+            <strong>{{ site.Title }}</strong>
+            <small>{{ site.Params.tagline }}</small>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          {{ range site.Menus.main }}
+            <a href="{{ .URL | relURL }}" {{ if $.IsMenuCurrent "main" . }}class="is-active"{{ end }}>{{ .Name }}</a>
+          {{ end }}
+        </nav>
+      </header>
+
+      <main class="page-shell">
+        {{ block "main" . }}{{ end }}
+      </main>
+
+      <footer class="site-footer">
+        <p>TwoEgg Tech Stack is a Hugo-powered portfolio for game-engine work, engineering judgment, and long-form technical writing.</p>
+      </footer>
+    </div>
+  </body>
+</html>

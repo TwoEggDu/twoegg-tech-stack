@@ -1,0 +1,29 @@
+{{ define "main" }}
+  <section class="page-title-block">
+    <p class="eyebrow">{{ .Title }}</p>
+    <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}{{ .Title }}{{ end }}</h1>
+    {{ with .Content }}
+      <div class="section-copy">{{ . }}</div>
+    {{ end }}
+  </section>
+
+  <section class="post-grid">
+    {{ range .Pages.ByWeight }}
+      <article class="post-card">
+        <p class="card-section">{{ .CurrentSection.Title }}</p>
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        <p>{{ with .Params.description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 110 }}{{ end }}</p>
+        <div class="meta-row">
+          {{ range .Params.tags }}
+            <span class="tag">{{ . }}</span>
+          {{ end }}
+        </div>
+      </article>
+    {{ else }}
+      <article class="empty-state">
+        <h2>内容还在整理</h2>
+        <p>这一栏会继续补充项目、判断和复盘。</p>
+      </article>
+    {{ end }}
+  </section>
+{{ end }}

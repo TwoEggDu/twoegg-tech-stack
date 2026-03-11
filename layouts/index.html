@@ -1,0 +1,66 @@
+{{ define "main" }}
+  {{ $featured := first 4 (where site.RegularPages.ByWeight "Params.featured" true) }}
+  {{ $sections := slice "projects" "engine-notes" "problem-solving" "essays" }}
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Portfolio + Technical Writing</p>
+        <h1>让人一眼看出你做过什么、怎么判断、值不值得信任。</h1>
+        <div class="section-copy">
+          {{ .Content }}
+        </div>
+        <div class="button-row">
+          <a class="button" href="{{ `/projects/` | relURL }}">看项目</a>
+          <a class="button button-secondary" href="{{ `/about/` | relURL }}">看定位</a>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        {{ range $sections }}
+          {{ with site.GetPage (printf "/%s" .) }}
+            <article class="stat-card">
+              <p class="card-section">{{ .Title }}</p>
+              <strong>{{ len .RegularPages }} 篇</strong>
+              <p>{{ .Params.description }}</p>
+            </article>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-grid">
+    {{ range $sections }}
+      {{ with site.GetPage (printf "/%s" .) }}
+        <article class="section-card">
+          <p class="card-section">{{ .Title }}</p>
+          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          <p>{{ .Params.description }}</p>
+          <span class="card-link">进入栏目</span>
+        </article>
+      {{ end }}
+    {{ end }}
+  </section>
+
+  <section class="feature-block">
+    <div class="page-title-block compact">
+      <p class="eyebrow">Featured</p>
+      <h2>首批最能体现工程能力的内容</h2>
+    </div>
+    <div class="post-grid">
+      {{ range $featured }}
+        <article class="post-card">
+          <p class="card-section">{{ .CurrentSection.Title }}</p>
+          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          <p>{{ .Params.description }}</p>
+          <div class="meta-row">
+            {{ range .Params.tags }}
+              <span class="tag">{{ . }}</span>
+            {{ end }}
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

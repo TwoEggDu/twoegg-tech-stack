@@ -1,0 +1,51 @@
+baseURL = "https://example.com/twoegg-tech-stack/"
+title = "TwoEgg Tech Stack"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh-cn"
+enableRobotsTXT = true
+summaryLength = 28
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  description = "Projects, engine notes, problem solving, and engineering judgment."
+  author = "TwoEgg"
+  tagline = "用项目、引擎理解、问题拆解和职业判断来展示工程实力。"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+
+[permalinks]
+  projects = "/projects/:slug/"
+  engine-notes = "/engine-notes/:slug/"
+  problem-solving = "/problem-solving/:slug/"
+  essays = "/essays/:slug/"
+
+[[menu.main]]
+  name = "Projects"
+  pageRef = "/projects/"
+  weight = 10
+
+[[menu.main]]
+  name = "Engine Notes"
+  pageRef = "/engine-notes/"
+  weight = 20
+
+[[menu.main]]
+  name = "Problem Solving"
+  pageRef = "/problem-solving/"
+  weight = 30
+
+[[menu.main]]
+  name = "Essays"
+  pageRef = "/essays/"
+  weight = 40
+
+[[menu.main]]
+  name = "About"
+  pageRef = "/about/"
+  weight = 50

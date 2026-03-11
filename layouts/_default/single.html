@@ -1,0 +1,28 @@
+{{ define "main" }}
+  <article class="article">
+    <a class="article-back" href="{{ with .CurrentSection }}{{ .RelPermalink }}{{ else }}{{ `/` | relURL }}{{ end }}">
+      {{ with .CurrentSection }}返回 {{ .Title }}{{ else }}返回首页{{ end }}
+    </a>
+
+    <header class="article-header">
+      {{ with .CurrentSection }}
+        <p class="eyebrow">{{ .Title }}</p>
+      {{ end }}
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.description }}
+        <p class="article-intro">{{ . }}</p>
+      {{ end }}
+      {{ with .Params.tags }}
+        <div class="meta-row">
+          {{ range . }}
+            <span class="tag">{{ . }}</span>
+          {{ end }}
+        </div>
+      {{ end }}
+    </header>
+
+    <div class="article-body">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

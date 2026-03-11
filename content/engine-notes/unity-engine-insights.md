@@ -1,0 +1,105 @@
++++
+title = "Unity 工具链开发真正要懂的三条引擎链路"
+description = "从资源导入、构建打包、脚本编译三条链路讲清 Unity 工具链开发的系统边界。"
+weight = 10
+featured = true
+tags = ["Unity", "Engine", "Toolchain"]
++++
+
+我现在看很多 Unity 工具开发内容，都会觉得一个问题很明显：很多文章教的是 API 用法，但没有解释这些 API 背后的系统边界。
+
+这会带来一个结果：工具在 Demo 里能用，一到大项目里就开始抖。
+
+如果真的想把工具链做好，我认为至少要理解 Unity 的三条底层链路：
+
+- 资源导入链路
+- 构建打包链路
+- 脚本编译链路
+
+这不是为了研究源码而研究源码，而是因为项目里的很多“诡异问题”，本质都卡在这三条线的交叉处。
+
+## 1. 资源导入链路
+
+很多人对 AssetDatabase 的理解，停留在 `Refresh()`、`ImportAsset()`、`StartAssetEditing()` 这些 API 级别。
+
+但你真看 Unity 源码，会发现它不是一个简单的“刷新文件夹”接口。
+
+从 `E:\HT\Projects\UnitySrcCode\Modules\AssetDatabase\Editor\V2\AssetDatabaseInternal.cpp` 可以看到，资源刷新和脚本编译实际上是相互影响的。同步刷新时，Unity 会显式等待脚本编译完成，避免在脚本与非脚本资源之间来回切换，触发多次域重载。
+
+这件事对工具链开发的启发很直接：
+
+- 不要把 `Refresh()` 当成一个廉价操作
+- 批量导入时应该尽量合并时机
+- 如果工具一边改脚本、一边改资源、一边强刷，很容易把编辑器拖进低效状态
+
+这也是为什么大型项目里，资源处理工具如果不控制批量导入边界，最终一定会变慢。
+
+## 2. 构建打包链路
+
+看 `E:\HT\Projects\UnitySrcCode\Editor\Mono\BuildPipeline.bindings.cs`，可以很清楚地看到 `BuildAssetBundles()` 的几个关键特点：
+
+- 构建期间不能并行触发新的构建
+- 输出目录必须是明确存在的
+- target 和 subtarget 是构建参数的一部分，不是附属信息
+
+再看 `E:\HT\Projects\UnitySrcCode\Editor\Mono\BuildPipeline\PostprocessBuildPlayer.cs`，会看到 `StreamingAssets` 在构建后处理阶段会被统一安装到最终产物目录，而且构建回调还能向这条链路追加文件。
+
+这两个文件合起来给我的一个判断是：
+
+`Unity 的构建不是一个“生成文件”的瞬时动作，而是一条带有输入校验、平台语义和后处理装配的流水线。`
+
+所以项目里真正靠谱的打包工具，必须回答这些问题：
+
+- 输出目录怎么组织
+- 平台目标和子目标怎么约束
+- StreamingAssets 和补丁资源怎么对齐
+- 构建后追加文件由谁负责
+- 哪些步骤可以增量，哪些步骤必须强制重建
+
+如果这些问题不提前设计，后面所有“包体不对”“热更资源缺失”“构建目录脏了”的问题，都会反复出现。
+
+## 3. 脚本编译链路
+
+很多人把 Unity 脚本编译理解成“Roslyn 把 C# 编成 dll”。
+
+但如果看 `E:\HT\Projects\UnitySrcCode\Editor\Src\ScriptCompilation\ScriptCompilationPipeline.cpp`，会发现 Unity 对编译的管理远比这复杂。
+
+里面至少能看出三件事：
+
+- 编译是被显式请求的，`RequestScriptCompilation()` 只是调度入口
+- 编译结束后还会驱动一系列回调和状态处理
+- 脚本编译和资产刷新、域重载、构建流程之间是联动的
+
+再看 `E:\HT\Projects\UnitySrcCode\Editor\IncrementalBuildPipeline\ScriptCompilationBuildProgram\BuildPlayerDataGenerator.cs`，还能看到 Unity 在玩家构建阶段会额外生成运行时初始化信息和 TypeDB 之类的构建数据。
+
+这意味着：
+
+`脚本编译不是独立事件，而是构建系统的一部分。`
+
+所以项目里如果要做自定义编译、热更程序集处理、脚本产物装配，必须尊重 Unity 现有的编译边界，而不是简单在外面再套一层脚本。
+
+## 这三条链路为什么重要
+
+因为真正的大项目工具问题，通常都不是单点问题。
+
+一个典型问题可能看起来是“资源导入慢”，但根因可能是：
+
+- 工具反复触发刷新
+- 刷新又引发脚本编译
+- 编译阻塞了后续构建
+- 构建产物和 StreamingAssets 组织方式又不一致
+
+如果不理解这三条线，就只能在表面症状上修修补补。
+
+如果理解了这三条线，很多工具设计决策会自然变得更稳健：
+
+- 哪些操作应该批量化
+- 哪些步骤应该延迟触发
+- 哪些产物应该交给构建后处理
+- 哪些流程应该做成显式的 pipeline，而不是零碎按钮
+
+所以我现在越来越认同一句话：
+
+`Unity 工具链开发真正要懂的，不是 Editor API 本身，而是资源、构建、编译三条引擎链路的边界。`
+
+只有理解边界，工具才会从“能用”变成“能进生产”。
