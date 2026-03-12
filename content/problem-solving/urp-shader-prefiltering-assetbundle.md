@@ -1,6 +1,6 @@
 +++
-title = "AssetBundle 构建后 Shader Variant 丢失的根因与修复"
-description = "从 URP ShaderPrefilteringData 机制讲清 AB 构建 shader variant 丢失的真正原因，以及 URP 14.0.11 之前项目的变通方案为什么有效、为什么不合理。"
+title = "一次 AssetBundle 构建后 Shader Variant 丢失问题的定位与修复"
+description = "记录一次 AB 构建后 shader variant 未生成的问题排查，聚焦 URP ShaderPrefilteringData 链路，以及 URP 14.0.11 之前项目的变通方案为什么有效、为什么不合理。"
 weight = 20
 featured = true
 tags = ["Unity", "URP", "Shader", "AssetBundle", "Build"]
@@ -12,13 +12,15 @@ AssetBundle 构建完成后，运行时发现部分 shader 效果异常，表现
 
 检查 shader 本身没有问题，换一台机器构建也偶发复现。进一步排查后发现，是 shader variant 在 AB 里根本没有被打进去——不是 variant 被过滤掉了，而是从来就没有生成过。
 
+Shader variant 丢失当然不止这一种原因，本文只记录这次排查里遇到的具体情况：variant 在 AB 构建阶段根本没有生成。
+
 ---
 
 ## 这不是 OnProcessShader 的问题
 
 遇到 shader variant 丢失，很多人的第一反应是去查 `IPreprocessShaders.OnProcessShader`，看看是不是哪里把 variant 过滤掉了。
 
-但这个问题的真正边界在更底层的地方。
+但这次排查遇到的问题，边界在更底层的地方。
 
 Unity URP 有一套叫做 **Shader Keyword Prefiltering** 的机制，控制的是哪些 keyword 组合在构建时**根本不参与编译**。它的作用层级比 `OnProcessShader` 更早——不是"编译了再过滤"，而是"根本不生成"。
 
@@ -133,9 +135,9 @@ class UpdateShaderPrefilteringDataBeforeBuild : IPreprocessShaders
 
 ## 结论
 
-| 问题 | 根因 | 修复方式 |
+| 问题 | 这次排查中的原因 | 修复方式 |
 |---|---|---|
 | AB 构建 shader variant 丢失 | Pipeline Asset 的 `m_Prefiltering*` 字段陈旧 | URP 14.0.11 `UpdateShaderPrefilteringDataBeforeBuild` 自动修复；旧版本需在 AB 构建前触发一次 Player 构建 |
 | Shader 改动后 AB 不更新 | `Library/ShaderCache` 缓存污染 | 手动删除 `Library/ShaderCache` |
 
-如果你的项目 URP 版本低于 14.0.11，这个问题随时可能以各种面目重现。升级包或者补一个自定义的 `IPreprocessShaders`（在构造函数里调用 `GatherShaderFeatures`），是更可靠的长期方案。
+如果你的项目 URP 版本低于 14.0.11，而你遇到的正好也是 prefiltering 数据陈旧问题，它随时可能以各种面目重现。升级包或者补一个自定义的 `IPreprocessShaders`（在构造函数里调用 `GatherShaderFeatures`），是更可靠的长期方案。
