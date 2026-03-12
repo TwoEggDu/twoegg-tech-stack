@@ -50,25 +50,20 @@ m_PrefilterSoftShadows: 0
 
 调用链是这样的：
 
-```
-GatherShaderFeatures(isDevelopmentBuild)
-  ├─ GetGlobalAndPlatformSettings()
-  │    读取 URP Global Settings 里的 stripUnusedVariants、
-  │    stripDebugVariants 等开关，以及平台信息（XR/Mobile）
-  │
-  ├─ GetSupportedFeaturesFromVolumes()
-  │    扫描项目里所有 VolumeProfile，确定哪些后处理 keyword 被用到
-  │
-  └─ HandleEnabledShaderStripping()
-       ├─ TryGetRenderPipelineAssets()
-       │    获取当前平台所有 URP Pipeline Asset
-       │
-       └─ GetSupportedShaderFeaturesFromAssets()
-            ├─ 逐个扫描每个 URP Asset 及其 Renderer / RendererFeature
-            ├─ CreatePrefilteringSettings()  →  计算出 ShaderPrefilteringData
-            ├─ urpAsset.UpdateShaderKeywordPrefiltering(ref spd)  →  写入字段
-            └─ AssetDatabase.SaveAssetIfDirty(urpAsset)  →  落盘
-```
+- `GatherShaderFeatures(isDevelopmentBuild)`
+  - `GetGlobalAndPlatformSettings()`
+    - 读取 `URP Global Settings` 里的 `stripUnusedVariants`
+    - 读取 `stripDebugVariants` 等开关，以及平台信息（XR/Mobile）
+  - `GetSupportedFeaturesFromVolumes()`
+    - 扫描项目里所有 `VolumeProfile`，确定哪些后处理 keyword 被用到
+  - `HandleEnabledShaderStripping()`
+    - `TryGetRenderPipelineAssets()`
+      - 获取当前平台所有 `URP Pipeline Asset`
+    - `GetSupportedShaderFeaturesFromAssets()`
+      - 逐个扫描每个 `URP Asset` 及其 `Renderer / RendererFeature`
+      - `CreatePrefilteringSettings()`：计算出 `ShaderPrefilteringData`
+      - `urpAsset.UpdateShaderKeywordPrefiltering(ref spd)`：写入字段
+      - `AssetDatabase.SaveAssetIfDirty(urpAsset)`：落盘
 
 正常的 Player 构建会在 `IPreprocessBuildWithReport.OnPreprocessBuild` 阶段触发这个链路，字段值保持最新。
 
