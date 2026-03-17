@@ -9,8 +9,13 @@ disableKinds = ["taxonomy", "term"]
 [params]
   description = "Projects, engine notes, problem solving, and engineering judgment."
   author = "TwoEgg"
-  mainSiteURL = "https://twoeggdu.github.io/"
   tagline = "用项目、引擎理解、问题拆解和职业判断来展示工程实力。"
+
+[[params.externalSites]]
+  title = "个人首页"
+  url = "https://twoeggdu.github.io/"
+  description = "放对外主页、补充内容和其他站点导航。"
+  cta = "打开站点"
 
 [markup]
   [markup.goldmark]

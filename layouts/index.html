@@ -17,9 +17,6 @@
           {{ with site.GetPage "/about" }}
             <a class="button button-secondary" href="{{ .RelPermalink }}">看定位</a>
           {{ end }}
-          {{ with site.Params.mainSiteURL }}
-            <a class="button button-secondary" href="{{ . }}" target="_blank" rel="noreferrer">个人首页</a>
-          {{ end }}
         </div>
       </div>
 
@@ -49,6 +46,26 @@
       {{ end }}
     {{ end }}
   </section>
+
+  {{ with site.Params.externalSites }}
+    <section class="outbound-block">
+      <div class="page-title-block compact">
+        <p class="eyebrow">Elsewhere</p>
+        <h2>站外入口</h2>
+        <p class="section-lead">除了这个项目站，其他对外页面统一放在这里，后面继续加网站也不用改首页结构。</p>
+      </div>
+      <div class="external-grid">
+        {{ range . }}
+          <article class="external-card">
+            <p class="card-section">External</p>
+            <h2><a href="{{ .url }}" target="_blank" rel="noreferrer">{{ .title }}</a></h2>
+            <p>{{ .description }}</p>
+            <a class="card-link" href="{{ .url }}" target="_blank" rel="noreferrer">{{ with .cta }}{{ . }}{{ else }}打开站点{{ end }}</a>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
 
   <section class="feature-block">
     <div class="page-title-block compact">
