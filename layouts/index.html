@@ -11,8 +11,15 @@
           {{ .Content }}
         </div>
         <div class="button-row">
-          <a class="button" href="{{ `/projects/` | relURL }}">看项目</a>
-          <a class="button button-secondary" href="{{ `/about/` | relURL }}">看定位</a>
+          {{ with site.GetPage "/projects" }}
+            <a class="button" href="{{ .RelPermalink }}">看项目</a>
+          {{ end }}
+          {{ with site.GetPage "/about" }}
+            <a class="button button-secondary" href="{{ .RelPermalink }}">看定位</a>
+          {{ end }}
+          {{ with site.Params.mainSiteURL }}
+            <a class="button button-secondary" href="{{ . }}" target="_blank" rel="noreferrer">个人首页</a>
+          {{ end }}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 {{ define "main" }}
   <article class="article">
-    <a class="article-back" href="{{ with .CurrentSection }}{{ .RelPermalink }}{{ else }}{{ `/` | relURL }}{{ end }}">
+    <a class="article-back" href="{{ with .CurrentSection }}{{ .RelPermalink }}{{ else }}{{ site.Home.RelPermalink }}{{ end }}">
       {{ with .CurrentSection }}返回 {{ .Title }}{{ else }}返回首页{{ end }}
     </a>
 
