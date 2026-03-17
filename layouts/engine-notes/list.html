@@ -1,0 +1,91 @@
+﻿{{ define "main" }}
+  {{ $pages := .RegularPages.ByWeight }}
+  {{ $seriesPages := where $pages "Params.series" "!=" nil }}
+  {{ $soloPages := where $pages "Params.series" "==" nil }}
+  {{ $seriesGroups := $seriesPages.GroupByParam "series" }}
+
+  <section class="page-title-block">
+    <p class="eyebrow">{{ .Title }}</p>
+    <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}{{ .Title }}{{ end }}</h1>
+    {{ with .Content }}
+      <div class="section-copy">{{ . }}</div>
+    {{ end }}
+  </section>
+
+  {{ if gt (len $seriesGroups) 0 }}
+    <section class="series-block">
+      <div class="page-title-block compact">
+        <p class="eyebrow">Series</p>
+        <h2>系列文章</h2>
+        <p class="section-lead">先按系列阅读，再看其他单篇笔记。系列内按文章顺序排列，适合顺着读完。</p>
+      </div>
+
+      <div class="series-grid">
+        {{ range $seriesGroups }}
+          {{ $ordered := .Pages.ByWeight }}
+          {{ $lead := index $ordered 0 }}
+          <article class="series-card">
+            <div class="series-card-head">
+              <div>
+                <p class="card-section">Series</p>
+                <h2>{{ .Key }}</h2>
+              </div>
+              <p class="series-count">{{ len $ordered }} 篇</p>
+            </div>
+
+            {{ with $lead.Params.description }}
+              <p class="series-summary">{{ . }}</p>
+            {{ else }}
+              <p class="series-summary">按顺序阅读这一组文章，先建立整体框架，再进入具体技术与实现边界。</p>
+            {{ end }}
+
+            <ol class="series-list">
+              {{ range $index, $page := $ordered }}
+                <li class="series-item">
+                  <span class="series-number">{{ printf "%02d" (add $index 1) }}</span>
+                  <div class="series-copy">
+                    <h3><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h3>
+                    <p>{{ with $page.Params.description }}{{ . }}{{ else }}{{ $page.Summary | plainify | truncate 120 }}{{ end }}</p>
+                  </div>
+                </li>
+              {{ end }}
+            </ol>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  {{ if gt (len $soloPages) 0 }}
+    <section class="feature-block">
+      <div class="page-title-block compact">
+        <p class="eyebrow">Notes</p>
+        <h2>其他文章</h2>
+        <p class="section-lead">不属于系列的单篇笔记，保留卡片式浏览方式。</p>
+      </div>
+      <div class="post-grid">
+        {{ range $soloPages }}
+          <article class="post-card">
+            <p class="card-section">{{ .CurrentSection.Title }}</p>
+            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+            <p>{{ with .Params.description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 110 }}{{ end }}</p>
+            <div class="meta-row">
+              {{ range .Params.tags }}
+                <span class="tag">{{ . }}</span>
+              {{ end }}
+            </div>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  {{ if eq (len $pages) 0 }}
+    <section class="post-grid">
+      <article class="empty-state">
+        <h2>内容还在整理</h2>
+        <p>这一栏会继续补充项目、判断和复盘。</p>
+      </article>
+    </section>
+  {{ end }}
+{{ end }}
