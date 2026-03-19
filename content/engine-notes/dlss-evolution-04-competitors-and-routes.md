@@ -1,6 +1,6 @@
 ﻿---
 title: "DLSS 进化论 04｜FSR、XeSS、PSSR、MetalFX、TSR、DirectSR：谁在走哪条路"
-description: "把竞品和相关路线拆成厂商方案、引擎方案、平台接口三个层级，解释它们各自解决的到底是不是同一个问题。"
+description: "把竞品和相关路线拆成厂商方案、引擎方案、平台接口三个层级，并从硬件依赖、运行时分发和接入契约角度解释它们的真实差异。"
 slug: "dlss-evolution-04-competitors-and-routes"
 weight: 80
 featured: false
@@ -25,103 +25,212 @@ series: "DLSS 进化论"
 
 如果不先分层，文章就会变成“谁更强”的混战，而不是“谁在用什么方式解决什么问题”的分析。
 
-## 先给一个总表
+但如果只分层，也还是不够硬核。因为开发者真正关心的不只是名字，而是这四件事：
 
-| 路线 | 所在层级 | 当前公开能力重点 | 强项 | 局限 |
-| --- | --- | --- | --- | --- |
-| NVIDIA DLSS | 厂商级套件 | SR、FG、Ray Reconstruction、MFG、Low Latency 协同 | 软硬件闭环最深 | 依赖 NVIDIA 生态和专有硬件能力 |
-| AMD FSR | 厂商级套件 | Temporal Upscaling、FG、ML upscaling、Ray Regeneration | 覆盖广、开放度高 | 闭环协同和专有硬件控制弱一些 |
-| Intel XeSS | 厂商级套件 | SR、FG、MFG、Low Latency | Intel 硬件优化 + 跨厂商 fallback | 生态体量仍在追赶 |
-| Sony PSSR | 平台级厂商方案 | 主机端 AI upscaling，持续升级 | 封闭主机平台、可深度定制 | 主要面向 PlayStation 生态 |
-| Apple MetalFX | 平台级厂商方案 | Spatial/Temporal upscaling、Metal 4 denoising、frame interpolation | Apple 平台深度整合 | 平台范围窄，不是 PC 通用方案 |
-| Unreal TSR | 引擎级方案 | 平台无关的 temporal upscaler | 接入统一、跨平台强 | 不绑定专有 AI 硬件能力 |
-| DirectSR | 平台接口 | 单一输入输出接口接入多家 SR | 降低接入成本，推进标准化 | 当前覆盖核心是 SR，不是完整神经渲染套件 |
+1. 它到底依赖什么硬件。  
+2. 它能不能靠驱动和运行时持续升级。  
+3. 它和引擎之间的接入契约有多深。  
+4. 它在生态里的位置，是厂商闭环、引擎内建，还是平台公共接口。  
 
-## AMD FSR：从开放超分，到开放神经渲染栈
+## 先给一个结构表
 
-AMD 的路线特别适合拿来观察产业演进，因为它几乎走完了“从简单到复杂”的完整路径。
+| 路线 | 所在层级 | 硬件依赖 | 运行时/分发 | 接入契约深度 | 生态位置 |
+| --- | --- | --- | --- | --- | --- |
+| NVIDIA DLSS | 厂商级套件 | Tensor / OFA / display engine 等专用硬件最深 | NGX + 驱动 + NVIDIA app 持续升级 | 深，吃 motion vectors、历史信息、FG/RR 等多条契约 | 最强闭环 |
+| AMD FSR | 厂商级套件 | 尽量弱化专用硬件依赖，强调广覆盖 | 以游戏集成和 SDK 版本为主，驱动协同较弱 | 中到深，取决于 FSR 2/3/4 与 FMF 路线 | 开放生态 |
+| Intel XeSS | 厂商级套件 | XMX 最优，DP4a fallback | 既有专有优化，又保留跨厂商路径 | 中到深，SR/FG/MFG 与低延迟并存 | 折中路线 |
+| Sony PSSR | 平台级厂商方案 | 主机固定硬件平台，深定制 | 随主机系统与游戏版本推进 | 深，但在封闭平台里可控 | 主机闭环 |
+| Apple MetalFX | 平台级厂商方案 | Apple GPU + Metal 能力栈 | OS / Metal 框架级分发 | 中，平台 API 统一 | 平台一体化 |
+| Unreal TSR | 引擎级方案 | 平台无关，不依赖专有 AI 硬件 | 随引擎版本演进 | 深入引擎，但不深入厂商驱动 | 引擎公共能力 |
+| DirectSR | 平台接口 | 不定义专有硬件 | 由系统/平台接口抽象 | 浅到中，统一 I/O 合约 | 标准化接口 |
 
-`2021-06-22` 的 FSR 1 还是一套空间超分方案，AMD 当时强调的重点是开放、跨平台和易接入。[AMD FSR 1，2021-06-22](https://www.amd.com/en/newsroom/press-releases/2021-6-22-with-amd-fidelityfx-super-resolution-amd-brings-h.html)
+## 一、NVIDIA DLSS：最深的软硬件闭环
 
-到了 `2022-03-17` 的 FSR 2，AMD 官方开始明确写出 uses temporal data，这说明 FSR 正式进入时域超分路线。[AMD FSR 2.0，2022-03-17](https://www.amd.com/en/newsroom/press-releases/2022-3-17-introducing-amd-software-adrenalin-edition-2022-r.html)
+DLSS 的强项不只是模型质量，而是它把四层东西绑在了一起：
 
-再到 `2023-08-25` 的 FSR 3，AMD 引入了 Frame Generation，使用 Fluid Motion Frames 与 game motion vector data 提升显示帧率。[AMD FSR 3，2023-08-25](https://www.amd.com/en/newsroom/press-releases/2023-8-25-new-amd-radeon-rx-7800-xt-and-radeon-rx-7700-xt-gr.html)
+- GPU 专用硬件  
+- 驱动与 NGX runtime  
+- Streamline / NGX 接入框架  
+- 模型分发与 per-game override  
 
-截至 `2026-03-17`，AMD 官方技术页已经把 FSR 组织成更大的技术栈：FSR Upscaling、FSR Frame Generation、FSR Ray Regeneration、FSR 4，以及 FSR “Redstone” ML-powered features，其中还包括 Neural Radiance Caching 等项目。[AMD FSR Technologies](https://www.amd.com/en/products/graphics/technologies/fidelityfx/super-resolution.html)
+这也是为什么 DLSS 很难只被叫做一个 upscaler。它从 DLSS 2 到 DLSS 5 的路线，实际上对应着 NVIDIA 逐步把更多专用硬件借给神经渲染：
 
-这说明 AMD 也在走向“神经渲染套件”，只是它的风格始终更偏开放生态和广覆盖，而不是 NVIDIA 式的深闭环。
+- `Turing`：Tensor Cores + NGX 让 DLSS 得以作为运行时能力成立。  
+- `Ada`：新的 Optical Flow Accelerator 让 DLSS 3 Frame Generation 成为新模式。  
+- `Blackwell`：5th-gen Tensor Cores、hardware Flip Metering 和增强 display engine 让 MFG 与更复杂的调度真正落地。  
+  [NVIDIA Turing 发布，2018-08-13](https://nvidianews.nvidia.com/news/nvidia-reinvents-computer-graphics-with-turing-architecture)；[Introducing NVIDIA DLSS 3](https://www.nvidia.com/en-my/geforce/news/dlss3-ai-powered-neural-graphics-innovations/)；[NVIDIA DLSS 4 技术文章，2025-01-06](https://www.nvidia.com/en-us/geforce/news/gfecnt/20251/dlss4-multi-frame-generation-ai-innovations/)
 
-## Intel XeSS：专有硬件优化和跨厂商 fallback 并存
+从分发机制看，DLSS 也明显和其他方案不同。它建立在 NGX Core Runtime、NGX Update Module、驱动分发和 NVIDIA app override 能力之上，这意味着模型、preset、兼容行为和部分 runtime 逻辑可以持续升级，而不是只能跟着游戏首发版本走。[NVIDIA NGX Programming Guide](https://docs.nvidia.com/ngx/programming-guide/index.html)；[NVIDIA App Update Adds DLSS 4 Overrides](https://www.nvidia.com/en-us/geforce/news/nvidia-app-update-dlss-overrides-and-more.html)
 
-Intel 的 XeSS 代表的是一条折中路线。Intel 希望在自家 Arc / XMX 硬件上拿到更好的 AI 加速效果，同时也保留 DP4a 这类跨硬件 fallback 路线。这样做的意思是：既不放弃自家硬件优势，也不愿意把生态完全锁死在自家卡上。
+但它的代价也很清楚：
 
-Intel 当前的 XeSS 3 开发者页面，已经把整套能力写得很明确：XeSS Super Resolution、XeSS Frame Generation、XeSS Multi Frame Generation 和 Xe Low Latency 都被纳入同一技术集合。[Intel XeSS 3](https://www.intel.com/content/www/us/en/developer/topic-technology/gamedev/xess.html)
+- 生态闭环很深。  
+- 功能边界高度受 NVIDIA 硬件代际能力影响。  
+- 最先进的 FG / MFG / 视觉增强能力，并不天然能跨到所有硬件。  
 
-Intel 自己的官方回顾文章又明确提到，XeSS 最早是在 `2022` 年随 Arc A-Series 推出的。[Intel Gaming Access 对 XeSS 的回顾，2025-05-06](https://game.intel.com/us/stories/xess-2-now-available-in-10-more-games-get-up-to-4x-boost-in-fps/)
+也就是说，DLSS 的本质不是“更聪明的算法”，而是 **最深的一套消费级神经渲染闭环。**
 
-所以 XeSS 的位置很清楚：它不是 AMD 那种尽量开放的通用方案，也不是 NVIDIA 那种最强闭环，而是在专有优化和生态扩张之间找平衡。
+## 二、AMD FSR：尽量不把未来押在专有硬件上
 
-## Sony PSSR：主机生态也在走 AI upscaling
+AMD 的路线特别适合做对照，因为它从一开始就尽量弱化“必须依赖某家专用 AI 硬件”这件事。
 
-PSSR 特别值得写，因为它意味着这条路线已经不只是 PC 显卡厂商在推进，而是连主机平台也在把 AI upscaling 当作基础能力。
+- `FSR 1` 是空间超分，优势是简单、开放、覆盖广。[AMD FSR 1，2021-06-22](https://www.amd.com/en/newsroom/press-releases/2021-6-22-with-amd-fidelityfx-super-resolution-amd-brings-h.html)  
+- `FSR 2` 转向 temporal data，正式进入时域重建路线。[AMD FSR 2.0，2022-03-17](https://www.amd.com/en/newsroom/press-releases/2022-3-17-introducing-amd-software-adrenalin-edition-2022-r.html)  
+- `FSR 3` 加入 Frame Generation，但其叙事依然更强调 game motion vectors 与广兼容，而不是某个专用硬件块。[AMD FSR 3，2023-08-25](https://www.amd.com/en/newsroom/press-releases/2023-8-25-new-amd-radeon-rx-7800-xt-and-radeon-rx-7700-xt-gr.html)  
+- 当前官方页已把 FSR 扩展成 `FSR Upscaling + FSR Frame Generation + FSR Ray Regeneration + FSR 4 + Redstone` 的更大技术集合。[AMD FSR Technologies](https://www.amd.com/en/products/graphics/technologies/fidelityfx/super-resolution.html)
 
-`2026-02-27`，Sony 在 PlayStation Blog 上公布升级版 PSSR 时，明确表示新的算法和神经网络来自与 AMD 的 Project Amethyst 合作，而且 PC 玩家已经能通过 AMD FSR 4 看到合作成果的一部分。[PlayStation PSSR 更新，2026-02-27](https://blog.playstation.com/2026/02/27/upgraded-pssr-upscaler-is-coming-to-ps5-pro/)
+这条路线的工程含义是：
 
-这件事的意义不在于“索尼也做了一个和 DLSS 类似的功能”，而在于：主机这种过去更强调固定硬件、定制优化、长周期打磨的平台，也已经接受“让模型参与最终图像生成”将是未来图形栈的一部分。
+- AMD 不想把未来完全锁死在某个单一卡种专有能力上。  
+- 它愿意牺牲一部分极致闭环，换来更广的生态覆盖和更低的碎片化。  
+- 它的升级更多依赖开发者采用新的 SDK / 新版本集成，而不是像 DLSS 那样强依赖独立 runtime 和 app override 机制。  
 
-## Apple MetalFX：苹果路线的价值在于平台一体化
+这也解释了为什么 FSR 的讨论经常和“开放”绑在一起。这里的开放，不只是源码或品牌姿态，而是它在架构上就尽量避免把最核心能力写成“没有这块专用硬件就完全无法进入”的模式。
 
-很多 PC 圈讨论 DLSS 时会忽略 MetalFX，但它其实是很有代表性的一条路线。Apple 在 `2022` 年 WWDC 的《Boost performance with MetalFX Upscaling》里，把 MetalFX 作为 Metal 3 的一部分推出，提供 spatial scaler 和 temporal scaler，目标同样是用更低内部渲染分辨率换取更高显示分辨率和更稳的性能。[Apple WWDC22: Boost performance with MetalFX Upscaling](https://developer.apple.com/videos/play/wwdc2022/10103/)
+## 三、Intel XeSS：专有硬件最优，fallback 保底
 
-这说明苹果很早就接受了一个事实：在功耗受限、平台整合度极高的设备上，纯粹坚持高分辨率原生渲染并不划算。
+XeSS 的位置更像一条折中路线。Intel 希望在自家 Arc / XMX 上获得最好的 AI 推理表现，但又保留 DP4a fallback，让别家硬件也能跑起来。
 
-更有意思的是，Apple 当前的《What’s new in Metal》页面已经把 Metal 4 的重点描述扩展到了 frame interpolation 和 denoising，说明 MetalFX 也在从“upscaling 工具”继续向更完整的图形辅助栈延伸。[Apple What’s new in Metal](https://developer.apple.com/metal/whats-new/)
+Intel 当前 XeSS 3 开发者页面，已经把 XeSS 定义成一个包含：
 
-因此，MetalFX 虽然不直接参与 PC 显卡大战，但它说明另一件事：当平台垂直整合足够强时，神经渲染同样会成为系统级特性，而不是单独的显卡卖点。
+- XeSS Super Resolution  
+- XeSS Frame Generation  
+- XeSS Multi Frame Generation  
+- Xe Low Latency  
 
-## Unreal TSR：这不是竞品，但必须放进来
+的完整技术集合。[Intel XeSS 3](https://www.intel.com/content/www/us/en/developer/topic-technology/gamedev/xess.html)
 
-严格说，TSR 不是 DLSS 的“厂商竞品”，因为它是引擎级 temporal upscaler，而不是某个 GPU 厂商的专有套件。但如果你真的想理解这个领域，TSR 反而是必须讨论的一条线。
+Intel 官方回顾还明确提到，XeSS 最早在 `2022` 年随 Arc A-Series 上线。[Intel Gaming Access 对 XeSS 的回顾，2025-05-06](https://game.intel.com/us/stories/xess-2-now-available-in-10-more-games-get-up-to-4x-boost-in-fps/)
 
-原因很简单。TSR 说明：哪怕不依赖某家硬件厂商的专门神经网络路线，时域重建也已经足够重要，值得直接写进引擎内核。Epic 的官方文档明确把 TSR 描述为 platform-agnostic temporal upscaler，并强调它能在较低内部渲染分辨率下逼近 4K 输出，同时保持较好的几何细节与稳定性。[Unreal Engine TSR 文档](https://dev.epicgames.com/documentation/unreal-engine/temporal-super-resolution-in-unreal-engine)
+XeSS 的价值，在于它把“专用硬件最优”和“跨硬件可运行”这两件事硬凑在了一起。它不像 DLSS 那样把生态锁得很紧，也不像 FSR 那样尽量抹平专有硬件差异，而是更接近：
 
-TSR 的意义不在于“它是不是比 DLSS 更强”，而在于它证明了时间维度重建已经成为现代引擎的默认思路之一。
+- 有 XMX，就吃更完整的 AI 路线。  
+- 没有 XMX，就退回 fallback 路径。  
 
-## DirectSR：它不是算法，而是标准化接口
+这种设计的优点是更容易兼顾性能和生态，缺点则是产品叙事会更复杂，因为用户实际体验不完全由“XeSS”这个名字决定，还高度取决于跑在哪种硬件路径上。
 
-`2024-05-29`，微软推出 DirectSR Preview。微软的表述非常明确：DirectSR 提供一组通用输入输出，让开发者可以用 single code path 同时对接 DLSS Super Resolution、FSR 和 XeSS，并用 “implement once and ship SR” 来概括其价值。[Microsoft DirectSR，2024-05-29](https://devblogs.microsoft.com/directx/directsr-preview/)
+## 四、Sony PSSR：主机平台的深闭环验证
 
-这件事的重要性在于，它说明超分能力正在从厂商私有 SDK 走向平台级基础设施。哪怕现在 DirectSR 的重心还主要在 SR，而不是完整覆盖补帧、光线重建和低延迟，但它已经透露出未来竞争的另一个维度：
+PSSR 的价值，不是因为它和 DLSS 名字相像，而是因为它证明了 **固定硬件主机平台也已经接受神经渲染会成为基础能力**。
 
-- 一边是专有模型和硬件协同继续深化。
-- 另一边是公共接口和接入标准继续抽象。
+`2026-02-27`，Sony 公布升级版 PSSR 时明确提到，新算法和神经网络来自与 AMD 的 Project Amethyst 合作，而且 PC 玩家已经能在 AMD FSR 4 中看到合作成果的一部分。[PlayStation PSSR 更新，2026-02-27](https://blog.playstation.com/2026/02/27/upgraded-pssr-upscaler-is-coming-to-ps5-pro/)
 
-未来几年，这两股力量很可能会同时存在。
+主机路线和 PC 最大的不同，不在算法本身，而在工程环境：
+
+- 硬件固定。  
+- 系统版本可控。  
+- 开发者目标平台稳定。  
+- 调优可以更深入地围绕单一 SoC 与显示目标展开。  
+
+这意味着 PSSR 这类方案未必需要像 PC 一样为极多驱动版本和硬件组合兜底。相反，它更像在验证另一种可能：**当硬件平台足够固定时，神经渲染可以更深地写进平台默认图形工作流。**
+
+## 五、Apple MetalFX：系统框架级的一体化路线
+
+MetalFX 往往被 PC 讨论忽略，但从架构视角看，它很典型。Apple 在 `2022` 年 WWDC 的《Boost performance with MetalFX Upscaling》中把 MetalFX 作为 Metal 3 的组成部分推出，提供 spatial scaler 与 temporal scaler。[Apple WWDC22: Boost performance with MetalFX Upscaling](https://developer.apple.com/videos/play/wwdc2022/10103/)
+
+当前 Apple《What’s new in Metal》页面又把 Metal 4 的能力延展到 frame interpolation 和 denoising。[Apple What’s new in Metal](https://developer.apple.com/metal/whats-new/)
+
+Apple 路线的关键不在于“和 DLSS 正面对打”，而在于它说明当平台、OS、API、GPU 和工具链完全归一时，神经渲染会自然演变成 **框架能力**，而不是单独显卡品牌能力。
+
+也就是说，MetalFX 的生态位置更像：
+
+- 不强调独立 runtime 品牌。  
+- 不强调跨厂商扩张。  
+- 而是把神经图形能力吸收到系统图形框架里。  
+
+这和 NVIDIA 的品牌闭环、AMD 的开放生态、Intel 的双路径设计都不一样。
+
+## 六、Unreal TSR：它不是厂商竞品，但它定义了现代引擎的默认思路
+
+严格说，TSR 不是厂商竞品，因为它不是围绕某家 GPU 硬件打造的专有神经渲染栈，而是引擎级 temporal upscaler。
+
+Epic 官方把 TSR 定义为 platform-agnostic temporal upscaler，并强调它能在较低内部渲染分辨率下逼近 4K 输出，同时保持几何细节和稳定性。[Unreal Engine Temporal Super Resolution](https://dev.epicgames.com/documentation/unreal-engine/temporal-super-resolution-in-unreal-engine)
+
+TSR 最重要的意义，不是“它和 DLSS 比谁更清楚”，而是它证明：
+
+- 时间维度重建已经足够重要，值得直接写进引擎内核。  
+- 哪怕不借助某家专用 AI 硬件，引擎也会主动围绕低内部渲染分辨率 + 时域重建来组织现代图形预算。  
+- 这让厂商方案必须回答一个新问题：除了更强模型和专有硬件，你还能比引擎内建方案多给开发者什么。  
+
+从接入契约看，TSR 的优势在于它直接活在 render graph 内部；它的限制也在于它天然缺少 DLSS 那种跨驱动 runtime 和专用硬件协同深度。
+
+## 七、DirectSR：公共接口层的抽象开始出现
+
+`2024-05-29`，微软推出 DirectSR Preview。它的目标不是再发明一个超分算法，而是提供 single code path 去对接 DLSS Super Resolution、FSR 和 XeSS，并用 “implement once and ship SR” 概括价值。[Microsoft DirectSR，2024-05-29](https://devblogs.microsoft.com/directx/directsr-preview/)
+
+DirectSR 的技术意义，是把“厂商特性接入”抽象成“平台公共接口”。
+
+但要注意它解决的问题边界：
+
+- 它主要统一的是 SR 层输入输出。  
+- 它并不天然等于统一 FG、MFG、RR、低延迟或 DLSS 5 这类更深能力。  
+- 它更像是在接口层减少碎片化，而不是抹平所有厂商能力差异。  
+
+也就是说，未来竞争很可能会形成一个双层结构：
+
+- 底层公共接口越来越统一。  
+- 顶层专有能力越来越深入。  
+
+这也是为什么 DirectSR 很重要，但又不能被误写成“微软做了一个 DLSS 替代品”。
+
+## 八、如果按‘硬件依赖、运行时分发、接入契约’重新排一次，差别会更清楚
+
+### 1. 硬件依赖
+
+- `DLSS`：依赖专用 Tensor / OFA / display engine 路线最深。  
+- `FSR`：尽量弱化专用硬件依赖。  
+- `XeSS`：XMX 最优，DP4a 保底。  
+- `PSSR / MetalFX`：绑定固定平台硬件，但因为平台固定，优化可以更深。  
+- `TSR / DirectSR`：不以某家专有 AI 硬件为前提。  
+
+### 2. 运行时分发
+
+- `DLSS`：最像“驱动 + runtime + app + per-game override”共同维护的系统。  
+- `FSR / XeSS`：更依赖 SDK 集成和游戏版本升级；运行时独立分发色彩弱一些。  
+- `PSSR / MetalFX`：更像系统/平台能力，跟随平台软件栈演进。  
+- `TSR`：跟随引擎版本演进。  
+- `DirectSR`：跟随平台接口演进。  
+
+### 3. 接入契约
+
+- `DLSS / FSR 2+ / XeSS / TSR`：都需要运动矢量、历史帧、分辨率策略等时域重建契约。  
+- `FG / MFG / RR / DLSS 5` 这类更深能力：会继续要求更复杂的缓冲、遮罩、时域一致性和 HUD 策略。  
+- `DirectSR`：尽量把最基础的 SR I/O 统一，但不会天然吃掉更深层契约复杂度。  
 
 ## 竞品篇里最容易写错的地方
 
-### 第一，把“同层对比”和“跨层关系”混为一谈
+### 第一，把同层对比和跨层关系混在一起
 
-DLSS、FSR、XeSS 更像是同层方案；TSR 是引擎层方案；DirectSR 是接口层方案。MetalFX 与 PSSR 则是强平台特征路线。如果把它们粗暴排成“谁更好”，文章一定会失真。
+DLSS、FSR、XeSS 更像同层方案；TSR 是引擎层方案；DirectSR 是接口层方案；PSSR 和 MetalFX 则带有极强平台特征。如果把这些名字排成一个简单分数榜，文章一定会失真。
 
-### 第二，只写画质和帧率，不写接入成本和生态位置
+### 第二，只写画质和帧率，不写分发与维护成本
 
-开发者真实关心的，从来不只是截图里哪张更锐，而是：接入难不难，维护重不重，跨平台怎么办，升级成本高不高，调试是否可控。DirectSR 和 TSR 之所以重要，就是因为它们分别在接口层和引擎层降低了这部分摩擦。
+真实工程世界里，开发者关心的不只是截图，而是：
 
-### 第三，把“开放”误写成“技术一定更弱”
+- 这个功能要接多深。  
+- 后续能不能通过 runtime 升级。  
+- 要不要为不同 GPU 厂商维护多套特殊路径。  
+- UI、透明物体、后处理、低延迟是否会带来新的维护成本。  
 
-开放和闭环不是强弱关系，而是工程取舍。闭环方案常常能把软硬件协同做得更深；开放方案则更容易扩大覆盖面，降低碎片化。
+### 第三，把开放误写成技术一定更弱，把闭环误写成天然更先进
+
+开放和闭环不是强弱关系，而是工程取舍。闭环能做更深协同，开放能做更广覆盖。很多时候，两者只是目标函数不同。
 
 ## 我的结论
 
 如果一定要用一句话概括这篇文章，我会这样写：
 
-> 今天围绕 DLSS 的竞争，不是单一算法之间的竞争，而是厂商套件、引擎方案、平台接口和整机生态之间的多层竞争。
+> 今天围绕 DLSS 的竞争，不是单一算法之间的竞争，而是专用硬件、运行时分发、引擎契约和平台接口四个层面的多层竞争。
 
-DLSS 当然是这场竞赛里最有代表性的名字，但它并不是孤例。真正发生的事情是：越来越多公司都在承认，现代游戏图形必须学会把“真实渲染”和“模型重建”混合起来。
+DLSS 当然是这场竞赛里最有代表性的名字，但它并不是孤例。真正发生的事情是：越来越多公司都在承认，现代游戏图形必须学会把“真实渲染”和“模型重建”混合起来；区别只在于，每家公司把这条边界画在了不同位置。
 
 ## 参考资料
 
+- [NVIDIA Turing 发布，2018-08-13](https://nvidianews.nvidia.com/news/nvidia-reinvents-computer-graphics-with-turing-architecture)
+- [Introducing NVIDIA DLSS 3](https://www.nvidia.com/en-my/geforce/news/dlss3-ai-powered-neural-graphics-innovations/)
+- [NVIDIA DLSS 4 技术文章，2025-01-06](https://www.nvidia.com/en-us/geforce/news/gfecnt/20251/dlss4-multi-frame-generation-ai-innovations/)
+- [NVIDIA NGX Programming Guide](https://docs.nvidia.com/ngx/programming-guide/index.html)
+- [NVIDIA App Update Adds DLSS 4 Overrides](https://www.nvidia.com/en-us/geforce/news/nvidia-app-update-dlss-overrides-and-more.html)
 - [AMD FSR 1，2021-06-22](https://www.amd.com/en/newsroom/press-releases/2021-6-22-with-amd-fidelityfx-super-resolution-amd-brings-h.html)
 - [AMD FSR 2.0，2022-03-17](https://www.amd.com/en/newsroom/press-releases/2022-3-17-introducing-amd-software-adrenalin-edition-2022-r.html)
 - [AMD FSR 3，2023-08-25](https://www.amd.com/en/newsroom/press-releases/2023-8-25-new-amd-radeon-rx-7800-xt-and-radeon-rx-7700-xt-gr.html)

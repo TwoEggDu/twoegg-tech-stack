@@ -298,7 +298,7 @@ NVIDIA app 的官方操作说明里有个非常关键的前提：你要升级的
 
 如果让我把这一篇压成一句话，我会这样写：
 
-> DLSS 的进化，从来不是“一个算法越来越强”，而是 GPU 硬件、驱动运行时和游戏引擎之间的边界在被重新划分。
+> DLSS 的进化，从来不是“一个算法越来越强”，而是 GPU 硬件、驱动运行时和游戏引擎之间的边界在被重新划分。到 DLSS 5，这种边界已经开始触及视觉真实感本身，而不只是性能与重建质量。
 
 这也解释了为什么 DLSS 会从 1.0 走到今天。真正变化的，不只是模型，而是 **显卡开始愿意为神经渲染提供专门硬件，驱动开始愿意把模型更新做成运行时能力，而游戏开始愿意把更多图像生成职责交给推理链路。**
 
@@ -314,7 +314,10 @@ NVIDIA app 的官方操作说明里有个非常关键的前提：你要升级的
 - [NVIDIA DLSS 4 技术文章，2025-01-06](https://www.nvidia.com/en-us/geforce/news/gfecnt/20251/dlss4-multi-frame-generation-ai-innovations/)
 - [NVIDIA App Update Adds DLSS 4 Overrides](https://www.nvidia.com/en-us/geforce/news/nvidia-app-update-dlss-overrides-and-more.html)
 - [NVIDIA DLSS 4.5，2026-01-06](https://www.nvidia.com/en-us/geforce/news/dlss-4-5-dynamic-multi-frame-gen-6x-2nd-gen-transformer-super-res/)
+- [NVIDIA DLSS 5，2026-03-16](https://www.nvidia.com/en-us/geforce/news/dlss5-breakthrough-in-visual-fidelity-for-games/)
 - [NVIDIA DLSS 4.5 Game Ready Driver Update，2026-01-06](https://www.nvidia.com/en-us/geforce/news/dlss-4-5-geforce-game-ready-driver/)
 - [NVIDIA GDC 2026 更新，2026-03-10](https://www.nvidia.com/en-us/geforce/news/gdc-2026-nvidia-geforce-rtx-announcements/)
 - [NVIDIA NGX Programming Guide](https://docs.nvidia.com/ngx/programming-guide/index.html)
 - [NVIDIA DLSS 2.0，2020-03-23](https://www.nvidia.com/en-us/geforce/news/nvidia-dlss-2-0-a-big-leap-in-ai-rendering/)
+
+
