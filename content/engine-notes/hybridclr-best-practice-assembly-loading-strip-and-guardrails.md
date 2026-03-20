@@ -353,4 +353,4 @@ HybridCLR 真出问题时，最耗时间的通常不是修，而是找层。
 ## 系列位置
 
 - 上一篇：[HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事]({{< relref "engine-notes/hybridclr-boundaries-and-tradeoffs.md" >}})
-- 下一篇：无。到这里，这个系列的第一轮主线就收住了。
+- 下一篇：[HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了]({{< relref "engine-notes/hybridclr-troubleshooting-diagnose-by-layer.md" >}})

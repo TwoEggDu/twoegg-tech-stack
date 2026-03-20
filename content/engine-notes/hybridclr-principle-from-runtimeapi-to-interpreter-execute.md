@@ -749,5 +749,5 @@ MethodBridge 的位置不是“锦上添花”，而是 interpreter / AOT / nati
 
 ## 系列位置
 
-- 上一篇：无。这是系列起点。
+- 上一篇：[HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇]({{< relref "engine-notes/hybridclr-series-index.md" >}})
 - 下一篇：[HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑]({{< relref "engine-notes/hybridclr-aot-generics-and-supplementary-metadata.md" >}})
