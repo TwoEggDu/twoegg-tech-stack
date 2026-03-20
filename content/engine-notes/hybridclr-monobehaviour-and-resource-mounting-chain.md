@@ -331,6 +331,12 @@ void Assembly::InitializePlaceHolderAssemblies()
 
 这就是 MonoBehaviour 资源挂载能成立的前半段基础。
 
+如果你自己跟这段初始化，最值得盯的是三个点：
+
+- `g_placeHolderAssemblies` 里到底有哪些名字，这决定哪些热更程序集会提前获得身份
+- `CreatePlaceHolderAssembly` 只填了哪些字段，这能帮助你理解 placeholder 为什么“有身份但没内容”
+- `RegisterInterpreterAssembly(placeHolderAss)` 为什么要发生在真实 DLL 加载之前，这决定资源反序列化时能不能先认出程序集对象
+
 ## 第六段链路：真正的热更 DLL 加载进来时，不是新建程序集，而是把 placeholder 填实
 
 这一步才是我觉得最关键、也最值得精读的地方。
@@ -383,6 +389,14 @@ il2cpp::vm::MetadataCache::RegisterInterpreterAssembly(ass);
 我觉得 HybridCLR 对资源挂载 MonoBehaviour 的支持，最硬核的价值就在这里。
 
 它不是事后做一个“脚本替换器”，而是在程序集身份层面把这条链接通了。
+
+如果你打算跟这一跳断点，我建议不要把注意力放在 `BuildIl2CppAssembly` 这些填充细节上，而是先盯三个变量：
+
+- `nameNoExt`：它是不是你资源里记录的那个程序集名
+- `ass`：这里拿到的是不是前面注册过的 placeholder
+- `image2`：这里最终复用的是不是 placeholder 身上的那层 `Il2CppImage`
+
+只要这三个变量在断点里对上，你就能亲眼看到“资源反序列化时期的程序集身份”和“真正热更 DLL 进来后的程序集对象”为什么会收敛到同一条链上。
 
 ## 把整条 MonoBehaviour 资源挂载链压成 4 步
 
@@ -471,5 +485,5 @@ HybridCLR 真正补的是这套链。
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么](hybridclr-toolchain-what-generate-buttons-do.md)
-- 下一篇：[HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute](hybridclr-call-chain-follow-a-hotfix-method.md)
+- 上一篇：[HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么]({{< relref "engine-notes/hybridclr-toolchain-what-generate-buttons-do.md" >}})
+- 下一篇：[HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute]({{< relref "engine-notes/hybridclr-call-chain-follow-a-hotfix-method.md" >}})

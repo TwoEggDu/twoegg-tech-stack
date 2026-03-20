@@ -572,5 +572,5 @@ foreach(var method in methodTypeAndNames)
 
 ## 系列位置
 
-- 上一篇：[HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑](hybridclr-aot-generics-and-supplementary-metadata.md)
-- 下一篇：[HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化](hybridclr-monobehaviour-and-resource-mounting-chain.md)
+- 上一篇：[HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑]({{< relref "engine-notes/hybridclr-aot-generics-and-supplementary-metadata.md" >}})
+- 下一篇：[HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化]({{< relref "engine-notes/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}})

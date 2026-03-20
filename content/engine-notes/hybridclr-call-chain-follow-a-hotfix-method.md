@@ -9,6 +9,7 @@ tags = ["Unity", "IL2CPP", "HybridCLR", "Runtime", "SourceCode"]
 > 如果说前几篇是在拆 HybridCLR 的零件，那这一篇要做的，就是沿着一条真实调用链，把这些零件重新装回一台会跑的机器。
 
 这是 HybridCLR 系列第 5 篇，用一条真实调用链把前面几篇重新串起来。
+
 这里默认前几篇的术语已经建立，所以不再重讲补充 metadata、菜单生成和资源挂载的细节，而只追方法调用主链。
 
 但只拆零件还不够。  
@@ -232,6 +233,13 @@ if (method->return_type->type == IL2CPP_TYPE_VOID)
 
 `反射没有发明第二条执行链，它只是走进了方法对象已经绑定好的 invoker。`
 
+如果你跟到这一跳，断点里最值得看的其实不是 `Invoke` 自己，而是 `method->invoker_method` 这个字段最终指向了谁。
+
+- 如果它指向普通 native invoker，这还是 AOT 路径
+- 如果它已经指向 `InterpreterInvoke`，那后面的控制流就已经彻底进入 HybridCLR 主链了
+
+也就是说，这一跳真正的分叉点不在反射层，而在方法初始化阶段写进 `MethodInfo` 的那个函数指针。
+
 ## 第五跳：`InterpreterInvoke` 做的第一件事不是执行，而是整理调用现场
 
 真正掉进 HybridCLR 的第一个函数，在 `hybridclr/interpreter/InterpreterModule.cpp`：
@@ -257,6 +265,14 @@ static void InterpreterInvoke(Il2CppMethodPointer methodPointer, const MethodInf
 它更像一个桥：
 
 `把 IL2CPP 世界里的调用约定，整理成解释器能接的参数布局，然后把控制权交给 Execute。`
+
+如果你自己跟这一段，我建议顺手观察 3 个量：
+
+- `method->interpData`：确认这次是不是第一次执行
+- `imi->argStackObjectSize`：确认解释器到底准备了多大的参数栈布局
+- `__args -> args`：确认托管/反射侧参数是在哪一步被翻译成 `StackObject[]` 的
+
+这三个量一旦看明白，`InterpreterInvoke` 在整条链里的职责就会非常清楚。
 
 ## 第六跳：第一次执行时，为什么还要先 `GetInterpMethodInfo`
 
@@ -335,6 +351,13 @@ MethodBody* methodBody = image->GetMethodBody(token);
 所以这一跳最值得记住的一句话是：
 
 `transform 的输入不是 MethodInfo 本身，而是“MethodInfo 所指向的 method body + runtime 解析结果”。`
+
+跟这一跳时，最好顺便看一下 `image` 的实际类型。
+
+- 如果它是 `InterpreterImage`，你看到的是热更程序集自己的 method body
+- 如果它是 `AOTHomologousImage`，你看到的是 AOT 程序集补回来的那份同源 metadata 视图
+
+这个观察点很值钱，因为它正好把“热更程序集执行”和“AOT 解释兜底”这两条路径在 transform 入口处收束到了一起。
 
 ## 第八跳：`Interpreter::Execute` 跑的已经不是原始 IL，而是 HiOpcode
 
@@ -439,5 +462,5 @@ LoopStart:
 
 ## 系列位置
 
-- 上一篇：[HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化](hybridclr-monobehaviour-and-resource-mounting-chain.md)
-- 下一篇：[HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事](hybridclr-boundaries-and-tradeoffs.md)
+- 上一篇：[HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化]({{< relref "engine-notes/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}})
+- 下一篇：[HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事]({{< relref "engine-notes/hybridclr-boundaries-and-tradeoffs.md" >}})

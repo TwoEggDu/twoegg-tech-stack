@@ -397,5 +397,5 @@ HybridCLR 的性能讨论最容易被一句“解释器比 AOT 慢”带偏。
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute](hybridclr-call-chain-follow-a-hotfix-method.md)
-- 下一篇：无。这一篇是第一轮收束。
+- 上一篇：[HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute]({{< relref "engine-notes/hybridclr-call-chain-follow-a-hotfix-method.md" >}})
+- 下一篇：[HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线]({{< relref "engine-notes/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}})

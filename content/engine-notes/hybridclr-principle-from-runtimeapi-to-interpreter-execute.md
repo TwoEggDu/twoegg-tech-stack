@@ -140,6 +140,15 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 如果你准备跟着断点读，我建议顺序就是上面这 8 个文件。
 
+如果只做第一轮跟读，我建议先下 4 个断点：
+
+- `Runtime::Initialize`：先确认 HybridCLR 到底是怎么挂进 `libil2cpp` 的
+- `RuntimeApi::LoadMetadataForAOTAssembly`：先把“补 metadata”和“加载热更 DLL”分开
+- `Assembly::Create`：先看热更程序集是怎么落成 `InterpreterImage` 的
+- `HiTransform::Transform`：先看到“method body -> InterpMethodInfo”这一步
+
+先走通这 4 跳，再往 `Interpreter::Execute` 深挖，阅读阻力会低很多。
+
 ## 先看 Editor 工具链：运行时到底提前需要哪些输入
 
 很多人第一次看到 HybridCLR 菜单，会把它理解成“编辑器上的一组便利按钮”。
@@ -213,6 +222,15 @@ void Runtime::Initialize()
 
 但实际上，它首先是一套被接进 IL2CPP runtime 的系统模块。
 
+如果你准备自己跟一次，这里最值得观察的不是“有没有调到 Initialize”，而是 4 行调用的先后顺序。
+
+- `RuntimeApi::RegisterInternalCalls()` 决定 C# 侧那几个 API 最后能不能落到 native 语义
+- `MetadataModule::Initialize()` 决定后面 image、assembly、method body 这条 metadata 主线能不能成立
+- `InterpreterModule::Initialize()` 决定解释器 invoker 和桥接表是否就位
+- `TransformModule::Initialize()` 决定 transform 所需的运行时环境是否就位
+
+也就是说，这里不是单纯的“启动代码”，而是在把后文四条主线一次性挂好。
+
 ## C# 的 RuntimeApi 调到 native 后，语义到底是什么
 
 这条主线的第二站应该看 `RuntimeApi.cs` 和 `RuntimeApi.cpp`。
@@ -268,6 +286,15 @@ int32_t RuntimeApi::LoadMetadataForAOTAssembly(Il2CppArray* dllBytes, int32_t mo
 因为它说明 `LoadMetadataForAOTAssembly` 的语义不是“执行热更 DLL”，而是把字节数组交给 `metadata::Assembly::LoadMetadataForAOTAssembly`。
 
 也就是说，它首先在解决的是 metadata 问题，不是代码执行问题。
+
+如果你自己跟这段断点，最值得确认的是一件事：控制流在这里没有走向 `Assembly::LoadFromBytes`，而是走向了 `Assembly::LoadMetadataForAOTAssembly`。
+
+这两个名字很像，但 runtime 语义完全不同：
+
+- `LoadFromBytes` 会创建解释型程序集
+- `LoadMetadataForAOTAssembly` 会把一份同源 metadata image 挂到现有 AOT assembly 上
+
+把这两个入口在代码里亲眼看分叉，后面读 AOT 泛型篇时会轻松很多。
 
 ### `PreJitMethod` 真正在做什么
 
@@ -723,4 +750,4 @@ MethodBridge 的位置不是“锦上添花”，而是 interpreter / AOT / nati
 ## 系列位置
 
 - 上一篇：无。这是系列起点。
-- 下一篇：[HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑](hybridclr-aot-generics-and-supplementary-metadata.md)
+- 下一篇：[HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑]({{< relref "engine-notes/hybridclr-aot-generics-and-supplementary-metadata.md" >}})

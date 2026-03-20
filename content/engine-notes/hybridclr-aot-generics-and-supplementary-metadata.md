@@ -9,6 +9,7 @@ tags = ["Unity", "IL2CPP", "HybridCLR", "Generics"]
 > HybridCLR 的补充 metadata 解决的是“运行时能不能看懂这段 AOT metadata”，不是“凭空生成一份原本没有被 AOT 出来的泛型 native 实现”。
 
 这是 HybridCLR 系列第 2 篇。第一篇先把 `RuntimeApi -> metadata -> transform -> execute` 这条主链立住；这一篇只收一件事：AOT 泛型和补充 metadata 到底各自补哪一层。
+
 这篇不再重讲 `MethodInfo -> Execute` 的执行主链，也不展开菜单生成顺序，只讨论泛型与同源 metadata 的边界。
 
 主链一旦立住，紧接着就会遇到一个更具体、也更容易把人绕晕的问题：
@@ -378,6 +379,14 @@ if (!InitAndGetInterpreterDirectlyCallMethodPointer(shareMethod))
 
 `补 metadata 解决的是“解释和解析能力”，不是“替 AOT 世界补一份本来没有的 native generic implementation”。`
 
+如果你准备亲自跟一次这条失败链，我建议断点顺序就按下面三处走：
+
+- `Assembly::LoadMetadataForAOTAssembly`：先确认补 metadata 只是注册 `AOTHomologousImage`
+- `AOTHomologousImage::RegisterLocked`：再确认这份 image 是怎么长期挂回目标 AOT assembly 的
+- `RaiseAOTGenericMethodNotInstantiatedException`：最后确认真正报错时，问题已经从 metadata 层推进到了“我要一个可调用指针，但 AOT 世界里没有”
+
+这三处连起来，读者就能在源码里亲眼看到“看得懂”和“调得到”为什么是两回事。
+
 ## `AOTGenericReference` 到底在做什么
 
 到这一步就能理解，为什么 HybridCLR 还需要单独做 `AOTGenericReference`。
@@ -463,6 +472,10 @@ GenerateMethodBridgeCppFile(..., outputFile);
 
 它们都不是补充 metadata 的替代品，但也都不是补充 metadata 能自动覆盖掉的部分。
 
+如果你跟到这里还想继续顺着源码看，我建议只再补一处断点就够了：`MethodBridgeGeneratorCommand.GenerateMethodBridgeAndReversePInvokeWrapper`。
+
+原因很简单。到这一步读者最容易误判成“MethodBridge 只是工具层产物”。但真正跟一次生成流程就会发现，它分析的是具体签名，不是在做抽象概念补丁。
+
 ## 把这件事压成一句话
 
 如果把这篇压成一句话，我会这样描述 HybridCLR 在 AOT 泛型问题上的位置：
@@ -514,5 +527,5 @@ GenerateMethodBridgeCppFile(..., outputFile);
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute](hybridclr-principle-from-runtimeapi-to-interpreter-execute.md)
-- 下一篇：[HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么](hybridclr-toolchain-what-generate-buttons-do.md)
+- 上一篇：[HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-notes/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
+- 下一篇：[HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么]({{< relref "engine-notes/hybridclr-toolchain-what-generate-buttons-do.md" >}})
