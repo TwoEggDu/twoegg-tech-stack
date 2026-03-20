@@ -4,6 +4,7 @@ description = "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、
 weight = 29
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "Index", "Architecture"]
+series = "HybridCLR"
 +++
 
 > 这组文章如果一篇篇单看，其实都能成立；但 HybridCLR 真正难的地方，不在某一篇单文，而在于你能不能先知道自己现在碰到的问题到底属于哪一层。
@@ -167,4 +168,4 @@ tags = ["Unity", "IL2CPP", "HybridCLR", "Index", "Architecture"]
 ## 系列位置
 
 - 上一篇：无。这是系列入口。
-- 下一篇：[HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-notes/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}}">HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute</a>

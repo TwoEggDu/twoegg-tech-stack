@@ -4,6 +4,7 @@ description = "不再重讲主链，而是把 HybridCLR 常见报错和现场按
 weight = 37
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "Troubleshooting", "Runtime"]
+series = "HybridCLR"
 +++
 
 > HybridCLR 排错最浪费时间的，不是修 bug，而是把不同层的问题混成一锅；真正稳的诊断方式，不是先搜报错，而是先判断这次坏的是哪一层。
@@ -333,5 +334,5 @@ tags = ["Unity", "IL2CPP", "HybridCLR", "Troubleshooting", "Runtime"]
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线]({{< relref "engine-notes/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}})
-- 下一篇：[HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT]({{< relref "engine-notes/hybridclr-performance-and-prejit-strategy.md" >}})
+- 上一篇：<a href="{{< relref "engine-notes/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}}">HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线</a>
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-performance-and-prejit-strategy.md" >}}">HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT</a>

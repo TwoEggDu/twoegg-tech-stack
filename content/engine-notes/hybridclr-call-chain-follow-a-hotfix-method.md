@@ -4,6 +4,7 @@ description = "从 Assembly.Load(byte[])、MethodInfo.Invoke、MetadataCache、I
 weight = 34
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "Runtime", "SourceCode"]
+series = "HybridCLR"
 +++
 
 > 如果说前几篇是在拆 HybridCLR 的零件，那这一篇要做的，就是沿着一条真实调用链，把这些零件重新装回一台会跑的机器。
@@ -462,5 +463,5 @@ LoopStart:
 
 ## 系列位置
 
-- 上一篇：[HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化]({{< relref "engine-notes/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}})
-- 下一篇：[HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事]({{< relref "engine-notes/hybridclr-boundaries-and-tradeoffs.md" >}})
+- 上一篇：<a href="{{< relref "engine-notes/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}}">HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化</a>
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-boundaries-and-tradeoffs.md" >}}">HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事</a>

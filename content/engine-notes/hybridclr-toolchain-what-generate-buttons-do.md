@@ -4,6 +4,7 @@ description = "从 Settings、Installer、Generate/All 到 BuildProcessors，拆
 weight = 32
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "Toolchain"]
+series = "HybridCLR"
 +++
 
 > HybridCLR 菜单不是一组“方便操作”的按钮，而是在为改造后的 IL2CPP runtime 逐项准备输入：本地 `libil2cpp`、热更 DLL、防裁剪信息、裁剪后的 AOT 快照、桥接代码，以及泛型风险清单。
@@ -572,5 +573,5 @@ foreach(var method in methodTypeAndNames)
 
 ## 系列位置
 
-- 上一篇：[HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑]({{< relref "engine-notes/hybridclr-aot-generics-and-supplementary-metadata.md" >}})
-- 下一篇：[HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化]({{< relref "engine-notes/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}})
+- 上一篇：<a href="{{< relref "engine-notes/hybridclr-aot-generics-and-supplementary-metadata.md" >}}">HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑</a>
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}}">HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化</a>

@@ -4,6 +4,7 @@ description = "不再重讲 HybridCLR 原理，而是把它落回真实项目：
 weight = 36
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "BestPractice", "Architecture"]
+series = "HybridCLR"
 +++
 
 > 真正让 HybridCLR 在项目里长期稳定的，不是“把原理看懂了”，而是把程序集边界、加载顺序、生成物一致性和问题诊断顺序，变成团队共同遵守的硬约束。
@@ -352,5 +353,5 @@ HybridCLR 真出问题时，最耗时间的通常不是修，而是找层。
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事]({{< relref "engine-notes/hybridclr-boundaries-and-tradeoffs.md" >}})
-- 下一篇：[HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了]({{< relref "engine-notes/hybridclr-troubleshooting-diagnose-by-layer.md" >}})
+- 上一篇：<a href="{{< relref "engine-notes/hybridclr-boundaries-and-tradeoffs.md" >}}">HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事</a>
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-troubleshooting-diagnose-by-layer.md" >}}">HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了</a>

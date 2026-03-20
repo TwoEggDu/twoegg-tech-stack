@@ -4,6 +4,7 @@ description = "把 HybridCLR 系列里的几条主线重新收成一张边界图
 weight = 35
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "Architecture", "Tradeoff"]
+series = "HybridCLR"
 +++
 
 > 说 HybridCLR “支持热更新”当然没错，但这句话最大的问题，是它把几类完全不同的缺口、几层不同的能力、以及几笔不同的工程代价，全部压扁成了一个口号。
@@ -397,5 +398,5 @@ HybridCLR 的性能讨论最容易被一句“解释器比 AOT 慢”带偏。
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute]({{< relref "engine-notes/hybridclr-call-chain-follow-a-hotfix-method.md" >}})
-- 下一篇：[HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线]({{< relref "engine-notes/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}})
+- 上一篇：<a href="{{< relref "engine-notes/hybridclr-call-chain-follow-a-hotfix-method.md" >}}">HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute</a>
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}}">HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线</a>
