@@ -1,0 +1,236 @@
+---
+title: "Unity 裁剪 01｜Unity 的裁剪到底分几层"
+description: "先把 Unity 里常说的 strip 拆成三层：managed stripping、Strip Engine Code 和 native symbol strip，避免把完全不同的问题混成一个词。"
+slug: "unity-stripping-01-what-gets-stripped"
+weight: 50
+featured: false
+tags:
+  - Unity
+  - Build
+  - Stripping
+  - Engine
+series: "Unity 裁剪"
+---
+
+> 如果只用一句话概括 Unity 的“裁剪”，我会这样说：它不是一个神秘黑盒开关，而是三层发生在不同对象、不同阶段、目标也不同的删除机制。
+
+做 Unity 构建的人，迟早都会碰到一个词：`strip`。
+
+问题是，这个词在项目里经常被说得过于随意了。
+
+有人说“这次包变小了，应该是 strip 生效了”；有人说“运行时报某个方法找不到，估计是被 strip 掉了”；还有人说“符号没了，是不是也是 Strip Engine Code 干的”。
+
+这些说法的问题在于：
+
+`它们可能说的是三件完全不同的事。`
+
+如果第一步不把地图立起来，后面再去讲 `Managed Stripping Level`、反射误删、`link.xml`、`[Preserve]`，读者脑子里会一直把几层机制混在一起。
+
+所以这一篇不先讲参数，也不先讲坑，而是先回答一个最基础的问题：
+
+`Unity 的裁剪，到底分几层？`
+
+## 这篇要回答什么
+
+这篇文章想讲清楚三个问题：
+
+1. Unity 里常说的 `strip`，到底在删什么。
+2. 哪几层裁剪最容易被混成一个词。
+3. 为什么搞不清这一点，后面排查问题会越查越乱。
+
+如果先给一个直觉版答案，那就是：
+
+Unity 里最常见、也最值得区分的裁剪，至少有三层：
+
+- `managed stripping`
+- `Strip Engine Code`
+- `native symbol strip`
+
+它们都可能让“构建结果变小”，但它们删掉的对象、发生的阶段和带来的风险并不一样。
+
+## 先给一张地图
+
+可以先把这三层粗略放进同一张表里：
+
+| 层级 | 主要处理对象 | 发生阶段 | 主要目标 | 典型风险 |
+| --- | --- | --- | --- | --- |
+| managed stripping | C# / IL 程序集 | 托管程序集处理阶段 | 删除不可达托管代码，减小托管输出和后续转换成本 | 反射、泛型、自动注册误删 |
+| Strip Engine Code | Unity 原生引擎模块、原生类型注册 | linker 决策后、native build 之前 | 让 player 只保留需要的引擎模块和注册代码 | 某些引擎能力或类型注册缺失 |
+| native symbol strip | 最终原生库或可执行文件里的符号信息 | 原生链接后 | 缩小包体、分离调试符号 | 调试和符号化变麻烦 |
+
+这张表最重要的一点，不是术语，而是边界：
+
+`看起来都叫 strip，但它们根本不在同一层工作。`
+
+## 一、Managed Stripping：删的是托管代码
+
+这层删的是你项目里最终要进入构建链路的托管程序集，也就是那些 `C# -> IL` 之后的 DLL。
+
+如果只从现象看，它很容易被理解成一句话：
+
+`把没用到的 C# 代码删掉。`
+
+这句话不算错，但还不够准确。更准确一点的说法是：
+
+`UnityLinker 会基于一组构建期可见的依赖信息，去删掉它判断为不可达的托管代码。`
+
+这也是为什么后面讲反射时，总会绕回“构建期能不能看见依赖”。
+
+如果从 Unity 当前实现往下看，这层裁剪不是随便扫一下程序集就结束了。Editor 会先把多种“已知依赖”喂给 linker，比如：
+
+- 场景里出现过的 managed type
+- 被序列化系统记录到的类型
+- 某些需要保留的方法
+- 用户自己写的 `link.xml`
+
+在 Unity 源码里，这些东西能直接看到。`AssemblyStripper.cs` 会生成 `TypesInScenes.xml`、`SerializedTypes.xml`、`MethodsToPreserve.xml`，然后再把 `Assets` 目录里的 `link.xml` 一起交给 `UnityLinker`。
+
+这一层真正想解决的问题是两个：
+
+- 最终托管输出别带上根本不会用到的代码
+- 后面的 `IL2CPP` 转换或 Mono 构建，不要为无意义的程序集和方法继续付成本
+
+所以 `managed stripping` 带来的收益，不只是“包体变小”，还包括：
+
+- 托管程序集变小
+- `IL2CPP` 转换输入变少
+- 某些情况下构建时间也会下降
+
+但它最典型的风险也正来自这里：
+
+`只要你的依赖关系对构建期不够可见，它就可能判断错。`
+
+这就是为什么反射、运行时泛型、自动注册框架在 strip 问题里总是高频词。
+
+## 二、Strip Engine Code：删的是引擎模块和注册结果
+
+很多人第一次看到 `Strip Engine Code`，直觉会把它理解成：
+
+“哦，就是把 `libunity` 最后做一下精简。”
+
+这其实不够准确。
+
+如果从 Unity 当前源码去看，`Strip Engine Code` 做的事，不是单纯拿已经生成好的引擎二进制跑一次普通 `strip`，而是先让 linker 参与决策，再把决策结果重新变成更小的引擎注册代码。
+
+这个判断可以从几条实现链看出来：
+
+- `AssemblyStripper.cs` 会在满足条件时把 `--enable-engine-module-stripping` 传给 linker
+- Editor 会把场景类型、native type、模块 include/exclude 等信息整理成 `EditorToUnityLinkerData.json`
+- linker 输出 `UnityLinkerToEditorData.json`
+- `ClassRegistrationGenerator.cs` 再根据这两份数据生成 `UnityClassRegistration.cpp`
+- 最后这些生成的注册源码会重新并入 native build
+
+换句话说，这层裁剪关注的不是“某个 C# 方法要不要保留”，而是：
+
+- 哪些 Unity 原生模块要注册
+- 哪些原生类型要进入最终 player
+- 引擎内部哪些能力根本没必要跟着项目一起打进去
+
+所以它的中心句更应该写成：
+
+`Strip Engine Code = linker 决策 + 更小的引擎模块/类注册代码 + 更小的 native build 结果。`
+
+这也是为什么我不建议把它和 managed stripping 写在同一层。
+
+它们虽然都和 linker 有关，但处理对象已经不是一回事了：
+
+- 一个主要看托管程序集和托管依赖
+- 一个主要看引擎模块和原生注册结果
+
+这里还要补一个很重要的边界：
+
+`Strip Engine Code` 是 `IL2CPP-only`。
+
+这个不是经验结论，而是 Unity 自己文档里的定义。
+
+## 三、Native Symbol Strip：删的是符号，不一定删逻辑
+
+第三层最容易被忽略，因为它从现象上看也像“构建结果变小了”，但它处理的对象其实和前两层又不一样。
+
+这层更接近平台工具链意义上的 `strip`：
+
+`对最终原生库或可执行文件里的符号信息做裁剪。`
+
+这件事在 Android 侧特别容易看见。Unity 当前 Android 构建程序里，在 `GenerateLibUnityLibrary.cs` 这条链上，会先产出未裁剪的 so，然后再走一套生成 `dbg.so`、`sym.so`、`stripped.so` 的过程。
+
+这里的关键点在于：
+
+- 它通常和调试符号、符号化、发布包大小强相关
+- 它不应该被理解成“业务逻辑为什么没了”的第一嫌疑人
+
+也就是说，如果你遇到的是：
+
+- 运行时报 `type not found`
+- 反射拿不到某个方法
+- 某段 C# 功能在构建后消失
+
+那你首先应该怀疑的是 managed stripping，或者再往上一层怀疑 `Strip Engine Code`，而不是先怀疑“是不是原生 strip 把逻辑剁掉了”。
+
+`native symbol strip` 更像是“让最终发布物更适合发版”，而不是“决定哪些业务路径存在”。`
+
+## 为什么一定要把这三层拆开
+
+如果只是在概念上混一下，好像问题不大。
+
+但到了真实项目里，这种混淆会直接影响排查顺序。
+
+比如下面三种问题，如果都用一句“是不是被 strip 了”去问，排查会非常低效：
+
+### 1. 运行时反射找不到方法
+
+这更像是：
+
+- `Managed Stripping Level` 太激进
+- 依赖对构建期不可见
+- 缺少 `link.xml` 或 `[Preserve]`
+
+也就是 managed stripping 问题。
+
+### 2. 某些引擎能力或模块没有进入最终 player
+
+这更像是：
+
+- `Strip Engine Code` 开启后，引擎模块或类型注册结果发生变化
+
+也就是引擎模块裁剪问题。
+
+### 3. 包体大小下降了，但调试和崩溃符号化变麻烦
+
+这更像是：
+
+- native symbol strip 和符号文件管理问题
+
+也就是原生发布物处理问题。
+
+如果这三件事不拆开，后面的讨论很容易出现一种假精确：
+
+大家都在说同一个词，但实际上每个人指的根本不是同一个阶段。
+
+## 先记住一个最简单的判断框架
+
+如果你后面只想带走一个排查入口，我建议先记住这一版最简判断：
+
+- `C# 功能、反射、泛型、序列化相关的“缺东西”`，先查 managed stripping
+- `引擎模块、引擎类型注册、libunity 体积变化相关的问题`，先查 Strip Engine Code
+- `包体、符号、崩溃栈符号化相关的问题`，先查 native symbol strip
+
+这套判断不能替代细节，但它能先把排查方向拉回正确的层上。
+
+## 这套地图后面会怎么用
+
+后面的系列文章会沿着这张地图继续往下拆：
+
+- 下一篇先讲 `Managed Stripping Level` 到底改变了什么
+- 再讲 Unity 为什么有时看不懂你的反射
+- 再讲哪些代码写法最怕 strip，以及怎样写得更适合裁剪
+- 最后再单独讲 `Strip Engine Code` 的实现路径
+
+这个顺序很重要，因为：
+
+`先把层级分开，后面的“误删”和“修复”才不会一直漂在半空里。`
+
+## 最后压成一句话
+
+如果把这篇文章最后压成一句话，我会这样说：
+
+`Unity 的“裁剪”不是一个开关，而是三层不同对象上的删除机制；你不先分清删的是托管代码、引擎模块，还是原生符号，后面的排查基本都会越查越乱。`
