@@ -120,6 +120,10 @@ public static void GenerateAll()
 
 `HybridCLR 的 build-time 工具链是一条依赖流水线。`
 
+![HybridCLR 工具链图](../../images/hybridclr/toolchain-pipeline.svg)
+
+*图：这一组按钮不是平铺命令，而是一条先产出、再被 runtime 或构建链消费的依赖流水线。*
+
 ## `Settings` 不是杂项，而是整条流水线的产物路由表
 
 如果要理解这些生成物最后去哪，第一步反而不是看命令，而是先看 `HybridCLRSettings.cs`。

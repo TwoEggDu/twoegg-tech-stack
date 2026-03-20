@@ -32,6 +32,10 @@ series = "HybridCLR"
 
 这件事一旦按层理解，很多策略都会自然很多。
 
+![HybridCLR 性能分层图](../../images/hybridclr/performance-layers.svg)
+
+*图：如果不先把成本拆成“首调、稳态、跨边界、启动期聚集”这几层，后面的优化动作很容易打错位置。*
+
 ## 不要把性能问题压扁成一句“解释器慢”
 
 如果只用一句“解释器比 AOT 慢”来讲 HybridCLR，工程上几乎没有指导价值。  

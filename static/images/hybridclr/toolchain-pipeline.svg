@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F0E6D8"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 17px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box { fill: rgba(255,251,244,0.94); stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .orange { fill: #FBE8D9; }
+      .teal { fill: #E5F1EE; }
+      .blue { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="28" fill="url(#bg)"/>
+  <text x="64" y="64" class="subtitle">HybridCLR Toolchain</text>
+  <text x="64" y="104" class="title">Generate/All 不是一组按钮，而是一条依赖流水线</text>
+
+  <rect x="56" y="140" width="1088" height="190" rx="24" class="band"/>
+  <rect x="56" y="356" width="1088" height="188" rx="24" class="band"/>
+
+  <text x="84" y="172" class="subtitle">Commands</text>
+  <text x="84" y="388" class="subtitle">Artifacts And Consumers</text>
+
+  <rect x="90" y="196" width="140" height="56" rx="18" class="box orange"/>
+  <text x="121" y="228" class="label">Settings</text>
+  <text x="104" y="246" class="copy">路径、目标平台、程序集名单</text>
+
+  <rect x="260" y="196" width="140" height="56" rx="18" class="box orange"/>
+  <text x="290" y="228" class="label">Installer</text>
+  <text x="274" y="246" class="copy">本地 libil2cpp / UNITY_IL2CPP_PATH</text>
+
+  <rect x="430" y="196" width="140" height="56" rx="18" class="box orange"/>
+  <text x="452" y="228" class="label">CompileDll</text>
+  <text x="453" y="246" class="copy">产出热更 DLL</text>
+
+  <rect x="600" y="196" width="140" height="56" rx="18" class="box orange"/>
+  <text x="628" y="228" class="label">Il2CppDef</text>
+  <text x="619" y="246" class="copy">版本适配 / AssemblyManifest</text>
+
+  <rect x="770" y="196" width="140" height="56" rx="18" class="box orange"/>
+  <text x="804" y="228" class="label">LinkXml</text>
+  <text x="788" y="246" class="copy">暴露热更引用给裁剪器</text>
+
+  <rect x="940" y="196" width="170" height="56" rx="18" class="box orange"/>
+  <text x="974" y="228" class="label">AOTDlls</text>
+  <text x="959" y="246" class="copy">裁剪后 AOT DLL 快照</text>
+
+  <path d="M230 224H260" class="line"/>
+  <path d="M400 224H430" class="line"/>
+  <path d="M570 224H600" class="line"/>
+  <path d="M740 224H770" class="line"/>
+  <path d="M910 224H940" class="line"/>
+
+  <rect x="360" y="274" width="220" height="40" rx="16" class="box teal"/>
+  <text x="392" y="300" class="label">MethodBridge</text>
+
+  <rect x="630" y="274" width="260" height="40" rx="16" class="box teal"/>
+  <text x="661" y="300" class="label">AOTGenericReference</text>
+
+  <path d="M1025 252V274H890" class="line"/>
+  <path d="M1025 252V294H580" class="line"/>
+
+  <rect x="108" y="412" width="220" height="74" rx="18" class="box blue"/>
+  <text x="135" y="442" class="label">HotUpdate DLLs</text>
+  <text x="131" y="463" class="copy">Assembly.Load / RuntimeApi / 业务加载入口</text>
+
+  <rect x="372" y="412" width="220" height="74" rx="18" class="box blue"/>
+  <text x="403" y="442" class="label">link.xml</text>
+  <text x="395" y="463" class="copy">主包裁剪器 / Managed Stripping</text>
+
+  <rect x="636" y="412" width="220" height="74" rx="18" class="box blue"/>
+  <text x="663" y="442" class="label">AOT DLL Snapshot</text>
+  <text x="664" y="463" class="copy">桥接分析 / 补充 metadata 分析</text>
+
+  <rect x="900" y="412" width="220" height="74" rx="18" class="box blue"/>
+  <text x="929" y="442" class="label">MethodBridge.cpp</text>
+  <text x="935" y="463" class="copy">runtime 真消费的桥接 C++ 代码</text>
+
+  <rect x="372" y="500" width="220" height="28" rx="12" class="box teal"/>
+  <text x="403" y="519" class="copy">AOTGenericReferences.cs - 泛型风险清单</text>
+
+  <text x="64" y="584" class="caption">关键词：少一步，后果通常不是“效果差一点”，而是 runtime 根本拿不到它需要的输入。</text>
+</svg>

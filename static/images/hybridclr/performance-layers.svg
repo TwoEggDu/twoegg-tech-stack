@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .layer { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .l1 { fill: #FBE8D9; }
+      .l2 { fill: #F4DFC8; }
+      .l3 { fill: #E5F1EE; }
+      .l4 { fill: #E8EEF7; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="560" rx="28" fill="url(#bg)"/>
+  <text x="64" y="64" class="subtitle">HybridCLR Performance</text>
+  <text x="64" y="104" class="title">性能问题不要压成一句“解释器比 AOT 慢”</text>
+
+  <rect x="108" y="150" width="984" height="72" rx="22" class="layer l1"/>
+  <text x="140" y="191" class="label">Layer 1 · 首调 transform</text>
+  <text x="392" y="191" class="copy">第一次命中解释器方法时，先付 IL -&gt; InterpMethodInfo 的转换成本</text>
+
+  <rect x="108" y="238" width="984" height="72" rx="22" class="layer l2"/>
+  <text x="140" y="279" class="label">Layer 2 · 长期解释执行</text>
+  <text x="392" y="279" class="copy">方法已经 transform 完，但稳态执行仍然是 interpreter，不会凭空变成 native AOT</text>
+
+  <rect x="108" y="326" width="984" height="72" rx="22" class="layer l3"/>
+  <text x="140" y="367" class="label">Layer 3 · 跨边界调用</text>
+  <text x="392" y="367" class="copy">频繁跨 interpreter / AOT / native / reverse pinvoke，成本常常比“单条逻辑慢一点”更伤</text>
+
+  <rect x="108" y="414" width="984" height="72" rx="22" class="layer l4"/>
+  <text x="140" y="455" class="label">Layer 4 · 启动期集中爆发</text>
+  <text x="392" y="455" class="copy">把本该分散的 transform、加载、桥接、预热全部堆到同一帧，就会变成卡顿问题</text>
+
+  <text x="64" y="528" class="caption">PreJitMethod / PreJitClass 解决的是 Layer 1 的时机管理，不是把解释器方法变成 native JIT。</text>
+</svg>

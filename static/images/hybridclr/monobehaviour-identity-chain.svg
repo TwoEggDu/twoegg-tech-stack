@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box { fill: rgba(255,251,244,0.94); stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .orange { fill: #FBE8D9; }
+      .teal { fill: #E5F1EE; }
+      .blue { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="28" fill="url(#bg)"/>
+  <text x="64" y="64" class="subtitle">HybridCLR MonoBehaviour</text>
+  <text x="64" y="104" class="title">资源上挂着热更脚本，关键在程序集身份链能不能接上</text>
+
+  <rect x="56" y="140" width="1088" height="154" rx="24" class="band"/>
+  <rect x="56" y="318" width="1088" height="154" rx="24" class="band"/>
+
+  <text x="84" y="172" class="subtitle">Build-Time</text>
+  <text x="84" y="350" class="subtitle">Runtime</text>
+
+  <rect x="90" y="198" width="220" height="64" rx="18" class="box orange"/>
+  <text x="116" y="228" class="label">FilterHotFixAssemblies</text>
+  <text x="123" y="248" class="copy">先把热更 DLL 从主包脚本编译链里拿掉</text>
+
+  <rect x="360" y="198" width="240" height="64" rx="18" class="box orange"/>
+  <text x="385" y="228" class="label">PatchScriptingAssemblyList</text>
+  <text x="391" y="248" class="copy">把热更程序集名字补回 Unity 脚本清单</text>
+
+  <rect x="650" y="198" width="220" height="64" rx="18" class="box orange"/>
+  <text x="687" y="228" class="label">Il2CppDef</text>
+  <text x="675" y="248" class="copy">生成 AssemblyManifest.cpp 名单</text>
+
+  <rect x="920" y="198" width="180" height="64" rx="18" class="box orange"/>
+  <text x="955" y="228" class="label">资源序列化产物</text>
+  <text x="945" y="248" class="copy">Prefab / Scene 仍记着程序集名</text>
+
+  <path d="M310 230H360" class="line"/>
+  <path d="M600 230H650" class="line"/>
+  <path d="M870 230H920" class="line"/>
+
+  <rect x="90" y="376" width="240" height="64" rx="18" class="box teal"/>
+  <text x="120" y="406" class="label">InitializePlaceHolderAssemblies</text>
+  <text x="133" y="426" class="copy">先注册同名 placeholder assembly</text>
+
+  <rect x="390" y="376" width="200" height="64" rx="18" class="box teal"/>
+  <text x="424" y="406" class="label">MetadataCache</text>
+  <text x="431" y="426" class="copy">资源反序列化能先找到程序集身份</text>
+
+  <rect x="650" y="376" width="220" height="64" rx="18" class="box blue"/>
+  <text x="683" y="406" class="label">Assembly::Create</text>
+  <text x="663" y="426" class="copy">真正热更 DLL 进来后填实 placeholder</text>
+
+  <rect x="930" y="376" width="170" height="64" rx="18" class="box blue"/>
+  <text x="964" y="406" class="label">类型实例化</text>
+  <text x="945" y="426" class="copy">资源上的 MonoBehaviour 正常落位</text>
+
+  <path d="M330 408H390" class="line"/>
+  <path d="M590 408H650" class="line"/>
+  <path d="M870 408H930" class="line"/>
+
+  <text x="88" y="522" class="label">要点</text>
+  <text x="88" y="550" class="caption">这条链解决的不是“运行时后来能不能拿到 Type”，而是 Unity 在资源反序列化那一刻，脚本程序集身份能不能沿着同一条对象链被重新接回真实热更程序集。</text>
+</svg>

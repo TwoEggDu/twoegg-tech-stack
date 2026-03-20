@@ -202,6 +202,10 @@ public void AddScriptingAssemblies(List<string> assemblies)
 
 这句话几乎就是整篇文章的总钥匙。
 
+![HybridCLR MonoBehaviour 身份链](../../images/hybridclr/monobehaviour-identity-chain.svg)
+
+*图：热更 MonoBehaviour 能挂在资源上，不是因为运行时“后来拿到了 Type”，而是因为这条程序集身份链在 build-time 和 runtime 两侧都被重新接上了。*
+
 也就是说，MonoBehaviour 资源挂载真正难的地方，不是“运行时有没有这个类”，而是：
 
 `Unity 在资源反序列化那一刻，脚本所属程序集名字是否还在它认得的 scripting assembly 列表里。`

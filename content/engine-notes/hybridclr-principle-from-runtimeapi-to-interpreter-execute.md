@@ -87,6 +87,10 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 `C# RuntimeApi -> native RuntimeApi -> metadata::Assembly -> MetadataModule / MethodBodyCache -> HiTransform -> Interpreter::Execute`
 
+![HybridCLR 主链图](../../images/hybridclr/runtime-mainline.svg)
+
+*图：先把主链压成一张图。后文所有源码解释，基本都在展开这 8 个节点之间的因果关系。*
+
 支线只在必要时插入：
 
 - Editor 工具链

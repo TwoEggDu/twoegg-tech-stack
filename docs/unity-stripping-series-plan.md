@@ -34,7 +34,7 @@
 - [x] 01｜Unity 的裁剪到底分几层
 - [x] 02｜Managed Stripping Level 到底做了什么
 - [x] 03｜Unity 为什么有时看不懂你的反射
-- [ ] 04｜哪些 Unity 代码最怕 Strip，以及怎样写得更适合裁剪
+- [x] 04｜哪些 Unity 代码最怕 Strip，以及怎样写得更适合裁剪
 - [ ] 05｜Strip Engine Code 到底在裁什么
 
 ## 核心判断
