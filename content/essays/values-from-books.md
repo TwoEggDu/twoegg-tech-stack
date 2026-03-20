@@ -85,7 +85,7 @@ tags = ["Values", "Essays", "Career"]
 
 适合对应：
 
-- 天谕 Electron 启动器
+- 客户端启动链路与版本分发工程
 - Unity 源码学习
 - 渲染优化
 - 服务端架构学习

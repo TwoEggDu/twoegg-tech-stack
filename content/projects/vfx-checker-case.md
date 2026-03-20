@@ -20,12 +20,12 @@ tags = ["VFX", "Quality Gate", "Projects"]
 
 ## 当前能证明它的直接证据
 
-- `E:\HT\Projects\PX\ProjectX\Assets\NFEditorTools\Editor\NFStudio\ResProcess\ResourceReport.VFX.cs`
-- `E:\HT\Projects\PX\ProjectX\Assets\NFEditorTools\Editor\NFStudio\ResProcess\ResourceReport.cs`
-- `E:\HT\Projects\PX\ProjectX\Assets\NFEditorTools\Editor\NFStudio\ResCheck\CheckNodes\Prefab\Prefab_MaxParticlesCheck.cs`
-- `E:\HT\Projects\PX\ProjectX\Assets\NFEditorTools\Editor\NFStudio\ResCheck\CheckNodes\Prefab\Prefab_ParticleMeshMissing.cs`
-- `E:\HT\Projects\PX\ProjectX\Assets\NFEditorTools\Editor\NFStudio\ResCheck\CheckNodes\Prefab\PrefabHelper.cs`
-- `E:\HT\docs\reference\PX项目-资源检查系统分析.md`
+- `Assets/EditorTools/ResProcess/ResourceReport.VFX.cs`
+- `Assets/EditorTools/ResProcess/ResourceReport.cs`
+- `Assets/EditorTools/ResCheck/CheckNodes/Prefab/Prefab_MaxParticlesCheck.cs`
+- `Assets/EditorTools/ResCheck/CheckNodes/Prefab/Prefab_ParticleMeshMissing.cs`
+- `Assets/EditorTools/ResCheck/CheckNodes/Prefab/PrefabHelper.cs`
+- `docs/reference/vfx-resource-check-system-analysis.md`
 
 这些文件能支撑的点包括：
 

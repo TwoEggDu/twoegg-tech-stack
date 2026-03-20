@@ -109,9 +109,9 @@ HybridCLR 的补充 metadata 主要解决第一类。
 
 ## 先给源码地图
 
-这一篇还是基于同一个工程：
+这一篇还是基于同一个接入 HybridCLR 的 Unity 工程：
 
-`E:\HT\Projects\DP\TopHeroUnity`
+`<ProjectRoot>`
 
 如果你准备跟着源码看，我建议先盯这几处：
 

@@ -91,7 +91,7 @@ series = "HybridCLR"
 
 这件事必须先说死，不然后面所有“预热”讨论都会歪。
 
-先看 [RuntimeApi.cs](/E:/HT/Projects/DP/TopHeroUnity/Packages/HybridCLR/Runtime/RuntimeApi.cs)：
+先看 `Packages/HybridCLR/Runtime/RuntimeApi.cs`：
 
 ```csharp
 /// prejit method to avoid the jit cost of first time running
@@ -102,7 +102,7 @@ public static extern bool PreJitClass(Type type);
 ```
 
 它自己把这件事叫 `PreJit`。  
-但如果你继续看 [RuntimeApi.cpp](/E:/HT/Projects/DP/TopHeroUnity/HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeApi.cpp)，就会发现它真正做的不是把 IL JIT 成 native 代码：
+但如果你继续看 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeApi.cpp`，就会发现它真正做的不是把 IL JIT 成 native 代码：
 
 ```cpp
 int32_t PreJitMethod0(const MethodInfo* methodInfo)
@@ -116,7 +116,7 @@ int32_t PreJitMethod0(const MethodInfo* methodInfo)
 }
 ```
 
-再往下看 [InterpreterModule.cpp](/E:/HT/Projects/DP/TopHeroUnity/HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/interpreter/InterpreterModule.cpp)：
+再往下看 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/interpreter/InterpreterModule.cpp`：
 
 ```cpp
 InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* methodInfo)
@@ -273,7 +273,7 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 
 前面几篇其实很少碰这个话题，但这一篇必须提一下。
 
-在 [RuntimeOptionId.cs](/E:/HT/Projects/DP/TopHeroUnity/Packages/HybridCLR/Runtime/RuntimeOptionId.cs) 和 [RuntimeConfig.cpp](/E:/HT/Projects/DP/TopHeroUnity/HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeConfig.cpp) 里，HybridCLR 暴露了一些运行时选项，比如：
+在 `Packages/HybridCLR/Runtime/RuntimeOptionId.cs` 和 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeConfig.cpp` 里，HybridCLR 暴露了一些运行时选项，比如：
 
 - `InterpreterThreadObjectStackSize`
 - `InterpreterThreadFrameStackSize`

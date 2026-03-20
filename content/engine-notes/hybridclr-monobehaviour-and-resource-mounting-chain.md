@@ -272,7 +272,7 @@ const char* g_placeHolderAssemblies[] =
 {
     "GameProto",
     "GameLogic",
-    "DP.Client",
+    "HotUpdate.Client",
     nullptr,
 };
 ```

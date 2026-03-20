@@ -24,7 +24,7 @@ tags = ["Unity", "Engine", "Toolchain"]
 
 但你真看 Unity 源码，会发现它不是一个简单的“刷新文件夹”接口。
 
-从 `E:\HT\Projects\UnitySrcCode\Modules\AssetDatabase\Editor\V2\AssetDatabaseInternal.cpp` 可以看到，资源刷新和脚本编译实际上是相互影响的。同步刷新时，Unity 会显式等待脚本编译完成，避免在脚本与非脚本资源之间来回切换，触发多次域重载。
+从 `Modules/AssetDatabase/Editor/V2/AssetDatabaseInternal.cpp` 可以看到，资源刷新和脚本编译实际上是相互影响的。同步刷新时，Unity 会显式等待脚本编译完成，避免在脚本与非脚本资源之间来回切换，触发多次域重载。
 
 这件事对工具链开发的启发很直接：
 
@@ -36,13 +36,13 @@ tags = ["Unity", "Engine", "Toolchain"]
 
 ## 2. 构建打包链路
 
-看 `E:\HT\Projects\UnitySrcCode\Editor\Mono\BuildPipeline.bindings.cs`，可以很清楚地看到 `BuildAssetBundles()` 的几个关键特点：
+看 `Editor/Mono/BuildPipeline.bindings.cs`，可以很清楚地看到 `BuildAssetBundles()` 的几个关键特点：
 
 - 构建期间不能并行触发新的构建
 - 输出目录必须是明确存在的
 - target 和 subtarget 是构建参数的一部分，不是附属信息
 
-再看 `E:\HT\Projects\UnitySrcCode\Editor\Mono\BuildPipeline\PostprocessBuildPlayer.cs`，会看到 `StreamingAssets` 在构建后处理阶段会被统一安装到最终产物目录，而且构建回调还能向这条链路追加文件。
+再看 `Editor/Mono/BuildPipeline/PostprocessBuildPlayer.cs`，会看到 `StreamingAssets` 在构建后处理阶段会被统一安装到最终产物目录，而且构建回调还能向这条链路追加文件。
 
 这两个文件合起来给我的一个判断是：
 
@@ -62,7 +62,7 @@ tags = ["Unity", "Engine", "Toolchain"]
 
 很多人把 Unity 脚本编译理解成“Roslyn 把 C# 编成 dll”。
 
-但如果看 `E:\HT\Projects\UnitySrcCode\Editor\Src\ScriptCompilation\ScriptCompilationPipeline.cpp`，会发现 Unity 对编译的管理远比这复杂。
+但如果看 `Editor/Src/ScriptCompilation/ScriptCompilationPipeline.cpp`，会发现 Unity 对编译的管理远比这复杂。
 
 里面至少能看出三件事：
 
@@ -70,7 +70,7 @@ tags = ["Unity", "Engine", "Toolchain"]
 - 编译结束后还会驱动一系列回调和状态处理
 - 脚本编译和资产刷新、域重载、构建流程之间是联动的
 
-再看 `E:\HT\Projects\UnitySrcCode\Editor\IncrementalBuildPipeline\ScriptCompilationBuildProgram\BuildPlayerDataGenerator.cs`，还能看到 Unity 在玩家构建阶段会额外生成运行时初始化信息和 TypeDB 之类的构建数据。
+再看 `Editor/IncrementalBuildPipeline/ScriptCompilationBuildProgram/BuildPlayerDataGenerator.cs`，还能看到 Unity 在玩家构建阶段会额外生成运行时初始化信息和 TypeDB 之类的构建数据。
 
 这意味着：
 

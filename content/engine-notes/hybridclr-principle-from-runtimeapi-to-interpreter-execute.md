@@ -99,9 +99,9 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 ## 先给源码地图
 
-本文基于这个工程里的源码：
+本文基于一个接入 HybridCLR 的 Unity 工程源码：
 
-`E:\HT\Projects\DP\TopHeroUnity`
+`<ProjectRoot>`
 
 如果你准备边看边跟源码，建议先把这三层边界立住。
 
@@ -109,7 +109,7 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 目录在：
 
-`E:\HT\Projects\DP\TopHeroUnity\Packages\HybridCLR\Editor`
+`<ProjectRoot>/Packages/HybridCLR/Editor`
 
 这一层负责生成运行时要消费的输入，比如 `link.xml`、裁剪后的 AOT DLL、`MethodBridge.cpp`、`AOTGenericReferences.cs`。
 
@@ -117,7 +117,7 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 目录在：
 
-`E:\HT\Projects\DP\TopHeroUnity\Packages\HybridCLR\Runtime`
+`<ProjectRoot>/Packages/HybridCLR/Runtime`
 
 这里最重要的文件是：
 
@@ -130,7 +130,7 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 目录在：
 
-`E:\HT\Projects\DP\TopHeroUnity\HybridCLRData\LocalIl2CppData-WindowsEditor\il2cpp\libil2cpp\hybridclr`
+`<ProjectRoot>/HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr`
 
 这里才是本文真正的主战场，后文会主要追这几处：
 
