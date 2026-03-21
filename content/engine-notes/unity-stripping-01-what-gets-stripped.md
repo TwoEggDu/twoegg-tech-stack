@@ -233,3 +233,8 @@ Unity 里最常见、也最值得区分的裁剪，至少有三层：
 如果把这篇文章最后压成一句话，我会这样说：
 
 `Unity 的“裁剪”不是一个开关，而是三层不同对象上的删除机制；你不先分清删的是托管代码、引擎模块，还是原生符号，后面的排查基本都会越查越乱。`
+
+## 系列导航
+
+- 上一篇：无。这是系列第一篇。
+- 下一篇：<a href="{{< relref "engine-notes/unity-stripping-02-managed-stripping-level.md" >}}">Unity 裁剪 02｜Managed Stripping Level 到底做了什么</a>

@@ -290,3 +290,8 @@ Unity 文档已经明确提醒了两件事：
 下一篇，我们就顺着这条线往下讲一个最关键的问题：
 
 `为什么 Unity 有时看不懂你的反射。`
+
+## 系列导航
+
+- 上一篇：<a href="{{< relref "engine-notes/unity-stripping-01-what-gets-stripped.md" >}}">Unity 裁剪 01｜Unity 的裁剪到底分几层</a>
+- 下一篇：<a href="{{< relref "engine-notes/unity-stripping-03-why-unity-misses-reflection.md" >}}">Unity 裁剪 03｜Unity 为什么有时看不懂你的反射</a>

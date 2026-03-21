@@ -364,3 +364,8 @@ Unity 的公开说明里，`stripEngineCode` 的定义就是：
 这一篇补上的，是最后一层：
 
 `引擎模块和原生类型注册，究竟是怎样被裁进去的。`
+
+## 系列导航
+
+- 上一篇：<a href="{{< relref "engine-notes/unity-stripping-04-strip-friendly-code-patterns.md" >}}">Unity 裁剪 04｜哪些 Unity 代码最怕 Strip，以及怎样写得更适合裁剪</a>
+- 下一篇：无。到这里，这个系列就收住了。

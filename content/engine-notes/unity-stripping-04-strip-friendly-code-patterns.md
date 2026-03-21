@@ -551,3 +551,8 @@ public static class MessageInvokerRegistry
 下一篇，我们就把最后一层也补齐：
 
 `Strip Engine Code 到底在裁什么，以及它为什么不是“对 libunity 再跑一次普通 strip”。`
+
+## 系列导航
+
+- 上一篇：<a href="{{< relref "engine-notes/unity-stripping-03-why-unity-misses-reflection.md" >}}">Unity 裁剪 03｜Unity 为什么有时看不懂你的反射</a>
+- 下一篇：<a href="{{< relref "engine-notes/unity-stripping-05-strip-engine-code.md" >}}">Unity 裁剪 05｜Strip Engine Code 到底在裁什么</a>
