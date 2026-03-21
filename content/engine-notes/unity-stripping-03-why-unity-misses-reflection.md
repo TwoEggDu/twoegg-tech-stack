@@ -71,6 +71,65 @@ series: "Unity 裁剪"
 
 `Unity 自动保留的不是“所有动态行为”，而是“几条源码里写死的已知通道”。`
 
+## 先把“可达”这件事钉住
+
+很多人读到这里，脑子里会立刻冒出三个追问：
+
+- Unity 到底是怎么判断“代码可达”的？
+- 是不是所有 `MonoBehaviour` 都天然不裁？
+- 它到底能不能知道资产里引用了哪些代码？
+
+如果把 Unity 当前这套判断压成最短的伪代码，可以先记成这样：
+
+```csharp
+roots =
+    types_in_scenes
+  + serialized_types
+  + persistent_unityevent_methods
+  + link_xml_rules
+  + explicit_preserve_attributes;
+
+reachable = mark_il_references_from(roots);
+
+strip_everything_not_marked(reachable);
+```
+
+这段伪代码最重要的不是每个名字，而是它背后的判断方式：
+
+`Unity 不是先理解“你的程序运行起来会发生什么”，而是先收集“构建期已经看得见什么”，再从这些根继续做静态标记。`
+
+所以第一个结论先钉死：
+
+`Unity 判断的不是万能运行时可达性，而是 build-time visible reachability。`
+
+这也是为什么“所有 `MonoBehaviour` 都不会被裁”这个说法并不成立。
+
+更接近事实的说法是：
+
+- 挂在会进入构建的场景、Prefab、资源图里的 `MonoBehaviour`，类型本身更容易因为“已被看见”而活下来
+- 但“类型活下来”不等于“这个类所有成员都活下来”，只靠反射、字符串或约定去找的方法仍然可能被裁
+- 一个完全没进场景、没进序列化、也没写 `link.xml` / `[Preserve]` 的 `MonoBehaviour`，并不会因为它继承了 `MonoBehaviour` 就自动安全
+
+同样，第三个问题也可以顺手一起回答：
+
+`Unity 能知道一部分资产引用出来的代码，但前提是这些引用已经进入它构建期能收集的那几条通道。`
+
+它比较擅长看见的是：
+
+- 场景、Prefab、ScriptableObject 这类已经进了构建图和序列化图的脚本类型
+- Inspector 里已经序列化下来的持久化调用
+- 你显式写出来的保留规则
+
+它看不见，或者至少不会替你自动推断的是：
+
+- 运行时 `Type.GetType("...")` / `GetMethod("...")` 这种字符串驱动反射
+- 扫程序集后再自动注册的一批实现类
+- 配置表、热更脚本、远端 AssetBundle 在运行时才决定的类型关系
+
+所以后面整篇文章其实都可以带着这一句话往下读：
+
+`只要依赖关系没有在 build 时落成“已知根”，Unity 就没有义务自动懂它。`
+
 ## 一、第一条通道：场景里的 managed type
 
 先看场景类型这条通道。
