@@ -352,7 +352,7 @@ Unity 的公开说明里，`stripEngineCode` 的定义就是：
 - 这条路径是 `IL2CPP-only`，而且要同时满足平台支持、backend 不是 Mono、`stripEngineCode` 开启等条件才会生效。
 - 它当前实现里最关键的链条是：`项目输入 -> linker 裁剪决策 -> 更小的原生注册源码 -> native build`。
 
-到这里，Unity 裁剪这组文章就算闭环了。
+到这里，Unity 裁剪这组文章的主线就算闭环了。
 
 前四篇讲的是：
 
@@ -368,4 +368,4 @@ Unity 的公开说明里，`stripEngineCode` 的定义就是：
 ## 系列导航
 
 - 上一篇：<a href="{{< relref "engine-notes/unity-stripping-04-strip-friendly-code-patterns.md" >}}">Unity 裁剪 04｜哪些 Unity 代码最怕 Strip，以及怎样写得更适合裁剪</a>
-- 下一篇：无。到这里，这个系列就收住了。
+- 下一篇：无。到这里，系列主线就收住了；工程决策建议优先从实战篇进入。
