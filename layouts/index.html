@@ -1,6 +1,6 @@
 {{ define "main" }}
   {{ $featured := first 4 (where site.RegularPages.ByWeight "Params.featured" true) }}
-  {{ $sections := slice "projects" "engine-notes" "problem-solving" "essays" }}
+  {{ $sections := slice "projects" "engine-notes" "code-quality" "problem-solving" "essays" }}
 
   <section class="hero">
     <div class="hero-grid">

@@ -7,9 +7,9 @@ summaryLength = 28
 disableKinds = ["taxonomy", "term"]
 
 [params]
-  description = "Projects, engine notes, problem solving, and engineering judgment."
+  description = "Projects, engine notes, code quality, problem solving, and engineering judgment."
   author = "TwoEgg"
-  tagline = "用项目、引擎理解、问题拆解和职业判断来展示工程实力。"
+  tagline = "用项目、引擎理解、代码质量、问题拆解和职业判断来展示工程实力。"
 
 [[params.externalSites]]
   title = "个人首页"
@@ -28,6 +28,7 @@ disableKinds = ["taxonomy", "term"]
 [permalinks]
   projects = "/projects/:slug/"
   engine-notes = "/engine-notes/:slug/"
+  code-quality = "/code-quality/:slug/"
   problem-solving = "/problem-solving/:slug/"
   essays = "/essays/:slug/"
 
@@ -42,16 +43,21 @@ disableKinds = ["taxonomy", "term"]
   weight = 20
 
 [[menu.main]]
+  name = "Code Quality"
+  pageRef = "/code-quality/"
+  weight = 30
+
+[[menu.main]]
   name = "Problem Solving"
   pageRef = "/problem-solving/"
-  weight = 30
+  weight = 40
 
 [[menu.main]]
   name = "Essays"
   pageRef = "/essays/"
-  weight = 40
+  weight = 50
 
 [[menu.main]]
   name = "About"
   pageRef = "/about/"
-  weight = 50
+  weight = 60

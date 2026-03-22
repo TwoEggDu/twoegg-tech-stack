@@ -4,6 +4,7 @@
 
 - 项目案例
 - Unity / Unreal 与客户端基础架构理解
+- 代码质量、可维护性与工程判断
 - 工具链、构建发布、问题拆解
 - 价值观、职业判断和长期输入
 
@@ -21,6 +22,7 @@
 - `Home`：`/`
 - `Projects`：`/projects/`
 - `Engine Notes`：`/engine-notes/`
+- `Code Quality`：`/code-quality/`
 - `Problem Solving`：`/problem-solving/`
 - `Essays`：`/essays/`
 - `About`：`/about/`
@@ -39,6 +41,7 @@ https://twoeggdu.github.io/twoegg-tech-stack/
 
 - `Projects`
 - `Engine Notes`
+- `Code Quality`
 - `Problem Solving`
 - `Essays`
 - `About`
