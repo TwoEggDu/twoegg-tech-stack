@@ -39,6 +39,21 @@ series = "HybridCLR"
 - 边界和 trade-off 到底在哪
 - 项目里该怎么落地
 
+## 建议先补一个公共前置
+
+这组文章虽然会在必要处补最小 `IL2CPP` 背景，但它本身不是一组 `IL2CPP` 入门文章。  
+如果你现在对下面这些问题还没有稳定直觉：
+
+- `global-metadata.dat` 到底是什么
+- `GameAssembly` 和 `libil2cpp` 分别负责什么
+- 为什么“看得见 metadata”不等于“调得到实现”
+
+那我建议先补这篇公共前置：
+
+- [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-notes/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})
+
+它不属于 HybridCLR 系列编号本身，但会把后面 `补 metadata`、`AOT 泛型`、`MethodBody`、`MethodBridge` 这些话题需要的底座先立住。
+
 ## 推荐阅读顺序
 
 如果你准备第一次系统读，我建议就按下面这个顺序：

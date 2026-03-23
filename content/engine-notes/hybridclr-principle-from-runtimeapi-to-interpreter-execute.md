@@ -39,6 +39,14 @@ series = "HybridCLR"
 
 它更像一篇“源码导读版总论”。目标不是把所有文件列出来，而是建立一张够用的因果地图，让读者可以顺着文章自己进源码。
 
+如果你现在对 `IL2CPP` 最终产物这一层还不够熟，比如还没把 `global-metadata.dat`、`GameAssembly`、`libil2cpp` 这三样东西的分工立住，我建议先补这篇公共前置：
+
+- [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-notes/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})
+
+因为后面这篇里会默认你已经接受一个前提：
+
+`HybridCLR 不是在真空里工作，而是在一个原本就把 metadata、AOT 代码和 runtime 组装层分开的 IL2CPP 世界里补动态能力。`
+
 ## 先给一段最小 IL2CPP 背景
 
 如果不先把 IL2CPP 的坐标立住，后面很容易把 HybridCLR 理解成“另起炉灶”。
