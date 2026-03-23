@@ -1,6 +1,6 @@
 ---
 title: "Unity 裁剪 03｜Unity 为什么有时看不懂你的反射"
-description: "从 TypesInScenes、SerializedTypes、MethodsToPreserve、link.xml 和 [Preserve] 五条入口拆开 Unity 能自动保留什么，以及它为什么不可能理解任意运行时反射。"
+description: "从场景引用、序列化记录、持久化 UnityEvent、link.xml 和显式保留属性五条入口拆开 Unity 能自动保留什么，以及它为什么不可能理解任意运行时反射。"
 slug: "unity-stripping-03-why-unity-misses-reflection"
 weight: 52
 featured: false
@@ -61,9 +61,9 @@ series: "Unity 裁剪"
 
 | 入口 | 主要来源 | 最终交给 linker 的形态 | 它能解决什么 | 它解决不了什么 |
 | --- | --- | --- | --- | --- |
-| 场景里的 managed type | `RuntimeClassRegistry.GetAllManagedTypesInScenes()` | `TypesInScenes.xml` | 场景和已知引用类型不被整体删掉 | 运行时临时拼出来的类型 |
-| 序列化类型 | `GetAllSerializedClassesAsString()` | `SerializedTypes.xml` | 序列化系统明确记录到的类型 | 没进入序列化图的动态类型 |
-| `UnityEvent.PersistentCall` | `AddMethodToPreserve()` | `MethodsToPreserve.xml` | Inspector 挂好的持久化回调目标方法 | 运行时 `AddListener`、字符串反射找方法 |
+| 场景里的 managed type | 场景和构建图里已知的类型引用 | 一份显式的场景类型保留清单 | 场景和已知引用类型不被整体删掉 | 运行时临时拼出来的类型 |
+| 序列化类型 | 序列化系统已经记录到的类型 | 一份显式的序列化类型保留清单 | 序列化系统明确记录到的类型 | 没进入序列化图的动态类型 |
+| `UnityEvent.PersistentCall` | Inspector 里序列化下来的持久化调用 | 一份显式的方法保留清单 | Inspector 挂好的持久化回调目标方法 | 运行时 `AddListener`、字符串反射找方法 |
 | 用户声明 | `Assets/**/link.xml` | 直接传给 linker | 你明确知道必须保留的类型和成员 | 你没声明出来的动态依赖 |
 | 显式属性 | `[Preserve]`、`[RuntimeInitializeOnLoadMethod]` | 属性本身参与保留语义 | 某个类型、方法、字段、入口显式不删 | 任意未标记的动态调用链 |
 
@@ -71,29 +71,70 @@ series: "Unity 裁剪"
 
 `Unity 自动保留的不是“所有动态行为”，而是“几条源码里写死的已知通道”。`
 
+## 先把“可达”这件事钉住
+
+很多人读到这里，脑子里会立刻冒出三个追问：
+
+- Unity 到底是怎么判断“代码可达”的？
+- 是不是所有 `MonoBehaviour` 都天然不裁？
+- 它到底能不能知道资产里引用了哪些代码？
+
+如果把 Unity 当前这套判断压成最短的伪代码，可以先记成这样：
+
+```csharp
+roots =
+    types_in_scenes
+  + serialized_types
+  + persistent_unityevent_methods
+  + link_xml_rules
+  + explicit_preserve_attributes;
+
+reachable = mark_il_references_from(roots);
+
+strip_everything_not_marked(reachable);
+```
+
+这段伪代码最重要的不是每个名字，而是它背后的判断方式：
+
+`Unity 不是先理解“你的程序运行起来会发生什么”，而是先收集“构建期已经看得见什么”，再从这些根继续做静态标记。`
+
+所以第一个结论先钉死：
+
+`Unity 判断的不是万能运行时可达性，而是 build-time visible reachability。`
+
+这也是为什么“所有 `MonoBehaviour` 都不会被裁”这个说法并不成立。
+
+更接近事实的说法是：
+
+- 挂在会进入构建的场景、Prefab、资源图里的 `MonoBehaviour`，类型本身更容易因为“已被看见”而活下来
+- 但“类型活下来”不等于“这个类所有成员都活下来”，只靠反射、字符串或约定去找的方法仍然可能被裁
+- 一个完全没进场景、没进序列化、也没写 `link.xml` / `[Preserve]` 的 `MonoBehaviour`，并不会因为它继承了 `MonoBehaviour` 就自动安全
+
+同样，第三个问题也可以顺手一起回答：
+
+`Unity 能知道一部分资产引用出来的代码，但前提是这些引用已经进入它构建期能收集的那几条通道。`
+
+它比较擅长看见的是：
+
+- 场景、Prefab、ScriptableObject 这类已经进了构建图和序列化图的脚本类型
+- Inspector 里已经序列化下来的持久化调用
+- 你显式写出来的保留规则
+
+它看不见，或者至少不会替你自动推断的是：
+
+- 运行时 `Type.GetType("...")` / `GetMethod("...")` 这种字符串驱动反射
+- 扫程序集后再自动注册的一批实现类
+- 配置表、热更脚本、远端 AssetBundle 在运行时才决定的类型关系
+
+所以后面整篇文章其实都可以带着这一句话往下读：
+
+`只要依赖关系没有在 build 时落成“已知根”，Unity 就没有义务自动懂它。`
+
 ## 一、第一条通道：场景里的 managed type
 
-先看 `RuntimeClassRegistry.cs`。
+先看场景类型这条通道。
 
-这里有一个非常关键的方法：
-
-`GetAllManagedTypesInScenes()`
-
-它会把当前构建里已经被认出来的 user assembly type 和 UnityEngine 相关 managed wrapper type 汇总起来，然后交给 `AssemblyStripper` 去写文件。
-
-`AssemblyStripper.cs` 里对应的实现也很直接：
-
-- `WriteTypesInScenesBlacklist(...)`
-- 取 `runInformation.rcr.GetAllManagedTypesInScenes()`
-- 生成 `TypesInScenes.xml`
-
-而且写出来的内容是明确的 linker XML：
-
-```xml
-<assembly fullname="SomeAssembly">
-    <type fullname="Some.Namespace.SomeType" preserve="nothing"/>
-</assembly>
-```
+Unity 会把当前构建里已经被认出来的用户程序集类型，以及和场景对象绑定的那部分托管类型，汇总成一份显式的场景类型保留清单，再交给 linker。
 
 这说明 Unity 当前并不是“理解了你后面会怎么反射这个类型”，而是：
 
@@ -115,18 +156,7 @@ series: "Unity 裁剪"
 
 `哪些类型被 Unity 的序列化系统明确记录到了。`
 
-`RuntimeClassRegistry` 里有：
-
-- `SetSerializedTypesInUserAssembly(...)`
-- `GetAllSerializedClassesAsString()`
-
-`AssemblyStripper.cs` 里则会把这些信息写成 `SerializedTypes.xml`。
-
-对应生成代码里最值得注意的一行是：
-
-```xml
-<type fullname="Some.Namespace.SomeType" preserve="nothing" serialized="true"/>
-```
+Unity 会把序列化系统已经明确记录到的类型，整理成另一份显式清单交给 linker。
 
 也就是说，这不是随便“猜测你可能会反射它”，而是：
 
@@ -155,27 +185,9 @@ series: "Unity 裁剪"
 
 答案不是 Unity 突然学会了“通用字符串反射分析”，而是它专门为 `UnityEvent.PersistentCall` 开了一条特殊通道。
 
-关键证据在 `SerializedInfoCollection.cpp`。
+构建期在遍历序列化数据时，会对 `PersistentCall` 这类 Unity 自己可验证的模式做特殊处理。
 
-这个文件会在序列化对象遍历时检查：
-
-- 当前对象是不是 `UnityEngine.Events.PersistentCall`
-- `targetAssemblyTypeName` 和 `methodName` 是否有效
-- 目标对象类型上是否真的存在这个方法
-
-如果都成立，它不会停在“哦，这里有个字符串方法名”这个层面，而是直接调用：
-
-`AddMethodToPreserve(assembly, namespace, class, methodName)`
-
-然后 `RuntimeClassRegistry.cs` 会把这些方法累积进 `m_MethodsToPreserve`，最后 `AssemblyStripper.cs` 再生成 `MethodsToPreserve.xml`：
-
-```xml
-<assembly fullname="SomeAssembly" ignoreIfMissing="1">
-    <type fullname="Some.Namespace.SomeType">
-        <method name="SomeMethod"/>
-    </type>
-</assembly>
-```
+如果目标类型和目标方法都能在构建期被确认，它就不会停在“这里有一个字符串方法名”这个层面，而是把目标方法加入一份显式的方法保留清单。
 
 所以这里的真实结论是：
 
@@ -197,17 +209,7 @@ series: "Unity 裁剪"
 
 ## 四、第四条通道：`Assets` 下的 `link.xml`
 
-再往下看 `AssemblyStripper.GetLinkXmlFiles(...)`，你会看到一个非常直接的入口：
-
-`GetUserBlacklistFiles()`
-
-实现更直接：
-
-```csharp
-Directory.GetFiles("Assets", "link.xml", SearchOption.AllDirectories)
-```
-
-也就是说，Unity 当前会主动扫描 `Assets` 目录下的 `link.xml`，然后把这些文件一起传给 linker。
+再往下看用户声明这条通道，你会发现 Unity 会主动扫描 `Assets` 目录下的 `link.xml`，然后把这些文件一起传给 linker。
 
 这件事本身已经说明一个事实：
 
@@ -240,35 +242,19 @@ Directory.GetFiles("Assets", "link.xml", SearchOption.AllDirectories)
 
 除了 `link.xml`，Unity 还给了一条更细粒度的通道：属性。
 
-`PreserveAttribute.cs` 很简单，核心就是：
-
-```csharp
-public class PreserveAttribute : System.Attribute
-{
-}
-```
-
-但它的意义不在代码量，而在语义：
+`[Preserve]` 的意义不在实现代码有多复杂，而在语义：
 
 `它是告诉 UnityLinker“这个目标别删”的显式标记。`
 
-更有意思的是另一个文件：
+更有意思的是，像 `[RuntimeInitializeOnLoadMethod]` 这类启动入口属性，本质上也带着显式保留语义。
 
-`RuntimeInitializeOnLoadAttribute.cs`
-
-这里直接写着：
-
-```csharp
-public class RuntimeInitializeOnLoadMethodAttribute : Scripting.PreserveAttribute
-```
-
-这行继承关系非常值得写进文章里，因为它能纠正一个常见误解：
+这件事很值得写进文章里，因为它能纠正一个常见误解：
 
 很多人会以为 `RuntimeInitializeOnLoadMethod` 之所以能活下来，是因为 Unity 理解了“启动流程一定会调它”。
 
 但从当前源码看，更直接的事实是：
 
-`这个 attribute 自己就是 PreserveAttribute 的子类。`
+`它之所以更稳，不是因为 Unity 会替你猜启动流程，而是因为这类入口本来就带着明确的保留信号。`
 
 也就是说，它首先是一条显式保留通道，然后才是一条运行时初始化语义。
 
@@ -438,3 +424,8 @@ public class RuntimeInitializeOnLoadMethodAttribute : Scripting.PreserveAttribut
 下一篇，我们就顺着这个边界继续往下讲最工程化的一步：
 
 `哪些 Unity 代码最怕 Strip，以及怎样把它写得更适合被裁剪。`
+
+## 系列导航
+
+- 上一篇：<a href="{{< relref "engine-notes/unity-stripping-02-managed-stripping-level.md" >}}">Unity 裁剪 02｜Managed Stripping Level 到底做了什么</a>
+- 下一篇：<a href="{{< relref "engine-notes/unity-stripping-04-strip-friendly-code-patterns.md" >}}">Unity 裁剪 04｜哪些 Unity 代码最怕 Strip，以及怎样写得更适合裁剪</a>

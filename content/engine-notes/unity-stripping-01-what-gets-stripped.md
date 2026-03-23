@@ -83,7 +83,7 @@ Unity 里最常见、也最值得区分的裁剪，至少有三层：
 - 某些需要保留的方法
 - 用户自己写的 `link.xml`
 
-在 Unity 源码里，这些东西能直接看到。`AssemblyStripper.cs` 会生成 `TypesInScenes.xml`、`SerializedTypes.xml`、`MethodsToPreserve.xml`，然后再把 `Assets` 目录里的 `link.xml` 一起交给 `UnityLinker`。
+从 Unity 当前实现看，这些信息不是临时拍脑袋推断的，而是会先被整理成几类显式的保留清单，再一起交给 linker。
 
 这一层真正想解决的问题是两个：
 
@@ -112,13 +112,12 @@ Unity 里最常见、也最值得区分的裁剪，至少有三层：
 
 如果从 Unity 当前源码去看，`Strip Engine Code` 做的事，不是单纯拿已经生成好的引擎二进制跑一次普通 `strip`，而是先让 linker 参与决策，再把决策结果重新变成更小的引擎注册代码。
 
-这个判断可以从几条实现链看出来：
+这个判断可以从整条构建路径看出来：
 
-- `AssemblyStripper.cs` 会在满足条件时把 `--enable-engine-module-stripping` 传给 linker
-- Editor 会把场景类型、native type、模块 include/exclude 等信息整理成 `EditorToUnityLinkerData.json`
-- linker 输出 `UnityLinkerToEditorData.json`
-- `ClassRegistrationGenerator.cs` 再根据这两份数据生成 `UnityClassRegistration.cpp`
-- 最后这些生成的注册源码会重新并入 native build
+- Editor 会先整理项目里实际用到的类型、模块和显式保留信息
+- linker 会基于这些输入给出一份更小的引擎裁剪结果
+- 后续原生构建会按这份结果生成更小的注册代码
+- 最终进入 native build 的，本来就已经不是“完整不变的引擎注册集”
 
 换句话说，这层裁剪关注的不是“某个 C# 方法要不要保留”，而是：
 
@@ -151,7 +150,7 @@ Unity 里最常见、也最值得区分的裁剪，至少有三层：
 
 `对最终原生库或可执行文件里的符号信息做裁剪。`
 
-这件事在 Android 侧特别容易看见。Unity 当前 Android 构建程序里，在 `GenerateLibUnityLibrary.cs` 这条链上，会先产出未裁剪的 so，然后再走一套生成 `dbg.so`、`sym.so`、`stripped.so` 的过程。
+这件事在 Android 侧特别容易看见。实际构建链通常会先产出未裁剪版本，再分别处理调试符号和发布版 so。
 
 这里的关键点在于：
 
@@ -234,3 +233,8 @@ Unity 里最常见、也最值得区分的裁剪，至少有三层：
 如果把这篇文章最后压成一句话，我会这样说：
 
 `Unity 的“裁剪”不是一个开关，而是三层不同对象上的删除机制；你不先分清删的是托管代码、引擎模块，还是原生符号，后面的排查基本都会越查越乱。`
+
+## 系列导航
+
+- 上一篇：无。这是系列第一篇。
+- 下一篇：<a href="{{< relref "engine-notes/unity-stripping-02-managed-stripping-level.md" >}}">Unity 裁剪 02｜Managed Stripping Level 到底做了什么</a>

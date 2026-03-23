@@ -75,14 +75,14 @@ series: "Unity 裁剪"
 
 第一条信号是：
 
-`AssemblyStripper.cs` 不会尝试理解任意运行时动态行为，它会把几类已知入口整理成明确文件再交给 linker。
+`Unity 不会尝试理解任意运行时动态行为，它更倾向于先把几类已知入口整理成显式保留信息，再交给 linker。`
 
-在 `GetLinkXmlFiles(...)` 里，Unity 会把下面这些东西喂给 `UnityLinker`：
+这些入口大致包括：
 
-- `MethodsToPreserve.xml`
-- `TypesInScenes.xml`
-- `SerializedTypes.xml`
-- `Assets` 目录下搜到的 `link.xml`
+- 场景里已经出现的类型
+- 序列化系统已经记录到的类型
+- 需要额外保留的方法
+- 用户显式声明的 `link.xml`
 
 这说明 Unity 的工作方式更像是：
 
@@ -94,9 +94,9 @@ series: "Unity 裁剪"
 
 第二条信号是：
 
-`PreserveAttribute` 的粒度其实非常细。
+显式保留属性的粒度其实非常细。
 
-在 `Runtime/Export/Scripting/PreserveAttribute.cs` 里，它可以标在：
+它可以细到：
 
 - `Method`
 - `Class`
@@ -110,7 +110,7 @@ series: "Unity 裁剪"
 - `Assembly`
 - `Enum`
 
-而 `RuntimeInitializeOnLoadMethodAttribute` 在源码里又是直接继承 `Scripting.PreserveAttribute` 的。
+而像 `[RuntimeInitializeOnLoadMethod]` 这类启动入口，本质上也带着显式保留语义。
 
 这件事很值得记一下，因为它传达的设计信号非常直接：
 
@@ -461,7 +461,7 @@ public static class MessageInvokerRegistry
 - 真实依赖边界继续模糊
 - 后面没人知道到底哪些东西真的需要保
 
-既然 `PreserveAttribute` 的目标粒度可以细到方法、字段、构造函数、属性，那更推荐的做法通常是：
+既然 `[Preserve]` 的目标粒度可以细到方法、字段、构造函数、属性，那更推荐的做法通常是：
 
 - 小例外用方法级 / 类型级 `[Preserve]`
 - 不能改源码的第三方库，用精确 `link.xml`
@@ -551,3 +551,8 @@ public static class MessageInvokerRegistry
 下一篇，我们就把最后一层也补齐：
 
 `Strip Engine Code 到底在裁什么，以及它为什么不是“对 libunity 再跑一次普通 strip”。`
+
+## 系列导航
+
+- 上一篇：<a href="{{< relref "engine-notes/unity-stripping-03-why-unity-misses-reflection.md" >}}">Unity 裁剪 03｜Unity 为什么有时看不懂你的反射</a>
+- 下一篇：<a href="{{< relref "engine-notes/unity-stripping-05-strip-engine-code.md" >}}">Unity 裁剪 05｜Strip Engine Code 到底在裁什么</a>
