@@ -343,4 +343,4 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 ## 系列位置
 
 - 上一篇：<a href="{{< relref "engine-notes/hybridclr-troubleshooting-diagnose-by-layer.md" >}}">HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了</a>
-- 下一篇：无。到这里，这个系列的第一轮主线就收住了。
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}}">HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版</a>

@@ -1,6 +1,6 @@
 +++
 title = "HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇"
-description = "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、按问题回看路径、当前已覆盖的主题边界，以及接下来准备补的两篇。"
+description = "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及已经开始往下延伸的高级主题。"
 weight = 29
 featured = false
 tags = ["Unity", "IL2CPP", "HybridCLR", "Index", "Architecture"]
@@ -86,7 +86,16 @@ series = "HybridCLR"
    这一篇不再加新原理，而是把前面几篇重新变成可用的排障工具。
 
 9. [HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT]({{< relref "engine-notes/hybridclr-performance-and-prejit-strategy.md" >}})
-   最后一篇把性能问题收回工程判断，不写空泛 benchmark，而是讲首调、常驻热点和跨边界成本。
+   这是第一轮主线的收束篇，把性能问题收回工程判断，不写空泛 benchmark，而是讲首调、常驻热点和跨边界成本。
+
+10. [HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版]({{< relref "engine-notes/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}})
+   这是第二轮高级篇的第一篇，专门解释为什么它改的是 generic 调用模型，不是 metadata 可见性。
+
+11. [HybridCLR DHE｜为什么它不是普通解释执行更快一点]({{< relref "engine-notes/hybridclr-dhe-why-not-just-faster-interpreter.md" >}})
+   这是第二轮高级篇的第二篇，专门解释为什么它改的是 AOT 与 interpreter 之间的函数级分流，不是单纯把解释器调快。
+
+12. [HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上]({{< relref "engine-notes/hybridclr-advanced-capability-selection-community-metadata-fgs-dhe.md" >}})
+   这是当前阶段最适合收口的一篇，把前面几条线重新收回项目选型判断。
 
 ## 如果你不是系统读，而是带着问题来查
 
@@ -146,6 +155,24 @@ series = "HybridCLR"
 
 - [HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT]({{< relref "engine-notes/hybridclr-performance-and-prejit-strategy.md" >}})
 
+### 10. 你发现补 metadata 还是不够，想知道 Full Generic Sharing 到底补的是哪一层
+
+先看：
+
+- [HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版]({{< relref "engine-notes/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}})
+
+### 11. 你想直接改现有 AOT 模块，又不想让没改的函数全退回解释执行
+
+先看：
+
+- [HybridCLR DHE｜为什么它不是普通解释执行更快一点]({{< relref "engine-notes/hybridclr-dhe-why-not-just-faster-interpreter.md" >}})
+
+### 12. 你已经把几条线都看过了，想知道项目里到底该选哪条路
+
+先看：
+
+- [HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上]({{< relref "engine-notes/hybridclr-advanced-capability-selection-community-metadata-fgs-dhe.md" >}})
+
 ## 这组文章刻意不做什么
 
 为了让这组文章保持收敛，我刻意没把它写成下面几种形态：
@@ -170,9 +197,12 @@ series = "HybridCLR"
 - MonoBehaviour 资源挂载身份链
 - 边界和 trade-off
 - 工程落地 best practice
+- runtime generic 调用模型往下的一条高级扩展轴：`Full Generic Sharing`
+- 已进包 AOT 程序集的函数级差分执行：`DHE`
+- 面向真实项目的高级能力选型判断
 
-到这一步，这组文章的第一轮主线其实已经收齐了。  
-如果后面还继续补，我更倾向于补更轻的索引、索引页互链和少量勘误，而不是再把主题继续摊大。
+到这一步，这组文章的第一轮主线已经收齐了。  
+现在开始补的，已经不是基础主链，而是 `Full Generic Sharing`、`DHE` 这类更高层的高级主题。
 
 ## 最后压一句话
 

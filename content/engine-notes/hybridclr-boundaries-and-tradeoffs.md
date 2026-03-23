@@ -387,6 +387,10 @@ HybridCLR 的性能讨论最容易被一句“解释器比 AOT 慢”带偏。
 
 因为它们不是同一个功能点，只是碰巧都被大家用一句“HybridCLR 支持热更新”盖过去了。
 
+如果你现在准备先把其中一条高级能力拆开，最自然的下一篇就是：
+
+- [HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版]({{< relref "engine-notes/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}})
+
 ## 最后压一句话
 
 如果只允许我用一句话收这篇文章，我会写成：
