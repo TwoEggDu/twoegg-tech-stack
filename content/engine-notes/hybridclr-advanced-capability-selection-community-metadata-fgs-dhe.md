@@ -327,4 +327,4 @@ series = "HybridCLR"
 ## 系列位置
 
 - 上一篇：<a href="{{< relref "engine-notes/hybridclr-dhe-why-not-just-faster-interpreter.md" >}}">HybridCLR DHE｜为什么它不是普通解释执行更快一点</a>
-- 下一篇：无。到这里，这组文章从社区版主线到高级能力边界，已经先收成了一套相对完整的选型地图。
+- 下一篇：<a href="{{< relref "engine-notes/hybridclr-faq-10-most-confused-judgments.md" >}}">HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断</a>

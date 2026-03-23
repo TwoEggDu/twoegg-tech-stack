@@ -97,6 +97,9 @@ series = "HybridCLR"
 12. [HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上]({{< relref "engine-notes/hybridclr-advanced-capability-selection-community-metadata-fgs-dhe.md" >}})
    这是当前阶段最适合收口的一篇，把前面几条线重新收回项目选型判断。
 
+13. [HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断]({{< relref "engine-notes/hybridclr-faq-10-most-confused-judgments.md" >}})
+   这是一篇 FAQ 入口，不补新原理，专门把最容易说错的 10 句话重新拉直。
+
 ## 如果你不是系统读，而是带着问题来查
 
 如果你已经在项目里遇到问题，那比起从头读，更稳的是按问题回看。
@@ -173,6 +176,12 @@ series = "HybridCLR"
 
 - [HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上]({{< relref "engine-notes/hybridclr-advanced-capability-selection-community-metadata-fgs-dhe.md" >}})
 
+### 13. 你不是缺新知识点，而是总把几种判断混成一件事
+
+先看：
+
+- [HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断]({{< relref "engine-notes/hybridclr-faq-10-most-confused-judgments.md" >}})
+
 ## 这组文章刻意不做什么
 
 为了让这组文章保持收敛，我刻意没把它写成下面几种形态：
@@ -200,6 +209,7 @@ series = "HybridCLR"
 - runtime generic 调用模型往下的一条高级扩展轴：`Full Generic Sharing`
 - 已进包 AOT 程序集的函数级差分执行：`DHE`
 - 面向真实项目的高级能力选型判断
+- 一篇面向高频混淆点的 FAQ 入口
 
 到这一步，这组文章的第一轮主线已经收齐了。  
 现在开始补的，已经不是基础主链，而是 `Full Generic Sharing`、`DHE` 这类更高层的高级主题。
