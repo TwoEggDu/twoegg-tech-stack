@@ -168,11 +168,13 @@ series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 
 **模式二：作为 Preloaded Shaders（Graphics Settings - Preloaded Shaders）**
 
-当 SVC 被挂载到 Preloaded Shaders 时，Unity 构建期会通过 `g_VariantCollectionOverride` 完全**替代** `usedKeywords` 参与 ShaderWriter 枚举——只有这个 SVC 里登记的变体才会被生成，材质贡献的 `usedKeywords` 被完全忽略。
+当 SVC 被挂载到 Graphics Settings 的 Preloaded Shaders 时，它的作用是**运行时**自动加载和 WarmUp——Player 启动时 Unity 会自动把这些 SVC 里的变体预热好，不需要代码手动加载。
 
-这是”覆盖”语义：这是非常激进的全量控制，适合那种”我已经完全知道运行时会用哪些变体，只想让这些变体存在”的场景，但用错了会导致大量材质驱动的变体全部丢失。
+对构建期变体生成没有特殊影响：Preloaded Shaders 里的 SVC 参与构建的方式和普通构建资产一样，其 keyword 组合同样会并入 `usedKeywords`，而不是替代它。
 
-两种模式在工程上完全不同，决策之前要先清楚自己用的是哪种。
+补充说明——`g_VariantCollectionOverride` 是另一套机制：Unity 内部有一个通过 `-svc-driven-build <svc_path>` 命令行参数触发的特殊构建模式，此时 SVC 会完全替代 `usedKeywords` 枚举，只生成 SVC 里登记的变体。这是 Unity 编辑器构建工具链的高级用法，不是挂载 Preloaded Shaders 带来的效果，日常项目里不会接触到。
+
+两种模式在构建行为上的实质区别是：挂 Preloaded Shaders 只影响运行时预热时机，不影响哪些变体被生成；要影响变体生成，必须让 SVC 作为构建资产参与到构建的 `allObjects` 收集里。
 
 ## 1. 它最适合什么场景
 

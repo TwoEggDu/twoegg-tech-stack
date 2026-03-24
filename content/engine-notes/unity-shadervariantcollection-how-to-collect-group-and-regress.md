@@ -64,7 +64,7 @@ series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 - 如果某个 keyword 组合只在 SVC 里登记、没有材质使用，它依然会被枚举进构建
 - 这就是为什么”加了 SVC 就能修复缺变体”：材质不在构建的 `allObjects` 集合里时（比如热更包），SVC 可以替代材质把关键 keyword 组合显式注入构建
 
-**SVC 作为 Preloaded Shaders（在 Graphics Settings - Preloaded Shaders 里挂载）时，行为完全不同**：它会在 ShaderWriter 枚举阶段通过 `g_VariantCollectionOverride` 完全替代 `usedKeywords`，只有 SVC 里登记的变体才会被生成。这是一种激进的全量覆盖，而不是补充。
+**SVC 作为 Preloaded Shaders（在 Graphics Settings - Preloaded Shaders 里挂载）时**，它的作用是运行时自动加载和 WarmUp——Player 启动时 Unity 自动预热这些 SVC 里的变体，不需要代码手动调用。对构建期变体生成没有特殊影响，Preloaded Shaders 里的 SVC 参与构建的方式和普通构建资产相同，keyword 组合同样并入 `usedKeywords`，而不是替代它。
 
 这两种模式的差别后面有专文讲，这里先记住：
 
