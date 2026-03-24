@@ -54,6 +54,11 @@
 |---|---|---|
 | `unity-rendering-00-asset-overview` | 综述：游戏渲染资产全景图 | 游戏里有哪些渲染资产，各自在管线哪个阶段介入，共同决定一个像素；以一帧画面为主线串联全部资产类型 |
 | `unity-rendering-01-mesh-material-texture` | 几何与表面：Mesh、Material、Texture | 顶点数据（Position/UV/Normal/Tangent）→ MVP 变换 → 光栅化插值 → Fragment Shader 采样贴图 → PBR 计算；Material 和 Shader 的关系 |
+| `unity-rendering-01b-draw-call-and-batching` | Draw Call 与批处理：CPU 每次向 GPU 发出什么请求 | Draw Call 的内容组成（Mesh/Material/Transform）、静态合批/动态合批/GPU Instancing 的条件与代价；Frame Debugger 里每一行是什么 |
+| `unity-rendering-01c-render-target-and-framebuffer` | Render Target 与帧缓冲区：GPU 把结果写到哪里 | Color Buffer、Depth Buffer、Stencil Buffer、G-Buffer、MRT 各自的作用；理解 Frame Debugger 里的 RT 切换和 RenderDoc 里的 Output Merger |
+| `unity-rendering-01d-frame-debugger` | Frame Debugger 使用指南 | 逐 Draw Call 回放一帧，读懂 URP Pass 顺序（DepthPrepass/OpaqueForward/Skybox/Transparent/PostProcessing），检查材质参数和 Shader Keyword，定位渲染顺序和批处理问题 |
+| `unity-rendering-01e-renderdoc-basics` | RenderDoc 入门：捕获第一帧并读懂它 | 安装配置、从 RenderDoc 启动 Unity、捕获帧、Event List 导航、Texture Viewer 查看 RT 内容，与 Frame Debugger 的定位差异 |
+| `unity-rendering-01f-renderdoc-advanced` | RenderDoc 进阶：顶点数据、贴图采样、Pipeline State | Mesh Viewer 读顶点缓冲（验证 Position/UV/Normal 数据）、Texture Viewer 查 mip 层级和采样结果、Pipeline State 各项含义（Blend/Depth/Stencil State）、Shader Debugger 逐像素追踪 |
 | `unity-rendering-02-lighting-assets` | 光照资产：实时光、Lightmap、Light Probe、Reflection Probe | 四条光照路径（直接光/烘焙间接光/动态间接光/环境反射）怎么在 Fragment Shader 里合并成最终颜色 |
 | `unity-rendering-03-skeletal-animation` | 动画变形：骨骼蒙皮与 Blend Shape | 骨骼权重如何在顶点阶段驱动 Skinning，Blend Shape 的顶点偏移原理，两者如何改变最终覆盖像素的范围和法线朝向 |
 | `unity-rendering-04-particles-vfx` | 粒子与特效 | Particle System 的几何生成机制（Billboard/Mesh/Trail），批量渲染与普通 Mesh 的路径异同，VFX Graph 和 Particle System 的架构差异 |
@@ -86,6 +91,11 @@
 ```
 00 综述（先建立地图）
   → 01 几何与表面（最核心的一条路）
+  → 01b Draw Call 与批处理（理解 CPU→GPU 的工作单元）
+  → 01c Render Target 与帧缓冲区（理解 GPU 的输出目标）
+  → 01d Frame Debugger（用工具验证 01/01b/01c 学到的东西）
+  → 01e RenderDoc 入门
+  → 01f RenderDoc 进阶
   → 02 光照资产（补完表面计算的另一半）
   → 06 固定管线（建立 Built-in 认知基础）
   → 07 为什么需要 SRP（承接 06 的问题）
