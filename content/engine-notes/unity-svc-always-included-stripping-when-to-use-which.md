@@ -2,7 +2,7 @@
 title = "SVC、Always Included、Stripping 到底各自该在什么场景下用"
 description = "把 ShaderVariantCollection、Always Included Shaders 和 Shader Stripping 拆成三种不同层级的治理手段，讲清它们分别解决什么问题、适合什么场景，以及常见误用。"
 slug = "unity-svc-always-included-stripping-when-to-use-which"
-weight = 57
+weight = 90
 featured = false
 tags = ["Unity", "Shader", "ShaderVariantCollection", "Stripping", "AssetBundle"]
 series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]

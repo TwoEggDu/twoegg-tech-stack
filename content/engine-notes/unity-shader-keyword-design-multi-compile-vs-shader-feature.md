@@ -2,7 +2,7 @@
 title = "Unity Shader Keyword 设计：multi_compile、shader_feature 和 _local 变体的选择与误用"
 description = "把 multi_compile、shader_feature、multi_compile_local、shader_feature_local 拆成构建行为、适用场景和决策依据，讲清 keyword 设计错误是怎样直接导致变体爆炸的。"
 slug = "unity-shader-keyword-design-multi-compile-vs-shader-feature"
-weight = 50
+weight = 20
 featured = false
 tags = ["Unity", "Shader", "Keyword", "Build", "Variant"]
 series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]

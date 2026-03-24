@@ -2,7 +2,7 @@
 title = "ShaderVariantCollection 应该怎么收集、怎么分组、怎么和回归一起管"
 description = "把 ShaderVariantCollection 的工程落地拆成收集来源、分组边界、预热策略和回归治理，讲清项目里怎样把 SVC 从概念资产变成可持续维护的系统。"
 slug = "unity-shadervariantcollection-how-to-collect-group-and-regress"
-weight = 56
+weight = 80
 featured = false
 tags = ["Unity", "Shader", "ShaderVariantCollection", "Regression", "Build"]
 series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
