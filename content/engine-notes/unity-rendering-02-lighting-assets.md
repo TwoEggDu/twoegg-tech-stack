@@ -144,6 +144,57 @@ float3 indirectDiffuse = albedo * (1 - metallic) * SHEval(normalWS);
 
 `unity_SHAr/g/b` 等就是 CPU 插值好之后传进来的 SH 系数。
 
+### SH 求值的展开版本
+
+把 `SHEval` 展开，能看清楚 27 个系数分别在做什么：
+
+```hlsl
+// 输入：世界空间单位法线 n，以及 CPU 上传的 SH 系数
+// unity_SHAr/g/b：L0+L1 系数，float4（xyz = L1 系数，w = L0 系数）
+// unity_SHBr/g/b：L2 前 4 个系数，float4
+// unity_SHC：     L2 第 5 个系数，float3（RGB 各一个值）
+
+float3 SHEvalExpanded(float3 n) {
+    float3 result = 0;
+
+    // ─── L0（常数项，1 个基函数）─────────────────────────────────────────
+    // Y_0 = 0.282（归一化常数），对所有方向相同
+    // 物理意义：Light Probe 位置处的平均环境亮度，是"全方向均匀光"
+    result.r += unity_SHAr.w;
+    result.g += unity_SHAg.w;
+    result.b += unity_SHAb.w;
+
+    // ─── L1（线性项，3 个基函数：x / y / z）──────────────────────────────
+    // Y_1 ∝ (x, y, z)，描述从某方向来的主光方向偏移
+    // 物理意义：近似一盏主方向光的漫反射贡献
+    result.r += dot(unity_SHAr.xyz, n);
+    result.g += dot(unity_SHAg.xyz, n);
+    result.b += dot(unity_SHAb.xyz, n);
+
+    // ─── L2（二次项，5 个基函数）─────────────────────────────────────────
+    // 描述更复杂的方向变化：xy/yz/zz/xz 的乘积项，以及 x²-y²
+    // 物理意义：近似两盏以上光源的叠加、以及有一定方向性的间接光细节
+    float4 b = float4(n.x * n.y,                    // xy 项
+                      n.y * n.z,                    // yz 项
+                      n.z * n.z - 1.0 / 3.0,        // zz - 常数（减去 L0 的泄漏）
+                      n.z * n.x);                   // zx 项
+    result.r += dot(unity_SHBr, b);
+    result.g += dot(unity_SHBg, b);
+    result.b += dot(unity_SHBb, b);
+
+    float c = n.x * n.x - n.y * n.y;               // x²-y² 项（第 5 个 L2 基函数）
+    result.r += unity_SHC.r * c;
+    result.g += unity_SHC.g * c;
+    result.b += unity_SHC.b * c;
+
+    return max(0, result);  // 负值无物理意义，截断到 0
+}
+```
+
+这 9 个基函数（1 + 3 + 5）× 3 通道 = 27 个浮点数，就是一个 Light Probe 存储的全部数据。
+
+L0 和 L1 合在一起可以近似表示一盏主方向光 + 环境底色；L2 加入后能捕捉到"两侧亮、顶部暗"或"多方向来光"这类更复杂的分布。但高频细节（锐利的点光源、尖锐阴影边界）L2 完全无法表达——这是 Light Probe 只适合表示柔和环境光的根本原因。
+
 ### Light Probe 的设置建议
 
 - **在光照变化明显的地方密集放置**：门口、窗边、明暗交界处
@@ -212,6 +263,90 @@ float3 indirectSpecular = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube
 **metallic 参数的作用在这里体现得很明显**：
 - `metallic = 0`（非金属）：漫反射项满权重，高光是白色
 - `metallic = 1`（纯金属）：漫反射项几乎为零，高光颜色继承 albedo 颜色，间接镜面反射贡献最大
+
+### 完整的 Fragment Shader 框架
+
+把四条路径在代码里组装到一起，就是 URP Lit Shader 的核心结构：
+
+```hlsl
+// ── 输入（由 Vertex Shader 插值传来）──────────────────────────────────────
+float3 positionWS;   // 世界空间位置
+float3 normalWS;     // 世界空间法线（已归一化）
+float2 uv0;          // 表面贴图 UV
+float2 uv1;          // Lightmap UV（静态物体）
+
+// ── 材质参数（从 Material Properties 读取）─────────────────────────────────
+float3 albedo     = tex2D(_BaseMap, uv0).rgb * _BaseColor.rgb;
+float  metallic   = tex2D(_MetallicMap, uv0).r * _Metallic;
+float  roughness  = 1.0 - tex2D(_SmoothnessMap, uv0).r * _Smoothness;
+float3 normalTS   = UnpackNormal(tex2D(_NormalMap, uv0));  // 切线空间法线
+float3 normalWS   = TangentToWorldNormal(normalTS, ...);   // 转到世界空间
+float3 emissive   = tex2D(_EmissionMap, uv0).rgb * _EmissionColor.rgb;
+
+float3 viewDirWS  = normalize(_WorldSpaceCameraPos - positionWS);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 路径一：直接光（实时光源）
+// ═══════════════════════════════════════════════════════════════════════════
+float3 lightDir   = normalize(_MainLightPosition.xyz);
+float3 halfDir    = normalize(lightDir + viewDirWS);
+float  NdotL      = max(0, dot(normalWS, lightDir));
+float  NdotH      = max(0, dot(normalWS, halfDir));
+float  NdotV      = max(0, dot(normalWS, viewDirWS));
+
+// 阴影系数（从 Shadow Map 采样，0 = 在阴影里，1 = 被照亮）
+float  shadowAtten = SampleShadowMap(positionWS);
+
+// 直接光漫反射（Lambert）
+float3 directDiffuse  = albedo * (1 - metallic) * NdotL * _MainLightColor.rgb * shadowAtten;
+
+// 直接光高光（Cook-Torrance BRDF 的简化版）
+float  D = GGX_D(NdotH, roughness);    // 法线分布函数
+float  G = SmithG(NdotV, NdotL, roughness); // 几何遮蔽函数
+float3 F = Fresnel_Schlick(NdotV, lerp(float3(0.04, 0.04, 0.04), albedo, metallic)); // 菲涅尔
+float3 directSpecular = D * G * F / (4 * NdotV * NdotL + 0.001)
+                      * NdotL * _MainLightColor.rgb * shadowAtten;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 路径二 + 三：间接光漫反射（Lightmap 或 Light Probe，二选一）
+// ═══════════════════════════════════════════════════════════════════════════
+#if defined(LIGHTMAP_ON)
+    // 静态物体：从 Lightmap 贴图采样（UV1 坐标）
+    float2 lightmapUV   = uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+    float3 bakedGI      = SampleLightmap(lightmapUV);
+#else
+    // 动态物体：用 CPU 插值好的 SH 系数对法线方向求值
+    float3 bakedGI      = SHEval(normalWS);   // 展开版本见上文
+#endif
+
+float3 indirectDiffuse = albedo * (1 - metallic) * bakedGI;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 路径四：间接光高光（Reflection Probe Cubemap）
+// ═══════════════════════════════════════════════════════════════════════════
+float3 reflectDir     = reflect(-viewDirWS, normalWS);
+float  mipLevel       = roughness * UNITY_SPECCUBE_LOD_STEPS;  // 粗糙度 → mip 层级
+float3 envSample      = DecodeHDR(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0,
+                                   samplerunity_SpecCube0, reflectDir, mipLevel));
+
+// Fresnel 控制反射强度（掠射角时反射最强）
+float3 envFresnel     = Fresnel_Schlick(NdotV, lerp(float3(0.04,0.04,0.04), albedo, metallic));
+float3 indirectSpecular = envSample * envFresnel;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 最终合并
+// ═══════════════════════════════════════════════════════════════════════════
+float3 finalColor = directDiffuse
+                  + directSpecular
+                  + indirectDiffuse
+                  + indirectSpecular
+                  + emissive;
+
+// 输出 HDR 颜色（后处理阶段再做 Tonemapping 压到 0-1）
+return float4(finalColor, 1.0);
+```
+
+这段代码就是 URP Lit Shader 的骨架。URP 实际实现里多了很多工程细节（多光源循环、Lightmap 解码格式、能量守恒修正、混合模式），但结构和这段伪代码完全一致。
 
 ---
 

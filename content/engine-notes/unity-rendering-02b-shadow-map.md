@@ -209,6 +209,68 @@ shadow /= 9.0; // 0.0 ~ 1.0 之间的过渡值，而不是纯 0 或 1
 
 PCF 的采样范围越大，阴影边缘越柔和，但采样次数越多（性能开销越高）。URP 的 Soft Shadow 选项就是 PCF，可以在 Light 组件的 Shadow Type 里设置 Hard / Soft。
 
+### 泊松圆盘采样：避免规则格子的条纹感
+
+上面 3×3 规则格子的 PCF 有一个问题：采样点分布太规则，在某些角度下会产生方向性的条纹感（Banding）。
+
+实际引擎（包括 URP）使用**泊松圆盘分布（Poisson Disk）**——采样点在单位圆内近似均匀分布，相互之间保持最小间距（避免聚集），但没有规则的格子结构：
+
+```hlsl
+// 预定义的泊松圆盘采样点（16 个，归一化到单位圆内）
+// 这些值是离线生成的，保存为常量
+static const float2 PoissonDisk[16] = {
+    float2(-0.94201624,  -0.39906216),
+    float2( 0.94558609,  -0.76890725),
+    float2(-0.09418410,  -0.92938870),
+    float2( 0.34495938,   0.29387760),
+    float2(-0.91588581,   0.45771432),
+    float2(-0.81544232,  -0.87912464),
+    float2(-0.38277543,   0.27676845),
+    float2( 0.97484398,   0.75648379),
+    float2( 0.44323325,  -0.97511554),
+    float2( 0.53742981,  -0.47373420),
+    float2(-0.26496911,  -0.41893023),
+    float2( 0.79197514,   0.19090188),
+    float2(-0.24188840,   0.99706507),
+    float2(-0.81409955,   0.91437590),
+    float2( 0.19984126,   0.78641367),
+    float2( 0.14383161,  -0.14100790)
+};
+
+float PCF_PoissonDisk(sampler2D shadowMap, float2 shadowUV,
+                      float currentDepth, float filterRadius)
+{
+    // 用像素的屏幕坐标生成一个随机旋转角度
+    // 目的：让不同像素的采样方向不同，避免大面积一致的条纹
+    float angle = frac(sin(dot(shadowUV, float2(12.9898, 78.233))) * 43758.5453);
+    float2x2 rotMatrix = float2x2(cos(angle), -sin(angle),
+                                   sin(angle),  cos(angle));
+
+    float shadow = 0.0;
+    float texelSize = filterRadius / shadowMapResolution;
+
+    for (int i = 0; i < 16; i++)
+    {
+        // 旋转采样点（每个像素旋转角度不同 → 避免全局一致的噪点模式）
+        float2 offset = mul(rotMatrix, PoissonDisk[i]) * texelSize;
+        float closestDepth = tex2D(shadowMap, shadowUV + offset).r;
+        shadow += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+    }
+
+    return shadow / 16.0;
+}
+```
+
+与 3×3 规则 PCF 相比：
+
+| | 规则 3×3 PCF | 泊松圆盘 16 样本 |
+|---|---|---|
+| 采样数 | 9 次 | 16 次（可配置）|
+| 采样分布 | 方形规则格子 | 圆形随机分布 |
+| 效果 | 有时出现方形轮廓感 | 更自然的圆形软阴影 |
+| 抖动 | 无（全局一致） | 每像素随机旋转（噪点更均匀）|
+| 后处理 | 通常不需要 | 有时需要 TAA 降噪 |
+
 **PCSS（Percentage Closer Soft Shadows）** 进一步根据遮挡物和接收面的距离动态调整 PCF 的采样半径：遮挡物越远，阴影越软（接近真实的半影效果）。HDRP 支持 PCSS，URP 的标准 Soft Shadow 是固定半径的 PCF。
 
 ---

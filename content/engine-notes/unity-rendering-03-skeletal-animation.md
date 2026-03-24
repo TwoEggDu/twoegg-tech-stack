@@ -105,6 +105,61 @@ AnimationClip 存储的是每块骨骼的变换曲线——在时间轴上，每
 
 **法线也要跟着变换**，这一点很重要——如果只变换位置，不更新法线，大腿弯曲后光照方向感会完全错误。
 
+### GPU Skinning Vertex Shader 完整伪代码
+
+把上面两步翻译成 GPU 侧的 Vertex Shader，就是现代引擎 GPU Skinning 的核心代码：
+
+```hlsl
+// 蒙皮矩阵数组：CPU 每帧计算并上传到 GPU CBuffer
+// 每块骨骼一个 float4x4，共 MAX_BONE_COUNT 个
+// 每个矩阵已经是"当前帧世界变换 × 绑定姿态逆矩阵"的结果
+float4x4 _SkinningMatrices[MAX_BONE_COUNT];
+
+// 顶点输入：除了普通的 Position/Normal，还带骨骼绑定数据
+struct VertexInput {
+    float3 positionOS   : POSITION;       // 绑定姿态（T-Pose）下的模型空间位置
+    float3 normalOS     : NORMAL;         // 绑定姿态下的法线
+    float4 boneWeights  : BLENDWEIGHTS;   // 4 块骨骼的权重（和为 1）
+    uint4  boneIndices  : BLENDINDICES;   // 4 块骨骼在 _SkinningMatrices 里的索引
+};
+
+float4x4 ComputeBlendedSkinMatrix(uint4 idx, float4 w) {
+    // 步骤一：用权重混合 4 块骨骼的蒙皮矩阵
+    // 本质是 4 个 4×4 矩阵的加权平均
+    return w.x * _SkinningMatrices[idx.x]
+         + w.y * _SkinningMatrices[idx.y]
+         + w.z * _SkinningMatrices[idx.z]
+         + w.w * _SkinningMatrices[idx.w];
+}
+
+VertexOutput vert(VertexInput v) {
+    // 步骤二：计算当前顶点的混合蒙皮矩阵
+    float4x4 skinMatrix = ComputeBlendedSkinMatrix(v.boneIndices, v.boneWeights);
+
+    // 步骤三：用蒙皮矩阵变换顶点位置（从 T-Pose 搬到当前动画姿态）
+    float3 skinnedPositionOS = mul(skinMatrix, float4(v.positionOS, 1.0)).xyz;
+
+    // 步骤四：变换法线
+    // 严格来说应该用 (M^{-1})^T（逆转置），但对于只含旋转和均匀缩放的蒙皮矩阵
+    // 直接取左上 3×3 即可（Unity 的实现也是这样）
+    float3x3 rotMatrix = (float3x3)skinMatrix;
+    float3 skinnedNormalOS = normalize(mul(rotMatrix, v.normalOS));
+
+    // 步骤五：和普通静态 Mesh 完全相同的后续流程
+    VertexOutput o;
+    o.positionCS = mul(UNITY_MATRIX_VP,
+                       mul(UNITY_MATRIX_M, float4(skinnedPositionOS, 1.0)));
+    o.normalWS   = TransformObjectToWorldNormal(skinnedNormalOS);
+    return o;
+}
+```
+
+几个细节：
+
+- `_SkinningMatrices` 由 CPU 每帧上传，大小 = 骨骼数 × 64 字节（一个 `float4x4`）。75 块骨骼 = 约 4.7 KB，很小
+- `boneWeights.w` 的权重通常是 `1 - (x + y + z)`，保证四权重之和精确为 1
+- 当 `boneWeights = (1, 0, 0, 0)` 时，等同于普通刚性绑定（该顶点只跟一块骨骼走），矩阵混合退化为单矩阵乘法
+
 ### CPU Skinning vs GPU Skinning
 
 这个计算可以在 CPU 或 GPU 上执行：
