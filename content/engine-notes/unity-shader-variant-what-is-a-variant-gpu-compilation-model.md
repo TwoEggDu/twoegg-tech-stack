@@ -41,10 +41,26 @@ Unity 的解法是：**在编译期把每种功能组合拆成独立的程序，
 #pragma multi_compile _ _HIGH_QUALITY_SHADOWS
 ```
 
-这两行告诉 Unity 编译器：
+先把这两行的语法拆开读：
 
-- 第一行：这里有一个三选一的开关——`无`、`_WET_SURFACE`、`_SNOW_SURFACE`
-- 第二行：这里有一个二选一的开关——`无`、`_HIGH_QUALITY_SHADOWS`
+**`#pragma` 是什么**：写给编译器的指令，不是 Shader 的运行逻辑。编译器读到 `#pragma` 开头的行，就按后面的内容调整编译行为。`#pragma multi_compile` 的意思是"声明一组编译时开关"。
+
+**每行的结构**：`#pragma multi_compile` 后面跟着一组用空格分隔的选项，每次只能有一个选项被激活。
+
+**单独一个 `_` 是什么**：Unity 约定用一个下划线表示"这个开关的关闭状态"，即不启用任何 keyword。读起来就是"要么什么都不开，要么开 `_WET_SURFACE`，要么开 `_SNOW_SURFACE`"。
+
+```
+#pragma multi_compile  _            _WET_SURFACE   _SNOW_SURFACE
+                       ↑            ↑              ↑
+                    关闭状态       湿地表面         雪地表面
+                  （默认，什么      （开关打开）     （开关打开）
+                    都不开）
+```
+
+这两行合起来告诉 Unity 编译器：
+
+- 第一行：这里有一个三选一的开关——关闭、`_WET_SURFACE`、`_SNOW_SURFACE`
+- 第二行：这里有一个二选一的开关——关闭、`_HIGH_QUALITY_SHADOWS`
 
 Unity 对这两行做笛卡尔积，编译出所有组合：
 
