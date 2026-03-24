@@ -5,7 +5,7 @@ slug = "unity-shadervariantcollection-how-to-collect-group-and-regress"
 weight = 56
 featured = false
 tags = ["Unity", "Shader", "ShaderVariantCollection", "Regression", "Build"]
-series = "Unity 资产系统与序列化"
+series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 +++
 
 上一篇我已经把 `ShaderVariantCollection` 的定位压清了：

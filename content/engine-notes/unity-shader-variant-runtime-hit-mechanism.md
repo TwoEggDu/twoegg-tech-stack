@@ -5,7 +5,7 @@ slug = "unity-shader-variant-runtime-hit-mechanism"
 weight = 58
 featured = false
 tags = ["Unity", "Shader", "ShaderVariantCollection", "Rendering", "Warmup"]
-series = "Unity 资产系统与序列化"
+series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 +++
 
 前几篇把 shader variant 的构建期行为讲清了：

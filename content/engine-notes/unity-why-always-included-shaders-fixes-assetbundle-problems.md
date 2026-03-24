@@ -5,7 +5,7 @@ slug = "unity-why-always-included-shaders-fixes-assetbundle-problems"
 weight = 54
 featured = false
 tags = ["Unity", "Shader", "AssetBundle", "Variant", "GraphicsSettings"]
-series = "Unity 资产系统与序列化"
+series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 +++
 
 做 Unity 资源交付时，很多人都会碰到一个非常具体、也非常迷惑的现象：

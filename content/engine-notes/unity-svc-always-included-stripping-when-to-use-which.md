@@ -5,7 +5,7 @@ slug = "unity-svc-always-included-stripping-when-to-use-which"
 weight = 57
 featured = false
 tags = ["Unity", "Shader", "ShaderVariantCollection", "Stripping", "AssetBundle"]
-series = "Unity 资产系统与序列化"
+series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 +++
 
 写到这里，shader 这条线其实已经把几个关键部件分别拆开了：

@@ -2,9 +2,10 @@
 title = "Unity Shader Variants 为什么会存在，以及它为什么总让项目变复杂"
 description = "解释 Unity 为什么引入 Shader Variants、它带来的工程问题，以及 Unreal 在 Shader Permutations 上的对应做法。"
 slug = "unity-shader-variants"
-weight = 30
+weight = 51
 featured = false
 tags = ["Unity", "Unreal", "Rendering", "Shader"]
+series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
 +++
 
 做 Unity 图形开发的人，迟早都会碰到一个词：`Shader Variants`。
