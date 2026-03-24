@@ -1,6 +1,6 @@
 ---
 title: "游戏编程设计模式 02｜Command 模式：操作对象化"
-description: "Command 模式把"做一件事"变成了一个可以传递、存储、撤销、重放的对象。这篇通过撤销/重做、技能队列、录像回放三个完整案例，讲清楚 Command 模式在游戏中的实际价值。"
+description: "Command 模式把『做一件事』变成了一个可以传递、存储、撤销、重放的对象。这篇通过撤销/重做、技能队列、录像回放三个完整案例，讲清楚 Command 模式在游戏中的实际价值。"
 slug: "pattern-02-command"
 weight: 729
 tags:
