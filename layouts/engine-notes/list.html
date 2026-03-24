@@ -1,8 +1,25 @@
-﻿{{ define "main" }}
+{{ define "main" }}
   {{ $pages := .RegularPages.ByWeight }}
-  {{ $seriesPages := where $pages "Params.series" "!=" nil }}
+
+  {{/* 收集所有 series 名称，兼容 string 和 []string 两种格式 */}}
+  {{ $allSeriesNames := slice }}
+  {{ range $pages }}
+    {{ if .Params.series }}
+      {{ if reflect.IsSlice .Params.series }}
+        {{ range .Params.series }}
+          {{ if not (in $allSeriesNames .) }}
+            {{ $allSeriesNames = $allSeriesNames | append . }}
+          {{ end }}
+        {{ end }}
+      {{ else }}
+        {{ if not (in $allSeriesNames .Params.series) }}
+          {{ $allSeriesNames = $allSeriesNames | append .Params.series }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
   {{ $soloPages := where $pages "Params.series" "==" nil }}
-  {{ $seriesGroups := $seriesPages.GroupByParam "series" }}
 
   <section class="page-title-block">
     <p class="eyebrow">{{ .Title }}</p>
@@ -12,7 +29,7 @@
     {{ end }}
   </section>
 
-  {{ if gt (len $seriesGroups) 0 }}
+  {{ if gt (len $allSeriesNames) 0 }}
     <section class="series-block">
       <div class="page-title-block compact">
         <p class="eyebrow">Series</p>
@@ -21,14 +38,30 @@
       </div>
 
       <div class="series-grid">
-        {{ range $seriesGroups }}
-          {{ $ordered := .Pages.ByWeight }}
+        {{ range $allSeriesNames }}
+          {{ $seriesName := . }}
+          {{ $seriesPages := slice }}
+          {{ range $pages }}
+            {{ $page := . }}
+            {{ if .Params.series }}
+              {{ if reflect.IsSlice .Params.series }}
+                {{ if in .Params.series $seriesName }}
+                  {{ $seriesPages = $seriesPages | append $page }}
+                {{ end }}
+              {{ else }}
+                {{ if eq .Params.series $seriesName }}
+                  {{ $seriesPages = $seriesPages | append $page }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          {{ $ordered := sort $seriesPages "Weight" "asc" }}
           {{ $lead := index $ordered 0 }}
           <article class="series-card">
             <div class="series-card-head">
               <div>
                 <p class="card-section">Series</p>
-                <h2>{{ .Key }}</h2>
+                <h2>{{ $seriesName }}</h2>
               </div>
               <p class="series-count">{{ len $ordered }} 篇</p>
             </div>
