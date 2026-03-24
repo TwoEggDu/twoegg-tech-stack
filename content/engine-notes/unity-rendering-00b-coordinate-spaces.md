@@ -1,5 +1,5 @@
 +++
-title = "坐标空间与空间变换：顶点为什么要经过五个坐标系"
+title = "渲染入门：顶点为什么要经过五个坐标系"
 slug = "unity-rendering-00b-coordinate-spaces"
 date = 2025-01-26
 description = "从模型空间到屏幕像素，一个顶点经历的五个坐标系各自解决什么问题，MVP 矩阵是什么，NDC 和屏幕坐标的关系，以及 UV 坐标作为独立 2D 空间的作用。"
