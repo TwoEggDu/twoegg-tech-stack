@@ -152,9 +152,27 @@ series = "Unity 资产系统与序列化"
 
 `Always Included 更像强力止血和基础全局能力，不像常规精细治理手段。`
 
-## 三、SVC：适合管“高价值关键路径”，不适合管整个世界
+## 三、SVC：适合管”高价值关键路径”，不适合管整个世界
 
-`SVC` 最容易被误读成“更高级的 Always Included”，但其实不是。
+`SVC` 最容易被误读成”更高级的 Always Included”，但其实不是。
+
+在讲它的使用场景之前，有一个构建期行为的区分非常重要，因为它会影响你的选择。
+
+### 0. SVC 的两种工作模式不一样
+
+**模式一：作为普通构建资产（Build Asset）**
+
+当 SVC 以普通资产形式被构建收集到（在 AssetBundle、Resources、或场景依赖链中），Unity 在构建期会把 SVC 里登记的 keyword 组合**并入** `usedKeywords`，与材质贡献的组合一起参与枚举。
+
+这是”补充”语义：材质不够的地方，SVC 可以补上关键 keyword 组合，让它进入变体生成阶段。热更新场景里的材质如果没有参与 Player 构建，用 SVC 显式登记其 keyword 组合就能让对应变体被生成出来。
+
+**模式二：作为 Preloaded Shaders（Graphics Settings - Preloaded Shaders）**
+
+当 SVC 被挂载到 Preloaded Shaders 时，Unity 构建期会通过 `g_VariantCollectionOverride` 完全**替代** `usedKeywords` 参与 ShaderWriter 枚举——只有这个 SVC 里登记的变体才会被生成，材质贡献的 `usedKeywords` 被完全忽略。
+
+这是”覆盖”语义：这是非常激进的全量控制，适合那种”我已经完全知道运行时会用哪些变体，只想让这些变体存在”的场景，但用错了会导致大量材质驱动的变体全部丢失。
+
+两种模式在工程上完全不同，决策之前要先清楚自己用的是哪种。
 
 ## 1. 它最适合什么场景
 

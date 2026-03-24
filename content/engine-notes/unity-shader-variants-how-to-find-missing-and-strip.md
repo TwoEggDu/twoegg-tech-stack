@@ -322,22 +322,39 @@ Debug.Log($"Warmup {svc.name}: {sw.ElapsedMilliseconds} ms");
 
 `variant 在包里，但没有被预热；或者本来依赖某份 SVC 来预热，但 SVC 没带上、没加载、没 WarmUp。`
 
-### 第二步：先查“缺 variant”这一支
+### 第二步：先查”缺 variant”这一支
 
-这条支路最常见的来源包括：
+发现 variant 没编进包，需要进一步区分两种根本不同的原因，因为它们的修法完全不同。
 
-- stripping 过头
-- 资源引用链没覆盖到
-- 平台切换后 variant 集合变化
-- URP / HDRP 某些 feature 配置导致变体没生成
-- AssetBundle 构建链和 Player 构建链收集条件不一致
+#### 情况 A：这条 variant 压根没有进入生成阶段（从未被枚举）
+
+Unity 在构建期收集 `usedKeywords` 时，遍历的是当前构建的 `allObjects` 集合——也就是 Player 场景、Resources、以及本次参与构建的 AssetBundle 里的所有对象。
+
+如果某个材质不在这个集合里（比如它在一个独立热更新包，或一个只在运行时下载的 AssetBundle，而这个 bundle 没有参与本次 Player 构建），那么这个材质上启用的 keyword 组合就永远不会出现在 `usedKeywords` 里。
+
+`PrepareEnumeration` 只枚举出现在 `usedKeywords` 里的组合，所以这条 variant 从一开始就没有机会生成，更不会进入后面的 stripping 阶段。
+
+**修法**：让材质参与构建（放入 Player 或参与构建的 AB），或者用 `SVC` 显式登记这条 keyword 组合（SVC 的 variant 会并入 `usedKeywords`），或者把 shader 加进 `Always Included`（`kShaderStripGlobalOnly` 不依赖 `usedKeywords`）。
+
+#### 情况 B：这条 variant 进入了生成阶段，但被后续 stripping 删掉
+
+这是”进去了再出来”。原因包括：
+
+- Unity 内置 stripping（`ShouldShaderKeywordVariantBeStripped`）：基于全局使用状态（雾效关闭、光照贴图模式等）
+- 自定义 `IPreprocessShaders` 的删除逻辑
+
+这类问题会在构建日志的 stripping 统计里体现：你会看到 `After filtering` 和 `After builtin stripping` 或 `After IPreprocessShaders` 之间的数量下降。
+
+**修法**：审查 stripping 规则，或检查全局 Graphics 配置（如 Fog Mode、Lightmap Mode）是否过于收窄。
+
+---
 
 要查这种问题，最有效的不是盯运行时，而是回去对比下面两样东西：
 
 1. 出问题时真实走到的 shader / pass / keyword 组合
 2. 构建报告里它到底有没有出现
 
-如果构建里根本没有它，那你就不是在查“运行时为什么没加载”，而是在查“构建为什么没保留”。
+如果构建里根本没有它，先判断是 A 还是 B——看 `IPreprocessShaders` 回调是否曾经收到过这条 variant。如果连回调都没收到，说明是情况 A（枚举阶段就没生成）；如果收到了但被 `RemoveAt` 掉，说明是情况 B（stripping 删掉了）。
 
 这里真正要做的是把“故障现场”记清楚。
 
