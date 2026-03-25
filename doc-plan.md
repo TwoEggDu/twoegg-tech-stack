@@ -209,9 +209,11 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-## 系列二·A：URP 深度（15 篇）
+## 系列二·A：URP 深度（16 篇）
 
 *从 CommandBuffer、RenderTexture 等前置基础，到 Pipeline 配置、光照阴影、Renderer Feature 扩展开发、移动端专项优化的完整 URP 工程路径。*
+
+*版本基准：代码示例以 **Unity 2022.3 LTS（URP 14）** 为主。Unity 6（URP 17）引入 RenderGraph 为默认路径，差异在 URP扩展-02 专篇说明，其余篇在涉及 API 变更时附注。*
 
 ### 二·A·1 — 前置基础（3 篇）
 
@@ -237,15 +239,16 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | URP光照-02 | URP Shadow 深度：Cascade 配置、Shadow Bias 调参指南、Soft Shadow、移动端代价 |
 | URP光照-03 | Ambient Occlusion：SSAO 在 URP 中的实现方式、参数含义与移动端性能代价 |
 
-### 二·A·4 — 扩展开发层（5 篇）
+### 二·A·4 — 扩展开发层（6 篇）
 
 | 编号 | 标题 |
 |------|------|
-| URP扩展-01 | Renderer Feature 完整开发：ScriptableRendererFeature + ScriptableRenderPass，Pass Event 插入时机选择 |
-| URP扩展-02 | RenderGraph 实战：Pass 声明、资源 Handle、Import/Export、依赖图调试 |
+| URP扩展-01 | Renderer Feature 完整开发：ScriptableRendererFeature + ScriptableRenderPass，Pass Event 插入时机选择（2022.3 LTS / Execute API）✅ |
+| URP扩展-02 | RenderGraph 实战（Unity 6 / URP 17）：RecordRenderGraph 写法、TextureHandle、Import/Export、与 Execute API 的对比迁移 |
 | URP扩展-03 | URP 后处理扩展：Volume Framework + 自定义 VolumeComponent + RendererFeature 后处理写法 |
 | URP扩展-04 | DrawRenderers 与 FilteringSettings：在特定条件下重绘物体（X 光效果、描边、自定义排序） |
 | URP扩展-05 | RenderDoc 调试 URP 自定义 Pass：Pass 捕获、RT 内容查看、G-Buffer 解析、Blit 链追踪、Shader 断点 |
+| URP扩展-06 | 版本迁移指南：2022.3 → Unity 6 URP 升级的 Breaking Change 清单与迁移策略 |
 
 ### 二·A·5 — 平台与优化层（2 篇）
 
@@ -1212,8 +1215,8 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 独立专题文章 | 5 |
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
-| **合计** | **约 533 篇（不含系列二十）** |
+| **合计** | **约 534 篇（不含系列二十）** |
 
 ---
 
-*最后更新：2026-03-25（v13）*
+*最后更新：2026-03-25（v14）*
