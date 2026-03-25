@@ -1,287 +1,228 @@
 +++
-title = "URP 深度扩展 03｜URP 后处理扩展：Volume Framework + 自定义 VolumeComponent"
+title = "URP 深度扩展 03｜URP 后处理扩展：Volume Framework 与自定义效果"
 slug = "urp-ext-03-postprocessing"
 date = 2026-03-25
-description = "URP 后处理的完整扩展路径：Volume Framework 的运行机制、自定义 VolumeComponent 的参数声明、配套 Renderer Feature 的写法，以及 Override 优先级与 Blend 权重。用一个自定义色调映射效果串通整个流程。"
+description = "URP 后处理扩展的完整链路：Volume Framework 的参数暴露机制、自定义 VolumeComponent、在 Renderer Feature 里读取 Volume 参数驱动效果，以及 VolumeProfile 的运行时混合和区域触发。"
 [taxonomies]
-tags = ["Unity", "URP", "后处理", "Volume", "VolumeComponent", "Renderer Feature"]
+tags = ["Unity", "URP", "后处理", "Volume Framework", "Renderer Feature", "渲染管线"]
 series = ["URP 深度"]
 [extra]
-weight = 1610
+weight = 1550
 +++
 
-URP 的后处理不是一个黑盒，而是一套开放的扩展框架——**Volume Framework**。你可以用它定义自己的后处理效果，在 Inspector 里配置参数，并通过 Renderer Feature 在管线里执行。
-
-这篇讲清楚 Volume Framework 的运行机制，以及如何在它的体系里插入自定义效果。
+URP 的后处理不是一个独立系统，而是 Volume Framework + Renderer Feature 两层配合的结果。理解这两层的分工，才能写出既能在 Inspector 里调参、又能在 Renderer Feature 里驱动效果的完整后处理扩展。
 
 ---
 
-## Volume Framework 是什么
+## Volume Framework 的两层分工
 
-Volume Framework 解决的问题：**同一个场景里，不同区域有不同的后处理配置**。
+**Volume（场景层）**：挂在 GameObject 上的触发区域，携带一个 `VolumeProfile`，里面存着一组后处理参数。
 
-比如：室外是高对比度的 Tonemapping，进入室内后平滑过渡到低饱和度的画面风格；角色靠近火焰时 Bloom 增强。这些需求靠全局参数做不到，Volume Framework 提供了一套按区域 + 权重混合的参数管理方案。
+**VolumeComponent（参数层）**：继承自 `VolumeComponent` 的数据类，定义具体的参数（强度、颜色、范围等），支持多 Volume 之间的权重混合。
 
-### 三个核心概念
+**Renderer Feature（执行层）**：在渲染管线里读取当前混合好的 VolumeComponent 参数，执行实际的 Shader 效果。
 
-**Volume**：挂在 GameObject 上的组件，持有一组 `VolumeComponent` 配置。
-
-```
-Volume 有两种模式：
-- Global（isGlobal = true）：全场景生效，权重由 Priority 决定
-- Local：有 Collider，相机进入范围后按距离 / Blend Distance 计算权重
-```
-
-**VolumeComponent**：一组参数的容器，继承自 `VolumeComponent`，每个参数用 `VolumeParameter<T>` 包装。
-
-**VolumeProfile**：存在磁盘上的 Asset，里面包含一组 VolumeComponent 实例。Volume 组件引用 VolumeProfile。
-
-### 运行时是怎么工作的
-
-每帧，`VolumeManager` 根据相机位置：
-1. 收集所有激活的 Volume（Global 全收集，Local 按距离过滤）
-2. 按 Priority 排序
-3. 把所有 VolumeComponent 参数按权重 Blend：低优先级 → 高优先级叠加
-4. 最终结果写入 `VolumeStack`
-
-Renderer Feature 从 `VolumeStack` 读取最终参数，执行渲染。
+三者的关系：Volume 负责"在哪里生效、权重多少"，VolumeComponent 负责"有哪些参数"，Renderer Feature 负责"怎么渲染"。
 
 ---
 
 ## 自定义 VolumeComponent
 
-### 参数声明
-
 ```csharp
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/My Tonemapping", typeof(UniversalRenderPipeline))]
-public class MyTonemapping : VolumeComponent, IPostProcessComponent
+[Serializable, VolumeComponentMenu("Custom/Vignette Extra")]
+public class VignetteExtra : VolumeComponent, IPostProcessComponent
 {
-    // VolumeParameter<T> 包装的参数，支持在 Volume 之间 Lerp
-    public ClampedFloatParameter contrast = new ClampedFloatParameter(1f, 0f, 2f);
-    public ClampedFloatParameter saturation = new ClampedFloatParameter(1f, 0f, 2f);
-    public ColorParameter tint = new ColorParameter(Color.white, false, false, true);
-    public BoolParameter enabled = new BoolParameter(false);
+    // VolumeParameter<T> 支持多 Volume 间插值混合
+    public ClampedFloatParameter Intensity   = new ClampedFloatParameter(0f, 0f, 1f);
+    public ColorParameter         Color       = new ColorParameter(Color.black, false, false, true);
+    public ClampedFloatParameter Smoothness  = new ClampedFloatParameter(0.5f, 0f, 1f);
+    public BoolParameter          Rounded     = new BoolParameter(false);
 
-    // IPostProcessComponent 接口：告诉 URP 这个效果是否激活
-    public bool IsActive() => enabled.value && contrast.value != 1f;
-    public bool IsTileCompatible() => true; // 移动端 Tile 兼容
+    // IPostProcessComponent 接口：告诉 URP 这个组件是否激活
+    public bool IsActive() => Intensity.value > 0f;
+
+    // 编辑器模式下是否生效（Scene 视图预览）
+    public bool IsTileCompatible() => false;
 }
 ```
 
-**VolumeParameter 常用类型**：
+**`VolumeComponentMenu` 特性**：决定这个组件在 `Add Override` 菜单里的路径，格式是 `"分类/名称"`。
 
-| 类型 | 用途 | 示例 |
-|------|------|------|
-| `FloatParameter` | 浮点数 | 强度、半径 |
-| `ClampedFloatParameter` | 限制范围的浮点数 | 0~1 的强度 |
-| `IntParameter` | 整数 | 采样次数 |
-| `ColorParameter` | 颜色 | 色调、雾颜色 |
-| `BoolParameter` | 开关 | 是否激活某功能 |
-| `TextureParameter` | 纹理 | LUT 贴图 |
-| `CubemapParameter` | Cubemap | 环境反射 |
-| `Vector2Parameter` | 二维向量 | UV 偏移 |
+**`VolumeParameter<T>` 类型**：URP 内置了常用的参数类型，支持按 Volume 权重插值：
 
-### 参数的 Override 机制
+| 类型 | 说明 |
+|------|------|
+| `FloatParameter` | 浮点，无范围限制 |
+| `ClampedFloatParameter` | 浮点，有 min/max |
+| `IntParameter` | 整型 |
+| `BoolParameter` | 布尔（不插值，直接覆盖）|
+| `ColorParameter` | 颜色，支持 HDR |
+| `TextureParameter` | 贴图引用 |
+| `Vector2Parameter` / `Vector4Parameter` | 向量 |
 
-每个 `VolumeParameter` 都有一个 `overrideState`，Inspector 里左侧的复选框就是它：
-
-```csharp
-// 只有 overrideState == true 的参数才会参与 Blend
-// 没有勾选 Override 的参数使用默认值，不会被这个 Volume 影响
-public ClampedFloatParameter contrast = new ClampedFloatParameter(1f, 0f, 2f);
-// contrast.overrideState 默认为 false，需要在 Inspector 里勾选才生效
-```
-
-这意味着一个 Volume Profile 可以只覆盖部分参数，其余参数保留全局默认值，非常适合做局部差异化配置。
+**`IPostProcessComponent`**：这个接口是可选的，但建议实现。URP 在每帧会查询 `IsActive()`，返回 false 时 Renderer Feature 可以跳过该 Pass，避免无效开销。
 
 ---
 
-## 配套 Renderer Feature
-
-有了 VolumeComponent，还需要对应的 Renderer Feature 来读取参数并执行效果：
+## 在 Renderer Feature 里读取 Volume 参数
 
 ```csharp
-public class MyTonemappingFeature : ScriptableRendererFeature
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+public class VignetteExtraFeature : ScriptableRendererFeature
 {
-    private MyTonemappingPass _pass;
+    private VignetteExtraPass _pass;
+    private Material _material;
 
     public override void Create()
     {
-        _pass = new MyTonemappingPass(RenderPassEvent.AfterRenderingPostProcessing);
+        // 用 CoreUtils 创建 Material，避免泄漏
+        _material = CoreUtils.CreateEngineMaterial("Hidden/Custom/VignetteExtra");
+        _pass = new VignetteExtraPass(_material)
+        {
+            renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing
+        };
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        // 从 VolumeStack 读取当前相机的参数
+        // 从 VolumeStack 获取当前混合好的参数
         var stack = VolumeManager.instance.stack;
-        var component = stack.GetComponent<MyTonemapping>();
+        var comp = stack.GetComponent<VignetteExtra>();
 
-        // 没激活就不加入队列，不占用任何渲染资源
-        if (!component.IsActive()) return;
+        // 组件不存在或未激活，跳过
+        if (comp == null || !comp.IsActive()) return;
 
-        _pass.Setup(component, renderer.cameraColorTargetHandle);
+        _pass.Setup(comp);
         renderer.EnqueuePass(_pass);
     }
-}
-```
 
-```csharp
-public class MyTonemappingPass : ScriptableRenderPass
-{
-    private MyTonemapping _component;
-    private RTHandle _cameraColorHandle;
-    private RTHandle _tempRT;
-    private Material _material;
-
-    private static readonly int ContrastId = Shader.PropertyToID("_Contrast");
-    private static readonly int SaturationId = Shader.PropertyToID("_Saturation");
-    private static readonly int TintId = Shader.PropertyToID("_Tint");
-
-    public MyTonemappingPass(RenderPassEvent evt)
+    protected override void Dispose(bool disposing)
     {
-        renderPassEvent = evt;
-        // Material 引用来自 Resources 或注入，不要每帧 new
-        _material = CoreUtils.CreateEngineMaterial("Custom/MyTonemapping");
-    }
-
-    public void Setup(MyTonemapping component, RTHandle cameraColorHandle)
-    {
-        _component = component;
-        _cameraColorHandle = cameraColorHandle;
-    }
-
-    public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
-    {
-        var desc = cameraTextureDescriptor;
-        desc.depthBufferBits = 0;
-        RenderingUtils.ReAllocateIfNeeded(ref _tempRT, desc, FilterMode.Bilinear, name: "_TonemappingTemp");
-    }
-
-    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-    {
-        var cmd = CommandBufferPool.Get();
-
-        using (new ProfilingScope(cmd, profilingSampler))
-        {
-            // 把 VolumeComponent 的最终混合值传给 Shader
-            _material.SetFloat(ContrastId, _component.contrast.value);
-            _material.SetFloat(SaturationId, _component.saturation.value);
-            _material.SetColor(TintId, _component.tint.value);
-
-            Blitter.BlitCameraTexture(cmd, _cameraColorHandle, _tempRT, _material, 0);
-            Blitter.BlitCameraTexture(cmd, _tempRT, _cameraColorHandle);
-        }
-
-        context.ExecuteCommandBuffer(cmd);
-        CommandBufferPool.Release(cmd);
-    }
-
-    public void Dispose()
-    {
-        _tempRT?.Release();
         CoreUtils.Destroy(_material);
     }
+
+    // -------------------------------------------------------
+    private class VignetteExtraPass : ScriptableRenderPass
+    {
+        private readonly Material _material;
+        private VignetteExtra _comp;
+
+        // Shader property IDs（避免每帧字符串查找）
+        private static readonly int IntensityId  = Shader.PropertyToID("_VignetteIntensity");
+        private static readonly int ColorId      = Shader.PropertyToID("_VignetteColor");
+        private static readonly int SmoothnessId = Shader.PropertyToID("_VignetteSmoothness");
+
+        public VignetteExtraPass(Material material) => _material = material;
+
+        public void Setup(VignetteExtra comp) => _comp = comp;
+
+        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+        {
+            var cmd = CommandBufferPool.Get("VignetteExtra");
+
+            // 把 Volume 混合好的参数设置到 Material
+            _material.SetFloat(IntensityId, _comp.Intensity.value);
+            _material.SetColor(ColorId, _comp.Color.value);
+            _material.SetFloat(SmoothnessId, _comp.Smoothness.value);
+
+            var source = renderingData.cameraData.renderer.cameraColorTargetHandle;
+            Blitter.BlitCameraTexture(cmd, source, source, _material, 0);
+
+            context.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+        }
+    }
 }
 ```
 
+**`VolumeManager.instance.stack.GetComponent<T>()`**：这是获取当前相机位置混合好的 Volume 参数的标准方式。URP 会根据相机位置和各 Volume 的权重/范围自动计算混合结果，这里直接读最终值即可。
+
 ---
 
-## 插入时机的选择
+## Volume 的混合机制
 
-自定义后处理通常有两个时机选择：
+### Global vs Local Volume
 
-**`AfterRenderingTransparents`（推荐）**
+**Global Volume**：没有 Collider，全场景生效，权重由 `Weight` 参数控制（0~1）。通常用作全局基准后处理配置。
 
-插在 URP 内置后处理之前。效果会参与 URP 的 TAA、Bloom 等处理，行为符合直觉。注意：如果 URP 的 Post Processing 是开着的，这个时机的 RT 还没有经过 Tonemapping，是线性空间（HDR）值。
+**Local Volume**：需要挂 Collider（设为 Trigger），相机进入区域时生效，可以设置 `Blend Distance` 控制边界过渡距离。
 
-**`AfterRenderingPostProcessing`**
+多个 Volume 叠加时，按 Priority（数值越高优先级越高）排序，参数按权重插值混合。
 
-插在 URP 内置后处理之后。RT 已经是 sRGB 空间的 LDR 值，直接叠加屏幕效果（UI 叠加、扫描线、噪声等）适合放在这里。
+### 运行时动态修改 Volume 参数
 
 ```csharp
-// 根据效果类型选择
-public class MyTonemappingFeature : ScriptableRendererFeature
+// 获取场景里的 Volume 组件
+var volume = GetComponent<Volume>();
+
+// 方法 1：直接修改 Profile（影响所有使用这个 Profile 的 Volume）
+var vignette = volume.profile.TryGet<VignetteExtra>(out var comp);
+comp.Intensity.value = 0.5f;
+
+// 方法 2：使用独立 Profile（只影响这一个 Volume，推荐）
+volume.profile = Instantiate(volume.profile); // 复制一份
+volume.profile.TryGet<VignetteExtra>(out comp);
+comp.Intensity.value = 0.5f;
+```
+
+直接修改共享 Profile 会影响所有使用这个 Profile 的 Volume，运行时调整一般应先 `Instantiate` 复制一份。
+
+### 代码触发区域后处理（淡入淡出）
+
+```csharp
+// 用 DOTween 或 Coroutine 做 Volume 权重过渡
+IEnumerator FadeInEffect(Volume volume, float duration)
 {
-    public RenderPassEvent insertionPoint = RenderPassEvent.AfterRenderingTransparents;
-    // ...
+    float elapsed = 0f;
+    while (elapsed < duration)
+    {
+        volume.weight = Mathf.Lerp(0f, 1f, elapsed / duration);
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+    volume.weight = 1f;
 }
 ```
-
----
-
-## 全局 Volume vs Local Volume
-
-**全局 Volume 的典型用法**：
-
-```csharp
-// 场景里放一个 Global Volume，挂默认 Profile
-// 包含场景基础的 Tonemapping / Color Grading / AO 等配置
-// Priority = 0（最低）
-```
-
-**Local Volume 的典型用法**：
-
-```csharp
-// 室内区域放一个 Local Volume，Blend Distance = 3f
-// 只覆盖 Color Grading 参数（室内偏暖）
-// Priority = 10（高于全局）
-// 相机从室外进入时，3m 范围内平滑过渡
-```
-
-**Priority 规则**：数值越大，优先级越高，覆盖低优先级的参数。同 Priority 时，最后激活的 Volume 优先。
 
 ---
 
 ## 常见问题
 
-**Q：Volume 的参数已经改了，但效果没变**
+### Volume 参数改了但效果没变
 
-检查：
-1. VolumeComponent 里对应参数的 `overrideState` 是否为 true（Inspector 里是否勾选了复选框）
-2. `IsActive()` 返回值是否为 true
-3. Renderer Feature 里是否正确读取了 `VolumeManager.instance.stack`
+检查顺序：
+1. `VolumeLayer` 是否正确——Camera 组件的 `Volume Mask` 和 Volume 所在 Layer 必须匹配
+2. `IsActive()` 返回是否为 true（Intensity 是否 > 0）
+3. Renderer Feature 的 `AddRenderPasses` 里是否正确 Enqueue 了 Pass
 
-**Q：自定义效果在 Scene 视图不正常**
+### 编辑器 Scene 视图里看不到效果
 
-Scene 视图相机有自己的 Volume Stack。如果 Scene 视图没有对应的 Volume 配置，效果可能不如预期。在 Pass 的 Execute 里加判断：
+Scene 视图有独立的相机，默认不使用 Post Processing。在 Scene 视图的 `Gizmos` 菜单里开启 `Post Processing` 选项，或者给 Scene Camera 加 `VolumeProfile`。
 
-```csharp
-if (renderingData.cameraData.cameraType == CameraType.SceneView) return;
-```
+### Shader 里读不到 Volume 的贴图参数
 
-**Q：多个相机时，Volume 参数是否各自独立**
-
-是的。每个相机有独立的 `VolumeStack`，根据各自的位置计算混合结果。Split Screen 场景下两个相机可以有完全不同的后处理参数。
-
-**Q：Runtime 里动态改 Volume 参数**
+`TextureParameter` 设置给 Material 时用 `material.SetTexture()`，注意贴图为 null 时要有默认值兜底，否则 Shader 采样 null 贴图会报错：
 
 ```csharp
-// 获取 Volume 组件，直接改参数
-var volume = GetComponent<Volume>();
-if (volume.profile.TryGet<MyTonemapping>(out var tonemapping))
-{
-    tonemapping.contrast.value = 1.5f;
-    tonemapping.contrast.overrideState = true;
-}
-```
-
-如果要做渐变，管理一个 Local Volume 的 Weight 更简洁：
-
-```csharp
-volume.weight = Mathf.Lerp(0f, 1f, t);
+var tex = _comp.LutTexture.value;
+_material.SetTexture(LutTexId, tex != null ? tex : Texture2D.whiteTexture);
 ```
 
 ---
 
 ## 小结
 
-- Volume Framework = 按区域 + 权重混合的参数管理体系，不是单纯的后处理系统
-- 自定义效果 = `VolumeComponent`（参数定义）+ `ScriptableRendererFeature`（执行逻辑）
-- 从 `VolumeManager.instance.stack.GetComponent<T>()` 读取最终混合值，在 `AddRenderPasses` 里判断是否激活
-- 插入时机：HDR 空间处理用 `AfterRenderingTransparents`，屏幕叠加效果用 `AfterRenderingPostProcessing`
-- Local Volume 的 Blend Distance 控制过渡平滑度，Priority 控制覆盖顺序
+- Volume Framework 的分工：Volume 控制区域和权重，VolumeComponent 存参数，Renderer Feature 执行效果
+- `VolumeParameter<T>` 支持多 Volume 间权重插值，`IPostProcessComponent.IsActive()` 控制 Pass 是否入队
+- `VolumeManager.instance.stack.GetComponent<T>()` 获取当前混合好的参数，在 `AddRenderPasses` 里读取
+- Global Volume 全局基准，Local Volume + BlendDistance 做区域过渡
+- 运行时修改 Profile 参数先 `Instantiate` 复制，避免影响共享资源
 
-下一篇：URP扩展-04，DrawRenderers 与 FilteringSettings——在 Pass 里有选择地重绘某些物体（描边、X 光、自定义排序）。
+下一篇：URP扩展-04，DrawRenderers 与 FilteringSettings——在特定条件下重绘一组物体，实现 X 光透视、描边、自定义排序等效果。

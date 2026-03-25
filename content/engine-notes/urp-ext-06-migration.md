@@ -1,291 +1,239 @@
 +++
-title = "URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 清单与迁移策略"
+title = "URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 与迁移策略"
 slug = "urp-ext-06-migration"
 date = 2026-03-25
-description = "URP 从 Unity 2022.3 LTS（URP 14）升级到 Unity 6（URP 17）的完整迁移指南：API Breaking Change 逐条说明、ScriptableRenderPass Execute→RecordRenderGraph 迁移流程、RTHandle→TextureHandle 替换规则、已删除 API 的替代方案，以及分阶段迁移策略。"
+description = "从 Unity 2022.3 LTS（URP 14）升级到 Unity 6（URP 17）的实际变更清单：RenderGraph 强制化、ScriptableRenderPass API 变更、RenderingData 拆分、Shader API 差异、以及渐进式迁移策略。"
 [taxonomies]
-tags = ["Unity", "URP", "Unity6", "迁移", "渲染管线", "升级"]
+tags = ["Unity", "URP", "Unity 6", "迁移", "升级", "渲染管线"]
 series = ["URP 深度"]
 [extra]
-weight = 1640
+weight = 1580
 +++
 
-Unity 6 发布后，很多团队面临迁移决策。这篇梳理 URP 14（Unity 2022.3 LTS）到 URP 17（Unity 6）的**渲染相关 Breaking Change**，重点讲 Renderer Feature 开发者实际会撞到的问题，以及对应的处理方式。
-
-> 说明：本篇聚焦渲染管线扩展开发层的变化（Renderer Feature / RenderPass）。项目全量升级还涉及物理、动画、UI 等系统，本篇不覆盖。
+Unity 2022.3 LTS 到 Unity 6 的 URP 升级不是简单的版本号跳跃，`ScriptableRenderPass` 的核心 API 发生了结构性变化。本篇梳理实际会遇到的 Breaking Change，以及一套不用一次性全改就能先让项目跑起来的迁移策略。
 
 ---
 
-## 变化总览
+## 变更全景
 
-Unity 6 对 URP 的改动可以分三类：
-
-**1. 推荐路径变更（有兼容层，旧代码能跑）**
-- `Execute()` → `RecordRenderGraph()`
-- `RenderTargetIdentifier` → `RTHandle` → `TextureHandle`
-
-**2. API 调整（需要修改）**
-- `SetupRenderPasses()` 签名变化
-- 部分 `RenderingData` 成员被废弃
-- `Blitter` API 小幅调整
-
-**3. 行为变更（不改代码也会影响结果）**
-- RenderGraph 默认开启后，Pass 执行顺序和资源管理逻辑变化
-- Native RenderPass 合并更激进，错误使用 LoadAction 会更明显地影响性能
+| 类别 | 2022.3 LTS（URP 14） | Unity 6（URP 17）| 影响程度 |
+|------|---------------------|-----------------|---------|
+| Pass 执行入口 | `Execute()` | `RecordRenderGraph()` | ★★★ 必须处理 |
+| 渲染数据结构 | `RenderingData` 整体传入 | 拆分为 `ContextContainer` 多个子结构 | ★★★ 必须处理 |
+| 临时 RT 创建 | `cmd.GetTemporaryRT` | `renderGraph.CreateTexture` | ★★☆ 推荐改 |
+| 渲染目标绑定 | `ConfigureTarget()` | `builder.SetRenderAttachment()` | ★★★ 必须处理 |
+| Blit 方法 | `Blitter.BlitCameraTexture(cmd, ...)` | `Blitter.BlitTexture(ctx.cmd, ...)` | ★★☆ 参数调整 |
+| VolumeStack 获取 | `VolumeManager.instance.stack` | 同，无变化 | ✅ 无需改 |
+| RTHandle 体系 | 主要 RT 句柄 | 仍可用，但推荐换 `TextureHandle` | ★☆☆ 可选 |
+| Shader 关键字 | 同 | 同 | ✅ 无需改 |
 
 ---
 
-## Breaking Change 逐条
+## 变更一：Execute → RecordRenderGraph（必须处理）
 
-### 1. ScriptableRenderPass.Execute() 变为 UnsafePass
+这是影响最大的变化。Unity 6 里，`Execute()` 方法仍然存在但被标记为过时，如果你的 Pass 只有 `Execute()` 没有 `RecordRenderGraph()`，Unity 6 会自动用 `AddUnsafePass` 包装它——能运行，但有 Warning，且无法享受 RenderGraph 的优化。
 
-**变化**：`Execute()` 仍然有效，但在 Unity 6 里被包成 `UnsafePass` 执行，控制台出现 Warning。
-
-```
-[Warning] Pass 'MyPass' uses the obsolete Execute API.
-Migrate to RecordRenderGraph for best performance.
-```
-
-**影响**：功能正常，但不享受 RenderGraph 的自动 Load/Store 优化和依赖裁剪。
-
-**处理方式**：
-- 短期：可以用 `ConfigureInput` + `requiresDepthTexture` 等标记抑制 Warning，继续用 Execute
-- 长期：迁移到 `RecordRenderGraph()`（见后文）
-
----
-
-### 2. SetupRenderPasses() 签名变化
-
-**2022.3（URP 14）**：
-```csharp
-public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
-```
-
-**Unity 6（URP 17）**：
-```csharp
-// RenderingData 参数被废弃，改用 FrameData
-public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
-// 同时新增：
-public override void SetupRenderPasses(ScriptableRenderer renderer, ContextContainer frameData)
-```
-
-**处理方式**：Unity 6 对旧签名保留兼容，但推荐切换到 `ContextContainer` 版本：
+**最小改动迁移策略**：先加一个空的 `RecordRenderGraph()`，把原来 `Execute()` 里的逻辑搬到 `AddUnsafePass` 里，消除 Warning，然后再逐步改成 `AddRasterRenderPass`：
 
 ```csharp
-// Unity 6 推荐写法
-public override void SetupRenderPasses(ScriptableRenderer renderer, ContextContainer frameData)
+// 第一步：加 RecordRenderGraph，用 AddUnsafePass 包装旧逻辑
+// 这样可以先消除 Warning，功能不变
+public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 {
-    var resourceData = frameData.Get<UniversalResourceData>();
-    _pass.Setup(resourceData.activeColorTexture);
+    using (var builder = renderGraph.AddUnsafePass<PassData>("MyPass", out var passData))
+    {
+        // 填充 passData（见下一节）
+        builder.AllowPassCulling(false);
+
+        builder.SetRenderFunc((PassData data, UnsafeGraphContext ctx) =>
+        {
+            // 把原来 Execute() 里的内容搬到这里
+            // ctx.cmd 就是原来的 CommandBuffer
+            var cmd = CommandBufferPool.Get();
+            // ... 原来的逻辑 ...
+            ctx.cmd.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+        });
+    }
 }
+
+// 第二步（之后）：改成 AddRasterRenderPass，享受 RenderGraph 优化
 ```
 
 ---
 
-### 3. RenderingData 部分成员废弃
+## 变更二：RenderingData 结构拆分（必须处理）
 
-Unity 6 把 `RenderingData` 里的数据逐步迁移到 `ContextContainer` 的各个 FrameData 容器里：
+Unity 6 里，`RenderingData` 被拆分成多个独立结构，通过 `ContextContainer` 获取：
 
-| 旧写法（2022.3） | 新写法（Unity 6） |
+| 旧写法（2022.3） | 新写法（Unity 6）|
 |----------------|----------------|
 | `renderingData.cameraData.camera` | `frameData.Get<UniversalCameraData>().camera` |
-| `renderingData.cameraData.cameraType` | `frameData.Get<UniversalCameraData>().cameraType` |
+| `renderingData.cameraData.renderer.cameraColorTargetHandle` | `frameData.Get<UniversalResourceData>().activeColorTexture` |
 | `renderingData.cullResults` | `frameData.Get<UniversalRenderingData>().cullResults` |
 | `renderingData.lightData` | `frameData.Get<UniversalLightData>()` |
 | `renderingData.shadowData` | `frameData.Get<UniversalShadowData>()` |
 
-**处理方式**：`RenderingData` 本身在 Unity 6 里未被删除，旧代码编译通过，只是部分成员标了 `[Obsolete]`。迁移时按需替换。
+**`AddRenderPasses` 里的 `RenderingData` 参数**：在 Unity 6 里这个参数仍然存在，但推荐在 `RecordRenderGraph` 里改用 `ContextContainer`。`AddRenderPasses` 里如果只用来判断是否 Enqueue，可以暂时不改。
 
 ---
 
-### 4. RTHandle 在 RenderGraph 路径下无法直接使用
+## 变更三：ConfigureTarget 废弃（必须处理）
 
-在 `RecordRenderGraph()` 里，不能直接把 `RTHandle` 传给 Pass 的 PassData，必须先用 `ImportTexture` 转换：
-
-```csharp
-// ❌ 错误：不能把 RTHandle 直接放进 PassData
-passData.texture = _myRTHandle;  // TextureHandle 类型，但传了 RTHandle
-
-// ✅ 正确：先 Import，得到 TextureHandle
-TextureHandle handle = renderGraph.ImportTexture(_myRTHandle);
-passData.texture = handle;
-```
-
-**处理方式**：凡是 `RTHandle` 类型的外部资源，在 `RecordRenderGraph()` 里都需要先 `ImportTexture`。
-
----
-
-### 5. cmd.Blit 在 RenderGraph Pass 里不可用
-
-在 `RecordRenderGraph()` 的 `SetRenderFunc` 里，只能使用 `RasterCommandBuffer`，而 `cmd.Blit` 需要 `CommandBuffer`：
+旧写法里，`Configure()` 方法里调用 `ConfigureTarget()` 声明渲染目标：
 
 ```csharp
-// ❌ 在 SetRenderFunc 里不能用 cmd.Blit
-builder.SetRenderFunc((PassData data, RasterGraphContext ctx) =>
+// 旧写法（2022.3）
+public override void Configure(CommandBuffer cmd, RenderTextureDescriptor desc)
 {
-    ctx.cmd.Blit(src, dst);  // 编译报错：RasterCommandBuffer 没有 Blit 方法
-});
-
-// ✅ 改用 Blitter.BlitTexture
-builder.SetRenderFunc((PassData data, RasterGraphContext ctx) =>
-{
-    Blitter.BlitTexture(ctx.cmd, data.sourceHandle, new Vector4(1,1,0,0), 0, false);
-});
-```
-
----
-
-### 6. VolumeManager API 微调
-
-`VolumeManager.instance.stack` 在 Unity 6 里被标为过时，推荐通过相机获取：
-
-```csharp
-// 2022.3 写法
-var stack = VolumeManager.instance.stack;
-var component = stack.GetComponent<MyEffect>();
-
-// Unity 6 推荐写法（在 AddRenderPasses 里）
-var stack = VolumeManager.instance.GetStack(renderingData.cameraData.camera);
-var component = stack.GetComponent<MyEffect>();
-```
-
-多相机场景下，新写法能正确获取每个相机各自的 Volume Stack，行为更准确。
-
----
-
-## Execute → RecordRenderGraph 迁移流程
-
-以扩展-01 的灰度效果为例，从 Execute API 迁移到 RecordRenderGraph：
-
-### Step 1：添加 RecordRenderGraph 方法
-
-```csharp
-// 保留旧的 Execute 作为后备（Unity 6 在 RenderGraph 禁用时走这里）
-public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-{
-    // 原有实现保留
+    ConfigureTarget(_myRT);
+    ConfigureClear(ClearFlag.Color, Color.clear);
 }
+```
 
-// 新增 RecordRenderGraph
+新写法里，渲染目标在 `RecordRenderGraph` 的 Pass Builder 里声明：
+
+```csharp
+// 新写法（Unity 6）
+builder.SetRenderAttachment(textureHandle, 0);
+builder.SetRenderAttachmentDepth(depthHandle, AccessFlags.Write);
+```
+
+`Configure()` 方法在 Unity 6 里已废弃，和 `Execute()` 一样会被包进 `UnsafePass`。
+
+---
+
+## 变更四：临时 RT 创建方式
+
+```csharp
+// 旧写法（2022.3）：手动创建、手动释放
+cmd.GetTemporaryRT(tempRTId, desc);
+// ... 使用 ...
+cmd.ReleaseTemporaryRT(tempRTId);
+
+// 或者用 RTHandle
+RenderingUtils.ReAllocateIfNeeded(ref _tempRT, desc, name: "_TempRT");
+// Dispose 里手动释放
+_tempRT?.Release();
+
+// 新写法（Unity 6）：RenderGraph 自动管理
+var desc = renderGraph.GetTextureDesc(resourceData.activeColorTexture);
+TextureHandle temp = renderGraph.CreateTexture(desc);
+// 不需要手动释放，Pass 结束后自动回收
+```
+
+---
+
+## 变更五：Blitter API 参数调整
+
+```csharp
+// 旧写法（2022.3）
+Blitter.BlitCameraTexture(cmd, source, destination, material, passIndex);
+Blitter.BlitCameraTexture(cmd, source, destination); // 无 Material 版
+
+// 新写法（Unity 6，RasterGraphContext 里）
+Blitter.BlitTexture(ctx.cmd, source, new Vector4(1, 1, 0, 0), material, passIndex);
+Blitter.BlitTexture(ctx.cmd, source, new Vector4(1, 1, 0, 0), passIndex); // 无 Material 版
+```
+
+`new Vector4(1, 1, 0, 0)` 是 `scaleBias` 参数（xy = scale，zw = bias），全屏 Blit 时用 `(1, 1, 0, 0)` 表示不缩放不偏移。
+
+---
+
+## 渐进式迁移策略
+
+一次性把所有 Pass 改成 RenderGraph 写法风险高，推荐分三步：
+
+### 第一步：升级能跑，消除红色 Error
+
+升级 Unity 版本后，项目可能有编译错误（API 改名、命名空间变化）。先修编译错误，不管 Warning。这一步目标是"能进 Play 模式"。
+
+常见编译错误：
+- `RenderingData.cameraData.renderer` → `UniversalResourceData`（需要改获取方式）
+- 某些 `UniversalRenderPipeline` 的静态方法已移除或改名
+
+### 第二步：消除 Warning，包装旧逻辑
+
+把所有只有 `Execute()` 的 Pass 都加上 `RecordRenderGraph()`，用 `AddUnsafePass` 包装旧逻辑：
+
+```csharp
 public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 {
-    // 新实现
-}
-```
-
-### Step 2：迁移资源获取
-
-```csharp
-// 旧：从 SetupRenderPasses 传入 RTHandle
-private RTHandle _cameraColorHandle;
-public void Setup(RTHandle handle) { _cameraColorHandle = handle; }
-
-// 新：在 RecordRenderGraph 里直接从 frameData 获取
-public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
-{
-    var resourceData = frameData.Get<UniversalResourceData>();
-    TextureHandle cameraColor = resourceData.activeColorTexture;
-    // ...
-}
-```
-
-### Step 3：迁移临时 RT
-
-```csharp
-// 旧：RTHandle + ReAllocateIfNeeded
-private RTHandle _tempRT;
-RenderingUtils.ReAllocateIfNeeded(ref _tempRT, desc, ...);
-
-// 新：CreateTransientTexture，无需手动管理生命周期
-var desc = renderGraph.GetTextureDesc(cameraColor);
-TextureHandle tempHandle = renderGraph.CreateTransientTexture(desc);
-// 不需要 Dispose，RenderGraph 自动回收
-```
-
-### Step 4：迁移 Execute 逻辑到 SetRenderFunc
-
-```csharp
-// 旧
-public override void Execute(...)
-{
-    var cmd = CommandBufferPool.Get();
-    _material.SetFloat("_Intensity", _intensity);
-    Blitter.BlitCameraTexture(cmd, _cameraColorHandle, _tempRT, _material, 0);
-    Blitter.BlitCameraTexture(cmd, _tempRT, _cameraColorHandle);
-    context.ExecuteCommandBuffer(cmd);
-    CommandBufferPool.Release(cmd);
-}
-
-// 新
-using (var builder = renderGraph.AddRasterRenderPass<PassData>("Grayscale", out var passData))
-{
-    passData.source = cameraColor;
-    passData.material = _material;
-    passData.intensity = _intensity;
-
-    builder.UseTexture(passData.source, AccessFlags.Read);
-    builder.SetRenderAttachment(tempHandle, 0, AccessFlags.Write);
-
-    builder.SetRenderFunc((PassData data, RasterGraphContext ctx) =>
+    using (var builder = renderGraph.AddUnsafePass<EmptyPassData>("Legacy_MyPass", out _))
     {
-        data.material.SetFloat("_Intensity", data.intensity);
-        Blitter.BlitTexture(ctx.cmd, data.source, new Vector4(1,1,0,0), data.material, 0);
-    });
+        builder.AllowPassCulling(false);
+        builder.SetRenderFunc((EmptyPassData _, UnsafeGraphContext ctx) =>
+        {
+            // 原来 Execute() 里的内容
+        });
+    }
 }
+```
+
+这一步完成后，项目可以正常运行且无 Warning，但还没有享受 RenderGraph 的优化。
+
+### 第三步：逐 Pass 迁移到 AddRasterRenderPass
+
+按重要性和频率排序，逐个把 `AddUnsafePass` 改成 `AddRasterRenderPass`。优先改调用频率高的 Pass（每帧执行的后处理 Pass），低频 Pass（初始化、烘焙辅助）可以留在 UnsafePass。
+
+---
+
+## 需要同步处理的 Shader 变化
+
+URP 14 → URP 17 的 Shader 层变化相对少，但有几个需要注意：
+
+**`TEXTURE2D_X` 宏**：URP 17 里部分内置贴图的采样宏从 `SAMPLE_TEXTURE2D` 改为 `SAMPLE_TEXTURE2D_X`（用于支持 XR 立体渲染）。如果你的自定义 Shader 采样 `_CameraOpaqueTexture` 或 `_CameraDepthTexture` 出现黑屏，检查是否需要用 `TEXTURE2D_X` 版本的宏。
+
+**`_BlitTexture` 替代 `_MainTex`**：URP 17 的 `Blitter` 用 `_BlitTexture` 作为源贴图的属性名，如果你的全屏 Blit Shader 里用了 `_MainTex`，需要改为 `_BlitTexture`：
+
+```hlsl
+// 旧写法
+TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
+float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
+
+// 新写法（URP 17 Blitter 规范）
+TEXTURE2D_X(_BlitTexture); SAMPLER(sampler_BlitTexture);
+float4 color = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_BlitTexture, uv);
 ```
 
 ---
 
-## 分阶段迁移策略
+## 快速参考：新旧 API 对照表
 
-项目升级不需要一次迁移所有 Renderer Feature。推荐分三阶段：
-
-### 阶段一：升级到 Unity 6，暂不迁移 API
-
-- 升级 Unity 版本
-- 旧的 `Execute()` Pass 以 UnsafePass 形式运行
-- 修复编译错误（主要是 `SetupRenderPasses` 签名、废弃 API）
-- 验证渲染结果正确
-
-**目标**：项目在 Unity 6 里能正常运行，不追求 RenderGraph 优化。
-
-### 阶段二：高频 Pass 迁移 RecordRenderGraph
-
-- 识别每帧必定执行的 Pass（主后处理、全局 AO、描边）
-- 逐个迁移到 `RecordRenderGraph()`
-- 用 Render Graph Viewer 验证依赖关系正确
-
-**目标**：核心渲染路径享受 RenderGraph 的 Load/Store 自动优化，减少 TBR 带宽消耗。
-
-### 阶段三：清理 UnsafePass
-
-- 迁移剩余低频或边缘 Feature
-- 移除旧版 `Execute()` 实现
-- 清理 `Dispose()` 里手动管理的 `RTHandle`（迁移后改由 RenderGraph 管理）
-
-**目标**：代码库统一使用 RenderGraph API，减少维护负担。
-
----
-
-## 不值得迁移的情况
-
-有些情况可以长期保留 `Execute()` API：
-
-- **编辑器工具 Feature**：只在编辑器里用，每帧不一定触发，性能不敏感
-- **项目不打算升级 Unity 6**：2022.3 LTS 维护到 2025 年底，如果项目生命周期在此之前结束，没有升级必要
-- **第三方插件**：等插件官方更新，不要自己 Fork 改
+```
+Execute()                     → RecordRenderGraph()
+Configure()                   → builder.SetRenderAttachment()
+ConfigureTarget(_rt)          → builder.SetRenderAttachment(handle, 0)
+ConfigureClear(...)           → builder.SetRenderAttachment(handle, 0, LoadAction.Clear)
+renderingData.cameraData      → frameData.Get<UniversalCameraData>()
+renderingData.cullResults     → frameData.Get<UniversalRenderingData>().cullResults
+renderingData.lightData       → frameData.Get<UniversalLightData>()
+cameraData.renderer.cameraColorTargetHandle  → resourceData.activeColorTexture
+cmd.GetTemporaryRT(...)       → renderGraph.CreateTexture(...)
+cmd.ReleaseTemporaryRT(...)   → （不需要，自动释放）
+_tempRT?.Release()            → （不需要，自动释放）
+Blitter.BlitCameraTexture(cmd, src, dst, mat, pass)
+  → Blitter.BlitTexture(ctx.cmd, src, new Vector4(1,1,0,0), mat, pass)
+```
 
 ---
 
 ## 小结
 
-| 变化 | 影响 | 处理方式 |
-|------|------|---------|
-| `Execute()` 变 UnsafePass | Warning，功能正常 | 逐步迁移 `RecordRenderGraph` |
-| `SetupRenderPasses` 签名 | 旧签名兼容，新签名推荐 | 按需切换 |
-| `RenderingData` 成员废弃 | `[Obsolete]` 警告 | 替换为 `ContextContainer` 写法 |
-| `RTHandle` 需 Import | RenderGraph Pass 内编译错误 | `renderGraph.ImportTexture()` |
-| `cmd.Blit` 不可用 | `RasterCommandBuffer` 无 Blit | 改用 `Blitter.BlitTexture` |
-| `VolumeManager.stack` 废弃 | 多相机下行为差异 | 改用相机关联的 Stack 获取 |
+- 最大变化：`Execute()` + `Configure()` → `RecordRenderGraph()` + Builder 声明
+- `RenderingData` 拆分：从整体参数改为 `frameData.Get<T>()` 按需获取
+- 渐进式迁移：先跑起来 → 用 `AddUnsafePass` 消除 Warning → 再改 `AddRasterRenderPass`
+- Shader 层：检查 `_MainTex` → `_BlitTexture`，`TEXTURE2D` → `TEXTURE2D_X`（采样相机 RT 时）
+- 不需要一次性全改，`AddUnsafePass` 是合法的过渡方案，功能完全正确
 
-扩展开发层（6 篇）到这里全部完成。下一层是**平台与优化层**：URP平台-01 移动端专项配置，URP平台-02 多平台质量分级。
+---
+
+**URP 深度系列（16 篇）全部完成。**
+
+| 层 | 篇数 | 覆盖内容 |
+|----|------|---------|
+| 前置基础层 | 3 | CommandBuffer、RTHandle、渲染路径 |
+| Pipeline 配置层 | 3 | Pipeline Asset、Renderer Settings、Camera Stack |
+| 光照与阴影层 | 3 | 光照系统、Shadow 深度、SSAO |
+| 扩展开发层 | 6 | Renderer Feature、RenderGraph（Unity 6）、后处理扩展、DrawRenderers、RenderDoc 调试、迁移指南 |
+| 平台与优化层 | 2 | 移动端专项配置、三档质量分级 |
