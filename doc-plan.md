@@ -289,12 +289,12 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| GPU优化-01 | Draw Call 与 Overdraw 优化：合批策略与 Alpha 排序 |
+| GPU优化-01 | Draw Call 与 Overdraw 优化：合批策略与 Alpha 排序（移动端视角补充）|
 | GPU优化-02 | 带宽优化：纹理压缩（ASTC/ETC2）、RT 格式选择、Resolve 时机 |
 | GPU优化-03 | Shader 优化：精度（half vs float）、分支、采样次数 |
-| GPU优化-04 | 阴影优化：Cascade 配置、Distance Shadow、Shadow Proxy |
-| GPU优化-05 | 后处理在移动端的取舍与降质策略 |
-| GPU优化-06 | URP 管线配置优化：关闭不需要的 Pass、Depth Priming、MSAA |
+| GPU优化-04 | ~~阴影优化：Cascade 配置、Distance Shadow、Shadow Proxy~~ → 已覆盖：`rendering-02b-shadow-map` + `urp-lighting-02-shadow` |
+| GPU优化-05 | 后处理在移动端的取舍与降质策略（移动端视角补充）|
+| GPU优化-06 | ~~URP 管线配置优化：关闭不需要的 Pass、Depth Priming、MSAA~~ → 已覆盖：`urp-platform-01-mobile` |
 | GPU优化-07 | GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充、与 SRP Batcher 的关系 |
 
 ### 三·D — CPU 性能优化（6 篇）
@@ -1219,4 +1219,4 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-03-25（v14）*
+*最后更新：2026-03-25（v15）*
