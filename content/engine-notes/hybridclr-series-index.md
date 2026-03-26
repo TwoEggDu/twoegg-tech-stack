@@ -182,6 +182,18 @@ series = "HybridCLR"
 
 - [HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断]({{< relref "engine-notes/hybridclr-faq-10-most-confused-judgments.md" >}})
 
+### 14. 你在线上或 CI 遇到 async 崩溃，想知道真正的根因和修法
+
+先看：
+
+- [HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法]({{< relref "engine-notes/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})
+
+### 15. 你想把 HybridCLR 的打包流程做成可重复的 CI 标准流程
+
+先看：
+
+- [HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-notes/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}})
+
 ## 这组文章刻意不做什么
 
 为了让这组文章保持收敛，我刻意没把它写成下面几种形态：
@@ -210,6 +222,8 @@ series = "HybridCLR"
 - 已进包 AOT 程序集的函数级差分执行：`DHE`
 - 面向真实项目的高级能力选型判断
 - 一篇面向高频混淆点的 FAQ 入口
+- 真实崩溃案例：async 崩溃根因与两种修法
+- CI 打包工程化：GenerateAll、Development 一致性、Launcher-only 场景
 
 到这一步，这组文章的第一轮主线已经收齐了。  
 现在开始补的，已经不是基础主链，而是 `Full Generic Sharing`、`DHE` 这类更高层的高级主题。
