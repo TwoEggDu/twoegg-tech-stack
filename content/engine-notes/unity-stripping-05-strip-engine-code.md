@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 裁剪 05｜Strip Engine Code 到底在裁什么"
 description: "顺着 Unity 当前实现把 Strip Engine Code 的工作方式串起来：Editor 怎样准备输入、linker 怎样做模块决策、结果又怎样影响后续原生构建。"
 slug: "unity-stripping-05-strip-engine-code"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "为什么 AssetBundle 总让项目变复杂：切包粒度、重复资源、共享依赖和包爆炸"
 description = "解释为什么 AssetBundle 一进真实项目就会把切包粒度、重复资源、共享依赖和包数量治理一起带出来，以及这些复杂度背后的结构冲突。"
 slug = "unity-why-assetbundle-gets-complex-granularity-duplication-shared-dependencies"

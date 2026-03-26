@@ -184,6 +184,129 @@ Offset -1, -1
 
 ---
 
+## Decal Layer 过滤：控制谁接受投影
+
+默认情况下，DecalProjector 会投影到范围内所有物体上。实际项目里往往需要过滤——比如技能警示圈只投影到地面，不投影到角色和怪物身上。
+
+URP 的解决方案是 **Rendering Layer Mask**。
+
+### 工作原理
+
+每个 MeshRenderer 有一个 `RenderingLayerMask`（32 位掩码），每个 DecalProjector 也有一个 `DecalLayerMask`。渲染时做位与运算，结果为 0 则丢弃该像素：
+
+```
+地面：  RenderingLayerMask = 0011  →  0011 & 0010 = 0010 ≠ 0  →  接受 Decal
+角色：  RenderingLayerMask = 0001  →  0001 & 0010 = 0000 = 0   →  丢弃，不受影响
+DecalProjector：DecalLayerMask = 0010
+```
+
+### 实现需要三步
+
+**Step 1：Renderer Feature 开启 Decal Layers**
+
+URP Renderer Asset → Decal Renderer Feature → 勾选 `Use Rendering Layers`。
+
+**Step 2：Opaque Pass 把每个物体的 Layer 写入纹理**
+
+开启后，不透明渲染阶段会用 MRT 额外输出一张 `_CameraRenderingLayersTexture`，每个像素存储该位置物体的 `RenderingLayerMask`：
+
+```hlsl
+// opaque shader 里（_WRITE_RENDERING_LAYERS keyword 开启时）
+#ifdef _WRITE_RENDERING_LAYERS
+    uint renderingLayers = GetMeshRenderingLayer();
+    outRenderingLayers = float4(EncodeMeshRenderingLayer(renderingLayers), ...);
+#endif
+```
+
+**Step 3：Decal Pass 读取纹理并过滤**
+
+```hlsl
+// decal shader 里（_DECAL_LAYERS keyword 开启时）
+#ifdef _DECAL_LAYERS
+    uint objectLayer = LoadRenderingLayerTexture(screenUV);
+    if ((objectLayer & _DecalLayerMask) == 0)
+        clip(-1);   // 位与为 0，丢弃这个像素
+#endif
+```
+
+### 两个关键 Keyword
+
+| Keyword | 作用 | 缺少时的后果 |
+|---|---|---|
+| `_WRITE_RENDERING_LAYERS` | opaque shader 写入 layer 纹理 | 纹理全为 0，过滤逻辑拿不到正确数据 |
+| `_DECAL_LAYERS` | decal shader 执行位与过滤 | 不做任何过滤，所有物体都受影响 |
+
+### 配置方法
+
+在 MeshRenderer 的 Inspector 里设置 `Rendering Layer Mask`（可多选），在 DecalProjector 上设置 `Decal Layer Mask`：
+
+```
+只投地面：
+  地面 RenderingLayerMask → 勾选 layer 1
+  角色 RenderingLayerMask → 只勾 layer 0（默认）
+  DecalProjector DecalLayerMask → layer 1
+
+只投角色（如血迹、污迹）：
+  角色 RenderingLayerMask → 勾选 layer 2
+  地面 RenderingLayerMask → 不勾 layer 2
+  DecalProjector DecalLayerMask → layer 2
+```
+
+16 个 layer 各自独立，不同用途的 Decal 互不干扰。
+
+---
+
+## 移动端方案选型
+
+移动端 GPU 普遍是 TBDR 架构（Mali、Adreno、Apple GPU），对带宽敏感。Decal Layer 过滤有三种方案，开销差异很大。
+
+### 方案一：Mesh Decal（最轻量）
+
+不用 DecalProjector，直接在地面放一个贴着地面的平面 Mesh，材质用普通半透明 shader：
+
+```
+放一个 Quad，Y 轴抬高 0.01 贴地
+材质半透明，直接渲染
+不需要深度采样，不需要额外 render target
+```
+
+优点：零额外开销，完全没有带宽压力
+缺点：地面不平时需要处理贴合；不能动态投影到任意表面
+**适合场景**：技能范围圈、固定位置的地面标记，大多数手游用的就是这个
+
+### 方案二：Stencil 过滤
+
+利用 Stencil Buffer 区分角色和地面：
+
+```
+Opaque Pass：角色写 Stencil = 1
+Decal Pass：Stencil Test，值为 1 的像素跳过
+```
+
+优点：Stencil 是 depth-stencil attachment 的一部分，在 TBDR GPU 上全程在 tile 内完成，**几乎零带宽开销**
+缺点：需要改 opaque shader；Stencil 通道有时被其他功能（描边、SSR）占用
+**适合场景**：需要动态投影但对性能要求高的情况
+
+### 方案三：Rendering Layers（URP 内置）
+
+即上面介绍的这套，用 MRT 写 `_CameraRenderingLayersTexture`，Decal 读取后做位与过滤。
+
+优点：URP 原生支持，灵活，可以精细控制 16 种层级组合
+缺点：MRT 额外写一张全屏纹理，有带宽开销；在移动端需要确认 shader variant 没有被错误剔除
+**适合场景**：需要多种 Decal 类型、层级控制逻辑复杂的项目
+
+> MRT 为什么在移动端有带宽开销？因为每张额外 RT 都占用 On-Chip Buffer 空间，超出容量时会溢出到系统内存，带来额外的 Load/Store 代价。详见 [移动端硬件 02｜TBDR 架构详解](@/engine-notes/hardware-02-tbdr.md)。
+
+### 横向对比
+
+| 方案 | 带宽开销 | 实现复杂度 | 灵活性 | 推荐场景 |
+|---|---|---|---|---|
+| Mesh Decal | 无 | 最简单 | 低 | 固定地面标记、技能圈 |
+| Stencil 过滤 | 极低 | 中等 | 中 | 动态投影，性能敏感 |
+| Rendering Layers | 中 | 复杂 | 高 | 多层级 Decal 系统 |
+
+---
+
 ## 小结
 
 | 概念 | 要点 |
@@ -192,5 +315,7 @@ Offset -1, -1
 | Z-fighting | `Offset -1, -1` 或 `ZTest Always` |
 | 边缘渐变 | `min(lp.xz, 1-lp.xz) / fadeWidth`，边缘 alpha 渐变到 0 |
 | URP 内置 | Decal Renderer Feature + Decal Projector 组件，推荐优先用 |
+| Decal Layer 过滤 | RenderingLayerMask & DecalLayerMask 位与，需要 `_DECAL_LAYERS` 和 `_WRITE_RENDERING_LAYERS` 两个 keyword |
+| 移动端选型 | 简单场景用 Mesh Decal；性能敏感用 Stencil；多层级控制用 Rendering Layers |
 
 下一篇：视差贴图——用高度图偏移 UV，让平面表现出砖墙、石块的凹凸深度感。

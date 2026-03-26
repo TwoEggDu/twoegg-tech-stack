@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 的 Scene 文件本质上是什么：为什么它更像一张对象图，而不是一个“大资源”"
 description = "把 Unity 的 Scene 文件从资源清单思维里拆出来，讲清它为什么本质上是一张由 GameObject、Transform、Component 和场景级对象组成的序列化对象图。"
 slug = "unity-scene-file-what-is-it-object-graph-not-a-big-asset"

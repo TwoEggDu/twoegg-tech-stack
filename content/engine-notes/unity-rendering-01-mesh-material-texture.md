@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 01｜几何与表面：Mesh、Material、Texture 是什么数据，怎么变成像素"
 description = "把 Mesh 的顶点结构、Material 与 Shader 的关系、Texture 的采样机制讲清楚，并完整追踪这三类资产从 Draw Call 提交到片元着色输出的数据路径。"
 slug = "unity-rendering-01-mesh-material-texture"

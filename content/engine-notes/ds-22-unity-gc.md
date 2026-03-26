@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 22｜Unity GC 深度：Boehm → 增量 GC，Alloc 热点与零 GC 实践"
 description: "Unity 的 GC 卡顿是最常见的性能问题之一。这篇讲清楚 Unity GC 的历史演进（Boehm → 增量 GC）、常见 GC Alloc 热点的根因，以及零 GC 编程的系统性方法：NativeArray、ArrayPool、对象池、值类型技巧。"
 slug: "ds-22-unity-gc"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 的 Prefab、Scene、AssetBundle 到底怎样从序列化文件还原成运行时对象"
 description = "把 Unity 的通用反序列化恢复链具体拆到 Prefab、Scene 和 AssetBundle 三种载体上，讲清它们共用哪一段、又分别在哪一层分叉。"
 slug = "unity-prefab-scene-assetbundle-how-they-restore-from-serialized-files"

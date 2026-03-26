@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 裁剪 04｜哪些 Unity 代码最怕 Strip，以及怎样写得更适合裁剪"
 description: "把最容易被 strip 误伤的几类 Unity 代码模式拆开：字符串反射、全程序集扫描、运行时泛型和配置驱动入口，并给出更适合裁剪的写法。"
 slug: "unity-stripping-04-strip-friendly-code-patterns"

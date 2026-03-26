@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 23｜Unreal GC 深度：UObject 体系、智能指针与两阶段销毁"
 description: "Unreal 在 C++ 之上为 UObject 实现了一套完整的 GC 体系，完全绕开语言运行时。这篇讲清楚 UObject 的内存模型、UPROPERTY 引用追踪、智能指针（TSharedPtr/TWeakObjectPtr）的设计意图，以及 BeginDestroy → FinishDestroy 的两阶段销毁流程。"
 slug: "ds-23-unreal-gc"

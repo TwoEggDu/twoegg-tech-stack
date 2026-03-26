@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "内存不是够不够，而是行为稳不稳"
 description: "从工作集、临时对象、生命周期尖峰、GC、页面缺失、资源常驻与淘汰出发，解释为什么很多游戏卡顿本质上不是内存不够，而是内存行为不稳定。"
 slug: "game-performance-memory-behavior"

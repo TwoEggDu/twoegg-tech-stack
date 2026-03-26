@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "为什么某些操作会慢：给游戏开发的性能判断框架"
 description: "从一帧预算、资源加载、内存行为、CPU/GPU 边界和平台差异出发，建立一套面向游戏开发的性能判断框架。"
 slug: "game-performance-judgment-framework"

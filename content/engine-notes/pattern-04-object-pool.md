@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏编程设计模式 04｜Object Pool：对象池化原理与实践"
 description: "频繁的对象创建和销毁是游戏 GC 卡顿的主要来源。这篇讲清楚对象池的原理、Unity 内置 ObjectPool 的使用、通用泛型池的实现，以及何时用何时不用。"
 slug: "pattern-04-object-pool"

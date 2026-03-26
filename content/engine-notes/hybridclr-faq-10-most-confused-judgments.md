@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断"
 description = "不再补新原理，而是把 HybridCLR 系列里最容易混掉的 10 个判断重新拉直：哪些是装载问题，哪些是 metadata 问题，哪些是 AOT 泛型、MethodBridge、MonoBehaviour、PreJit、Full Generic Sharing、DHE 的边界问题。"
 weight = 42

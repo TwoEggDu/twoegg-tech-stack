@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来"
 description = "把 Unity 运行时口中的“加载一个 AssetBundle”拆成完整链路，讲清下载、本地缓存、依赖满足、LoadAsset、反序列化、Instantiate 和 Unload 分别站在哪一层。"
 slug = "unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload"

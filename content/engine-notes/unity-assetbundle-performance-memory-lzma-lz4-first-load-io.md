@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "AssetBundle 的性能与内存代价：LZMA/LZ4、首次加载卡顿、内存峰值、解压与 I/O"
 description = "把 AssetBundle 的性能问题拆成压缩格式取舍、首次加载链、内存峰值和生命周期重叠四层，讲清为什么“异步加载了”也不等于性能账已经结清。"
 slug = "unity-assetbundle-performance-memory-lzma-lz4-first-load-io"

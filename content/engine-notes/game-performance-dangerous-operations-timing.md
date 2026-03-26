@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "什么事不能在什么时候做：游戏开发里最危险的时机管理"
 description: "解释为什么很多性能问题不是工作本身太重，而是发生时机错误；从主线程阻塞、资源首次加载、对象生命周期、GPU 上传和同步边界出发，建立一套时机管理判断框架。"
 slug: "game-performance-dangerous-operations-timing"

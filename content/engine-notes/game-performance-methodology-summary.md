@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "从现象到方法：把游戏性能判断连成一套工作流"
 description: "收束前面的性能系列文章，把现象分类、帧链路、危险时机、加载链、内存行为、引擎现场和平台差异连成一套完整的游戏性能判断方法。"
 slug: "game-performance-methodology-summary"

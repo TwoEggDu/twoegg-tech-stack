@@ -1,4 +1,5 @@
 +++
+date = 2026-03-20
 title = "HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute"
 description = "从 Assembly.Load(byte[])、MethodInfo.Invoke、MetadataCache、InterpreterInvoke 到 HiTransform 与 Interpreter::Execute，沿着一条真实调用链把 HybridCLR 再跑一遍。"
 weight = 34

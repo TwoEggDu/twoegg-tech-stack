@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 05｜资源导入、Cook、Build、Package，为什么也是引擎本体"
 description: "基于 Unity 与 Unreal 官方资料，把资源导入、序列化、资产分发与最终构建收回同一层资产与发布层，而不是把它们看成外围流程。"
 slug: "game-engine-architecture-05-asset-and-delivery"

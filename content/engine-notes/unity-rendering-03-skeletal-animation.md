@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 03｜动画变形：骨骼蒙皮与 Blend Shape 怎么改变渲染结果"
 description = "讲清楚骨骼动画的蒙皮原理（骨骼权重如何在顶点阶段混合多个变换矩阵）、Blend Shape 的顶点偏移机制，以及两者如何改变最终覆盖的像素范围和法线朝向。"
 slug = "unity-rendering-03-skeletal-animation"

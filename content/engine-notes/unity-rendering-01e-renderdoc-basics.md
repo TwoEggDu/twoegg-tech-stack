@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它"
 description = "讲清楚 RenderDoc 和 Frame Debugger 的定位差异，如何从 RenderDoc 启动 Unity 并捕获一帧，以及 Event Browser、Texture Viewer 和 Pipeline State 面板的基本用法。"
 slug = "unity-rendering-01e-renderdoc-basics"

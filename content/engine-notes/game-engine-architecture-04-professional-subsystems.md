@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 04｜渲染、物理、动画、音频、UI，为什么都像半台小引擎"
 description: "基于 Unity 与 Unreal 官方资料，把渲染、物理、动画、音频、UI 收回专业子系统层，解释它们为什么不是平铺功能点。"
 slug: "game-engine-architecture-04-professional-subsystems"

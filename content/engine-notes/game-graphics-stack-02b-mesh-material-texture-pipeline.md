@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏图形系统 02b｜模型、材质和贴图是怎么变成屏幕像素的"
 description: "具体追踪一个 3D 物体从网格数据、材质参数到贴图采样的完整数据路径，解释顶点坐标、UV、法线在管线各阶段的流转和用途。"
 slug: "game-graphics-stack-02b-mesh-material-texture-pipeline"

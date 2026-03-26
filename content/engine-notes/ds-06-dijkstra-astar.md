@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 06｜Dijkstra → A*：最短路径原理与启发函数"
 description: "BFS 在无权图里找最短路，Dijkstra 把它推广到带权图，A* 在 Dijkstra 基础上加入启发函数让搜索方向更聪明。这篇讲清楚三者的演进关系，以及为什么 A* 是游戏寻路的标准算法。"
 slug: "ds-06-dijkstra-astar"

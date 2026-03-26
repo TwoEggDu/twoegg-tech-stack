@@ -1,4 +1,5 @@
 +++
+date = 2026-03-26
 title = "崩溃分析 Android 篇｜adb logcat、tombstone、llvm-addr2line 完整流程"
 description = "崩溃分析系列第 1 篇。从 adb logcat 过滤 CRASH tag 开始，到 tombstone 文件提取，到用 llvm-addr2line / ndk-stack 做符号化，再到 Firebase Crashlytics 的在线符号化，走完 Android native crash 的完整分析链路。"
 weight = 51

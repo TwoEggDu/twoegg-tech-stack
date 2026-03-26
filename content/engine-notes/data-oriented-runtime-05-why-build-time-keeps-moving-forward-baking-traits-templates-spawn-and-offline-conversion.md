@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 05｜构建期前移怎么做：Baking、Traits / Templates / Spawn、离线转换"
 description: "把 Unity DOTS、Unreal Mass 和自研 ECS 放回同一条 authoring-to-runtime 主链里，说明为什么这些系统越来越喜欢把运行时代价前移到构建期，以及这种前移到底在吃掉什么成本。"
 slug: "data-oriented-runtime-05-why-build-time-keeps-moving-forward-baking-traits-templates-spawn-and-offline-conversion"

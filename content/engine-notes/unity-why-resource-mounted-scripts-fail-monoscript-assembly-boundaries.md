@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 为什么资源挂脚本时问题特别多：脚本身份链、MonoScript 和程序集边界"
 description = "把 Unity 资源挂脚本这条最容易出事的链单独拆出来，讲清 MonoScript 怎样把资产系统接到程序集和类型身份上，以及为什么 missing script 往往不是“类没了”这么简单。"
 slug = "unity-why-resource-mounted-scripts-fail-monoscript-assembly-boundaries"

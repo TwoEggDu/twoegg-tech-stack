@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 里，这些性能问题通常怎么显形"
 description: "把 CPU、GPU、I/O、内存、同步和时机问题映射回 Unity 的现场表现，解释为什么很多问题最后会长成主线程尖峰、GC、Instantiate/Destroy、Addressables 首次卡顿和 UI 抖动。"
 slug: "game-performance-unity-symptoms"

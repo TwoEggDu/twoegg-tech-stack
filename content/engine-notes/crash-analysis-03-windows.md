@@ -1,4 +1,5 @@
 +++
+date = 2026-03-26
 title = "崩溃分析 Windows 篇｜minidump、WinDbg、PDB 完整流程"
 description = "崩溃分析系列第 3 篇。Windows native crash 的完整分析链路：Unity Editor/Player 崩溃日志的位置，minidump (.dmp) 文件的生成与读取，用 WinDbg / Visual Studio 加载 PDB 做符号化，以及 Windows Error Reporting 的崩溃收集。"
 weight = 53

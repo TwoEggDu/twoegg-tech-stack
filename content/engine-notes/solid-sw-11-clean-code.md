@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "软件工程基础 11｜Clean Code 基础：命名、函数、注释——让代码自解释"
 description: "好的代码应该像好的散文：清晰、直接、无需注解就能被理解。这篇从命名、函数设计、注释三个维度，讲游戏代码里最实用的 Clean Code 规范。"
 slug: "solid-sw-11-clean-code"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 01c｜Render Target 与帧缓冲区：GPU 把渲染结果写到哪里"
 description = "讲清楚 Color Buffer、Depth Buffer、Stencil Buffer、G-Buffer 和 MRT 各自是什么，GPU 怎么在多个 Render Target 之间切换，以及这些概念在 Frame Debugger 和 RenderDoc 里对应什么。"
 slug = "unity-rendering-01c-render-target-and-framebuffer"

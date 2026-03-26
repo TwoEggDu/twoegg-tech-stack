@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "URP 的 Shader Variant 管理：Prefiltering、Strip 设置和多 Pipeline Asset 对变体集合的影响"
 description = "把 URP 特有的变体管理机制拆成 Shader Prefiltering、Strip Unused Shader Variants、多 Pipeline Asset 与质量档，讲清 URP 项目里变体问题和通用机制的不同之处。"
 slug = "unity-urp-shader-variant-prefiltering-strip-settings"

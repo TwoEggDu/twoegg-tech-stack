@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Shader Variant 数量监控与 CI 集成：怎么把变体治理接入构建流程"
 description = "把 shader variant 数量监控拆成构建期采集、基线对比、阈值告警和 CI 集成，讲清怎样把变体治理从人工排查变成可持续运转的自动化机制。"
 slug = "unity-shader-variant-ci-monitoring"

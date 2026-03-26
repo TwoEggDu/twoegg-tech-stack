@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 01b｜Draw Call 是什么：CPU 每次向 GPU 发出什么请求"
 description = "把 Draw Call 拆成它真正包含的内容，讲清楚 CPU 和 GPU 的协作模型、批处理的三种方式和各自的条件限制，以及 Frame Debugger 里看到的每一行对应什么。"
 slug = "unity-rendering-01b-draw-call-and-batching"

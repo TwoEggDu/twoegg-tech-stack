@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 03｜Structural Change、Command Buffer 与同步点：为什么改结构总是贵"
 description: "把 Unity DOTS、Unreal Mass 和自研 ECS 放回同一条结构变化主链里，说明 structural change 真正贵在哪里，command buffer 在解决什么，以及为什么同步点只是代价的一种表现。"
 slug: "data-oriented-runtime-03-structural-change-command-buffer-and-sync-points-why-structural-mutations-are-expensive"

@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏编程设计模式 06｜State 模式 vs FSM vs 行为树：三种状态管理方式的适用边界"
 description: "从最简单的枚举状态机，到有层次结构的 FSM，到支持复杂 AI 逻辑的行为树——这三种状态管理方式解决的问题规模不同。这篇用具体案例讲清楚它们各自的实现和适用场景。"
 slug: "pattern-06-state-fsm-behavior-tree"

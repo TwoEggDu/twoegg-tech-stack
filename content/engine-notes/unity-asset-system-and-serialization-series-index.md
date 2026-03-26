@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "Unity 资产系统与序列化系列索引：从资产通识到 Scene、Prefab、Shader 与 AssetBundle"
 description = "给 Unity 资产系统与序列化系列补一个总入口：推荐阅读顺序、按问题跳转路径、按主题分组，以及 Shader、AssetBundle、脚本身份链的交叉位置。"
 slug = "unity-asset-system-and-serialization-series-index"

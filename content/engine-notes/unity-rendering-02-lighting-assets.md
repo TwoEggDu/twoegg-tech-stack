@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 02｜光照资产：实时光、Lightmap、Light Probe、Reflection Probe"
 description = "把 Unity 的四条光照路径拆开讲清楚：实时光提供直接光、Lightmap 存储烘焙间接光、Light Probe 给动态物体提供间接光、Reflection Probe 提供环境反射——以及这四条路径怎么在 Fragment Shader 里合并成最终颜色。"
 slug = "unity-rendering-02-lighting-assets"

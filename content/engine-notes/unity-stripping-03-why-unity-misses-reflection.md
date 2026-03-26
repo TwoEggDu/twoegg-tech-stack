@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 裁剪 03｜Unity 为什么有时看不懂你的反射"
 description: "从场景引用、序列化记录、持久化 UnityEvent、link.xml 和显式保留属性五条入口拆开 Unity 能自动保留什么，以及它为什么不可能理解任意运行时反射。"
 slug: "unity-stripping-03-why-unity-misses-reflection"

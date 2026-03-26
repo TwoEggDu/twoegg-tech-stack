@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unreal 里，这些性能问题通常怎么显形"
 description: "把 CPU、GPU、I/O、内存、同步和时机问题映射回 Unreal 的现场表现，解释为什么很多问题最后会长成 Game Thread、Render Thread、RHI、Asset Streaming、PSO 和对象激活链路上的尖峰。"
 slug: "game-performance-unreal-symptoms"

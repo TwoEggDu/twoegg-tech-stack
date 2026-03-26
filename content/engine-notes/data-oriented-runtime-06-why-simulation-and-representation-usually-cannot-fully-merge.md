@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 06｜表示层边界怎么切：GameObject、Actor、ISM 与 ECS 世界"
 description: "把 Unity DOTS、Unreal Mass 和自研 ECS 放回同一条 simulation-to-representation 主链里，说明为什么仿真层和表示层通常不能彻底合并，以及表示桥真正应该站在哪里。"
 slug: "data-oriented-runtime-06-why-simulation-and-representation-usually-cannot-fully-merge"

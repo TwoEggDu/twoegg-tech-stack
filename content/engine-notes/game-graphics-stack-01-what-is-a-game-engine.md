@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏图形系统 01｜游戏引擎到底在做什么，它和游戏本身是什么关系"
 description: "解释游戏引擎为什么不是素材播放器，也不是单纯渲染器，以及它和具体游戏逻辑之间的分工边界。"
 slug: "game-graphics-stack-01-what-is-a-game-engine"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "Resources、StreamingAssets、AssetBundle、Addressables 到底各自该在什么场景下用"
 description = "把 Resources、StreamingAssets、AssetBundle 和 Addressables 放回同一张资源路径决策图里，讲清它们分别适合什么内容、解决什么问题，以及哪些用法短期方便但长期会变债务。"
 slug = "unity-resources-streamingassets-assetbundle-addressables-when-to-use"

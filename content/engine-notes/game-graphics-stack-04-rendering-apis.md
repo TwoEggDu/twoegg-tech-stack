@@ -12,6 +12,7 @@ tags:
   - Vulkan
 series: "游戏图形系统"
 ---
+date: "2026-03-26"
 
 > 如果只用一句话概括这篇，我会这样说：OpenGL、Vulkan、Metal、Direct3D 不是“图像怎么形成”的原理，而是程序“怎么把图形命令交给 GPU”的接口。
 

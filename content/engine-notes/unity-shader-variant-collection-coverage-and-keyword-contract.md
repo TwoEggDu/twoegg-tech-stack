@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Shader Variant 收集的覆盖边界：静态扫描看不到什么，以及 Keyword 使用契约"
 description = "讲清楚静态收集器（材质/场景/Prefab 扫描）和运行时追踪的本质区别，哪些动态路径是静态扫描覆盖不到的，以及怎么用 Keyword 使用契约在设计阶段把这个问题消灭掉。"
 slug = "unity-shader-variant-collection-coverage-and-keyword-contract"

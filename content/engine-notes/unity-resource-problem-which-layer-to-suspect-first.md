@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "看到一个 Unity 资源问题时，先怀疑哪一层"
 description = "把 Unity 资源问题收成一张排查地图，从资产定义、引用与序列化、构建切分、交付、运行时恢复到 shader 和脚本边界，讲清不同症状更该先落在哪一层。"
 slug = "unity-resource-problem-which-layer-to-suspect-first"

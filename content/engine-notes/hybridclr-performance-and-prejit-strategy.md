@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT"
 description = "不做空泛 benchmark，而是把 HybridCLR 的成本拆成几层：首调 transform、长期解释执行、跨 ABI 调用，以及 PreJit 和运行时选项到底该怎么用。"
 weight = 38

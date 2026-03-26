@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏编程设计模式 03｜Observer / Event Bus：事件驱动解耦"
 description: "Observer 模式让系统之间通过事件通信，而不是直接调用。这篇对比 C# 委托、UnityEvent、ScriptableObject Event Channel 三种实现方式，并讲清楚 Event Bus 的适用场景与陷阱。"
 slug: "pattern-03-observer-event-bus"

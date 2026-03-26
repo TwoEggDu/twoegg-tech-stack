@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 的 Importer 到底做了什么：为什么同一份源文件，进到 Unity 后不再只是“一个文件”"
 description = "把 Unity 的 Importer 放回资产系统里来看，讲清它为什么不是编辑器细节，而是把源文件翻译成可引用对象、子资产和构建输入的关键边界。"
 slug = "unity-importer-what-does-it-do-and-why-source-file-is-not-just-a-file"

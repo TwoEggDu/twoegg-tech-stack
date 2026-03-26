@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上"
 description = "把四条路线重新压成一个选型问题：社区版主线、补充 metadata、Full Generic Sharing、DHE 分别在解决什么，什么时候该继续加码，什么时候反而该克制。"
 weight = 41

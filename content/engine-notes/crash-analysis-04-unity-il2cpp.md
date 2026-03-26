@@ -1,4 +1,5 @@
 +++
+date = 2026-03-26
 title = "崩溃分析 Unity + IL2CPP 篇｜symbols.zip、global-metadata.dat 和三平台统一视角"
 description = "崩溃分析系列第 4 篇。Unity IL2CPP 项目的崩溃分析统一视角：symbols.zip 的产出和用法，global-metadata.dat 的作用，libil2cpp.so 和 GameAssembly.dll 的崩溃模式识别，以及 HybridCLR 热更代码崩溃的定位思路。"
 weight = 54

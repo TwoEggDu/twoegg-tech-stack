@@ -1,4 +1,5 @@
 +++
+date = 2026-03-20
 title = "HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了"
 description = "不再重讲主链，而是把 HybridCLR 常见报错和现场按层拆开：装载、补充 metadata、AOT 泛型实例、MethodBridge/ReversePInvoke、资源挂载身份链分别怎么判断。"
 weight = 37

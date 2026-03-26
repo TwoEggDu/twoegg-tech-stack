@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 01｜Unity DOTS、Unreal Mass 与自研 ECS：问题空间怎么对齐"
 description: "先不做术语对译，而是把 Unity DOTS、Unreal Mass 和自研 ECS 放到同一张问题表里，说明它们分别在改什么、不改什么、代价落在哪里。"
 slug: "data-oriented-runtime-01-aligning-unity-dots-unreal-mass-and-self-built-ecs"

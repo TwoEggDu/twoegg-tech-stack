@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "为什么一个大整文件，往往比很多小散文件更稳"
 description: "从顺序读取、随机读取、元数据访问、解压、反序列化、GPU 上传和资源组织方式出发，解释为什么游戏运行时往往更怕海量小文件，而不是单纯怕大文件。"
 slug: "game-performance-big-files-vs-small-files"

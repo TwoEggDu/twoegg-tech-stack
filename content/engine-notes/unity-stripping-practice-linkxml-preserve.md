@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 裁剪实战｜什么时候用 link.xml，什么时候用 [Preserve]"
 description: "作为 Unity 裁剪系列的入口篇，先回答工程决策：player 默认会留下什么、bundle 不会自动带走什么、什么时候该用 link.xml、什么时候该用 [Preserve]。"
 slug: "unity-stripping-practice-linkxml-preserve"

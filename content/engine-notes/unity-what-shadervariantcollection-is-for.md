@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "ShaderVariantCollection 到底是干什么的：记录、预热、保留与它不负责的事"
 description = "把 ShaderVariantCollection 的用途拆成变体记录、显式清单、预热入口和治理抓手，讲清它为什么有用，以及它不该被误解成什么。"
 slug = "unity-what-shadervariantcollection-is-for"

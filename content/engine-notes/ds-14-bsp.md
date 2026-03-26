@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 14｜BSP 树：静态室内场景的可见性与碰撞"
 description: "BSP（Binary Space Partitioning）用平面递归地把空间分成两半，是 Quake / Doom 时代的核心技术，至今仍用于静态场景的预计算可见性、编译器 CSG 运算和精确碰撞检测。"
 slug: "ds-14-bsp"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "热更新场景下的 Shader 交付架构：bundle 边界、版本对齐与变体保护策略"
 description = "把热更新项目里 shader 交付的核心问题拆成 bundle 边界设计、shader bundle 独立性、版本对齐和变体保护四层，讲清楚如何避免热更内容里的 shader 变体在运行时缺失。"
 slug = "unity-shader-delivery-in-hotupdate"

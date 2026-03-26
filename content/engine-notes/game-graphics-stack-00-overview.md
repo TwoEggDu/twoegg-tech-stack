@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏图形系统 00｜总论：一帧游戏画面，到底经过了谁"
 description: "从玩家输入到屏幕显示，建立游戏引擎、渲染管线、渲染 API、操作系统、驱动和 GPU 之间的整体关系图。"
 slug: "game-graphics-stack-00-overview"

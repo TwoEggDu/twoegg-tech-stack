@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 的序列化资产怎样还原成运行时对象：从 Serialized Data 到 Native Object、Managed Binding"
 description = "把 Unity 的反序列化链拆开来看，讲清磁盘上的序列化资产为什么不是“读出来就能用”，以及它们怎样沿着对象记录、引用恢复、Native Object 创建和 Managed Binding 变成运行时对象。"
 slug = "unity-serialized-assets-how-they-restore-to-runtime-objects"

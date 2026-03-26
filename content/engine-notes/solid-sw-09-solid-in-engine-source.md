@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "软件工程基础 09｜SOLID 在引擎源码中的体现：从 Unity 和 Unreal 的架构理解这五个原则"
 description: "从真实引擎的设计决策里，看 SOLID 原则是如何在工业级代码中被应用的。理解引擎为什么这样设计，是读懂引擎源码的前提。"
 slug: "solid-sw-09-solid-in-engine-source"

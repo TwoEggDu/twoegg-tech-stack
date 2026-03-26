@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏编程设计模式 07｜Data-Oriented Design：从面向对象到面向数据"
 description: "DOD 不是替代 OOP 的新范式，而是一种针对现代 CPU 缓存架构的优化思维。这篇解释为什么 OOP 在大规模数据处理时会产生性能问题，DOD 如何从根本上解决它，以及 DOTS/ECS 为什么是这个思维的工业实现。"
 slug: "pattern-07-data-oriented-design"

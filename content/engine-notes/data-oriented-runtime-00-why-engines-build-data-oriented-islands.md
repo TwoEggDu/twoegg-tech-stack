@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 00｜总论：为什么现代引擎都在做“数据导向孤岛”"
 description: "把 Unity DOTS、Unreal Mass 和自研 ECS 放到同一张地图里，说明现代引擎为什么会把高规模仿真、调度和表示层拆成不同世界。"
 slug: "data-oriented-runtime-00-why-engines-build-data-oriented-islands"

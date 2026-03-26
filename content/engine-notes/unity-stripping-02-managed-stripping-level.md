@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 裁剪 02｜Managed Stripping Level 到底做了什么"
 description: "拆开 Disabled、Minimal、Low、Medium、High 这几个级别真正的差别，重点说明 Minimal 不是更弱的 Low，以及为什么 IL2CPP 下没有真正的 Disabled。"
 slug: "unity-stripping-02-managed-stripping-level"

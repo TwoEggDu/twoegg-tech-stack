@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来"
 description = "把 Shader Variant 问题在 AssetBundle 场景里高频暴露的原因拆成构建边界、交付边界和运行时命中边界，讲清它为什么更像放大镜，而不是问题的唯一来源。"
 slug = "unity-why-shader-variant-problems-explode-on-assetbundle"

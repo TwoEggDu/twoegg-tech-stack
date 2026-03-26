@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 04｜渲染排序与 Z-order：DrawCall 合批、透明物体、2D 层级"
 description: "渲染排序是游戏里最高频的排序场景，直接影响 DrawCall 数量、透明效果正确性和 2D 层级显示。这篇讲清楚不透明/透明物体的排序策略、Unity 的渲染队列设计，以及 2D 游戏的 Z-order 管理。"
 slug: "ds-04-render-sorting"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-20
 title = "HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute"
 description = "沿着 RuntimeApi -> metadata -> transform -> execute 的真实调用链，拆解 HybridCLR 在 IL2CPP 上如何把热更新代码跑起来。"
 weight = 30

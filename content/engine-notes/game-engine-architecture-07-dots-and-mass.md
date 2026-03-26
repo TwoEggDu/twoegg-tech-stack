@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 07｜为什么 DOTS 和 Mass 不能只算“一个模块”"
 description: "基于 Unity 与 Unreal 官方资料，把 DOTS 与 Mass 收回到数据导向扩展层，解释它们为什么不是普通功能包或插件。"
 slug: "game-engine-architecture-07-dots-and-mass"

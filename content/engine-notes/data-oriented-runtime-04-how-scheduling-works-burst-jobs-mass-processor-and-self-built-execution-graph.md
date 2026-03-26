@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 04｜调度怎么做：Burst/Jobs、Mass Processor、自己手搓执行图"
 description: "把 Unity DOTS、Unreal Mass 和自研 ECS 放回同一条执行主链里，说明 system、processor、query、job、compiler 分别在解决什么问题，以及为什么数据连续还不够，最后还是会走到显式调度。"
 slug: "data-oriented-runtime-04-how-scheduling-works-burst-jobs-mass-processor-and-self-built-execution-graph"

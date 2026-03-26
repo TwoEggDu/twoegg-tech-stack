@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 12｜BVH：层次包围体树，光线追踪与碰撞检测的基础"
 description: "BVH（Bounding Volume Hierarchy）是一种自底向上构建的树形空间结构，能适应物体分布不均匀的场景。是现代光线追踪、物理引擎碰撞宽相和 GPU 加速渲染的核心数据结构。"
 slug: "ds-12-bvh"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载"
 description = "把 Unity 资源系统的验证体系拆成构建校验、入口实例化、Shader 首载、缓存复用和回滚快照回归，讲清项目里怎样用一套最低可落地的烟测和回归防线挡住高频资源事故。"
 slug = "unity-resource-system-smoketests-and-regression"

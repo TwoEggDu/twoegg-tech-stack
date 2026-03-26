@@ -1,4 +1,5 @@
 +++
+date = 2026-03-26
 title = "HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么"
 description = "从 Settings、Installer、Generate/All 到 BuildProcessors，拆解 HybridCLR 的 build-time 工具链到底生成了什么、被谁消费、少了会怎样。"
 weight = 32

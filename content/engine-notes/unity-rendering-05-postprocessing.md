@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 05｜后处理：Volume 系统与全屏 Pass 的工作机制"
 description = "讲清楚 URP 后处理的 Volume 覆盖机制、全屏 Pass 对帧缓冲区的操作原理，以及 Bloom、Tonemapping、SSAO、Depth of Field 各自在像素级别做了什么。"
 slug = "unity-rendering-05-postprocessing"

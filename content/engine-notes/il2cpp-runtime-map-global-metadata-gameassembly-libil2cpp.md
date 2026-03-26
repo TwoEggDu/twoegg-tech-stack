@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么"
 description: "把 IL2CPP 先还原成三样具体产物：global-metadata.dat、GameAssembly 和 libil2cpp。解释 metadata 文件到底存了什么、不存什么，runtime 怎么靠 metadata 和 native method pointer 把一个托管方法接成可运行代码，以及这套结构为什么会直接影响 stripping、AOT 泛型和 HybridCLR。"
 slug: "il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp"

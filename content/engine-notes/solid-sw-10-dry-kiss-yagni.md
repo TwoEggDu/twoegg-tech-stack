@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "软件工程基础 10｜DRY / KISS / YAGNI：与 SOLID 互补的三条辅助原则"
 description: "DRY（不重复）、KISS（保持简单）、YAGNI（不需要的东西不要加）是 SOLID 的重要补充。它们防止两个相反方向的错误：代码重复，以及过度设计。"
 slug: "solid-sw-10-dry-kiss-yagni"

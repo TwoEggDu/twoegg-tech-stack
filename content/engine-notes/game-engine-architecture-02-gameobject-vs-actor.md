@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 02｜Unity 的 GameObject 和 Unreal 的 Actor，到底差在哪"
 description: "基于 Unity 与 Unreal 官方资料，先把两台引擎默认的对象世界组织方式拆开，再解释为什么 GameObject 和 Actor 不是表面上的名词换皮。"
 slug: "game-engine-architecture-02-gameobject-vs-actor"

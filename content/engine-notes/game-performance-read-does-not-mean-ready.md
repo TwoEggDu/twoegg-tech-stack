@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "读盘完成，为什么还是不等于资源可用"
 description: "从文件读取、解压、反序列化、依赖解析、运行时对象创建到 GPU 上传，解释为什么加载问题不能只看磁盘速度，以及为什么很多卡顿其实发生在读盘之后。"
 slug: "game-performance-read-does-not-mean-ready"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity Shader Variant 实操：怎么知道项目用了哪些、运行时缺了哪些、以及怎么剔除不需要的"
 description = "一篇偏实操的 Shader Variant 治理稿：从构建记录、运行时定位到 stripping 和 SVC 清理，给出一套可以直接在项目里落地的排查顺序。"
 slug = "unity-shader-variants-how-to-find-missing-and-strip"

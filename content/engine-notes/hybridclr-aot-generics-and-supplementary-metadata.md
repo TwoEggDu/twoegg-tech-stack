@@ -1,4 +1,5 @@
 +++
+date = 2026-03-26
 title = "HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑"
 description = "从 AOT 泛型缺口、补充 metadata、Consistent/SuperSet 映射，到 AOTGenericReference 和 MethodBridge，拆解 HybridCLR 在泛型问题上到底补了什么、没补什么。"
 weight = 31

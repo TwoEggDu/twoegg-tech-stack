@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏编程设计模式 05｜Service Locator 与依赖注入：全局服务访问的两种策略"
 description: "游戏里有些服务需要全局访问（音效、存档、日志）。Service Locator 和依赖注入是两种解决这个问题的方式，各有取舍。这篇对比它们的实现、优缺点，以及在 Unity 项目里的选择策略。"
 slug: "pattern-05-service-locator-di"

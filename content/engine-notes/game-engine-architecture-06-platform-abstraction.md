@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 06｜跨平台引擎到底在抽象什么？"
 description: "基于 Unity 与 Unreal 官方资料，把 graphics APIs、条件编译、平台设置、RHI、target platform 与 build configuration 收回同一层平台抽象层。"
 slug: "game-engine-architecture-06-platform-abstraction"

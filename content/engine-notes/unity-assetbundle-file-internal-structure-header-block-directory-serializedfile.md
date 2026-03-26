@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的"
 description = "从 Unity 官方的 Archive 与 AssetBundle file format reference 出发，按 Header、Block、Directory 和 SerializedFile 四层解释 AssetBundle 内部结构，以及它为什么会影响加载、压缩和随机访问。"
 slug = "unity-assetbundle-file-internal-structure-header-block-directory-serializedfile"

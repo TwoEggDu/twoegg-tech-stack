@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "怎么看 Unity 资源构建产物：Manifest、BuildLayout、Catalog 和缓存目录到底在告诉你什么"
 description = "把 Unity 资源构建后的 Manifest、BuildLayout、Catalog 和缓存目录放回同一张观测地图，讲清它们分别在记录什么，以及遇到重复资源、依赖爆炸、缓存失效时该先看哪一份证据。"
 slug = "unity-how-to-read-resource-build-artifacts-manifest-buildlayout-catalog-cache"

@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity Shader Variants 为什么会存在，以及它为什么总让项目变复杂"
 description = "解释 Unity 为什么引入 Shader Variants、它带来的工程问题，以及 Unreal 在 Shader Permutations 上的对应做法。"
 slug = "unity-shader-variants"

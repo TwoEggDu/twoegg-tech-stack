@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "Addressables 和 AssetBundle 到底是什么关系：谁是底层格式，谁是调度和管理层"
 description = "把 Addressables 和 AssetBundle 的关系拆成构建层、运行时层和治理层，讲清为什么它们不是简单替代关系，而是不同层级的资源交付系统。"
 slug = "unity-addressables-and-assetbundle-format-vs-management-layer"

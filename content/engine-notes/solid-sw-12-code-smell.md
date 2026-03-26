@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "软件工程基础 12｜Code Smell 识别：危险信号的诊断"
 description: "Code Smell 是代码里预示深层问题的表面症状。这篇讲游戏项目中最常见的 10 种 Code Smell，它们对应什么 SOLID 违反，以及如何快速识别。"
 slug: "solid-sw-12-code-smell"

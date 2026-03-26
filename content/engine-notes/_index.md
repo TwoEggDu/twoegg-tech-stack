@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Engine Notes"
 description = "记录对 Unity / Unreal、渲染链路、构建系统和引擎边界的理解。"
 hero_title = "理解引擎边界，比会调几个 API 更值钱。"

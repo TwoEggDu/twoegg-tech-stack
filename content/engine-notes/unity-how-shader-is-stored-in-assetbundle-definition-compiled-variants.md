@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界"
 description = "把 Shader 在 AssetBundle 里的问题拆成资源定义层、编译产物层和运行时命中层，讲清 Material、ShaderVariantCollection 和变体边界到底各自站在哪。"
 slug = "unity-how-shader-is-stored-in-assetbundle-definition-compiled-variants"

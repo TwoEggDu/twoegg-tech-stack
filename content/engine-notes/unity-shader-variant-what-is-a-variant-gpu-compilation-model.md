@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity Shader Variant 是什么：GPU 程序的编译模型"
 description = "从 GPU 不能高效做运行时分支讲起，解释 multi_compile 为什么产生笛卡尔积、每个变体是什么、以及 EnableKeyword 在运行时切换的究竟是什么。"
 slug = "unity-shader-variant-gpu-compilation-model"

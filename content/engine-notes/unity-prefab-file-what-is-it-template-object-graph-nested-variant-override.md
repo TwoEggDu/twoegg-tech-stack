@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 的 Prefab 文件本质上是什么：模板对象图、嵌套、Variant 和 Override 分别站在哪"
 description = "把 Prefab 从“可复用 GameObject 文件”这种过粗理解里拆出来，讲清它为什么本质上是模板对象图，以及 Nested Prefab、Variant、Override 各自站在哪层。"
 slug = "unity-prefab-file-what-is-it-template-object-graph-nested-variant-override"

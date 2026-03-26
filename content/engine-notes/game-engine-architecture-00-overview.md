@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 00｜总论：现代游戏引擎到底该怎么分层"
 description: "基于 Unity 与 Unreal 官方资料，先建立内容生产、世界模型、运行时底座、专业子系统、资产与发布、数据导向扩展这六层总地图。"
 slug: "game-engine-architecture-00-overview"

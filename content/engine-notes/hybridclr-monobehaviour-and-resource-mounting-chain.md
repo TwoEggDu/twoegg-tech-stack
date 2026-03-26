@@ -1,4 +1,5 @@
 +++
+date = 2026-03-20
 title = "HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化"
 description = "从 ScriptingAssemblies.json、placeholder assembly 到真实热更 DLL 覆盖 placeholder，拆解 HybridCLR 为什么能让资源上挂着的热更 MonoBehaviour 正确实例化。"
 weight = 33

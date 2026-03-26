@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "Unity 裁剪 01｜Unity 的裁剪到底分几层"
 description: "先把 Unity 里常说的 strip 拆成三层：managed stripping、Strip Engine Code 和 native symbol strip，避免把完全不同的问题混成一个词。"
 slug: "unity-stripping-01-what-gets-stripped"

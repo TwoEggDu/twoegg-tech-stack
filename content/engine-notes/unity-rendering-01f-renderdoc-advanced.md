@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 01f｜RenderDoc 进阶：顶点数据、贴图采样、Pipeline State 调试"
 description = "深入讲解 RenderDoc 的 Mesh Viewer、Texture Viewer 高级功能和 Pipeline State 各项参数，覆盖顶点缓冲验证、mip 采样检查、Blend/Depth/Stencil State 读法，以及 Shader Debugger 逐像素追踪的基本用法。"
 slug = "unity-rendering-01f-renderdoc-advanced"

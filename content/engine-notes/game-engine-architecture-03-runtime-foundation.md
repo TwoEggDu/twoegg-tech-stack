@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 03｜脚本、反射、GC、任务系统，到底站在引擎的哪一层"
 description: "基于 Unity 与 Unreal 官方资料，把脚本后端、对象元信息、GC 和任务调度收回同一层运行时底座，而不是把它们写成一排平铺功能。"
 slug: "game-engine-architecture-03-runtime-foundation"

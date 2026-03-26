@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 20｜程序化噪声：Perlin、Simplex、Worley 与游戏生成"
 description: "程序化生成的核心是噪声函数——它把坐标映射为连续的随机值，生成地形、云彩、纹理、动画抖动。这篇讲清楚三种主流噪声（Perlin、Simplex、Worley）的原理、分形叠加（fBM）、以及在地形生成和程序化纹理中的具体用法。"
 slug: "ds-20-procedural-noise"

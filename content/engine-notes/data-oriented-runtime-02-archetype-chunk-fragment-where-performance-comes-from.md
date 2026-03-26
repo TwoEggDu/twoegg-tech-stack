@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据导向运行时 02｜Archetype、Chunk、Fragment：性能到底建在什么地方"
 description: "把 Unity DOTS、Unreal Mass 和自研 ECS 放回同一条存储主链里，说明 archetype、chunk、fragment、query cache 分别在解决什么问题，以及性能为什么不是凭空来的。"
 slug: "data-oriented-runtime-02-archetype-chunk-fragment-where-performance-comes-from"

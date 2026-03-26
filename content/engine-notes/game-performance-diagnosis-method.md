@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法"
 description: "给游戏开发的性能诊断长文：从稳定瓶颈、偶发尖峰、首次命中、工作集波动和平台预算收缩出发，建立一套定位 CPU bound、GPU bound、I/O bound、memory bound、sync bound、thermal / power bound 的判断方法。"
 slug: "game-performance-diagnosis-method"

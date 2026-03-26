@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Unity 渲染系统 00｜游戏里有哪些渲染资产，它们各自在管线哪个阶段介入"
 description = "以一帧画面为主线，把 Unity 里所有参与渲染的资产类型串起来，讲清楚每类资产是什么数据、在管线哪个阶段被消费、对最终像素起什么作用。"
 slug = "unity-rendering-00-asset-overview"

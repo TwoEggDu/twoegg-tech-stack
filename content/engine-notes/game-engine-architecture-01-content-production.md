@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "游戏引擎架构地图 01｜为什么游戏引擎首先是一套内容生产工具"
 description: "基于 Unity 与 Unreal 官方资料，把编辑器工作台、可复用对象单位和项目级扩展入口收回同一层内容生产层，而不是把引擎压成纯运行时库。"
 slug: "game-engine-architecture-01-content-production"

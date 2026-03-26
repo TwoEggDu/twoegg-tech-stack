@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "手机和 PC 为什么要用不同的性能直觉"
 description: "从功耗、温度、CPU/GPU 预算、内存工作集、存储路径、操作系统生命周期和用户环境差异出发，解释为什么同样的游戏性能问题，在手机和 PC 上往往不是同一种病。"
 slug: "game-performance-mobile-vs-pc-intuition"

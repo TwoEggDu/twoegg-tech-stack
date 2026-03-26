@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "为什么 Shader 加到 Always Included 就好了：它和放进 AssetBundle 到底差在哪"
 description = "把 Always Included Shaders 和 AssetBundle 自带 shader 的区别拆成 Player 全局内置、bundle 引用、平台相关代码和 variant 边界，讲清它为什么看起来像一键修复。"
 slug = "unity-why-always-included-shaders-fixes-assetbundle-problems"

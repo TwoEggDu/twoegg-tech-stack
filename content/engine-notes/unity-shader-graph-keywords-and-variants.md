@@ -1,4 +1,5 @@
 +++
+date = 2026-03-24
 title = "Shader Graph 的 Keyword 节点与变体：Boolean、Enum 和 _local 在 Shader Graph 里怎么用"
 description = "把 Shader Graph 的 Boolean Keyword、Enum Keyword 节点与 multi_compile、shader_feature 的对应关系讲清楚，说明 Shader Graph 项目里 keyword 设计错误是怎么导致变体爆炸的。"
 slug = "unity-shader-graph-keywords-and-variants"

@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 17｜LRU Cache：资源流式加载与内存管理"
 description: "LRU（Least Recently Used）缓存淘汰策略用于：有限内存里保留最近用到的资源，丢弃最久未使用的。游戏里的贴图流式加载、Chunk 缓存、UI 资源管理都是 LRU 的经典场景。实现上哈希表 + 双向链表 = O(1) 全操作。"
 slug: "ds-17-lru-cache"

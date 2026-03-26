@@ -1,4 +1,5 @@
 +++
+date = 2026-03-23
 title = "Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么"
 description = "从构建期视角拆开 Unity 的 AssetBundle 生成链，讲清输入边界怎么定义、依赖怎么收集、Manifest 在解决什么问题，以及最终 bundle 文件里大致装了什么。"
 slug = "unity-how-assets-become-assetbundles-dependencies-manifest-compression"

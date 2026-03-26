@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "数据结构与算法 21｜GC 通用原理与各平台实现横评：Java、.NET、iOS、Unreal"
 description: "垃圾回收是每个游戏开发者都会遇到的性能瓶颈，但很少人真正理解它。这篇讲清楚 GC 的核心算法原理，然后横向对比 Android/Java ART、.NET/Unity、iOS/Swift ARC、Unreal 自实现 GC 四条路线的设计取舍，建立全局认知框架。"
 slug: "ds-21-gc-overview"

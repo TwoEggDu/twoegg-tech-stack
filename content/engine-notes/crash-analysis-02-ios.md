@@ -1,4 +1,5 @@
 +++
+date = 2026-03-26
 title = "崩溃分析 iOS 篇｜.dSYM、atos、symbolicatecrash 完整流程"
 description = "崩溃分析系列第 2 篇。iOS native crash 的完整分析链路：从 Xcode Organizer 和 TestFlight 拿到崩溃报告，用 atos / symbolicatecrash 做符号化，处理 Unity IL2CPP 的 dSYM 特殊情况，以及 dSYM 和 crash report 的 UUID 匹配问题。"
 weight = 52

@@ -1,4 +1,5 @@
 ---
+date: "2026-03-26"
 title: "一帧到底是怎么完成的：游戏里一个 Frame 到底在做什么"
 description: "从输入、主线程、任务系统、资源准备、渲染提交、GPU 执行到 Present，解释游戏里一帧真正经过的链路，以及卡顿最容易发生在哪些环节。"
 slug: "game-performance-frame-breakdown"

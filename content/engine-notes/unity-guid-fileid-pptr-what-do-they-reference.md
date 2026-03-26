@@ -1,4 +1,5 @@
 +++
+date = 2026-03-21
 title = "Unity 的 GUID、fileID、PPtr 到底在引用什么：为什么资源引用不是文件路径"
 description = "把 Unity 的资源引用拆成 GUID、fileID、PPtr 三层，讲清它为什么不靠文件路径维持引用，以及引用丢失时到底是哪条身份链断了。"
 slug = "unity-guid-fileid-pptr-what-do-they-reference"
