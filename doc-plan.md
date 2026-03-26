@@ -1045,6 +1045,23 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | HCLR-11 | HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了 |
 | HCLR-12 | HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断 |
 | HCLR-13 | HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事 |
+| HCLR-14 | HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析 |
+
+---
+
+---
+
+## 崩溃分析系列（5 篇）
+
+*从操作系统信号到三平台符号化工具，帮助 Unity / 游戏客户端开发者建立 native crash 分析能力。*
+
+| 编号 | 标题 |
+|------|------|
+| Crash-00 | 崩溃分析基础｜信号、异常、托管与 native，先把概念底座立住 |
+| Crash-01 | 崩溃分析 Android 篇｜adb logcat、tombstone、llvm-addr2line 完整流程 |
+| Crash-02 | 崩溃分析 iOS 篇｜.dSYM、atos、symbolicatecrash 完整流程 |
+| Crash-03 | 崩溃分析 Windows 篇｜minidump、WinDbg、PDB 完整流程 |
+| Crash-04 | 崩溃分析 Unity + IL2CPP 篇｜symbols.zip、global-metadata.dat 和三平台统一视角 |
 
 ---
 
@@ -1209,14 +1226,15 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十八（DOTS）| 5 |
 | 系列十八·B（数据导向运行时深度）| 7 |
 | 系列十九（插件框架）| 5 |
-| 系列十九·B（HybridCLR 热更新深度）| 13 |
+| 系列十九·B（HybridCLR 热更新深度）| 14 |
+| 崩溃分析系列 | 5 |
 | 系列二十一（质量保证体系）| 14 |
 | 系列二十二（DLSS 进化论）| 8 |
 | 独立专题文章 | 5 |
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
-| **合计** | **约 534 篇（不含系列二十）** |
+| **合计** | **约 553 篇（不含系列二十）** |
 
 ---
 
-*最后更新：2026-03-25（v15）*
+*最后更新：2026-03-26（v16）*
