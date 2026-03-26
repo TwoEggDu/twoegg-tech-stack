@@ -1046,6 +1046,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | HCLR-12 | HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断 |
 | HCLR-13 | HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事 |
 | HCLR-14 | HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析 |
+| HCLR-15 | HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次 |
 
 ---
 
@@ -1226,15 +1227,15 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十八（DOTS）| 5 |
 | 系列十八·B（数据导向运行时深度）| 7 |
 | 系列十九（插件框架）| 5 |
-| 系列十九·B（HybridCLR 热更新深度）| 14 |
+| 系列十九·B（HybridCLR 热更新深度）| 15 |
 | 崩溃分析系列 | 5 |
 | 系列二十一（质量保证体系）| 14 |
 | 系列二十二（DLSS 进化论）| 8 |
 | 独立专题文章 | 5 |
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
-| **合计** | **约 553 篇（不含系列二十）** |
+| **合计** | **约 554 篇（不含系列二十）** |
 
 ---
 
-*最后更新：2026-03-26（v16）*
+*最后更新：2026-03-26（v17）*
