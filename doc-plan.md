@@ -1,4 +1,4 @@
-# 游戏开发全栈知识体系 v13
+# 游戏开发全栈知识体系 v18
 
 > 目标读者：有 Unity 开发经验的开发者。
 > 终极目标：能读懂 Unity / Unreal 源码，具备自研游戏引擎和游戏后端的基础。
@@ -1234,6 +1234,27 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
 | **合计** | **约 555 篇（不含系列二十）** |
+
+---
+
+## 待完成的补充与修订
+
+*已写文章中需要补充或修订的部分，按优先级排列。*
+
+### 高优先级
+
+| 文件 | 待完成内容 |
+|------|-----------|
+| `hybridclr-aot-generics-and-supplementary-metadata.md` | 更新末尾"把这件事压成一句话"结论，纳入 `IlCppFullySharedGenericAny` fallback 路径 |
+| `hybridclr-toolchain-what-generate-buttons-do.md` | 更新"常见误解 误解五"表述，补充缺失时的具体崩溃表现（`NotSupportedException` vs SIGSEGV） |
+| `hybridclr-crash-analysis.md` | 模式 4（metadata 版本不匹配）扩充崩溃特征描述，添加指向 `il2cpp-global-metadata-deep-dive.md` 的链接 |
+| `hybridclr-series-index.md` | 新增 HCLR-14（案例诊断）、HCLR-15（崩溃定位专题）条目 |
+
+### 低优先级
+
+| 文件 | 待完成内容 |
+|------|-----------|
+| `il2cpp-global-metadata-deep-dive.md` | 考虑归入"IL2CPP 运行时"子系列（如未来该系列成立） |
 
 ---
 
