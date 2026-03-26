@@ -1,15 +1,18 @@
-+++
-title = "HDRP 的定位与取舍"
-slug = "unity-rendering-11-hdrp-positioning"
-date = 2025-01-26
-description = "HDRP 和 URP 在核心架构上的本质差异：Deferred-first 光照、物理正确的 Lit Shader、更完整的 Volume 系统，以及它适合什么项目、不适合什么项目。"
-[taxonomies]
-tags = ["Unity", "HDRP", "URP", "渲染管线", "Deferred", "PBR"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 1400
-+++
-
+---
+title: "HDRP 的定位与取舍"
+slug: "unity-rendering-11-hdrp-positioning"
+date: "2025-01-26"
+description: "HDRP 和 URP 在核心架构上的本质差异：Deferred-first 光照、物理正确的 Lit Shader、更完整的 Volume 系统，以及它适合什么项目、不适合什么项目。"
+tags:
+  - "Unity"
+  - "HDRP"
+  - "URP"
+  - "渲染管线"
+  - "Deferred"
+  - "PBR"
+series: "Unity 渲染系统"
+weight: 1400
+---
 如果只用一句话概括这篇：HDRP 是 Unity 在 SRP 上构建的高端渲染管线，它用更复杂的架构换取更高保真度的视觉效果——适合 PC/主机高画质项目，不适合移动端，也不适合对渲染管线有深度自定义需求的项目。
 
 ---

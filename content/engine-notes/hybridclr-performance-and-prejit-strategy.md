@@ -1,13 +1,17 @@
-+++
-date = 2026-03-23
-title = "HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT"
-description = "不做空泛 benchmark，而是把 HybridCLR 的成本拆成几层：首调 transform、长期解释执行、跨 ABI 调用，以及 PreJit 和运行时选项到底该怎么用。"
-weight = 38
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Performance", "Runtime"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-23"
+title: "HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT"
+description: "不做空泛 benchmark，而是把 HybridCLR 的成本拆成几层：首调 transform、长期解释执行、跨 ABI 调用，以及 PreJit 和运行时选项到底该怎么用。"
+weight: 38
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Performance"
+  - "Runtime"
+series: "HybridCLR"
+---
 > HybridCLR 的性能问题，最容易被一句“解释器比 AOT 慢”带过去；但真正能指导工程决策的，不是这句大而化之的判断，而是先分清你现在付出的成本，到底来自首调 transform、长期解释执行，还是跨 ABI 边界。
 
 这是 HybridCLR 系列第 9 篇。  

@@ -1,15 +1,17 @@
-+++
-title = "URP 架构详解：从 Asset 到 RenderPass 的层级结构"
-slug = "unity-rendering-09-urp-architecture"
-date = 2025-01-26
-description = "URP 如何把 SRP 的三层抽象落地为具体的四层层级（Asset → Renderer → RendererFeature → RenderPass），以及 URP 默认 Pass 顺序的每一步在做什么。"
-[taxonomies]
-tags = ["Unity", "URP", "渲染管线", "RendererFeature", "RenderPass"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 1200
-+++
-
+---
+title: "URP 架构详解：从 Asset 到 RenderPass 的层级结构"
+slug: "unity-rendering-09-urp-architecture"
+date: "2025-01-26"
+description: "URP 如何把 SRP 的三层抽象落地为具体的四层层级（Asset → Renderer → RendererFeature → RenderPass），以及 URP 默认 Pass 顺序的每一步在做什么。"
+tags:
+  - "Unity"
+  - "URP"
+  - "渲染管线"
+  - "RendererFeature"
+  - "RenderPass"
+series: "Unity 渲染系统"
+weight: 1200
+---
 如果只用一句话概括这篇：URP 是 SRP 的一个官方实现，它在 SRP 的三层抽象之上加了 Renderer 和 RendererFeature 两个层，让开发者可以在不碰管线主干代码的情况下，以"插件"方式插入自定义渲染逻辑。
 
 ---

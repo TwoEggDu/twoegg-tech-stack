@@ -1,14 +1,19 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 01d｜Frame Debugger 使用指南：逐 Draw Call 分析一帧画面"
-description = "系统讲解 Unity Frame Debugger 的界面和用法，包括如何读懂 URP 的 Pass 顺序、检查材质参数和 Shader Keyword、定位批处理失效原因，以及常见渲染问题的定位流程。"
-slug = "unity-rendering-01d-frame-debugger"
-weight = 350
-featured = false
-tags = ["Unity", "Rendering", "FrameDebugger", "Debugging", "URP", "DrawCall"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 01d｜Frame Debugger 使用指南：逐 Draw Call 分析一帧画面"
+description: "系统讲解 Unity Frame Debugger 的界面和用法，包括如何读懂 URP 的 Pass 顺序、检查材质参数和 Shader Keyword、定位批处理失效原因，以及常见渲染问题的定位流程。"
+slug: "unity-rendering-01d-frame-debugger"
+weight: 350
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "FrameDebugger"
+  - "Debugging"
+  - "URP"
+  - "DrawCall"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：Frame Debugger 是 Unity 内置的"渲染回放器"，它把一帧画面里发生的每一次 Draw Call 和 Pass 切换都记录下来，让你能暂停在任意时刻，检查当时的材质参数、渲染目标和批处理状态。
 
 前两篇把 Draw Call 和 Render Target 的概念讲清了。这篇用 Frame Debugger 把它们"看见"。

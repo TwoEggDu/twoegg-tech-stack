@@ -1,11 +1,16 @@
-+++
-title = "HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景"
-date = "2026-03-26"
-series = ["HybridCLR"]
-tags = ["HybridCLR", "CI/CD", "Android", "IL2CPP", "Build Pipeline"]
-weight = 45
-+++
-
+---
+title: "HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景"
+date: "2026-03-26"
+series:
+  - "HybridCLR"
+tags:
+  - "HybridCLR"
+  - "CI/CD"
+  - "Android"
+  - "IL2CPP"
+  - "Build Pipeline"
+weight: 45
+---
 在 Unity Editor 里手动点 `HybridCLR/Generate/All` 是开发期的操作，**CI 打包流程里必须显式调用它，而且必须确保 Development 标志与最终构建完全一致。** 这两件事做不到，补充元数据就会失效，热更代码里的 async/await 就可能在真机上崩溃——即使在编辑器里跑完全正常。
 
 这篇讲清楚三件事：为什么 GenerateAll 要进流程、Development 标志为什么会错、Launcher-only 场景优化是什么。

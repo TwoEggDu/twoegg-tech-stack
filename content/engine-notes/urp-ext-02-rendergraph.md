@@ -1,15 +1,18 @@
-+++
-title = "URP 深度扩展 02｜RenderGraph 实战：Unity 6 的新写法"
-slug = "urp-ext-02-rendergraph"
-date = 2026-03-25
-description = "Unity 6（URP 17）将 RenderGraph 设为默认渲染路径，推荐写法从 Execute() 改为 RecordRenderGraph()。本篇讲清楚为什么要换、新写法的核心概念（TextureHandle、ImportResource、UseTexture）、和旧写法的对比迁移，以及 RenderGraph Viewer 的调试方法。"
-[taxonomies]
-tags = ["Unity", "URP", "RenderGraph", "Unity 6", "Renderer Feature", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1540
-+++
-
+---
+title: "URP 深度扩展 02｜RenderGraph 实战：Unity 6 的新写法"
+slug: "urp-ext-02-rendergraph"
+date: "2026-03-25"
+description: "Unity 6（URP 17）将 RenderGraph 设为默认渲染路径，推荐写法从 Execute() 改为 RecordRenderGraph()。本篇讲清楚为什么要换、新写法的核心概念（TextureHandle、ImportResource、UseTexture）、和旧写法的对比迁移，以及 RenderGraph Viewer 的调试方法。"
+tags:
+  - "Unity"
+  - "URP"
+  - "RenderGraph"
+  - "Unity 6"
+  - "Renderer Feature"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1540
+---
 > 版本说明：本篇针对 Unity 6（URP 17）的 RenderGraph API。Unity 2022.3 LTS 的写法见 URP扩展-01。两套 API 可以共存，但 Unity 6 中用旧写法会走 UnsafePass 包装，有警告且无法享受 RenderGraph 的自动优化。
 
 ---

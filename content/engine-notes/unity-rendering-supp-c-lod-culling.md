@@ -1,15 +1,18 @@
-+++
-title = "Unity 渲染系统补C｜LOD 与 Culling 系统：Frustum、Occlusion、HZB"
-slug = "unity-rendering-supp-c-lod-culling"
-date = 2026-03-26
-description = "LOD 减少远处物体的面数，Culling 直接跳过不可见物体。这两个系统是 CPU 端渲染性能的核心。讲清 LOD Group 工作原理、Frustum Culling 的实现、Occlusion Culling 的烘焙与运行时机制，以及 HZB（Hierarchical Z-Buffer）的 GPU 端剔除思路。"
-weight = 1520
-[taxonomies]
-tags = ["Unity", "Rendering", "LOD", "Culling", "性能优化", "HZB"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补C｜LOD 与 Culling 系统：Frustum、Occlusion、HZB"
+slug: "unity-rendering-supp-c-lod-culling"
+date: "2026-03-26"
+description: "LOD 减少远处物体的面数，Culling 直接跳过不可见物体。这两个系统是 CPU 端渲染性能的核心。讲清 LOD Group 工作原理、Frustum Culling 的实现、Occlusion Culling 的烘焙与运行时机制，以及 HZB（Hierarchical Z-Buffer）的 GPU 端剔除思路。"
+weight: 1520
+tags:
+  - "Unity"
+  - "Rendering"
+  - "LOD"
+  - "Culling"
+  - "性能优化"
+  - "HZB"
+series: "Unity 渲染系统"
+---
 渲染性能的第一道防线不是在 GPU 上优化 Shader，而是在 CPU 上决定哪些物体根本不需要提交。LOD（Level of Detail）和 Culling 两个系统协同工作：LOD 降低远处物体的几何复杂度，Culling 直接把不可见物体从渲染列表中剔除。一个场景里哪怕有数千个物体，真正每帧需要 GPU 处理的往往只有其中的一小部分。
 
 ---

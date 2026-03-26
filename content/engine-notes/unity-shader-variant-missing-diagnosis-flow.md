@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity Shader Variant 缺失事故排查流程：从现象到根因的三层定位法"
-description = "把 shader variant 缺失问题的排查分成现象分流、构建期定位（从未枚举 vs 被 strip）、运行时定位三层，给出可复用的决策树和每层具体的排查手段。"
-slug = "unity-shader-variant-missing-diagnosis-flow"
-weight = 130
-featured = false
-tags = ["Unity", "Shader", "Build", "AssetBundle", "Debugging"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Unity Shader Variant 缺失事故排查流程：从现象到根因的三层定位法"
+description: "把 shader variant 缺失问题的排查分成现象分流、构建期定位（从未枚举 vs 被 strip）、运行时定位三层，给出可复用的决策树和每层具体的排查手段。"
+slug: "unity-shader-variant-missing-diagnosis-flow"
+weight: 130
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "Build"
+  - "AssetBundle"
+  - "Debugging"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 包里缺了 shader variant，是一个很常见但很难快速定位的问题。
 
 原因是它的表面现象都长得很像：

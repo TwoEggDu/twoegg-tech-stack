@@ -1,15 +1,20 @@
-+++
-title = "Shader 核心技法 11｜自发光与 Bloom 联动：HDR 颜色驱动光晕"
-slug = "shader-technique-11-emission-bloom"
-date = 2026-03-26
-description = "自发光（Emission）的颜色值超过 1 时，Post Processing 的 Bloom 会拾取它产生光晕效果。理解 HDR 颜色、Bloom 的工作原理，以及如何用动画驱动自发光强度做出脉冲发光效果。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "自发光", "Emission", "Bloom", "HDR"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4270
-+++
-
+---
+title: "Shader 核心技法 11｜自发光与 Bloom 联动：HDR 颜色驱动光晕"
+slug: "shader-technique-11-emission-bloom"
+date: "2026-03-26"
+description: "自发光（Emission）的颜色值超过 1 时，Post Processing 的 Bloom 会拾取它产生光晕效果。理解 HDR 颜色、Bloom 的工作原理，以及如何用动画驱动自发光强度做出脉冲发光效果。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "自发光"
+  - "Emission"
+  - "Bloom"
+  - "HDR"
+series: "Shader 手写技法"
+weight: 4270
+---
 游戏里发光的符文、能量球、霓虹灯——它们的光晕效果（Bloom）不是 Shader 直接画出来的，而是 Shader 输出超过 1 的 HDR 颜色，由后处理的 Bloom pass 自动产生。理解这条流程，才能精确控制发光效果。
 
 ---

@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界"
-description = "把 Shader 在 AssetBundle 里的问题拆成资源定义层、编译产物层和运行时命中层，讲清 Material、ShaderVariantCollection 和变体边界到底各自站在哪。"
-slug = "unity-how-shader-is-stored-in-assetbundle-definition-compiled-variants"
-weight = 40
-featured = false
-tags = ["Unity", "Shader", "AssetBundle", "Variant", "Rendering"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界"
+description: "把 Shader 在 AssetBundle 里的问题拆成资源定义层、编译产物层和运行时命中层，讲清 Material、ShaderVariantCollection 和变体边界到底各自站在哪。"
+slug: "unity-how-shader-is-stored-in-assetbundle-definition-compiled-variants"
+weight: 40
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "AssetBundle"
+  - "Variant"
+  - "Rendering"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 写到这里，`AssetBundle` 这条线其实已经把交付、构建、运行时加载和工程治理都铺出来了。
 
 但只要项目里一碰到 `Shader`，问题复杂度通常就会再往上抬一层。

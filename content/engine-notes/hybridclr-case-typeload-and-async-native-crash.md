@@ -1,13 +1,19 @@
-+++
-date = 2026-03-26
-title = "HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析"
-description = "记录一次真实的 HybridCLR 接入问题：先是 TypeLoadException 卡在加载顺序，修完后进入 native crash，通过 adb logcat + llvm-addr2line 符号化 libil2cpp.so 回溯栈帧，最终定位到 AOTGenericReferences 空导致 async UniTask 在解释器和 AOT 之间无限递归。"
-weight = 43
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Troubleshooting", "UniTask", "NativeCrash", "CaseStudy"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-26"
+title: "HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析"
+description: "记录一次真实的 HybridCLR 接入问题：先是 TypeLoadException 卡在加载顺序，修完后进入 native crash，通过 adb logcat + llvm-addr2line 符号化 libil2cpp.so 回溯栈帧，最终定位到 AOTGenericReferences 空导致 async UniTask 在解释器和 AOT 之间无限递归。"
+weight: 43
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Troubleshooting"
+  - "UniTask"
+  - "NativeCrash"
+  - "CaseStudy"
+series: "HybridCLR"
+---
 > 很多 HybridCLR 问题不是在第一行报错里，而是第一行报错修完之后，后面那层才真正暴露出来。
 
 这是 HybridCLR 系列第 14 篇。

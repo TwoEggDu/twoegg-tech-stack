@@ -1,8 +1,7 @@
-+++
-title = "About"
-description = "TwoEgg 的职业方向、内容边界和这座站点的用途。"
-+++
-
+---
+title: "About"
+description: "TwoEgg 的职业方向、内容边界和这座站点的用途。"
+---
 `TwoEgg Tech Stack` 不是传统博客，更接近一份公开的技术作品集。
 
 我希望它持续回答下面这些问题：

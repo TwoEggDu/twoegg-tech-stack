@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心光照 02｜法线贴图：TBN 矩阵与切线空间"
-slug = "shader-lighting-02-normal-map"
-date = 2026-03-26
-description = "法线贴图让低面数模型呈现高面数的光照细节。理解切线空间（TBN）的几何含义，在 URP Shader 里正确采样法线贴图并变换到世界空间参与光照计算。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "光照", "法线贴图", "TBN", "切线空间"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4120
-+++
-
+---
+title: "Shader 核心光照 02｜法线贴图：TBN 矩阵与切线空间"
+slug: "shader-lighting-02-normal-map"
+date: "2026-03-26"
+description: "法线贴图让低面数模型呈现高面数的光照细节。理解切线空间（TBN）的几何含义，在 URP Shader 里正确采样法线贴图并变换到世界空间参与光照计算。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "光照"
+  - "法线贴图"
+  - "TBN"
+  - "切线空间"
+series: "Shader 手写技法"
+weight: 4120
+---
 一个低面数的平面，贴上法线贴图后，光照反应和有凹凸的高面数模型几乎一样。法线贴图是游戏里提升视觉细节最高效的手段之一，理解它的原理才能用对。
 
 ---

@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 02｜Stencil 模板缓冲：传送门、遮罩与渲染分层"
-slug = "shader-advanced-02-stencil"
-date = 2026-03-26
-description = "Stencil Buffer（模板缓冲）是渲染管线里一个被低估的工具。理解 Ref/Comp/Pass/Fail 四个参数，用 Stencil 实现传送门、选中高亮遮罩、镜面反射裁剪、UI 遮罩等效果。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "Stencil", "模板缓冲", "传送门"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4300
-+++
-
+---
+title: "Shader 进阶技法 02｜Stencil 模板缓冲：传送门、遮罩与渲染分层"
+slug: "shader-advanced-02-stencil"
+date: "2026-03-26"
+description: "Stencil Buffer（模板缓冲）是渲染管线里一个被低估的工具。理解 Ref/Comp/Pass/Fail 四个参数，用 Stencil 实现传送门、选中高亮遮罩、镜面反射裁剪、UI 遮罩等效果。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "Stencil"
+  - "模板缓冲"
+  - "传送门"
+series: "Shader 手写技法"
+weight: 4300
+---
 Stencil Buffer（模板缓冲）是与深度缓冲并列的一块逐像素存储区域，每个像素 8 位（0~255）。它的作用是：**在某些像素上做标记，后续的渲染 Pass 可以根据这个标记决定是否绘制**。
 
 ---

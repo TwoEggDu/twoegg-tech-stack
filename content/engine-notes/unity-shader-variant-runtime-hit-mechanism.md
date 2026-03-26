@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity Shader Variant 运行时命中机制：从 SetPass 到变体匹配的完整链路"
-description = "把 Unity 运行时 shader variant 命中的完整链路拆成 SetPass 调用、变体查找、评分算法、延迟加载和 WarmUp 意义，讲清变体到底是怎么在运行时被找到和使用的。"
-slug = "unity-shader-variant-runtime-hit-mechanism"
-weight = 120
-featured = false
-tags = ["Unity", "Shader", "ShaderVariantCollection", "Rendering", "Warmup"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Unity Shader Variant 运行时命中机制：从 SetPass 到变体匹配的完整链路"
+description: "把 Unity 运行时 shader variant 命中的完整链路拆成 SetPass 调用、变体查找、评分算法、延迟加载和 WarmUp 意义，讲清变体到底是怎么在运行时被找到和使用的。"
+slug: "unity-shader-variant-runtime-hit-mechanism"
+weight: 120
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "ShaderVariantCollection"
+  - "Rendering"
+  - "Warmup"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 前几篇把 shader variant 的构建期行为讲清了：
 
 - 哪些 variant 会被枚举生成

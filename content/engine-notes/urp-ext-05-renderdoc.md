@@ -1,15 +1,18 @@
-+++
-title = "URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass"
-slug = "urp-ext-05-renderdoc"
-date = 2026-03-25
-description = "RenderDoc 是调试 URP 自定义 Pass 最有效的工具。本篇讲 Unity 连接 RenderDoc 的正确姿势、帧捕获后的 Pass 定位方法、RT 内容查看、Blit 链追踪、Shader 调试，以及几个常见问题的定位流程。"
-[taxonomies]
-tags = ["Unity", "URP", "RenderDoc", "调试", "渲染管线", "性能分析"]
-series = ["URP 深度"]
-[extra]
-weight = 1570
-+++
-
+---
+title: "URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass"
+slug: "urp-ext-05-renderdoc"
+date: "2026-03-25"
+description: "RenderDoc 是调试 URP 自定义 Pass 最有效的工具。本篇讲 Unity 连接 RenderDoc 的正确姿势、帧捕获后的 Pass 定位方法、RT 内容查看、Blit 链追踪、Shader 调试，以及几个常见问题的定位流程。"
+tags:
+  - "Unity"
+  - "URP"
+  - "RenderDoc"
+  - "调试"
+  - "渲染管线"
+  - "性能分析"
+series: "URP 深度"
+weight: 1570
+---
 自定义 Renderer Feature 出问题时，Debug.Log 和 Frame Debugger 能帮你缩小范围，但要真正看清楚"某张 RT 里存了什么"、"这个 Draw Call 用的是哪个 Shader 变体"，需要 RenderDoc。
 
 ---

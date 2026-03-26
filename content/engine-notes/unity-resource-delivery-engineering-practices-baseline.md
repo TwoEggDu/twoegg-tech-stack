@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线"
-description = "把 Unity 资源交付的工程实践拆成分组边界、命名规则、内容身份、缓存回滚、构建校验和框架选型，讲清项目里真正该先定下来的规则。"
-slug = "unity-resource-delivery-engineering-practices-baseline"
-weight = 50
-featured = false
-tags = ["Unity", "AssetBundle", "Addressables", "YooAsset", "Engineering"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线"
+description: "把 Unity 资源交付的工程实践拆成分组边界、命名规则、内容身份、缓存回滚、构建校验和框架选型，讲清项目里真正该先定下来的规则。"
+slug: "unity-resource-delivery-engineering-practices-baseline"
+weight: 50
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Addressables"
+  - "YooAsset"
+  - "Engineering"
+series: "Unity 资产系统与序列化"
+---
 写到这里，这条系列的原理主线其实已经铺得比较完整了：
 
 - 资产是什么，文件和资产对象不是一回事

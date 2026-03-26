@@ -1,15 +1,18 @@
-+++
-title = "Unity 渲染系统补L｜Virtual Texturing：原理、UDIM 与 Unreal 的 Virtual Heightfield"
-slug = "unity-rendering-supp-l-virtual-texturing"
-date = 2026-03-26
-description = "传统贴图方式要求所有纹理常驻显存，大型开放世界场景的贴图总量远超显存容量。Virtual Texturing（虚拟纹理）借鉴虚拟内存的思路，只把当前可见的纹理 Tile 加载到显存。这篇讲清楚 VT 的原理、UDIM 工作流，以及 Unreal 的 Virtual Heightfield Mesh。"
-weight = 1610
-[taxonomies]
-tags = ["Unity", "Rendering", "Virtual Texturing", "UDIM", "开放世界", "性能优化"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补L｜Virtual Texturing：原理、UDIM 与 Unreal 的 Virtual Heightfield"
+slug: "unity-rendering-supp-l-virtual-texturing"
+date: "2026-03-26"
+description: "传统贴图方式要求所有纹理常驻显存，大型开放世界场景的贴图总量远超显存容量。Virtual Texturing（虚拟纹理）借鉴虚拟内存的思路，只把当前可见的纹理 Tile 加载到显存。这篇讲清楚 VT 的原理、UDIM 工作流，以及 Unreal 的 Virtual Heightfield Mesh。"
+weight: 1610
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Virtual Texturing"
+  - "UDIM"
+  - "开放世界"
+  - "性能优化"
+series: "Unity 渲染系统"
+---
 开放世界游戏的贴图总量往往以 TB 计——地形、建筑、植被、道路，每一类都有不同分辨率的 Albedo、Normal、Roughness 贴图。显存永远装不下这些数据的全部。
 
 Virtual Texturing 的答案是：不装全部，只装"此刻摄像机看到的部分"。这个思路直接类比操作系统的虚拟内存分页机制，把一张巨大的虚拟纹理切成小 Tile，按需加载到有限的物理显存中。

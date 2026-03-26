@@ -1,15 +1,17 @@
-+++
-title = "URP 深度配置 01｜Pipeline Asset 解读：每个参数背后的渲染行为"
-slug = "urp-config-01-pipeline-asset"
-date = 2026-03-25
-description = "逐节拆解 UniversalRenderPipelineAsset 的每个配置项：Rendering、Quality、Lighting、Shadows、Post-processing 各区块的参数含义、对渲染行为的实际影响，以及移动端和 PC 的典型取值策略。"
-[taxonomies]
-tags = ["Unity", "URP", "Pipeline Asset", "渲染配置", "性能优化"]
-series = ["URP 深度"]
-[extra]
-weight = 1530
-+++
-
+---
+title: "URP 深度配置 01｜Pipeline Asset 解读：每个参数背后的渲染行为"
+slug: "urp-config-01-pipeline-asset"
+date: "2026-03-25"
+description: "逐节拆解 UniversalRenderPipelineAsset 的每个配置项：Rendering、Quality、Lighting、Shadows、Post-processing 各区块的参数含义、对渲染行为的实际影响，以及移动端和 PC 的典型取值策略。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Pipeline Asset"
+  - "渲染配置"
+  - "性能优化"
+series: "URP 深度"
+weight: 1530
+---
 `UniversalRenderPipelineAsset`（以下简称 Pipeline Asset）是 URP 的全局配置入口，挂在 `Project Settings → Graphics` 或 `Quality Settings` 里。这篇逐块拆解每个参数的含义，以及为什么这样设置。
 
 系列九（unity-rendering-09）里已经介绍了它的整体定位，这篇不重复"它是什么"，直接讲每个参数背后的渲染行为。

@@ -1,15 +1,20 @@
-+++
-title = "项目实战 04｜草地系统 Shader：风吹动画 + 交互弯曲 + LOD 策略"
-slug = "shader-project-04-grass-system"
-date = 2026-03-26
-description = "游戏中的草地需要：风吹摇摆（顶点动画）、玩家踩踏时弯曲（运行时交互）、远处简化（LOD 淡出）。这篇用顶点色存储弯曲权重，结合 C# 传入的交互数据，实现完整的草地系统 Shader。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "草地", "顶点动画", "交互", "LOD"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4430
-+++
-
+---
+title: "项目实战 04｜草地系统 Shader：风吹动画 + 交互弯曲 + LOD 策略"
+slug: "shader-project-04-grass-system"
+date: "2026-03-26"
+description: "游戏中的草地需要：风吹摇摆（顶点动画）、玩家踩踏时弯曲（运行时交互）、远处简化（LOD 淡出）。这篇用顶点色存储弯曲权重，结合 C# 传入的交互数据，实现完整的草地系统 Shader。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "草地"
+  - "顶点动画"
+  - "交互"
+  - "LOD"
+series: "Shader 手写技法"
+weight: 4430
+---
 草地 Shader 需要解决三个问题：**风吹动画**（让草自然摇摆）、**交互弯曲**（玩家经过时压倒草）、**远距离 LOD 淡出**（节省性能）。这三个问题分别在 Shader 的顶点阶段、顶点阶段和 Fragment 阶段处理。
 
 ---

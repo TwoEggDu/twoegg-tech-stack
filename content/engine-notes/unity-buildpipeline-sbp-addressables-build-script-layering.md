@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Unity 的资源构建管线到底分几层：BuildPipeline、SBP、Addressables Build Script 各自站在哪"
-description = "把 Unity 资源构建里最容易混掉的三层边界拆开，讲清 BuildPipeline、Scriptable Build Pipeline 和 Addressables Build Script 分别在解决什么问题，以及项目里该在哪一层做改动。"
-slug = "unity-buildpipeline-sbp-addressables-build-script-layering"
-weight = 65
-featured = false
-tags = ["Unity", "BuildPipeline", "SBP", "Addressables", "AssetBundle"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Unity 的资源构建管线到底分几层：BuildPipeline、SBP、Addressables Build Script 各自站在哪"
+description: "把 Unity 资源构建里最容易混掉的三层边界拆开，讲清 BuildPipeline、Scriptable Build Pipeline 和 Addressables Build Script 分别在解决什么问题，以及项目里该在哪一层做改动。"
+slug: "unity-buildpipeline-sbp-addressables-build-script-layering"
+weight: 65
+featured: false
+tags:
+  - "Unity"
+  - "BuildPipeline"
+  - "SBP"
+  - "Addressables"
+  - "AssetBundle"
+series: "Unity 资产系统与序列化"
+---
 写到这里，这条系列已经把：
 
 - 资产系统本体

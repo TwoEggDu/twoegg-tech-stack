@@ -1,15 +1,19 @@
-+++
-title = "Unity 渲染系统补A｜Mesh 与 Texture 存储基础：顶点格式、纹理压缩、Mip"
-slug = "unity-rendering-supp-a-mesh-texture-storage"
-date = 2026-03-26
-description = "Mesh 在显存里是什么格式？Texture 为什么要压缩，压缩成什么？Mip 链怎么生成、怎么影响采样？这篇把这些存储层细节讲清楚——它们直接决定内存占用、带宽消耗和最终画质。"
-weight = 1500
-[taxonomies]
-tags = ["Unity", "Rendering", "Mesh", "Texture", "内存", "纹理压缩", "Mip"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补A｜Mesh 与 Texture 存储基础：顶点格式、纹理压缩、Mip"
+slug: "unity-rendering-supp-a-mesh-texture-storage"
+date: "2026-03-26"
+description: "Mesh 在显存里是什么格式？Texture 为什么要压缩，压缩成什么？Mip 链怎么生成、怎么影响采样？这篇把这些存储层细节讲清楚——它们直接决定内存占用、带宽消耗和最终画质。"
+weight: 1500
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Mesh"
+  - "Texture"
+  - "内存"
+  - "纹理压缩"
+  - "Mip"
+series: "Unity 渲染系统"
+---
 渲染管线讲的是"数据怎么流动"，这篇讲的是"数据本身长什么样"。Mesh 的顶点格式选择影响顶点缓冲大小；Texture 的压缩格式影响显存占用和采样带宽；Mip 链的生成方式影响远处贴图的画质和性能。这些存储层细节，是性能优化和 Profile 分析的基础。
 
 ---

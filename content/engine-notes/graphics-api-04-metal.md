@@ -1,15 +1,19 @@
-+++
-title = "图形 API 04｜Metal：苹果的图形 API，与 Vulkan 设计哲学的异同"
-slug = "graphics-api-04-metal"
-date = 2026-03-26
-description = "Metal 是 Apple 在 2014 年推出的图形/计算 API，比 Vulkan 早两年。它同样是低开销 API，但在设计上更贴近苹果平台的硬件特性（Tile Memory、Memoryless RT）。这篇对比 Metal 与 Vulkan 的设计差异，以及 Unity Metal 后端的关键参数。"
-weight = 730
-[taxonomies]
-tags = ["图形API", "Metal", "Apple", "iOS", "macOS", "Tile Memory", "Vulkan对比"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 04｜Metal：苹果的图形 API，与 Vulkan 设计哲学的异同"
+slug: "graphics-api-04-metal"
+date: "2026-03-26"
+description: "Metal 是 Apple 在 2014 年推出的图形/计算 API，比 Vulkan 早两年。它同样是低开销 API，但在设计上更贴近苹果平台的硬件特性（Tile Memory、Memoryless RT）。这篇对比 Metal 与 Vulkan 的设计差异，以及 Unity Metal 后端的关键参数。"
+weight: 730
+tags:
+  - "图形API"
+  - "Metal"
+  - "Apple"
+  - "iOS"
+  - "macOS"
+  - "Tile Memory"
+  - "Vulkan对比"
+series: "图形 API 基础"
+---
 ## 诞生背景
 
 2014 年 WWDC，Apple 在发布 iOS 8 时同步推出了 Metal。当时 OpenGL ES 2.0/3.0 是 iOS 上唯一的图形 API，但 Apple 的 GPU 团队（收购 Imagination Technologies 授权，后来自研 Apple Silicon GPU）已经在 A7 芯片里为 Metal 设计了专用硬件支持。

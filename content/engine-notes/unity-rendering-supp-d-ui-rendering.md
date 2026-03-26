@@ -1,15 +1,19 @@
-+++
-title = "Unity 渲染系统补D｜UI 渲染：Canvas 合批、Rebuild、Overdraw、Atlas"
-slug = "unity-rendering-supp-d-ui-rendering"
-date = 2026-03-26
-description = "Unity 的 UI 渲染（uGUI/UI Toolkit）有自己独立的合批逻辑。Canvas 合批依赖几何排序和材质一致性；Rebuild 是 CPU 性能的主要杀手；Overdraw 是 GPU 性能的主要杀手。这篇系统讲清楚这三个问题的原因和解法。"
-weight = 1530
-[taxonomies]
-tags = ["Unity", "Rendering", "UI", "uGUI", "Canvas", "性能优化", "Overdraw"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补D｜UI 渲染：Canvas 合批、Rebuild、Overdraw、Atlas"
+slug: "unity-rendering-supp-d-ui-rendering"
+date: "2026-03-26"
+description: "Unity 的 UI 渲染（uGUI/UI Toolkit）有自己独立的合批逻辑。Canvas 合批依赖几何排序和材质一致性；Rebuild 是 CPU 性能的主要杀手；Overdraw 是 GPU 性能的主要杀手。这篇系统讲清楚这三个问题的原因和解法。"
+weight: 1530
+tags:
+  - "Unity"
+  - "Rendering"
+  - "UI"
+  - "uGUI"
+  - "Canvas"
+  - "性能优化"
+  - "Overdraw"
+series: "Unity 渲染系统"
+---
 UI 渲染是很多项目里性能问题最密集的地方，却也是最容易被忽视的地方。3D 场景用了 GPU Instancing、SRP Batcher，但 UI 这边每帧 Rebuild 几十个 Canvas，帧率依然上不去。uGUI 的合批逻辑和 3D 渲染完全不同——它有自己的几何重建机制、自己的深度排序规则、自己的 Overdraw 来源。搞清楚这套逻辑，才能真正解决 UI 性能问题。
 
 ---

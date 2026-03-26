@@ -1,15 +1,19 @@
-+++
-title = "项目实战 01｜卡通角色完整 Shader：NPR 渲染的全套组合"
-slug = "shader-project-01-toon-character"
-date = 2026-03-26
-description = "一个完整的卡通角色 Shader 需要整合多个 NPR 技法：Cel 色阶漫反射、Ramp 贴图、面部阴影修正、各向异性头发高光、轮廓描边（顶点外扩）、Rim Light。这篇把这些模块拼成一套可直接用的角色方案。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "NPR", "卡通渲染", "角色"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4400
-+++
-
+---
+title: "项目实战 01｜卡通角色完整 Shader：NPR 渲染的全套组合"
+slug: "shader-project-01-toon-character"
+date: "2026-03-26"
+description: "一个完整的卡通角色 Shader 需要整合多个 NPR 技法：Cel 色阶漫反射、Ramp 贴图、面部阴影修正、各向异性头发高光、轮廓描边（顶点外扩）、Rim Light。这篇把这些模块拼成一套可直接用的角色方案。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "NPR"
+  - "卡通渲染"
+  - "角色"
+series: "Shader 手写技法"
+weight: 4400
+---
 卡通角色渲染（NPR，Non-Photorealistic Rendering）是游戏开发中最常见的需求之一。单独用一篇讲 Cel Shading，另一篇讲描边，在实际项目里需要把它们整合成一套方案。
 
 ---

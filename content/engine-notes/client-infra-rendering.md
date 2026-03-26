@@ -1,12 +1,14 @@
-+++
-date = 2026-03-11
-title = "为什么我认为客户端基础架构应该同时懂工具链和渲染优化"
-description = "解释为什么客户端基础架构需要同时理解工具链和渲染优化。"
-weight = 20
-featured = false
-tags = ["Unity", "Rendering", "Infrastructure"]
-+++
-
+---
+date: "2026-03-11"
+title: "为什么我认为客户端基础架构应该同时懂工具链和渲染优化"
+description: "解释为什么客户端基础架构需要同时理解工具链和渲染优化。"
+weight: 20
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Infrastructure"
+---
 很多人会把工具链和渲染优化看成两种人。
 
 一种人负责编辑器、构建、CI/CD、资源导入、发布流程。另一种人负责 Shader、后处理、阴影、性能和画面效果。

@@ -1,11 +1,17 @@
-+++
-title = "HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法"
-date = "2026-03-26"
-series = ["HybridCLR"]
-tags = ["HybridCLR", "async", "UniTask", "IL2CPP", "crash", "AOT"]
-weight = 46
-+++
-
+---
+title: "HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法"
+date: "2026-03-26"
+series:
+  - "HybridCLR"
+tags:
+  - "HybridCLR"
+  - "async"
+  - "UniTask"
+  - "IL2CPP"
+  - "crash"
+  - "AOT"
+weight: 46
+---
 上一篇案例（HCLR-14）定位到崩溃堆栈是 `AsyncUniTaskMethodBuilder.Start<IlCppFullySharedGenericAny>` 和 `Interpreter::Execute` 的无限递归，并指出 `AOTGenericReferences.RefMethods()` 是空的。但"RefMethods 是空的"只是症状，不是根因。
 
 这篇补完整个因果链，并给出两种修法。

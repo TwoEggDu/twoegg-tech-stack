@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 12｜顶点色驱动：让美术直接在模型上刷数据"
-slug = "shader-technique-12-vertex-color"
-date = 2026-03-26
-description = "顶点色（Vertex Color）是 Shader 与美术之间的数据通道。R/G/B/A 四通道各自存不同含义的遮罩数据，驱动草地弯曲权重、多材质混合、AO、顶点动画强度。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "顶点色", "Vertex Color", "遮罩"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4280
-+++
-
+---
+title: "Shader 核心技法 12｜顶点色驱动：让美术直接在模型上刷数据"
+slug: "shader-technique-12-vertex-color"
+date: "2026-03-26"
+description: "顶点色（Vertex Color）是 Shader 与美术之间的数据通道。R/G/B/A 四通道各自存不同含义的遮罩数据，驱动草地弯曲权重、多材质混合、AO、顶点动画强度。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "顶点色"
+  - "Vertex Color"
+  - "遮罩"
+series: "Shader 手写技法"
+weight: 4280
+---
 顶点色是 Shader 里一种特殊的数据通道——每个顶点存一个 RGBA 颜色，在 Fragment Shader 里插值后可以用作遮罩、权重、混合系数。它不需要额外的贴图，由美术直接在 DCC 工具（Blender/Maya）或 Unity 里刷入。
 
 ---

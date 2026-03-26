@@ -1,11 +1,13 @@
-+++
-title = "特效性能检查器案例"
-description = "用特效性能检查器案例展示资源门禁、规则化检查和发布前质量控制。"
-weight = 10
-featured = true
-tags = ["VFX", "Quality Gate", "Projects"]
-+++
-
+---
+title: "特效性能检查器案例"
+description: "用特效性能检查器案例展示资源门禁、规则化检查和发布前质量控制。"
+weight: 10
+featured: true
+tags:
+  - "VFX"
+  - "Quality Gate"
+  - "Projects"
+---
 ## 一句话总结
 
 这条经历最好的包装不是“做过特效工具”，而是：

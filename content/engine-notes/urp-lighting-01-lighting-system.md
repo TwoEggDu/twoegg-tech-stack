@@ -1,15 +1,18 @@
-+++
-title = "URP 深度光照 01｜URP 光照系统：主光、附加光、Light Layer、Light Cookie"
-slug = "urp-lighting-01-lighting-system"
-date = 2026-03-25
-description = "URP 光照系统的完整架构：主光与附加光的分工、逐顶点 vs 逐像素的精度代价、Forward+ 下的 Cluster Light List、Light Layer 的渲染层隔离、Light Cookie 的实现与用法。"
-[taxonomies]
-tags = ["Unity", "URP", "光照", "Light Layer", "Light Cookie", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1560
-+++
-
+---
+title: "URP 深度光照 01｜URP 光照系统：主光、附加光、Light Layer、Light Cookie"
+slug: "urp-lighting-01-lighting-system"
+date: "2026-03-25"
+description: "URP 光照系统的完整架构：主光与附加光的分工、逐顶点 vs 逐像素的精度代价、Forward+ 下的 Cluster Light List、Light Layer 的渲染层隔离、Light Cookie 的实现与用法。"
+tags:
+  - "Unity"
+  - "URP"
+  - "光照"
+  - "Light Layer"
+  - "Light Cookie"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1560
+---
 URP 的光照系统不是"把所有光照信息传给 Shader"那么简单，它在 CPU 侧做了大量分类、排序、裁剪工作，才把一份经过精简的光源数据送到 GPU。理解这套机制，才能明白为什么场景里某盏灯"不生效"，以及 Shader 里的 `_MainLightColor` 和 `_AdditionalLightsBuffer` 分别是什么。
 
 ---

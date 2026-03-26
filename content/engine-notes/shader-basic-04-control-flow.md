@@ -1,15 +1,19 @@
-+++
-title = "Shader 语法基础 04｜控制流与分支代价：GPU 里的 if 为什么危险"
-slug = "shader-basic-04-control-flow"
-date = 2026-03-26
-description = "GPU 的 SIMD 架构决定了分支有独特的代价模型。理解 Warp Divergence，知道什么时候 if 是安全的，什么时候要用 step/lerp 替代，以及 UNITY_BRANCH 和 flatten 的区别。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "语法基础", "控制流", "分支", "性能"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4080
-+++
-
+---
+title: "Shader 语法基础 04｜控制流与分支代价：GPU 里的 if 为什么危险"
+slug: "shader-basic-04-control-flow"
+date: "2026-03-26"
+description: "GPU 的 SIMD 架构决定了分支有独特的代价模型。理解 Warp Divergence，知道什么时候 if 是安全的，什么时候要用 step/lerp 替代，以及 UNITY_BRANCH 和 flatten 的区别。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "语法基础"
+  - "控制流"
+  - "分支"
+  - "性能"
+series: "Shader 手写技法"
+weight: 4080
+---
 写 Shader 时，`if` 并不是完全禁止的——但它有独特的代价模型，必须理解才能用对。
 
 ---

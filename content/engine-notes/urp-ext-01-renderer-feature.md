@@ -1,15 +1,18 @@
-+++
-title = "URP 深度扩展 01｜Renderer Feature 完整开发：从零写一个 ScriptableRendererFeature"
-slug = "urp-ext-01-renderer-feature"
-date = 2026-03-25
-description = "系统讲解 ScriptableRendererFeature + ScriptableRenderPass 的完整开发流程：类职责划分、RenderPassEvent 时机选择、临时 RT 的申请与释放、常见陷阱。以一个灰度后处理为例，写出一个生产可用的 Renderer Feature。基于 Unity 2022.3 LTS（URP 14）。"
-[taxonomies]
-tags = ["Unity", "URP", "Renderer Feature", "ScriptableRenderPass", "渲染管线", "扩展开发"]
-series = ["URP 深度"]
-[extra]
-weight = 1590
-+++
-
+---
+title: "URP 深度扩展 01｜Renderer Feature 完整开发：从零写一个 ScriptableRendererFeature"
+slug: "urp-ext-01-renderer-feature"
+date: "2026-03-25"
+description: "系统讲解 ScriptableRendererFeature + ScriptableRenderPass 的完整开发流程：类职责划分、RenderPassEvent 时机选择、临时 RT 的申请与释放、常见陷阱。以一个灰度后处理为例，写出一个生产可用的 Renderer Feature。基于 Unity 2022.3 LTS（URP 14）。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Renderer Feature"
+  - "ScriptableRenderPass"
+  - "渲染管线"
+  - "扩展开发"
+series: "URP 深度"
+weight: 1590
+---
 前三层（前置基础、Pipeline 配置、光照阴影）讲的是 URP 已经提供了什么、每个参数背后是什么行为。扩展开发层要解决的问题是：**当 URP 内置功能不满足需求时，怎么往管线里插入自己的渲染逻辑**。
 
 Renderer Feature 是 URP 给出的标准扩展点。这篇从零写一个完整的 Renderer Feature，把架构讲清楚。

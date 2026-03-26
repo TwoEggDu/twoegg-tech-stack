@@ -1,14 +1,21 @@
-+++
-date = 2026-03-24
-title = "Shader Variant 收集的覆盖边界：静态扫描看不到什么，以及 Keyword 使用契约"
-description = "讲清楚静态收集器（材质/场景/Prefab 扫描）和运行时追踪的本质区别，哪些动态路径是静态扫描覆盖不到的，以及怎么用 Keyword 使用契约在设计阶段把这个问题消灭掉。"
-slug = "unity-shader-variant-collection-coverage-and-keyword-contract"
-weight = 55
-featured = false
-tags = ["Unity", "Shader", "Variant", "Collection", "Keyword", "Workflow"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Shader Variant 收集的覆盖边界：静态扫描看不到什么，以及 Keyword 使用契约"
+description: "讲清楚静态收集器（材质/场景/Prefab 扫描）和运行时追踪的本质区别，哪些动态路径是静态扫描覆盖不到的，以及怎么用 Keyword 使用契约在设计阶段把这个问题消灭掉。"
+slug: "unity-shader-variant-collection-coverage-and-keyword-contract"
+weight: 55
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "Variant"
+  - "Collection"
+  - "Keyword"
+  - "Workflow"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 > 如果只用一句话概括这篇，我会这样说：静态收集器只能看到写在资产文件里的 keyword 状态，它永远看不到运行时代码动态开关的那部分变体；消灭这个盲区最可靠的方法不是更强的扫描器，而是在项目里约定"凡是动态开关 keyword 的代码，必须在数据库里提前声明"。
 
 前几篇把收集的工具和方法讲清了。这篇要回答一个更根本的问题：

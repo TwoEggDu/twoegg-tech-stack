@@ -1,15 +1,17 @@
-+++
-title = "URP 深度配置 03｜Camera Stack：Base Camera、Overlay Camera 与多摄像机组织"
-slug = "urp-config-03-camera-stack"
-date = 2026-03-25
-description = "Camera Stack 是 URP 组织多摄像机渲染的核心机制。这篇讲 Base / Overlay Camera 的渲染顺序与资源复用逻辑、Clear Flags 的实际含义、Overlay Camera 的代价，以及常见多摄像机场景（UI 叠加、小地图、第一人称武器）的正确实现方式。"
-[taxonomies]
-tags = ["Unity", "URP", "Camera Stack", "多摄像机", "渲染配置"]
-series = ["URP 深度"]
-[extra]
-weight = 1550
-+++
-
+---
+title: "URP 深度配置 03｜Camera Stack：Base Camera、Overlay Camera 与多摄像机组织"
+slug: "urp-config-03-camera-stack"
+date: "2026-03-25"
+description: "Camera Stack 是 URP 组织多摄像机渲染的核心机制。这篇讲 Base / Overlay Camera 的渲染顺序与资源复用逻辑、Clear Flags 的实际含义、Overlay Camera 的代价，以及常见多摄像机场景（UI 叠加、小地图、第一人称武器）的正确实现方式。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Camera Stack"
+  - "多摄像机"
+  - "渲染配置"
+series: "URP 深度"
+weight: 1550
+---
 在 Built-in 管线里，多个摄像机直接叠加（每个 Camera 独立 Culling + 独立渲染），代价随摄像机数量线性增加。URP 的 Camera Stack 改变了这个模型：多个 Camera 共享 Base Camera 的 Culling 结果和深度，Overlay Camera 只负责"往上加内容"，而不是重新渲染整个场景。
 
 ---

@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 04｜描边：顶点外扩法与后处理法"
-slug = "shader-technique-04-outline"
-date = 2026-03-26
-description = "描边有两条主路线：顶点外扩（背面法线扩展）和后处理（深度/法线边缘检测）。理解两种方法的原理、适用场景和各自的局限，在 URP 里实现可用的描边效果。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "描边", "Outline", "后处理"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4200
-+++
-
+---
+title: "Shader 核心技法 04｜描边：顶点外扩法与后处理法"
+slug: "shader-technique-04-outline"
+date: "2026-03-26"
+description: "描边有两条主路线：顶点外扩（背面法线扩展）和后处理（深度/法线边缘检测）。理解两种方法的原理、适用场景和各自的局限，在 URP 里实现可用的描边效果。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "描边"
+  - "Outline"
+  - "后处理"
+series: "Shader 手写技法"
+weight: 4200
+---
 描边配合卡通渲染是标配。主流方案有两种：在物体层面做（顶点外扩），或在屏幕层面做（后处理边缘检测）。两种方案各有优劣，实际项目里经常组合使用。
 
 ---

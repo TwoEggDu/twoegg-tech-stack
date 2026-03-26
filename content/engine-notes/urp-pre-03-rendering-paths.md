@@ -1,15 +1,18 @@
-+++
-title = "URP 深度前置 03｜Forward、Deferred、Forward+：三条渲染路径对比"
-slug = "urp-pre-03-rendering-paths"
-date = 2026-03-25
-description = "从光照计算的本质矛盾出发，讲清楚 Forward 为什么慢、Deferred 如何解决多光源问题以及它的代价、Forward+ 如何在移动端友好性和多光源效率间取得平衡，以及在 URP 里选择路径对自定义 Pass 的具体影响。"
-[taxonomies]
-tags = ["Unity", "URP", "渲染路径", "Forward", "Deferred", "Forward+"]
-series = ["URP 深度"]
-[extra]
-weight = 1520
-+++
-
+---
+title: "URP 深度前置 03｜Forward、Deferred、Forward+：三条渲染路径对比"
+slug: "urp-pre-03-rendering-paths"
+date: "2026-03-25"
+description: "从光照计算的本质矛盾出发，讲清楚 Forward 为什么慢、Deferred 如何解决多光源问题以及它的代价、Forward+ 如何在移动端友好性和多光源效率间取得平衡，以及在 URP 里选择路径对自定义 Pass 的具体影响。"
+tags:
+  - "Unity"
+  - "URP"
+  - "渲染路径"
+  - "Forward"
+  - "Deferred"
+  - "Forward+"
+series: "URP 深度"
+weight: 1520
+---
 三条渲染路径要解决的是同一个问题：**场景里有很多光源，怎么让每个 Mesh 的每个像素知道自己被哪些光照亮，以及如何高效地完成这个计算**。
 
 ---

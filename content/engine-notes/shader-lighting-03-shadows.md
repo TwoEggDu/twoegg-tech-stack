@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心光照 03｜阴影接收与投射：ShadowCaster Pass 完整实现"
-slug = "shader-lighting-03-shadows"
-date = 2026-03-26
-description = "自定义 URP Shader 默认没有阴影。理解阴影贴图原理，写 ShadowCaster Pass 让物体投射阴影，在 ForwardLit Pass 里接收阴影，处理 Alpha Test 物体的阴影裁剪。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "光照", "阴影", "ShadowCaster", "ShadowMap"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4130
-+++
-
+---
+title: "Shader 核心光照 03｜阴影接收与投射：ShadowCaster Pass 完整实现"
+slug: "shader-lighting-03-shadows"
+date: "2026-03-26"
+description: "自定义 URP Shader 默认没有阴影。理解阴影贴图原理，写 ShadowCaster Pass 让物体投射阴影，在 ForwardLit Pass 里接收阴影，处理 Alpha Test 物体的阴影裁剪。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "光照"
+  - "阴影"
+  - "ShadowCaster"
+  - "ShadowMap"
+series: "Shader 手写技法"
+weight: 4130
+---
 自己写的 Shader 默认没有阴影——不投射，也不接收。这篇补齐阴影的两个方向：写 ShadowCaster Pass 让物体投射阴影，在 ForwardLit Pass 里接收阴影。
 
 ---

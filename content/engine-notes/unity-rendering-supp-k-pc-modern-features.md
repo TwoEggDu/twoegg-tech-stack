@@ -1,15 +1,20 @@
-+++
-title = "Unity 渲染系统补K｜PC 平台现代特性：DLSS/FSR/XeSS、VRS、DirectStorage"
-slug = "unity-rendering-supp-k-pc-modern-features"
-date = 2026-03-26
-description = "PC 平台近年出现了一批改变渲染架构的新技术：DLSS/FSR/XeSS 让低分辨率渲染达到高分辨率画质，VRS 降低非关键区域的 Shader 开销，DirectStorage 绕过 CPU 直接把贴图从 SSD 加载到显存。这篇讲清楚这三类技术的原理和 Unity 的支持情况。"
-weight = 1600
-[taxonomies]
-tags = ["Unity", "Rendering", "PC", "DLSS", "FSR", "VRS", "DirectStorage", "现代渲染"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补K｜PC 平台现代特性：DLSS/FSR/XeSS、VRS、DirectStorage"
+slug: "unity-rendering-supp-k-pc-modern-features"
+date: "2026-03-26"
+description: "PC 平台近年出现了一批改变渲染架构的新技术：DLSS/FSR/XeSS 让低分辨率渲染达到高分辨率画质，VRS 降低非关键区域的 Shader 开销，DirectStorage 绕过 CPU 直接把贴图从 SSD 加载到显存。这篇讲清楚这三类技术的原理和 Unity 的支持情况。"
+weight: 1600
+tags:
+  - "Unity"
+  - "Rendering"
+  - "PC"
+  - "DLSS"
+  - "FSR"
+  - "VRS"
+  - "DirectStorage"
+  - "现代渲染"
+series: "Unity 渲染系统"
+---
 PC 平台的渲染技术在过去几年经历了一轮架构级的变化。这批新技术不是对传统管线的小修小补，而是从根本上改变了"渲染分辨率与显示分辨率的关系"、"Shader 执行密度"以及"贴图数据如何从存储到达显存"这三个核心环节。
 
 对于 Unity 开发者而言，理解这些技术的原理，是正确评估项目性能上限、选择技术方案的前提。

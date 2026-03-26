@@ -1,15 +1,19 @@
-+++
-title = "Shader 语法基础 06｜调试技巧：颜色可视化、Frame Debugger、RenderDoc"
-slug = "shader-basic-06-debugging"
-date = 2026-03-26
-description = "Shader 出错时没有断点、没有 Debug.Log，只能靠颜色输出来观察中间值。掌握颜色可视化法线/UV/光照数据，配合 Frame Debugger 和 RenderDoc 定位问题。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "语法基础", "调试", "Frame Debugger", "RenderDoc"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4100
-+++
-
+---
+title: "Shader 语法基础 06｜调试技巧：颜色可视化、Frame Debugger、RenderDoc"
+slug: "shader-basic-06-debugging"
+date: "2026-03-26"
+description: "Shader 出错时没有断点、没有 Debug.Log，只能靠颜色输出来观察中间值。掌握颜色可视化法线/UV/光照数据，配合 Frame Debugger 和 RenderDoc 定位问题。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "语法基础"
+  - "调试"
+  - "Frame Debugger"
+  - "RenderDoc"
+series: "Shader 手写技法"
+weight: 4100
+---
 Shader 调试和 C# 完全不同——没有断点，没有 `print`，出了问题只能观察屏幕上的颜色。这篇整理实际开发中最常用的调试手段。
 
 ---

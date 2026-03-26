@@ -1,15 +1,18 @@
-+++
-title = "URP 深度平台 01｜移动端专项配置：为什么这么设、怎么验证"
-slug = "urp-platform-01-mobile"
-date = 2026-03-25
-description = "URP 移动端配置不是参数抄答案，而是每个选项背后有具体的 TBR 带宽代价模型。本篇从 TBR 架构出发，逐一讲清楚 Pipeline Asset、Universal Renderer Settings、Pass 裁剪、Shader 写法四个层面的配置决策依据，并给出用 Frame Debugger / Xcode / Snapdragon Profiler 验证效果的具体方法。"
-[taxonomies]
-tags = ["Unity", "URP", "移动端", "性能优化", "TBR", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1650
-+++
-
+---
+title: "URP 深度平台 01｜移动端专项配置：为什么这么设、怎么验证"
+slug: "urp-platform-01-mobile"
+date: "2026-03-25"
+description: "URP 移动端配置不是参数抄答案，而是每个选项背后有具体的 TBR 带宽代价模型。本篇从 TBR 架构出发，逐一讲清楚 Pipeline Asset、Universal Renderer Settings、Pass 裁剪、Shader 写法四个层面的配置决策依据，并给出用 Frame Debugger / Xcode / Snapdragon Profiler 验证效果的具体方法。"
+tags:
+  - "Unity"
+  - "URP"
+  - "移动端"
+  - "性能优化"
+  - "TBR"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1650
+---
 移动端 URP 配置的常见误区是"照着最佳实践清单全关一遍"。问题在于：没有理解原因的配置，换个项目就不会用了，遇到效果和性能的取舍也无从判断。
 
 这篇从移动端 GPU 的架构特点出发，讲清楚每个配置项背后的代价是什么，以及怎么用工具验证你的配置确实起了作用。

@@ -1,15 +1,19 @@
-+++
-title = "Shader 语法基础 03｜向量与矩阵：空间变换的几何含义"
-slug = "shader-basic-03-vector-matrix"
-date = 2026-03-26
-description = "Shader 里的坐标变换为什么需要矩阵？理解模型矩阵、视图矩阵、投影矩阵的作用，法线矩阵为什么和模型矩阵不同，以及切线空间（TBN）是什么。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "语法基础", "向量", "矩阵", "坐标变换"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4070
-+++
-
+---
+title: "Shader 语法基础 03｜向量与矩阵：空间变换的几何含义"
+slug: "shader-basic-03-vector-matrix"
+date: "2026-03-26"
+description: "Shader 里的坐标变换为什么需要矩阵？理解模型矩阵、视图矩阵、投影矩阵的作用，法线矩阵为什么和模型矩阵不同，以及切线空间（TBN）是什么。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "语法基础"
+  - "向量"
+  - "矩阵"
+  - "坐标变换"
+series: "Shader 手写技法"
+weight: 4070
+---
 坐标变换是 Shader 的核心机制。为什么顶点位置要乘矩阵？法线为什么不能用同一个矩阵？切线空间是干什么用的？这篇从几何直觉出发把这些问题讲清楚。
 
 ---

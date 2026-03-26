@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来"
-description = "把 Unity 运行时口中的“加载一个 AssetBundle”拆成完整链路，讲清下载、本地缓存、依赖满足、LoadAsset、反序列化、Instantiate 和 Unload 分别站在哪一层。"
-slug = "unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload"
-weight = 45
-featured = false
-tags = ["Unity", "AssetBundle", "Loading", "Runtime", "Cache"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来"
+description: "把 Unity 运行时口中的“加载一个 AssetBundle”拆成完整链路，讲清下载、本地缓存、依赖满足、LoadAsset、反序列化、Instantiate 和 Unload 分别站在哪一层。"
+slug: "unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload"
+weight: 45
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Loading"
+  - "Runtime"
+  - "Cache"
+series: "Unity 资产系统与序列化"
+---
 上一篇我先从构建期把 AssetBundle 拆开了：
 它不是把一批项目文件简单压成一个包，而是沿着输入边界、依赖图、序列化内容和压缩策略，最后输出成运行时可交付的内容单元。
 

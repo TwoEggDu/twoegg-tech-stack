@@ -1,15 +1,18 @@
-+++
-title = "图形 API 02｜OpenGL：状态机模型、驱动隐式管理、为什么逐渐被取代"
-slug = "graphics-api-02-opengl"
-date = 2026-03-26
-description = "OpenGL 统治了图形编程 20 余年，但它的状态机设计在现代多线程 CPU 上变成了性能瓶颈。这篇讲清楚 OpenGL 的状态机模型是什么、隐式驱动管理带来了什么问题、以及为什么 Vulkan 要彻底推翻它。"
-weight = 710
-[taxonomies]
-tags = ["图形API", "OpenGL", "OpenGL ES", "状态机", "驱动", "图形历史"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 02｜OpenGL：状态机模型、驱动隐式管理、为什么逐渐被取代"
+slug: "graphics-api-02-opengl"
+date: "2026-03-26"
+description: "OpenGL 统治了图形编程 20 余年，但它的状态机设计在现代多线程 CPU 上变成了性能瓶颈。这篇讲清楚 OpenGL 的状态机模型是什么、隐式驱动管理带来了什么问题、以及为什么 Vulkan 要彻底推翻它。"
+weight: 710
+tags:
+  - "图形API"
+  - "OpenGL"
+  - "OpenGL ES"
+  - "状态机"
+  - "驱动"
+  - "图形历史"
+series: "图形 API 基础"
+---
 ## 状态机模型
 
 OpenGL 的设计核心是一个全局状态机（State Machine）。整个 OpenGL Context 就是一张超大的状态表，里面记录了：

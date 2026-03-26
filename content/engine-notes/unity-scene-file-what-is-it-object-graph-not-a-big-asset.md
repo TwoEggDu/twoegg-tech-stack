@@ -1,14 +1,17 @@
-+++
-date = 2026-03-21
-title = "Unity 的 Scene 文件本质上是什么：为什么它更像一张对象图，而不是一个“大资源”"
-description = "把 Unity 的 Scene 文件从资源清单思维里拆出来，讲清它为什么本质上是一张由 GameObject、Transform、Component 和场景级对象组成的序列化对象图。"
-slug = "unity-scene-file-what-is-it-object-graph-not-a-big-asset"
-weight = 37
-featured = false
-tags = ["Unity", "Scene", "Serialization", "Asset"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 的 Scene 文件本质上是什么：为什么它更像一张对象图，而不是一个“大资源”"
+description: "把 Unity 的 Scene 文件从资源清单思维里拆出来，讲清它为什么本质上是一张由 GameObject、Transform、Component 和场景级对象组成的序列化对象图。"
+slug: "unity-scene-file-what-is-it-object-graph-not-a-big-asset"
+weight: 37
+featured: false
+tags:
+  - "Unity"
+  - "Scene"
+  - "Serialization"
+  - "Asset"
+series: "Unity 资产系统与序列化"
+---
 前面三篇，我分别在立三层底座：
 
 - 第一篇先把 `文件`、`资产对象`、`场景对象`、`运行时实例` 这些层拆开

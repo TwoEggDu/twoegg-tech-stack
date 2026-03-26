@@ -1,15 +1,19 @@
-+++
-title = "移动端硬件 02｜TBDR 架构详解：Tile、On-Chip Buffer、HSR 如何改变渲染逻辑"
-slug = "hardware-02-tbdr"
-date = 2026-03-25
-description = "TBDR 是移动端 GPU 和桌面 GPU 最根本的架构差异。本篇从硬件层面讲清楚 Tile 怎么分、On-Chip Buffer 是什么、HSR 如何剔除被遮挡的像素、Bandwidth 代价模型，以及这套机制对渲染工程决策的实际影响。"
-[taxonomies]
-tags = ["移动端", "GPU", "TBDR", "TBR", "硬件架构", "渲染管线", "性能优化"]
-series = ["移动端硬件与优化"]
-[extra]
-weight = 2020
-+++
-
+---
+title: "移动端硬件 02｜TBDR 架构详解：Tile、On-Chip Buffer、HSR 如何改变渲染逻辑"
+slug: "hardware-02-tbdr"
+date: "2026-03-25"
+description: "TBDR 是移动端 GPU 和桌面 GPU 最根本的架构差异。本篇从硬件层面讲清楚 Tile 怎么分、On-Chip Buffer 是什么、HSR 如何剔除被遮挡的像素、Bandwidth 代价模型，以及这套机制对渲染工程决策的实际影响。"
+tags:
+  - "移动端"
+  - "GPU"
+  - "TBDR"
+  - "TBR"
+  - "硬件架构"
+  - "渲染管线"
+  - "性能优化"
+series: "移动端硬件与优化"
+weight: 2020
+---
 移动端 GPU 几乎全都是 TBDR（Tile-Based Deferred Rendering）或 TBR（Tile-Based Rendering）架构，桌面 GPU 则普遍是 IMR（Immediate Mode Rendering）。这不是设计风格的差异，而是由物理约束决定的——移动端没有独立显存，没有风扇，功耗预算只有桌面的 1/10。这些约束导致了完全不同的渲染执行方式，也决定了移动端优化的底层逻辑。
 
 ---

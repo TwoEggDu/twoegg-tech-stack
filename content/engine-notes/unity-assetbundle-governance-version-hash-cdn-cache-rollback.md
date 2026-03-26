@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "AssetBundle 的工程治理：版本号、Hash、CDN、缓存、回滚、构建校验与回归"
-description = "把 AssetBundle 的工程治理拆成内容身份、分发映射、缓存策略、回滚路径和构建校验五层，讲清为什么真正难的不是把包发出去，而是让它长期可验证、可回退、可演进。"
-slug = "unity-assetbundle-governance-version-hash-cdn-cache-rollback"
-weight = 48
-featured = false
-tags = ["Unity", "AssetBundle", "Governance", "CDN", "Cache"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "AssetBundle 的工程治理：版本号、Hash、CDN、缓存、回滚、构建校验与回归"
+description: "把 AssetBundle 的工程治理拆成内容身份、分发映射、缓存策略、回滚路径和构建校验五层，讲清为什么真正难的不是把包发出去，而是让它长期可验证、可回退、可演进。"
+slug: "unity-assetbundle-governance-version-hash-cdn-cache-rollback"
+weight: 48
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Governance"
+  - "CDN"
+  - "Cache"
+series: "Unity 资产系统与序列化"
+---
 前面几篇已经把 AssetBundle 的主线拆到了比较完整的程度：
 
 - 为什么它解决的是交付，不是单纯加载

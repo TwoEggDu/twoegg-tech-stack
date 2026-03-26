@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Unity 资产系统与序列化系列索引：从资产通识到 Scene、Prefab、Shader 与 AssetBundle"
-description = "给 Unity 资产系统与序列化系列补一个总入口：推荐阅读顺序、按问题跳转路径、按主题分组，以及 Shader、AssetBundle、脚本身份链的交叉位置。"
-slug = "unity-asset-system-and-serialization-series-index"
-weight = 33
-featured = false
-tags = ["Unity", "Asset", "Serialization", "AssetBundle", "Index"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Unity 资产系统与序列化系列索引：从资产通识到 Scene、Prefab、Shader 与 AssetBundle"
+description: "给 Unity 资产系统与序列化系列补一个总入口：推荐阅读顺序、按问题跳转路径、按主题分组，以及 Shader、AssetBundle、脚本身份链的交叉位置。"
+slug: "unity-asset-system-and-serialization-series-index"
+weight: 33
+featured: false
+tags:
+  - "Unity"
+  - "Asset"
+  - "Serialization"
+  - "AssetBundle"
+  - "Index"
+series: "Unity 资产系统与序列化"
+---
 > 这组文章如果一篇篇单看，其实都能成立；但 Unity 资源问题真正难的地方，不在单篇知识点，而在于你能不能先知道自己现在站在哪一层。
 
 这是这组文章的索引页。  

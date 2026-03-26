@@ -1,12 +1,16 @@
-+++
-title = "首次加载卡顿或缓存失效：为什么看起来像下载慢，其实常常是准备链和内容身份没对齐"
-description = "从一个典型的 Unity 资源交付现场出发，拆解首次加载卡顿和缓存失效为什么总会一起出现，以及它们如何分别落在准备链、内容身份和发布映射上。"
-slug = "unity-first-load-stutter-or-cache-miss"
-weight = 23
-featured = false
-tags = ["Unity", "AssetBundle", "Cache", "Performance", "Case Study"]
-+++
-
+---
+title: "首次加载卡顿或缓存失效：为什么看起来像下载慢，其实常常是准备链和内容身份没对齐"
+description: "从一个典型的 Unity 资源交付现场出发，拆解首次加载卡顿和缓存失效为什么总会一起出现，以及它们如何分别落在准备链、内容身份和发布映射上。"
+slug: "unity-first-load-stutter-or-cache-miss"
+weight: 23
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Cache"
+  - "Performance"
+  - "Case Study"
+---
 这篇继续写案例。
 
 如果前两篇案例分别在讲：

@@ -1,14 +1,21 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 02｜光照资产：实时光、Lightmap、Light Probe、Reflection Probe"
-description = "把 Unity 的四条光照路径拆开讲清楚：实时光提供直接光、Lightmap 存储烘焙间接光、Light Probe 给动态物体提供间接光、Reflection Probe 提供环境反射——以及这四条路径怎么在 Fragment Shader 里合并成最终颜色。"
-slug = "unity-rendering-02-lighting-assets"
-weight = 500
-featured = false
-tags = ["Unity", "Rendering", "Lighting", "Lightmap", "LightProbe", "ReflectionProbe", "GI", "PBR"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 02｜光照资产：实时光、Lightmap、Light Probe、Reflection Probe"
+description: "把 Unity 的四条光照路径拆开讲清楚：实时光提供直接光、Lightmap 存储烘焙间接光、Light Probe 给动态物体提供间接光、Reflection Probe 提供环境反射——以及这四条路径怎么在 Fragment Shader 里合并成最终颜色。"
+slug: "unity-rendering-02-lighting-assets"
+weight: 500
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Lighting"
+  - "Lightmap"
+  - "LightProbe"
+  - "ReflectionProbe"
+  - "GI"
+  - "PBR"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：Unity 的光照不是一个系统，而是四条并行的路径——实时光、Lightmap、Light Probe、Reflection Probe——各自解决不同类型的光照贡献，最终在 Fragment Shader 里汇合成一个颜色。
 
 01 篇在 PBR 计算那一节留了一个坑：

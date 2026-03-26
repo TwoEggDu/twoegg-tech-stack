@@ -1,15 +1,18 @@
-+++
-title = "URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 与迁移策略"
-slug = "urp-ext-06-migration"
-date = 2026-03-25
-description = "从 Unity 2022.3 LTS（URP 14）升级到 Unity 6（URP 17）的实际变更清单：RenderGraph 强制化、ScriptableRenderPass API 变更、RenderingData 拆分、Shader API 差异、以及渐进式迁移策略。"
-[taxonomies]
-tags = ["Unity", "URP", "Unity 6", "迁移", "升级", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1580
-+++
-
+---
+title: "URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 与迁移策略"
+slug: "urp-ext-06-migration"
+date: "2026-03-25"
+description: "从 Unity 2022.3 LTS（URP 14）升级到 Unity 6（URP 17）的实际变更清单：RenderGraph 强制化、ScriptableRenderPass API 变更、RenderingData 拆分、Shader API 差异、以及渐进式迁移策略。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Unity 6"
+  - "迁移"
+  - "升级"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1580
+---
 Unity 2022.3 LTS 到 Unity 6 的 URP 升级不是简单的版本号跳跃，`ScriptableRenderPass` 的核心 API 发生了结构性变化。本篇梳理实际会遇到的 Breaking Change，以及一套不用一次性全改就能先让项目跑起来的迁移策略。
 
 ---

@@ -1,15 +1,18 @@
-+++
-title = "Shader 语法基础 01｜数据类型与精度：half、float、int 怎么选"
-slug = "shader-basic-01-data-types"
-date = 2026-03-26
-description = "HLSL 里的数据类型不只有 float。理解 half/float/int 的精度范围、swizzle 操作、向量分量访问，以及移动端为什么 half 更重要。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "语法基础", "数据类型", "精度"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4050
-+++
-
+---
+title: "Shader 语法基础 01｜数据类型与精度：half、float、int 怎么选"
+slug: "shader-basic-01-data-types"
+date: "2026-03-26"
+description: "HLSL 里的数据类型不只有 float。理解 half/float/int 的精度范围、swizzle 操作、向量分量访问，以及移动端为什么 half 更重要。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "语法基础"
+  - "数据类型"
+  - "精度"
+series: "Shader 手写技法"
+weight: 4050
+---
 入门层写 Shader 时，所有变量都用了 `float`。这没问题，但不是最优解。HLSL 提供了多种数据类型，选对类型对移动端性能有直接影响。
 
 ---

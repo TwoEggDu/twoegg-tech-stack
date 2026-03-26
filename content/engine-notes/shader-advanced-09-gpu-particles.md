@@ -1,15 +1,20 @@
-+++
-title = "Shader 进阶技法 09｜GPU 粒子 Shader：StructuredBuffer 与 Instancing"
-slug = "shader-advanced-09-gpu-particles"
-date = 2026-03-26
-description = "CPU 粒子系统的瓶颈在于每帧 CPU 更新和 DrawCall 数量。GPU 粒子把粒子数据存入 StructuredBuffer，Compute Shader 并行更新，Shader 用 SV_InstanceID 读取并渲染——实现十万级粒子的实时渲染。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "GPU粒子", "StructuredBuffer", "Compute Shader", "Instancing"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4370
-+++
-
+---
+title: "Shader 进阶技法 09｜GPU 粒子 Shader：StructuredBuffer 与 Instancing"
+slug: "shader-advanced-09-gpu-particles"
+date: "2026-03-26"
+description: "CPU 粒子系统的瓶颈在于每帧 CPU 更新和 DrawCall 数量。GPU 粒子把粒子数据存入 StructuredBuffer，Compute Shader 并行更新，Shader 用 SV_InstanceID 读取并渲染——实现十万级粒子的实时渲染。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "GPU粒子"
+  - "StructuredBuffer"
+  - "Compute Shader"
+  - "Instancing"
+series: "Shader 手写技法"
+weight: 4370
+---
 Unity 内置粒子系统（ParticleSystem）的每个粒子需要 CPU 更新，DrawCall 合批有限制。大量粒子（10 万+）时性能不足。GPU 粒子方案把粒子数据完全放在 GPU：Compute Shader 更新，DrawMeshInstancedIndirect 批量绘制。
 
 ---

@@ -1,15 +1,19 @@
-+++
-title = "URP 深度平台 02｜多平台质量分级：三档配置的工程实现"
-slug = "urp-platform-02-quality"
-date = 2026-03-25
-description = "URP 多平台质量分级的完整工程实现：Quality Settings 与 URP Asset 的配对机制、iOS / Android 三档设备检测代码（含分档依据）、每档的具体配置差异表、Runtime 动态切换策略、以及什么时候应该从三档扩展到四档。"
-[taxonomies]
-tags = ["Unity", "URP", "质量分级", "移动端", "iOS", "Android", "性能优化"]
-series = ["URP 深度"]
-[extra]
-weight = 1660
-+++
-
+---
+title: "URP 深度平台 02｜多平台质量分级：三档配置的工程实现"
+slug: "urp-platform-02-quality"
+date: "2026-03-25"
+description: "URP 多平台质量分级的完整工程实现：Quality Settings 与 URP Asset 的配对机制、iOS / Android 三档设备检测代码（含分档依据）、每档的具体配置差异表、Runtime 动态切换策略、以及什么时候应该从三档扩展到四档。"
+tags:
+  - "Unity"
+  - "URP"
+  - "质量分级"
+  - "移动端"
+  - "iOS"
+  - "Android"
+  - "性能优化"
+series: "URP 深度"
+weight: 1660
+---
 一套配置无法适配所有设备，质量分级是解决这个问题的工程方案。这篇讲三档分级的完整实现：为什么这样分、代码怎么写、配置差异在哪里、切换时机怎么选。
 
 ---

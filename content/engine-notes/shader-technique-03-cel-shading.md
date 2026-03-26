@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 03｜卡通渲染：Cel Shading 色阶与边缘光"
-slug = "shader-technique-03-cel-shading"
-date = 2026-03-26
-description = "Cel Shading（赛璐珞）风格的核心是阶梯状漫反射和 Rim Light。用 step/smoothstep 把连续光照变成色阶，加边缘光（Rim），实现日式动漫风格渲染。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "卡通渲染", "Cel Shading", "Rim Light"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4190
-+++
-
+---
+title: "Shader 核心技法 03｜卡通渲染：Cel Shading 色阶与边缘光"
+slug: "shader-technique-03-cel-shading"
+date: "2026-03-26"
+description: "Cel Shading（赛璐珞）风格的核心是阶梯状漫反射和 Rim Light。用 step/smoothstep 把连续光照变成色阶，加边缘光（Rim），实现日式动漫风格渲染。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "卡通渲染"
+  - "Cel Shading"
+  - "Rim Light"
+series: "Shader 手写技法"
+weight: 4190
+---
 卡通渲染（Cel Shading / Toon Shading）的特征是**阶梯式明暗**——光照不连续过渡，而是突变成几个离散的色阶。配合外描边（下一篇），构成完整的日式动漫风格。
 
 ---

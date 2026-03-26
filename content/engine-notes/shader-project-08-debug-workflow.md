@@ -1,15 +1,19 @@
-+++
-title = "项目实战 08｜Shader 调试与性能分析工作流"
-slug = "shader-project-08-debug-workflow"
-date = 2026-03-26
-description = "Shader 出现问题时如何快速定位？性能超出预算时如何找到瓶颈？这篇整理一套完整的 Shader 调试方法论：从颜色可视化到 Frame Debugger，从 GPU 性能分析到变体追踪。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "调试", "性能分析", "工作流"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4470
-+++
-
+---
+title: "项目实战 08｜Shader 调试与性能分析工作流"
+slug: "shader-project-08-debug-workflow"
+date: "2026-03-26"
+description: "Shader 出现问题时如何快速定位？性能超出预算时如何找到瓶颈？这篇整理一套完整的 Shader 调试方法论：从颜色可视化到 Frame Debugger，从 GPU 性能分析到变体追踪。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "调试"
+  - "性能分析"
+  - "工作流"
+series: "Shader 手写技法"
+weight: 4470
+---
 Shader 开发中遇到问题是常态——渲染结果不对、性能超出预算、特定机型崩溃。有一套系统的调试方法，能把"玄学调参"变成有据可查的排查流程。
 
 ---

@@ -1,14 +1,17 @@
-+++
-date = 2026-03-23
-title = "Unity 为什么需要 AssetBundle：它解决的不是“加载”，而是“交付”"
-description = "把 AssetBundle 放回 Unity 资产系统的大地图里，讲清它为什么首先不是运行时加载 API 话题，而是构建期资源交付、分发、版本和缓存治理问题。"
-slug = "unity-why-needs-assetbundle-delivery-not-loading"
-weight = 43
-featured = false
-tags = ["Unity", "AssetBundle", "Build", "Delivery"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Unity 为什么需要 AssetBundle：它解决的不是“加载”，而是“交付”"
+description: "把 AssetBundle 放回 Unity 资产系统的大地图里，讲清它为什么首先不是运行时加载 API 话题，而是构建期资源交付、分发、版本和缓存治理问题。"
+slug: "unity-why-needs-assetbundle-delivery-not-loading"
+weight: 43
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Build"
+  - "Delivery"
+series: "Unity 资产系统与序列化"
+---
 前面这条主线，我一直在把 AssetBundle 之前的底座先立稳：
 
 - 什么叫资产，文件和资产对象不是一回事

@@ -1,15 +1,18 @@
-+++
-title = "怎么在 URP 里扩展渲染流程"
-slug = "unity-rendering-10-urp-extend"
-date = 2025-01-26
-description = "ScriptableRendererFeature + ScriptableRenderPass 的完整写法，RTHandle API 的用法，RenderGraph 的基本思路，以及描边、屏幕特效、自定义 Pass 注入的实现模式。"
-[taxonomies]
-tags = ["Unity", "URP", "RendererFeature", "RenderPass", "RTHandle", "RenderGraph"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 1300
-+++
-
+---
+title: "怎么在 URP 里扩展渲染流程"
+slug: "unity-rendering-10-urp-extend"
+date: "2025-01-26"
+description: "ScriptableRendererFeature + ScriptableRenderPass 的完整写法，RTHandle API 的用法，RenderGraph 的基本思路，以及描边、屏幕特效、自定义 Pass 注入的实现模式。"
+tags:
+  - "Unity"
+  - "URP"
+  - "RendererFeature"
+  - "RenderPass"
+  - "RTHandle"
+  - "RenderGraph"
+series: "Unity 渲染系统"
+weight: 1300
+---
 如果只用一句话概括这篇：在 URP 里扩展渲染流程，本质是写一个 `ScriptableRendererFeature` 来创建并注册 `ScriptableRenderPass`，然后在 Pass 的 `Execute` 里用 `CommandBuffer` 提交 GPU 命令——关键是理解 RT 的生命周期管理，以及 RenderGraph 和旧 API 的边界。
 
 ---

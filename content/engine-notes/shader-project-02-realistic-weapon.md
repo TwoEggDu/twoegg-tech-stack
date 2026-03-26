@@ -1,15 +1,20 @@
-+++
-title = "项目实战 02｜写实武器 Shader：PBR + 磨损细节 + 自发光能量槽"
-slug = "shader-project-02-realistic-weapon"
-date = 2026-03-26
-description = "写实武器需要传达材质质感——金属光泽、边缘磨损、科幻能量槽的自发光脉冲。在标准 PBR 工作流上叠加磨损遮罩、细节法线和自发光动画，组合出有说服力的武器表现。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "PBR", "武器", "写实", "自发光"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4410
-+++
-
+---
+title: "项目实战 02｜写实武器 Shader：PBR + 磨损细节 + 自发光能量槽"
+slug: "shader-project-02-realistic-weapon"
+date: "2026-03-26"
+description: "写实武器需要传达材质质感——金属光泽、边缘磨损、科幻能量槽的自发光脉冲。在标准 PBR 工作流上叠加磨损遮罩、细节法线和自发光动画，组合出有说服力的武器表现。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "PBR"
+  - "武器"
+  - "写实"
+  - "自发光"
+series: "Shader 手写技法"
+weight: 4410
+---
 写实武器 Shader 的核心是在 PBR 基础上叠加几个额外的表现层：**磨损（Wear）细节**让武器显得经过使用，**自发光能量槽（Energy Channel）**在科幻武器上制造科技感，**细节法线**增加近距离的表面质感。
 
 ---

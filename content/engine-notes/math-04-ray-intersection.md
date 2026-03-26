@@ -1,15 +1,19 @@
-+++
-title = "图形数学 04｜射线求交：Ray-AABB、Ray-OBB、Ray-Triangle"
-slug = "math-04-ray-intersection"
-date = 2026-03-26
-description = "射线求交是拾取（Picking）、物理射线检测、BVH 加速结构的核心操作。这篇讲三种最常用的求交算法：Ray-AABB（slab 方法）、Ray-OBB（转换到 OBB 本地空间）、Ray-Triangle（Möller–Trumbore 算法），并给出可直接使用的代码。"
-weight = 630
-[taxonomies]
-tags = ["数学", "图形学", "射线求交", "AABB", "OBB", "Ray Casting", "BVH"]
-[extra]
-series = "图形数学"
-+++
-
+---
+title: "图形数学 04｜射线求交：Ray-AABB、Ray-OBB、Ray-Triangle"
+slug: "math-04-ray-intersection"
+date: "2026-03-26"
+description: "射线求交是拾取（Picking）、物理射线检测、BVH 加速结构的核心操作。这篇讲三种最常用的求交算法：Ray-AABB（slab 方法）、Ray-OBB（转换到 OBB 本地空间）、Ray-Triangle（Möller–Trumbore 算法），并给出可直接使用的代码。"
+weight: 630
+tags:
+  - "数学"
+  - "图形学"
+  - "射线求交"
+  - "AABB"
+  - "OBB"
+  - "Ray Casting"
+  - "BVH"
+series: "图形数学"
+---
 ## 射线的表示
 
 射线（Ray）是从一个点出发、沿某个方向延伸的半直线：

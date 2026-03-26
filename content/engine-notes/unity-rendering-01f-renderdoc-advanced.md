@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 01f｜RenderDoc 进阶：顶点数据、贴图采样、Pipeline State 调试"
-description = "深入讲解 RenderDoc 的 Mesh Viewer、Texture Viewer 高级功能和 Pipeline State 各项参数，覆盖顶点缓冲验证、mip 采样检查、Blend/Depth/Stencil State 读法，以及 Shader Debugger 逐像素追踪的基本用法。"
-slug = "unity-rendering-01f-renderdoc-advanced"
-weight = 450
-featured = false
-tags = ["Unity", "Rendering", "RenderDoc", "Debugging", "GPU", "Shader", "MeshViewer"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 01f｜RenderDoc 进阶：顶点数据、贴图采样、Pipeline State 调试"
+description: "深入讲解 RenderDoc 的 Mesh Viewer、Texture Viewer 高级功能和 Pipeline State 各项参数，覆盖顶点缓冲验证、mip 采样检查、Blend/Depth/Stencil State 读法，以及 Shader Debugger 逐像素追踪的基本用法。"
+slug: "unity-rendering-01f-renderdoc-advanced"
+weight: 450
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "RenderDoc"
+  - "Debugging"
+  - "GPU"
+  - "Shader"
+  - "MeshViewer"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：当 Frame Debugger 告诉你"哪里出问题了"之后，RenderDoc 告诉你"GPU 收到的原始数据到底是什么"——Mesh Viewer 看顶点，Texture Viewer 看贴图采样，Pipeline State 看渲染状态，Shader Debugger 追踪单个像素的计算过程。
 
 上一篇把 RenderDoc 的界面和基本捕获流程讲清了。这篇进入实际排查问题时最常用的几个功能。

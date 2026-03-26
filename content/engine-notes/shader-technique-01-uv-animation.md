@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 01｜UV 动画：滚动、旋转与扭曲"
-slug = "shader-technique-01-uv-animation"
-date = 2026-03-26
-description = "用时间驱动 UV 坐标，实现贴图滚动、旋转、扭曲三种动画效果。掌握 UV 操作的基本模式，理解 frac/sin/矩阵旋转在 UV 空间的含义。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "UV动画", "滚动", "扭曲"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4170
-+++
-
+---
+title: "Shader 核心技法 01｜UV 动画：滚动、旋转与扭曲"
+slug: "shader-technique-01-uv-animation"
+date: "2026-03-26"
+description: "用时间驱动 UV 坐标，实现贴图滚动、旋转、扭曲三种动画效果。掌握 UV 操作的基本模式，理解 frac/sin/矩阵旋转在 UV 空间的含义。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "UV动画"
+  - "滚动"
+  - "扭曲"
+series: "Shader 手写技法"
+weight: 4170
+---
 UV 动画是 Shader 里最高效的动画手段之一——无需骨骼、无需 Animator，只需在 Fragment Shader 里修改采样 UV，贴图就能动起来。传送带、水流、火焰、魔法阵，都可以用这种方式实现。
 
 ---

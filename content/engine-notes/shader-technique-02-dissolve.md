@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 02｜溶解效果：噪声 clip 与发光边缘"
-slug = "shader-technique-02-dissolve"
-date = 2026-03-26
-description = "溶解（Dissolve）是游戏里最常见的特效之一。用噪声贴图 + clip 实现基础溶解，再加上 smoothstep 做出带发光边缘的高质量溶解效果。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "溶解", "特效", "clip"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4180
-+++
-
+---
+title: "Shader 核心技法 02｜溶解效果：噪声 clip 与发光边缘"
+slug: "shader-technique-02-dissolve"
+date: "2026-03-26"
+description: "溶解（Dissolve）是游戏里最常见的特效之一。用噪声贴图 + clip 实现基础溶解，再加上 smoothstep 做出带发光边缘的高质量溶解效果。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "溶解"
+  - "特效"
+  - "clip"
+series: "Shader 手写技法"
+weight: 4180
+---
 角色死亡消散、物体被火焰燃烧、传送效果——溶解（Dissolve）是游戏里出现频率极高的特效。核心原理极简：用噪声贴图的值和一个阈值比较，低于阈值的像素丢弃。
 
 ---

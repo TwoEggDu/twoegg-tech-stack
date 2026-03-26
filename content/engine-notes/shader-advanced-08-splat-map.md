@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 08｜地形多层混合：Splat Map 方案"
-slug = "shader-advanced-08-splat-map"
-date = 2026-03-26
-description = "地形需要在一张网格上显示多种地表材质（草、泥、石、雪）。Splat Map 用一张 RGBA 纹理存储每种材质的混合权重，Shader 采样各层并按权重混合。这篇实现一个 4 层地形混合 Shader。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "地形", "Splat Map", "多层混合"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4360
-+++
-
+---
+title: "Shader 进阶技法 08｜地形多层混合：Splat Map 方案"
+slug: "shader-advanced-08-splat-map"
+date: "2026-03-26"
+description: "地形需要在一张网格上显示多种地表材质（草、泥、石、雪）。Splat Map 用一张 RGBA 纹理存储每种材质的混合权重，Shader 采样各层并按权重混合。这篇实现一个 4 层地形混合 Shader。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "地形"
+  - "Splat Map"
+  - "多层混合"
+series: "Shader 手写技法"
+weight: 4360
+---
 Unity 内置 Terrain 有自己的 Terrain Shader，但当你需要自定义地表（如 Mesh 地形、程序化地形、特效地形）时，需要自己实现 Splat Map 混合。
 
 ---

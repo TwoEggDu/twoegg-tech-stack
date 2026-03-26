@@ -1,15 +1,19 @@
-+++
-title = "项目实战 03｜写实水面：Gerstner 顶点波浪 + 完整着色"
-slug = "shader-project-03-realistic-water"
-date = 2026-03-26
-description = "进阶层的水面 Shader 解决了着色问题（折射/反射/深度/泡沫），但水面网格是平的。Gerstner Wave 在顶点阶段模拟真实海浪的尖峰形状，配合法线更新，让水面从视觉到几何都像真实水体。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "水面", "Gerstner Wave", "顶点动画"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4420
-+++
-
+---
+title: "项目实战 03｜写实水面：Gerstner 顶点波浪 + 完整着色"
+slug: "shader-project-03-realistic-water"
+date: "2026-03-26"
+description: "进阶层的水面 Shader 解决了着色问题（折射/反射/深度/泡沫），但水面网格是平的。Gerstner Wave 在顶点阶段模拟真实海浪的尖峰形状，配合法线更新，让水面从视觉到几何都像真实水体。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "水面"
+  - "Gerstner Wave"
+  - "顶点动画"
+series: "Shader 手写技法"
+weight: 4420
+---
 进阶层的 `shader-advanced-07-water` 解决了水面的着色（折射/反射/深度/泡沫），但顶点是静止的平面网格。真实海浪的形状是尖峰状的——波峰比正弦波更尖锐，波谷更平坦。**Gerstner Wave** 是模拟这种形状的经典模型。
 
 ---

@@ -1,13 +1,16 @@
-+++
-date = 2026-03-26
-title = "HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑"
-description = "从 AOT 泛型缺口、补充 metadata、Consistent/SuperSet 映射，到 AOTGenericReference 和 MethodBridge，拆解 HybridCLR 在泛型问题上到底补了什么、没补什么。"
-weight = 31
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Generics"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-26"
+title: "HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑"
+description: "从 AOT 泛型缺口、补充 metadata、Consistent/SuperSet 映射，到 AOTGenericReference 和 MethodBridge，拆解 HybridCLR 在泛型问题上到底补了什么、没补什么。"
+weight: 31
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Generics"
+series: "HybridCLR"
+---
 > HybridCLR 的补充 metadata 解决的是“运行时能不能看懂这段 AOT metadata”，不是“凭空生成一份原本没有被 AOT 出来的泛型 native 实现”。
 
 这是 HybridCLR 系列第 2 篇。第一篇先把 `RuntimeApi -> metadata -> transform -> execute` 这条主链立住；这一篇只收一件事：AOT 泛型和补充 metadata 到底各自补哪一层。

@@ -1,15 +1,18 @@
-+++
-title = "图形数学 03｜视锥体数学：裁剪平面提取、物体可见性判断"
-slug = "math-03-frustum-math"
-date = 2026-03-26
-description = "Frustum Culling 的核心是用 6 个平面方程判断物体是否在视锥体内。这篇讲如何从 VP 矩阵提取这 6 个平面、AABB 与平面的快速测试算法、以及 Unity 的 GeometryUtility.CalculateFrustumPlanes 背后做了什么。"
-weight = 620
-[taxonomies]
-tags = ["数学", "图形学", "视锥体", "Frustum Culling", "AABB", "剔除"]
-[extra]
-series = "图形数学"
-+++
-
+---
+title: "图形数学 03｜视锥体数学：裁剪平面提取、物体可见性判断"
+slug: "math-03-frustum-math"
+date: "2026-03-26"
+description: "Frustum Culling 的核心是用 6 个平面方程判断物体是否在视锥体内。这篇讲如何从 VP 矩阵提取这 6 个平面、AABB 与平面的快速测试算法、以及 Unity 的 GeometryUtility.CalculateFrustumPlanes 背后做了什么。"
+weight: 620
+tags:
+  - "数学"
+  - "图形学"
+  - "视锥体"
+  - "Frustum Culling"
+  - "AABB"
+  - "剔除"
+series: "图形数学"
+---
 ## 视锥体的几何结构
 
 透视相机的视锥体（Frustum）是一个四棱台，由 6 个平面围成：近平面（Near）、远平面（Far）、左平面（Left）、右平面（Right）、上平面（Top）、下平面（Bottom）。平面的法线统一定义为**指向视锥体内部**。

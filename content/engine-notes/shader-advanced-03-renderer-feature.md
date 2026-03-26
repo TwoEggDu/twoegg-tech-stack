@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 03｜自定义后处理：Renderer Feature 完整写法"
-slug = "shader-advanced-03-renderer-feature"
-date = 2026-03-26
-description = "URP 的后处理通过 Renderer Feature 插入渲染管线。理解 ScriptableRendererFeature / ScriptableRenderPass 的结构，写一个完整的全屏后处理效果（灰度、色差、像素化）。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "后处理", "Renderer Feature", "全屏特效"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4310
-+++
-
+---
+title: "Shader 进阶技法 03｜自定义后处理：Renderer Feature 完整写法"
+slug: "shader-advanced-03-renderer-feature"
+date: "2026-03-26"
+description: "URP 的后处理通过 Renderer Feature 插入渲染管线。理解 ScriptableRendererFeature / ScriptableRenderPass 的结构，写一个完整的全屏后处理效果（灰度、色差、像素化）。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "后处理"
+  - "Renderer Feature"
+  - "全屏特效"
+series: "Shader 手写技法"
+weight: 4310
+---
 URP 的后处理不再用 `OnRenderImage`，而是通过 **Renderer Feature** 插入渲染管线。写一个完整的后处理效果需要三个部分：C# 的 Feature + Pass 类，以及 HLSL Shader。
 
 ---

@@ -1,13 +1,17 @@
-+++
-date = 2026-03-23
-title = "HybridCLR DHE｜为什么它不是普通解释执行更快一点"
-description = "把 DHE 放回正确位置：它解决的不是“解释器更快一点”，而是对已打进包体的 AOT 程序集做函数级差分执行。解释为什么未改动函数还能继续走 AOT、`dhao` 文件到底在做什么、这条路线换来什么又限制了什么。"
-weight = 40
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Runtime", "Performance"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-23"
+title: "HybridCLR DHE｜为什么它不是普通解释执行更快一点"
+description: "把 DHE 放回正确位置：它解决的不是“解释器更快一点”，而是对已打进包体的 AOT 程序集做函数级差分执行。解释为什么未改动函数还能继续走 AOT、`dhao` 文件到底在做什么、这条路线换来什么又限制了什么。"
+weight: 40
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Runtime"
+  - "Performance"
+series: "HybridCLR"
+---
 > 这篇同样不写“商业版实现揭秘”。能确定的部分，只来自官方公开文档已经明说的行为；凡是落到 runtime 细部怎么拼起来，我都会按“高可信推断”来写，而不是把猜测写成源码事实。
 
 这是 HybridCLR 系列第 11 篇，也是第二篇继续往高级能力边界下探的文章。  

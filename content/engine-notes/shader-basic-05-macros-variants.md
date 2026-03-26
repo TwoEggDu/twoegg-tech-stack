@@ -1,15 +1,19 @@
-+++
-title = "Shader 语法基础 05｜宏体系与 Shader 变体：multi_compile vs shader_feature"
-slug = "shader-basic-05-macros-variants"
-date = 2026-03-26
-description = "Shader 变体是移动端包体膨胀和运行时卡顿的常见根源。理解 #pragma multi_compile 和 shader_feature 的区别，变体是怎么生成的，以及如何控制变体数量。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "语法基础", "宏", "Shader变体", "性能"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4090
-+++
-
+---
+title: "Shader 语法基础 05｜宏体系与 Shader 变体：multi_compile vs shader_feature"
+slug: "shader-basic-05-macros-variants"
+date: "2026-03-26"
+description: "Shader 变体是移动端包体膨胀和运行时卡顿的常见根源。理解 #pragma multi_compile 和 shader_feature 的区别，变体是怎么生成的，以及如何控制变体数量。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "语法基础"
+  - "宏"
+  - "Shader变体"
+  - "性能"
+series: "Shader 手写技法"
+weight: 4090
+---
 Shader 里的 `#pragma multi_compile` 和 `shader_feature` 是两个看起来相似、行为截然不同的指令。理解它们的区别，是控制包体大小和避免运行时卡顿的前提。
 
 ---

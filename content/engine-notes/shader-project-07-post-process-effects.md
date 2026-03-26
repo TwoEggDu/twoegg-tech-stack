@@ -1,15 +1,19 @@
-+++
-title = "项目实战 07｜后处理特效组合：夜视仪、血屏、扫描波"
-slug = "shader-project-07-post-process-effects"
-date = 2026-03-26
-description = "游戏中常见的屏幕空间特效：夜视仪（绿色噪点 + 渐晕）、受伤血屏（边缘红色脉冲）、扫描波（从中心扩散的波纹）。每种效果都用 Renderer Feature + Blit Shader 实现，可独立开关、叠加组合。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "后处理", "Renderer Feature", "屏幕特效"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4460
-+++
-
+---
+title: "项目实战 07｜后处理特效组合：夜视仪、血屏、扫描波"
+slug: "shader-project-07-post-process-effects"
+date: "2026-03-26"
+description: "游戏中常见的屏幕空间特效：夜视仪（绿色噪点 + 渐晕）、受伤血屏（边缘红色脉冲）、扫描波（从中心扩散的波纹）。每种效果都用 Renderer Feature + Blit Shader 实现，可独立开关、叠加组合。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "后处理"
+  - "Renderer Feature"
+  - "屏幕特效"
+series: "Shader 手写技法"
+weight: 4460
+---
 这三种后处理特效在很多类型的游戏里都会用到——FPS 的受伤反馈、恐怖游戏的夜视、技能释放的扫描波。它们都基于进阶层介绍的 Renderer Feature 结构，每种效果一个独立的 Feature + Shader。
 
 ---

@@ -1,14 +1,21 @@
-+++
-date = 2026-03-24
-title = "热更新场景下的 Shader 交付架构：bundle 边界、版本对齐与变体保护策略"
-description = "把热更新项目里 shader 交付的核心问题拆成 bundle 边界设计、shader bundle 独立性、版本对齐和变体保护四层，讲清楚如何避免热更内容里的 shader 变体在运行时缺失。"
-slug = "unity-shader-delivery-in-hotupdate"
-weight = 100
-featured = false
-tags = ["Unity", "Shader", "AssetBundle", "HotUpdate", "Variant", "Addressables"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "热更新场景下的 Shader 交付架构：bundle 边界、版本对齐与变体保护策略"
+description: "把热更新项目里 shader 交付的核心问题拆成 bundle 边界设计、shader bundle 独立性、版本对齐和变体保护四层，讲清楚如何避免热更内容里的 shader 变体在运行时缺失。"
+slug: "unity-shader-delivery-in-hotupdate"
+weight: 100
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "AssetBundle"
+  - "HotUpdate"
+  - "Variant"
+  - "Addressables"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 前面的文章已经把这个核心问题讲清楚了：
 
 热更新包里的材质如果没有参与 Player 构建，它们的 keyword 组合就不会进入 `usedKeywords`，对应的变体就不会被生成——这是热更项目里 shader 变体缺失问题最常见的根因。

@@ -1,13 +1,17 @@
-+++
-date = 2026-03-23
-title = "HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版"
-description = "把 Full Generic Sharing 放回正确位置：它解决的不是 metadata 可见性，而是 generic 代码共享与调用模型。解释为什么它能减少补充 metadata、缩小包体和内存，又为什么会引入泛型函数性能代价和 Unity 版本前提。"
-weight = 39
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Generics", "Runtime"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-23"
+title: "HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版"
+description: "把 Full Generic Sharing 放回正确位置：它解决的不是 metadata 可见性，而是 generic 代码共享与调用模型。解释为什么它能减少补充 metadata、缩小包体和内存，又为什么会引入泛型函数性能代价和 Unity 版本前提。"
+weight: 39
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Generics"
+  - "Runtime"
+series: "HybridCLR"
+---
 > 这篇不写“商业版内幕揭秘”。能确定的部分，只来自公开文档、当前系列已经拆出来的 runtime 边界，以及 `libil2cpp` 公开字段名暴露出的方向；凡是涉及具体内部实现的地方，我都会明确按“高可信推断”来写，而不是把猜测写成事实。
 
 这是 HybridCLR 系列第 10 篇，也是第一篇继续往高级能力边界下探的文章。  

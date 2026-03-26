@@ -1,15 +1,19 @@
-+++
-title = "URP 深度扩展 04｜DrawRenderers 与 FilteringSettings：有选择地重绘物体"
-slug = "urp-ext-04-draw-renderers"
-date = 2026-03-25
-description = "在 ScriptableRenderPass 里用 DrawRenderers 实现 X 光、描边、自定义排序等效果：FilteringSettings 的层级与 RenderQueue 过滤、DrawingSettings 的排序键与 Shader Pass 选择、SortingCriteria 控制渲染顺序，以及 X 光效果的完整实现示例。"
-[taxonomies]
-tags = ["Unity", "URP", "DrawRenderers", "FilteringSettings", "描边", "X光", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1620
-+++
-
+---
+title: "URP 深度扩展 04｜DrawRenderers 与 FilteringSettings：有选择地重绘物体"
+slug: "urp-ext-04-draw-renderers"
+date: "2026-03-25"
+description: "在 ScriptableRenderPass 里用 DrawRenderers 实现 X 光、描边、自定义排序等效果：FilteringSettings 的层级与 RenderQueue 过滤、DrawingSettings 的排序键与 Shader Pass 选择、SortingCriteria 控制渲染顺序，以及 X 光效果的完整实现示例。"
+tags:
+  - "Unity"
+  - "URP"
+  - "DrawRenderers"
+  - "FilteringSettings"
+  - "描边"
+  - "X光"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1620
+---
 Renderer Feature 里除了全屏 Blit，另一类常见需求是：**把场景里某些物体再画一遍**，但用不同的 Shader、不同的时机、不同的 RT。
 
 X 光效果（穿墙显示角色）、描边（选中高亮）、自定义透明排序——这些都依赖同一个 API：`context.DrawRenderers()`。

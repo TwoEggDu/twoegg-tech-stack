@@ -1,13 +1,17 @@
-+++
-date = 2026-03-23
-title = "HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断"
-description = "不再补新原理，而是把 HybridCLR 系列里最容易混掉的 10 个判断重新拉直：哪些是装载问题，哪些是 metadata 问题，哪些是 AOT 泛型、MethodBridge、MonoBehaviour、PreJit、Full Generic Sharing、DHE 的边界问题。"
-weight = 42
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "FAQ", "Architecture"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-23"
+title: "HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断"
+description: "不再补新原理，而是把 HybridCLR 系列里最容易混掉的 10 个判断重新拉直：哪些是装载问题，哪些是 metadata 问题，哪些是 AOT 泛型、MethodBridge、MonoBehaviour、PreJit、Full Generic Sharing、DHE 的边界问题。"
+weight: 42
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "FAQ"
+  - "Architecture"
+series: "HybridCLR"
+---
 > 这篇不再讲新的源码细节。它只做一件事：把前面几篇里最容易混掉、但又最影响项目判断的 10 句话重新拉直。因为很多时候，团队不是“不会用 HybridCLR”，而是脑子里默认站着几句错判断。
 
 这是 HybridCLR 系列第 13 篇。  

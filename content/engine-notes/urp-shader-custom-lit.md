@@ -1,15 +1,19 @@
-+++
-title = "URP Shader 手写｜从骨架到完整光照：接入主光、附加光与阴影"
-slug = "urp-shader-custom-lit"
-date = 2026-03-26
-description = "在 URP 里手写一个完整的 Lit Shader：讲清楚 URP Shader 的骨架结构、include 体系、与 Built-in 的关键差异，以及如何正确接入主光（GetMainLight）、附加光循环、Shadow 采样和 ShadowCaster Pass。最终得到一个可以直接用于项目的自定义光照 Shader 模板。"
-[taxonomies]
-tags = ["Unity", "URP", "Shader", "HLSL", "光照", "阴影", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1680
-+++
-
+---
+title: "URP Shader 手写｜从骨架到完整光照：接入主光、附加光与阴影"
+slug: "urp-shader-custom-lit"
+date: "2026-03-26"
+description: "在 URP 里手写一个完整的 Lit Shader：讲清楚 URP Shader 的骨架结构、include 体系、与 Built-in 的关键差异，以及如何正确接入主光（GetMainLight）、附加光循环、Shadow 采样和 ShadowCaster Pass。最终得到一个可以直接用于项目的自定义光照 Shader 模板。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Shader"
+  - "HLSL"
+  - "光照"
+  - "阴影"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1680
+---
 URP 自带的 Lit Shader 功能完整，但高度封装——想加一个效果、改一个细节，要在几千行代码里找位置。手写 Shader 的价值在于：你完全清楚每一行代码在做什么，改起来没有障碍。
 
 这篇从一个空文件开始，一步步写出一个接入 URP 完整光照体系的 Shader：主光漫反射 + 高光、附加光循环、主光阴影接收、ShadowCaster Pass。

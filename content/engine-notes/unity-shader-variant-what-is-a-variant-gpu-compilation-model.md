@@ -1,14 +1,21 @@
-+++
-date = 2026-03-24
-title = "Unity Shader Variant 是什么：GPU 程序的编译模型"
-description = "从 GPU 不能高效做运行时分支讲起，解释 multi_compile 为什么产生笛卡尔积、每个变体是什么、以及 EnableKeyword 在运行时切换的究竟是什么。"
-slug = "unity-shader-variant-gpu-compilation-model"
-weight = 15
-featured = false
-tags = ["Unity", "Shader", "Variant", "GPU", "Keyword", "Compilation"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Unity Shader Variant 是什么：GPU 程序的编译模型"
+description: "从 GPU 不能高效做运行时分支讲起，解释 multi_compile 为什么产生笛卡尔积、每个变体是什么、以及 EnableKeyword 在运行时切换的究竟是什么。"
+slug: "unity-shader-variant-gpu-compilation-model"
+weight: 15
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "Variant"
+  - "GPU"
+  - "Keyword"
+  - "Compilation"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 > 如果只用一句话概括这篇，我会这样说：Shader Variant 不是"带条件的 Shader"，而是"同一段 Shader 逻辑按不同关键字组合预先编译出的多份独立 GPU 程序"。
 
 上一篇讲了 Shader Variant 为什么会存在。这篇进一步解决一个更基础的问题：

@@ -1,15 +1,18 @@
-+++
-title = "Unity 渲染系统补B｜CBuffer 超限与常量缓冲区管理"
-slug = "unity-rendering-supp-b-cbuffer"
-date = 2026-03-26
-description = "Shader 里声明了很多属性，它们在 GPU 里存在哪？CBuffer（Constant Buffer）容量有限，超限后性能骤降。这篇讲清楚 CBuffer 的工作原理、Unity 的 UnityPerMaterial 规范、超限的表现与诊断方法。"
-weight = 1510
-[taxonomies]
-tags = ["Unity", "Rendering", "Shader", "CBuffer", "性能", "HLSL"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补B｜CBuffer 超限与常量缓冲区管理"
+slug: "unity-rendering-supp-b-cbuffer"
+date: "2026-03-26"
+description: "Shader 里声明了很多属性，它们在 GPU 里存在哪？CBuffer（Constant Buffer）容量有限，超限后性能骤降。这篇讲清楚 CBuffer 的工作原理、Unity 的 UnityPerMaterial 规范、超限的表现与诊断方法。"
+weight: 1510
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Shader"
+  - "CBuffer"
+  - "性能"
+  - "HLSL"
+series: "Unity 渲染系统"
+---
 每次写 Shader 时，`CBUFFER_START(UnityPerMaterial) ... CBUFFER_END` 这个结构经常让人困惑——为什么要放在这里？不放会怎样？这篇把 Constant Buffer 的机制讲清楚，以及 Unity 是怎么用它来支撑 SRP Batcher 的。
 
 ---

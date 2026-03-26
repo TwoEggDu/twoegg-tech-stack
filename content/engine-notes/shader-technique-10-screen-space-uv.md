@@ -1,15 +1,20 @@
-+++
-title = "Shader 核心技法 10｜屏幕空间 UV：扫描线、X-Ray 与屏幕坐标特效"
-slug = "shader-technique-10-screen-space-uv"
-date = 2026-03-26
-description = "用屏幕坐标而非模型 UV 来驱动 Shader 效果——扫描线、全息投影、X-Ray 透视、噪点叠加。理解 SV_POSITION 和 ComputeScreenPos 的差别，以及屏幕空间坐标的常见用法。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "屏幕空间", "扫描线", "全息", "X-Ray"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4260
-+++
-
+---
+title: "Shader 核心技法 10｜屏幕空间 UV：扫描线、X-Ray 与屏幕坐标特效"
+slug: "shader-technique-10-screen-space-uv"
+date: "2026-03-26"
+description: "用屏幕坐标而非模型 UV 来驱动 Shader 效果——扫描线、全息投影、X-Ray 透视、噪点叠加。理解 SV_POSITION 和 ComputeScreenPos 的差别，以及屏幕空间坐标的常见用法。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "屏幕空间"
+  - "扫描线"
+  - "全息"
+  - "X-Ray"
+series: "Shader 手写技法"
+weight: 4260
+---
 有些效果不依赖模型的 UV，而是基于像素在**屏幕上的位置**——全息投影的扫描线不管模型怎么旋转，扫描线都保持水平；X-Ray 透视在屏幕空间显示被遮挡的物体轮廓。
 
 ---

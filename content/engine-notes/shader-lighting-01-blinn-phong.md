@@ -1,15 +1,18 @@
-+++
-title = "Shader 核心光照 01｜Blinn-Phong 高光：镜面反射与半角向量"
-slug = "shader-lighting-01-blinn-phong"
-date = 2026-03-26
-description = "在 Lambert 漫反射基础上加上镜面高光。理解 Phong 模型的反射向量和 Blinn-Phong 的半角向量优化，写出可控高光大小和强度的完整光照 Shader。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "光照", "Blinn-Phong", "高光"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4110
-+++
-
+---
+title: "Shader 核心光照 01｜Blinn-Phong 高光：镜面反射与半角向量"
+slug: "shader-lighting-01-blinn-phong"
+date: "2026-03-26"
+description: "在 Lambert 漫反射基础上加上镜面高光。理解 Phong 模型的反射向量和 Blinn-Phong 的半角向量优化，写出可控高光大小和强度的完整光照 Shader。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "光照"
+  - "Blinn-Phong"
+  - "高光"
+series: "Shader 手写技法"
+weight: 4110
+---
 Lambert 漫反射让物体有了立体感，但表面是完全哑光的——金属、塑料、湿润表面都有高光（Specular）。这篇在漫反射基础上加上镜面高光，完成 Blinn-Phong 光照模型。
 
 ---

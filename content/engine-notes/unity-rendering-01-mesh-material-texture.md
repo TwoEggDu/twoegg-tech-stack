@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 01｜几何与表面：Mesh、Material、Texture 是什么数据，怎么变成像素"
-description = "把 Mesh 的顶点结构、Material 与 Shader 的关系、Texture 的采样机制讲清楚，并完整追踪这三类资产从 Draw Call 提交到片元着色输出的数据路径。"
-slug = "unity-rendering-01-mesh-material-texture"
-weight = 200
-featured = false
-tags = ["Unity", "Rendering", "Mesh", "Material", "Texture", "Shader", "PBR"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 01｜几何与表面：Mesh、Material、Texture 是什么数据，怎么变成像素"
+description: "把 Mesh 的顶点结构、Material 与 Shader 的关系、Texture 的采样机制讲清楚，并完整追踪这三类资产从 Draw Call 提交到片元着色输出的数据路径。"
+slug: "unity-rendering-01-mesh-material-texture"
+weight: 200
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Mesh"
+  - "Material"
+  - "Texture"
+  - "Shader"
+  - "PBR"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：Mesh 是形状数据，Material 是计算规则，Texture 是被 UV 地址查询的数据——三者不是"拼在一起的东西"，而是在管线的不同阶段各自发挥作用。
 
 上一篇建立了渲染资产的全局地图。这篇把地图里最核心的一条路展开讲：**一个普通的 3D 物体，它的 Mesh、Material、Texture 各是什么数据结构，在管线里各自在哪一步被消费。**

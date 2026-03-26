@@ -1,15 +1,18 @@
-+++
-title = "Shader 手写入门 03｜加上光照：Lambert 漫反射"
-slug = "shader-intro-03-lambert"
-date = 2026-03-26
-description = "从 Unlit 到 Lit 的关键改动：读入法线、获取主光方向、用 dot(N,L) 计算漫反射。理解法线从物体空间到世界空间的变换，以及 URP 里怎么拿到主光源数据。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "入门", "光照", "Lambert"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4030
-+++
-
+---
+title: "Shader 手写入门 03｜加上光照：Lambert 漫反射"
+slug: "shader-intro-03-lambert"
+date: "2026-03-26"
+description: "从 Unlit 到 Lit 的关键改动：读入法线、获取主光方向、用 dot(N,L) 计算漫反射。理解法线从物体空间到世界空间的变换，以及 URP 里怎么拿到主光源数据。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "入门"
+  - "光照"
+  - "Lambert"
+series: "Shader 手写技法"
+weight: 4030
+---
 前两篇的 Shader 是 Unlit——不受光照影响，每个像素的颜色只由贴图或固定颜色决定。实际游戏里大多数物体需要响应灯光：光照到的地方亮，背面暗。这篇加上最基础的漫反射，让 Shader 有了立体感。
 
 ---

@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "为什么 AssetBundle 总让项目变复杂：切包粒度、重复资源、共享依赖和包爆炸"
-description = "解释为什么 AssetBundle 一进真实项目就会把切包粒度、重复资源、共享依赖和包数量治理一起带出来，以及这些复杂度背后的结构冲突。"
-slug = "unity-why-assetbundle-gets-complex-granularity-duplication-shared-dependencies"
-weight = 46
-featured = false
-tags = ["Unity", "AssetBundle", "Dependencies", "Architecture", "Delivery"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "为什么 AssetBundle 总让项目变复杂：切包粒度、重复资源、共享依赖和包爆炸"
+description: "解释为什么 AssetBundle 一进真实项目就会把切包粒度、重复资源、共享依赖和包数量治理一起带出来，以及这些复杂度背后的结构冲突。"
+slug: "unity-why-assetbundle-gets-complex-granularity-duplication-shared-dependencies"
+weight: 46
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Dependencies"
+  - "Architecture"
+  - "Delivery"
+series: "Unity 资产系统与序列化"
+---
 前两篇我分别把 AssetBundle 的两条基础链拆开了：
 
 - 构建期，它怎么从资产系统输出成 bundle、manifest 和压缩后的交付物

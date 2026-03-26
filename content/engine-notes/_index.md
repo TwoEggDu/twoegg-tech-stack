@@ -1,10 +1,9 @@
-+++
-date = 2026-03-21
-title = "Engine Notes"
-description = "记录对 Unity / Unreal、渲染链路、构建系统和引擎边界的理解。"
-hero_title = "理解引擎边界，比会调几个 API 更值钱。"
-+++
-
+---
+date: "2026-03-21"
+title: "Engine Notes"
+description: "记录对 Unity / Unreal、渲染链路、构建系统和引擎边界的理解。"
+hero_title: "理解引擎边界，比会调几个 API 更值钱。"
+---
 这些内容不只是 API 笔记，而是我对引擎系统边界的判断。
 
 如果第一次看这一栏，建议先从 [从玩家输入到屏幕画面：游戏内容和运行时是怎么汇合的]({{< relref "engine-notes/player-input-and-game-content-to-screen.md" >}}) 开始。它更像一篇入口文，会先把“团队准备内容”和“玩家运行时输入”怎么在同一帧里汇合讲清楚。

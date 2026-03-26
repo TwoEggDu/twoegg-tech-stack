@@ -1,15 +1,19 @@
-+++
-title = "Unity 渲染系统补J｜HDR 显示输出：色彩空间、HDR10、SDR vs HDR 渲染路径"
-slug = "unity-rendering-supp-j-hdr-display"
-date = 2026-03-26
-description = "游戏内的 HDR（高动态范围）有两层含义：渲染用 HDR 帧缓冲（防止过曝截断）和输出到 HDR 显示器（真实亮度超过 100 nit）。这篇讲清楚色彩空间（sRGB/Linear/P3/Rec2020）、Tonemapping、HDR10/Dolby Vision 输出格式，以及 Unity 的 HDR 显示支持。"
-weight = 1590
-[taxonomies]
-tags = ["Unity", "Rendering", "HDR", "色彩空间", "Tonemapping", "HDR10", "显示技术"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补J｜HDR 显示输出：色彩空间、HDR10、SDR vs HDR 渲染路径"
+slug: "unity-rendering-supp-j-hdr-display"
+date: "2026-03-26"
+description: "游戏内的 HDR（高动态范围）有两层含义：渲染用 HDR 帧缓冲（防止过曝截断）和输出到 HDR 显示器（真实亮度超过 100 nit）。这篇讲清楚色彩空间（sRGB/Linear/P3/Rec2020）、Tonemapping、HDR10/Dolby Vision 输出格式，以及 Unity 的 HDR 显示支持。"
+weight: 1590
+tags:
+  - "Unity"
+  - "Rendering"
+  - "HDR"
+  - "色彩空间"
+  - "Tonemapping"
+  - "HDR10"
+  - "显示技术"
+series: "Unity 渲染系统"
+---
 "HDR"这个词在游戏渲染里出现在两个完全不同的语境中，经常被混淆。第一个是**渲染管线内部的 HDR 帧缓冲**——用浮点格式存储光照计算结果，防止过亮区域的颜色被截断到 1.0，让 Bloom 和 Tonemapping 能正确工作。第二个是**输出到 HDR 显示器**——把亮度信号真正发送到支持 1000~4000 nit 峰值亮度的显示器，让玩家看到超出 SDR 范围的亮度和色彩。这两件事相互关联但性质不同，都需要理解清楚。
 
 ---

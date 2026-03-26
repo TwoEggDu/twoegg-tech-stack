@@ -1,13 +1,17 @@
-+++
-date = 2026-03-20
-title = "HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线"
-description = "不再重讲 HybridCLR 原理，而是把它落回真实项目：哪些程序集该进热更、加载顺序怎么固化、裁剪和泛型风险怎么前移、团队该建立哪些回归防线。"
-weight = 36
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "BestPractice", "Architecture"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-20"
+title: "HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线"
+description: "不再重讲 HybridCLR 原理，而是把它落回真实项目：哪些程序集该进热更、加载顺序怎么固化、裁剪和泛型风险怎么前移、团队该建立哪些回归防线。"
+weight: 36
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "BestPractice"
+  - "Architecture"
+series: "HybridCLR"
+---
 > 真正让 HybridCLR 在项目里长期稳定的，不是“把原理看懂了”，而是把程序集边界、加载顺序、生成物一致性和问题诊断顺序，变成团队共同遵守的硬约束。
 
 这是 HybridCLR 系列第 7 篇，也是第一轮落地篇。  

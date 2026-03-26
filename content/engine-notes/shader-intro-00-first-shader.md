@@ -1,15 +1,17 @@
-+++
-title = "Shader 手写入门 00｜我的第一个 Shader：让物体显示纯色"
-slug = "shader-intro-00-first-shader"
-date = 2026-03-26
-description = "从一个空文件开始，写出第一个能在 Unity URP 里跑的 Shader。不讲渲染管线理论，只讲每一行代码是什么、为什么要写它，让物体显示一个你指定的颜色。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "入门", "Unity"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4000
-+++
-
+---
+title: "Shader 手写入门 00｜我的第一个 Shader：让物体显示纯色"
+slug: "shader-intro-00-first-shader"
+date: "2026-03-26"
+description: "从一个空文件开始，写出第一个能在 Unity URP 里跑的 Shader。不讲渲染管线理论，只讲每一行代码是什么、为什么要写它，让物体显示一个你指定的颜色。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "入门"
+  - "Unity"
+series: "Shader 手写技法"
+weight: 4000
+---
 写第一个 Shader 之前，先把一件事说清楚：Shader 不是魔法，它就是一段跑在 GPU 上的程序。你写的代码决定了每个像素最终显示什么颜色。
 
 这篇只有一个目标：写出一个能用的 Shader，让材质球上的物体显示你指定的颜色。其他一切都在后面慢慢展开。

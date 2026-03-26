@@ -1,15 +1,18 @@
-+++
-title = "URP 深度光照 03｜Ambient Occlusion：SSAO 实现原理、参数调参与移动端策略"
-slug = "urp-lighting-03-ambient-occlusion"
-date = 2026-03-25
-description = "URP 里 Ambient Occlusion 的完整实现分析：SSAO 的屏幕空间采样原理、GTAO 的改进之处、URP SSAO Renderer Feature 的每个参数含义、与 Deferred 路径的关系，以及移动端降质到可接受代价的策略。"
-[taxonomies]
-tags = ["Unity", "URP", "SSAO", "Ambient Occlusion", "后处理", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1580
-+++
-
+---
+title: "URP 深度光照 03｜Ambient Occlusion：SSAO 实现原理、参数调参与移动端策略"
+slug: "urp-lighting-03-ambient-occlusion"
+date: "2026-03-25"
+description: "URP 里 Ambient Occlusion 的完整实现分析：SSAO 的屏幕空间采样原理、GTAO 的改进之处、URP SSAO Renderer Feature 的每个参数含义、与 Deferred 路径的关系，以及移动端降质到可接受代价的策略。"
+tags:
+  - "Unity"
+  - "URP"
+  - "SSAO"
+  - "Ambient Occlusion"
+  - "后处理"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1580
+---
 Ambient Occlusion（环境光遮蔽）模拟的是：在角落、缝隙、物体相交处，光线更难照进来，所以这些地方应该更暗。它在视觉上显著增加场景的立体感和接触感——尤其是去掉后你才会明显感觉"画面变平了"。
 
 URP 里 AO 通过 **SSAO Renderer Feature** 实现，是屏幕空间算法，不需要预计算，可以处理动态物体。

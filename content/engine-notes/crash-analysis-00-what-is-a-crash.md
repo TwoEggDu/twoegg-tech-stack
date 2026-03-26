@@ -1,13 +1,19 @@
-+++
-date = 2026-03-26
-title = "崩溃分析基础｜信号、异常、托管与 native，先把概念底座立住"
-description = "崩溃分析系列第 0 篇。从操作系统信号、C++ 异常、托管异常三条线拆清楚"崩溃"这件事，讲清楚符号是什么、调用栈怎么读，为后续 Android / iOS / Windows 三个平台篇建立共同语言。"
-weight = 50
-featured = false
-tags = ["Crash", "Debug", "NativeCrash", "Symbols", "Callstack", "Unity", "IL2CPP"]
-series = "CrashAnalysis"
-+++
-
+---
+date: "2026-03-26"
+title: "崩溃分析基础｜信号、异常、托管与 native，先把概念底座立住"
+description: "崩溃分析系列第 0 篇。从操作系统信号、C++ 异常、托管异常三条线拆清楚\"崩溃\"这件事，讲清楚符号是什么、调用栈怎么读，为后续 Android / iOS / Windows 三个平台篇建立共同语言。"
+weight: 50
+featured: false
+tags:
+  - "Crash"
+  - "Debug"
+  - "NativeCrash"
+  - "Symbols"
+  - "Callstack"
+  - "Unity"
+  - "IL2CPP"
+series: "CrashAnalysis"
+---
 > 大多数人第一次遇到 native crash 的反应，是去搜那几行 log；但如果连"这次 crash 是因为什么机制终止的"都不清楚，搜到的答案通常也对不上。
 
 这是崩溃分析系列第 0 篇。

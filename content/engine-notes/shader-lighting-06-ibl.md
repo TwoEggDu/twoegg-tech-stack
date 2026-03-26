@@ -1,15 +1,20 @@
-+++
-title = "Shader 核心光照 06｜环境光与 IBL：球谐、反射探针与间接光照"
-slug = "shader-lighting-06-ibl"
-date = 2026-03-26
-description = "没有环境光的 PBR 材质在背光面完全黑——这不真实。理解球谐光照（SH）提供漫反射环境光，反射探针（Reflection Probe）提供镜面环境光，以及如何在自定义 Shader 里手动接入这两部分。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "光照", "IBL", "环境光", "球谐", "反射探针"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4160
-+++
-
+---
+title: "Shader 核心光照 06｜环境光与 IBL：球谐、反射探针与间接光照"
+slug: "shader-lighting-06-ibl"
+date: "2026-03-26"
+description: "没有环境光的 PBR 材质在背光面完全黑——这不真实。理解球谐光照（SH）提供漫反射环境光，反射探针（Reflection Probe）提供镜面环境光，以及如何在自定义 Shader 里手动接入这两部分。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "光照"
+  - "IBL"
+  - "环境光"
+  - "球谐"
+  - "反射探针"
+series: "Shader 手写技法"
+weight: 4160
+---
 真实世界里，物体的背光面不是全黑的——天空、地面、周围物体的反射光都在照亮它。这种来自环境的光叫**间接光照（Indirect Lighting）**，由两部分组成：**漫反射间接光（Indirect Diffuse）** 和 **镜面间接光（Indirect Specular）**。
 
 ---

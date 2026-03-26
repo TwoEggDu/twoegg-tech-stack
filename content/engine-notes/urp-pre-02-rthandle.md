@@ -1,15 +1,17 @@
-+++
-title = "URP 深度前置 02｜RenderTexture 与 RTHandle：临时 RT、RTHandle 体系"
-slug = "urp-pre-02-rthandle"
-date = 2026-03-25
-description = "从 GetTemporaryRT 的旧模式讲到 RTHandle 体系：RTHandleSystem 如何统一管理 RT 的生命周期和分辨率缩放，ReAllocateIfNeeded 的正确用法，以及 Descriptor 各字段的实际含义。"
-[taxonomies]
-tags = ["Unity", "URP", "RenderTexture", "RTHandle", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1510
-+++
-
+---
+title: "URP 深度前置 02｜RenderTexture 与 RTHandle：临时 RT、RTHandle 体系"
+slug: "urp-pre-02-rthandle"
+date: "2026-03-25"
+description: "从 GetTemporaryRT 的旧模式讲到 RTHandle 体系：RTHandleSystem 如何统一管理 RT 的生命周期和分辨率缩放，ReAllocateIfNeeded 的正确用法，以及 Descriptor 各字段的实际含义。"
+tags:
+  - "Unity"
+  - "URP"
+  - "RenderTexture"
+  - "RTHandle"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1510
+---
 在 URP 里，"渲染目标的生命周期管理"是写自定义 Pass 时最容易出错的地方。这篇从头讲清楚 RenderTexture 是什么、旧的临时 RT 模式有什么问题，以及 RTHandle 体系如何解决这些问题。
 
 ---

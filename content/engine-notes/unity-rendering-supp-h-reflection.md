@@ -1,15 +1,19 @@
-+++
-title = "Unity 渲染系统补H｜渲染算法对比：反射方案（Cubemap/Planar/SSR/RTXGI）"
-slug = "unity-rendering-supp-h-reflection"
-date = 2026-03-26
-description = "反射是 PBR 材质质感的重要组成。不同方案在动态性、精度、性能上差异巨大：Reflection Probe 是静态快照，Planar Reflection 精确但代价高，SSR 动态但有屏幕边界问题，实时光追反射精确但硬件要求高。"
-weight = 1570
-[taxonomies]
-tags = ["Unity", "Rendering", "反射", "Reflection Probe", "SSR", "光线追踪", "PBR"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补H｜渲染算法对比：反射方案（Cubemap/Planar/SSR/RTXGI）"
+slug: "unity-rendering-supp-h-reflection"
+date: "2026-03-26"
+description: "反射是 PBR 材质质感的重要组成。不同方案在动态性、精度、性能上差异巨大：Reflection Probe 是静态快照，Planar Reflection 精确但代价高，SSR 动态但有屏幕边界问题，实时光追反射精确但硬件要求高。"
+weight: 1570
+tags:
+  - "Unity"
+  - "Rendering"
+  - "反射"
+  - "Reflection Probe"
+  - "SSR"
+  - "光线追踪"
+  - "PBR"
+series: "Unity 渲染系统"
+---
 PBR 材质的质感，很大程度上来自反射。金属的质感、水面的倒影、光滑地板映出的灯光——这些视觉效果都依赖反射计算是否准确。但反射天然昂贵：精确的反射需要知道场景中每个方向的光照，而这正是渲染本身要解决的问题，形成循环。不同方案在精度、动态性、性能代价之间做出不同取舍，理解这些取舍是选择合适方案的前提。
 
 ---

@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 01c｜Render Target 与帧缓冲区：GPU 把渲染结果写到哪里"
-description = "讲清楚 Color Buffer、Depth Buffer、Stencil Buffer、G-Buffer 和 MRT 各自是什么，GPU 怎么在多个 Render Target 之间切换，以及这些概念在 Frame Debugger 和 RenderDoc 里对应什么。"
-slug = "unity-rendering-01c-render-target-and-framebuffer"
-weight = 300
-featured = false
-tags = ["Unity", "Rendering", "RenderTarget", "Framebuffer", "DepthBuffer", "GBuffer", "MRT"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 01c｜Render Target 与帧缓冲区：GPU 把渲染结果写到哪里"
+description: "讲清楚 Color Buffer、Depth Buffer、Stencil Buffer、G-Buffer 和 MRT 各自是什么，GPU 怎么在多个 Render Target 之间切换，以及这些概念在 Frame Debugger 和 RenderDoc 里对应什么。"
+slug: "unity-rendering-01c-render-target-and-framebuffer"
+weight: 300
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "RenderTarget"
+  - "Framebuffer"
+  - "DepthBuffer"
+  - "GBuffer"
+  - "MRT"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：GPU 不是直接"往屏幕上画"，而是把每个阶段的结果写进一块内存缓冲区，最后把其中一块缓冲区显示到屏幕——这些缓冲区就叫 Render Target，理解它们是读懂 Frame Debugger 和 RenderDoc 的前提。
 
 上一篇讲了 Draw Call 是 CPU 向 GPU 发出的工作请求。这篇要回答另一个问题：

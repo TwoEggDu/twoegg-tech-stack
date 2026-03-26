@@ -1,15 +1,17 @@
-+++
-title = "为什么需要可编程渲染管线"
-slug = "unity-rendering-07-why-srp"
-date = 2025-01-26
-description = "Built-in 渲染管线的架构性限制在实际项目中造成了哪些具体问题，SRP 用什么方式解决了这些问题，以及引入 SRP 的代价是什么。"
-[taxonomies]
-tags = ["Unity", "SRP", "渲染管线", "URP", "HDRP"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 1000
-+++
-
+---
+title: "为什么需要可编程渲染管线"
+slug: "unity-rendering-07-why-srp"
+date: "2025-01-26"
+description: "Built-in 渲染管线的架构性限制在实际项目中造成了哪些具体问题，SRP 用什么方式解决了这些问题，以及引入 SRP 的代价是什么。"
+tags:
+  - "Unity"
+  - "SRP"
+  - "渲染管线"
+  - "URP"
+  - "HDRP"
+series: "Unity 渲染系统"
+weight: 1000
+---
 如果只用一句话概括这篇：Built-in 渲染管线的核心问题是"管线结构对开发者不透明，扩展点太少"，SRP 把管线执行权还给了开发者，但代价是开发者需要自己承担更多复杂性。
 
 ---

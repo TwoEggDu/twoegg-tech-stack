@@ -1,15 +1,17 @@
-+++
-title = "RenderGraph：声明式渲染资源管理"
-slug = "unity-rendering-10b-render-graph"
-date = 2025-01-26
-description = "RenderGraph 用声明式依赖图替代手动管理 RT 和 CommandBuffer，理解 Pass 如何声明资源读写关系、FrameResources 里的内置资源如何获取、以及与旧 API 的边界在哪里。"
-[taxonomies]
-tags = ["Unity", "RenderGraph", "URP", "RTHandle", "渲染管线"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 1350
-+++
-
+---
+title: "RenderGraph：声明式渲染资源管理"
+slug: "unity-rendering-10b-render-graph"
+date: "2025-01-26"
+description: "RenderGraph 用声明式依赖图替代手动管理 RT 和 CommandBuffer，理解 Pass 如何声明资源读写关系、FrameResources 里的内置资源如何获取、以及与旧 API 的边界在哪里。"
+tags:
+  - "Unity"
+  - "RenderGraph"
+  - "URP"
+  - "RTHandle"
+  - "渲染管线"
+series: "Unity 渲染系统"
+weight: 1350
+---
 如果只用一句话概括这篇：RenderGraph 把"我要用什么 RT、读还是写"从命令式的 SetRenderTarget 变成了声明式的依赖声明，引擎据此自动管理 RT 生命周期、剔除无用 Pass、并行调度资源。
 
 ---

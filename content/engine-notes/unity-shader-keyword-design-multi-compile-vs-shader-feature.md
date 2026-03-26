@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity Shader Keyword 设计：multi_compile、shader_feature 和 _local 变体的选择与误用"
-description = "把 multi_compile、shader_feature、multi_compile_local、shader_feature_local 拆成构建行为、适用场景和决策依据，讲清 keyword 设计错误是怎样直接导致变体爆炸的。"
-slug = "unity-shader-keyword-design-multi-compile-vs-shader-feature"
-weight = 20
-featured = false
-tags = ["Unity", "Shader", "Keyword", "Build", "Variant"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Unity Shader Keyword 设计：multi_compile、shader_feature 和 _local 变体的选择与误用"
+description: "把 multi_compile、shader_feature、multi_compile_local、shader_feature_local 拆成构建行为、适用场景和决策依据，讲清 keyword 设计错误是怎样直接导致变体爆炸的。"
+slug: "unity-shader-keyword-design-multi-compile-vs-shader-feature"
+weight: 20
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "Keyword"
+  - "Build"
+  - "Variant"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 Shader variant 数量为什么会失控，最终能追溯到源头的问题通常只有一个：
 
 `keyword 设计错了。`

@@ -1,13 +1,17 @@
-+++
-date = 2026-03-26
-title = "HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇"
-description = "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及已经开始往下延伸的高级主题。"
-weight = 29
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Index", "Architecture"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-26"
+title: "HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇"
+description: "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及已经开始往下延伸的高级主题。"
+weight: 29
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Index"
+  - "Architecture"
+series: "HybridCLR"
+---
 > 这组文章如果一篇篇单看，其实都能成立；但 HybridCLR 真正难的地方，不在某一篇单文，而在于你能不能先知道自己现在碰到的问题到底属于哪一层。
 
 这是 HybridCLR 系列第 0 篇。  

@@ -1,15 +1,19 @@
-+++
-title = "Unity 渲染系统补E｜2D 渲染：Sprite、Atlas、九宫格、2D 光照"
-slug = "unity-rendering-supp-e-2d-rendering"
-date = 2026-03-26
-description = "Unity 的 2D 渲染建立在 3D 管线之上，但有一套专用系统：Sprite 的存储与切割、Sprite Atlas 的合批逻辑、九宫格（9-Slicing）的实现、2D 光照（URP 2D Renderer）的 Normal Map 与 Light 类型。"
-weight = 1540
-[taxonomies]
-tags = ["Unity", "Rendering", "2D", "Sprite", "Atlas", "九宫格", "2D光照"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补E｜2D 渲染：Sprite、Atlas、九宫格、2D 光照"
+slug: "unity-rendering-supp-e-2d-rendering"
+date: "2026-03-26"
+description: "Unity 的 2D 渲染建立在 3D 管线之上，但有一套专用系统：Sprite 的存储与切割、Sprite Atlas 的合批逻辑、九宫格（9-Slicing）的实现、2D 光照（URP 2D Renderer）的 Normal Map 与 Light 类型。"
+weight: 1540
+tags:
+  - "Unity"
+  - "Rendering"
+  - "2D"
+  - "Sprite"
+  - "Atlas"
+  - "九宫格"
+  - "2D光照"
+series: "Unity 渲染系统"
+---
 Unity 的 2D 渲染从来不是一个独立的管线，它是建在 3D 管线之上的一层抽象。每个 Sprite 最终都是一个带纹理的三角形网格，每盏 2D 灯光最终都是一个着色器 Pass。理解这一点，才能解释 2D 开发中很多"为什么这样做"的问题——为什么要用 Sprite Atlas、为什么九宫格能节省纹理内存、为什么 2D 法线贴图的 Z 轴方向和 3D 里不一样。
 
 ---

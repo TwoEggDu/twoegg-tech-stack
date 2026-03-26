@@ -1,15 +1,18 @@
-+++
-title = "URP 深度光照 02｜URP Shadow 深度：Cascade 机制、Shadow Atlas、Bias 调参"
-slug = "urp-lighting-02-shadow"
-date = 2026-03-25
-description = "URP 阴影系统的完整工作原理：Cascade Shadow Map 的分割算法、Shadow Atlas 的布局与分辨率分配、Bias 参数的数学含义与调参步骤、Soft Shadow 的 PCF 实现、移动端阴影代价的量化分析。"
-[taxonomies]
-tags = ["Unity", "URP", "Shadow", "Cascade", "Shadow Map", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1570
-+++
-
+---
+title: "URP 深度光照 02｜URP Shadow 深度：Cascade 机制、Shadow Atlas、Bias 调参"
+slug: "urp-lighting-02-shadow"
+date: "2026-03-25"
+description: "URP 阴影系统的完整工作原理：Cascade Shadow Map 的分割算法、Shadow Atlas 的布局与分辨率分配、Bias 参数的数学含义与调参步骤、Soft Shadow 的 PCF 实现、移动端阴影代价的量化分析。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Shadow"
+  - "Cascade"
+  - "Shadow Map"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1570
+---
 URP 的阴影是移动端性能开销最大的单项功能之一。一个 4 级联、1024 分辨率的 Shadow Map，在 60Hz 下每秒需要执行 4 次完整场景渲染（仅阴影），约占总渲染时间的 20–40%。这篇把阴影系统的工作原理讲清楚，让每个参数的调整有据可依。
 
 ---

@@ -1,11 +1,13 @@
-+++
-title = "代码质量不是洁癖，而是交付能力"
-description = "把代码质量放回协作、演进和交付语境里看，它本质上是在决定团队未来还能不能持续改。"
-weight = 10
-featured = true
-tags = ["Code Quality", "Maintainability", "Engineering"]
-+++
-
+---
+title: "代码质量不是洁癖，而是交付能力"
+description: "把代码质量放回协作、演进和交付语境里看，它本质上是在决定团队未来还能不能持续改。"
+weight: 10
+featured: true
+tags:
+  - "Code Quality"
+  - "Maintainability"
+  - "Engineering"
+---
 我越来越觉得，很多团队一谈“代码质量”，很容易把问题谈偏。
 
 有人把它理解成命名优不优雅、缩进整不整齐、函数是不是足够短；也有人一听到代码质量，就本能觉得这是在拖慢开发，是一种理想化的工程洁癖。

@@ -1,12 +1,14 @@
-+++
-date = 2026-03-20
-title = "Unity 工具链开发真正要懂的三条引擎链路"
-description = "从资源导入、构建打包、脚本编译三条链路讲清 Unity 工具链开发的系统边界。"
-weight = 10
-featured = true
-tags = ["Unity", "Engine", "Toolchain"]
-+++
-
+---
+date: "2026-03-20"
+title: "Unity 工具链开发真正要懂的三条引擎链路"
+description: "从资源导入、构建打包、脚本编译三条链路讲清 Unity 工具链开发的系统边界。"
+weight: 10
+featured: true
+tags:
+  - "Unity"
+  - "Engine"
+  - "Toolchain"
+---
 我现在看很多 Unity 工具开发内容，都会觉得一个问题很明显：很多文章教的是 API 用法，但没有解释这些 API 背后的系统边界。
 
 这会带来一个结果：工具在 Demo 里能用，一到大项目里就开始抖。

@@ -1,14 +1,17 @@
-+++
-date = 2026-03-21
-title = "Unity 的 Importer 到底做了什么：为什么同一份源文件，进到 Unity 后不再只是“一个文件”"
-description = "把 Unity 的 Importer 放回资产系统里来看，讲清它为什么不是编辑器细节，而是把源文件翻译成可引用对象、子资产和构建输入的关键边界。"
-slug = "unity-importer-what-does-it-do-and-why-source-file-is-not-just-a-file"
-weight = 36
-featured = false
-tags = ["Unity", "Asset", "Importer", "Serialization"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 的 Importer 到底做了什么：为什么同一份源文件，进到 Unity 后不再只是“一个文件”"
+description: "把 Unity 的 Importer 放回资产系统里来看，讲清它为什么不是编辑器细节，而是把源文件翻译成可引用对象、子资产和构建输入的关键边界。"
+slug: "unity-importer-what-does-it-do-and-why-source-file-is-not-just-a-file"
+weight: 36
+featured: false
+tags:
+  - "Unity"
+  - "Asset"
+  - "Importer"
+  - "Serialization"
+series: "Unity 资产系统与序列化"
+---
 前两篇我分别在做两件事：
 
 - 第一篇先把 `文件`、`meta/GUID`、`Importer`、`资产对象`、`场景对象`、`运行时实例` 这些层拆开

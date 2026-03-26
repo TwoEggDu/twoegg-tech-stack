@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心光照 04｜附加光源：点光与聚光的多光源循环"
-slug = "shader-lighting-04-additional-lights"
-date = 2026-03-26
-description = "场景里有多个点光和聚光时，URP 的 ForwardLit 需要遍历附加光源。理解 GetAdditionalLightsCount / GetAdditionalLight 的用法，以及移动端限制附加光数量的策略。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "光照", "点光", "附加光源", "多光源"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4140
-+++
-
+---
+title: "Shader 核心光照 04｜附加光源：点光与聚光的多光源循环"
+slug: "shader-lighting-04-additional-lights"
+date: "2026-03-26"
+description: "场景里有多个点光和聚光时，URP 的 ForwardLit 需要遍历附加光源。理解 GetAdditionalLightsCount / GetAdditionalLight 的用法，以及移动端限制附加光数量的策略。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "光照"
+  - "点光"
+  - "附加光源"
+  - "多光源"
+series: "Shader 手写技法"
+weight: 4140
+---
 前几篇只处理了主方向光（`GetMainLight`）。场景里还有点光（Point Light）、聚光（Spot Light），它们是附加光源（Additional Lights）。这篇讲如何在 Shader 里遍历处理它们。
 
 ---

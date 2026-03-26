@@ -1,15 +1,20 @@
-+++
-title = "Unity 渲染系统补G｜渲染算法对比：抗锯齿（MSAA/TAA/FXAA/DLSS/FSR）"
-slug = "unity-rendering-supp-g-antialiasing"
-date = 2026-03-26
-description = "锯齿来自离散采样，各种抗锯齿方案从不同角度解决这个问题：MSAA 在光栅化阶段多采样，FXAA 在后处理阶段检测边缘，TAA 累积多帧历史，DLSS/FSR 用低分辨率渲染再升频。这篇做横向对比，帮助选择合适方案。"
-weight = 1560
-[taxonomies]
-tags = ["Unity", "Rendering", "抗锯齿", "MSAA", "TAA", "FXAA", "DLSS", "FSR"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补G｜渲染算法对比：抗锯齿（MSAA/TAA/FXAA/DLSS/FSR）"
+slug: "unity-rendering-supp-g-antialiasing"
+date: "2026-03-26"
+description: "锯齿来自离散采样，各种抗锯齿方案从不同角度解决这个问题：MSAA 在光栅化阶段多采样，FXAA 在后处理阶段检测边缘，TAA 累积多帧历史，DLSS/FSR 用低分辨率渲染再升频。这篇做横向对比，帮助选择合适方案。"
+weight: 1560
+tags:
+  - "Unity"
+  - "Rendering"
+  - "抗锯齿"
+  - "MSAA"
+  - "TAA"
+  - "FXAA"
+  - "DLSS"
+  - "FSR"
+series: "Unity 渲染系统"
+---
 游戏画面里的锯齿是一个老问题，但解法从来不统一。MSAA 在光栅化阶段用更多样本；FXAA 在后处理阶段用图像处理模糊边缘；TAA 跨帧累积信息；DLSS/FSR 干脆以低分辨率渲染再用算法升频。这些方案各有取舍，没有"最好的方案"，只有"当前平台和质量目标下最合适的方案"。这篇从原理出发，做横向对比，帮助做出有依据的选择。
 
 ---

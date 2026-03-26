@@ -1,15 +1,19 @@
-+++
-title = "图形 API 05｜DirectX 12：Windows 平台的显式 API，D3D12 与 DX11 的代差"
-slug = "graphics-api-05-dx12"
-date = 2026-03-26
-description = "DirectX 12 是微软在 2015 年随 Windows 10 发布的低层 API，设计思路与 Vulkan 基本一致：显式内存管理、Command List、Resource Barrier。这篇讲清楚 DX12 的核心概念、与 DX11 的代差，以及 PC 平台游戏引擎的 DX12 后端要处理什么。"
-weight = 740
-[taxonomies]
-tags = ["图形API", "DirectX 12", "DX12", "D3D12", "Windows", "Command List", "Resource Barrier"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 05｜DirectX 12：Windows 平台的显式 API，D3D12 与 DX11 的代差"
+slug: "graphics-api-05-dx12"
+date: "2026-03-26"
+description: "DirectX 12 是微软在 2015 年随 Windows 10 发布的低层 API，设计思路与 Vulkan 基本一致：显式内存管理、Command List、Resource Barrier。这篇讲清楚 DX12 的核心概念、与 DX11 的代差，以及 PC 平台游戏引擎的 DX12 后端要处理什么。"
+weight: 740
+tags:
+  - "图形API"
+  - "DirectX 12"
+  - "DX12"
+  - "D3D12"
+  - "Windows"
+  - "Command List"
+  - "Resource Barrier"
+series: "图形 API 基础"
+---
 ## 为什么需要 DX12
 
 DX11 在 2009 年发布时已经是当时最好的图形 API 之一，但它的设计假设是"让驱动替你管理一切"。驱动负责资源状态追踪、同步、内存分配，开发者只需要按照文档绑定资源、提交 Draw Call。这套方案降低了上手门槛，但代价是驱动层藏着大量隐式开销：状态比对、Hazard 检测、内存别名处理，这些逻辑在驱动里几乎是黑盒。

@@ -1,15 +1,19 @@
-+++
-title = "GPU 渲染优化 07｜GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充"
-slug = "gpu-opt-07-instancing-deep"
-date = 2026-03-25
-description = "GPU Instancing 有两套 API：DrawMeshInstanced 和 DrawMeshInstancedIndirect。本篇讲清楚两者的执行模型差异、PerInstance Data 怎么填充、移动端的实际限制，以及与 SRP Batcher 的关系和选择依据。"
-[taxonomies]
-tags = ["移动端", "GPU", "GPU Instancing", "DrawMeshInstanced", "Compute Shader", "性能优化", "URP"]
-series = ["移动端硬件与优化"]
-[extra]
-weight = 2270
-+++
-
+---
+title: "GPU 渲染优化 07｜GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充"
+slug: "gpu-opt-07-instancing-deep"
+date: "2026-03-25"
+description: "GPU Instancing 有两套 API：DrawMeshInstanced 和 DrawMeshInstancedIndirect。本篇讲清楚两者的执行模型差异、PerInstance Data 怎么填充、移动端的实际限制，以及与 SRP Batcher 的关系和选择依据。"
+tags:
+  - "移动端"
+  - "GPU"
+  - "GPU Instancing"
+  - "DrawMeshInstanced"
+  - "Compute Shader"
+  - "性能优化"
+  - "URP"
+series: "移动端硬件与优化"
+weight: 2270
+---
 GPU Instancing 的基本概念（同一 Mesh 多实例一次 Draw Call）在入门文章里已经覆盖。这篇深入两个更实用的问题：两套 API 的差异和选择、PerInstance Data 的填充方式与限制。
 
 ---

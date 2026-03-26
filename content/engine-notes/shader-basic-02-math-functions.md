@@ -1,15 +1,17 @@
-+++
-title = "Shader 语法基础 02｜内置数学函数：saturate、lerp、step、smoothstep、frac"
-slug = "shader-basic-02-math-functions"
-date = 2026-03-26
-description = "HLSL 内置的数学函数是 Shader 的基础词汇。掌握 saturate/lerp/step/smoothstep/frac/pow/abs/floor/ceil，理解它们的图形含义和常见组合用法。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "语法基础", "数学函数"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4060
-+++
-
+---
+title: "Shader 语法基础 02｜内置数学函数：saturate、lerp、step、smoothstep、frac"
+slug: "shader-basic-02-math-functions"
+date: "2026-03-26"
+description: "HLSL 内置的数学函数是 Shader 的基础词汇。掌握 saturate/lerp/step/smoothstep/frac/pow/abs/floor/ceil，理解它们的图形含义和常见组合用法。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "语法基础"
+  - "数学函数"
+series: "Shader 手写技法"
+weight: 4060
+---
 写 Shader 和写普通代码不同——没有 `if-else` 的思维习惯，而是用数学函数把条件变成连续值。这些函数是 Shader 的核心词汇，熟悉它们比背语法更重要。
 
 ---

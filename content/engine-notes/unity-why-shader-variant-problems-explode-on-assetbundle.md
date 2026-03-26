@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来"
-description = "把 Shader Variant 问题在 AssetBundle 场景里高频暴露的原因拆成构建边界、交付边界和运行时命中边界，讲清它为什么更像放大镜，而不是问题的唯一来源。"
-slug = "unity-why-shader-variant-problems-explode-on-assetbundle"
-weight = 50
-featured = false
-tags = ["Unity", "Shader", "AssetBundle", "Variant", "Build"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来"
+description: "把 Shader Variant 问题在 AssetBundle 场景里高频暴露的原因拆成构建边界、交付边界和运行时命中边界，讲清它为什么更像放大镜，而不是问题的唯一来源。"
+slug: "unity-why-shader-variant-problems-explode-on-assetbundle"
+weight: 50
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "AssetBundle"
+  - "Variant"
+  - "Build"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 前一篇我已经先把一个更底层的问题拆开了：
 
 `Shader 在 AssetBundle 里，不该被理解成“一个完整可运行效果被原样塞进包里”，而应该拆成资源定义层、编译产物层和运行时命中层。`

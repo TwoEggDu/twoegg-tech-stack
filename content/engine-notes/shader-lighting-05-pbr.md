@@ -1,15 +1,20 @@
-+++
-title = "Shader 核心光照 05｜PBR 基础：金属度、粗糙度与 Cook-Torrance"
-slug = "shader-lighting-05-pbr"
-date = 2026-03-26
-description = "理解 PBR 的金属度/粗糙度工作流，Cook-Torrance BRDF 的三个分项（D/F/G），以及如何使用 URP 的 UniversalFragmentPBR 接口，而不是从零手写 BRDF。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "光照", "PBR", "金属度", "粗糙度", "Cook-Torrance"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4150
-+++
-
+---
+title: "Shader 核心光照 05｜PBR 基础：金属度、粗糙度与 Cook-Torrance"
+slug: "shader-lighting-05-pbr"
+date: "2026-03-26"
+description: "理解 PBR 的金属度/粗糙度工作流，Cook-Torrance BRDF 的三个分项（D/F/G），以及如何使用 URP 的 UniversalFragmentPBR 接口，而不是从零手写 BRDF。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "光照"
+  - "PBR"
+  - "金属度"
+  - "粗糙度"
+  - "Cook-Torrance"
+series: "Shader 手写技法"
+weight: 4150
+---
 Blinn-Phong 是经验模型，不保证物理正确。PBR（Physically Based Rendering）从物理原理出发，同一套参数在任何光照环境下都能得到一致的视觉结果。这篇讲清楚 PBR 的参数含义和 URP 的接入方式。
 
 ---

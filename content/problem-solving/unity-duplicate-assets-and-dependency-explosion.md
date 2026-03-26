@@ -1,12 +1,16 @@
-+++
-title = "重复资源和依赖爆炸：为什么切包一开始看起来合理，最后却越来越难收"
-description = "从一个典型的 AssetBundle 项目现场出发，拆解重复资源和共享依赖为什么会一起失控，以及它们如何放大包体、缓存、加载链和回滚复杂度。"
-slug = "unity-duplicate-assets-and-dependency-explosion"
-weight = 21
-featured = false
-tags = ["Unity", "AssetBundle", "Dependency", "Duplicate Asset", "Case Study"]
-+++
-
+---
+title: "重复资源和依赖爆炸：为什么切包一开始看起来合理，最后却越来越难收"
+description: "从一个典型的 AssetBundle 项目现场出发，拆解重复资源和共享依赖为什么会一起失控，以及它们如何放大包体、缓存、加载链和回滚复杂度。"
+slug: "unity-duplicate-assets-and-dependency-explosion"
+weight: 21
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Dependency"
+  - "Duplicate Asset"
+  - "Case Study"
+---
 这篇不再讲新的主线原理，而是把前面那套地图落回一个最常见、也最容易长期失控的现场：
 
 `重复资源和依赖爆炸。`

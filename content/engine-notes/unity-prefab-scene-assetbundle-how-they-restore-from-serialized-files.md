@@ -1,14 +1,18 @@
-+++
-date = 2026-03-21
-title = "Unity 的 Prefab、Scene、AssetBundle 到底怎样从序列化文件还原成运行时对象"
-description = "把 Unity 的通用反序列化恢复链具体拆到 Prefab、Scene 和 AssetBundle 三种载体上，讲清它们共用哪一段、又分别在哪一层分叉。"
-slug = "unity-prefab-scene-assetbundle-how-they-restore-from-serialized-files"
-weight = 40
-featured = false
-tags = ["Unity", "Prefab", "Scene", "AssetBundle", "Serialization"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 的 Prefab、Scene、AssetBundle 到底怎样从序列化文件还原成运行时对象"
+description: "把 Unity 的通用反序列化恢复链具体拆到 Prefab、Scene 和 AssetBundle 三种载体上，讲清它们共用哪一段、又分别在哪一层分叉。"
+slug: "unity-prefab-scene-assetbundle-how-they-restore-from-serialized-files"
+weight: 40
+featured: false
+tags:
+  - "Unity"
+  - "Prefab"
+  - "Scene"
+  - "AssetBundle"
+  - "Serialization"
+series: "Unity 资产系统与序列化"
+---
 上一篇我先把最通用的恢复链单独立了出来：
 
 `Serialized Data -> object records -> 引用恢复 -> Native Object -> Managed Binding -> 实例化 / 激活 / 子系统接入`

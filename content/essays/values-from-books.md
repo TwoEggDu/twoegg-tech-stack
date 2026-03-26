@@ -1,11 +1,13 @@
-+++
-title = "用读过的书表达你的价值观"
-description = "把读书输入转成职业价值观和工程判断，而不是简单罗列书单。"
-weight = 10
-featured = true
-tags = ["Values", "Essays", "Career"]
-+++
-
+---
+title: "用读过的书表达你的价值观"
+description: "把读书输入转成职业价值观和工程判断，而不是简单罗列书单。"
+weight: 10
+featured: true
+tags:
+  - "Values"
+  - "Essays"
+  - "Career"
+---
 ## 为什么不要直接写书单
 
 高薪岗位不会因为你“读过很多书”就高看你。

@@ -1,11 +1,13 @@
-+++
-title = "从上线流程反推主程价值"
-description = "从上线流程反推主程价值，强调可交付性、风险前置和系统边界。"
-weight = 20
-featured = false
-tags = ["Release", "Delivery", "Leadership"]
-+++
-
+---
+title: "从上线流程反推主程价值"
+description: "从上线流程反推主程价值，强调可交付性、风险前置和系统边界。"
+weight: 20
+featured: false
+tags:
+  - "Release"
+  - "Delivery"
+  - "Leadership"
+---
 我越来越觉得，一个工程师是不是具备主程价值，很多时候不是看他能不能把某个模块写深，而是看他有没有真正对“上线流程”负责过。
 
 因为一旦你参与过完整的上线链路，你对技术工作的理解会发生很大的变化。

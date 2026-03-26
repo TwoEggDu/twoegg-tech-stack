@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 05｜透明与半透明：Alpha Blend 的正确姿势"
-slug = "shader-technique-05-transparency"
-date = 2026-03-26
-description = "透明物体在渲染管线里有特殊处理：不写深度、必须排序、Blend 方程决定混合方式。理解 Alpha Blend / Premultiplied / Additive 三种模式，以及移动端透明物体的性能代价。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "透明", "Alpha Blend", "半透明"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4210
-+++
-
+---
+title: "Shader 核心技法 05｜透明与半透明：Alpha Blend 的正确姿势"
+slug: "shader-technique-05-transparency"
+date: "2026-03-26"
+description: "透明物体在渲染管线里有特殊处理：不写深度、必须排序、Blend 方程决定混合方式。理解 Alpha Blend / Premultiplied / Additive 三种模式，以及移动端透明物体的性能代价。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "透明"
+  - "Alpha Blend"
+  - "半透明"
+series: "Shader 手写技法"
+weight: 4210
+---
 透明物体是渲染里最容易出错的部分——排序错误、深度穿插、移动端带宽翻倍。这篇把透明的完整机制讲清楚。
 
 ---

@@ -1,13 +1,17 @@
-+++
-date = 2026-03-23
-title = "HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上"
-description = "把四条路线重新压成一个选型问题：社区版主线、补充 metadata、Full Generic Sharing、DHE 分别在解决什么，什么时候该继续加码，什么时候反而该克制。"
-weight = 41
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Architecture", "Tradeoff"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-23"
+title: "HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上"
+description: "把四条路线重新压成一个选型问题：社区版主线、补充 metadata、Full Generic Sharing、DHE 分别在解决什么，什么时候该继续加码，什么时候反而该克制。"
+weight: 41
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Architecture"
+  - "Tradeoff"
+series: "HybridCLR"
+---
 > 这篇不再补新的底层细节，而是把前面几篇已经拆开的能力重新收回来，变成一个项目里真的能用的选型判断。因为一旦进入 `Full Generic Sharing` 和 `DHE` 这类高级能力，最容易出错的往往不是“不懂原理”，而是“在还没把问题分层之前，就太早上了更重的解”。
 
 这是 HybridCLR 系列第 12 篇，也是当前这一轮最适合收口的一篇。  

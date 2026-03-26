@@ -1,13 +1,17 @@
-+++
-date = 2026-03-20
-title = "HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了"
-description = "不再重讲主链，而是把 HybridCLR 常见报错和现场按层拆开：装载、补充 metadata、AOT 泛型实例、MethodBridge/ReversePInvoke、资源挂载身份链分别怎么判断。"
-weight = 37
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Troubleshooting", "Runtime"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-20"
+title: "HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了"
+description: "不再重讲主链，而是把 HybridCLR 常见报错和现场按层拆开：装载、补充 metadata、AOT 泛型实例、MethodBridge/ReversePInvoke、资源挂载身份链分别怎么判断。"
+weight: 37
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Troubleshooting"
+  - "Runtime"
+series: "HybridCLR"
+---
 > HybridCLR 排错最浪费时间的，不是修 bug，而是把不同层的问题混成一锅；真正稳的诊断方式，不是先搜报错，而是先判断这次坏的是哪一层。
 
 这是 HybridCLR 系列第 8 篇。  

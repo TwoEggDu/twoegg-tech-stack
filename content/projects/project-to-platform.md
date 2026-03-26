@@ -1,11 +1,13 @@
-+++
-title = "从项目内工具到跨项目平台：我对 Unity 工程化成长路径的理解"
-description = "把项目内工具经验抽象成跨项目平台能力，展示工程化成长路径。"
-weight = 20
-featured = true
-tags = ["Platform", "Projects", "Toolchain"]
-+++
-
+---
+title: "从项目内工具到跨项目平台：我对 Unity 工程化成长路径的理解"
+description: "把项目内工具经验抽象成跨项目平台能力，展示工程化成长路径。"
+weight: 20
+featured: true
+tags:
+  - "Platform"
+  - "Projects"
+  - "Toolchain"
+---
 很多人会把工具链工程师理解成“会写几个编辑器工具的人”。
 
 但我这几年越做越清楚，真正高价值的工具链工作，终点从来不是一个窗口、一个菜单、一个批处理按钮，而是把项目里的重复问题，变成团队可复用、跨项目可迁移的生产能力。

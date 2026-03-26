@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 10｜移动端 Shader 完整优化检查表"
-slug = "shader-advanced-10-mobile-optimization"
-date = 2026-03-26
-description = "移动端 GPU 的架构（TBDR）、带宽限制、ALU 吞吐量与 PC 差异很大。这篇整理一份可操作的 Shader 优化检查表：数据类型、纹理采样、透明代价、变体控制、CBUFFER、后处理取舍。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "移动端", "优化", "性能"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4380
-+++
-
+---
+title: "Shader 进阶技法 10｜移动端 Shader 完整优化检查表"
+slug: "shader-advanced-10-mobile-optimization"
+date: "2026-03-26"
+description: "移动端 GPU 的架构（TBDR）、带宽限制、ALU 吞吐量与 PC 差异很大。这篇整理一份可操作的 Shader 优化检查表：数据类型、纹理采样、透明代价、变体控制、CBUFFER、后处理取舍。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "移动端"
+  - "优化"
+  - "性能"
+series: "Shader 手写技法"
+weight: 4380
+---
 移动端 GPU（Mali、Adreno、Apple GPU）普遍采用 **TBDR（Tile-Based Deferred Rendering）** 架构，与 PC 的 IMR 差异很大。理解这些差异，才能写出真正高效的移动端 Shader。
 
 ---

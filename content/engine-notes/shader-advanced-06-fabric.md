@@ -1,15 +1,20 @@
-+++
-title = "Shader 进阶技法 06｜布料 Shader：各向异性高光与天鹅绒效果"
-slug = "shader-advanced-06-fabric"
-date = 2026-03-26
-description = "布料的高光不是圆形的——丝绸的高光沿纤维方向拉伸，天鹅绒在逆光方向有模糊的毛边光。理解各向异性 BRDF（Kajiya-Kay 模型），以及天鹅绒的 Sheen 模型。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "布料", "各向异性", "天鹅绒", "Sheen"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4340
-+++
-
+---
+title: "Shader 进阶技法 06｜布料 Shader：各向异性高光与天鹅绒效果"
+slug: "shader-advanced-06-fabric"
+date: "2026-03-26"
+description: "布料的高光不是圆形的——丝绸的高光沿纤维方向拉伸，天鹅绒在逆光方向有模糊的毛边光。理解各向异性 BRDF（Kajiya-Kay 模型），以及天鹅绒的 Sheen 模型。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "布料"
+  - "各向异性"
+  - "天鹅绒"
+  - "Sheen"
+series: "Shader 手写技法"
+weight: 4340
+---
 金属、皮肤之后，布料是另一类需要专用 BRDF 的材质。布料的高光不是各向同性的圆形光斑——丝绸沿纤维方向产生拉伸高光，天鹅绒在逆光方向呈现柔软的光边（Sheen）。
 
 ---

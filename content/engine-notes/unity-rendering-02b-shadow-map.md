@@ -1,15 +1,18 @@
-+++
-title = "Shadow Map 机制：生成、级联与阴影质量问题"
-slug = "unity-rendering-02b-shadow-map"
-date = 2025-01-26
-description = "Shadow Map 如何从光源视角生成深度图并在渲染时进行比较，Cascade Shadow Map 为什么能兼顾近处精度和远处覆盖，Shadow Acne / Peter Panning 的成因和 Bias 的两面性，PCF / PCSS 软化阴影的采样原理。"
-[taxonomies]
-tags = ["Unity", "Shadow Map", "Cascade", "PCF", "阴影", "光照"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 550
-+++
-
+---
+title: "Shadow Map 机制：生成、级联与阴影质量问题"
+slug: "unity-rendering-02b-shadow-map"
+date: "2025-01-26"
+description: "Shadow Map 如何从光源视角生成深度图并在渲染时进行比较，Cascade Shadow Map 为什么能兼顾近处精度和远处覆盖，Shadow Acne / Peter Panning 的成因和 Bias 的两面性，PCF / PCSS 软化阴影的采样原理。"
+tags:
+  - "Unity"
+  - "Shadow Map"
+  - "Cascade"
+  - "PCF"
+  - "阴影"
+  - "光照"
+series: "Unity 渲染系统"
+weight: 550
+---
 如果只用一句话概括这篇：Shadow Map 是一种"先从光源视角拍一张深度照片，渲染时用来判断当前像素是否在阴影里"的技术，它的所有问题——精度不足、自遮挡、软硬边——都源于这张深度照片的分辨率和精度限制。
 
 ---

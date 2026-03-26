@@ -1,15 +1,18 @@
-+++
-title = "Shader 手写入门 04｜让顶点动起来：Vertex Shader 动画"
-slug = "shader-intro-04-vertex-animation"
-date = 2026-03-26
-description = "在 Vertex Shader 里用 sin(_Time.y) 移动顶点位置，做出波浪和呼吸效果。理解顶点动画的执行时机、空间坐标操作方式，以及移动端的性能注意事项。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "入门", "顶点动画", "动画"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4040
-+++
-
+---
+title: "Shader 手写入门 04｜让顶点动起来：Vertex Shader 动画"
+slug: "shader-intro-04-vertex-animation"
+date: "2026-03-26"
+description: "在 Vertex Shader 里用 sin(_Time.y) 移动顶点位置，做出波浪和呼吸效果。理解顶点动画的执行时机、空间坐标操作方式，以及移动端的性能注意事项。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "入门"
+  - "顶点动画"
+  - "动画"
+series: "Shader 手写技法"
+weight: 4040
+---
 前几篇的改动都在 Fragment Shader 里——每个像素算颜色。这篇把目光转到 Vertex Shader：**在顶点阶段移动顶点位置**，让几何体本身产生动画。
 
 草地、旗帜、水面、呼吸效果，都可以用这种方式实现。它的计算发生在光栅化之前，开销只和顶点数量有关，而不是像素数量。

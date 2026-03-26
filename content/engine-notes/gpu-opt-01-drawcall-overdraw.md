@@ -1,15 +1,19 @@
-+++
-title = "GPU 渲染优化 01｜Draw Call 与 Overdraw：移动端的合批策略与 Alpha 排序"
-slug = "gpu-opt-01-drawcall-overdraw"
-date = 2026-03-25
-description = "Draw Call 和 Overdraw 是移动端 GPU 性能的两个常见瓶颈，但它们的优化方向截然不同。本篇从移动端视角讲清楚合批的三种策略和各自的适用条件，以及 Alpha 排序为什么在 TBDR 上格外重要、怎么用工具量化 Overdraw。"
-[taxonomies]
-tags = ["移动端", "GPU", "Draw Call", "Overdraw", "合批", "性能优化", "URP"]
-series = ["移动端硬件与优化"]
-[extra]
-weight = 2210
-+++
-
+---
+title: "GPU 渲染优化 01｜Draw Call 与 Overdraw：移动端的合批策略与 Alpha 排序"
+slug: "gpu-opt-01-drawcall-overdraw"
+date: "2026-03-25"
+description: "Draw Call 和 Overdraw 是移动端 GPU 性能的两个常见瓶颈，但它们的优化方向截然不同。本篇从移动端视角讲清楚合批的三种策略和各自的适用条件，以及 Alpha 排序为什么在 TBDR 上格外重要、怎么用工具量化 Overdraw。"
+tags:
+  - "移动端"
+  - "GPU"
+  - "Draw Call"
+  - "Overdraw"
+  - "合批"
+  - "性能优化"
+  - "URP"
+series: "移动端硬件与优化"
+weight: 2210
+---
 Draw Call 和 Overdraw 经常被并列提到，但它们是两个完全不同的问题：Draw Call 是 CPU 向 GPU 提交指令的开销，Overdraw 是 GPU 重复渲染同一像素的开销。优化方向不同，工具不同，在移动端的权重也不同。
 
 ---

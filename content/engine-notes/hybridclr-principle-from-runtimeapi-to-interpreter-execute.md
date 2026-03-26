@@ -1,13 +1,16 @@
-+++
-date = 2026-03-20
-title = "HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute"
-description = "沿着 RuntimeApi -> metadata -> transform -> execute 的真实调用链，拆解 HybridCLR 在 IL2CPP 上如何把热更新代码跑起来。"
-weight = 30
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Runtime"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-20"
+title: "HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute"
+description: "沿着 RuntimeApi -> metadata -> transform -> execute 的真实调用链，拆解 HybridCLR 在 IL2CPP 上如何把热更新代码跑起来。"
+weight: 30
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Runtime"
+series: "HybridCLR"
+---
 > HybridCLR 不是“把 DLL load 进来就能跑”，而是在一个原本偏静态、偏 AOT 的 IL2CPP runtime 上，补了一整条从 metadata 装载到解释执行的运行时链路。
 
 这是 HybridCLR 系列第 1 篇，先把总地图和 runtime 主链立住。

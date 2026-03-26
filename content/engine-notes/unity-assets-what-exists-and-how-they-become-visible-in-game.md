@@ -1,14 +1,17 @@
-+++
-date = 2026-03-21
-title = "Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的"
-description = "把 Unity 里的文件、meta/GUID、Importer、资产对象、场景对象和运行时实例拆开，建立一张稳定的资产系统地图。"
-slug = "unity-assets-what-exists-and-how-they-become-visible-in-game"
-weight = 34
-featured = false
-tags = ["Unity", "Asset", "Serialization", "Engine"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的"
+description: "把 Unity 里的文件、meta/GUID、Importer、资产对象、场景对象和运行时实例拆开，建立一张稳定的资产系统地图。"
+slug: "unity-assets-what-exists-and-how-they-become-visible-in-game"
+weight: 34
+featured: false
+tags:
+  - "Unity"
+  - "Asset"
+  - "Serialization"
+  - "Engine"
+series: "Unity 资产系统与序列化"
+---
 很多人第一次系统想 Unity 的资源问题时，脑子里其实只有一个很模糊的词：
 
 `资产。`

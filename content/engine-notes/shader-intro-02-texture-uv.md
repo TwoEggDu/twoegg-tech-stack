@@ -1,15 +1,18 @@
-+++
-title = "Shader 手写入门 02｜采样一张贴图：UV 坐标与纹理采样"
-slug = "shader-intro-02-texture-uv"
-date = 2026-03-26
-description = "在 Shader 里采样一张贴图，理解 UV 坐标是什么、怎么从 Mesh 里读、TRANSFORM_TEX 在做什么，以及 Tiling 和 Offset 为什么能控制贴图的显示方式。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "入门", "贴图", "UV"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4020
-+++
-
+---
+title: "Shader 手写入门 02｜采样一张贴图：UV 坐标与纹理采样"
+slug: "shader-intro-02-texture-uv"
+date: "2026-03-26"
+description: "在 Shader 里采样一张贴图，理解 UV 坐标是什么、怎么从 Mesh 里读、TRANSFORM_TEX 在做什么，以及 Tiling 和 Offset 为什么能控制贴图的显示方式。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "入门"
+  - "贴图"
+  - "UV"
+series: "Shader 手写技法"
+weight: 4020
+---
 颜色固定的 Shader 用处有限。大多数情况下你需要采样一张贴图——让贴图决定每个像素的颜色。这篇讲清楚贴图采样的完整流程，核心是理解 UV 坐标。
 
 ---

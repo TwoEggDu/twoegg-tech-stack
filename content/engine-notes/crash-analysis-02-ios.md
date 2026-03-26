@@ -1,13 +1,21 @@
-+++
-date = 2026-03-26
-title = "崩溃分析 iOS 篇｜.dSYM、atos、symbolicatecrash 完整流程"
-description = "崩溃分析系列第 2 篇。iOS native crash 的完整分析链路：从 Xcode Organizer 和 TestFlight 拿到崩溃报告，用 atos / symbolicatecrash 做符号化，处理 Unity IL2CPP 的 dSYM 特殊情况，以及 dSYM 和 crash report 的 UUID 匹配问题。"
-weight = 52
-featured = false
-tags = ["Crash", "Debug", "iOS", "NativeCrash", "dSYM", "Symbols", "atos", "Unity", "IL2CPP"]
-series = "CrashAnalysis"
-+++
-
+---
+date: "2026-03-26"
+title: "崩溃分析 iOS 篇｜.dSYM、atos、symbolicatecrash 完整流程"
+description: "崩溃分析系列第 2 篇。iOS native crash 的完整分析链路：从 Xcode Organizer 和 TestFlight 拿到崩溃报告，用 atos / symbolicatecrash 做符号化，处理 Unity IL2CPP 的 dSYM 特殊情况，以及 dSYM 和 crash report 的 UUID 匹配问题。"
+weight: 52
+featured: false
+tags:
+  - "Crash"
+  - "Debug"
+  - "iOS"
+  - "NativeCrash"
+  - "dSYM"
+  - "Symbols"
+  - "atos"
+  - "Unity"
+  - "IL2CPP"
+series: "CrashAnalysis"
+---
 > iOS 的崩溃诊断相比 Android 多了一层：`.dSYM` 和崩溃报告的 UUID 必须完全匹配，不然符号化结果全是问号。
 
 这是崩溃分析系列第 2 篇，专注 iOS 平台。

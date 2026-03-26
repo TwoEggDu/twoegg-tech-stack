@@ -1,15 +1,19 @@
-+++
-title = "Unity 渲染系统补I｜帧时序与显示技术：VSync、Frame Pacing、输入延迟"
-slug = "unity-rendering-supp-i-frame-timing"
-date = 2026-03-26
-description = "游戏渲染了 60fps，玩家感受到的未必是流畅的 60fps。帧时序（Frame Pacing）问题、VSync 模式选择、G-Sync/FreeSync 自适应同步、输入延迟链路——这些显示技术的细节直接影响玩家的手感和体验。"
-weight = 1580
-[taxonomies]
-tags = ["Unity", "Rendering", "VSync", "Frame Pacing", "显示技术", "输入延迟", "G-Sync"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补I｜帧时序与显示技术：VSync、Frame Pacing、输入延迟"
+slug: "unity-rendering-supp-i-frame-timing"
+date: "2026-03-26"
+description: "游戏渲染了 60fps，玩家感受到的未必是流畅的 60fps。帧时序（Frame Pacing）问题、VSync 模式选择、G-Sync/FreeSync 自适应同步、输入延迟链路——这些显示技术的细节直接影响玩家的手感和体验。"
+weight: 1580
+tags:
+  - "Unity"
+  - "Rendering"
+  - "VSync"
+  - "Frame Pacing"
+  - "显示技术"
+  - "输入延迟"
+  - "G-Sync"
+series: "Unity 渲染系统"
+---
 "我们跑满 60fps"——这句话在开发中常被当作性能达标的标志，但它掩盖了一个重要细节：帧率是平均值，玩家感受到的是每一帧的实际时间间隔。16ms/16ms 和 8ms/24ms 的帧时间序列，平均帧率相同，玩家体验完全不同。帧时序（Frame Pacing）、VSync 模式、输入延迟链路——这些显示层的细节，直接决定手感和视觉流畅度。
 
 ---

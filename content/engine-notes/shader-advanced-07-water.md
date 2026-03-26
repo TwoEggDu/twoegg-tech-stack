@@ -1,15 +1,20 @@
-+++
-title = "Shader 进阶技法 07｜水体完整实现：折射、反射、深度与泡沫"
-slug = "shader-advanced-07-water"
-date = 2026-03-26
-description = "一个完整的水面 Shader 需要整合多个技术：双层法线波动、折射（Opaque Texture）、反射（探针+Fresnel）、深度颜色过渡、岸边泡沫。这篇把这些模块组合成可直接使用的水面方案。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "水面", "折射", "反射", "深度"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4350
-+++
-
+---
+title: "Shader 进阶技法 07｜水体完整实现：折射、反射、深度与泡沫"
+slug: "shader-advanced-07-water"
+date: "2026-03-26"
+description: "一个完整的水面 Shader 需要整合多个技术：双层法线波动、折射（Opaque Texture）、反射（探针+Fresnel）、深度颜色过渡、岸边泡沫。这篇把这些模块组合成可直接使用的水面方案。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "水面"
+  - "折射"
+  - "反射"
+  - "深度"
+series: "Shader 手写技法"
+weight: 4350
+---
 水面是游戏里最常见的复杂 Shader 之一，需要把多个技术模块整合：双层法线（波动）、折射（水下可见）、反射（水面镜面）、深度颜色（浅水浅色、深水深色）、泡沫（岸边）。
 
 ---

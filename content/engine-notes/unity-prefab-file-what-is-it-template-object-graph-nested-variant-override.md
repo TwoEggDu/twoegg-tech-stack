@@ -1,14 +1,17 @@
-+++
-date = 2026-03-21
-title = "Unity 的 Prefab 文件本质上是什么：模板对象图、嵌套、Variant 和 Override 分别站在哪"
-description = "把 Prefab 从“可复用 GameObject 文件”这种过粗理解里拆出来，讲清它为什么本质上是模板对象图，以及 Nested Prefab、Variant、Override 各自站在哪层。"
-slug = "unity-prefab-file-what-is-it-template-object-graph-nested-variant-override"
-weight = 38
-featured = false
-tags = ["Unity", "Prefab", "Serialization", "Asset"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 的 Prefab 文件本质上是什么：模板对象图、嵌套、Variant 和 Override 分别站在哪"
+description: "把 Prefab 从“可复用 GameObject 文件”这种过粗理解里拆出来，讲清它为什么本质上是模板对象图，以及 Nested Prefab、Variant、Override 各自站在哪层。"
+slug: "unity-prefab-file-what-is-it-template-object-graph-nested-variant-override"
+weight: 38
+featured: false
+tags:
+  - "Unity"
+  - "Prefab"
+  - "Serialization"
+  - "Asset"
+series: "Unity 资产系统与序列化"
+---
 上一篇我刚把 `Scene` 立成了一张对象图：
 
 `Scene 文件不是一个大资源，而是一份描述场景世界快照的序列化对象图。`

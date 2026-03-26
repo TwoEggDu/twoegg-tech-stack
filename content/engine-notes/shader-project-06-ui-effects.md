@@ -1,15 +1,20 @@
-+++
-title = "项目实战 06｜UI 特效 Shader：扫光、溶解边框、全息干扰"
-slug = "shader-project-06-ui-effects"
-date = 2026-03-26
-description = "UI 的视觉冲击力经常来自 Shader 特效：装备扫光（高亮从左到右扫过）、技能冷却溶解（圆形进度裁剪）、科幻全息界面（扫描线 + 色差 + 闪烁）。这篇给出可直接挂在 UI Image 上的 Shader 实现。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "UI", "特效", "全息", "扫光"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4450
-+++
-
+---
+title: "项目实战 06｜UI 特效 Shader：扫光、溶解边框、全息干扰"
+slug: "shader-project-06-ui-effects"
+date: "2026-03-26"
+description: "UI 的视觉冲击力经常来自 Shader 特效：装备扫光（高亮从左到右扫过）、技能冷却溶解（圆形进度裁剪）、科幻全息界面（扫描线 + 色差 + 闪烁）。这篇给出可直接挂在 UI Image 上的 Shader 实现。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "UI"
+  - "特效"
+  - "全息"
+  - "扫光"
+series: "Shader 手写技法"
+weight: 4450
+---
 UI Shader 与场景 Shader 有几个关键差异：渲染管线走 Unity UI 的 Canvas（`UI/Default` 基础）、需要保持 UV 归一化（`0~1` 范围）、通常不需要光照（纯颜色操作）。这些特效可以直接赋给 `Image` 组件的 Material。
 
 ---

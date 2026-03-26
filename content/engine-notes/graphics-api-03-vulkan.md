@@ -1,15 +1,18 @@
-+++
-title = "图形 API 03｜Vulkan：显式控制、Command Buffer、RenderPass 与 Framebuffer"
-slug = "graphics-api-03-vulkan"
-date = 2026-03-26
-description = "Vulkan 把之前由驱动隐式完成的事情全都交给应用程序：内存分配、命令录制、同步屏障、RenderPass 结构。代码量大了 5~10 倍，但 CPU 开销和可预测性大幅提升。这篇讲清楚 Vulkan 的核心概念和它与 OpenGL 的根本差异。"
-weight = 720
-[taxonomies]
-tags = ["图形API", "Vulkan", "Command Buffer", "RenderPass", "同步", "显式控制"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 03｜Vulkan：显式控制、Command Buffer、RenderPass 与 Framebuffer"
+slug: "graphics-api-03-vulkan"
+date: "2026-03-26"
+description: "Vulkan 把之前由驱动隐式完成的事情全都交给应用程序：内存分配、命令录制、同步屏障、RenderPass 结构。代码量大了 5~10 倍，但 CPU 开销和可预测性大幅提升。这篇讲清楚 Vulkan 的核心概念和它与 OpenGL 的根本差异。"
+weight: 720
+tags:
+  - "图形API"
+  - "Vulkan"
+  - "Command Buffer"
+  - "RenderPass"
+  - "同步"
+  - "显式控制"
+series: "图形 API 基础"
+---
 ## Everything Explicit
 
 Vulkan 的核心设计原则可以用两个词概括：显式控制（Explicit Control）。

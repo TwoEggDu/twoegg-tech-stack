@@ -1,15 +1,19 @@
-+++
-title = "项目实战 05｜角色皮肤完整方案：SSS + 毛孔细节 + 湿润"
-slug = "shader-project-05-character-skin"
-date = 2026-03-26
-description = "写实角色皮肤需要整合多个技术：Wrap Lighting（柔和明暗）、Transmission（薄处透光）、多层法线（基础 + 毛孔细节）、Specular 颜色（皮脂色调）、湿润状态（光滑度提升 + 法线压平）。这篇把这些组合成完整皮肤 Shader。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "项目实战", "皮肤", "SSS", "写实角色"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4440
-+++
-
+---
+title: "项目实战 05｜角色皮肤完整方案：SSS + 毛孔细节 + 湿润"
+slug: "shader-project-05-character-skin"
+date: "2026-03-26"
+description: "写实角色皮肤需要整合多个技术：Wrap Lighting（柔和明暗）、Transmission（薄处透光）、多层法线（基础 + 毛孔细节）、Specular 颜色（皮脂色调）、湿润状态（光滑度提升 + 法线压平）。这篇把这些组合成完整皮肤 Shader。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "项目实战"
+  - "皮肤"
+  - "SSS"
+  - "写实角色"
+series: "Shader 手写技法"
+weight: 4440
+---
 皮肤是写实角色渲染里最难做的材质——不够通透显得像塑料，细节不足显得像蜡像。这篇整合进阶层 SSS 的理论，加入毛孔细节和湿润状态，给出一套可用于生产的皮肤 Shader。
 
 ---

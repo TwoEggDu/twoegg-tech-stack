@@ -1,14 +1,21 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 05｜后处理：Volume 系统与全屏 Pass 的工作机制"
-description = "讲清楚 URP 后处理的 Volume 覆盖机制、全屏 Pass 对帧缓冲区的操作原理，以及 Bloom、Tonemapping、SSAO、Depth of Field 各自在像素级别做了什么。"
-slug = "unity-rendering-05-postprocessing"
-weight = 800
-featured = false
-tags = ["Unity", "Rendering", "PostProcessing", "Volume", "Bloom", "Tonemapping", "SSAO", "URP"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 05｜后处理：Volume 系统与全屏 Pass 的工作机制"
+description: "讲清楚 URP 后处理的 Volume 覆盖机制、全屏 Pass 对帧缓冲区的操作原理，以及 Bloom、Tonemapping、SSAO、Depth of Field 各自在像素级别做了什么。"
+slug: "unity-rendering-05-postprocessing"
+weight: 800
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "PostProcessing"
+  - "Volume"
+  - "Bloom"
+  - "Tonemapping"
+  - "SSAO"
+  - "URP"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：后处理不是"给画面加滤镜"的魔法，而是在场景渲染完成后，对整张帧缓冲区做一系列全屏的 Fragment Shader 计算——每个效果是一个独立的 Pass，把上一个 Pass 的输出作为输入，串联处理最终输出到屏幕。
 
 前几篇讲的所有内容——Mesh、Material、光照、动画、粒子——产生的都是场景里的几何渲染。这篇讲在这一切完成之后，对整张画面做的最后一层处理。

@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Resources、StreamingAssets、AssetBundle、Addressables 到底各自该在什么场景下用"
-description = "把 Resources、StreamingAssets、AssetBundle 和 Addressables 放回同一张资源路径决策图里，讲清它们分别适合什么内容、解决什么问题，以及哪些用法短期方便但长期会变债务。"
-slug = "unity-resources-streamingassets-assetbundle-addressables-when-to-use"
-weight = 61
-featured = false
-tags = ["Unity", "Resources", "StreamingAssets", "AssetBundle", "Addressables"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Resources、StreamingAssets、AssetBundle、Addressables 到底各自该在什么场景下用"
+description: "把 Resources、StreamingAssets、AssetBundle 和 Addressables 放回同一张资源路径决策图里，讲清它们分别适合什么内容、解决什么问题，以及哪些用法短期方便但长期会变债务。"
+slug: "unity-resources-streamingassets-assetbundle-addressables-when-to-use"
+weight: 61
+featured: false
+tags:
+  - "Unity"
+  - "Resources"
+  - "StreamingAssets"
+  - "AssetBundle"
+  - "Addressables"
+series: "Unity 资产系统与序列化"
+---
 写到这里，这条系列已经把资源系统的几条主线都铺出来了：
 
 - 资产是什么，引用怎么成立

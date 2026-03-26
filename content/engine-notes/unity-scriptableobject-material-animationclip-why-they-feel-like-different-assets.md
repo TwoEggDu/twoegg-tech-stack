@@ -1,14 +1,18 @@
-+++
-date = 2026-03-21
-title = "Unity 的 ScriptableObject、Material、AnimationClip 为什么气质完全不一样"
-description = "把 ScriptableObject、Material、AnimationClip 这些常见资产放回同一张地图里比较，讲清它们为什么虽然都叫资产，却分别更像数据配置对象、渲染绑定对象和专用子系统的时序输入。"
-slug = "unity-scriptableobject-material-animationclip-why-they-feel-like-different-assets"
-weight = 42
-featured = false
-tags = ["Unity", "Asset", "ScriptableObject", "Material", "AnimationClip"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 的 ScriptableObject、Material、AnimationClip 为什么气质完全不一样"
+description: "把 ScriptableObject、Material、AnimationClip 这些常见资产放回同一张地图里比较，讲清它们为什么虽然都叫资产，却分别更像数据配置对象、渲染绑定对象和专用子系统的时序输入。"
+slug: "unity-scriptableobject-material-animationclip-why-they-feel-like-different-assets"
+weight: 42
+featured: false
+tags:
+  - "Unity"
+  - "Asset"
+  - "ScriptableObject"
+  - "Material"
+  - "AnimationClip"
+series: "Unity 资产系统与序列化"
+---
 前面这组文章，我已经先把几块最容易混的底座立起来了：
 
 - 什么叫资产，文件和资产对象不是一回事

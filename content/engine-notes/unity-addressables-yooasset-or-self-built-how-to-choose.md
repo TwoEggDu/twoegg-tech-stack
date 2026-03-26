@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Addressables、YooAsset 和自研资源系统到底怎么选：哪些问题该交给框架，哪些问题必须团队自己负责"
-description = "把 Addressables、YooAsset 和自研资源系统放回同一张决策图里，讲清它们分别适合什么团队条件、能接住哪些复杂度，以及哪些复杂度框架根本替你接不住。"
-slug = "unity-addressables-yooasset-or-self-built-how-to-choose"
-weight = 59
-featured = false
-tags = ["Unity", "Addressables", "YooAsset", "AssetBundle", "Engineering"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Addressables、YooAsset 和自研资源系统到底怎么选：哪些问题该交给框架，哪些问题必须团队自己负责"
+description: "把 Addressables、YooAsset 和自研资源系统放回同一张决策图里，讲清它们分别适合什么团队条件、能接住哪些复杂度，以及哪些复杂度框架根本替你接不住。"
+slug: "unity-addressables-yooasset-or-self-built-how-to-choose"
+weight: 59
+featured: false
+tags:
+  - "Unity"
+  - "Addressables"
+  - "YooAsset"
+  - "AssetBundle"
+  - "Engineering"
+series: "Unity 资产系统与序列化"
+---
 前面这条资源交付线，其实已经把很多基础判断铺出来了：
 
 - `AssetBundle` 先是交付容器，不是加载 API 教程

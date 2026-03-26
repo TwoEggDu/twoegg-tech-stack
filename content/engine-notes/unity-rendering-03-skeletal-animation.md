@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 03｜动画变形：骨骼蒙皮与 Blend Shape 怎么改变渲染结果"
-description = "讲清楚骨骼动画的蒙皮原理（骨骼权重如何在顶点阶段混合多个变换矩阵）、Blend Shape 的顶点偏移机制，以及两者如何改变最终覆盖的像素范围和法线朝向。"
-slug = "unity-rendering-03-skeletal-animation"
-weight = 600
-featured = false
-tags = ["Unity", "Rendering", "Animation", "SkinnedMesh", "BlendShape", "Skinning", "GPU"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 03｜动画变形：骨骼蒙皮与 Blend Shape 怎么改变渲染结果"
+description: "讲清楚骨骼动画的蒙皮原理（骨骼权重如何在顶点阶段混合多个变换矩阵）、Blend Shape 的顶点偏移机制，以及两者如何改变最终覆盖的像素范围和法线朝向。"
+slug: "unity-rendering-03-skeletal-animation"
+weight: 600
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Animation"
+  - "SkinnedMesh"
+  - "BlendShape"
+  - "Skinning"
+  - "GPU"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：骨骼动画和 Blend Shape 改变的不是"播放效果"，而是送进光栅化的顶点坐标本身——动画本质上是每帧重新计算一遍顶点位置，再走和静态 Mesh 完全相同的渲染路径。
 
 前面几篇讲的都是"静止的表面"——Mesh 顶点固定，Material 决定颜色，光照影响明暗。但游戏里大量物体是运动的：角色在奔跑，衣物在飘动，面部在说话。

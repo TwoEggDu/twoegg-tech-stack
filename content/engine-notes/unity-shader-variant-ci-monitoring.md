@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Shader Variant 数量监控与 CI 集成：怎么把变体治理接入构建流程"
-description = "把 shader variant 数量监控拆成构建期采集、基线对比、阈值告警和 CI 集成，讲清怎样把变体治理从人工排查变成可持续运转的自动化机制。"
-slug = "unity-shader-variant-ci-monitoring"
-weight = 150
-featured = false
-tags = ["Unity", "Shader", "Build", "CI", "Variant"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Shader Variant 数量监控与 CI 集成：怎么把变体治理接入构建流程"
+description: "把 shader variant 数量监控拆成构建期采集、基线对比、阈值告警和 CI 集成，讲清怎样把变体治理从人工排查变成可持续运转的自动化机制。"
+slug: "unity-shader-variant-ci-monitoring"
+weight: 150
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "Build"
+  - "CI"
+  - "Variant"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 前面这条线，把 shader variant 的原理、工具选择、运行时机制和排查流程都覆盖了。
 
 但还差最后一块：

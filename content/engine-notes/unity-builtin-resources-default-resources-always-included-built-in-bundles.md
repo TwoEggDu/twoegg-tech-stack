@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Unity 内置资源到底是什么：Builtin Resources、Default Resources、Always Included 和 Built-in Bundles 分别站在哪"
-description = "把 Unity 里最容易混掉的几类内置资源边界拆开，讲清 unity default resources、unity_builtin_extra、Always Included Shaders、Built-in Bundles 和项目资源到底是什么关系。"
-slug = "unity-builtin-resources-default-resources-always-included-built-in-bundles"
-weight = 64
-featured = false
-tags = ["Unity", "Builtin Resources", "Shader", "AssetBundle", "BuildLayout"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Unity 内置资源到底是什么：Builtin Resources、Default Resources、Always Included 和 Built-in Bundles 分别站在哪"
+description: "把 Unity 里最容易混掉的几类内置资源边界拆开，讲清 unity default resources、unity_builtin_extra、Always Included Shaders、Built-in Bundles 和项目资源到底是什么关系。"
+slug: "unity-builtin-resources-default-resources-always-included-built-in-bundles"
+weight: 64
+featured: false
+tags:
+  - "Unity"
+  - "Builtin Resources"
+  - "Shader"
+  - "AssetBundle"
+  - "BuildLayout"
+series: "Unity 资产系统与序列化"
+---
 写到这里，这条系列里关于“项目自己的资源”其实已经讲得很完整了：
 
 - 资产对象是什么

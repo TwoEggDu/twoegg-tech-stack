@@ -1,13 +1,16 @@
-+++
-date = 2026-03-26
-title = "HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么"
-description = "从 Settings、Installer、Generate/All 到 BuildProcessors，拆解 HybridCLR 的 build-time 工具链到底生成了什么、被谁消费、少了会怎样。"
-weight = 32
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Toolchain"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-26"
+title: "HybridCLR 工具链拆解｜LinkXml、AOTDlls、MethodBridge、AOTGenericReference 到底在生成什么"
+description: "从 Settings、Installer、Generate/All 到 BuildProcessors，拆解 HybridCLR 的 build-time 工具链到底生成了什么、被谁消费、少了会怎样。"
+weight: 32
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Toolchain"
+series: "HybridCLR"
+---
 > HybridCLR 菜单不是一组“方便操作”的按钮，而是在为改造后的 IL2CPP runtime 逐项准备输入：本地 `libil2cpp`、热更 DLL、防裁剪信息、裁剪后的 AOT 快照、桥接代码，以及泛型风险清单。
 
 这是 HybridCLR 系列第 3 篇，回到 build-time 侧解释 runtime 主链为什么能成立。

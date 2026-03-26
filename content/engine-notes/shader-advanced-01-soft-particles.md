@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 01｜软粒子：深度交叉渐变消除硬边"
-slug = "shader-advanced-01-soft-particles"
-date = 2026-03-26
-description = "普通粒子和场景相交时会出现硬边切割。软粒子通过比较粒子深度和场景深度，在交叉处渐变 alpha，消除硬边。理解 Camera Depth Texture 的采样和深度差计算。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "软粒子", "粒子", "深度"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4290
-+++
-
+---
+title: "Shader 进阶技法 01｜软粒子：深度交叉渐变消除硬边"
+slug: "shader-advanced-01-soft-particles"
+date: "2026-03-26"
+description: "普通粒子和场景相交时会出现硬边切割。软粒子通过比较粒子深度和场景深度，在交叉处渐变 alpha，消除硬边。理解 Camera Depth Texture 的采样和深度差计算。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "软粒子"
+  - "粒子"
+  - "深度"
+series: "Shader 手写技法"
+weight: 4290
+---
 烟雾、水花、火焰粒子与场景几何体相交时，会出现明显的硬边切割——粒子的矩形 Quad 和地面的交叉线暴露无遗。软粒子（Soft Particles）通过深度比较，让交叉区域的 alpha 渐变到 0，消除硬边。
 
 ---

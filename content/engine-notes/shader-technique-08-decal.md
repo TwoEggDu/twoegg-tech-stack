@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 08｜Decal 贴花：把贴图投影到任意表面"
-slug = "shader-technique-08-decal"
-date = 2026-03-26
-description = "弹孔、血迹、泥土污迹、符文印记——Decal 把贴图投影到任意表面，不需要修改底层模型的 UV。理解 URP 的 Decal Renderer Feature，以及用深度重建世界坐标的手写方案。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "Decal", "贴花", "投影"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4240
-+++
-
+---
+title: "Shader 核心技法 08｜Decal 贴花：把贴图投影到任意表面"
+slug: "shader-technique-08-decal"
+date: "2026-03-26"
+description: "弹孔、血迹、泥土污迹、符文印记——Decal 把贴图投影到任意表面，不需要修改底层模型的 UV。理解 URP 的 Decal Renderer Feature，以及用深度重建世界坐标的手写方案。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "Decal"
+  - "贴花"
+  - "投影"
+series: "Shader 手写技法"
+weight: 4240
+---
 弹孔、血迹、地面印记——这类效果不适合烘焙进底层贴图（动态生成），也不适合每次都修改模型 UV。Decal（贴花）把贴图从外部投影到任意表面，是这类动态细节的标准方案。
 
 ---

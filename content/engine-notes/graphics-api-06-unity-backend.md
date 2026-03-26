@@ -1,15 +1,19 @@
-+++
-title = "图形 API 06｜Unity 的图形后端：GraphicsDeviceType、API 选择与平台兼容性"
-slug = "graphics-api-06-unity-backend"
-date = 2026-03-26
-description = "Unity 在应用程序代码和底层图形 API 之间插入了一层图形后端（Graphics Backend），封装了 DX11/DX12/Vulkan/Metal/OpenGL ES 的差异。这篇讲清楚 Unity 图形后端的结构、各平台默认选择、如何在运行时查询，以及切换 API 时需要注意什么。"
-weight = 750
-[taxonomies]
-tags = ["图形API", "Unity", "GraphicsDeviceType", "Vulkan", "Metal", "DX11", "平台兼容性"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 06｜Unity 的图形后端：GraphicsDeviceType、API 选择与平台兼容性"
+slug: "graphics-api-06-unity-backend"
+date: "2026-03-26"
+description: "Unity 在应用程序代码和底层图形 API 之间插入了一层图形后端（Graphics Backend），封装了 DX11/DX12/Vulkan/Metal/OpenGL ES 的差异。这篇讲清楚 Unity 图形后端的结构、各平台默认选择、如何在运行时查询，以及切换 API 时需要注意什么。"
+weight: 750
+tags:
+  - "图形API"
+  - "Unity"
+  - "GraphicsDeviceType"
+  - "Vulkan"
+  - "Metal"
+  - "DX11"
+  - "平台兼容性"
+series: "图形 API 基础"
+---
 ## 图形后端的位置
 
 Unity 的渲染调用链从上到下是这样的：

@@ -1,15 +1,17 @@
-+++
-title = "固定渲染管线：Built-in 的渲染流程与限制"
-slug = "unity-rendering-06-builtin-pipeline"
-date = 2025-01-26
-description = "Built-in 渲染管线是怎么组织一帧画面的，Camera 排序、Culling、Forward/Deferred 路径、以及它为什么越来越难适应现代项目需求。"
-[taxonomies]
-tags = ["Unity", "渲染管线", "Built-in", "Forward", "Deferred"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 900
-+++
-
+---
+title: "固定渲染管线：Built-in 的渲染流程与限制"
+slug: "unity-rendering-06-builtin-pipeline"
+date: "2025-01-26"
+description: "Built-in 渲染管线是怎么组织一帧画面的，Camera 排序、Culling、Forward/Deferred 路径、以及它为什么越来越难适应现代项目需求。"
+tags:
+  - "Unity"
+  - "渲染管线"
+  - "Built-in"
+  - "Forward"
+  - "Deferred"
+series: "Unity 渲染系统"
+weight: 900
+---
 如果只用一句话概括这篇：Built-in 渲染管线用一套固定的"Camera → Culling → Pass 顺序"把一帧画面组织出来，这套流程在简单场景里工作良好，但它对 Shader 模型、光照模型和多 RT 输出都做了写死的假设，这就是后来需要 SRP 的根本原因。
 
 ---

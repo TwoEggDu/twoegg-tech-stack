@@ -1,15 +1,20 @@
-+++
-title = "Unity 渲染系统补F｜渲染算法对比：GI 方案（Lightmap/Probe/SSGI/Lumen）"
-slug = "unity-rendering-supp-f-gi-comparison"
-date = 2026-03-26
-description = "全局光照（GI）让场景里的间接光照真实可信。主流方案从静态烘焙（Lightmap）到动态探针（Light Probe），从屏幕空间（SSGI）到 Lumen，各有适用场景和代价。这篇做一次横向对比，帮助选择合适的方案。"
-weight = 1550
-[taxonomies]
-tags = ["Unity", "Rendering", "GI", "全局光照", "Lightmap", "Light Probe", "Lumen", "SSGI"]
-[extra]
-series = "Unity 渲染系统"
-+++
-
+---
+title: "Unity 渲染系统补F｜渲染算法对比：GI 方案（Lightmap/Probe/SSGI/Lumen）"
+slug: "unity-rendering-supp-f-gi-comparison"
+date: "2026-03-26"
+description: "全局光照（GI）让场景里的间接光照真实可信。主流方案从静态烘焙（Lightmap）到动态探针（Light Probe），从屏幕空间（SSGI）到 Lumen，各有适用场景和代价。这篇做一次横向对比，帮助选择合适的方案。"
+weight: 1550
+tags:
+  - "Unity"
+  - "Rendering"
+  - "GI"
+  - "全局光照"
+  - "Lightmap"
+  - "Light Probe"
+  - "Lumen"
+  - "SSGI"
+series: "Unity 渲染系统"
+---
 只有直接光照的场景总有一种说不清的"假"——阴影太硬、背光面太黑、相邻物体的颜色不互相影响。现实世界里，光线在表面之间反弹，产生色溢、环境光遮蔽、柔和的间接阴影。这就是全局光照（GI，Global Illumination）要解决的问题。从离线烘焙到实时计算，GI 方案的技术选择直接决定了项目的画质上限和性能成本。
 
 ---

@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 04｜屏幕空间反射：SSR 的原理与简化实现"
-slug = "shader-advanced-04-ssr"
-date = 2026-03-26
-description = "反射探针是静态快照，无法反射动态物体。SSR（屏幕空间反射）在屏幕内追踪反射光线，实现动态精确反射。理解线性步进（Linear March）原理，以及 SSR 的边界问题和适用场景。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "SSR", "屏幕空间反射", "光线步进"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4320
-+++
-
+---
+title: "Shader 进阶技法 04｜屏幕空间反射：SSR 的原理与简化实现"
+slug: "shader-advanced-04-ssr"
+date: "2026-03-26"
+description: "反射探针是静态快照，无法反射动态物体。SSR（屏幕空间反射）在屏幕内追踪反射光线，实现动态精确反射。理解线性步进（Linear March）原理，以及 SSR 的边界问题和适用场景。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "SSR"
+  - "屏幕空间反射"
+  - "光线步进"
+series: "Shader 手写技法"
+weight: 4320
+---
 反射探针（Reflection Probe）烘焙的是静态场景，无法反射动态移动的物体。SSR（Screen Space Reflection）直接在屏幕空间里追踪反射光线，反射结果来自当前帧的渲染结果——动态、精确，但有固有的边界限制。
 
 ---

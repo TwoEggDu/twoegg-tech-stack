@@ -1,15 +1,20 @@
-+++
-title = "GPU 渲染优化 02｜带宽优化：纹理压缩、RT 格式选择与 Resolve 时机"
-slug = "gpu-opt-02-bandwidth"
-date = 2026-03-25
-description = "带宽是移动端 GPU 最核心的瓶颈之一。本篇讲清楚纹理压缩格式的选择逻辑（ASTC/ETC2/PVRTC）、RT 格式对带宽的影响、Resolve 时机的控制，以及如何用工具量化带宽消耗。"
-[taxonomies]
-tags = ["移动端", "GPU", "带宽优化", "纹理压缩", "ASTC", "ETC2", "RT格式", "性能优化"]
-series = ["移动端硬件与优化"]
-[extra]
-weight = 2220
-+++
-
+---
+title: "GPU 渲染优化 02｜带宽优化：纹理压缩、RT 格式选择与 Resolve 时机"
+slug: "gpu-opt-02-bandwidth"
+date: "2026-03-25"
+description: "带宽是移动端 GPU 最核心的瓶颈之一。本篇讲清楚纹理压缩格式的选择逻辑（ASTC/ETC2/PVRTC）、RT 格式对带宽的影响、Resolve 时机的控制，以及如何用工具量化带宽消耗。"
+tags:
+  - "移动端"
+  - "GPU"
+  - "带宽优化"
+  - "纹理压缩"
+  - "ASTC"
+  - "ETC2"
+  - "RT格式"
+  - "性能优化"
+series: "移动端硬件与优化"
+weight: 2220
+---
 移动端 GPU 和 CPU 共享系统内存，带宽（Memory Bandwidth）是整个 SoC 的共享资源。GPU 读纹理、写 RT、Load/Store Tile 都在消耗这个资源。带宽打满的症状是帧时间随场景复杂度增加而线性上升，但 GPU 的 ALU 利用率并不高——不是计算慢，是数据搬运的速度跟不上。
 
 ---

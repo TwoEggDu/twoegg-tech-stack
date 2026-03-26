@@ -1,14 +1,18 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 00｜游戏里有哪些渲染资产，它们各自在管线哪个阶段介入"
-description = "以一帧画面为主线，把 Unity 里所有参与渲染的资产类型串起来，讲清楚每类资产是什么数据、在管线哪个阶段被消费、对最终像素起什么作用。"
-slug = "unity-rendering-00-asset-overview"
-weight = 100
-featured = false
-tags = ["Unity", "Rendering", "Asset", "Pipeline", "Overview"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 00｜游戏里有哪些渲染资产，它们各自在管线哪个阶段介入"
+description: "以一帧画面为主线，把 Unity 里所有参与渲染的资产类型串起来，讲清楚每类资产是什么数据、在管线哪个阶段被消费、对最终像素起什么作用。"
+slug: "unity-rendering-00-asset-overview"
+weight: 100
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Asset"
+  - "Pipeline"
+  - "Overview"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：Unity 里参与渲染的资产不止材质和贴图，它们按照介入管线的时机分成几类，每类扮演完全不同的角色，共同决定了屏幕上每一个像素的颜色。
 
 很多人对渲染资产的认知是散的——知道材质要挂贴图，知道光源会影响颜色，知道后处理可以做 Bloom，但这些东西在流程上是什么关系，哪个在哪一步发挥作用，说不太清楚。

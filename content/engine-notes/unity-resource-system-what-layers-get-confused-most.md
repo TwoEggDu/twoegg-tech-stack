@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "做 Unity 资源系统时，最容易把哪几层混在一起"
-description = "把 Unity 资源系统里最容易被混掉的几组层级拆开，讲清文件、资产对象、Scene、Prefab、Shader、AssetBundle、Addressables、版本和缓存副本为什么总会在项目里被说成一回事。"
-slug = "unity-resource-system-what-layers-get-confused-most"
-weight = 62
-featured = false
-tags = ["Unity", "Asset", "Serialization", "Architecture", "Engineering"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "做 Unity 资源系统时，最容易把哪几层混在一起"
+description: "把 Unity 资源系统里最容易被混掉的几组层级拆开，讲清文件、资产对象、Scene、Prefab、Shader、AssetBundle、Addressables、版本和缓存副本为什么总会在项目里被说成一回事。"
+slug: "unity-resource-system-what-layers-get-confused-most"
+weight: 62
+featured: false
+tags:
+  - "Unity"
+  - "Asset"
+  - "Serialization"
+  - "Architecture"
+  - "Engineering"
+series: "Unity 资产系统与序列化"
+---
 写到这里，这组文章其实已经把很多内容单独拆开讲过了：
 
 - 文件和资产对象不是一回事

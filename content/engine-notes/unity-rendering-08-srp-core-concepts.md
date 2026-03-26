@@ -1,15 +1,17 @@
-+++
-title = "SRP 核心概念：RenderPipelineAsset、RenderPipeline 与 ScriptableRenderContext"
-slug = "unity-rendering-08-srp-core-concepts"
-date = 2025-01-26
-description = "SRP 的三个核心对象怎么组织在一起，CommandBuffer 在其中的角色，以及一帧的执行流程从哪里开始到哪里结束。"
-[taxonomies]
-tags = ["Unity", "SRP", "RenderPipeline", "CommandBuffer", "ScriptableRenderContext"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 1100
-+++
-
+---
+title: "SRP 核心概念：RenderPipelineAsset、RenderPipeline 与 ScriptableRenderContext"
+slug: "unity-rendering-08-srp-core-concepts"
+date: "2025-01-26"
+description: "SRP 的三个核心对象怎么组织在一起，CommandBuffer 在其中的角色，以及一帧的执行流程从哪里开始到哪里结束。"
+tags:
+  - "Unity"
+  - "SRP"
+  - "RenderPipeline"
+  - "CommandBuffer"
+  - "ScriptableRenderContext"
+series: "Unity 渲染系统"
+weight: 1100
+---
 如果只用一句话概括这篇：SRP 把渲染管线拆成"配置数据（Asset）"、"执行逻辑（Pipeline）"、"GPU 命令接口（Context）"三层，开发者通过这三层拼出自己的渲染管线，而 CommandBuffer 是把命令攒起来批量提交的中间层。
 
 ---

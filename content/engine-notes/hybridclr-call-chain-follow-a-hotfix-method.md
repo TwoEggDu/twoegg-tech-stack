@@ -1,13 +1,17 @@
-+++
-date = 2026-03-20
-title = "HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute"
-description = "从 Assembly.Load(byte[])、MethodInfo.Invoke、MetadataCache、InterpreterInvoke 到 HiTransform 与 Interpreter::Execute，沿着一条真实调用链把 HybridCLR 再跑一遍。"
-weight = 34
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Runtime", "SourceCode"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-20"
+title: "HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute"
+description: "从 Assembly.Load(byte[])、MethodInfo.Invoke、MetadataCache、InterpreterInvoke 到 HiTransform 与 Interpreter::Execute，沿着一条真实调用链把 HybridCLR 再跑一遍。"
+weight: 34
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Runtime"
+  - "SourceCode"
+series: "HybridCLR"
+---
 > 如果说前几篇是在拆 HybridCLR 的零件，那这一篇要做的，就是沿着一条真实调用链，把这些零件重新装回一台会跑的机器。
 
 这是 HybridCLR 系列第 5 篇，用一条真实调用链把前面几篇重新串起来。

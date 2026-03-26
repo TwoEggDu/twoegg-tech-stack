@@ -1,14 +1,18 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它"
-description = "讲清楚 RenderDoc 和 Frame Debugger 的定位差异，如何从 RenderDoc 启动 Unity 并捕获一帧，以及 Event Browser、Texture Viewer 和 Pipeline State 面板的基本用法。"
-slug = "unity-rendering-01e-renderdoc-basics"
-weight = 400
-featured = false
-tags = ["Unity", "Rendering", "RenderDoc", "Debugging", "GPU"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它"
+description: "讲清楚 RenderDoc 和 Frame Debugger 的定位差异，如何从 RenderDoc 启动 Unity 并捕获一帧，以及 Event Browser、Texture Viewer 和 Pipeline State 面板的基本用法。"
+slug: "unity-rendering-01e-renderdoc-basics"
+weight: 400
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "RenderDoc"
+  - "Debugging"
+  - "GPU"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：RenderDoc 是一个外部 GPU 帧捕获工具，它能让你看到 GPU 真正收到了什么数据——而不是 Unity 以为自己发出了什么——这个区别在排查顶点数据错误、贴图采样问题和 GPU 状态问题时至关重要。
 
 上一篇用 Frame Debugger 把一帧画面的 Draw Call 顺序和材质参数看清楚了。但 Frame Debugger 有它看不到的地方——顶点数据、实际 mip 采样、逐像素的着色过程。

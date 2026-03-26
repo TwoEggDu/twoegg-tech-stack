@@ -1,15 +1,19 @@
-+++
-title = "GPU 渲染优化 05｜后处理在移动端的取舍与降质策略"
-slug = "gpu-opt-05-postprocess-mobile"
-date = 2026-03-25
-description = "后处理在 PC 上几乎是标配，在移动端却是性能消耗的大户。本篇从移动端带宽和 ALU 代价出发，逐一评估常见后处理效果的代价，给出哪些值得保留、哪些应该关闭、哪些可以降质替代的具体建议。"
-[taxonomies]
-tags = ["移动端", "GPU", "后处理", "性能优化", "URP", "Bloom", "SSAO"]
-series = ["移动端硬件与优化"]
-[extra]
-weight = 2250
-+++
-
+---
+title: "GPU 渲染优化 05｜后处理在移动端的取舍与降质策略"
+slug: "gpu-opt-05-postprocess-mobile"
+date: "2026-03-25"
+description: "后处理在 PC 上几乎是标配，在移动端却是性能消耗的大户。本篇从移动端带宽和 ALU 代价出发，逐一评估常见后处理效果的代价，给出哪些值得保留、哪些应该关闭、哪些可以降质替代的具体建议。"
+tags:
+  - "移动端"
+  - "GPU"
+  - "后处理"
+  - "性能优化"
+  - "URP"
+  - "Bloom"
+  - "SSAO"
+series: "移动端硬件与优化"
+weight: 2250
+---
 后处理的代价在移动端被严重低估。每个全屏后处理效果至少需要一次额外的 RT 读写（Load + Store），加上 Fragment Shader 的 ALU 代价。对于 1080P 设备，一次全屏 Blit 的带宽代价约 8~16MB，多个效果叠加后很快成为瓶颈。
 
 ---

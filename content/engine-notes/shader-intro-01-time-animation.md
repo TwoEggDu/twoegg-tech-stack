@@ -1,15 +1,18 @@
-+++
-title = "Shader 手写入门 01｜让颜色动起来：_Time 与 Shader 的执行时机"
-slug = "shader-intro-01-time-animation"
-date = 2026-03-26
-description = "用 _Time 让颜色随时间变化，理解 Shader 每帧执行一次的机制。顺带讲清楚 sin/cos 在 Shader 里怎么用，以及为什么 Shader 里不能用 if 做时间判断。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "入门", "动画", "_Time"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4010
-+++
-
+---
+title: "Shader 手写入门 01｜让颜色动起来：_Time 与 Shader 的执行时机"
+slug: "shader-intro-01-time-animation"
+date: "2026-03-26"
+description: "用 _Time 让颜色随时间变化，理解 Shader 每帧执行一次的机制。顺带讲清楚 sin/cos 在 Shader 里怎么用，以及为什么 Shader 里不能用 if 做时间判断。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "入门"
+  - "动画"
+  - "_Time"
+series: "Shader 手写技法"
+weight: 4010
+---
 上一篇写了一个显示纯色的 Shader。颜色是固定的——你在 Inspector 里改，物体颜色才变。这一篇让颜色自己动起来：不需要任何 C# 代码，Shader 自己随时间变化。
 
 ---

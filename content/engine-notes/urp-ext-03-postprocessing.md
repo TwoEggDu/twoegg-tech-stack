@@ -1,15 +1,18 @@
-+++
-title = "URP 深度扩展 03｜URP 后处理扩展：Volume Framework 与自定义效果"
-slug = "urp-ext-03-postprocessing"
-date = 2026-03-25
-description = "URP 后处理扩展的完整链路：Volume Framework 的参数暴露机制、自定义 VolumeComponent、在 Renderer Feature 里读取 Volume 参数驱动效果，以及 VolumeProfile 的运行时混合和区域触发。"
-[taxonomies]
-tags = ["Unity", "URP", "后处理", "Volume Framework", "Renderer Feature", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1550
-+++
-
+---
+title: "URP 深度扩展 03｜URP 后处理扩展：Volume Framework 与自定义效果"
+slug: "urp-ext-03-postprocessing"
+date: "2026-03-25"
+description: "URP 后处理扩展的完整链路：Volume Framework 的参数暴露机制、自定义 VolumeComponent、在 Renderer Feature 里读取 Volume 参数驱动效果，以及 VolumeProfile 的运行时混合和区域触发。"
+tags:
+  - "Unity"
+  - "URP"
+  - "后处理"
+  - "Volume Framework"
+  - "Renderer Feature"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1550
+---
 URP 的后处理不是一个独立系统，而是 Volume Framework + Renderer Feature 两层配合的结果。理解这两层的分工，才能写出既能在 Inspector 里调参、又能在 Renderer Feature 里驱动效果的完整后处理扩展。
 
 ---

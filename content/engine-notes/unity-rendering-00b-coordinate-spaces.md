@@ -1,15 +1,17 @@
-+++
-title = "渲染入门：顶点为什么要经过五个坐标系"
-slug = "unity-rendering-00b-coordinate-spaces"
-date = 2025-01-26
-description = "从模型空间到屏幕像素，一个顶点经历的五个坐标系各自解决什么问题，MVP 矩阵是什么，NDC 和屏幕坐标的关系，以及 UV 坐标作为独立 2D 空间的作用。"
-[taxonomies]
-tags = ["Unity", "坐标系", "MVP变换", "空间变换", "渲染基础"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 150
-+++
-
+---
+title: "渲染入门：顶点为什么要经过五个坐标系"
+slug: "unity-rendering-00b-coordinate-spaces"
+date: "2025-01-26"
+description: "从模型空间到屏幕像素，一个顶点经历的五个坐标系各自解决什么问题，MVP 矩阵是什么，NDC 和屏幕坐标的关系，以及 UV 坐标作为独立 2D 空间的作用。"
+tags:
+  - "Unity"
+  - "坐标系"
+  - "MVP变换"
+  - "空间变换"
+  - "渲染基础"
+series: "Unity 渲染系统"
+weight: 150
+---
 如果只用一句话概括这篇：一个顶点从"模型文件里的原始坐标"变成"屏幕上的像素"，需要经过五次坐标系转换——每次转换都在解决一个具体问题，理解这五次转换，就理解了渲染管线前半段的全部工作。
 
 ---

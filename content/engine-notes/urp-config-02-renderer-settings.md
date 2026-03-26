@@ -1,15 +1,18 @@
-+++
-title = "URP 深度配置 02｜Universal Renderer Settings：渲染路径、Depth Priming、Native RenderPass"
-slug = "urp-config-02-renderer-settings"
-date = 2026-03-25
-description = "Universal Renderer 的核心配置项深度解读：Rendering Path 的选择依据、Depth Priming 减少 OverDraw 的机制、Native RenderPass 在 TBDR 上的带宽节省、Intermediate Texture 的存在理由与关闭时机。"
-[taxonomies]
-tags = ["Unity", "URP", "Renderer Settings", "Depth Priming", "Native RenderPass", "渲染配置"]
-series = ["URP 深度"]
-[extra]
-weight = 1540
-+++
-
+---
+title: "URP 深度配置 02｜Universal Renderer Settings：渲染路径、Depth Priming、Native RenderPass"
+slug: "urp-config-02-renderer-settings"
+date: "2026-03-25"
+description: "Universal Renderer 的核心配置项深度解读：Rendering Path 的选择依据、Depth Priming 减少 OverDraw 的机制、Native RenderPass 在 TBDR 上的带宽节省、Intermediate Texture 的存在理由与关闭时机。"
+tags:
+  - "Unity"
+  - "URP"
+  - "Renderer Settings"
+  - "Depth Priming"
+  - "Native RenderPass"
+  - "渲染配置"
+series: "URP 深度"
+weight: 1540
+---
 `UniversalRenderer`（即 Renderer Asset，挂在 Pipeline Asset 的 Renderer List 里）控制的是渲染路径本身的行为——不是"渲什么"（那是 Pipeline Asset 的职责），而是"怎么渲"。这几个参数直接影响 GPU 的工作方式，是 URP 配置里最值得深入理解的部分。
 
 ---

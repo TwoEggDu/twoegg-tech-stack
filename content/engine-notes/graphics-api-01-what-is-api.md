@@ -1,15 +1,18 @@
-+++
-title = "图形 API 01｜图形 API 是什么：OpenGL / Vulkan / Metal / DirectX 解决的共同问题"
-slug = "graphics-api-01-what-is-api"
-date = 2026-03-26
-description = "OpenGL、Vulkan、Metal、DirectX——它们都叫图形 API，但解决的是同一个问题：让应用程序用统一的接口驱动不同厂商的 GPU。这篇讲清楚图形 API 的定位、它在软件栈里的层次、以及不同 API 的设计哲学差异。"
-weight = 700
-[taxonomies]
-tags = ["图形API", "OpenGL", "Vulkan", "Metal", "DirectX", "GPU"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 01｜图形 API 是什么：OpenGL / Vulkan / Metal / DirectX 解决的共同问题"
+slug: "graphics-api-01-what-is-api"
+date: "2026-03-26"
+description: "OpenGL、Vulkan、Metal、DirectX——它们都叫图形 API，但解决的是同一个问题：让应用程序用统一的接口驱动不同厂商的 GPU。这篇讲清楚图形 API 的定位、它在软件栈里的层次、以及不同 API 的设计哲学差异。"
+weight: 700
+tags:
+  - "图形API"
+  - "OpenGL"
+  - "Vulkan"
+  - "Metal"
+  - "DirectX"
+  - "GPU"
+series: "图形 API 基础"
+---
 ## 问题的起点
 
 GPU 是专用硬件。NVIDIA、AMD、Intel、Apple、Qualcomm 各自设计自己的 GPU，指令集互不兼容。如果应用程序要直接操作 GPU，就必须为每款 GPU 写一套定制代码——这显然不可行。

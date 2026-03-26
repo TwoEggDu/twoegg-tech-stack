@@ -1,15 +1,17 @@
-+++
-title = "URP 深度前置 01｜CommandBuffer：Blit、SetRenderTarget、DrawRenderers"
-slug = "urp-pre-01-commandbuffer"
-date = 2026-03-25
-description = "深入 CommandBuffer 的三个核心操作：Blit 的正确用法与 UV 翻转陷阱、SetRenderTarget 各重载与 LoadAction/StoreAction 的开销含义、DrawRenderers 的过滤与排序控制。"
-[taxonomies]
-tags = ["Unity", "URP", "CommandBuffer", "Blit", "渲染管线"]
-series = ["URP 深度"]
-[extra]
-weight = 1500
-+++
-
+---
+title: "URP 深度前置 01｜CommandBuffer：Blit、SetRenderTarget、DrawRenderers"
+slug: "urp-pre-01-commandbuffer"
+date: "2026-03-25"
+description: "深入 CommandBuffer 的三个核心操作：Blit 的正确用法与 UV 翻转陷阱、SetRenderTarget 各重载与 LoadAction/StoreAction 的开销含义、DrawRenderers 的过滤与排序控制。"
+tags:
+  - "Unity"
+  - "URP"
+  - "CommandBuffer"
+  - "Blit"
+  - "渲染管线"
+series: "URP 深度"
+weight: 1500
+---
 这篇是 URP 深度系列的第一篇前置文章。系列八（unity-rendering-08）讲了 CommandBuffer 是什么，系列十（unity-rendering-10）展示了 Pass 骨架。这篇专门深入 CommandBuffer 最常用的三个操作——**Blit、SetRenderTarget、DrawRenderers**——把使用中真正会遇到的陷阱和选择讲清楚。
 
 ---

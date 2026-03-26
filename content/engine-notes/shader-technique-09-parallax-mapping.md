@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 09｜视差贴图：用高度图模拟真实深度"
-slug = "shader-technique-09-parallax-mapping"
-date = 2026-03-26
-description = "法线贴图只改变光照，不改变轮廓。视差贴图用高度图偏移 UV，让砖墙、石块的凹槽从斜角看有真实的深度感。理解 Parallax Offset、Steep Parallax 和性能取舍。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "视差贴图", "Parallax Mapping", "高度图"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4250
-+++
-
+---
+title: "Shader 核心技法 09｜视差贴图：用高度图模拟真实深度"
+slug: "shader-technique-09-parallax-mapping"
+date: "2026-03-26"
+description: "法线贴图只改变光照，不改变轮廓。视差贴图用高度图偏移 UV，让砖墙、石块的凹槽从斜角看有真实的深度感。理解 Parallax Offset、Steep Parallax 和性能取舍。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "视差贴图"
+  - "Parallax Mapping"
+  - "高度图"
+series: "Shader 手写技法"
+weight: 4250
+---
 法线贴图改变了表面的光照方向，让平面"看起来"有凹凸——但从侧面看轮廓依然是直线，没有真实的深度感。视差贴图（Parallax Mapping）向前一步：根据高度图偏移 UV，让凹凸处的贴图位置发生视觉上的位移，产生真实的深度错觉。
 
 ---

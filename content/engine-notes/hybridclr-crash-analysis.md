@@ -1,13 +1,20 @@
-+++
-date = 2026-03-26
-title = "HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次"
-description = "HybridCLR 系列第 15 篇。专注于 HybridCLR 项目的 native crash 分析：hybridclr:: 函数在调用栈里意味着什么，AOT 泛型缺失的崩溃特征，MethodBridge 缺失，metadata 不匹配，以及如何系统性地填写 AOTGenericReferences.cs 来预防这类崩溃。"
-weight = 44
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Troubleshooting", "NativeCrash", "Symbols", "AOTGeneric", "MethodBridge"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-26"
+title: "HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次"
+description: "HybridCLR 系列第 15 篇。专注于 HybridCLR 项目的 native crash 分析：hybridclr:: 函数在调用栈里意味着什么，AOT 泛型缺失的崩溃特征，MethodBridge 缺失，metadata 不匹配，以及如何系统性地填写 AOTGenericReferences.cs 来预防这类崩溃。"
+weight: 44
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Troubleshooting"
+  - "NativeCrash"
+  - "Symbols"
+  - "AOTGeneric"
+  - "MethodBridge"
+series: "HybridCLR"
+---
 > HybridCLR 的 native crash 和普通 IL2CPP 项目的 native crash 看起来很像，但调用栈里多了几类 HybridCLR 特有的函数——学会识别这些函数，就能快速判断这次崩溃属于哪一层。
 
 这是 HybridCLR 系列第 15 篇。

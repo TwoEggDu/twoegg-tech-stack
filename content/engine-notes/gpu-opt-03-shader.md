@@ -1,15 +1,19 @@
-+++
-title = "GPU 渲染优化 03｜Shader 优化：精度、分支与采样次数"
-slug = "gpu-opt-03-shader"
-date = 2026-03-25
-description = "移动端 Shader 优化的三个核心维度：精度选择（half vs float 对 ALU 和寄存器的影响）、分支对 GPU 流水线的代价、采样次数的控制策略。每个维度都从硬件执行原理出发，给出判断依据而不只是规则。"
-[taxonomies]
-tags = ["移动端", "GPU", "Shader", "性能优化", "HLSL", "half", "float"]
-series = ["移动端硬件与优化"]
-[extra]
-weight = 2230
-+++
-
+---
+title: "GPU 渲染优化 03｜Shader 优化：精度、分支与采样次数"
+slug: "gpu-opt-03-shader"
+date: "2026-03-25"
+description: "移动端 Shader 优化的三个核心维度：精度选择（half vs float 对 ALU 和寄存器的影响）、分支对 GPU 流水线的代价、采样次数的控制策略。每个维度都从硬件执行原理出发，给出判断依据而不只是规则。"
+tags:
+  - "移动端"
+  - "GPU"
+  - "Shader"
+  - "性能优化"
+  - "HLSL"
+  - "half"
+  - "float"
+series: "移动端硬件与优化"
+weight: 2230
+---
 Shader 优化是移动端性能调优里最直接、效果最可量化的部分。改一行 `float` 为 `half`、去掉一次纹理采样，用 Profiler 立刻能看到帧时间变化。但要做对，需要理解这些改动背后的硬件原理——不然容易改出精度问题，或者优化了不影响性能的地方。
 
 ---

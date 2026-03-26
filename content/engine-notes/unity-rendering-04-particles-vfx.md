@@ -1,14 +1,20 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 04｜粒子与特效：Particle System 的几何生成与渲染机制"
-description = "讲清楚 Particle System 怎么在 CPU 上管理粒子状态、动态生成几何体（Billboard/Mesh/Trail），以及粒子渲染和普通 Mesh 渲染路径的异同，顺带对比 VFX Graph 的架构差异。"
-slug = "unity-rendering-04-particles-vfx"
-weight = 700
-featured = false
-tags = ["Unity", "Rendering", "Particles", "VFX", "Billboard", "ParticleSystem", "VFXGraph"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 04｜粒子与特效：Particle System 的几何生成与渲染机制"
+description: "讲清楚 Particle System 怎么在 CPU 上管理粒子状态、动态生成几何体（Billboard/Mesh/Trail），以及粒子渲染和普通 Mesh 渲染路径的异同，顺带对比 VFX Graph 的架构差异。"
+slug: "unity-rendering-04-particles-vfx"
+weight: 700
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "Particles"
+  - "VFX"
+  - "Billboard"
+  - "ParticleSystem"
+  - "VFXGraph"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：粒子特效在渲染层面没有任何魔法——它是大量动态生成的小 Mesh 批量走了一遍标准的顶点→光栅化→片元着色路径，只是这些 Mesh 的位置、大小、颜色每帧都由 CPU 上的粒子模拟系统计算出来。
 
 前几篇讲的形状变形（骨骼/Blend Shape）作用于一个有固定顶点数量的 Mesh。粒子特效不同——它的几何体数量本身就是动态的：一个爆炸效果可能在一帧内生成 500 个粒子，下一帧这些粒子开始死亡，数量减少。

@@ -1,14 +1,17 @@
-+++
-date = 2026-03-21
-title = "Unity 的 GUID、fileID、PPtr 到底在引用什么：为什么资源引用不是文件路径"
-description = "把 Unity 的资源引用拆成 GUID、fileID、PPtr 三层，讲清它为什么不靠文件路径维持引用，以及引用丢失时到底是哪条身份链断了。"
-slug = "unity-guid-fileid-pptr-what-do-they-reference"
-weight = 35
-featured = false
-tags = ["Unity", "Asset", "Serialization", "Reference"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-21"
+title: "Unity 的 GUID、fileID、PPtr 到底在引用什么：为什么资源引用不是文件路径"
+description: "把 Unity 的资源引用拆成 GUID、fileID、PPtr 三层，讲清它为什么不靠文件路径维持引用，以及引用丢失时到底是哪条身份链断了。"
+slug: "unity-guid-fileid-pptr-what-do-they-reference"
+weight: 35
+featured: false
+tags:
+  - "Unity"
+  - "Asset"
+  - "Serialization"
+  - "Reference"
+series: "Unity 资产系统与序列化"
+---
 上一篇我先把 `文件`、`meta/GUID`、`Importer`、`资产对象`、`场景对象`、`运行时实例` 这几层拆开了。
 如果那篇是在回答：
 

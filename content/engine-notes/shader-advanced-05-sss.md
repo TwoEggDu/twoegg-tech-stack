@@ -1,15 +1,19 @@
-+++
-title = "Shader 进阶技法 05｜皮肤次表面散射：SSS 与透光感"
-slug = "shader-advanced-05-sss"
-date = 2026-03-26
-description = "皮肤不是完全不透明的——光线穿透进去散射后再出来，让皮肤显得通透有血色。理解次表面散射的物理原理，实现 Wrap Lighting 和透射（Transmission）两种近似方案。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "进阶", "SSS", "皮肤", "次表面散射"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4330
-+++
-
+---
+title: "Shader 进阶技法 05｜皮肤次表面散射：SSS 与透光感"
+slug: "shader-advanced-05-sss"
+date: "2026-03-26"
+description: "皮肤不是完全不透明的——光线穿透进去散射后再出来，让皮肤显得通透有血色。理解次表面散射的物理原理，实现 Wrap Lighting 和透射（Transmission）两种近似方案。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "进阶"
+  - "SSS"
+  - "皮肤"
+  - "次表面散射"
+series: "Shader 手写技法"
+weight: 4330
+---
 真实皮肤、蜡烛、玉石等半透明材质有一个共同特征：光线不是在表面直接反射，而是穿透进材质内部散射后再出来。这叫**次表面散射（Subsurface Scattering，SSS）**。它让皮肤看起来有血色、通透，而不是塑料感的纯反射。
 
 ---

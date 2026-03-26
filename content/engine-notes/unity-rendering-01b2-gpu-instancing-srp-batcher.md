@@ -1,15 +1,17 @@
-+++
-title = "GPU Instancing 与 SRP Batcher：两种减少 CPU 开销的机制"
-slug = "unity-rendering-01b2-gpu-instancing-srp-batcher"
-date = 2025-01-26
-description = "GPU Instancing 如何用一次 Draw Call 渲染大量同 Mesh 物体，SRP Batcher 如何通过持久化 CBuffer 减少 SetPass 开销，以及两者的选择逻辑和常见陷阱。"
-[taxonomies]
-tags = ["Unity", "GPU Instancing", "SRP Batcher", "Draw Call", "性能优化"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 275
-+++
-
+---
+title: "GPU Instancing 与 SRP Batcher：两种减少 CPU 开销的机制"
+slug: "unity-rendering-01b2-gpu-instancing-srp-batcher"
+date: "2025-01-26"
+description: "GPU Instancing 如何用一次 Draw Call 渲染大量同 Mesh 物体，SRP Batcher 如何通过持久化 CBuffer 减少 SetPass 开销，以及两者的选择逻辑和常见陷阱。"
+tags:
+  - "Unity"
+  - "GPU Instancing"
+  - "SRP Batcher"
+  - "Draw Call"
+  - "性能优化"
+series: "Unity 渲染系统"
+weight: 275
+---
 如果只用一句话概括这篇：GPU Instancing 解决"大量相同物体"的 Draw Call 爆炸，SRP Batcher 解决"大量不同物体但用同一 Shader"的 SetPass 开销——两者机制不同，针对不同瓶颈，不能互相替代。
 
 ---

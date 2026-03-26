@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么"
-description = "从构建期视角拆开 Unity 的 AssetBundle 生成链，讲清输入边界怎么定义、依赖怎么收集、Manifest 在解决什么问题，以及最终 bundle 文件里大致装了什么。"
-slug = "unity-how-assets-become-assetbundles-dependencies-manifest-compression"
-weight = 44
-featured = false
-tags = ["Unity", "AssetBundle", "Build", "Manifest", "Compression"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么"
+description: "从构建期视角拆开 Unity 的 AssetBundle 生成链，讲清输入边界怎么定义、依赖怎么收集、Manifest 在解决什么问题，以及最终 bundle 文件里大致装了什么。"
+slug: "unity-how-assets-become-assetbundles-dependencies-manifest-compression"
+weight: 44
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Build"
+  - "Manifest"
+  - "Compression"
+series: "Unity 资产系统与序列化"
+---
 上一篇我先把 AssetBundle 的位置掰正了：
 
 `AssetBundle 首先不是“怎么 Load 一个包”的运行时 API 话题，而是 Unity 在构建期把资产系统输出成交付物的一种格式。`

@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 07｜高度雾与自定义雾效"
-slug = "shader-technique-07-height-fog"
-date = 2026-03-26
-description = "Unity 内置雾只有线性/指数两种，无法做高度雾（低处浓厚、高处稀薄）。在 Shader 里用世界 Y 坐标手写高度雾，配合距离雾，实现层叠式大气效果。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "雾效", "高度雾", "大气"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4230
-+++
-
+---
+title: "Shader 核心技法 07｜高度雾与自定义雾效"
+slug: "shader-technique-07-height-fog"
+date: "2026-03-26"
+description: "Unity 内置雾只有线性/指数两种，无法做高度雾（低处浓厚、高处稀薄）。在 Shader 里用世界 Y 坐标手写高度雾，配合距离雾，实现层叠式大气效果。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "雾效"
+  - "高度雾"
+  - "大气"
+series: "Shader 手写技法"
+weight: 4230
+---
 Unity 内置的 `MixFog` 函数只做基于距离的指数/线性雾，不支持高度雾（低处浓厚、高处稀薄）。游戏里常见的山谷晨雾、海面薄雾，需要在 Shader 里手写高度雾。
 
 ---

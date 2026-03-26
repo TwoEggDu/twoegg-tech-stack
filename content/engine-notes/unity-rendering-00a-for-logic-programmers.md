@@ -1,15 +1,16 @@
-+++
-title = "渲染入门：CPU、GPU 与 Shader 的分工"
-slug = "unity-rendering-00a-rendering-basics"
-date = 2025-01-26
-description = "从 Unity 已有的组件概念（GameObject、Component、MonoBehaviour、Update）出发，建立渲染系统的认知框架：CPU 负责组织命令，GPU 负责并行执行，Shader 是跑在 GPU 上的像素计算函数。"
-[taxonomies]
-tags = ["Unity", "渲染入门", "GPU", "渲染管线"]
-series = ["Unity 渲染系统"]
-[extra]
-weight = 75
-+++
-
+---
+title: "渲染入门：CPU、GPU 与 Shader 的分工"
+slug: "unity-rendering-00a-rendering-basics"
+date: "2025-01-26"
+description: "从 Unity 已有的组件概念（GameObject、Component、MonoBehaviour、Update）出发，建立渲染系统的认知框架：CPU 负责组织命令，GPU 负责并行执行，Shader 是跑在 GPU 上的像素计算函数。"
+tags:
+  - "Unity"
+  - "渲染入门"
+  - "GPU"
+  - "渲染管线"
+series: "Unity 渲染系统"
+weight: 75
+---
 如果只用一句话概括这篇：渲染系统和游戏逻辑系统的根本区别是"谁在执行代码"——游戏逻辑跑在 CPU 上的 C# 里，渲染跑在 GPU 上的 Shader 里，理解这个分工，是理解整套渲染系列的起点。
 
 ---

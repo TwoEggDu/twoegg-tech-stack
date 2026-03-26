@@ -1,15 +1,19 @@
-+++
-title = "Shader 核心技法 06｜折射：Camera Opaque Texture 与水下扭曲"
-slug = "shader-technique-06-refraction"
-date = 2026-03-26
-description = "真实的玻璃、水面折射需要采样背后的场景颜色。URP 的 Camera Opaque Texture 提供了已完成不透明渲染的场景快照。用屏幕 UV 加法线扰动，实现折射扭曲效果。"
-[taxonomies]
-tags = ["Shader", "HLSL", "URP", "技法", "折射", "水面", "Camera Opaque Texture"]
-series = ["Shader 手写技法"]
-[extra]
-weight = 4220
-+++
-
+---
+title: "Shader 核心技法 06｜折射：Camera Opaque Texture 与水下扭曲"
+slug: "shader-technique-06-refraction"
+date: "2026-03-26"
+description: "真实的玻璃、水面折射需要采样背后的场景颜色。URP 的 Camera Opaque Texture 提供了已完成不透明渲染的场景快照。用屏幕 UV 加法线扰动，实现折射扭曲效果。"
+tags:
+  - "Shader"
+  - "HLSL"
+  - "URP"
+  - "技法"
+  - "折射"
+  - "水面"
+  - "Camera Opaque Texture"
+series: "Shader 手写技法"
+weight: 4220
+---
 玻璃、水面、热浪的折射效果，本质是"看到背后场景的扭曲版本"。URP 提供了 Camera Opaque Texture，在透明物体渲染前保存了一份场景快照，可以直接在 Shader 里采样。
 
 ---

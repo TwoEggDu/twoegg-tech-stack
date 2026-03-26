@@ -1,15 +1,20 @@
-+++
-title = "图形 API 07｜Shader 编译管线：HLSL → SPIR-V / MSL / DXBC，Variant 爆炸与缓存"
-slug = "graphics-api-07-shader-compilation"
-date = 2026-03-26
-description = "Unity 的 HLSL Shader 在构建时要编译成多个目标平台的 bytecode，同时每组 keyword 组合产生一个变体。这篇讲清楚 Shader 编译的完整管线：源码→中间表示→目标 bytecode，变体爆炸的成因与控制，以及 Shader 缓存的工作原理。"
-weight = 760
-[taxonomies]
-tags = ["图形API", "Shader编译", "HLSL", "SPIR-V", "Shader变体", "DXC", "HLSLcc", "Unity"]
-[extra]
-series = "图形 API 基础"
-+++
-
+---
+title: "图形 API 07｜Shader 编译管线：HLSL → SPIR-V / MSL / DXBC，Variant 爆炸与缓存"
+slug: "graphics-api-07-shader-compilation"
+date: "2026-03-26"
+description: "Unity 的 HLSL Shader 在构建时要编译成多个目标平台的 bytecode，同时每组 keyword 组合产生一个变体。这篇讲清楚 Shader 编译的完整管线：源码→中间表示→目标 bytecode，变体爆炸的成因与控制，以及 Shader 缓存的工作原理。"
+weight: 760
+tags:
+  - "图形API"
+  - "Shader编译"
+  - "HLSL"
+  - "SPIR-V"
+  - "Shader变体"
+  - "DXC"
+  - "HLSLcc"
+  - "Unity"
+series: "图形 API 基础"
+---
 ## 从源码到可执行 bytecode 的完整路径
 
 一个 Unity `.shader` 文件从源码到最终运行在 GPU 上，要经历三个阶段：预处理展开、编译为中间表示、转译/编译为目标平台 bytecode。

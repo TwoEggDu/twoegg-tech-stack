@@ -1,13 +1,17 @@
-+++
-date = 2026-03-20
-title = "HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化"
-description = "从 ScriptingAssemblies.json、placeholder assembly 到真实热更 DLL 覆盖 placeholder，拆解 HybridCLR 为什么能让资源上挂着的热更 MonoBehaviour 正确实例化。"
-weight = 33
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "MonoBehaviour", "Asset"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-20"
+title: "HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化"
+description: "从 ScriptingAssemblies.json、placeholder assembly 到真实热更 DLL 覆盖 placeholder，拆解 HybridCLR 为什么能让资源上挂着的热更 MonoBehaviour 正确实例化。"
+weight: 33
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "MonoBehaviour"
+  - "Asset"
+series: "HybridCLR"
+---
 > HybridCLR 对热更 MonoBehaviour 的支持，难点不在 `AddComponent<T>()`，而在 Unity 资源反序列化链会提前按“程序集身份”去找脚本；HybridCLR 真正补的是这条身份链，而不是只补一个运行时 `Type`。
 
 这是 HybridCLR 系列第 4 篇，把 Unity 资源挂脚本这条最容易被忽略的身份链单独拆出来。

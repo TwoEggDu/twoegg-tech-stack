@@ -1,13 +1,17 @@
-+++
-date = 2026-03-23
-title = "HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事"
-description = "把 HybridCLR 系列里的几条主线重新收成一张边界图：动态装载、补充 metadata、AOT 泛型、MethodBridge、资源挂载、Full Generic Sharing 与 DHE 分别在解决什么，又分别带来什么代价。"
-weight = 35
-featured = false
-tags = ["Unity", "IL2CPP", "HybridCLR", "Architecture", "Tradeoff"]
-series = "HybridCLR"
-+++
-
+---
+date: "2026-03-23"
+title: "HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事"
+description: "把 HybridCLR 系列里的几条主线重新收成一张边界图：动态装载、补充 metadata、AOT 泛型、MethodBridge、资源挂载、Full Generic Sharing 与 DHE 分别在解决什么，又分别带来什么代价。"
+weight: 35
+featured: false
+tags:
+  - "Unity"
+  - "IL2CPP"
+  - "HybridCLR"
+  - "Architecture"
+  - "Tradeoff"
+series: "HybridCLR"
+---
 > 说 HybridCLR “支持热更新”当然没错，但这句话最大的问题，是它把几类完全不同的缺口、几层不同的能力、以及几笔不同的工程代价，全部压扁成了一个口号。
 
 这是 HybridCLR 系列第 6 篇，也是第一轮收束篇，用来把前面几篇的边界和 trade-off 重新压成一张图。

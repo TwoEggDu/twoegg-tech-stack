@@ -1,14 +1,18 @@
-+++
-date = 2026-03-23
-title = "AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的"
-description = "从 Unity 官方的 Archive 与 AssetBundle file format reference 出发，按 Header、Block、Directory 和 SerializedFile 四层解释 AssetBundle 内部结构，以及它为什么会影响加载、压缩和随机访问。"
-slug = "unity-assetbundle-file-internal-structure-header-block-directory-serializedfile"
-weight = 58
-featured = false
-tags = ["Unity", "AssetBundle", "Serialization", "Archive", "Compression"]
-series = "Unity 资产系统与序列化"
-+++
-
+---
+date: "2026-03-23"
+title: "AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的"
+description: "从 Unity 官方的 Archive 与 AssetBundle file format reference 出发，按 Header、Block、Directory 和 SerializedFile 四层解释 AssetBundle 内部结构，以及它为什么会影响加载、压缩和随机访问。"
+slug: "unity-assetbundle-file-internal-structure-header-block-directory-serializedfile"
+weight: 58
+featured: false
+tags:
+  - "Unity"
+  - "AssetBundle"
+  - "Serialization"
+  - "Archive"
+  - "Compression"
+series: "Unity 资产系统与序列化"
+---
 写到这里，`AssetBundle` 这条线已经把构建、运行时加载、复杂度、性能、治理和 `Shader` 边界都铺得差不多了。
 
 但如果还想再往下一层看，就会碰到一个更底层的问题：

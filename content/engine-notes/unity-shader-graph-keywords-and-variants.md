@@ -1,14 +1,21 @@
-+++
-date = 2026-03-24
-title = "Shader Graph 的 Keyword 节点与变体：Boolean、Enum 和 _local 在 Shader Graph 里怎么用"
-description = "把 Shader Graph 的 Boolean Keyword、Enum Keyword 节点与 multi_compile、shader_feature 的对应关系讲清楚，说明 Shader Graph 项目里 keyword 设计错误是怎么导致变体爆炸的。"
-slug = "unity-shader-graph-keywords-and-variants"
-weight = 30
-featured = false
-tags = ["Unity", "Shader", "ShaderGraph", "Keyword", "Variant", "URP"]
-series = ["Unity 资产系统与序列化", "Unity Shader Variant 治理"]
-+++
-
+---
+date: "2026-03-24"
+title: "Shader Graph 的 Keyword 节点与变体：Boolean、Enum 和 _local 在 Shader Graph 里怎么用"
+description: "把 Shader Graph 的 Boolean Keyword、Enum Keyword 节点与 multi_compile、shader_feature 的对应关系讲清楚，说明 Shader Graph 项目里 keyword 设计错误是怎么导致变体爆炸的。"
+slug: "unity-shader-graph-keywords-and-variants"
+weight: 30
+featured: false
+tags:
+  - "Unity"
+  - "Shader"
+  - "ShaderGraph"
+  - "Keyword"
+  - "Variant"
+  - "URP"
+series:
+  - "Unity 资产系统与序列化"
+  - "Unity Shader Variant 治理"
+---
 上一篇把手写 shader 的 keyword 设计讲清楚了：
 
 `multi_compile` 总是生成变体，`shader_feature` 只在材质使用时生成变体，`_local` 解决全局 keyword 空间污染。

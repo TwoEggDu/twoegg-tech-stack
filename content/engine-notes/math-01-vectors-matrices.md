@@ -1,15 +1,18 @@
-+++
-title = "图形数学 01｜向量与矩阵：内存布局、列主序 vs 行主序、精度陷阱"
-slug = "math-01-vectors-matrices"
-date = 2026-03-26
-description = "向量和矩阵是渲染管线的基础数据结构。这篇讲清楚它们在内存里的实际布局、列主序与行主序的差异对 HLSL/GLSL/C++ 代码的影响、以及 half/float/double 精度选择的陷阱。"
-weight = 600
-[taxonomies]
-tags = ["数学", "图形学", "向量", "矩阵", "HLSL", "精度"]
-[extra]
-series = "图形数学"
-+++
-
+---
+title: "图形数学 01｜向量与矩阵：内存布局、列主序 vs 行主序、精度陷阱"
+slug: "math-01-vectors-matrices"
+date: "2026-03-26"
+description: "向量和矩阵是渲染管线的基础数据结构。这篇讲清楚它们在内存里的实际布局、列主序与行主序的差异对 HLSL/GLSL/C++ 代码的影响、以及 half/float/double 精度选择的陷阱。"
+weight: 600
+tags:
+  - "数学"
+  - "图形学"
+  - "向量"
+  - "矩阵"
+  - "HLSL"
+  - "精度"
+series: "图形数学"
+---
 ## 向量的内存布局
 
 `float3` 在 C++ 里占 12 字节，`float4` 占 16 字节。GPU 硬件对 SIMD 操作有 16 字节对齐要求，所以即使声明 `float3`，编译器或驱动也经常把它 padding 到 16 字节。这在 cbuffer/uniform buffer 里是个经典陷阱：

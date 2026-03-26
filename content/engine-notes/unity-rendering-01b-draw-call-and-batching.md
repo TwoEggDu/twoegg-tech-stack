@@ -1,14 +1,19 @@
-+++
-date = 2026-03-24
-title = "Unity 渲染系统 01b｜Draw Call 是什么：CPU 每次向 GPU 发出什么请求"
-description = "把 Draw Call 拆成它真正包含的内容，讲清楚 CPU 和 GPU 的协作模型、批处理的三种方式和各自的条件限制，以及 Frame Debugger 里看到的每一行对应什么。"
-slug = "unity-rendering-01b-draw-call-and-batching"
-weight = 250
-featured = false
-tags = ["Unity", "Rendering", "DrawCall", "Batching", "GPU", "Performance"]
-series = "Unity 渲染系统"
-+++
-
+---
+date: "2026-03-24"
+title: "Unity 渲染系统 01b｜Draw Call 是什么：CPU 每次向 GPU 发出什么请求"
+description: "把 Draw Call 拆成它真正包含的内容，讲清楚 CPU 和 GPU 的协作模型、批处理的三种方式和各自的条件限制，以及 Frame Debugger 里看到的每一行对应什么。"
+slug: "unity-rendering-01b-draw-call-and-batching"
+weight: 250
+featured: false
+tags:
+  - "Unity"
+  - "Rendering"
+  - "DrawCall"
+  - "Batching"
+  - "GPU"
+  - "Performance"
+series: "Unity 渲染系统"
+---
 > 如果只用一句话概括这篇，我会这样说：Draw Call 不是"让 GPU 画一个东西"的神秘指令，而是 CPU 把一批顶点数据、一套材质状态、一组变换矩阵打包好，交给 GPU 驱动排队执行的一次工作请求。
 
 上一篇追踪了 Mesh、Material、Texture 在管线里的数据路径。但那条路是从 GPU 视角看的——数据已经在 GPU 里了。这篇往前一步：
