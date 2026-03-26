@@ -409,21 +409,21 @@ writer.Write(analyzer.AotGenericTypes.ToList(), analyzer.AotGenericMethods.ToLis
 
 `热更代码到底触发到了哪些 AOT 泛型类型和泛型方法实例。`
 
-更有意思的是生成器本身。  
+更有意思的是生成器本身。
 如果你看 `GenericReferenceWriter.cs`，会发现它生成出来的 `AOTGenericReferences.cs` 本质上更像一个报告文件，而不是魔法修复文件。
 
 ```csharp
-codes.Add("\t// {{ AOT generic types");
+codes.Add(“\t// {{ AOT generic types”);
 foreach(var typeName in typeNames)
 {
-    codes.Add($"\t// {typeName}");
+    codes.Add($”\t// {typeName}”);
 }
 
-codes.Add("\tpublic void RefMethods()");
-codes.Add("\t{");
+codes.Add(“\tpublic void RefMethods()”);
+codes.Add(“\t{“);
 foreach(var method in methodTypeAndNames)
 {
-    codes.Add($"\t\t// {PrettifyMethodSig(method.Item3)}");
+    codes.Add($”\t\t// {PrettifyMethodSig(method.Item3)}”);
 }
 ```
 
@@ -431,12 +431,73 @@ foreach(var method in methodTypeAndNames)
 
 这件事非常值得讲清楚，因为它和很多人的直觉正好相反：
 
-`AOTGenericReference 默认不是“自动修复器”，而是“把真实风险点显式列出来的清单”。`
+`AOTGenericReference 默认不是”自动修复器”，而是”把真实风险点显式列出来的清单”。`
 
-它告诉你的不是“已经好了”，而是：
+它告诉你的不是”已经好了”，而是：
 
 - 热更代码现在实际依赖了哪些 AOT 泛型实例
 - 你最好显式把哪些实例保进 AOT 世界
+
+## `IlCppFullySharedGenericAny`：缺少具体实例时的 fallback 路径，以及为什么它会死循环
+
+这是 AOT 泛型缺失问题里最值得单独拆清楚的一条路径。
+
+当 IL2CPP 遇到需要调用某个泛型方法，而该方法的具体类型实例在 AOT 世界里根本不存在时，它不会立即 abort——在启用了 Full Generic Sharing 的情况下（Unity 2021+ 默认开启），IL2CPP 会退到一条 fallback 路径，用一个叫做 `IlCppFullySharedGenericAny` 的特殊类型来替代具体类型参数。
+
+调用栈里看到带 `TisIl2CppFullySharedGenericAny` 后缀的函数名，就是走进了这条路径：
+
+```
+AsyncUniTaskMethodBuilder_Start_TisIl2CppFullySharedGenericAny
+```
+
+这个函数的含义是：`AsyncUniTaskMethodBuilder.Start<T>` 的全共享泛型版本，其中 T 被替换成了通用占位类型。
+
+**为什么这条路径会导致无限递归？**
+
+以 `async UniTask` 方法为例，完整的死循环链是这样的：
+
+```
+热更代码调用 async 方法
+  → C# 编译器生成的状态机类型 <SomeMethod>d__N（热更类型，AOT 里不存在）
+  → 调用 AsyncUniTaskMethodBuilder.Start<TStateMachine>(ref stateMachine)
+    TStateMachine = <SomeMethod>d__N（热更类型，AOT 里没有具体实例）
+    → IL2CPP 找不到 Start<HotUpdateStateMachine>
+    → fallback 到 Start<IlCppFullySharedGenericAny>
+      → 这个 FullySharedGeneric 版本不包含具体逻辑
+      → 通过 HybridCLR 解释器执行
+        → 解释器执行 stateMachine.MoveNext()（调用热更状态机）
+          → MoveNext 内部执行 await 逻辑
+          → 触发 AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(...)
+            TStateMachine 仍然是热更类型
+            → 再次找不到具体 AOT 实例
+            → 再次 fallback 到 FullySharedGeneric 路径
+              → 再次进入解释器
+                → 再次调用 MoveNext
+                  → ……无限递归
+```
+
+**循环为什么是不可逃的？**
+
+这个循环之所以无法自然退出，是因为：
+
+1. `async` 状态机类型（`<SomeMethod>d__N`）总是在热更 DLL 里，永远是热更类型
+2. 凡是需要 `TStateMachine` 的地方（`Start`、`AwaitUnsafeOnCompleted`），都会触发同一个 fallback
+3. `FullySharedGenericAny` 版本的 `Start` 和 `AwaitUnsafeOnCompleted` 通过解释器执行，而解释器执行的热更代码又再次触发相同的泛型方法
+4. 这个循环的终止条件——“拿到具体 AOT 实例直接调用”——永远得不到满足
+
+**补进 `RefMethods()` 为什么能打破循环？**
+
+当你在 `AOTGenericReferences.cs` 的 `RefMethods()` 里写下：
+
+```csharp
+Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder<object> _v = default;
+```
+
+IL2CPP 在 AOT 编译阶段会看到对 `AsyncUniTaskMethodBuilder<object>` 的具体引用，进而为它生成具体的 native 实现，包括 `Start<TStateMachine>` 和 `AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>` 的具体版本。
+
+有了这些具体 AOT 实现，HybridCLR 在运行时能找到对应的方法指针，不再需要走 FullySharedGeneric fallback 路径——循环就此断开。
+
+**如果 `RefMethods()` 里只有注释没有代码，效果和空函数相同。** IL2CPP 只分析 C# 代码里的实际引用，不解析注释。
 
 ## MethodBridge 和泛型问题是什么关系
 

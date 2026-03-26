@@ -445,6 +445,69 @@ CleanIl2CppBuildCache();
 
 `MethodBridge.cpp` 是 build-time 生成、runtime 真消费的产物。`
 
+### MethodBridge 在 runtime 里怎么被消费——以及缺失时发生了什么
+
+理解"MethodBridge 是真消费的产物"之后，有一个更具体的问题值得追：runtime 是在哪个时刻发现桥接缺失的，发现之后又做了什么。
+
+先从生成物入手。`MethodBridge.cpp` 里有大量类似这样的函数：
+
+```cpp
+// 一个典型的 bridge stub（示意，实际函数名由签名 hash 决定）
+static void __M2NMethod_i4(const MethodInfo* method, uint16_t* argVarIndexs, StackObject* localVarBase, void** outRetVal)
+{
+    // 从解释器栈帧里取参数，按 ABI 重排，然后调用 AOT 函数
+    typedef int32_t (*Fn)(int32_t, const MethodInfo*);
+    int32_t arg0 = *(int32_t*)(localVarBase + argVarIndexs[0]);
+    *((int32_t*)outRetVal) = ((Fn)(method->methodPointer))(arg0, method);
+}
+```
+
+每个 stub 函数都对应一种方法签名——参数类型组合和返回类型组合各不同，就是一个不同的 stub。
+
+这些 stub 函数在 `InitMethodBridge()` 里被批量注册进一张哈希表。哈希表的 key 是方法签名（经过规范化处理），value 是对应的 stub 函数指针。
+
+**调用发生时的查表逻辑：**
+
+HybridCLR 解释器在执行热更代码里的某个 delegate 调用或接口方法调用时，需要跨越"解释器 → AOT"边界。这时它会：
+
+1. 拿到目标方法的签名
+2. 用签名在桥接表里查对应的 stub
+3. 找到 → 调用 stub，stub 负责参数重排和 ABI 适配
+4. 找不到 → 调用 `MethodBridge_NotSupport`
+
+`MethodBridge_NotSupport` 不是一个断言或 abort，而是一个会被直接"执行"的占位 stub：
+
+```cpp
+// 概念示意
+static void MethodBridge_NotSupport(...)
+{
+    // 通常会抛出一个可被托管层捕获的异常
+    // 而不是直接 abort()
+    il2cpp::vm::Exception::Raise(
+        il2cpp::vm::Exception::GetNotSupportedException(
+            "method call bridge missing"));
+}
+```
+
+所以缺少 MethodBridge 时，看到的通常是：
+
+```
+E Unity: NotSupportedException: method call bridge missing: ...SignatureString...
+  at SomeDelegate (...)
+```
+
+而不是 SIGSEGV。这一点和 AOT 泛型缺失的崩溃表现（SIGSEGV 栈溢出）截然不同。
+
+但在某些签名匹配逻辑有缺陷或桥接表本身损坏的情况下，也可能表现为 SIGABRT 或 SIGILL，取决于 HybridCLR 版本和具体调用路径。
+
+**实际项目里 MethodBridge 缺失的常见触发点：**
+
+- 带值类型参数的 delegate（值类型泛型参数组合爆炸，生成器可能漏掉）
+- 通过 Func / Action 持有的热更方法，参数签名是 AOT 侧没见过的组合
+- 反射调用带特定签名的方法（`MethodInfo.Invoke` 内部也走桥接逻辑）
+
+每次热更代码新增了新的参数签名组合，就需要重新执行 `Generate/All` 重新生成桥接表，否则桥接表只包含上一次分析时见过的签名。
+
 ## `AOTGenericReference`：把泛型风险显式列出来，而不是自动修好
 
 `AOTReferenceGeneratorCommand.cs` 的主线是：
