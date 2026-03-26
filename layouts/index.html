@@ -23,9 +23,10 @@
       <div class="stat-grid">
         {{ range $sections }}
           {{ with site.GetPage (printf "/%s" .) }}
+            {{ $sectionPages := where site.RegularPages "Section" .Section }}
             <article class="stat-card">
               <p class="card-section">{{ .Title }}</p>
-              <strong>{{ len .RegularPages }} 篇</strong>
+              <strong>{{ len $sectionPages }} 篇</strong>
               <p>{{ .Params.description }}</p>
             </article>
           {{ end }}
