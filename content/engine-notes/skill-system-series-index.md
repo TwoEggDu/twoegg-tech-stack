@@ -1,7 +1,7 @@
 ---
 date: "2026-03-27"
 title: "技能系统深度系列索引｜先读哪篇，遇到什么问题该回看哪篇"
-description: "给技能系统深度系列补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及接下来还准备补的多人同步、工具链、测试与 GAS 对照。"
+description: "给技能系统深度系列补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及当前已经接上的多人同步与后续还要补的工具链、测试、GAS 对照。"
 slug: "skill-system-series-index"
 weight: 7999
 featured: false
@@ -107,6 +107,14 @@ series: "技能系统深度"
 11. [技能系统深度 10｜AI 与技能系统的边界：AI 负责选技能，不该接管技能执行链]({{< relref "engine-notes/skill-system-10-ai-boundary.md" >}})
     最后再收 AI，回答“AI 算不算技能系统”这个最容易混的问题。
 
+12. [技能系统深度 11｜多人同步：服务器权威、预测、回滚、命中确认、冷却同步应该怎么拆]({{< relref "engine-notes/skill-system-11-multiplayer-sync.md" >}})
+    把技能执行链放进服务器权威和多端同步场景，重新拆清请求、确认、命中和冷却的真相归属。
+
+13. [技能系统深度 12｜编辑器与配置工具：技能编辑器、依赖图、校验器、调试视图怎样服务执行链]({{< relref "engine-notes/skill-system-12-editor-and-tooling.md" >}})
+    把工程期真正需要的工具层接回执行链，讲清编辑器、预览、校验和调试视图分别服务哪一层。
+14. [技能系统深度 13｜测试与回归：公式回归、边界条件、战斗日志、技能时间线怎样落地]({{< relref "engine-notes/skill-system-13-testing-and-regression.md" >}})
+    把工具层继续往下接成回归体系，讲清配置校验、公式夹具、事件日志和技能时间线分别怎样钉住执行链的真相。
+
 ## 按主题分组去读
 
 如果你不想严格按顺序读，而是想按主题看，这组文章目前可以分成下面几块。
@@ -152,10 +160,20 @@ series: "技能系统深度"
 
 - [技能系统深度 09｜动画与表现解耦：前摇点、生效点、受击点、VFX/SFX、Timeline/Event 怎么对齐]({{< relref "engine-notes/skill-system-09-animation-and-presentation-decoupling.md" >}})
 - [技能系统深度 10｜AI 与技能系统的边界：AI 负责选技能，不该接管技能执行链]({{< relref "engine-notes/skill-system-10-ai-boundary.md" >}})
+- [技能系统深度 11｜多人同步：服务器权威、预测、回滚、命中确认、冷却同步应该怎么拆]({{< relref "engine-notes/skill-system-11-multiplayer-sync.md" >}})
 
 这一组回答的是：
 
-`技能系统怎样和表现系统、AI 系统对齐，但又不被它们吞掉。`
+`技能系统怎样和表现系统、AI 系统、多人同步语境对齐，但又不被它们吞掉。`
+
+## 六、工程化落地
+
+- [技能系统深度 12｜编辑器与配置工具：技能编辑器、依赖图、校验器、调试视图怎样服务执行链]({{< relref "engine-notes/skill-system-12-editor-and-tooling.md" >}})
+- [技能系统深度 13｜测试与回归：公式回归、边界条件、战斗日志、技能时间线怎样落地]({{< relref "engine-notes/skill-system-13-testing-and-regression.md" >}})
+
+这一组回答的是：
+
+`技能系统进入团队协作和长期维护阶段后，定义层、依赖关系、运行时过程以及回归证据应该怎样被稳定地看见和验证。`
 
 ## 如果你不是系统读，而是带着问题来查
 
@@ -206,20 +224,45 @@ series: "技能系统深度"
 - [技能系统深度 04｜输入与施法请求：按键、输入缓冲、技能队列、取消窗口怎么接]({{< relref "engine-notes/skill-system-04-input-and-cast-request.md" >}})
 - [技能系统深度 05｜校验与约束：冷却、消耗、距离、状态、标签阻塞应该放在哪]({{< relref "engine-notes/skill-system-05-validation-and-constraints.md" >}})
 
+### 7. 你现在最大的痛点是一进联网或对战场景，命中、冷却、表现和真相就开始错位
+
+先看：
+
+- [技能系统深度 11｜多人同步：服务器权威、预测、回滚、命中确认、冷却同步应该怎么拆]({{< relref "engine-notes/skill-system-11-multiplayer-sync.md" >}})
+- [技能系统深度 04｜输入与施法请求：按键、输入缓冲、技能队列、取消窗口怎么接]({{< relref "engine-notes/skill-system-04-input-and-cast-request.md" >}})
+- [技能系统深度 06｜目标选择与命中：单体、范围、投射物、锁定、碰撞、命中时机怎么拆]({{< relref "engine-notes/skill-system-06-targeting-and-hit-resolution.md" >}})
+- [技能系统深度 09｜动画与表现解耦：前摇点、生效点、受击点、VFX/SFX、Timeline/Event 怎么对齐]({{< relref "engine-notes/skill-system-09-animation-and-presentation-decoupling.md" >}})
+
+### 8. 你现在最大的痛点是配置越来越多，但没人说得清一个技能到底依赖了什么、为什么配错
+
+先看：
+
+- [技能系统深度 12｜编辑器与配置工具：技能编辑器、依赖图、校验器、调试视图怎样服务执行链]({{< relref "engine-notes/skill-system-12-editor-and-tooling.md" >}})
+- [技能系统深度 02｜数据模型：SkillDef、SkillInstance、CastContext、TargetSpec、EffectSpec 怎么设计]({{< relref "engine-notes/skill-system-02-data-model.md" >}})
+- [技能系统深度 07｜效果系统：伤害、治疗、位移、驱散、召唤为什么应该统一落到 Effect System]({{< relref "engine-notes/skill-system-07-effect-system.md" >}})
+- [技能系统深度 08｜Buff / Modifier：叠层、刷新、覆盖、快照、实时重算应该怎么建模]({{< relref "engine-notes/skill-system-08-buff-modifier.md" >}})
+
+### 9. 你现在最大的痛点是每次改完公式、Buff 或时间线，都不知道有没有悄悄打坏旧技能
+
+先看：
+
+- [技能系统深度 13｜测试与回归：公式回归、边界条件、战斗日志、技能时间线怎样落地]({{< relref "engine-notes/skill-system-13-testing-and-regression.md" >}})
+- [技能系统深度 03｜生命周期：Instant / Cast / Channel / Charge / Toggle / Passive / Combo 怎么统一]({{< relref "engine-notes/skill-system-03-lifecycle.md" >}})
+- [技能系统深度 07｜效果系统：伤害、治疗、位移、驱散、召唤为什么应该统一落到 Effect System]({{< relref "engine-notes/skill-system-07-effect-system.md" >}})
+- [技能系统深度 08｜Buff / Modifier：叠层、刷新、覆盖、快照、实时重算应该怎么建模]({{< relref "engine-notes/skill-system-08-buff-modifier.md" >}})
+- [技能系统深度 12｜编辑器与配置工具：技能编辑器、依赖图、校验器、调试视图怎样服务执行链]({{< relref "engine-notes/skill-system-12-editor-and-tooling.md" >}})
+
 ## 这组文章现在还没写到哪
 
-到目前为止，这组文章已经把“主干”基本立起来了，但后半段还有几篇非常值得补：
+到目前为止，这组文章已经把“主干”、多人同步、工具层和回归链都接上了；现在只剩最后一篇收束：
 
-- `11｜多人同步：服务器权威、预测、回滚、命中确认、冷却同步`
-- `12｜编辑器与配置工具：技能编辑器、依赖图、校验器、调试视图`
-- `13｜测试与回归：公式回归、边界条件、战斗日志、技能时间线`
 - `14｜Unity 自研技能系统 vs Unreal GAS：思想映射，而不是 API 对照`
 
 也就是说，这组文章目前已经能回答：
 
-`技能系统在本地单机 / 单端逻辑里怎样搭得稳。`
+`技能系统在单端执行链里怎样搭得稳、进到服务器权威场景后怎样拆同步边界，以及工程期怎样建立一套覆盖配置、公式、时序、边界条件和战斗日志的回归体系。`
 
-而接下来更偏工程化、更偏多人、更偏框架映射的部分，还会继续往下补。
+而接下来剩下的最后一篇，会把这套自研技能系统再和 Unreal GAS 做一次思想映射收束。
 
 ## 这篇真正想留下来的结论
 
