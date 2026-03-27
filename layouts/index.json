@@ -1,0 +1,23 @@
+{{- $entries := slice -}}
+{{- range site.RegularPages.ByWeight -}}
+  {{- $section := "" -}}
+  {{- with .CurrentSection -}}
+    {{- $section = .Title -}}
+  {{- end -}}
+  {{- $summary := "" -}}
+  {{- with .Params.description -}}
+    {{- $summary = . | plainify | replaceRE "\\s+" " " -}}
+  {{- else -}}
+    {{- $summary = .Summary | plainify | replaceRE "\\s+" " " | truncate 180 -}}
+  {{- end -}}
+  {{- $content := .Plain | replaceRE "\\s+" " " | truncate 260 -}}
+  {{- $entries = $entries | append (dict
+    "title" .Title
+    "href" .RelPermalink
+    "section" $section
+    "summary" $summary
+    "content" $content
+    "tags" (.Params.tags | default (slice))
+  ) -}}
+{{- end -}}
+{{- $entries | jsonify -}}

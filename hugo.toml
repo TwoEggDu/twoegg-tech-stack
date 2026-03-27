@@ -6,6 +6,9 @@ enableRobotsTXT = true
 summaryLength = 28
 disableKinds = ["taxonomy", "term"]
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [params]
   description = "Projects, engine notes, code quality, problem solving, and engineering judgment."
   author = "TwoEgg"
