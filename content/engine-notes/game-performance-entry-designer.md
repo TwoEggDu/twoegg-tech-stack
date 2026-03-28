@@ -27,7 +27,16 @@ series_order: 4
 - 哪些分档看起来更细，实际上只是在给团队加维护成本。
 - 哪些内容不该在首进、首开、首放的瞬间一起触发。
 
-## 第一轮先读这几篇
+## 第一轮先读这三篇
+
+1. [玩法设计怎么放大性能成本：同屏人数、召唤物、持续范围、链式效果与主城密度]({{< relref "engine-notes/game-performance-design-scaling-risk.md" >}})
+   这篇先帮你建立“设计会怎样把总账乘起来”的直觉。
+2. [首进、首开、首战为什么最容易卡：策划该怎么拆首次触发风险]({{< relref "engine-notes/game-performance-design-first-trigger-risk.md" >}})
+   这篇先把“第一次为什么最危险”和“策划能怎么拆时机”讲清楚。
+3. [策划怎么验收分档一致性：低中高档分别该保什么，不该保什么]({{< relref "engine-notes/game-performance-design-tier-acceptance.md" >}})
+   这篇先把“什么叫同一款游戏”和“策划怎么做分档验收”落成可执行口径。
+
+## 读完桥接文，再接这几篇共用基础文
 
 1. [四个档位的玩家应该感受到同一款游戏：体验一致性设计]({{< relref "engine-notes/device-tier-experience-consistency.md" >}})
    这是策划最该先建立的判断：低档玩家是不是还在玩同一款游戏。
@@ -53,16 +62,14 @@ series_order: 4
 - [从现象到方法：把游戏性能判断连成一套工作流]({{< relref "engine-notes/game-performance-methodology-summary.md" >}})
   这篇更适合作为收束，不适合作为起步。
 
-## 接下来最值得补的桥接文章
-
-- 玩法设计怎么放大性能成本：同屏人数、召唤物、持续范围、链式效果与主城密度
-- 首进、首开、首战为什么最容易卡：策划该怎么拆首次触发风险
-- 策划怎么验收分档一致性：低中高档分别该保什么，不该保什么
-
 ## 按你手上的问题跳转
 
+- 你在评审一个玩法，担心同屏人数、召唤物、持续范围和链式效果会把成本越滚越大：
+  先看 [玩法设计怎么放大性能成本]({{< relref "engine-notes/game-performance-design-scaling-risk.md" >}})。
 - 某个玩法、技能或活动只要第一次触发就容易卡：
-  先看 [什么事不能在什么时候做]({{< relref "engine-notes/game-performance-dangerous-operations-timing.md" >}})。
+  先看 [首进、首开、首战为什么最容易卡]({{< relref "engine-notes/game-performance-design-first-trigger-risk.md" >}})。
+- 你要验收低中高档，但不确定哪些能降、哪些一降就变味：
+  先看 [策划怎么验收分档一致性]({{< relref "engine-notes/game-performance-design-tier-acceptance.md" >}})。
 - 你想让低中高端设备“都像同一款游戏”，但不知道该怎么定义一致性：
   看 [体验一致性设计]({{< relref "engine-notes/device-tier-experience-consistency.md" >}})。
 - 团队想继续加画质档、活动档或机型档，但你怀疑维护成本会爆：

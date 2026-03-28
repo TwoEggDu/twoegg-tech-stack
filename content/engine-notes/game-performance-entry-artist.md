@@ -28,14 +28,27 @@ series_order: 2
 
 ## 第一轮先读这几篇
 
-1. [每档资产规格清单：贴图压缩、LOD 与包体分层]({{< relref "engine-notes/device-tier-asset-spec-texture-and-package.md" >}})
+1. [美术资源性能自检表：贴图、材质、LOD、UI、特效提交前先看什么]({{< relref "engine-notes/game-performance-artist-self-checklist.md" >}})
+   先把“提交前到底该先查什么”这条线建立起来，再去看后面的规格和取舍。
+2. [每档资产规格清单：贴图压缩、LOD 与包体分层]({{< relref "engine-notes/device-tier-asset-spec-texture-and-package.md" >}})
    这是最适合美术拿来做自检的预算入口。
-2. [性能预算不够用时，什么该最后砍：移动端视觉效果性价比排序]({{< relref "engine-notes/device-tier-visual-tradeoff-priority.md" >}})
+3. [性能预算不够用时，什么该最后砍：移动端视觉效果性价比排序]({{< relref "engine-notes/device-tier-visual-tradeoff-priority.md" >}})
    帮你判断哪些效果最贵，哪些效果该最后保。
-3. [四个档位的玩家应该感受到同一款游戏：体验一致性设计]({{< relref "engine-notes/device-tier-experience-consistency.md" >}})
+4. [四个档位的玩家应该感受到同一款游戏：体验一致性设计]({{< relref "engine-notes/device-tier-experience-consistency.md" >}})
    帮你判断哪些是“画质可以降”，哪些是“降了就变味”。
-4. [什么事不能在什么时候做：游戏开发里最危险的时机管理]({{< relref "engine-notes/game-performance-dangerous-operations-timing.md" >}})
+5. [什么事不能在什么时候做：游戏开发里最危险的时机管理]({{< relref "engine-notes/game-performance-dangerous-operations-timing.md" >}})
    先知道哪些内容最不适合在首开 UI、首放特效、切场景、进战斗的瞬间一起压上去。
+
+## 按工种继续读
+
+- 你是角色美术：
+  先看 [角色资源哪里最容易超预算：主贴图、材质槽位、轮廓复杂度与近景优先级]({{< relref "engine-notes/game-performance-character-art-budget-priority.md" >}})。
+- 你是场景美术：
+  先看 [场景为什么最容易堆爆预算：地形、植被、装饰件密度、远景与 LOD]({{< relref "engine-notes/game-performance-environment-art-density-lod.md" >}})。
+- 你是特效美术：
+  先看 [为什么这个特效看起来不多，叠起来却最容易炸：透明、屏占比、生命周期与首放成本]({{< relref "engine-notes/game-performance-vfx-stacking-and-first-play.md" >}})。
+- 你是 UI 美术：
+  先看 [UI 为什么最容易在首开、切页、叠层时出问题：图集、层级、动效与模糊背景]({{< relref "engine-notes/game-performance-ui-first-open-layering.md" >}})。
 
 ## 第二轮再看这些
 
@@ -47,11 +60,12 @@ series_order: 2
 - 想知道为什么透明叠加和材质切换会贵，再看 [GPU 渲染优化 01｜Draw Call 与 Overdraw：移动端的合批策略与 Alpha 排序]({{< relref "engine-notes/gpu-opt-01-drawcall-overdraw.md" >}})。
 - 想知道阴影和后处理为什么总是最先吃预算，再看 [GPU 优化 04｜移动端阴影：Shadow Map 代价、CSM 配置与软阴影替代方案]({{< relref "engine-notes/gpu-opt-04-shadow-mobile.md" >}}) 和 [GPU 渲染优化 05｜后处理在移动端的取舍与降质策略]({{< relref "engine-notes/gpu-opt-05-postprocess-mobile.md" >}})。
 
-## 接下来最值得补的桥接文章
+## 继续补直觉就读这两篇
 
-- 美术资源性能自检表：贴图、材质、LOD、UI、特效提交前先看什么
-- 为什么这个资源看起来不重，进项目却会贵：透明、阴影、后处理与特效叠层的成本直觉
-- 低档不是粗暴砍效果：角色、场景、UI 与特效怎么降级而不变味
+- [为什么这个资源看起来不重，进项目却会贵：透明、阴影、后处理与特效叠层的成本直觉]({{< relref "engine-notes/game-performance-art-hidden-cost-intuition.md" >}})
+  这篇负责把“为什么它看起来不重却会贵”的成本直觉立起来。
+- [低档不是粗暴砍效果：角色、场景、UI 与特效怎么降级而不变味]({{< relref "engine-notes/game-performance-art-downgrade-without-losing-identity.md" >}})
+  这篇负责把“低档怎么降而不变味”的降级直觉立起来。
 
 ## 按你手上的问题跳转
 
