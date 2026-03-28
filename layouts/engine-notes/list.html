@@ -52,8 +52,12 @@
 
   {{ $legacySeriesTitles := slice }}
   {{ range $pages }}
+    {{ $hasSeriesTitle := false }}
+    {{ with .Params.series }}
+      {{ $hasSeriesTitle = true }}
+    {{ end }}
     {{ with .Params.primary_series }}
-      {{ if and (not (in $explicitSeriesIds .)) (not (in $legacySeriesTitles .)) }}
+      {{ if and (not $hasSeriesTitle) (not (in $explicitSeriesIds .)) (not (in $legacySeriesTitles .)) }}
         {{ $legacySeriesTitles = $legacySeriesTitles | append . }}
       {{ end }}
     {{ end }}
@@ -159,13 +163,15 @@
           {{ $memberCards = sort $memberCards "title" }}
           {{ $memberCards = sort $memberCards "order" }}
 
-          {{ $displayPages := slice }}
+          {{ $articlePages := slice }}
           {{ range $memberCards }}
             {{ $memberPage := index . "page" }}
             {{ if ne $memberPage.RelPermalink $entryPage.RelPermalink }}
-              {{ $displayPages = $displayPages | append $memberPage }}
+              {{ $articlePages = $articlePages | append $memberPage }}
             {{ end }}
           {{ end }}
+          {{ $seriesCount := len $articlePages }}
+          {{ $displayPages := $articlePages }}
           {{ if eq (len $displayPages) 0 }}
             {{ range first 1 $memberCards }}
               {{ $displayPages = $displayPages | append (index . "page") }}
@@ -190,7 +196,7 @@
                 <p class="card-section">Series</p>
                 <h2>{{ $seriesTitle }}</h2>
               </div>
-              <p class="series-count">{{ len $memberCards }} 篇</p>
+              <p class="series-count">{{ $seriesCount }} 篇</p>
             </div>
 
             <p class="series-summary">{{ $seriesSummary }}</p>
