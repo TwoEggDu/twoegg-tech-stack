@@ -114,6 +114,8 @@ series: "技能系统深度"
     把工程期真正需要的工具层接回执行链，讲清编辑器、预览、校验和调试视图分别服务哪一层。
 14. [技能系统深度 13｜测试与回归：公式回归、边界条件、战斗日志、技能时间线怎样落地]({{< relref "engine-notes/skill-system-13-testing-and-regression.md" >}})
     把工具层继续往下接成回归体系，讲清配置校验、公式夹具、事件日志和技能时间线分别怎样钉住执行链的真相。
+15. [技能系统深度 14｜Unity 自研技能系统 vs Unreal GAS：思想映射，而不是 API 对照]({{< relref "engine-notes/skill-system-14-unity-self-built-vs-unreal-gas.md" >}})
+    把整条自研技能系统主线和 GAS 做一次思想映射，讲清哪些概念同构、哪些边界不同，以及 Unity 项目到底该借什么。
 
 ## 按主题分组去读
 
@@ -174,6 +176,14 @@ series: "技能系统深度"
 这一组回答的是：
 
 `技能系统进入团队协作和长期维护阶段后，定义层、依赖关系、运行时过程以及回归证据应该怎样被稳定地看见和验证。`
+
+## 七、框架映射与收束
+
+- [技能系统深度 14｜Unity 自研技能系统 vs Unreal GAS：思想映射，而不是 API 对照]({{< relref "engine-notes/skill-system-14-unity-self-built-vs-unreal-gas.md" >}})
+
+这一组回答的是：
+
+`当自研技能系统主线已经写完整之后，怎样把它和 Unreal GAS 做一次思想映射，看清哪些概念同构、哪些边界不同，以及哪些经验值得借。`
 
 ## 如果你不是系统读，而是带着问题来查
 
@@ -252,17 +262,27 @@ series: "技能系统深度"
 - [技能系统深度 08｜Buff / Modifier：叠层、刷新、覆盖、快照、实时重算应该怎么建模]({{< relref "engine-notes/skill-system-08-buff-modifier.md" >}})
 - [技能系统深度 12｜编辑器与配置工具：技能编辑器、依赖图、校验器、调试视图怎样服务执行链]({{< relref "engine-notes/skill-system-12-editor-and-tooling.md" >}})
 
-## 这组文章现在还没写到哪
+### 10. 你开始研究 GAS，但总想把 Unity 技能系统和 GAS API 一一对上
 
-到目前为止，这组文章已经把“主干”、多人同步、工具层和回归链都接上了；现在只剩最后一篇收束：
+先看：
 
-- `14｜Unity 自研技能系统 vs Unreal GAS：思想映射，而不是 API 对照`
+- [技能系统深度 14｜Unity 自研技能系统 vs Unreal GAS：思想映射，而不是 API 对照]({{< relref "engine-notes/skill-system-14-unity-self-built-vs-unreal-gas.md" >}})
+- [技能系统深度 01｜边界：技能、效果、Buff、属性、标签、资源、冷却分别是什么]({{< relref "engine-notes/skill-system-01-boundaries.md" >}})
+- [技能系统深度 07｜效果系统：伤害、治疗、位移、驱散、召唤为什么应该统一落到 Effect System]({{< relref "engine-notes/skill-system-07-effect-system.md" >}})
+- [技能系统深度 09｜动画与表现解耦：前摇点、生效点、受击点、VFX/SFX、Timeline/Event 怎么对齐]({{< relref "engine-notes/skill-system-09-animation-and-presentation-decoupling.md" >}})
+- [技能系统深度 11｜多人同步：服务器权威、预测、回滚、命中确认、冷却同步应该怎么拆]({{< relref "engine-notes/skill-system-11-multiplayer-sync.md" >}})
 
-也就是说，这组文章目前已经能回答：
+## 这组文章现在已经写到哪
 
-`技能系统在单端执行链里怎样搭得稳、进到服务器权威场景后怎样拆同步边界，以及工程期怎样建立一套覆盖配置、公式、时序、边界条件和战斗日志的回归体系。`
+到目前为止，这组文章的主线已经全部写完了：从概念边界、数据模型、生命周期、命中与效果，到多人同步、工具链、回归体系和最后的 GAS 思想映射，都已经接上。
 
-而接下来剩下的最后一篇，会把这套自研技能系统再和 Unreal GAS 做一次思想映射收束。
+- `14｜Unity 自研技能系统 vs Unreal GAS：思想映射，而不是 API 对照` 负责把这条自研主线和成熟框架做一次横向对照收束。
+
+也就是说，这组文章现在已经能回答：
+
+`技能系统在单端和多人场景里怎样搭出稳定执行链、怎样让工程期的配置、调试和回归站住，以及怎样把这套自研方案和 Unreal GAS 做一次思想对照。`
+
+如果后面还继续往下写，就不再是给这条主线补洞，而更像是展开单独的 GAS 系列、具体项目案例或更细的引擎实现专题。
 
 ## 这篇真正想留下来的结论
 
