@@ -228,3 +228,4 @@ Game.Tests.asmdef                testAssemblies，不进 Player build
 ---
 
 - 上一篇：[Unity 脚本编译管线 05｜点击 Build 之后：Mono 与 IL2CPP 的编译路径分叉]({{< relref "engine-notes/unity-script-compilation-pipeline-05-player-build.md" >}})
+- 下一篇：[Unity 脚本编译管线 07｜CI 编译缓存：Library 哪些能缓存、哪些不能]({{< relref "engine-notes/unity-script-compilation-pipeline-07-ci-cache.md" >}})
