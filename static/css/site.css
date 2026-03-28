@@ -591,6 +591,20 @@ body.has-scrolled .site-nav a {
   margin: 1em 0;
 }
 
+.article-body a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.16em;
+  text-decoration-color: rgba(161, 77, 52, 0.45);
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.article-body a:hover {
+  color: var(--accent);
+  text-decoration-color: rgba(161, 77, 52, 0.9);
+}
+
 .article-body ul,
 .article-body ol {
   padding-left: 1.3rem;
@@ -797,6 +811,20 @@ body.has-scrolled .site-nav a {
   font-family: var(--headline);
   font-size: clamp(1.2rem, 2vw, 1.55rem);
   line-height: 1.15;
+}
+
+.series-copy h3 a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(161, 77, 52, 0.4);
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.series-copy h3 a:hover {
+  color: var(--accent);
+  text-decoration-color: rgba(161, 77, 52, 0.9);
 }
 
 .series-copy p {
