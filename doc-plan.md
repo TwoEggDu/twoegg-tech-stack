@@ -1047,6 +1047,9 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | HCLR-13 | HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事 |
 | HCLR-14 | HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析 |
 | HCLR-15 | HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次 |
+| HCLR-16 | HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景 |
+| HCLR-17 | HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法 |
+| HCLR-18 | HybridCLR 案例｜Dictionary<ValueTuple, 热更类型> 的 MissingMethodException 与 object 替代法 |
 
 ---
 
@@ -1226,7 +1229,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十八（DOTS）| 5 |
 | 系列十八·B（数据导向运行时深度）| 7 |
 | 系列十九（插件框架）| 5 |
-| 系列十九·B（HybridCLR 热更新深度）| 15 |
+| 系列十九·B（HybridCLR 热更新深度）| 18 |
 | 崩溃分析系列 | 5 |
 | 系列二十一（质量保证体系）| 14 |
 | 系列二十二（DLSS 进化论）| 8 |
@@ -1248,7 +1251,6 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | `hybridclr-aot-generics-and-supplementary-metadata.md` | 更新末尾"把这件事压成一句话"结论，纳入 `IlCppFullySharedGenericAny` fallback 路径 |
 | `hybridclr-toolchain-what-generate-buttons-do.md` | 更新"常见误解 误解五"表述，补充缺失时的具体崩溃表现（`NotSupportedException` vs SIGSEGV） |
 | `hybridclr-crash-analysis.md` | 模式 4（metadata 版本不匹配）扩充崩溃特征描述，添加指向 `il2cpp-global-metadata-deep-dive.md` 的链接 |
-| `hybridclr-series-index.md` | 新增 HCLR-14（案例诊断）、HCLR-15（崩溃定位专题）条目 |
 
 ### 低优先级
 
@@ -1258,4 +1260,4 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-03-26（v18）*
+*最后更新：2026-03-28（v18）*

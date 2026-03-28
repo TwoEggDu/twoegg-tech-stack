@@ -105,6 +105,21 @@ series: "HybridCLR"
 13. [HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断]({{< relref "engine-notes/hybridclr-faq-10-most-confused-judgments.md" >}})
    这是一篇 FAQ 入口，不补新原理，专门把最容易说错的 10 句话重新拉直。
 
+14. [HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析]({{< relref "engine-notes/hybridclr-case-typeload-and-async-native-crash.md" >}})
+   这一篇开始进入真实项目案例，把 `TypeLoadException`、真机崩溃和符号化分析串成一条完整排查链。
+
+15. [HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次]({{< relref "engine-notes/hybridclr-crash-analysis.md" >}})
+   这一篇把调用栈阅读方法单独展开，说明 `hybridclr::`、AOT 泛型缺失、MethodBridge 缺失和 metadata 不匹配各自会留下什么特征。
+
+16. [HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-notes/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}})
+   这一篇把案例里暴露出来的工程问题单独收束，解释为什么 `GenerateAll`、`Development` 一致性和 `Launcher-only` 场景必须进入构建流程。
+
+17. [HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法]({{< relref "engine-notes/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})
+   这一篇沿着 HCLR-14 的崩溃链继续下钻，把“`RefMethods()` 是空的”和“真正根因是什么”区分开，并给出根治与应急两条修法。
+
+18. [HybridCLR 案例｜Dictionary<ValueTuple, 热更类型> 的 MissingMethodException 与 object 替代法]({{< relref "engine-notes/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}})
+   这是另一类 AOT 泛型缺口案例，专门讲清为什么值类型键和热更引用类型值组合在一起时，`DisStripCode` 里只能用 `object` 兜底。
+
 ## 如果你不是系统读，而是带着问题来查
 
 如果你已经在项目里遇到问题，那比起从头读，更稳的是按问题回看。
@@ -187,17 +202,35 @@ series: "HybridCLR"
 
 - [HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断]({{< relref "engine-notes/hybridclr-faq-10-most-confused-judgments.md" >}})
 
-### 14. 你在线上或 CI 遇到 async 崩溃，想知道真正的根因和修法
+### 14. 你已经拿到一条 `TypeLoadException`、真机 `SIGSEGV` 或 native crash，想看一次完整的 HybridCLR 案例诊断是怎么推进的
+
+先看：
+
+- [HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出，一次完整的 native crash 符号化分析]({{< relref "engine-notes/hybridclr-case-typeload-and-async-native-crash.md" >}})
+
+### 15. 你已经拿到 native crash 调用栈，想读懂里面的 `hybridclr::`、AOT 泛型缺口、MethodBridge 缺失和 metadata 不匹配
+
+先看：
+
+- [HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次]({{< relref "engine-notes/hybridclr-crash-analysis.md" >}})
+
+### 16. 你想把 HybridCLR 的打包流程做成可重复的 CI 标准流程
+
+先看：
+
+- [HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-notes/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}})
+
+### 17. 你在线上或 CI 遇到 async 崩溃，想知道真正的根因和修法
 
 先看：
 
 - [HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法]({{< relref "engine-notes/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})
 
-### 15. 你想把 HybridCLR 的打包流程做成可重复的 CI 标准流程
+### 18. 你遇到 `Dictionary<ValueTuple, 热更类型>` 的 `MissingMethodException`，或者想知道 DisStripCode 里为什么只能用 object 替代热更类型
 
 先看：
 
-- [HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-notes/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}})
+- [HybridCLR 案例｜Dictionary<ValueTuple, 热更类型> 的 MissingMethodException 与 object 替代法]({{< relref "engine-notes/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}})
 
 ## 这组文章刻意不做什么
 
@@ -227,11 +260,14 @@ series: "HybridCLR"
 - 已进包 AOT 程序集的函数级差分执行：`DHE`
 - 面向真实项目的高级能力选型判断
 - 一篇面向高频混淆点的 FAQ 入口
-- 真实崩溃案例：async 崩溃根因与两种修法
+- 真实案例诊断：从 `TypeLoadException` 到 async 栈溢出的完整排查链
+- native crash 调用栈定位：`hybridclr::`、AOT 泛型缺失、MethodBridge 缺失、metadata 不匹配
 - CI 打包工程化：GenerateAll、Development 一致性、Launcher-only 场景
+- 真实崩溃案例续篇：async 崩溃根因与两种修法
+- 真实案例：`Dictionary<ValueTuple, 热更类型>` 的 `MissingMethodException` 与 `object` 替代法
 
-到这一步，这组文章的第一轮主线已经收齐了。  
-现在开始补的，已经不是基础主链，而是 `Full Generic Sharing`、`DHE` 这类更高层的高级主题。
+到这一步，这组文章的基础主线、第一批真实案例和第一批工程化问题都已经接上了。  
+后面继续补，更值得写的是新的项目案例、构建约束和回归防线，而不是回头重复基础原理。
 
 ## 最后压一句话
 
