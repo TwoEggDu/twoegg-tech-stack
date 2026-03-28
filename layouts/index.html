@@ -1,5 +1,15 @@
 {{ define "main" }}
-  {{ $featured := first 4 (where site.RegularPages.ByWeight "Params.featured" true) }}
+  {{ $featured := slice }}
+  {{ range (slice
+    "/projects/vfx-checker-case.md"
+    "/engine-notes/player-input-and-game-content-to-screen.md"
+    "/engine-notes/unity-engine-insights.md"
+    "/code-quality/code-quality-is-delivery-capability.md"
+  ) }}
+    {{ with site.GetPage . }}
+      {{ $featured = $featured | append . }}
+    {{ end }}
+  {{ end }}
   {{ $sections := slice "projects" "engine-notes" "code-quality" "problem-solving" "essays" }}
   {{ $sectionLabels := dict
     "projects" "交付案例"
@@ -14,20 +24,6 @@
     "code-quality" "看判断标准"
     "problem-solving" "看拆解过程"
     "essays" "看长期方法"
-  }}
-  {{ $statTitles := dict
-    "projects" "Projects"
-    "engine-notes" "Engine Notes"
-    "code-quality" "Code Quality"
-    "problem-solving" "Problem Solving"
-    "essays" "Essays"
-  }}
-  {{ $statSummaries := dict
-    "projects" "项目交付、平台差异、流程建设和结果闭环。"
-    "engine-notes" "引擎链路、资源、构建、脚本、运行时和渲染协同。"
-    "code-quality" "评审标准、演进边界、协作成本和稳定性约束。"
-    "problem-solving" "复杂约束下的定位、收敛、取舍和交付判断。"
-    "essays" "职业判断、工作方法和长期输入带来的技术取舍。"
   }}
 
   <section class="hero">
@@ -50,16 +46,14 @@
           {{ end }}
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="stat-grid">
-        {{ range $sections }}
-          <article class="stat-card">
-            <p class="card-section">{{ index $sectionLabels . }}</p>
-            <strong>{{ index $statTitles . }}</strong>
-            <p>{{ index $statSummaries . }}</p>
-          </article>
-        {{ end }}
-      </div>
+  <section class="proof-bar" aria-label="Proof">
+    <div class="meta-row">
+      <span class="tag">资源导入 / 构建打包 / CI / 渲染性能 / 工具平台</span>
+      <span class="tag">PC / Mobile / Console</span>
+      <span class="tag">工具链 owner / 平台建设 / 质量门禁</span>
     </div>
   </section>
 
@@ -68,7 +62,7 @@
       <div class="page-title-block compact">
         <p class="eyebrow">Featured</p>
         <h2>先看这几篇代表作</h2>
-        <p class="section-lead">先看最能代表项目交付、引擎链路、工具链、渲染性能和工程判断的几篇。</p>
+        <p class="section-lead">先看最能证明交付能力、系统拆解和工程判断的 4 篇。</p>
       </div>
       <div class="post-grid">
         {{ range $featured }}
