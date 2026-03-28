@@ -22,9 +22,9 @@ series_audience:
   - "性能优化"
 series_level: "进阶"
 series_best_for: "当你想把 CPU / GPU / I/O / Memory / Sync / Thermal 的性能判断拉回同一套诊断框架"
-series_summary: "把性能问题从现象、平台直觉、资源行为和证据链，收成一套可执行的判断工作流。"
+series_summary: "把性能问题从现象、平台直觉、能力指纹、资源行为和证据链，收成一套可执行的判断工作流。"
 series_intro: "这组文章关心的不是“记几个优化技巧”，而是先建立一套性能判断框架：看到现象时先怀疑什么，怎样区分 CPU、GPU、I/O、Memory、Sync 和 Thermal 的问题，以及 Unity / Unreal 中这些问题通常怎样显形。"
-series_reading_hint: "第一次读建议先看判断框架、一帧拆解和危险时机，再回到平台症状、诊断方法和完整工作流。"
+series_reading_hint: "第一次读建议先看判断框架、一帧拆解和危险时机，再回到平台直觉、能力指纹、症状、诊断方法和完整工作流。"
 ---
 {{< series-directory >}}
 
