@@ -546,7 +546,7 @@ GenerateMethodBridgeCppFile(..., outputFile);
 
 如果把这篇压成一句话，我会这样描述 HybridCLR 在 AOT 泛型问题上的位置：
 
-`补充 metadata 让 runtime 重新拥有解释和解析 AOT 泛型 metadata 的能力；AOTGenericReference 告诉你哪些具体泛型实例不能只靠“看得懂”就算完，而必须在 AOT 世界里真的存在；MethodBridge 则负责这些具体实例跨 interpreter / AOT / native 边界时的调用问题。`
+`补充 metadata 让 runtime 重新拥有解释和解析 AOT 泛型 metadata 的能力；当具体泛型实例在 AOT 世界里根本不存在时，IL2CPP/HybridCLR 会退到 \`IlCppFullySharedGenericAny\` 这类 fallback 路径，这不是“metadata 没补上”，而是“具体实例没进 AOT 世界”；AOTGenericReference 告诉你这些实例到底缺谁；MethodBridge 则负责这些具体实例跨 interpreter / AOT / native 边界时的调用问题。`
 
 这三者各自站在不同层上，不能混。
 

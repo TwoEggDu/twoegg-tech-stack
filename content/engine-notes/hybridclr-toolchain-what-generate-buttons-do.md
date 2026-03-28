@@ -623,11 +623,22 @@ foreach(var method in methodTypeAndNames)
 
 从生成器实现看，它默认更像风险清单，而不是自动补救。
 
-### 误解五：MethodBridge 只是性能优化
+### 误解五：MethodBridge 只是性能优化，缺了最多是慢一点
 
 不对。
 
 它是 build-time 生成、runtime 真消费的桥接代码，缺它不是慢一点，而是很多跨边界调用根本接不上。
+
+更具体地说，MethodBridge 缺失时，常见表现不是 AOT 泛型缺失那种 `SIGSEGV` / 栈溢出，而是运行时直接报：
+
+`NotSupportedException: method call bridge missing: ...SignatureString...`
+
+也就是说：
+
+- 看到 `NotSupportedException`，优先查 MethodBridge 是否没生成或没带进包
+- 看到 `IlCppFullySharedGenericAny`、重复栈帧、`SIGSEGV`，再优先查 AOT 泛型实例化或补充 metadata 链路
+
+两者都会表现成“HybridCLR 跑不起来”，但它们坏的层完全不同，修法也完全不同。
 
 ## 最后一句
 

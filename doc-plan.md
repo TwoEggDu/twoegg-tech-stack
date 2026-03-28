@@ -1246,11 +1246,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ### 高优先级
 
-| 文件 | 待完成内容 |
-|------|-----------|
-| `hybridclr-aot-generics-and-supplementary-metadata.md` | 更新末尾"把这件事压成一句话"结论，纳入 `IlCppFullySharedGenericAny` fallback 路径 |
-| `hybridclr-toolchain-what-generate-buttons-do.md` | 更新"常见误解 误解五"表述，补充缺失时的具体崩溃表现（`NotSupportedException` vs SIGSEGV） |
-| `hybridclr-crash-analysis.md` | 模式 4（metadata 版本不匹配）扩充崩溃特征描述，添加指向 `il2cpp-global-metadata-deep-dive.md` 的链接 |
+当前无。
 
 ### 低优先级
 

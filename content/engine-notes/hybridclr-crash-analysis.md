@@ -181,10 +181,13 @@ E Unity: Exception: System.TypeLoadException: Could not load type 'Namespace.Cla
 - app 安装后一启动就崩溃，连热更 DLL 加载都没开始
 - logcat 里可能看到：`CRASH: signal 6 (SIGABRT)` 或 IL2CPP metadata 相关日志
 - Unity log 里出现：`Failed to initialize Unity Metadata` 或 IL2CPP 初始化错误
+- 调用栈更像 IL2CPP metadata 初始化阶段，而不是业务方法、`Interpreter::Execute` 或 `IlCppFullySharedGenericAny` 这类运行中痕迹
 
-**根因**：`global-metadata.dat` 是随包体编译的，和 `libil2cpp.so` 的版本强绑定。如果热更流程错误地替换了 `global-metadata.dat`（例如把下一个版本的 metadata 推给了旧版本的包），IL2CPP 在启动时校验失败，直接 abort。
+**根因**：`global-metadata.dat` 是随包体编译的，和 `libil2cpp.so` 的版本强绑定。如果热更流程错误地替换了 `global-metadata.dat`（例如把下一个版本的 metadata 推给了旧版本的包），IL2CPP 在启动时校验失败，直接 abort。这里常见的是主动 `SIGABRT`，不是随机 `SIGSEGV`，因为 IL2CPP 在 metadata 初始化阶段就已经判定“这份结构不能继续跑了”。
 
 **预防**：`global-metadata.dat` 属于 AOT 层产物，不应该通过热更下发。只有 DLL 可以热更，metadata 不行。
+
+如果你想把 `global-metadata.dat`、`GameAssembly/libil2cpp` 和 HybridCLR 的边界彻底拆开，可以回看 [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-notes/il2cpp-global-metadata-deep-dive.md" >}})。
 
 ---
 
