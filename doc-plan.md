@@ -1055,9 +1055,10 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ## 系列十八：数据导向运行时（共 45 篇）
 
-*从 CPU 微架构到框架选型的完整知识链。详细规划分两份文档：*
+*从 CPU 微架构到框架选型的完整知识链。现有 45 篇闭环的详细规划分两份文档：*
 *架构哲学层（已全部写完）→ [docs/data-oriented-runtime-series-plan.md](docs/data-oriented-runtime-series-plan.md)*
 *工程实践层（待写）→ [docs/dots-mass-hardware-deep-series-plan.md](docs/dots-mass-hardware-deep-series-plan.md)*
+*DOTS 后续延伸（不计入现有 45 篇闭环）→ [docs/unity-dots-follow-up-series-plan.md](docs/unity-dots-follow-up-series-plan.md)*
 
 ### 十八·A — 数据导向运行时架构哲学（7 篇）✅
 
@@ -1128,6 +1129,45 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | ✅ DOD-案例-01 | 大规模单位调度（RTS）：ECS + Jobs 完整实现，从 1000 到 100000 单位的扩展路径 |
 | ✅ DOD-案例-02 | 弹幕系统（5000+ 子弹）：碰撞检测、生命周期、VFX 同步的 ECS 实现 |
 | ✅ DOD-案例-03 | 混合架构设计：ECS 仿真层 + GameObject 表现层的稳定边界策略 |
+
+### 十八·F — Unity DOTS 后续专题（延伸规划，20 篇，不计入上方 45 篇）
+
+*`DOTS-E01~E18` 已经闭环，这里不继续追加 `E19+`，而是把最值得继续写的三块内容拆成独立后续系列。详见 [docs/unity-dots-follow-up-series-plan.md](docs/unity-dots-follow-up-series-plan.md)。*
+
+#### 十八·F1 — Unity DOTS Physics（7 篇）
+
+| 编号 | 标题 |
+|------|------|
+| DOTS-P01 | Unity Physics / Havok Physics 全景：DOTS 里的物理世界到底怎样运转 |
+| DOTS-P02 | Collider、PhysicsBody、PhysicsMass：DOTS 物理数据模型怎么拆 |
+| DOTS-P03 | Physics Query：Raycast、ColliderCast、DistanceQuery 什么时候该用哪种 |
+| DOTS-P04 | CollisionEvents / TriggerEvents：命中事件怎样安全地回写 ECS 世界 |
+| DOTS-P05 | Character Controller 与 Kinematic 移动：为什么这块最容易写散 |
+| DOTS-P06 | Physics Baking：Collider Authoring 到运行时物理数据的转换链 |
+| DOTS-P07 | DOTS Physics 调试与性能分析：Broadphase、接触对、固定步长抖动怎么看 |
+
+#### 十八·F2 — Unity DOTS 项目落地与迁移（6 篇）
+
+| 编号 | 标题 |
+|------|------|
+| DOTS-M01 | 什么项目该上 DOTS：不要把“性能焦虑”误当成技术选型依据 |
+| DOTS-M02 | 第一阶段怎么迁移：别从 UI 开始，先切高密度仿真层 |
+| DOTS-M03 | Hybrid 架构长期怎么活：输入、UI、动画、资源、调试分别站哪边 |
+| DOTS-M04 | 版本升级与包依赖：Entities / Burst / Collections 升级最容易炸哪 |
+| DOTS-M05 | 测试与验证：怎样证明这次引入 DOTS 真的值 |
+| DOTS-M06 | 构建、CI 与发布：Burst、AOT、Headless、Profiler 数据怎么进工程链 |
+
+#### 十八·F3 — Unity DOTS NetCode（7 篇）
+
+| 编号 | 标题 |
+|------|------|
+| DOTS-N01 | NetCode 世界观：Client World / Server World / Ghost 各自在解决什么 |
+| DOTS-N02 | CommandData 与输入链：客户端输入怎样进入预测系统 |
+| DOTS-N03 | Snapshot 与 Ghost 同步：什么应该同步，什么根本不该发 |
+| DOTS-N04 | Prediction / Rollback：为什么“多跑一遍逻辑”远远不够 |
+| DOTS-N05 | Relevancy / Prioritization / Interpolation：不同实体为什么不该被同等对待 |
+| DOTS-N06 | Character、Projectile、技能系统：三类高频对象在 NetCode 下怎么拆 |
+| DOTS-N07 | NetCode 调试与排障：延迟、抖动、错位、回滚尖峰怎么定位 |
 
 ---
 
