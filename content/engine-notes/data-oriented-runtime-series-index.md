@@ -26,5 +26,11 @@ series_summary: "把数据导向运行时从问题动机、存储结构、结构
 series_intro: "这组文章处理的不是“ECS 语法怎么写”，而是现代引擎为什么都会在某些高密度场景里建数据导向孤岛。它先解释问题动机，再拆 Archetype / Chunk、结构变化、调度、构建期前移和表示层边界。"
 series_reading_hint: "第一次读建议从总论、数据布局和结构变化开始，再看调度、Baking 和表示层边界。"
 ---
+> 这一组讲的是数据导向运行时的共性问题。  
+> 如果你已经明确是带着具体落地方向来的，可以直接分流：
+>
+> - 偏 Unreal 大规模实体仿真：看 [Unreal Mass 深度系列索引]({{< relref "engine-notes/unreal-mass-series-index.md" >}})
+> - 偏服务端高密度仿真：看 [高性能游戏服务端 ECS 系列索引]({{< relref "engine-notes/server-ecs-series-index.md" >}})
+
 {{< series-directory >}}
 

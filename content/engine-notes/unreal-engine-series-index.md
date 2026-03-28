@@ -23,4 +23,8 @@ series_intro: "这组文章不是 Unreal API 速查，而是把 Unreal 内部最
 series_reading_hint: "建议先读架构篇（UE-01~07）建立底层认知，再读 GAS 篇（GAS-01~08），最后读网络篇（UE网络-01~06）。"
 weight: 6000
 ---
+> 如果你这次进 Unreal 不是为了对象系统、反射、GAS 或网络复制，而是为了 `MassEntity / Processor / City Sample` 这条大规模仿真支线，建议先转到：
+>
+> - [Unreal Mass 深度系列索引｜先立数据导向边界，再看 Processor、LOD 和 Actor 协作]({{< relref "engine-notes/unreal-mass-series-index.md" >}})
+
 {{< series-directory >}}
