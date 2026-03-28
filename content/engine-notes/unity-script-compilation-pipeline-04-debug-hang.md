@@ -260,3 +260,4 @@ Reload completed in X.XXX seconds
 ---
 
 - 上一篇：[Unity 脚本编译管线 03｜Domain Reload：为什么改一行代码要等那么久]({{< relref "engine-notes/unity-script-compilation-pipeline-03-domain-reload.md" >}})
+- 下一篇：[Unity 脚本编译管线 05｜点击 Build 之后：Mono 与 IL2CPP 的编译路径分叉]({{< relref "engine-notes/unity-script-compilation-pipeline-05-player-build.md" >}})

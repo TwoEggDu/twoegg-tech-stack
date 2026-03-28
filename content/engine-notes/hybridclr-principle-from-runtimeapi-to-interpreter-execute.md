@@ -47,6 +47,10 @@ series: "HybridCLR"
 
 - [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-notes/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})
 
+如果你对 Unity 编辑器里脚本编译链（Roslyn → bee_backend → ILPP → Domain Reload）还不够熟，也建议同时看这篇：
+
+- [Unity 脚本编译管线 01｜你改了一行 C#，Unity 在背后做了什么]({{< relref "engine-notes/unity-script-compilation-pipeline-01-overview.md" >}})
+
 因为后面这篇里会默认你已经接受一个前提：
 
 `HybridCLR 不是在真空里工作，而是在一个原本就把 metadata、AOT 代码和 runtime 组装层分开的 IL2CPP 世界里补动态能力。`
