@@ -12,6 +12,7 @@ tags:
   - "C#"
   - ".NET"
 series: "构建与调试前置"
+series_order: 2
 ---
 
 > 如果这篇只先记一句话，我建议记这个：`C++ 的 Debug/Release 更多是在原生编译产物上做取舍，C#/.NET 的 Debug/Release 中间还隔着 IL、PDB 和运行时，所以不能直接套同一套直觉。`
@@ -239,12 +240,11 @@ series: "构建与调试前置"
 - 在 `C#/.NET` 里，“能调试”经常首先说的是托管调试能力，而不是原生意义上的 Debug 构建。
 - 一旦进入 `AOT`，问题会重新同时落到托管层和原生层，这正是 Unity 很多构建讨论的前置背景。
 
-下一篇就把这张图正式落到 Unity：
+下一篇先把“调试本身为什么能成立”补出来：
 
-为什么 Unity 里并没有一个单独的 `Debug 模式`，而是 `Development Build`、`Script Debugging`、`Autoconnect Profiler`、`Deep Profile` 和 `IL2CPP / Mono` 这几条线交叉在一起？
+断点为什么能停住、源码行号为什么能对回来、变量为什么有时能看有时看不到，以及为什么托管调试一定多了一层运行时协作？
 
 ---
 
 - 上一篇：[构建与调试前置 01｜Debug 和 Release 到底改了什么：优化、符号、断言与可观测性不是一回事]({{< relref "engine-notes/build-debug-01-what-debug-and-release-really-change.md" >}})
-- 下一篇：[构建与调试前置 03｜Unity 里没有单独的 Debug 模式：Development Build、Script Debugging、Deep Profile 各在改哪一层]({{< relref "engine-notes/build-debug-03-unity-development-build-script-debugging-deep-profile.md" >}})
-
+- 下一篇：[构建与调试前置 02b｜调试到底依赖哪几层：断点、符号、源码映射与运行时协作]({{< relref "engine-notes/build-debug-02b-how-debugging-works-breakpoints-symbols-runtime.md" >}})

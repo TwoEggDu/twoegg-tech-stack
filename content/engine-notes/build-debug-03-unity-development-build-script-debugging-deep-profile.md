@@ -12,6 +12,7 @@ tags:
   - "IL2CPP"
   - "Profiler"
 series: "构建与调试前置"
+series_order: 3
 ---
 
 > 如果这篇只先记一句话，我建议记这个：`Unity 里并没有一个单独的“Debug 模式”；你平时叫的“debug 包”，通常只是 Development Build、Script Debugging、Profiler 支持和后端配置被一起打包后的口头说法。`
@@ -34,7 +35,7 @@ series: "构建与调试前置"
 - `C++ Compiler Configuration`
 - `Managed Stripping Level`
 
-如果前面那两篇文章解决的是“通用工程概念”和“语言编译链差异”，这一篇要做的就是：
+如果前面这三篇文章解决的是“通用工程概念”“语言编译链差异”和“调试为什么能成立”，这一篇要做的就是：
 
 `把 Unity 里这些经常被口头压成“debug / release”的东西重新拆开。`
 
@@ -91,6 +92,19 @@ series: "构建与调试前置"
 - 后端是 `Mono` 还是 `IL2CPP`
 - 原生编译到底是偏开发态还是偏交付态
 
+### 还有一层：`Editor`、`Development Build Player`、`Release Player` 不是一回事
+
+很多团队口头里说“我这边 debug 着呢”，其实可能指的是三种完全不同的运行环境：
+
+| 你现在实际在跑什么 | 更接近哪类问题 | 最容易混淆成什么 |
+| --- | --- | --- |
+| `Editor Play Mode` | 编辑器内验证、快速迭代、工具链联调 | “这就等于 Development Build” |
+| `Development Build Player` | 开发态 Player 排错、托管调试、Profiler 接入 | “这就是 Unity 的 Debug 模式” |
+| `Release Player` | 交付态验证、真实性能、接近线上行为 | “只是把 Debug 关掉的另一个包” |
+
+这篇后面主要讨论的是 `Player` 构建选项，而不是 `Editor` 本身。
+因为 `Editor` 自带大量只属于编辑器环境的行为，它既不等于 `Development Build`，也更不该被当成 `Release Player` 的替身。
+
 ## 二、Development Build：它更像“开发态 Player”，不是原生编译器的 Debug
 
 先看最常被误解的 `Development Build`。
@@ -144,6 +158,29 @@ series: "构建与调试前置"
 
 那它通常就不该直接拿来代表最终交付结果。
 
+### 1. `DEVELOPMENT_BUILD` 和 `Debug.isDebugBuild` 分别回答什么
+
+如果你想把这个区别落到代码里，最容易混起来的是这两个名字。
+
+`DEVELOPMENT_BUILD` 是编译期条件。
+它更适合回答的是：
+
+`这次参与编译的，是不是 Development Build 语义。`
+
+`Debug.isDebugBuild` 是运行时判断。
+它更适合回答的是：
+
+`当前跑起来的这个实例，是不是开发态构建。`
+
+两者都和 `Development Build` 有关，但它们不在同一层。
+前者更像编译期开关，后者更像运行时状态。
+
+这里还要记一个很容易误判的细节：
+
+`在 Editor 里，Debug.isDebugBuild 也会一直是 true。`
+
+所以如果你的目标是区分 `Editor`、`Development Build Player` 和最终交付包，就不要把它们压成同一个判断。
+
 ## 三、Script Debugging：它解决的是“能不能挂托管调试器”
 
 第二条要拆开的，是 `Script Debugging`。
@@ -167,6 +204,15 @@ series: "构建与调试前置"
 - `Script Debugging` 回答的是“这次要不要把托管调试链也带进去”
 
 很多团队把这两件事永远一起开，于是时间久了，就会误以为它们本来就是一回事。
+
+还有个很容易被界面顺手带偏的点：
+
+`Script Debugging` 这个选项，只有在勾选 `Development Build` 之后才会出现。
+
+这再次说明它不是另一种独立 build 模式，而是挂在开发态 Player 上的一条托管调试链。
+更准确的理解仍然是：
+
+`你先选择了开发态 Player，然后再决定要不要把托管调试能力一起带进去。`
 
 但从工程判断上看，你最好始终把它们拆开。
 
@@ -207,7 +253,29 @@ series: "构建与调试前置"
 
 更接近工程事实的说法应该是：
 
-`Deep Profile` 是一种更重的观测/插桩支持，它会显著改变你正在观察的对象。`
+`Deep Profile` 是一种更重的观测/插桩支持，它会显著改变你正在观察的对象。
+
+这里还要再拆开一层：
+
+`Build Settings` 里的 `Deep Profiling Support`，和 Profiler 面板里的 `Deep Profile`，不是同一个入口。
+
+更稳的理解方式是：
+
+- `Deep Profiling Support` 更像“把 Player 做成可被深度剖析的版本”
+- Profiler 里的 `Deep Profile` 更像“这一次真的用深度方式去观测它”
+
+前者发生在构建时，后者发生在观测时。
+所以在 Player 语境里，`Deep Profiling Support` 通常要先准备好，后面你才有机会把这个 Player 当成 `Deep Profile` 目标来抓更细的数据。
+
+这也是它和普通 `Autoconnect Profiler` 最大的区别：
+
+`Autoconnect Profiler` 更像连线便利性，`Deep Profiling Support` 则是在包里预埋更重的托管方法级检查。
+
+更重要的是，这个成本不是只有你真正点开 `Deep Profile` 的那一刻才出现。
+开启这项支持后，Player 里的 C# 方法前后都会带上额外检查，所以就算当前并没有以 `Deep Profile` 模式记录，它也会比没开这项支持的包更重。
+
+因此如果你要查的是启动阶段问题，`Deep Profiling Support` 很有价值，因为你不能指望 Player 跑起来一段时间后，再补抓启动期的深度数据。
+但如果你只是想做常规热点观察或性能基线，它通常都不该默认常开。
 
 所以它适合做的，是：
 
@@ -304,14 +372,15 @@ series: "构建与调试前置"
 
 ## 小结
 
-- Unity 里没有一个单独的“Debug 模式”，只有几条彼此独立但常常一起出现的构建线。
+- `Editor Play Mode`、`Development Build Player`、`Release Player` 是三种不同环境，不该一起被压成一句“debug 包”。
 - `Development Build` 更像开发态 Player 语义，不等于原生编译器意义上的 Debug。
-- `Script Debugging` 解决的是托管调试器接入，`Autoconnect Profiler` 解决的是连接方式，`Deep Profile` 解决的是更重的观测深度。
+- `DEVELOPMENT_BUILD` 是编译期条件，`Debug.isDebugBuild` 是运行时判断，而且 `Editor` 里后者始终为 `true`。
+- `Script Debugging` 解决的是托管调试器接入，只有在 `Development Build` 语境下才会出现。
+- `Deep Profiling Support` 更像“让 Player 具备深度剖析能力”，Profiler 面板里的 `Deep Profile` 才是实际以深度方式观测。
 - `Mono / IL2CPP / C++ Compiler Configuration / Managed Stripping Level` 站在另一条执行与构建链上，不该和“debug 包 / release 包”混成一句话。
 - 真正做性能结论时，最该警惕的不是某个按钮名字，而是你是不是把开发态观测成本一起带进了对比。
 
 ---
 
-- 上一篇：[构建与调试前置 02｜同样叫 Debug/Release，C++ 和 C#/.NET 到底差在哪]({{< relref "engine-notes/build-debug-02-cpp-vs-csharp-debug-and-release.md" >}})
+- 上一篇：[构建与调试前置 02b｜调试到底依赖哪几层：断点、符号、源码映射与运行时协作]({{< relref "engine-notes/build-debug-02b-how-debugging-works-breakpoints-symbols-runtime.md" >}})
 - 延伸阅读：[Unity Player Settings 总览｜哪些参数真的会影响裁剪、构建速度和运行时]({{< relref "engine-notes/unity-player-settings-build-runtime-overview.md" >}})
-

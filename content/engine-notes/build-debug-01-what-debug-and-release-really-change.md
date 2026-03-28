@@ -11,6 +11,7 @@ tags:
   - "Release"
   - "Performance"
 series: "构建与调试前置"
+series_order: 1
 ---
 
 > 如果这篇只记一句话，我建议记这个：`Debug 和 Release 不是一根“慢到快”的滑杆，而是几条不同工程取舍线被一起打包后的名字。`
@@ -139,6 +140,12 @@ series: "构建与调试前置"
 
 `不跟包一起发`，不等于 `根本不存在`。
 
+再往工程里落一层，很多团队真正要保存的不是一个抽象的“能调试的信息”，而是一套和构建强绑定的符号产物。
+Windows 常见是 `.pdb`，iOS 常见是 `.dSYM`，Unity `IL2CPP` 构建里常见是 `*-IL2CPP.symbols.zip`。
+
+它们不一定跟安装包一起交付给玩家，但必须和那次构建一一对应地保存。
+因为包还能重新分发，符号如果没归档，后面的崩溃回溯和地址还原通常就补不回来了。
+
 ### 误解二：能看懂栈，就一定是 `Debug`
 
 未必。
@@ -266,4 +273,4 @@ series: "构建与调试前置"
 
 - 下一篇：[构建与调试前置 02｜同样叫 Debug/Release，C++ 和 C#/.NET 到底差在哪]({{< relref "engine-notes/build-debug-02-cpp-vs-csharp-debug-and-release.md" >}})
 - 如果你已经在 Unity 项目里卡在“为什么 Development Build 和 Release 体感不一样”，也可以直接跳到：[构建与调试前置 03｜Unity 里没有单独的 Debug 模式：Development Build、Script Debugging、Deep Profile 各在改哪一层]({{< relref "engine-notes/build-debug-03-unity-development-build-script-debugging-deep-profile.md" >}})
-
+- 如果你想把“符号是什么、为什么 release 包里常看不到函数名”单独补清，可以继续读：[崩溃分析 00｜什么是 crash：signal、abort、异常、调用栈和符号化]({{< relref "engine-notes/crash-analysis-00-what-is-a-crash.md" >}})
