@@ -1,4 +1,4 @@
-# 游戏开发全栈知识体系 v18
+# 游戏开发全栈知识体系 v19
 
 > 目标读者：有 Unity 开发经验的开发者。
 > 终极目标：能读懂 Unity / Unreal 源码，具备自研游戏引擎和游戏后端的基础。
@@ -152,6 +152,19 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | IO-04 | IO 调度与优化：预读取（Read-Ahead）、批量 IO、IO 队列深度 |
 | IO-05 | 移动端存储特性：eMMC vs UFS 随机读写差异，存储碎片对加载的影响 |
 | IO-06 | IO 性能分析：用 fio / iostat / 系统 Profiler 定位 IO 瓶颈 |
+
+### 一·F — 现代 CPU 与内存体系（6 篇）
+
+*数据导向设计、Burst 编译器、移动端带宽优化的硬件底座。不理解 cache miss 和 SIMD 代价，"cache-friendly"就只是咒语。详细规划见 [docs/dots-mass-hardware-deep-series-plan.md](docs/dots-mass-hardware-deep-series-plan.md)。*
+
+| 编号 | 标题 |
+|------|------|
+| 硬件-F01 | CPU 流水线与乱序执行：分支预测、指令级并行，为什么热路径里的 if 有代价 |
+| 硬件-F02 | Cache 体系全景：L1/L2/L3 延迟数字、cache line 64B、prefetch 机制 |
+| 硬件-F03 | SIMD 指令集：SSE2 / AVX2 / AVX-512 / NEON，向量宽度的演进史 |
+| 硬件-F04 | 内存带宽与延迟：LPDDR5 vs DDR5，UMA 架构，移动端与桌面的本质差异 |
+| 硬件-F05 | 多核与并行陷阱：False Sharing、Memory Ordering、原子操作代价 |
+| 硬件-F06 | 数据布局实战：AoS vs SoA vs AoSoA，对齐、填充、stride 的实测对比 |
 
 ### 一·D — 网络技术基础（8 篇）
 
@@ -322,6 +335,8 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 性能-03 | 内存不是够不够，而是行为稳不稳 |
 | 性能-04 | 手机和 PC 为什么要用不同的性能直觉 |
 | 性能-04b | 从型号表到能力指纹：Android 与 PC 的分档判断怎么设计 |
+| 性能-04c | 主流芯片档位参考表：四档判断依据与代码（Apple / Qualcomm / MediaTek / Kirin） | ✅ |
+| 性能-04d | 每档资产规格清单：贴图压缩、LOD 与包体分层（按游戏类型） | ✅ |
 | 性能-05 | 怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法 |
 | 性能-06 | Unity 里，这些性能问题通常怎么显形 |
 | 性能-07 | Unreal 里，这些性能问题通常怎么显形 |
@@ -886,6 +901,26 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | GaaS-03 | 玩家行为分析：埋点设计规范、漏斗分析、留存率计算 |
 | GaaS-04 | 游戏运营告警：关键指标监控（DAU、崩溃率、付费率）、告警阈值设计 |
 
+### 十三·G — 高性能游戏服务端 ECS（13 篇）
+
+*服务端 ECS 与客户端的本质区别，以及 Flecs / EnTT / Bevy ECS / C# 方案在 Multi-World、异步 I/O、持久化、横向扩展上的取舍。详细规划见 [docs/game-server-ecs-high-performance-series-plan.md](docs/game-server-ecs-high-performance-series-plan.md)。*
+
+| 编号 | 标题 |
+|------|------|
+| SV-ECS-01 | 游戏服务端为什么需要 ECS：和客户端的问题空间有什么本质区别 |
+| SV-ECS-02 | 服务端 ECS 的五个核心约束：无渲染、有 I/O、有持久化、有多 World、有横向扩展 |
+| SV-ECS-03 | Flecs 深度：架构、Observer、REST API、Pipeline、World Streaming |
+| SV-ECS-04 | EnTT 深度：header-only C++、Signal、View、Group，Minecraft Bedrock 选型理由 |
+| SV-ECS-05 | Bevy ECS on Server：Rust 内存安全 + ECS 性能，无渲染环境下的用法 |
+| SV-ECS-06 | C# 服务端 ECS：Arch / Leopotam 定位，与 Unity DOTS Headless Server 的对比 |
+| SV-ECS-07 | Multi-World 隔离：每个房间一个 World，生命周期、资源共享与跨 World 边界 |
+| SV-ECS-08 | ECS + 异步 I/O：游戏逻辑的同步/并行世界与网络 I/O 的异步世界怎样接起来 |
+| SV-ECS-09 | 状态广播：哪些 Component 变化需要同步给哪些客户端，Delta 压缩与 AOI 的 ECS 实现 |
+| SV-ECS-10 | 持久化边界：ECS World 快照如何映射到数据库，冷热分离与宕机恢复策略 |
+| SV-ECS-11 | Tick 预算管理：固定时间步、服务器权威、Tick 超载的检测与降级策略 |
+| SV-ECS-12 | 案例拆解：大规模多人游戏服务端的 ECS 落地（SpatialOS 架构回顾 + 自研方案参考） |
+| SV-ECS-13 | 服务端 ECS 选型决策地图：语言 × 规模 × 团队栈 × 客户端代码共享程度的四维判断 |
+
 ---
 
 ## 系列十四：引擎架构与自研引擎基础
@@ -993,19 +1028,15 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-## 系列十八：DOTS 专题（5 篇）
+## 系列十八：数据导向运行时（共 45 篇）
 
-| 编号 | 标题 |
-|------|------|
-| DOTS-01 | DOTS 概览：ECS / Jobs / Burst / Collections 各自解决什么 |
-| DOTS-02 | IJobParallelForTransform：并行 Transform 更新原理与写法 |
-| DOTS-03 | NativeArray 与内存管理：为什么不用 List，Dispose 时机 |
-| DOTS-04 | [BurstCompile]：什么代码能编译，限制是什么 |
-| DOTS-05 | 案例：飘字系统拆解——Jobs 并行更新 + GPU Instancing 批渲染 |
+*从 CPU 微架构到框架选型的完整知识链。详细规划分两份文档：*
+*架构哲学层（已全部写完）→ [docs/data-oriented-runtime-series-plan.md](docs/data-oriented-runtime-series-plan.md)*
+*工程实践层（待写）→ [docs/dots-mass-hardware-deep-series-plan.md](docs/dots-mass-hardware-deep-series-plan.md)*
 
-### 十八·B — 数据导向运行时深度（7 篇）
+### 十八·A — 数据导向运行时架构哲学（7 篇）✅
 
-*Unity DOTS、Unreal Mass 与自研 ECS 的原理对比与工程实践。*
+*Unity DOTS、Unreal Mass 与自研 ECS 的问题空间对照，回答"为什么这类系统会长成这样"。*
 
 | 编号 | 标题 |
 |------|------|
@@ -1016,6 +1047,62 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | DOD-04 | 数据导向运行时 04｜调度怎么做：Burst/Jobs、Mass Processor、自己手搓执行图 |
 | DOD-05 | 数据导向运行时 05｜构建期前移怎么做：Baking、Traits / Templates / Spawn、离线转换 |
 | DOD-06 | 数据导向运行时 06｜表示层边界怎么切：GameObject、Actor、ISM 与 ECS 世界 |
+
+### 十八·B — Unity DOTS 工程实践（18 篇）
+
+*Entities 1.x 完整工程路径：世界观切换 → ECS 核心 → Baking → Jobs/Burst → 进阶边界 → 调试。*
+
+| 编号 | 标题 |
+|------|------|
+| DOTS-E01 | 从 GameObject 到 Entity：数据模型的本质转变，什么该留在 OOP |
+| DOTS-E02 | 第一个完整 ECS 程序：World、EntityManager、IComponentData、ISystem 的最小组合 |
+| DOTS-E03 | SystemBase vs ISystem：两种写法的本质差异与选择依据 |
+| DOTS-E04 | EntityQuery 完整语法：过滤器、变更检测、EnabledMask、缓存 |
+| DOTS-E05 | ComponentLookup 与随机访问：在 Job 里安全地查别的 Entity |
+| DOTS-E06 | IBufferElementData：动态缓冲区替代 List\<T\> 的时机与写法 |
+| DOTS-E07 | ISharedComponentData：分组的代价与用途，Chunk 碎片化的风险 |
+| DOTS-E08 | Enableable Component：不改 Archetype 的开关方案及其代价 |
+| DOTS-E09 | Baking Pipeline 全景：Authoring → Baker → Runtime Data，为什么需要这一层 |
+| DOTS-E10 | SubScene 与流式加载：大世界的内容单元、生命周期与内存管理 |
+| DOTS-E11 | Blob Asset：只读数据的高效打包、引用计数与访问方式 |
+| DOTS-E12 | IJobEntity vs IJobChunk vs IJob：三种 Job 的适用边界与性能差异 |
+| DOTS-E13 | Burst 编译规则全景：什么代码能过、限制来自哪里、常见报错原因 |
+| DOTS-E14 | NativeCollection 选型：Array / List / HashMap / Queue / MultiHashMap / Stream |
+| DOTS-E15 | EntityCommandBuffer：延迟结构变更的正确用法、并发 ECB 与常见踩坑 |
+| DOTS-E16 | Entities.Graphics：Hybrid Renderer、MaterialMeshInfo、GPU Instancing 与 Mesh 替换 |
+| DOTS-E17 | MonoBehaviour ↔ ECS 边界：Managed 与 Unmanaged 世界的数据传递模式 |
+| DOTS-E18 | DOTS 调试工具全景：Entities Hierarchy、Chunk Utilization、Job Debugger、Burst Inspector |
+
+### 十八·C — Unreal Mass 深度（7 篇）
+
+*和 DOTS 并列对照，讲清楚两套系统在同一问题上的不同答案。*
+
+| 编号 | 标题 |
+|------|------|
+| Mass-01 | Mass Framework 架构全景：Fragment、Tag、Trait、EntityHandle、EntityManager |
+| Mass-02 | UMassProcessor 执行模型：Query、依赖声明、Pipeline、ExecutionFlags |
+| Mass-03 | Mass Structural Change：FMassCommandBuffer、Deferred Add/Remove、Flush 时机 |
+| Mass-04 | Mass LOD：Fragment 分级激活、FMassLODFragment、距离驱动的精度切换 |
+| Mass-05 | Mass Signals：跨 Entity 的异步事件机制，解决纯 DOD 里的突发事件问题 |
+| Mass-06 | Mass 与 Actor 世界的边界：Representation Fragment、ISM、Niagara、LOD 联动 |
+| Mass-07 | Mass 实战案例拆解：City Sample 人群 + Mass Traffic 的架构决策 |
+
+### 十八·D — 行业横向对比与选型（4 篇）
+
+| 编号 | 标题 |
+|------|------|
+| DOD-行业-01 | Overwatch ECS（GDC 2017）：为什么 ECS 的架构价值和性能价值可以分开 |
+| DOD-行业-02 | id Tech 7 / DOOM Eternal：不用 ECS 框架，用 Job Graph 手工管数据流 |
+| DOD-行业-03 | Flecs 与 EnTT：服务端与跨平台独立 ECS，Minecraft Bedrock 为什么选 EnTT |
+| DOD-行业-04 | 选型决策地图：DOTS / Mass / 自研 / Flecs，什么项目该选哪条路 |
+
+### 十八·E — 实战案例（3 篇）
+
+| 编号 | 标题 |
+|------|------|
+| DOD-案例-01 | 大规模单位调度（RTS）：ECS + Jobs 完整实现，从 1000 到 100000 单位的扩展路径 |
+| DOD-案例-02 | 弹幕系统（5000+ 子弹）：碰撞检测、生命周期、VFX 同步的 ECS 实现 |
+| DOD-案例-03 | 混合架构设计：ECS 仿真层 + GameObject 表现层的稳定边界策略 |
 
 ---
 
@@ -1191,7 +1278,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 系列十四（引擎架构 → 自研引擎）
     ↓
 系列十五（本地化）  系列十六（安全）  系列十七（CI/CD）
-系列十八（DOTS）   系列十八·B（数据导向运行时）
+系列十八（数据导向运行时全系列：硬件基础·A + DOTS工程·B + Mass深度·C + 行业对比·D + 案例·E）
 系列十九（插件）   系列十九·B（HybridCLR）
 系列二十（Unity源码）  系列二十一（质量保证）  系列二十二（DLSS）
 ```
@@ -1205,7 +1292,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列零（背景历史）| 15 |
 | 系列零·D（游戏图形系统全貌）| 13 |
 | 系列零·E（游戏引擎架构地图）| 8 |
-| 系列一（底层基础：数学 + C++ + 图形API + IO存储 + 网络）| 33 |
+| 系列一（底层基础：数学 + C++ + 图形API + IO存储 + 网络 + CPU内存体系）| 39 |
 | 系列二（Unity 渲染）| 38 |
 | 系列二·A（URP 深度）| 19 |
 | 系列三（移动端硬件 + GPU/CPU 优化 + 工具）| 27 |
@@ -1225,14 +1312,17 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十（美术协作桥梁）| 17 |
 | 系列十一（Unreal 架构 + GAS + 网络 + 编辑器扩展）| 25 |
 | 系列十二（Unity 网络）| 4 |
-| 系列十三（游戏后端 + 后端安全 + Live Service）| 28 |
+| 系列十三（游戏后端 + 后端安全 + Live Service + 服务端ECS）| 41 |
 | 系列十四（引擎架构：子系统 + 渲染架构 + 脚本 + 工程 + UE编辑器）| 29 |
 | 系列十五（本地化）| 5 |
 | 系列十五·B（Accessibility）| 3 |
 | 系列十六（安全与反外挂）| 4 |
 | 系列十七（CI/CD 与工程质量）| 8 |
-| 系列十八（DOTS）| 5 |
-| 系列十八·B（数据导向运行时深度）| 7 |
+| 系列十八·A（数据导向架构哲学，已完成）| 7 |
+| 系列十八·B（Unity DOTS 工程实践）| 18 |
+| 系列十八·C（Unreal Mass 深度）| 7 |
+| 系列十八·D（行业横向对比与选型）| 4 |
+| 系列十八·E（实战案例）| 3 |
 | 系列十九（插件框架）| 5 |
 | 系列十九·B（HybridCLR 热更新深度）| 18 |
 | 崩溃分析系列 | 5 |
@@ -1241,7 +1331,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 独立专题文章 | 5 |
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
-| **合计** | **约 560 篇（不含系列二十）** |
+| **合计** | **约 619 篇（不含系列二十）** |
 
 ---
 
@@ -1261,4 +1351,4 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-03-28（v18）*
+*最后更新：2026-03-28（v19）——系列十八重构为 45 篇全系列；系列一新增 一·F CPU与内存体系 6 篇；系列十三新增 十三·G 高性能游戏服务端ECS 13 篇；总计约 619 篇。*
