@@ -277,52 +277,60 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ## 系列三：移动端硬件与优化
 
-### 三·A — 移动端硬件基础（4 篇）
+### 三·A — 移动端硬件基础（5 篇）
 
-| 编号 | 标题 |
-|------|------|
-| 硬件-01 | 移动端 SoC 总览：CPU、GPU、内存、闪存在一块芯片上意味着什么 |
-| 硬件-02 | TBDR 架构详解：Tile、On-Chip Buffer、HSR 如何改变渲染逻辑 |
-| 硬件-03 | 移动端功耗与发热：为什么帧率稳定比峰值帧率更重要 |
-| 硬件-04 | 移动端 vs 主机/PC：带宽瓶颈、内存带宽共享、驱动差异 |
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| 硬件-01 | 移动端 SoC 总览：CPU、GPU、内存、闪存在一块芯片上意味着什么 | ✅ |
+| 硬件-02 | TBDR 架构详解：Tile、On-Chip Buffer、HSR 如何改变渲染逻辑 | |
+| 硬件-03 | 移动端功耗与发热：为什么帧率稳定比峰值帧率更重要 | ✅ |
+| 硬件-04 | 移动端 vs 主机/PC：带宽瓶颈、内存带宽共享、驱动差异 | ✅ |
+| 硬件-05 | 移动端耗电：游戏功耗的构成、量化测量与节电设计 | ✅ |
 
 ### 三·B — 性能分析工具（10 篇）
 
-| 编号 | 标题 |
-|------|------|
-| 工具-01 | Unity Profiler 各模块深度：CPU Timeline（调用栈、GC.Alloc）、GPU Timeline、Memory、Physics、Audio |
-| 工具-02 | RenderDoc 完整指南：帧捕获、Pipeline State、资源查看、Shader 调试 |
-| 工具-03 | ARM Mali Graphics Debugger：Mali GPU Counter 解读与瓶颈定位 |
-| 工具-04 | Snapdragon Profiler：Adreno GPU 的 Counter 体系与瓶颈定位 |
-| 工具-05 | Xcode GPU Frame Capture：iOS / Metal 渲染调试 |
-| 工具-06 | 如何读懂 GPU Counter：填充率、带宽、ALU 利用率、Early-Z 命中率 |
-| 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 |
-| 工具-08 | Unity Memory Profiler：Snapshot 对比、Native 对象追踪、托管堆分析、内存泄漏定位 |
-| 工具-09 | 性能诊断工具选择指南：什么问题用 Frame Debugger / RenderDoc / Unity Profiler / Mali Debugger / Snapdragon Profiler |
-| 工具-10 | 音频系统优化：Load Type 与内存、压缩格式（Vorbis/ADPCM）CPU 解码代价、AudioSource 并发控制、iOS/Android 平台差异 |
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| 工具-01 | Unity Profiler 真机连接：USB 接入、GPU Profiler 与 Memory Profiler | ✅ |
+| 工具-02 | RenderDoc 完整指南：帧捕获、Pipeline State、资源查看、Shader 调试 | |
+| 工具-03 | ARM Mali Graphics Debugger：Mali GPU Counter 解读与瓶颈定位 | ✅ |
+| 工具-04 | Snapdragon Profiler：Adreno GPU 的 Counter 体系与瓶颈定位 | ✅ |
+| 工具-05 | Xcode GPU Frame Capture：iOS / Metal 渲染调试 | ✅ |
+| 工具-06 | 如何读懂 GPU Counter：跨厂商对照与瓶颈判断框架 | ✅ |
+| 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 | |
+| 工具-08 | Unity Memory Profiler：Snapshot 对比、Native 对象追踪、托管堆分析、内存泄漏定位 | |
+| 工具-09 | 性能诊断工具选择指南：什么问题用 Frame Debugger / RenderDoc / Unity Profiler / Mali Debugger / Snapdragon Profiler | |
+| 工具-10 | 音频系统优化：Load Type 与内存、压缩格式（Vorbis/ADPCM）CPU 解码代价、AudioSource 并发控制、iOS/Android 平台差异 | |
 
 ### 三·C — GPU 渲染性能优化（7 篇）
 
-| 编号 | 标题 |
-|------|------|
-| GPU优化-01 | Draw Call 与 Overdraw 优化：合批策略与 Alpha 排序（移动端视角补充）|
-| GPU优化-02 | 带宽优化：纹理压缩（ASTC/ETC2）、RT 格式选择、Resolve 时机 |
-| GPU优化-03 | Shader 优化：精度（half vs float）、分支、采样次数 |
-| GPU优化-04 | ~~阴影优化：Cascade 配置、Distance Shadow、Shadow Proxy~~ → 已覆盖：`rendering-02b-shadow-map` + `urp-lighting-02-shadow` |
-| GPU优化-05 | 后处理在移动端的取舍与降质策略（移动端视角补充）|
-| GPU优化-06 | ~~URP 管线配置优化：关闭不需要的 Pass、Depth Priming、MSAA~~ → 已覆盖：`urp-platform-01-mobile` |
-| GPU优化-07 | GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充、与 SRP Batcher 的关系 |
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| GPU优化-01 | Draw Call 与 Overdraw 优化：合批策略与 Alpha 排序（移动端视角补充）| |
+| GPU优化-02 | 带宽优化：纹理压缩（ASTC/ETC2）、RT 格式选择、Resolve 时机 | |
+| GPU优化-03 | Shader 优化：精度（half vs float）、分支、采样次数 | |
+| GPU优化-04 | 移动端阴影：Shadow Map 代价、CSM 配置与软阴影替代方案 | ✅ |
+| GPU优化-05 | 后处理在移动端的取舍与降质策略（移动端视角补充）| |
+| GPU优化-06 | URP 移动端 Pipeline 配置：Renderer Feature、Pass 裁剪与带宽优化 | ✅ |
+| GPU优化-07 | GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充、与 SRP Batcher 的关系 | |
 
 ### 三·D — CPU 性能优化（6 篇）
 
-| 编号 | 标题 |
-|------|------|
-| CPU优化-01 | C# GC 压力：堆分配来源、避免 GC 的写法、对象池 |
-| CPU优化-02 | IL2CPP vs Mono：编译差异、性能影响、调试限制 |
-| CPU优化-03 | Update 调用链优化：减少 Update 数量、手动调度管理器 |
-| CPU优化-04 | Unity Profiler CPU 深度分析：调用堆栈、GC.Alloc 定位、HierarchyMode |
-| CPU优化-05 | 内存预算管理：按系统分配上限、Texture Streaming、OOM 防护 |
-| CPU优化-06 | Unity 物理系统移动端优化：FixedTimestep 调参、Layer Collision Matrix、碰撞体精简、Physics Profiler 解读 |
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| CPU优化-01 | C# GC 压力：堆分配来源、避免 GC 的写法、对象池 | ✅ |
+| CPU优化-02 | IL2CPP vs Mono：编译差异、性能影响、调试限制 | ✅ |
+| CPU优化-03 | Update 调用链优化：减少 Update 数量、手动调度管理器 | ✅ |
+| CPU优化-04 | Unity Profiler CPU 深度分析：调用堆栈、GC.Alloc 定位、HierarchyMode | ✅ |
+| CPU优化-05 | 内存预算管理：按系统分配上限、Texture Streaming、OOM 防护 | ✅ |
+| CPU优化-06 | Unity 物理系统移动端优化：FixedTimestep 调参、Layer Collision Matrix、碰撞体精简、Physics Profiler 解读 | |
+
+### 三·F — Unity 移动平台专项（2 篇）✅ 已写
+
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| 平台-01 | Unity 移动端 Android 专项：Vulkan、Adaptive Performance、图形分级 | ✅ |
+| 平台-02 | Unity 移动端 iOS 专项：Metal、内存警告、App Store 合规 | ✅ |
 
 ### 三·E — 游戏性能方法论（12 篇）
 
@@ -827,6 +835,15 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | UE网络-04 | RPC：Reliable / Unreliable，Server / Client / Multicast 的选择 |
 | UE网络-05 | 客户端预测：移动组件的预测回滚实现原理 |
 | UE网络-06 | Dedicated Server 配置、打包与部署 |
+
+### 十一·D — Unreal 性能优化（4 篇）✅ 已写
+
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| UE性能-01 | Unreal 性能 01｜性能分析工作流：stat 命令体系、Unreal Insights 与 GPU Visualizer | ✅ |
+| UE性能-02 | Unreal 性能 02｜CPU 优化：Game Thread 瓶颈、Tick 调度与 TaskGraph 并行 | ✅ |
+| UE性能-03 | Unreal 性能 03｜GPU 优化：DrawCall、Culling、LOD 与 Nanite / Lumen 代价 | ✅ |
+| UE性能-04 | Unreal 性能 04｜内存与流送：资产预算、Texture Streaming、PSO Cache 与 GC 调优 | ✅ |
 
 ---
 
