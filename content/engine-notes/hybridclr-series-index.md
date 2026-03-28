@@ -1,4 +1,4 @@
----
+﻿---
 date: "2026-03-26"
 title: "HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇"
 description: "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及已经开始往下延伸的高级主题。"
@@ -11,6 +11,16 @@ tags:
   - "Index"
   - "Architecture"
 series: "HybridCLR"
+series_id: "hybridclr"
+series_role: "index"
+series_order: 0
+series_nav_order: 30
+series_title: "HybridCLR"
+series_audience:
+  - "Unity 客户端"
+  - "热更新 / 工具链"
+series_level: "进阶"
+series_best_for: "当你想把 HybridCLR 从 build-time、runtime 到排障链路一起看清"
 ---
 > 这组文章如果一篇篇单看，其实都能成立；但 HybridCLR 真正难的地方，不在某一篇单文，而在于你能不能先知道自己现在碰到的问题到底属于哪一层。
 
@@ -279,3 +289,4 @@ series: "HybridCLR"
 
 - 上一篇：无。这是系列入口。
 - 下一篇：<a href="{{< relref "engine-notes/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}}">HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute</a>
+

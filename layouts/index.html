@@ -1,36 +1,70 @@
 {{ define "main" }}
   {{ $featured := first 4 (where site.RegularPages.ByWeight "Params.featured" true) }}
   {{ $sections := slice "projects" "engine-notes" "code-quality" "problem-solving" "essays" }}
+  {{ $sectionLabels := dict
+    "projects" "证明交付能力"
+    "engine-notes" "证明系统拆解能力"
+    "code-quality" "证明工程判断能力"
+    "problem-solving" "证明问题收敛能力"
+    "essays" "补充方法与协作标准"
+  }}
+  {{ $sectionProofs := dict
+    "projects" "把项目放回真实生产链路，看结果、约束、复用方式和交付质量，而不是只展示功能堆叠。"
+    "engine-notes" "把 Unity / Unreal、工具链、构建发布、渲染与运行时问题拆成可复用的系统模型。"
+    "code-quality" "把评审标准、重构边界、设计取舍和长期演进放回工程约束里判断。"
+    "problem-solving" "把复杂问题拆成边界、链路、约束和可执行方案，说明为什么这样解决。"
+    "essays" "补充这些技术判断背后的方法、协作标准和长期工作方式。"
+  }}
+  {{ $sectionCtas := dict
+    "projects" "看代表项目"
+    "engine-notes" "看引擎与工具链"
+    "code-quality" "看工程判断"
+    "problem-solving" "看问题拆解"
+    "essays" "看方法与判断"
+  }}
 
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">Projects, Notes, Essays</p>
-        <h1>把做过的项目、想过的问题，慢慢写成一些能回头再看的记录。</h1>
+        <p class="eyebrow">{{ with .Params.hero_eyebrow }}{{ . }}{{ else }}Unity / Unreal 工程，工具链，渲染，代码质量{{ end }}</p>
+        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}解决 Unity / Unreal 工程、工具链构建发布、渲染性能与代码质量里的复杂问题。{{ end }}</h1>
         <div class="section-copy">
           {{ .Content }}
         </div>
         <div class="button-row">
           {{ with site.GetPage "/projects" }}
-            <a class="button" href="{{ .RelPermalink }}">看项目</a>
+            <a class="button" href="{{ .RelPermalink }}">看代表项目</a>
           {{ end }}
-          {{ with site.GetPage "/about" }}
-            <a class="button button-secondary" href="{{ .RelPermalink }}">看定位</a>
+          {{ with site.GetPage "/engine-notes" }}
+            <a class="button button-secondary" href="{{ .RelPermalink }}">看引擎与工具链</a>
+          {{ end }}
+          {{ with site.GetPage "/problem-solving" }}
+            <a class="button button-secondary" href="{{ .RelPermalink }}">看问题拆解</a>
           {{ end }}
         </div>
       </div>
 
       <div class="stat-grid">
-        {{ range $sections }}
-          {{ with site.GetPage (printf "/%s" .) }}
-            {{ $sectionPages := where site.RegularPages "Section" .Section }}
-            <article class="stat-card">
-              <p class="card-section">{{ .Title }}</p>
-              <strong>{{ len $sectionPages }} 篇</strong>
-              <p>{{ .Params.description }}</p>
-            </article>
-          {{ end }}
-        {{ end }}
+        <article class="stat-card">
+          <p class="card-section">能力域</p>
+          <strong>Unity / Unreal 工程</strong>
+          <p>拆解系统边界、运行时模型、资源与脚本链路，能把问题放回引擎真实结构里判断。</p>
+        </article>
+        <article class="stat-card">
+          <p class="card-section">能力域</p>
+          <strong>工具链与构建发布</strong>
+          <p>处理导入、构建、打包、CI、防回归和交付稳定性，把一次性经验做成可复用链路。</p>
+        </article>
+        <article class="stat-card">
+          <p class="card-section">能力域</p>
+          <strong>渲染与性能</strong>
+          <p>处理渲染链路、Shader Variant、资源交付和性能判断，关注边界而不只盯局部现象。</p>
+        </article>
+        <article class="stat-card">
+          <p class="card-section">能力域</p>
+          <strong>代码质量与工程判断</strong>
+          <p>关注评审标准、重构边界、可维护性和交付取舍，判断什么该做成系统，什么不该吞进来。</p>
+        </article>
       </div>
     </div>
   </section>
@@ -39,39 +73,20 @@
     {{ range $sections }}
       {{ with site.GetPage (printf "/%s" .) }}
         <article class="section-card">
-          <p class="card-section">{{ .Title }}</p>
+          <p class="card-section">{{ index $sectionLabels .Section }}</p>
           <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-          <p>{{ .Params.description }}</p>
-          <span class="card-link">进入栏目</span>
+          <p>{{ index $sectionProofs .Section }}</p>
+          <span class="card-link">{{ index $sectionCtas .Section }}</span>
         </article>
       {{ end }}
     {{ end }}
   </section>
 
-  {{ with site.Params.externalSites }}
-    <section class="outbound-block">
-      <div class="page-title-block compact">
-        <p class="eyebrow">Elsewhere</p>
-        <h2>站外入口</h2>
-        <p class="section-lead">除了这个项目站，其他对外页面统一放在这里，后面继续加网站也不用改首页结构。</p>
-      </div>
-      <div class="external-grid">
-        {{ range . }}
-          <article class="external-card">
-            <p class="card-section">External</p>
-            <h2><a href="{{ .url }}" target="_blank" rel="noreferrer">{{ .title }}</a></h2>
-            <p>{{ .description }}</p>
-            <a class="card-link" href="{{ .url }}" target="_blank" rel="noreferrer">{{ with .cta }}{{ . }}{{ else }}打开站点{{ end }}</a>
-          </article>
-        {{ end }}
-      </div>
-    </section>
-  {{ end }}
-
   <section class="feature-block">
     <div class="page-title-block compact">
       <p class="eyebrow">Featured</p>
-      <h2>先从这里开始看也可以</h2>
+      <h2>先看这几篇代表作</h2>
+      <p class="section-lead">最能代表我处理系统边界、工具链、渲染和问题拆解方法的几篇。</p>
     </div>
     <div class="post-grid">
       {{ range $featured }}
@@ -88,4 +103,24 @@
       {{ end }}
     </div>
   </section>
+
+  {{ with site.Params.externalSites }}
+    <section class="outbound-block">
+      <div class="page-title-block compact">
+        <p class="eyebrow">Elsewhere</p>
+        <h2>其他入口</h2>
+        <p class="section-lead">站外页面放在这里，作为补充入口，不占首页核心展示区。</p>
+      </div>
+      <div class="external-grid">
+        {{ range . }}
+          <article class="external-card">
+            <p class="card-section">External</p>
+            <h2><a href="{{ .url }}" target="_blank" rel="noreferrer">{{ .title }}</a></h2>
+            <p>{{ .description }}</p>
+            <a class="card-link" href="{{ .url }}" target="_blank" rel="noreferrer">{{ with .cta }}{{ . }}{{ else }}打开站点{{ end }}</a>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
 {{ end }}

@@ -1,4 +1,4 @@
----
+﻿---
 date: "2026-03-23"
 title: "Unity 资产系统与序列化系列索引：从资产通识到 Scene、Prefab、Shader 与 AssetBundle"
 description: "给 Unity 资产系统与序列化系列补一个总入口：推荐阅读顺序、按问题跳转路径、按主题分组，以及 Shader、AssetBundle、脚本身份链的交叉位置。"
@@ -12,6 +12,16 @@ tags:
   - "AssetBundle"
   - "Index"
 series: "Unity 资产系统与序列化"
+series_id: "unity-assets"
+series_role: "index"
+series_order: 0
+series_nav_order: 10
+series_title: "Unity 资产系统与序列化"
+series_audience:
+  - "Unity 客户端"
+  - "资源 / 工具链"
+series_level: "进阶"
+series_best_for: "当你想把文件、引用、序列化、AssetBundle 和 Shader 交付放回一张结构图里"
 ---
 > 这组文章如果一篇篇单看，其实都能成立；但 Unity 资源问题真正难的地方，不在单篇知识点，而在于你能不能先知道自己现在站在哪一层。
 
@@ -270,3 +280,4 @@ series: "Unity 资产系统与序列化"
 
 - 上一篇：无。这是系列入口。
 - 下一篇：<a href="{{< relref "engine-notes/unity-assets-what-exists-and-how-they-become-visible-in-game.md" >}}">Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的</a>
+

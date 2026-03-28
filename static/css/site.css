@@ -803,6 +803,32 @@ body.has-scrolled .site-nav a {
   color: var(--muted);
 }
 
+.series-meta {
+  margin-top: 14px;
+}
+
+.series-best-for {
+  margin: 12px 0 0;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.series-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+
+.series-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.series-card .card-link {
+  margin-top: 0;
+}
+
 @media (max-width: 720px) {
   .series-card-head {
     flex-direction: column;
