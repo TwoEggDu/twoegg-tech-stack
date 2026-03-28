@@ -159,12 +159,12 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| 硬件-F01 | CPU 流水线与乱序执行：分支预测、指令级并行，为什么热路径里的 if 有代价 |
-| 硬件-F02 | Cache 体系全景：L1/L2/L3 延迟数字、cache line 64B、prefetch 机制 |
-| 硬件-F03 | SIMD 指令集：SSE2 / AVX2 / AVX-512 / NEON，向量宽度的演进史 |
-| 硬件-F04 | 内存带宽与延迟：LPDDR5 vs DDR5，UMA 架构，移动端与桌面的本质差异 |
-| 硬件-F05 | 多核与并行陷阱：False Sharing、Memory Ordering、原子操作代价 |
-| 硬件-F06 | 数据布局实战：AoS vs SoA vs AoSoA，对齐、填充、stride 的实测对比 |
+| ✅ 硬件-F01 | CPU 流水线与乱序执行：分支预测、指令级并行，为什么热路径里的 if 有代价 |
+| ✅ 硬件-F02 | Cache 体系全景：L1/L2/L3 延迟数字、cache line 64B、prefetch 机制 |
+| ✅ 硬件-F03 | SIMD 指令集：SSE2 / AVX2 / AVX-512 / NEON，向量宽度的演进史 |
+| ✅ 硬件-F04 | 内存带宽与延迟：LPDDR5 vs DDR5，UMA 架构，移动端与桌面的本质差异 |
+| ✅ 硬件-F05 | 多核与并行陷阱：False Sharing、Memory Ordering、原子操作代价 |
+| ✅ 硬件-F06 | 数据布局实战：AoS vs SoA vs AoSoA，对齐、填充、stride 的实测对比 |
 
 ### 一·D — 网络技术基础（8 篇）
 
@@ -332,12 +332,17 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 平台-01 | Unity 移动端 Android 专项：Vulkan、Adaptive Performance、图形分级 | ✅ |
 | 平台-02 | Unity 移动端 iOS 专项：Metal、内存警告、App Store 合规 | ✅ |
 
-### 三·E — 游戏性能方法论（12 篇）
+### 三·E — 游戏性能方法论（17 篇）
 
-*从判断框架到诊断流程，建立系统性的性能分析工作流。*
+*从判断框架、角色入口到诊断流程，建立系统性的性能分析工作流。*
 
 | 编号 | 标题 |
 |------|------|
+| 性能-索引 | 游戏性能判断系列索引｜先看判断框架，再按角色入口或问题类型进入正文 | ✅ |
+| 性能-入口-客户端 | 游戏性能判断入口｜客户端程序先看定位、证据链和引擎显形 | ✅ |
+| 性能-入口-美术 | 游戏性能判断入口｜美术先看资源预算、自检指标和高风险效果 | ✅ |
+| 性能-入口-TA | 游戏性能判断入口｜TA 先看渲染链路、材质治理和分档策略 | ✅ |
+| 性能-入口-策划 | 游戏性能判断入口｜策划先看预算边界、人数规模和体验一致性 | ✅ |
 | 性能-01 | 为什么某些操作会慢：给游戏开发的性能判断框架 |
 | 性能-02 | 一帧到底是怎么完成的：游戏里一个 Frame 到底在做什么 |
 | 性能-03 | 内存不是够不够，而是行为稳不稳 |
@@ -927,7 +932,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| SV-ECS-01 | 游戏服务端为什么需要 ECS：和客户端的问题空间有什么本质区别 |
+| ✅ SV-ECS-01 | 游戏服务端为什么需要 ECS：和客户端的问题空间有什么本质区别 |
 | SV-ECS-02 | 服务端 ECS 的五个核心约束：无渲染、有 I/O、有持久化、有多 World、有横向扩展 |
 | SV-ECS-03 | Flecs 深度：架构、Observer、REST API、Pipeline、World Streaming |
 | SV-ECS-04 | EnTT 深度：header-only C++、Signal、View、Group，Minecraft Bedrock 选型理由 |
@@ -1074,24 +1079,24 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| DOTS-E01 | 从 GameObject 到 Entity：数据模型的本质转变，什么该留在 OOP |
-| DOTS-E02 | 第一个完整 ECS 程序：World、EntityManager、IComponentData、ISystem 的最小组合 |
-| DOTS-E03 | SystemBase vs ISystem：两种写法的本质差异与选择依据 |
-| DOTS-E04 | EntityQuery 完整语法：过滤器、变更检测、EnabledMask、缓存 |
-| DOTS-E05 | ComponentLookup 与随机访问：在 Job 里安全地查别的 Entity |
-| DOTS-E06 | IBufferElementData：动态缓冲区替代 List\<T\> 的时机与写法 |
-| DOTS-E07 | ISharedComponentData：分组的代价与用途，Chunk 碎片化的风险 |
-| DOTS-E08 | Enableable Component：不改 Archetype 的开关方案及其代价 |
-| DOTS-E09 | Baking Pipeline 全景：Authoring → Baker → Runtime Data，为什么需要这一层 |
-| DOTS-E10 | SubScene 与流式加载：大世界的内容单元、生命周期与内存管理 |
-| DOTS-E11 | Blob Asset：只读数据的高效打包、引用计数与访问方式 |
-| DOTS-E12 | IJobEntity vs IJobChunk vs IJob：三种 Job 的适用边界与性能差异 |
-| DOTS-E13 | Burst 编译规则全景：什么代码能过、限制来自哪里、常见报错原因 |
-| DOTS-E14 | NativeCollection 选型：Array / List / HashMap / Queue / MultiHashMap / Stream |
-| DOTS-E15 | EntityCommandBuffer：延迟结构变更的正确用法、并发 ECB 与常见踩坑 |
-| DOTS-E16 | Entities.Graphics：Hybrid Renderer、MaterialMeshInfo、GPU Instancing 与 Mesh 替换 |
-| DOTS-E17 | MonoBehaviour ↔ ECS 边界：Managed 与 Unmanaged 世界的数据传递模式 |
-| DOTS-E18 | DOTS 调试工具全景：Entities Hierarchy、Chunk Utilization、Job Debugger、Burst Inspector |
+| ✅ DOTS-E01 | 从 GameObject 到 Entity：数据模型的本质转变，什么该留在 OOP |
+| ✅ DOTS-E02 | 第一个完整 ECS 程序：World、EntityManager、IComponentData、ISystem 的最小组合 |
+| ✅ DOTS-E03 | SystemBase vs ISystem：两种写法的本质差异与选择依据 |
+| ✅ DOTS-E04 | EntityQuery 完整语法：过滤器、变更检测、EnabledMask、缓存 |
+| ✅ DOTS-E05 | ComponentLookup 与随机访问：在 Job 里安全地查别的 Entity |
+| ✅ DOTS-E06 | IBufferElementData：动态缓冲区替代 List\<T\> 的时机与写法 |
+| ✅ DOTS-E07 | ISharedComponentData：分组的代价与用途，Chunk 碎片化的风险 |
+| ✅ DOTS-E08 | Enableable Component：不改 Archetype 的开关方案及其代价 |
+| ✅ DOTS-E09 | Baking Pipeline 全景：Authoring → Baker → Runtime Data，为什么需要这一层 |
+| ✅ DOTS-E10 | SubScene 与流式加载：大世界的内容单元、生命周期与内存管理 |
+| ✅ DOTS-E11 | Blob Asset：只读数据的高效打包、引用计数与访问方式 |
+| ✅ DOTS-E12 | IJobEntity vs IJobChunk vs IJob：三种 Job 的适用边界与性能差异 |
+| ✅ DOTS-E13 | Burst 编译规则全景：什么代码能过、限制来自哪里、常见报错原因 |
+| ✅ DOTS-E14 | NativeCollection 选型：Array / List / HashMap / Queue / MultiHashMap / Stream |
+| ✅ DOTS-E15 | EntityCommandBuffer：延迟结构变更的正确用法、并发 ECB 与常见踩坑 |
+| ✅ DOTS-E16 | Entities.Graphics：Hybrid Renderer、MaterialMeshInfo、GPU Instancing 与 Mesh 替换 |
+| ✅ DOTS-E17 | MonoBehaviour ↔ ECS 边界：Managed 与 Unmanaged 世界的数据传递模式 |
+| ✅ DOTS-E18 | DOTS 调试工具全景：Entities Hierarchy、Chunk Utilization、Job Debugger、Burst Inspector |
 
 ### 十八·C — Unreal Mass 深度（7 篇）
 
@@ -1099,30 +1104,30 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| Mass-01 | Mass Framework 架构全景：Fragment、Tag、Trait、EntityHandle、EntityManager |
-| Mass-02 | UMassProcessor 执行模型：Query、依赖声明、Pipeline、ExecutionFlags |
-| Mass-03 | Mass Structural Change：FMassCommandBuffer、Deferred Add/Remove、Flush 时机 |
-| Mass-04 | Mass LOD：Fragment 分级激活、FMassLODFragment、距离驱动的精度切换 |
-| Mass-05 | Mass Signals：跨 Entity 的异步事件机制，解决纯 DOD 里的突发事件问题 |
-| Mass-06 | Mass 与 Actor 世界的边界：Representation Fragment、ISM、Niagara、LOD 联动 |
-| Mass-07 | Mass 实战案例拆解：City Sample 人群 + Mass Traffic 的架构决策 |
+| ✅ Mass-01 | Mass Framework 架构全景：Fragment、Tag、Trait、EntityHandle、EntityManager |
+| ✅ Mass-02 | UMassProcessor 执行模型：Query、依赖声明、Pipeline、ExecutionFlags |
+| ✅ Mass-03 | Mass Structural Change：FMassCommandBuffer、Deferred Add/Remove、Flush 时机 |
+| ✅ Mass-04 | Mass LOD：Fragment 分级激活、FMassLODFragment、距离驱动的精度切换 |
+| ✅ Mass-05 | Mass Signals：跨 Entity 的异步事件机制，解决纯 DOD 里的突发事件问题 |
+| ✅ Mass-06 | Mass 与 Actor 世界的边界：Representation Fragment、ISM、Niagara、LOD 联动 |
+| ✅ Mass-07 | Mass 实战案例拆解：City Sample 人群 + Mass Traffic 的架构决策 |
 
 ### 十八·D — 行业横向对比与选型（4 篇）
 
 | 编号 | 标题 |
 |------|------|
-| DOD-行业-01 | Overwatch ECS（GDC 2017）：为什么 ECS 的架构价值和性能价值可以分开 |
-| DOD-行业-02 | id Tech 7 / DOOM Eternal：不用 ECS 框架，用 Job Graph 手工管数据流 |
-| DOD-行业-03 | Flecs 与 EnTT：服务端与跨平台独立 ECS，Minecraft Bedrock 为什么选 EnTT |
-| DOD-行业-04 | 选型决策地图：DOTS / Mass / 自研 / Flecs，什么项目该选哪条路 |
+| ✅ DOD-行业-01 | Overwatch ECS（GDC 2017）：为什么 ECS 的架构价值和性能价值可以分开 |
+| ✅ DOD-行业-02 | id Tech 7 / DOOM Eternal：不用 ECS 框架，用 Job Graph 手工管数据流 |
+| ✅ DOD-行业-03 | Flecs 与 EnTT：服务端与跨平台独立 ECS，Minecraft Bedrock 为什么选 EnTT |
+| ✅ DOD-行业-04 | 选型决策地图：DOTS / Mass / 自研 / Flecs，什么项目该选哪条路 |
 
 ### 十八·E — 实战案例（3 篇）
 
 | 编号 | 标题 |
 |------|------|
-| DOD-案例-01 | 大规模单位调度（RTS）：ECS + Jobs 完整实现，从 1000 到 100000 单位的扩展路径 |
-| DOD-案例-02 | 弹幕系统（5000+ 子弹）：碰撞检测、生命周期、VFX 同步的 ECS 实现 |
-| DOD-案例-03 | 混合架构设计：ECS 仿真层 + GameObject 表现层的稳定边界策略 |
+| ✅ DOD-案例-01 | 大规模单位调度（RTS）：ECS + Jobs 完整实现，从 1000 到 100000 单位的扩展路径 |
+| ✅ DOD-案例-02 | 弹幕系统（5000+ 子弹）：碰撞检测、生命周期、VFX 同步的 ECS 实现 |
+| ✅ DOD-案例-03 | 混合架构设计：ECS 仿真层 + GameObject 表现层的稳定边界策略 |
 
 ---
 
@@ -1316,7 +1321,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列二（Unity 渲染）| 38 |
 | 系列二·A（URP 深度）| 19 |
 | 系列三（移动端硬件 + GPU/CPU 优化 + 工具）| 27 |
-| 系列三·E（游戏性能方法论）| 12 |
+| 系列三·E（游戏性能方法论）| 17 |
 | 系列四（Shader 技法 + 游戏效果）| 56 |
 | 系列四·F（Unity Shader 变体工程）| 17 |
 | 系列五（动画系统）| 7 |
@@ -1371,4 +1376,4 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-03-28（v19）——系列十八重构为 45 篇全系列；系列一新增 一·F CPU与内存体系 6 篇；系列十三新增 十三·G 高性能游戏服务端ECS 13 篇；总计约 619 篇。*
+*最后更新：2026-03-28（v20）——系列十八重构为 45 篇全系列；系列一新增 一·F CPU与内存体系 6 篇；系列十三新增 十三·G 高性能游戏服务端ECS 13 篇；总计约 619 篇。一·F 硬件-F01~F06 全部写完；十八·B DOTS-E01~E18 全部写完。*

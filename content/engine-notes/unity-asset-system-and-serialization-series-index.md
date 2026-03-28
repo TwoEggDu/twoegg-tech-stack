@@ -22,6 +22,9 @@ series_audience:
   - "资源 / 工具链"
 series_level: "进阶"
 series_best_for: "当你想把文件、引用、序列化、AssetBundle 和 Shader 交付放回一张结构图里"
+series_summary: "把 Unity 资源从文件、引用、序列化到 AssetBundle 和 Shader 交付串成一张结构图"
+series_intro: "这组文章不是单讲某个资源 API，而是把 Unity 里的文件、导入、引用、序列化、场景、Prefab、AssetBundle 和 Shader 的交付边界串成一条线。先把资源如何变成运行时对象看清楚，后面再回头看 Scene、Prefab 和各种交付场景。"
+series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Importer 这条主线往下读，再回头看场景、Prefab 和打包交付。"
 ---
 > 这组文章如果一篇篇单看，其实都能成立；但 Unity 资源问题真正难的地方，不在单篇知识点，而在于你能不能先知道自己现在站在哪一层。
 
@@ -280,4 +283,5 @@ series_best_for: "当你想把文件、引用、序列化、AssetBundle 和 Shad
 
 - 上一篇：无。这是系列入口。
 - 下一篇：<a href="{{< relref "engine-notes/unity-assets-what-exists-and-how-they-become-visible-in-game.md" >}}">Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的</a>
+
 
