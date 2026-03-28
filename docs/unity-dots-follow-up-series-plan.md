@@ -5,6 +5,14 @@
 
 ---
 
+## 执行底稿
+
+- 共享术语表：`docs/unity-dots-follow-up-shared-glossary.md`
+- 正文模板：`docs/unity-dots-follow-up-article-template.md`
+- Batch 1 编辑工作单：`docs/unity-dots-follow-up-batch-1-editorial-workorders.md`
+
+---
+
 ## 系列定位
 
 `DOTS-E01~E18` 已经回答了三件事：
