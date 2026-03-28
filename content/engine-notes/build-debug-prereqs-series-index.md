@@ -25,7 +25,7 @@ series_audience:
 series_level: "基础"
 series_best_for: "当你想先把 Debug/Release、语言编译链差异和 Unity 构建开关放回同一张地图里"
 series_summary: "把“调试模式”“发布模式”“Development Build”“Deep Profile”这些经常混成一团的词拆回不同层次。"
-series_intro: "这组文章处理的不是某个 IDE 按钮怎么点，而是先把几条最容易被混在一起的链拆开：Debug/Release 作为工程取舍到底改了什么，C++ 和 C#/.NET 为什么不能直接套同一套直觉，调试器为什么需要断点、符号、源码映射和运行时协作，以及 Unity 里为什么并没有一个单独的“Debug 模式”。只有这张前置地图先立住，后面再去看 Player Settings、IL2CPP、Profiler、崩溃分析和性能回归，很多讨论才不会从第一句就跑偏。"
-series_reading_hint: "第一次读建议按 01 → 02 → 02b → 03 顺序读；如果你已经在 Unity 项目里卡在 Development Build、Script Debugging 或 Deep Profile 的区别上，也可以直接跳到第 03 篇。"
+series_intro: “这组文章处理的不是某个 IDE 按钮怎么点，而是先把几条最容易被混在一起的链拆开：Debug/Release 作为工程取舍到底改了什么，C++ 和 C#/.NET 为什么不能直接套同一套直觉，调试器为什么需要断点、符号、源码映射和运行时协作，IL 和 .NET 程序集是什么以及 JIT/AOT 各站在哪，以及 Unity 里为什么并没有一个单独的”Debug 模式”。只有这张前置地图先立住，后面再去看 Player Settings、IL2CPP、Profiler、Unity 编译管线、崩溃分析和性能回归，很多讨论才不会从第一句就跑偏。”
+series_reading_hint: “第一次读建议按 01 → 02 → 02b → 02c → 03 顺序读；如果你已经在 Unity 项目里卡在 Development Build、Script Debugging 或 Deep Profile 的区别上，也可以直接跳到第 03 篇；如果你想理解 Unity 编译链为什么慢，02c 是必读的前置。”
 ---
 {{< series-directory >}}

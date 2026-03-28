@@ -255,5 +255,5 @@ series_order: 2.5
 ---
 
 - 上一篇：[构建与调试前置 02｜同样叫 Debug/Release，C++ 和 C#/.NET 到底差在哪]({{< relref "engine-notes/build-debug-02-cpp-vs-csharp-debug-and-release.md" >}})
-- 下一篇：[构建与调试前置 03｜Unity 里没有单独的 Debug 模式：Development Build、Script Debugging、Deep Profile 各在改哪一层]({{< relref "engine-notes/build-debug-03-unity-development-build-script-debugging-deep-profile.md" >}})
+- 下一篇：[构建与调试前置 02c｜.NET 程序集与 IL：C# 代码到可执行文件中间那层是什么]({{< relref "engine-notes/build-debug-02c-dotnet-assembly-and-il.md" >}})
 - 延伸阅读：[崩溃分析基础｜信号、异常、托管与 native，先把概念底座立住]({{< relref "engine-notes/crash-analysis-00-what-is-a-crash.md" >}})
