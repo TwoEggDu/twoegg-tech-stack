@@ -1,0 +1,120 @@
+{{ $page := .Page }}
+{{ $seriesId := $page.Params.series_id | default "" }}
+{{ $seriesTitle := $page.Params.series_title | default ($page.Params.series | default $page.Title) }}
+{{ $section := $page.Section }}
+{{ $members := slice }}
+
+{{ range where site.RegularPages "Section" $section }}
+  {{ $candidate := . }}
+  {{ if ne $candidate.RelPermalink $page.RelPermalink }}
+    {{ $belongs := false }}
+
+    {{ with $candidate.Params.primary_series }}
+      {{ if and $seriesId (eq . $seriesId) }}
+        {{ $belongs = true }}
+      {{ end }}
+    {{ end }}
+
+    {{ if not $belongs }}
+      {{ with $candidate.Params.series }}
+        {{ if reflect.IsSlice . }}
+          {{ if in . $seriesTitle }}
+            {{ $belongs = true }}
+          {{ end }}
+        {{ else }}
+          {{ if eq . $seriesTitle }}
+            {{ $belongs = true }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+
+    {{ if $belongs }}
+      {{ $order := $candidate.Weight }}
+      {{ with $candidate.Params.series_order }}
+        {{ $order = . }}
+      {{ end }}
+      {{ $members = $members | append (dict "page" $candidate "order" $order "title" $candidate.Title) }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ $members = sort $members "title" }}
+{{ $members = sort $members "order" }}
+
+{{ $firstMember := false }}
+{{ if gt (len $members) 0 }}
+  {{ $firstMember = index (index $members 0) "page" }}
+{{ end }}
+
+<p>这是这个专题的索引页。它先说明这组文章主要在解决什么问题，再给出一份稳定的阅读入口和自动更新的文章目录。</p>
+
+{{ if or $page.Params.series_level $page.Params.series_audience }}
+  <div class="meta-row series-meta">
+    {{ with $page.Params.series_level }}
+      <span class="tag">难度：{{ . }}</span>
+    {{ end }}
+    {{ with $page.Params.series_audience }}
+      {{ if reflect.IsSlice . }}
+        {{ range first 3 . }}
+          <span class="tag">{{ . }}</span>
+        {{ end }}
+      {{ else }}
+        <span class="tag">{{ . }}</span>
+      {{ end }}
+    {{ end }}
+  </div>
+{{ end }}
+
+{{ with $page.Params.series_best_for }}
+  <p class="series-best-for">最适合：{{ . }}</p>
+{{ end }}
+
+<h2>这个专题在讲什么</h2>
+{{ with $page.Params.series_intro }}
+  <p>{{ . }}</p>
+{{ else }}
+  <p>这组文章围绕 {{ $seriesTitle }} 展开，先把问题空间和边界立住，再把关键链路拆开。</p>
+{{ end }}
+
+<h2>怎么用这页索引</h2>
+<ul>
+  <li>第一次系统读：从下面目录最前面的正文开始，先把问题空间、边界和主链立住。</li>
+  <li>带着问题回查：直接按标题跳到对应主题，不必从头顺序翻。</li>
+  <li>如果这组文章继续扩张：后面再把主线、案例和 FAQ 拆成二级索引。</li>
+</ul>
+
+{{ with $page.Params.series_reading_hint }}
+  <p class="series-note">{{ . }}</p>
+{{ end }}
+
+<h2>文章索引</h2>
+{{ if gt (len $members) 0 }}
+  <p class="series-note">下面这份目录会跟着同系列文章自动更新。新文章补进这个系列后，这里会自动出现。</p>
+  <ol class="series-list">
+    {{ range $index, $item := $members }}
+      {{ $member := index $item "page" }}
+      <li class="series-item">
+        <span class="series-number">{{ printf "%02d" (add $index 1) }}</span>
+        <div class="series-copy">
+          <h3><a href="{{ $member.RelPermalink }}">{{ $member.Title }}</a></h3>
+          <p>{{ with $member.Params.description }}{{ . }}{{ else }}{{ $member.Summary | plainify | truncate 120 }}{{ end }}</p>
+        </div>
+      </li>
+    {{ end }}
+  </ol>
+{{ else }}
+  <p class="series-note">这个系列暂时还没有识别到正文文章，后续补文后这里会自动更新。</p>
+{{ end }}
+
+<h2>系列位置</h2>
+<ul>
+  <li>上一篇：无。这是系列入口。</li>
+  <li>下一步：
+    {{ with $firstMember }}
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{ else }}
+      等待正文补齐。
+    {{ end }}
+  </li>
+</ul>

@@ -1,0 +1,30 @@
+---
+date: "2026-03-28"
+title: "URP 深度系列索引｜先立渲染路径与扩展边界，再进配置和实战"
+description: "给 URP 深度补一个稳定入口：先说明 URP 的前置、配置、光照和扩展应该怎么读，再列出当前全部文章。"
+slug: "urp-deep-dive-series-index"
+weight: 1490
+featured: false
+tags:
+  - "Unity"
+  - "URP"
+  - "Rendering"
+  - "Index"
+series: "URP 深度"
+series_id: "urp-deep-dive"
+series_role: "index"
+series_order: 0
+series_nav_order: 60
+series_title: "URP 深度"
+series_entry: true
+series_audience:
+  - "Unity 图形程序"
+  - "客户端主程"
+series_level: "进阶"
+series_best_for: "当你想把 URP 的前置能力、配置项、光照和扩展边界按链路看清"
+series_summary: "把 URP 从前置概念、配置、光照到 Renderer Feature / RenderGraph 扩展接成一条链。"
+series_intro: "这组文章关心的不是“某个选项怎么点”，而是 URP 的渲染路径、资源组织、配置项和扩展点各自站在哪一层。只有先知道 CommandBuffer、RTHandle、渲染路径和 Renderer 的关系，后面的配置与自定义 Pass 才不容易写散。"
+series_reading_hint: "第一次读 URP，建议先按前置三篇和配置主线往下看，再进入光照、扩展和迁移相关主题。"
+---
+{{< series-directory >}}
+
