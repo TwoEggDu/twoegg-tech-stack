@@ -11,6 +11,7 @@ tags:
   - "资源交付"
   - "移动端"
 series: "URP 深度"
+primary_series: "device-tiering"
 weight: 1690
 ---
 前面几篇平台文已经把三件事分别立住了：

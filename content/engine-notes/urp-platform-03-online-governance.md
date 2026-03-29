@@ -11,6 +11,7 @@ tags:
   - "灰度发布"
   - "移动端"
 series: "URP 深度"
+primary_series: "device-tiering"
 weight: 1670
 ---
 前一篇 [URP 深度平台 02｜多平台质量分级：三档配置的工程实现]({{< relref "engine-notes/urp-platform-02-quality.md" >}}) 解决的是：

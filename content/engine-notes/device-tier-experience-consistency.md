@@ -12,6 +12,7 @@ tags:
   - Design
   - Client
 series: "游戏性能判断"
+primary_series: "device-tiering"
 series_order: 6.5
 ---
 
