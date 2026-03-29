@@ -148,6 +148,7 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 - [AssetBundle 的工程治理：版本号、Hash、CDN、缓存、回滚、构建校验与回归]({{< relref "engine-notes/unity-assetbundle-governance-version-hash-cdn-cache-rollback.md" >}})
 - [Addressables 和 AssetBundle 到底是什么关系：谁是底层格式，谁是调度和管理层]({{< relref "engine-notes/unity-addressables-and-assetbundle-format-vs-management-layer.md" >}})
 - [Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线]({{< relref "engine-notes/unity-resource-delivery-engineering-practices-baseline.md" >}})
+- [Unity 资源交付的优化边界：引擎已经替你做了什么，项目自己还要做什么]({{< relref "engine-notes/unity-resource-delivery-optimization-boundaries-engine-vs-project.md" >}})
 - [AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的]({{< relref "engine-notes/unity-assetbundle-file-internal-structure-header-block-directory-serializedfile.md" >}})
 
 这一组回答的是：
@@ -225,6 +226,7 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 - [为什么 AssetBundle 总让项目变复杂：切包粒度、重复资源、共享依赖和包爆炸]({{< relref "engine-notes/unity-why-assetbundle-gets-complex-granularity-duplication-shared-dependencies.md" >}})
 - [AssetBundle 的工程治理：版本号、Hash、CDN、缓存、回滚、构建校验与回归]({{< relref "engine-notes/unity-assetbundle-governance-version-hash-cdn-cache-rollback.md" >}})
 - [Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线]({{< relref "engine-notes/unity-resource-delivery-engineering-practices-baseline.md" >}})
+- [Unity 资源交付的优化边界：引擎已经替你做了什么，项目自己还要做什么]({{< relref "engine-notes/unity-resource-delivery-optimization-boundaries-engine-vs-project.md" >}})
 
 ### 7. 你遇到的是 `Shader`、`Variant`、粉材质、首载卡顿、Always Included、SVC
 
@@ -285,4 +287,3 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 
 - 上一篇：无。这是系列入口。
 - 下一篇：<a href="{{< relref "engine-notes/unity-assets-what-exists-and-how-they-become-visible-in-game.md" >}}">Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的</a>
-
