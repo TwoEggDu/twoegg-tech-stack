@@ -99,12 +99,12 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| IO-01 | 存储设备类型：HDD / SSD / NVMe / eMMC / UFS 的读写特性与延迟差异 |
-| IO-02 | 文件系统基础：FAT32 / NTFS / APFS / ext4，游戏资产存储的格式考量 |
-| IO-03 | OS IO 机制：同步 vs 异步 IO、DMA、文件系统页缓存、内存映射文件 |
-| IO-04 | IO 调度与优化：预读取（Read-Ahead）、批量 IO、IO 队列深度 |
-| IO-05 | 移动端存储特性：eMMC vs UFS 随机读写差异，存储碎片对加载的影响 |
-| IO-06 | IO 性能分析：用 fio / iostat / 系统 Profiler 定位 IO 瓶颈 |
+| IO-01 | 为什么碎文件更慢：从 HDD / SSD / UFS、文件系统和 OS I/O 机制，到游戏加载链 |
+| IO-02 | 存储设备类型：HDD / SSD / NVMe / eMMC / UFS 的读写特性与延迟差异 |
+| IO-03 | 文件系统基础：路径、目录项、元数据和页缓存为什么会影响游戏加载 |
+| IO-04 | OS I/O 机制：同步 / 异步 I/O、DMA、mmap、Read-Ahead、队列深度 |
+| IO-05 | 移动端存储特性：eMMC vs UFS 随机读写差异，碎访问为什么在手机上也照样危险 |
+| IO-06 | IO 性能分析：用 fio / iostat / Perfetto / Instruments 定位 IO 瓶颈 |
 
 ### 一·D — 网络技术基础（8 篇）
 
