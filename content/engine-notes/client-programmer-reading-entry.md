@@ -34,15 +34,17 @@ tags:
 
 1. [游戏性能判断入口｜客户端程序先看定位、证据链和引擎显形]({{< relref "engine-notes/game-performance-entry-client-programmer.md" >}})
    如果你最常遇到的是卡顿、掉帧、首载慢、GC.Alloc 或 GPU bound，这就是最先该看的入口。
-2. [Unity 资产系统与序列化系列索引｜从资产通识到 Scene、Prefab、Shader 与 AssetBundle]({{< relref "engine-notes/unity-asset-system-and-serialization-series-index.md" >}})
+2. [移动平台阅读入口｜客户端程序先建立硬件、渲染和平台差异地图]({{< relref "engine-notes/mobile-platform-reading-entry.md" >}})
+   如果你经常碰到“同样的问题在手机和 PC 上完全不像一回事”，或者总被机型差异、热降频和平台碎片化带偏，这条线最适合先补。
+3. [Unity 资产系统与序列化系列索引｜从资产通识到 Scene、Prefab、Shader 与 AssetBundle]({{< relref "engine-notes/unity-asset-system-and-serialization-series-index.md" >}})
    如果你经常在资源引用、Prefab、Scene、AssetBundle、Shader 交付这几层之间来回排障，这条线最关键。
-3. [HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇]({{< relref "engine-notes/hybridclr-series-index.md" >}})
+4. [HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇]({{< relref "engine-notes/hybridclr-series-index.md" >}})
    如果你手上的问题和热更、AOT 泛型、补充元数据、资源挂载脚本有关，先从这里走。
-4. [CrashAnalysis 系列索引｜先立概念地图，再按平台和 Unity + IL2CPP 回查]({{< relref "engine-notes/crash-analysis-series-index.md" >}})
+5. [CrashAnalysis 系列索引｜先立概念地图，再按平台和 Unity + IL2CPP 回查]({{< relref "engine-notes/crash-analysis-series-index.md" >}})
    如果你已经拿到崩溃堆栈、dump 或符号化结果，这条线会比盲猜更快。
-5. [Unity 脚本编译管线系列索引｜从改一行代码到编辑器可用，中间发生了什么]({{< relref "engine-notes/unity-script-compilation-pipeline-series-index.md" >}})
+6. [Unity 脚本编译管线系列索引｜从改一行代码到编辑器可用，中间发生了什么]({{< relref "engine-notes/unity-script-compilation-pipeline-series-index.md" >}})
    如果你关心脚本编译、域重载、ILPP、打包编译和 CI 缓存，这条线要单独走。
-6. [Code Quality]({{< relref "code-quality/_index.md" >}})
+7. [Code Quality]({{< relref "code-quality/_index.md" >}})
    如果你想把客户端问题进一步接到测试、CI、门禁、回滚和线上治理，这里是工程化收口。
 
 ## 按问题进入
