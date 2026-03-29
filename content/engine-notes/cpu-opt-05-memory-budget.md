@@ -1,16 +1,16 @@
 ---
-title: "CPU 性能优化 05｜内存预算管理：按系统分配上限、Texture Streaming 与 OOM 防护"
+title: "CPU 性能优化 05｜内存预算管理：按系统分配上限、Texture Streaming 与 OOM/LMK 防护"
 slug: "cpu-opt-05-memory-budget"
 date: "2026-03-28"
-description: "移动端 OOM（内存不足）崩溃是上架后最难排查的问题之一。本篇建立系统化的内存预算框架：按资产类型分配预算、配置 Texture Streaming 参数、实现 OOM 预警机制。"
-tags: ["Unity", "内存", "Texture Streaming", "OOM", "性能优化"]
+description: "移动端内存问题最难的往往不是分配失败本身，而是 LMK / jetsam 这类系统强杀。本篇建立系统化的内存预算框架：按目标设备倒推预算、配置 Texture Streaming、建立 OOM/LMK 预警与响应机制。"
+tags: ["Unity", "内存", "Texture Streaming", "OOM", "LMK", "性能优化"]
 series: "移动端硬件与优化"
 weight: 2180
 ---
 
 ## 移动端内存预算的建立
 
-在优化内存之前，必须先建立**预算意识**：每个系统有多少内存可以用，超出了要报警。没有预算的优化是无效的——你不知道什么时候"够了"。
+在优化内存之前，必须先建立**预算意识**：每个系统有多少内存可以用，超出了要报警。没有预算的优化是无效的，你不知道什么时候"够了"。更重要的是，移动端所谓的"OOM"很多时候并不是代码抛出了 `OutOfMemoryException`，而是系统在 LMK / jetsam 压力下直接结束进程。
 
 ### 设备层级的内存上限
 
@@ -28,6 +28,59 @@ weight: 2180
 - Android 系统本身（Zygote、System Server、各类系统服务）占用约 600MB - 1.2GB
 - Android 的 Low Memory Killer（LMK）在系统内存不足时会杀死后台进程，如果游戏占用过高，轮到杀前台进程时游戏就会被强制关闭
 - iOS 没有 LMK，但有内存警告机制，超限后直接被 jetsam 杀掉，不给缓冲时间
+
+### 预算要从目标设备矩阵倒推，不是从旗舰机正推
+
+上面的表只是"物理 RAM 大致在哪个档位"。真正做项目时，应该先回答：**我们准备跑在哪些设备上**，然后再回答：**这批设备允许我们把内容做到多大**。
+
+如果项目要同时覆盖 Android 和 iOS，统一内容预算通常应当按**更紧的那一侧**倒推。大多数情况下，真正卡你的往往是低内存 Android 设备，而不是高配 iPhone。iOS 多出来的余量更适合做高档差异资源、保留更多缓存，或者把 Texture Streaming 池放大一点，而不是把基础内容直接做大。
+
+真正可执行的运行内存规划，至少要定三条线：
+- **稳态线**：玩家连续跑图 / 战斗 10-20 分钟后的常驻占用
+- **峰值线**：首进大场景、切场景、热更解压、后台切回前台时的瞬时峰值
+- **红线**：再继续上涨就会进入 LMK / jetsam 高风险区的上限
+
+下面给一个适合移动项目立项期使用的基线表。这里的数字不是"理论可分配上限"，而是更适合拿来做发布门槛的**工程线**：
+
+| 最低支持设备基线 | 稳态线 | 峰值线 | 红线 | 适用策略 |
+|----------------|-------|-------|------|---------|
+| 4GB Android 档 | 850-950 MB | 1.1-1.2 GB | 1.3-1.4 GB | 广覆盖项目、希望保住更多中低端机 |
+| 6GB Android 档 | 1.2-1.4 GB | 1.6-1.8 GB | 1.9-2.1 GB | 主流覆盖、允许中高质量资源 |
+| 8GB Android 档 | 1.6-1.9 GB | 2.1-2.3 GB | 2.4-2.5 GB | 中重度项目、高配机为主 |
+
+这张表的用法不是"测到 2.1GB 还没死就算安全"，而是反过来：
+1. 先定最低支持机型。
+2. 再把关卡、角色、特效、缓存、Streaming Pool 都装进对应的稳态线和峰值线里。
+3. 最后把红线留给系统波动、后台 App、第三方 SDK、瞬时大分配和异常抖动。
+
+一个很常见的误区是：测试机上有 12GB RAM，于是就默认 2GB 内容常驻也没问题。这样做最后往往不是"低端机画质差一点"，而是低端机在大场景切换、热更新解压、回前台重载时直接被系统强杀。
+
+### 先看清应用程序的内存分布：不是只有 Texture
+
+内存预算最容易卡住的地方，是把**包体大小**、**磁盘缓存大小**、**进程常驻大小**混成同一件事。LMK / jetsam 真正关心的是：**这个进程现在实际占住了多少内存**，而不是某张资源文件在磁盘上只有几 MB。
+
+工程上更有用的分法，不是"美术资源 / 代码资源"这种按制作工种分，而是按**运行时驻留位置**分：
+
+| 内存桶 | 里面有什么 | 常见观察口径 | 典型风险 |
+|-------|-----------|-------------|---------|
+| 代码与运行时 | `libil2cpp.so`、Unity 引擎代码、托管堆、线程栈、Native 插件 | `Managed Heap`、`Total Allocated`、Memory Profiler 的 Native 区 | 第三方 SDK 常驻、线程过多、托管对象长期存活 |
+| Texture / RenderTexture | `Texture2D`、Sprite Atlas、Lightmap、Shadow Map、Bloom / Camera RT | `Graphics Driver`、GPU/Texture Memory | `Read/Write` 复制、RT 链过多、HDR/MSAA/后处理抬高峰值 |
+| Mesh & Animation | 顶点/索引缓冲、Skinned Mesh 缓冲、动画片段、BlendShape 数据 | Native + Graphics 相关统计 | 高 LOD 常驻、角色同屏多、蒙皮缓存过大 |
+| Shader / Shader Variant | 已加载 Shader、运行时命中的 Variant、驱动程序对象、WarmUp 相关缓存 | Build Report + Native/Driver 侧间接观察 | 变体爆炸、预热面过大、多档位 Shader 同驻 |
+| Objects / Pool | GameObject、Component、脚本对象实例、对象池里的子弹/VFX/UI | 托管对象数、Native Object 数、常驻实例数 | 对象池上限太大，把瞬时对象变成常驻对象 |
+| Bundle / Cache / Temp | Addressables Handle、Bundle 解压缓冲、下载缓存、场景切换重叠资源 | `Total Reserved`、切场景尖峰、下载时峰值 | 旧场景未退完新场景已进来，造成双驻留 |
+
+这里有几个特别容易漏算的点：
+- 同一份资源可能同时存在**磁盘压缩包、CPU 副本、GPU 副本、上传临时缓冲**四份，不是"文件只有 2MB，内存里也就 2MB"。
+- `Texture` 和 `Mesh` 一旦开了 `Read/Write Enabled`，就很可能意味着 CPU 和 GPU 各留一份，内存会被直接抬高。
+- `Shader Variant` 往往不像 Texture 那样一眼吃掉几百 MB，但它会通过更多的 shader blob、driver program、WarmUp 面，把启动、Native 内存和驱动内存一起抬高。
+- `Object Pool` 省的是 `Instantiate/Destroy` 和 GC，不是白送内存；池容量本身就应该进入预算表。
+
+所以做预算时，不要只问"贴图几张 2K"，而要问："这套内容进场之后，代码、对象、纹理、Mesh、Shader、缓存各自有多少常驻和峰值"。
+
+如果读到这里，对对象池和 Shader Variant 这两桶还没有稳定直觉，最适合先配合看：
+- [游戏编程设计模式 04｜Object Pool：对象池化原理与实践]({{< relref "engine-notes/pattern-04-object-pool.md" >}})
+- [Unity Shader Variant 是什么：GPU 程序的编译模型]({{< relref "engine-notes/unity-shader-variant-what-is-a-variant-gpu-compilation-model.md" >}})
 
 ### 内存预算分配表
 
@@ -51,6 +104,60 @@ weight: 2180
 高端设备（2.5 GB）：
   Texture: 1000 MB | Mesh: 375 MB | Audio: 250 MB | Runtime: 375 MB | 余量: 500 MB
 ```
+
+### 再往下拆一层：Texture 多少，RT 多少
+
+上面这张表适合立项和总盘子估算，但真正落项目时，`Texture 560 MB` 这种大桶还不够用。因为最容易把你顶到峰值的，常常不是普通贴图，而是 **RenderTexture / ShadowMap / 后处理临时 RT**。
+
+以 **4GB Android 档，应用总预算约 1.4GB** 为例，更适合执行的拆法如下：
+
+| 运行时子桶 | 稳态预算 | 峰值上限 | 说明 |
+|-----------|---------|---------|------|
+| 静态 Texture / Sprite Atlas | 300-360 MB | 380 MB | 角色、场景、UI 图集、普通贴图主体 |
+| Lightmap / Reflection / Cubemap | 60-100 MB | 120 MB | 容易被忽略，但大场景里会持续常驻 |
+| RenderTexture / ShadowMap / 后处理临时 RT | 80-120 MB | 140 MB | 最敏感的峰值桶，切场景和开后处理时最容易抬高 |
+| Mesh / Animation | 180-220 MB | 250 MB | 顶点索引、Skinned Mesh、动画片段 |
+| Shader / Variant / Driver Program | 20-40 MB | 60 MB | 不一定最大，但会抬高 Native / Driver 压力 |
+| Objects / Pool | 40-80 MB | 100 MB | 子弹池、VFX 池、UI 预创建、脚本对象 |
+| Audio | 100-140 MB | 160 MB | 背景音乐如果不走 Streaming，很容易顶高 |
+| Code / Runtime / Native 插件 | 160-220 MB | 250 MB | IL2CPP、托管堆、线程栈、SDK |
+| Bundle / Cache / Temp | 80-120 MB | 160 MB | 下载、解压、反序列化、切场景缓冲 |
+| 安全余量 | 140 MB | 140 MB | 留给系统波动和瞬时抖动 |
+
+如果你现在只想先回答最核心的两个问题，可以先记这两个工程线：
+- **Texture 主桶**：4GB Android 档建议稳态控制在 **360-460 MB**
+- **RT 主桶**：4GB Android 档建议稳态控制在 **80-120 MB**，峰值尽量不要超过 **140 MB**
+
+### RenderTexture 为什么要单独算
+
+普通 `Texture2D` 往往是内容驱动，增加是渐进的；`RenderTexture` 则更像配置驱动，一开功能就可能立刻多出几十 MB：
+- HDR 打开后，Color RT 可能从 `RGBA32` 变成 `RGBA16F`
+- Bloom、DOF、SSAO、TAA 往往都会引入额外的中间 RT
+- 阴影贴图、反射探针、相机堆叠会继续叠加
+- MSAA 会进一步抬高颜色和深度缓冲的占用
+
+所以很多项目不是"贴图做大了"，而是"后处理 + 阴影 + HDR + 多相机"一起把 RT 桶顶爆了。
+
+### RT 的快速估算公式
+
+```text
+RenderTexture 内存 ≈ Width × Height × BytesPerPixel × BufferCount
+
+常见参考：
+1920 × 1080 RGBA32    ≈ 7.9 MB
+1920 × 1080 RGBA16F   ≈ 15.8 MB
+1024 × 1024 D32 阴影图 ≈ 4 MB
+2048 × 2048 D32 阴影图 ≈ 16 MB
+```
+
+这只是单张 RT 的裸大小。真实项目里还要继续乘上：
+- 是否有 Color + Depth 两张
+- 是否有 Ping-Pong 双缓冲
+- 是否有多级 Bloom Downsample / Upsample
+- 是否有多 Camera / Camera Stack
+- 是否有 MSAA
+
+也就是说，**一个 HDR 主相机 + 一套 Bloom 链 + 一张 2048 阴影图**，很容易就吃掉几十 MB，甚至直接逼近 100 MB。
 
 ### 建立内存预算仪表盘
 
@@ -544,7 +651,52 @@ assetBundle.Unload(true);
 
 ## OOM 防护机制
 
-### Android：`Application.lowMemory` 事件
+### 先分清：移动端 OOM、LMK、jetsam 不是一回事
+
+线上团队经常把所有"内存相关闪退"都叫 OOM，但工程上至少要分成三类：
+
+| 现象 | 平台 | 真正原因 | 外部表现 | 处理重点 |
+|------|------|----------|----------|----------|
+| 分配失败型 OOM | Android / iOS | 某次 `new`、`malloc`、贴图上传或大块连续内存申请失败 | 可能有异常栈或 abort 日志 | 减少大块分配、拆分加载、避免瞬时峰值 |
+| LMK 前台强杀 | Android | 系统整体可用内存过低，`lmkd` 直接结束进程 | 玩家感觉是"闪退回桌面"，Crash SDK 可能拿不到托管栈 | 压低项目峰值、看 `logcat`、关注 `PSS` 和 `onTrimMemory()` |
+| jetsam 强杀 | iOS | 收到内存警告后仍未及时降下来 | 直接被系统终止，普通崩溃平台经常没有业务栈 | 快速释放缓存、控制统一内容预算、看 `jetsam_event_report` |
+
+所以"做 OOM 防护"并不只是 try-catch `OutOfMemoryException`。真正要防的是：关卡峰值、贴图峰值、热更峰值把设备推进 LMK / jetsam 区间，而这类问题在玩家侧看起来往往只是一次毫无栈信息的闪退。
+
+### Android 到底什么时候会触发 LMK
+
+Android 的 LMK 不是"你的游戏超过某个固定 MB 就被杀"。真正发生的是：**系统整体已经处在高内存压力下，Page Cache 和后台进程回收后仍然不够，`lmkd` 开始按进程优先级杀进程**。所以前台游戏是**最后才会被杀**，不是**绝对不会被杀**。
+
+这也是为什么同样是 1.2GB 占用：
+- 在一台后台很干净的 8GB 设备上，可能什么事都没有
+- 在一台 4GB 设备上，同时挂着微信、输入法、系统相机和一堆系统服务时，就可能在切场景瞬间直接回桌面
+
+项目里最常见的 LMK 触发时机，不是"慢慢涨到某个值"，而是下面这些**瞬时峰值场景**：
+- **切场景双驻留**：旧场景资源还没卸完，新场景 Texture / Mesh / Audio 已经开始进来
+- **热更与解压峰值**：Bundle 下载、解压、反序列化、贴图上传、Shader WarmUp 同时发生
+- **回前台恢复**：从后台切回时，系统本来就紧，游戏又要恢复 RT、纹理和业务缓存
+- **常驻线过高**：对象池、可读纹理、可读 Mesh、过大的 RenderTexture 链让稳态线离红线太近，任何一次正常峰值都会越线
+
+理解这一点很重要：LMK 很多时候不是"某个资源特别夸张"，而是**常驻线太高 + 峰值又重叠**。
+
+### Android：`Application.lowMemory` 只是最后一道保险
+
+在 Unity 里最容易接到的信号是 `Application.lowMemory`，但工程上不要把它当成"足够早的预警器"：
+- 它通常意味着系统已经处在高压区，而不是还很从容
+- 某些机型只会给很短的处理窗口，来不及做重清理
+- 真正导致前台闪退的很多情况，不会先抛出 `OutOfMemoryException`，而是 LMK 直接把进程杀掉
+
+如果项目需要更细的分级，最好把 Android 原生 `onTrimMemory()` 桥接到 Unity，区分 `RUNNING_LOW` 和 `RUNNING_CRITICAL`；`Application.lowMemory` 更适合作为最后一道兜底。
+
+### Android 上我们该怎么做
+
+如果目标设备覆盖到 4GB / 6GB Android，这几件事通常比"收到 lowMemory 再 GC 一次"更重要：
+
+1. **先定最低支持档位，再定常驻线和峰值线**。不要用旗舰测试机的余量去估低端机的安全线。
+2. **把 `onTrimMemory()`、`Application.lowMemory`、`dumpsys meminfo` 放进同一套观测链路**。只看 Unity 的托管堆，很容易漏掉 Native 和 Graphics 压力。
+3. **避免切场景重叠峰值**。能先卸再载就不要先载再卸；能分批上传贴图和 RT，就不要一帧里同时做。
+4. **把对象池、Read/Write、RenderTexture、Shader WarmUp 都纳入预算**。这些东西单个看都"不算大"，叠起来最容易把稳态线抬高。
+5. **做分级降载梯子**。先清缓存、再缩 Streaming Pool、再降纹理/阴影/RT，最后才是激进清理；不要把所有动作都压到一次 `lowMemory` 回调里。
 
 ```csharp
 using UnityEngine;
@@ -668,7 +820,7 @@ public class MemoryResponseSystem : MonoBehaviour
 
 ### 主动检测：预警阈值
 
-不等系统发出 lowMemory 警告，主动检测当前内存用量：
+不等系统发出 `lowMemory` 警告，主动检测当前内存用量。下面这组阈值更适合把**4GB Android 作为最低支持机型**的项目；如果你的最低目标设备是 6GB 或 8GB 档，阈值要整体上移，但仍建议保留至少 10-15% 的安全余量：
 
 ```csharp
 using Unity.Profiling;
