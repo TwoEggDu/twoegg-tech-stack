@@ -179,6 +179,7 @@ body.has-scrolled .brand-mark {
 }
 
 .site-nav {
+  order: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -205,10 +206,12 @@ body.has-scrolled .site-nav a {
 }
 
 .site-search {
+  order: 1;
   position: relative;
   flex: 0 0 auto;
   min-width: 16rem;
   width: min(24rem, 100%);
+  margin-inline: auto;
 }
 
 .site-search-field {
