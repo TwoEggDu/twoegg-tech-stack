@@ -28,6 +28,8 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 ---
 > 这组文章如果一篇篇单看，其实都能成立；但 Unity 资源问题真正难的地方，不在单篇知识点，而在于你能不能先知道自己现在站在哪一层。
 
+如果你这次最关心的是存储硬件、文件系统、OS I/O 和加载链怎样把 AssetBundle / Addressables 问题放大，也可以先去 [存储设备与 IO 基础系列索引｜先立住存储硬件、文件系统和 OS I/O，再回到游戏加载链]({{< relref "engine-notes/storage-io-series-index.md" >}})。
+
 这是这组文章的索引页。  
 它不讲新的底层细节，只做一件事：
 
@@ -283,5 +285,4 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 
 - 上一篇：无。这是系列入口。
 - 下一篇：<a href="{{< relref "engine-notes/unity-assets-what-exists-and-how-they-become-visible-in-game.md" >}}">Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的</a>
-
 
