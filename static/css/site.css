@@ -664,6 +664,26 @@ body.has-scrolled .site-nav a {
   color: inherit;
 }
 
+.article-body .mermaid-block {
+  overflow-x: auto;
+  margin: 1.2rem 0;
+  padding: 18px;
+  border: 1px solid rgba(20, 33, 31, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 251, 244, 0.92);
+  box-shadow: 0 14px 34px rgba(59, 39, 17, 0.08);
+}
+
+.article-body .mermaid-block .mermaid {
+  display: flex;
+  justify-content: center;
+  min-width: fit-content;
+}
+
+.article-body .mermaid-block svg {
+  height: auto;
+}
+
 .article-body img {
   display: block;
   max-width: 100%;
@@ -911,3 +931,4 @@ body.has-scrolled .site-nav a {
     grid-template-columns: 46px minmax(0, 1fr);
   }
 }
+
