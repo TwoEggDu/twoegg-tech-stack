@@ -11,6 +11,7 @@ tags:
   - "Thermal"
   - "性能优化"
 series: "URP 深度"
+primary_series: "device-tiering"
 weight: 1680
 ---
 前两篇平台文已经分别解决了两件事：

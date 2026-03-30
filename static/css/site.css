@@ -77,8 +77,8 @@ a {
 
 .site-header {
   position: sticky;
-  top: 0;
-  z-index: 30;
+  top: 10px;
+  z-index: 40;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -120,6 +120,10 @@ body.has-scrolled .site-header {
   min-width: 0;
 }
 
+.brand-copy {
+  min-width: 0;
+}
+
 .brand strong,
 .site-nav a,
 .button,
@@ -130,15 +134,20 @@ body.has-scrolled .site-header {
 
 .brand small {
   display: block;
-  max-width: 28rem;
+  max-width: 24rem;
+  margin-top: 4px;
   color: var(--muted);
   font-size: 0.8rem;
-  transition: opacity 180ms ease, transform 180ms ease;
+  max-height: 4.2rem;
+  overflow: hidden;
+  transition: opacity 180ms ease, transform 180ms ease, max-height 180ms ease, margin-top 180ms ease;
 }
 
 body.has-scrolled .brand small {
-  opacity: 0.82;
-  transform: translateY(-1px);
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 .brand-mark {
@@ -170,15 +179,16 @@ body.has-scrolled .brand-mark {
 }
 
 .site-nav {
+  order: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   justify-content: flex-end;
   max-width: 100%;
 }
 
 .site-nav a {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
   color: var(--muted);
   transition: padding 160ms ease, background-color 160ms ease, color 160ms ease, transform 160ms ease;
@@ -196,10 +206,12 @@ body.has-scrolled .site-nav a {
 }
 
 .site-search {
+  order: 1;
   position: relative;
   flex: 0 0 auto;
   min-width: 16rem;
-  width: min(22.5rem, 100%);
+  width: min(24rem, 100%);
+  margin-inline: auto;
 }
 
 .site-search-field {
@@ -704,10 +716,12 @@ body.has-scrolled .site-nav a {
   }
 
   .site-nav {
+    order: 0;
     justify-content: flex-start;
   }
 
   .site-search {
+    order: 1;
     flex-basis: auto;
     width: 100%;
   }
@@ -897,4 +911,3 @@ body.has-scrolled .site-nav a {
     grid-template-columns: 46px minmax(0, 1fr);
   }
 }
-

@@ -20,6 +20,8 @@ series_order: 3
 
 如果你经常面对的是 Shader 关键词爆炸、材质规范不稳、Renderer Feature 越堆越重、同一效果跨档位难维护，这页是更合适的起点。
 
+如果你这次只想沿着机型分档这条线走，不想在角色入口里来回跳，可以直接去 [机型分档专题入口｜先定分档依据，再接配置、内容、线上治理与验证]({{< relref "engine-notes/device-tiering-series-index.md" >}})。
+
 ## 第一轮先读这几篇
 
 1. [为什么某些操作会慢：给游戏开发的性能判断框架]({{< relref "engine-notes/game-performance-judgment-framework.md" >}})

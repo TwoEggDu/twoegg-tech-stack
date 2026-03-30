@@ -20,6 +20,8 @@ series_order: 1
 
 如果你现在面对的是掉帧、首开卡顿、Main Thread 尖峰、GC.Alloc、GPU bound、加载后仍不可用这类问题，最稳的起点是这页。
 
+如果你这次只想沿着存储 / I/O / 加载链这条线走，不想在性能主线里来回跳，可以直接去 [存储设备与 IO 基础系列索引｜先立住存储硬件、文件系统和 OS I/O，再回到游戏加载链]({{< relref "engine-notes/storage-io-series-index.md" >}})。
+
 ## 第一轮先读这几篇
 
 1. [为什么某些操作会慢：给游戏开发的性能判断框架]({{< relref "engine-notes/game-performance-judgment-framework.md" >}})

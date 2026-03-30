@@ -14,6 +14,7 @@ tags:
   - Mobile
   - PC
 series: "游戏性能判断"
+primary_series: "storage-io-foundations"
 ---
 
 > 如果只用一句话概括这篇文章，我会这样说：游戏运行时真正怕的，很多时候不是“数据量大”，而是“数据访问方式碎、首次成本多、而且恰好发生在关键帧里”。

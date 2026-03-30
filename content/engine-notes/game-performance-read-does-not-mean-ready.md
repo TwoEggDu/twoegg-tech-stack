@@ -15,6 +15,7 @@ tags:
   - Mobile
   - PC
 series: "游戏性能判断"
+primary_series: "storage-io-foundations"
 ---
 
 > 如果只用一句话概括这篇文章，我会这样说：资源从磁盘里被读出来，只说明字节到了内存，还远远不代表游戏已经能在这一帧里安全地使用它。

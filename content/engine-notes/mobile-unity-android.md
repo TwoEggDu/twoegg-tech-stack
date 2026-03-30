@@ -301,11 +301,25 @@ adb logcat | grep "ContentProvider"
 
 **解决方案**：使用 **App Startup 库**（Jetpack）统一管理 ContentProvider 初始化时序，将非关键初始化推迟到主线程空闲后执行。对于无法修改的第三方 SDK，在 `AndroidManifest.xml` 中用 `tools:node="remove"` 移除其 ContentProvider 声明，然后手动在合适时机调用 SDK 初始化。
 
-### 陷阱二：Android 低内存时的 GC 行为
+### 陷阱二：把 LMK 理解成"超过某个固定值就 OOM"
 
-Android 内存管理器（LMK，Low Memory Killer）会在系统内存不足时按优先级杀掉后台进程。前台应用不会被直接杀，但系统会通过 `onTrimMemory()` 通知应用清理内存。
+Android 的低内存问题，最容易被误解成："游戏一旦超过 1GB / 1.5GB 就会被系统杀掉。"
 
-Unity 响应这一通知的方式：**`Application.lowMemory`** 事件。
+实际不是这样。Android 的内存回收是**全局系统行为**：`lmkd` 会结合当前可回收内存、Page Cache 回收效果、进程优先级（前台 / 可见 / 后台）来决定先杀谁。前台应用是**最后被杀**，不是**绝对不会被杀**。
+
+这意味着同样一份游戏包、同样一个场景：
+- 在后台很干净的 8GB 手机上，可能完全安全
+- 在一台 4GB 手机上，如果系统里还挂着微信、输入法、相机、广告 SDK 的独立进程，就可能在切场景时直接回桌面
+
+最常见的触发时机不是"慢慢涨爆"，而是几类瞬时峰值：
+- **切场景双驻留**：旧场景还没卸载，新场景纹理和 Mesh 已经开始进来
+- **资源解压与上传重叠**：Bundle 解压、纹理上传、Shader WarmUp、RenderTexture 分配同时发生
+- **回前台恢复**：系统本来就在紧张区间，游戏又要恢复自己的常驻资源
+- **常驻线过高**：对象池、可读纹理、可读 Mesh、过大的 RT 链先把稳态线顶高，剩下的峰值空间不够
+
+Unity 能接到的标准信号之一，是 Android 的 `onTrimMemory()` 最终映射到 **`Application.lowMemory`**。
+
+在 Unity 层最基础的兜底做法是：
 
 ```csharp
 void OnEnable()
@@ -332,7 +346,27 @@ void OnLowMemory()
 }
 ```
 
-注意：Android 的 `TRIM_MEMORY_RUNNING_CRITICAL` 通知意味着系统可用内存已低于 约 40MB，此时不及时响应可能导致应用被系统强杀。
+注意两点：
+- `Application.lowMemory` 通常已经比较晚了，它更像最后一道保险，不是舒适的提前预警
+- `TRIM_MEMORY_RUNNING_CRITICAL` 通知意味着系统已经处在非常紧张的区间，此时不及时响应，前台应用也可能被系统强杀
+
+**更稳的观测方式**：
+
+```bash
+# 查看进程内存分布（PSS / Private Dirty / Graphics / Native Heap）
+adb shell dumpsys meminfo com.your.package
+
+# 观察系统是否出现 lmkd / lowmemorykiller 相关日志
+adb logcat | grep -E "lmkd|lowmemorykiller|onTrimMemory"
+```
+
+**工程上真正该做的事**：
+1. 不要把预算定在"Development Build 的高配测试机还能跑"这一档，而要按最低支持机型定常驻线和峰值线。
+2. 不要等 `lowMemory` 才第一次处理，应该提前在切场景、回前台、下载解压前后做分阶段清理。
+3. 不要只盯着托管堆，Texture、RenderTexture、Mesh、对象池、Bundle 解压缓冲往往才是 LMK 的真正推手。
+
+更完整的预算拆分、LMK / jetsam 区别和响应梯子，可继续看：
+[CPU 性能优化 05｜内存预算管理：按系统分配上限、Texture Streaming 与 OOM/LMK 防护]({{< relref "engine-notes/cpu-opt-05-memory-budget.md" >}})
 
 ### 陷阱三：Vulkan 驱动 Bug 的常见 Workaround
 
