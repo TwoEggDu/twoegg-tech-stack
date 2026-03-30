@@ -49,6 +49,35 @@ series:
 
 一条 variant 从定义到被 GPU 使用，通常会经过下面这几站：
 
+```mermaid
+flowchart LR
+    A["Shader / Pass / keywords / 平台维度<br/>定义理论变体空间"]
+    B["构建输入与保留依据<br/>Scene / Material / Bundle 输入 / SVC / Always Included / 活跃 URP Asset"]
+    C["本次构建的候选集<br/>Build Usage / 可讨论路径"]
+    D["URP Prefiltering / 配置过滤<br/>先裁掉当前构建不可能发生的路径"]
+    E["Unity Builtin Stripping<br/>按全局渲染能力继续裁剪"]
+    F["SRP Stripping<br/>按 URP/HDRP 管线规则继续裁剪"]
+    G["Project Stripping<br/>IPreprocessShaders / OnProcessShader"]
+    H["最终保留的 variant 集合"]
+    I["平台相关编译结果<br/>subprogram / program blob"]
+    J["写入 Player 或 AssetBundle"]
+    K["运行时 SetPass / keyword 匹配"]
+    L["GPU 消费最终命中的平台程序"]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K --> L
+```
+
+这里先澄清一个很容易混的点：
+
+- `Material / Scene / Bundle 输入 / SVC / Always Included` 不是构建输出，它们是 `输入`、`保留依据` 和 `交付边界条件`
+- 真正逐阶段产出的，分别是 `理论空间`、`本次候选集`、`逐层裁剪后的保留集合`、`平台编译结果` 和 `运行时命中结果`
+- 所以现场一说“variant 怎么被剔除了”，最好先问的是 `它死在输入阶段、过滤阶段、stripping 阶段，还是其实已经留下来了，只是运行时没命中对`
+
+如果你现在关心的不是总览，而是源码口径的构建细账，可以继续读这两篇：
+
+- [Unity Shader Variant 在 Player 构建里到底吃了哪些输入：从 BuildPlayerOptions、场景对象、UsageTag 到写入产物]({{< relref "engine-notes/unity-shader-variant-player-build-inputs-processing-outputs.md" >}})
+- [Unity Shader Variant 在 AssetBundle 构建里到底吃了哪些输入：从 AssetBundleBuild、ObjectIdentifier、WriteParameters 到归档输出]({{< relref "engine-notes/unity-shader-variant-assetbundle-build-inputs-processing-outputs.md" >}})
+
 1. `生产阶段`：`Shader` 代码、`Pass`、`multi_compile`、`shader_feature`、SRP 内置分支等，共同定义理论上的可能空间。
 2. `保留依据阶段`：参与本次构建的 `Material`、`Scene`、`Resources`、`AssetBundle` 输入、`ShaderVariantCollection`、`Always Included` 等，告诉构建系统哪些路径值得进入这次构建的正式讨论。
 3. `过滤与剔除阶段`：`URP Prefiltering`、内置 stripping、SRP stripping、项目自定义 `IPreprocessShaders` 等，把“不可能发生”或“明确不需要”的路径继续裁掉。
