@@ -158,6 +158,14 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 ## 五、Shader 与 Variant 边界
 
 - [Unity Shader Variants 为什么会存在，以及它为什么总让项目变复杂]({{< relref "engine-notes/unity-shader-variants-why-and-tradeoffs.md" >}})
+- [Unity Shader Variant 是什么：GPU 程序的编译模型]({{< relref "engine-notes/unity-shader-variant-what-is-a-variant-gpu-compilation-model.md" >}})
+- [Unity Shader Variant 全流程总览：从生产、保留、剔除到运行时使用]({{< relref "engine-notes/unity-shader-variant-full-lifecycle-overview.md" >}})
+- [Unity Shader Variant 从哪里来：哪些维度真的在制造变体]({{< relref "engine-notes/unity-shader-variant-where-variants-come-from.md" >}})
+- [Unity Shader Variant 从资产到 GPU 消费：资源定义、构建产物和运行时命中链路]({{< relref "engine-notes/unity-shader-variant-from-assets-to-gpu-consumption.md" >}})
+- [Material、场景、SVC、Always Included 是怎么一起决定 Shader Variant 保留面的]({{< relref "engine-notes/unity-shader-variant-retention-sources-material-scene-svc-always-included.md" >}})
+- [Unity Shader Variant 到底怎样才会被保留下来：一个 variant 要过哪几关]({{< relref "engine-notes/unity-shader-variant-how-a-variant-survives-build.md" >}})
+- [Unity Shader Variant 是在哪几层被剔除的：Prefiltering、内置 Stripping 和自定义 Stripping 的顺序]({{< relref "engine-notes/unity-shader-variant-stripping-stages-prefiltering-builtin-custom.md" >}})
+- [Unity Shader Variant 运行时命中机制：从 SetPass 到变体匹配的完整链路]({{< relref "engine-notes/unity-shader-variant-runtime-hit-mechanism.md" >}})
 - [Unity Shader Variant 实操：怎么知道项目用了哪些、运行时缺了哪些、以及怎么剔除不需要的]({{< relref "engine-notes/unity-shader-variants-how-to-find-missing-and-strip.md" >}})
 - [Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界]({{< relref "engine-notes/unity-how-shader-is-stored-in-assetbundle-definition-compiled-variants.md" >}})
 - [Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来]({{< relref "engine-notes/unity-why-shader-variant-problems-explode-on-assetbundle.md" >}})
@@ -232,6 +240,9 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 
 先看：
 
+- [Unity Shader Variant 全流程总览：从生产、保留、剔除到运行时使用]({{< relref "engine-notes/unity-shader-variant-full-lifecycle-overview.md" >}})
+- [Unity Shader Variant 从资产到 GPU 消费：资源定义、构建产物和运行时命中链路]({{< relref "engine-notes/unity-shader-variant-from-assets-to-gpu-consumption.md" >}})
+- [Unity Shader Variant 从哪里来：哪些维度真的在制造变体]({{< relref "engine-notes/unity-shader-variant-where-variants-come-from.md" >}})
 - [Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界]({{< relref "engine-notes/unity-how-shader-is-stored-in-assetbundle-definition-compiled-variants.md" >}})
 - [Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来]({{< relref "engine-notes/unity-why-shader-variant-problems-explode-on-assetbundle.md" >}})
 - [为什么 Shader 加到 Always Included 就好了：它和放进 AssetBundle 到底差在哪]({{< relref "engine-notes/unity-why-always-included-shaders-fixes-assetbundle-problems.md" >}})
