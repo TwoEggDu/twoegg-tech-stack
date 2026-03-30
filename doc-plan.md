@@ -1143,6 +1143,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 ### 十八·F — Unity DOTS 后续专题（延伸规划，20 篇，不计入上方 45 篇）
 
 *`DOTS-E01~E18` 已经闭环，这里不继续追加 `E19+`，而是把最值得继续写的三块内容拆成独立后续系列。详见 [docs/unity-dots-follow-up-series-plan.md](docs/unity-dots-follow-up-series-plan.md)。*
+*当前状态：20 篇后续专题正文首轮草稿已齐，仍以 `draft` 形式保留在仓库，待后续核对版本环境与发布节奏。*
 
 #### 十八·F1 — Unity DOTS Physics（7 篇）
 

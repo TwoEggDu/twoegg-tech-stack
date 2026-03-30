@@ -139,9 +139,11 @@
 
 | Part | 状态 |
 |------|------|
-| Part 1 Unity DOTS Physics（7 篇） | ❌ 待写 |
-| Part 2 Unity DOTS 项目落地与迁移（6 篇） | ❌ 待写 |
-| Part 3 Unity DOTS NetCode（7 篇） | ❌ 待写 |
+| Part 1 Unity DOTS Physics（7 篇） | 已起草 7/7（索引与正文已齐，均为 `draft`） |
+| Part 2 Unity DOTS 项目落地与迁移（6 篇） | 已起草 6/6（索引与正文已齐，均为 `draft`） |
+| Part 3 Unity DOTS NetCode（7 篇） | 已起草 7/7（索引与正文已齐，均为 `draft`） |
+
+截至 `2026-03-30`，三条后续线的 20 篇正文首轮草稿已经全部落库；后续工作重点从“补齐篇目”切到“核对版本环境、补验证证据、安排发布节奏”。
 
 ---
 
