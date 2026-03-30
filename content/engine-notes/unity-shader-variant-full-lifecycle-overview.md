@@ -49,23 +49,60 @@ series:
 
 一条 variant 从定义到被 GPU 使用，通常会经过下面这几站：
 
-```mermaid
-flowchart LR
-    A["Shader / Pass / keywords / 平台维度<br/>定义理论变体空间"]
-    B["构建输入与保留依据<br/>Scene / Material / Bundle 输入 / SVC / Always Included / 活跃 URP Asset"]
-    C["本次构建的候选集<br/>Build Usage / 可讨论路径"]
-    D["URP Prefiltering / 配置过滤<br/>先裁掉当前构建不可能发生的路径"]
-    E["Unity Builtin Stripping<br/>按全局渲染能力继续裁剪"]
-    F["SRP Stripping<br/>按 URP/HDRP 管线规则继续裁剪"]
-    G["Project Stripping<br/>IPreprocessShaders / OnProcessShader"]
-    H["最终保留的 variant 集合"]
-    I["平台相关编译结果<br/>subprogram / program blob"]
-    J["写入 Player 或 AssetBundle"]
-    K["运行时 SetPass / keyword 匹配"]
-    L["GPU 消费最终命中的平台程序"]
-
-    A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K --> L
-```
+<div class="lifecycle-flow">
+  <div class="lifecycle-step">
+    <span class="lifecycle-step-index">1</span>
+    <div class="lifecycle-step-copy">
+      <strong>理论空间</strong>
+      <p><code>Shader / Pass / keywords / 平台维度</code> 先定义“理论上可能有哪些 variant”。</p>
+    </div>
+  </div>
+  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
+  <div class="lifecycle-step">
+    <span class="lifecycle-step-index">2</span>
+    <div class="lifecycle-step-copy">
+      <strong>构建输入与保留依据</strong>
+      <p><code>Scene / Material / Bundle 输入 / SVC / Always Included / 活跃 URP Asset</code> 决定这次 build 真正要讨论哪些路径。</p>
+    </div>
+  </div>
+  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
+  <div class="lifecycle-step">
+    <span class="lifecycle-step-index">3</span>
+    <div class="lifecycle-step-copy">
+      <strong>本次构建候选集</strong>
+      <p><code>Build Usage</code> 把“项目里存在的路径”收缩成“这次构建真的要处理的路径”。</p>
+    </div>
+  </div>
+  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
+  <div class="lifecycle-step lifecycle-step-group">
+    <span class="lifecycle-step-index">4</span>
+    <div class="lifecycle-step-copy">
+      <strong>过滤与剔除</strong>
+      <ul>
+        <li><code>URP Prefiltering</code></li>
+        <li><code>Unity Builtin Stripping</code></li>
+        <li><code>SRP Stripping</code></li>
+        <li><code>Project Stripping / OnProcessShader</code></li>
+      </ul>
+    </div>
+  </div>
+  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
+  <div class="lifecycle-step">
+    <span class="lifecycle-step-index">5</span>
+    <div class="lifecycle-step-copy">
+      <strong>交付与平台编译</strong>
+      <p>活下来的路径会变成 <code>subprogram / program blob</code>，再写入 <code>Player</code> 或 <code>AssetBundle</code>。</p>
+    </div>
+  </div>
+  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
+  <div class="lifecycle-step">
+    <span class="lifecycle-step-index">6</span>
+    <div class="lifecycle-step-copy">
+      <strong>运行时命中与 GPU 消费</strong>
+      <p><code>SetPass / keyword 匹配</code> 决定最终命中的那份平台程序，再交给 GPU 真正执行。</p>
+    </div>
+  </div>
+</div>
 
 这里先澄清一个很容易混的点：
 

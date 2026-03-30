@@ -40,12 +40,17 @@
         startOnLoad: false,
         securityLevel: 'loose',
         theme: 'base',
+        fontFamily: '"IBM Plex Sans", "Segoe UI", sans-serif',
         flowchart: {
-          useMaxWidth: true,
-          htmlLabels: true
+          useMaxWidth: false,
+          htmlLabels: true,
+          nodeSpacing: 36,
+          rankSpacing: 54,
+          padding: 12
         },
         themeVariables: {
           fontFamily: '"IBM Plex Sans", "Segoe UI", sans-serif',
+          fontSize: '18px',
           primaryColor: '#fffaf2',
           primaryTextColor: '#14211f',
           primaryBorderColor: '#a14d34',
