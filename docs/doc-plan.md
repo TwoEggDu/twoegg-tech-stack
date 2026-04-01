@@ -131,6 +131,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 01b | Draw Call 与批处理 | ✅ |
 | 01b-2 | GPU Instancing 与 SRP Batcher | ✅ |
 | 01c | Render Target：Color Buffer / Depth Buffer / G-Buffer | ✅ |
+| 01c5 | 调试视角补桥：为什么工具里总在看 Draw Call、Pass 和 Render Target | ✅ |
 | 01d | Frame Debugger 使用指南 | ✅ |
 | 01e | RenderDoc 入门 | ✅ |
 | 01f | RenderDoc 进阶 | ✅ |
@@ -172,17 +173,18 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 硬件-03 | 移动端功耗与发热：为什么帧率稳定比峰值帧率更重要 |
 | 硬件-04 | 移动端 vs 主机/PC：带宽瓶颈、内存带宽共享、驱动差异 |
 
-### 三·B — 性能分析工具（7 篇）
+### 三·B — 性能分析工具（8 篇）
 
-| 编号 | 标题 |
-|------|------|
-| 工具-01 | Unity Profiler 与 Frame Debugger：CPU 侧分析入口 |
-| 工具-02 | RenderDoc 完整指南：帧捕获、Pipeline State、资源查看、Shader 调试 |
-| 工具-03 | ARM Mali Graphics Debugger：Mali GPU Counter 解读与瓶颈定位 |
-| 工具-04 | Snapdragon Profiler：Adreno GPU 的 Counter 体系与瓶颈定位 |
-| 工具-05 | Xcode GPU Frame Capture：iOS / Metal 渲染调试 |
-| 工具-06 | 如何读懂 GPU Counter：填充率、带宽、ALU 利用率、Early-Z 命中率 |
-| 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 |
+| 编号 | 标题 | 状态 |
+|------|------|------|
+| 工具-01 | Unity Profiler 与 Frame Debugger：CPU 侧分析入口 | ✅ |
+| 工具-02 | RenderDoc 完整指南：帧捕获、Pipeline State、资源查看、Shader 调试 | ✅ |
+| 工具-03 | ARM Mali Graphics Debugger：Mali GPU Counter 解读与瓶颈定位 | ✅ |
+| 工具-04 | Snapdragon Profiler：Adreno GPU 的 Counter 体系与瓶颈定位 | ✅ |
+| 工具-05 | Xcode GPU Frame Capture：iOS / Metal 渲染调试 | ✅ |
+| 工具-06 | 如何读懂 GPU Counter：填充率、带宽、ALU 利用率、Early-Z 命中率 | ✅ |
+| 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 | |
+| 工具-09 | 性能诊断工具选择指南：什么问题用 Frame Debugger / RenderDoc / Unity Profiler / Mali Debugger / Snapdragon Profiler | ✅ |
 
 ### 三·C — GPU 渲染性能优化（6 篇）
 

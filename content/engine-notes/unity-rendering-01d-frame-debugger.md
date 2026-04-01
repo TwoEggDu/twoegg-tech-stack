@@ -16,7 +16,7 @@ series: "Unity 渲染系统"
 ---
 > 如果只用一句话概括这篇，我会这样说：Frame Debugger 是 Unity 内置的"渲染回放器"，它把一帧画面里发生的每一次 Draw Call 和 Pass 切换都记录下来，让你能暂停在任意时刻，检查当时的材质参数、渲染目标和批处理状态。
 
-前两篇把 Draw Call 和 Render Target 的概念讲清了。这篇用 Frame Debugger 把它们"看见"。
+前面几篇已经把 Draw Call、Render Target，以及为什么工具里总在看这些对象的原因讲清了。这篇用 Frame Debugger 把它们"看见"。
 
 ---
 

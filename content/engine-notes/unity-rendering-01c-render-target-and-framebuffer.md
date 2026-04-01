@@ -155,10 +155,10 @@ RenderDoc 的 **Texture Viewer** 和 **Pipeline State** 面板能看到更完整
 - **Output Merger（OM）** 面板：显示当前 Draw Call 绑定了哪些 RT，每个槽位绑定的是什么格式的纹理
 - **Texture Viewer**：可以打开任意一张 RT，查看任意 mip、任意通道的内容，还能用 Range 调整显示范围（方便查看 HDR 值）
 
-下两篇会分别用 Frame Debugger 和 RenderDoc 把这篇讲的结构"看见"。
+接下来会先补一篇调试视角的补桥文，把 Draw Call、Pass 和 Render Target 这些概念映射到工具界面上；再分别用 Frame Debugger 和 RenderDoc 把这篇讲的结构"看见"。
 
 ---
 
 ## 和下一篇的关系
 
-有了 Draw Call（01b）和 Render Target（01c）的概念基础，下一篇就可以系统地使用 Frame Debugger 了——它的每一行是一个 Draw Call 或 Pass，每次切换意味着 RT 变了，右侧面板显示的是 Material 参数和当前 RT 内容。把这两篇的知识投射到 Frame Debugger 的界面上，工具就能真正用起来。
+有了 Draw Call（01b）和 Render Target（01c）的概念基础，接下来先补一篇调试视角的补桥文：为什么工具里总在看 Draw Call、Pass 和 RT，以及这三个对象分别对应渲染链的哪一层。把这层桥接好之后，再进入 Frame Debugger，工具就会真正用起来。

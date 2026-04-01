@@ -192,6 +192,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 01b | Draw Call 与批处理 | ✅ |
 | 01b-2 | GPU Instancing 与 SRP Batcher | ✅ |
 | 01c | Render Target：Color Buffer / Depth Buffer / G-Buffer | ✅ |
+| 01c5 | 调试视角补桥：为什么工具里总在看 Draw Call、Pass 和 Render Target | ✅ |
 | 01d | Frame Debugger 使用指南 | ✅ |
 | 01e | RenderDoc 入门 | ✅ |
 | 01f | RenderDoc 进阶 | ✅ |
@@ -292,14 +293,14 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 编号 | 标题 | 状态 |
 |------|------|------|
 | 工具-01 | Unity Profiler 真机连接：USB 接入、GPU Profiler 与 Memory Profiler | ✅ |
-| 工具-02 | RenderDoc 完整指南：帧捕获、Pipeline State、资源查看、Shader 调试 | |
+| 工具-02 | RenderDoc 完整指南：帧捕获、Pipeline State、资源查看、Shader 调试 | ✅ |
 | 工具-03 | ARM Mali Graphics Debugger：Mali GPU Counter 解读与瓶颈定位 | ✅ |
 | 工具-04 | Snapdragon Profiler：Adreno GPU 的 Counter 体系与瓶颈定位 | ✅ |
 | 工具-05 | Xcode GPU Frame Capture：iOS / Metal 渲染调试 | ✅ |
 | 工具-06 | 如何读懂 GPU Counter：跨厂商对照与瓶颈判断框架 | ✅ |
 | 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 | |
 | 工具-08 | Unity Memory Profiler：Snapshot 对比、Native 对象追踪、托管堆分析、内存泄漏定位 | |
-| 工具-09 | 性能诊断工具选择指南：什么问题用 Frame Debugger / RenderDoc / Unity Profiler / Mali Debugger / Snapdragon Profiler | |
+| 工具-09 | 性能诊断工具选择指南：什么问题用 Frame Debugger / RenderDoc / Unity Profiler / Mali Debugger / Snapdragon Profiler | ✅ |
 | 工具-10 | 音频系统优化：Load Type 与内存、压缩格式（Vorbis/ADPCM）CPU 解码代价、AudioSource 并发控制、iOS/Android 平台差异 | |
 
 ### 三·C — GPU 渲染性能优化（7 篇）
@@ -425,7 +426,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 进阶-09 | GPU Driven Rendering：GPU Culling、Indirect Draw、Multi-Draw Indirect 原理 |
 | 进阶-10 | GPU Scene 与 Per-Instance Data：现代引擎如何用 GPU 管理场景数据 |
 
-### 四·E — 游戏常用渲染效果（21 篇）
+### 四·E — 游戏常用渲染效果（26 篇）
 
 **角色（5 篇）**
 
@@ -437,19 +438,18 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 角色-04 | 卡通角色全流程：描边 + 阶梯光照 + Rim Light + 自定义 Shadow |
 | 角色-05 | 角色 LOD 与性能：骨骼数量、材质合并、Imposter |
 
-**地形（7 篇）**
+**地形（6 篇）**
 
 | 编号 | 标题 |
 |------|------|
 | 地形-01 | Terrain 系统基础：Heightmap、SplatMap、Control Map 布局与 Unity Terrain 工作流 |
 | 地形-02 | SplatMap 混合算法：线性权重 vs 高度权重、Alpha 通道存高度、逐层条件采样优化 |
 | 地形-03 | 地形细节层 A：Detail Mesh / Grass 的 GPU Instancing 渲染 |
-| 地形-04 | 地形细节层 B：Detail Map 贴图系统——逐层混合强度与编辑器工具实现 |
+| 地形-04 | 地形材质增强：Detail Map、Height Blend 与天气响应如何接进 TerrainLit |
 | 地形-05 | 地形阴影：Height Shadow、SDF Shadow、云影 RT 投影方案对比 |
 | 地形-06 | 自定义 Terrain Shader：URP 替换流程、8 层单 Pass 方案、MaterialPropertyBlock 注入 |
-| 地形-07 | 地形 LOD：GPU Instancing Tessellation、Patch 自适应精度、远近切换策略 |
 
-**场景物件（4 篇）**
+**场景物件（5 篇）**
 
 | 编号 | 标题 |
 |------|------|
@@ -457,8 +457,9 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 场景-02 | 树木渲染：LOD、Billboard、SpeedTree 原理与替代方案 |
 | 场景-03 | 水面渲染：法线流动、SSPR 反射、折射、焦散 |
 | 场景-04 | Decal（贴花）：延迟贴花与 URP Decal Projector |
+| 场景-05 | 场景植被 LOD 工程实践：GrassInstance、LODGroup、HLOD 在项目里怎么分工 |
 
-**天气与大气（4 篇）**
+**天气与大气（5 篇）**
 
 | 编号 | 标题 |
 |------|------|
@@ -466,7 +467,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 天气-02 | 雾效：线性雾 / 指数雾 / 高度雾在 Shader 里的计算 |
 | 天气-03 | 雨雪效果：雨滴法线扰动、积雪顶面权重、粒子配合 |
 | 天气-04 | 体积云与体积光：Ray Marching 原理与移动端近似 |
-| 天气-05 | URP 天空与天气系统工程实践：Enviro 集成架构、LUT 预计算大气散射替换、云影 RT 投影联动 |
+| 天气-05 | 天气系统工程实践：Enviro、SkyAtmosphere、FogVolume 与 URP 云影/雨雪链路怎么接起来 |
 
 **特效（5 篇）**
 
@@ -1192,7 +1193,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 插件-04 | DOTween：补间动画的性能边界与最佳实践 |
 | 插件-05 | UniTask：async/await 在 Unity 中的正确用法 |
 
-### 十九·B — HybridCLR 热更新深度（13 篇）
+### 十九·B — HybridCLR 热更新深度（24 篇）
 
 *HybridCLR 的原理、工具链、AOT 泛型、DHE、性能与故障诊断完整系列。*
 
@@ -1217,6 +1218,12 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | HCLR-16 | HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景 |
 | HCLR-17 | HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法 |
 | HCLR-18 | HybridCLR 案例｜Dictionary<ValueTuple, 热更类型> 的 MissingMethodException 与 object 替代法 |
+| HCLR-19 | HybridCLR 修法决策｜DisStripCode、link.xml、补充元数据分别在什么时候用 |
+| HCLR-20 | HybridCLR 共享类型判断｜为什么报错是 ValueTuple<int,string>，你写的却可能是 ValueTuple<int,object> |
+| HCLR-21 | HybridCLR DisStripCode 写法手册｜值类型、引用类型、嵌套泛型、委托分别该怎么写 |
+| HCLR-22 | HybridCLR AOTGenericReferences、DisStripCode、补 metadata 到底怎么配合 |
+| HCLR-23 | HybridCLR AOT 泛型高频坑型录｜UniTask、LINQ、Dictionary、委托、自定义泛型容器怎么排 |
+| HCLR-24 | HybridCLR AOT 泛型回归防线｜怎么把这些坑前移到 Generate、CI 和构建检查里 |
 
 ---
 
@@ -1400,14 +1407,14 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十八·D（行业横向对比与选型）| 4 |
 | 系列十八·E（实战案例）| 3 |
 | 系列十九（插件框架）| 5 |
-| 系列十九·B（HybridCLR 热更新深度）| 18 |
+| 系列十九·B（HybridCLR 热更新深度）| 24 |
 | 崩溃分析系列 | 5 |
 | 系列二十一（质量保证体系）| 15 |
 | 系列二十二（DLSS 进化论）| 8 |
 | 独立专题文章 | 5 |
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
-| **合计** | **约 623 篇（不含系列二十）** |
+| **合计** | **约 629 篇（不含系列二十）** |
 
 ---
 
@@ -1427,4 +1434,4 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-03-28（v22）——系列十八重构为 45 篇全系列；系列一新增 一·F CPU与内存体系 6 篇；系列十三新增 十三·G 高性能游戏服务端ECS 13 篇；系列三·E 面向美术与策划的桥接文章全部补齐，美术继续细分到角色、场景、特效、UI 四个工种入口；总计约 623 篇。一·F 硬件-F01~F06 全部写完；十八·B DOTS-E01~E18 全部写完。*
+*最后更新：2026-03-31（v23）——系列四按 TopHeroUnity 项目上下文重排当前批次 3 篇选题：天气-05、地形-04、场景-05；原“地形-07 地形 LOD”方向调整为更贴项目的“场景-05 场景植被 LOD 工程实践”。此前系列十八重构为 45 篇全系列；系列一新增 一·F CPU与内存体系 6 篇；系列十三新增 十三·G 高性能游戏服务端ECS 13 篇；系列三·E 面向美术与策划的桥接文章全部补齐，美术继续细分到角色、场景、特效、UI 四个工种入口；总计约 629 篇。一·F 硬件-F01~F06 全部写完；十八·B DOTS-E01~E18 全部写完。*
