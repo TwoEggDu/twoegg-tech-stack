@@ -28,4 +28,6 @@ series_reading_hint: "第一次读 URP，建议先按前置三篇和配置主线
 ---
 如果你现在最关心的是设备识别、质量分级、热机降档、内容分层和线上治理这条线，可以直接先看 [机型分档专题入口｜先定分档依据，再接配置、内容、线上治理与验证]({{< relref "engine-notes/device-tiering-series-index.md" >}})。
 
+如果你已经知道设备会怎么分档，现在更想补的是“渲染系统本身该怎么设计、怎么量化、怎么长期保持健康”，可以继续看这条新接出来的内层主线：[渲染系统分档设计 01｜先定体验合同和预算合同：低档保什么，高档加什么]({{< relref "engine-notes/rendering-tier-design-01-contracts.md" >}})。
+
 {{< series-directory >}}

@@ -22,6 +22,8 @@ series_order: 3
 
 如果你这次只想沿着机型分档这条线走，不想在角色入口里来回跳，可以直接去 [机型分档专题入口｜先定分档依据，再接配置、内容、线上治理与验证]({{< relref "engine-notes/device-tiering-series-index.md" >}})。
 
+如果你已经知道机型怎么分档，现在更关心的是“渲染系统本身怎么搭，才能让高端机吃到高端特性、低端机又保住基础体验”，可以接着看 [渲染系统分档设计 01｜先定体验合同和预算合同：低档保什么，高档加什么]({{< relref "engine-notes/rendering-tier-design-01-contracts.md" >}})。
+
 ## 第一轮先读这几篇
 
 1. [为什么某些操作会慢：给游戏开发的性能判断框架]({{< relref "engine-notes/game-performance-judgment-framework.md" >}})
