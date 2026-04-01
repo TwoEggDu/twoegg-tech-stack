@@ -15,6 +15,10 @@ weight: 1570
 ---
 自定义 Renderer Feature 出问题时，Debug.Log 和 Frame Debugger 能帮你缩小范围，但要真正看清楚"某张 RT 里存了什么"、"这个 Draw Call 用的是哪个 Shader 变体"，需要 RenderDoc。
 
+> 如果你第一次接触 `Pass`、`Draw Call`、`RT` 这些词，建议先补：
+> - [Unity 渲染系统 01c5｜调试视角补桥：为什么工具里总在看 Draw Call、Pass 和 Render Target]({{< relref "engine-notes/unity-rendering-01c5-debugging-bridge-drawcall-pass-render-target.md" >}})
+> - [Unity 渲染系统 01d｜Frame Debugger 使用指南：逐 Draw Call 分析一帧画面]({{< relref "engine-notes/unity-rendering-01d-frame-debugger.md" >}})
+
 ---
 
 ## 连接方式：两条路

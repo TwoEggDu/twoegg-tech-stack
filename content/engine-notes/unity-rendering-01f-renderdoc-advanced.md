@@ -19,6 +19,11 @@ series: "Unity 渲染系统"
 
 上一篇把 RenderDoc 的界面和基本捕获流程讲清了。这篇进入实际排查问题时最常用的几个功能。
 
+> 如果你第一次接触这套调试语言，建议先补：
+> - [Unity 渲染系统 01c5｜调试视角补桥：为什么工具里总在看 Draw Call、Pass 和 Render Target]({{< relref "engine-notes/unity-rendering-01c5-debugging-bridge-drawcall-pass-render-target.md" >}})
+> - [Unity 渲染系统 01d｜Frame Debugger 使用指南：逐 Draw Call 分析一帧画面]({{< relref "engine-notes/unity-rendering-01d-frame-debugger.md" >}})
+> - [Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它]({{< relref "engine-notes/unity-rendering-01e-renderdoc-basics.md" >}})
+
 ---
 
 ## Mesh Viewer：验证顶点数据

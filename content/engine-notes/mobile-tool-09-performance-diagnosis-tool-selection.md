@@ -43,6 +43,10 @@ weight: 2130
 
 工具只是拿证据的手段，不是诊断本身。
 
+> 如果你第一次接触 `Pass`、`Draw Call`、`RT` 这些词，建议先补：
+> - [Unity 渲染系统 01c5｜调试视角补桥：为什么工具里总在看 Draw Call、Pass 和 Render Target]({{< relref "engine-notes/unity-rendering-01c5-debugging-bridge-drawcall-pass-render-target.md" >}})
+> - [Unity 渲染系统 01d｜Frame Debugger 使用指南：逐 Draw Call 分析一帧画面]({{< relref "engine-notes/unity-rendering-01d-frame-debugger.md" >}})
+
 ---
 
 ## 先给一个最短结论
@@ -61,6 +65,13 @@ Mali / Snapdragon 看“GPU 瓶颈类型和硬件计数器”
 ---
 
 ## 不要先按工具分，先按症状分
+
+如果你对下面几个词还不熟，先按最小意思理解就够了：
+
+- `Pass`：渲染过程里的一个阶段片段
+- `Draw Call`：CPU 发给 GPU 的一次具体绘制请求
+- `RT`：Render Target，当前被写入或读取的渲染结果
+- `ALU / Early-Z`：更偏 GPU 硬件瓶颈术语，先把它们当成“需要厂商工具回答的问题”就够了
 
 你手上的问题，通常只会落在下面几类之一：
 

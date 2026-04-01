@@ -18,6 +18,8 @@ series: "Unity 渲染系统"
 
 前面几篇已经把 Draw Call、Render Target，以及为什么工具里总在看这些对象的原因讲清了。这篇用 Frame Debugger 把它们"看见"。
 
+如果你第一次打开这类工具，先记一个最小翻译：左侧 Event List 不是 Scene 树，而是“这一帧按执行顺序展开的渲染日志”。
+
 ---
 
 ## 打开 Frame Debugger
@@ -39,6 +41,8 @@ Window → Analysis → Frame Debugger
 Frame Debugger 分为左右两个区域：
 
 **左侧：事件列表（Event List）**
+
+先不要把它理解成“场景物体列表”，而要把它理解成“这一帧渲染是按什么顺序一步步发生的”。
 
 显示这一帧里所有渲染事件的层级树，大致结构如下：
 

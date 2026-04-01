@@ -1,7 +1,7 @@
 ---
 date: "2026-03-24"
 title: "Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它"
-description: "讲清楚 RenderDoc 和 Frame Debugger 的定位差异，如何从 RenderDoc 启动 Unity 并捕获一帧，以及 Event Browser、Texture Viewer 和 Pipeline State 面板的基本用法。"
+description: "讲清楚 RenderDoc 和 Frame Debugger 的定位差异，如何连接 Unity 并捕获一帧，以及 Event Browser、Texture Viewer 和 Pipeline State 面板的基本用法。"
 slug: "unity-rendering-01e-renderdoc-basics"
 weight: 400
 featured: false
@@ -19,6 +19,10 @@ series: "Unity 渲染系统"
 
 这篇进入 RenderDoc：一个能直接看 GPU 原始数据的工具。
 
+> 如果你第一次接触 `Draw Call`、`Pass`、`Render Target` 这些词，建议先补两篇：
+> - [Unity 渲染系统 01c5｜调试视角补桥：为什么工具里总在看 Draw Call、Pass 和 Render Target]({{< relref "engine-notes/unity-rendering-01c5-debugging-bridge-drawcall-pass-render-target.md" >}})
+> - [Unity 渲染系统 01d｜Frame Debugger 使用指南：逐 Draw Call 分析一帧画面]({{< relref "engine-notes/unity-rendering-01d-frame-debugger.md" >}})
+
 ---
 
 ## RenderDoc 和 Frame Debugger 的定位差异
@@ -33,7 +37,7 @@ series: "Unity 渲染系统"
 | **看贴图 mip** | 不能 | 能（每个 mip 层级） |
 | **看 Pipeline State** | 部分 | 完整（Blend/Depth/Stencil/Rasterizer） |
 | **逐像素调试** | 不能 | 能（Shader Debugger） |
-| **启动方式** | Unity 内置，直接启用 | 需要从 RenderDoc 启动 Unity |
+| **启动方式** | Unity 内置，直接启用 | 可在 Unity 编辑器里附加，也可从 RenderDoc 启动 Unity |
 | **适合场景** | 快速定位 Pass 顺序和材质问题 | 深入排查 GPU 数据正确性 |
 
 两个工具是互补的：Frame Debugger 定位"哪里出问题"，RenderDoc 确认"数据层面出了什么问题"。
@@ -44,15 +48,29 @@ series: "Unity 渲染系统"
 
 从 [renderdoc.org](https://renderdoc.org) 下载安装，支持 Windows、Linux、Android。
 
-Unity 2019.3 及以上版本内置了 RenderDoc 集成——不需要额外配置，直接从 RenderDoc 启动 Unity 即可识别。
+Unity 2019.3 及以上版本内置了 RenderDoc 集成——常用连接方式有两条：直接在 Unity 编辑器里加载 RenderDoc，或者从 RenderDoc 启动 Unity。
 
 ---
 
-## 从 RenderDoc 启动 Unity
+## 连接 Unity 并捕获第一帧
 
-RenderDoc 的捕获原理是**注入目标进程**：它在进程启动时注入一个 hook，拦截所有图形 API 调用（DX11/DX12/Vulkan/OpenGL）。要让 RenderDoc 能捕获 Unity 的帧，必须由 RenderDoc 启动 Unity，而不是先打开 Unity 再附加。
+RenderDoc 的捕获原理是**注入目标进程**：它需要挂进目标进程，拦截图形 API 调用（DX11/DX12/Vulkan/OpenGL）。对 Unity 来说，常见做法有两条：
 
-**启动步骤：**
+### 方式一：从 Unity 编辑器附加（推荐）
+
+1. 安装 RenderDoc
+2. 打开 Unity，进入：
+   ```
+   Window → Analysis → RenderDoc
+   ```
+3. 点击 **Load RenderDoc**
+4. 进入 Play Mode，点击编辑器里的捕获按钮或按 `F12` 抓一帧
+
+这条路最适合初学者，因为迭代最快，也最符合后面几篇实战文的工作流。
+
+### 方式二：从 RenderDoc 启动 Unity
+
+如果你想调试特定启动参数，或者更习惯从 RenderDoc 管理捕获，也可以这样做：
 
 1. 打开 RenderDoc，切到 **Launch Application** 选项卡
 2. Executable Path 填 Unity Editor 的路径：
@@ -67,10 +85,6 @@ RenderDoc 的捕获原理是**注入目标进程**：它在进程启动时注入
 5. 点击 **Launch** 启动 Unity
 
 Unity 正常打开后，进入 Play Mode，在 RenderDoc 里点击 **Capture Frame**（或按 F12）捕获当前帧。
-
-**Unity 编辑器里的快捷方式：**
-
-Unity 菜单栏里有 **RenderDoc → Capture Frame** 选项（需要 RenderDoc 已启动且注入成功）。如果看不到这个菜单，说明 Unity 没有从 RenderDoc 启动。
 
 ---
 
