@@ -73,15 +73,26 @@ Unity 里的 `RenderTexture` 资产就是一个可配置的 RT：指定分辨率
 
 ## 为什么渲染过程中 RT 会切换
 
-现代渲染管线不是一次性把所有东西画完——它分成多个 **Pass**，每个 Pass 可能写入不同的 RT：
+现代渲染管线不是一次性把所有东西画完——它分成多个 **Pass**，每个 Pass 可能写入不同的 RT。
+
+这些 Pass 不是为了"把一帧拆得更复杂"，而是因为不同阶段要先生产不同类型的中间结果，后面的阶段才能继续使用。一个简单的判断方法是：**谁是后面要采样或依赖的数据，谁就得先生成；谁必须基于已经形成的颜色结果做混合或整屏处理，谁就只能放后面。**
+
+下面这组顺序更适合理解成"常见 Pass 类型与依赖关系示意"，不是所有项目都会完整出现：
 
 ```
-Depth Prepass     → 写入 Depth Buffer（只写深度，不写颜色）
-Opaque Pass       → 写入 Color Buffer + Depth Buffer
 Shadow Map Pass   → 写入 Shadow Map RT（一张独立的深度贴图）
-Transparent Pass  → 写入 Color Buffer（从后往前，Alpha 混合）
+Depth Prepass     → 写入 Depth Buffer（只写深度，不写颜色，可选）
+Opaque Pass       → 写入 Color Buffer + Depth Buffer（并采样 Shadow Map）
+Transparent Pass  → 基于已有 Color Buffer 做 Alpha 混合（从后往前，通常不写深度）
 Post-processing   → 读取 Color Buffer → 处理 → 写入另一张 RT → 最终输出
 ```
+
+顺序背后的原因可以直接记成四句：
+
+- `Shadow Map Pass` 往往在前面，因为不透明物体做光照时要先拿到阴影结果。
+- `Depth Prepass` 也是服务型 Pass：它先把深度写好，让后面的不透明着色少做无效 Fragment，也能给依赖深度纹理的效果提供输入；如果项目里没人依赖它，这个 Pass 也可能根本不存在。
+- `Transparent Pass` 必须放在不透明物体后面，因为透明混合依赖已经写好的背景颜色，而且半透明通常不写深度，只能按从后往前的顺序叠上去。
+- `Post-processing` 几乎总在最后，因为它处理的对象已经不是某个单独物体，而是整张相机颜色结果。
 
 每次从一个 RT 切换到另一个 RT，在图形 API 层面叫做 **Render Target 切换**（或 Framebuffer 切换）。这个切换有性能代价，尤其在移动端的 TBDR（Tile-Based Deferred Rendering）架构上，频繁切换 RT 会打断 tile 缓存，造成显著的带宽开销。
 
