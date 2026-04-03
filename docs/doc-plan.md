@@ -765,21 +765,6 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-## Unity Android 发布与包体 (6)
-
-*把 Google Play 规则、AAB / PAD、Unity 打包设置、base module 边界和超限排查串成一条可执行的工程链路*
-
-| 编号 | 标题 |
-|------|------|
-| AAB-index | Unity Android AAB / PAD 系列索引：从 APK 心智切到 base module 与 asset packs |
-| AAB-01 | 从 APK + OBB 到 AAB + PAD：Google Play 为什么改了发布模型 |
-| AAB-02 | Play Console 报 base 超 200MB，到底在算什么 |
-| AAB-03 | Unity 里哪些设置真的决定 base module 和 asset packs |
-| AAB-04 | 为什么你的 Unity 资源还在进 base：首场景、StreamingAssets、so 和 ABI |
-| AAB-05 | Unity AAB 超限实战：base > 200MB 时怎么排、怎么改、怎么做 CI |
-
----
-
 ## 系列十八：DOTS 专题（5 篇）
 
 | 编号 | 标题 |
@@ -886,7 +871,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
     ↓
 系列十四（引擎架构 → 自研引擎）
     ↓
-系列十五（本地化）  系列十六（安全）  系列十七（CI/CD）  Unity Android 发布与包体
+系列十五（本地化）  系列十六（安全）  系列十七（CI/CD）
 系列十八（DOTS）   系列十九（插件）  系列二十（Unity源码）
 ```
 
@@ -918,12 +903,11 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十五·B（Accessibility）| 3 |
 | 系列十六（安全与反外挂）| 4 |
 | 系列十七（CI/CD 与工程质量）| 8 |
-| Unity Android 发布与包体 | 6 |
 | 系列十八（DOTS）| 5 |
 | 系列十九（插件框架）| 5 |
 | 系列二十一（质量保证体系）| 14 |
 | 系列二十（Unity 源码）| 待定 |
-| **合计** | **约 390 篇（不含系列二十）** |
+| **合计** | **约 384 篇（不含系列二十）** |
 
 ---
 
