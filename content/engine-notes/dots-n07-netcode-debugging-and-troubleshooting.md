@@ -17,6 +17,8 @@ series_role: "article"
 series_order: 7
 weight: 2307
 ---
+> 验证环境：Unity 6000.0.x · com.unity.netcode 1.4.x · com.unity.entities 1.3.x
+
 
 NetCode 最后拼的不是概念，而是证据链。很多多人问题表面上都像“网络有点抖”，但实际根因可能完全不同：输入链错了、快照太重了、权威边界漂了、预测回滚不稳定，或者只是表现层在伪装问题。
 

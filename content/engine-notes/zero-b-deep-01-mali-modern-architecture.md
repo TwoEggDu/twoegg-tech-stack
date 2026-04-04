@@ -254,6 +254,8 @@ Mali 的 Tile Buffer 对比：
 
 这解释了一个实践现象：**Deferred Rendering 管线在 Mali 上的带宽消耗远高于 Adreno**，因为 GBuffer 读取是 Mali 的 L2 无法完全覆盖的大工作集访问。
 
+带宽优化的实操建议（纹理格式选择、RT 格式、MSAA Resolve 时机）见 [GPU 渲染优化 02｜带宽优化]({{< relref "engine-notes/gpu-opt-02-bandwidth.md" >}})。
+
 ### 量化参考
 
 在相似规格设备上（2022-2023 年旗舰），相同场景的 DRAM 读取量测量（来自 ARM Performance Studio 和 Snapdragon Profiler 数据对比，典型中等复杂度游戏场景）：

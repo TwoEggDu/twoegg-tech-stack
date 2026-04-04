@@ -17,6 +17,8 @@ series_role: "article"
 series_order: 3
 weight: 2303
 ---
+> 验证环境：Unity 6000.0.x · com.unity.netcode 1.4.x · com.unity.entities 1.3.x
+
 
 N01 已经把世界地图立住了：Client World、Server World、Ghost、Authority 这些概念分别站在哪一层。N03 要往下走一步，回答更具体的问题：**Snapshot 到底该装什么，Ghost 到底同步什么，什么东西根本不该走网络**。
 

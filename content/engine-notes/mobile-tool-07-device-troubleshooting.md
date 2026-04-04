@@ -190,6 +190,11 @@ Step 3：RenderDoc 抓帧对比
 Step 4：检查 Shader 精度
   Mali 严格执行 mediump（fp16），Adreno 通常提升到 highp
   如果只有 Mali 花屏：检查是否有 UV、位置坐标用了 mediump
+  精度问题的完整分析和修复方案见 [Mali 现代架构深度 § mediump 精度行为]({{< relref "engine-notes/zero-b-deep-01-mali-modern-architecture.md" >}})
+
+Step 5（补充）：确认不是驱动层 Shader 编译 Bug
+  同一 Shader 在同款 GPU 的不同 ROM 版本上表现不同 → 驱动 Bug
+  排查思路详见 [Android Vulkan 驱动架构｜驱动 Bug 类型与规避]({{< relref "engine-notes/android-vulkan-driver.md" >}})
 ```
 
 ### 3.3 闪烁 / 画面撕裂排查

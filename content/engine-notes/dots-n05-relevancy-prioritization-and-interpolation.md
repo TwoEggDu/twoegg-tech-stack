@@ -17,6 +17,8 @@ series_role: "article"
 series_order: 5
 weight: 2305
 ---
+> 验证环境：Unity 6000.0.x · com.unity.netcode 1.4.x · com.unity.entities 1.3.x
+
 
 N01 已经把世界地图立住了，N03 讲清了 Snapshot 和 Ghost 应该同步什么，N04 则说明了 Prediction / Rollback 为什么不是简单重跑。N05 要继续往下收：**网络同步本质上是预算问题，不同实体不该被同等对待，Relevancy、Prioritization 和 Interpolation 就是把预算分到该花的地方**。
 

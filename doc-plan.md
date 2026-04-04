@@ -497,9 +497,9 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 变体-10 | Unity Shader Variant 运行时命中机制：从 SetPass 到变体匹配的完整链路 |
 | 变体-11 | Unity Shader Variant 缺失事故排查流程：从现象到根因的三层定位法 |
 | 变体-12 | SVC、Always Included、Stripping 到底各自该在什么场景下用 |
-| 变体-13 | 为什么 Shader 加到 Always Included 就好了：它和放进 AssetBundle 到底差在哪 |
-| 变体-14 | Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界 |
-| 变体-15 | Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来 |
+| ✅ 变体-13 | 为什么 Shader 加到 Always Included 就好了：它和放进 AssetBundle 到底差在哪 |
+| ✅ 变体-14 | Unity Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界 |
+| ✅ 变体-15 | Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来 |
 | 变体-16 | 热更新场景下的 Shader 交付架构：bundle 边界、版本对齐与变体保护策略 |
 | 变体-17 | Shader Variant 数量监控与 CI 集成：怎么把变体治理接入构建流程 |
 
@@ -693,52 +693,53 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| 资产-01 | Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的 |
-| 资产-02 | Unity 的 Importer 到底做了什么：为什么同一份源文件，进到 Unity 后不再只是"一个文件" |
-| 资产-03 | Unity 的 GUID、fileID、PPtr 到底在引用什么：为什么资源引用不是文件路径 |
-| 资产-04 | Unity 的序列化资产怎样还原成运行时对象：从 Serialized Data 到 Native Object、Managed Binding |
-| 资产-05 | Unity 的 ScriptableObject、Material、AnimationClip 为什么气质完全不一样 |
+| ✅ 资产-01 | Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的 |
+| ✅ 资产-02 | Unity 的 Importer 到底做了什么：为什么同一份源文件，进到 Unity 后不再只是"一个文件" |
+| ✅ 资产-03 | Unity 的 GUID、fileID、PPtr 到底在引用什么：为什么资源引用不是文件路径 |
+| ✅ 资产-04 | Unity 的序列化资产怎样还原成运行时对象：从 Serialized Data 到 Native Object、Managed Binding |
+| ✅ 资产-05 | Unity 的 ScriptableObject、Material、AnimationClip 为什么气质完全不一样 |
 
 **对象图结构（3 篇）**
 
 | 编号 | 标题 |
 |------|------|
-| 资产-06 | Unity 的 Prefab 文件本质上是什么：模板对象图、嵌套、Variant 和 Override 分别站在哪 |
-| 资产-07 | Unity 的 Scene 文件本质上是什么：为什么它更像一张对象图，而不是一个"大资源" |
-| 资产-08 | Unity 的 Prefab、Scene、AssetBundle 到底怎样从序列化文件还原成运行时对象 |
+| ✅ 资产-06 | Unity 的 Prefab 文件本质上是什么：模板对象图、嵌套、Variant 和 Override 分别站在哪 |
+| ✅ 资产-07 | Unity 的 Scene 文件本质上是什么：为什么它更像一张对象图，而不是一个"大资源" |
+| ✅ 资产-08 | Unity 的 Prefab、Scene、AssetBundle 到底怎样从序列化文件还原成运行时对象 |
 
 **AssetBundle 层（8 篇）**
 
 | 编号 | 标题 |
 |------|------|
-| 资产-09 | Unity 为什么需要 AssetBundle：它解决的不是"加载"，而是"交付" |
-| 资产-10 | 为什么 AssetBundle 总让项目变复杂：切包粒度、重复资源、共享依赖和包爆炸 |
-| 资产-11 | Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么 |
-| 资产-12 | AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的 |
-| 资产-13 | AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来 |
-| 资产-14 | AssetBundle 的性能与内存代价：LZMA/LZ4、首次加载卡顿、内存峰值、解压与 I/O |
-| 资产-15 | AssetBundle 的工程治理：版本号、Hash、CDN、缓存、回滚、构建校验与回归 |
-| 资产-16 | Unity 内置资源到底是什么：Builtin Resources、Default Resources、Always Included 和 Built-in Bundles 分别站在哪 |
+| ✅ 资产-09 | Unity 为什么需要 AssetBundle：它解决的不是"加载"，而是"交付" |
+| ✅ 资产-10 | 为什么 AssetBundle 总让项目变复杂：切包粒度、重复资源、共享依赖和包爆炸 |
+| ✅ 资产-11 | Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么 |
+| ✅ 资产-12 | AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的 |
+| ✅ 资产-13 | AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来 |
+| ✅ 资产-14 | AssetBundle 的性能与内存代价：LZMA/LZ4、首次加载卡顿、内存峰值、解压与 I/O |
+| ✅ 资产-15 | AssetBundle 的工程治理：版本号、Hash、CDN、缓存、回滚、构建校验与回归 |
+| ✅ 资产-16 | Unity 内置资源到底是什么：Builtin Resources、Default Resources、Always Included 和 Built-in Bundles 分别站在哪 |
 
 **构建管线与框架层（5 篇）**
 
 | 编号 | 标题 |
 |------|------|
-| 资产-17 | Unity 的资源构建管线到底分几层：BuildPipeline、SBP、Addressables Build Script 各自站在哪 |
-| 资产-18 | Addressables 和 AssetBundle 到底是什么关系：谁是底层格式，谁是调度和管理层 |
-| 资产-19 | Addressables、YooAsset 和自研资源系统到底怎么选 |
-| 资产-20 | Resources、StreamingAssets、AssetBundle、Addressables 到底各自该在什么场景下用 |
-| 资产-21 | 怎么看 Unity 资源构建产物：Manifest、BuildLayout、Catalog 和缓存目录到底在告诉你什么 |
+| ✅ 资产-17 | Unity 的资源构建管线到底分几层：BuildPipeline、SBP、Addressables Build Script 各自站在哪 |
+| ✅ 资产-18 | Addressables 和 AssetBundle 到底是什么关系：谁是底层格式，谁是调度和管理层 |
+| ✅ 资产-19 | Addressables、YooAsset 和自研资源系统到底怎么选 |
+| ✅ 资产-20 | Resources、StreamingAssets、AssetBundle、Addressables 到底各自该在什么场景下用 |
+| ✅ 资产-21 | 怎么看 Unity 资源构建产物：Manifest、BuildLayout、Catalog 和缓存目录到底在告诉你什么 |
 
 **运维与诊断层（6 篇）**
 
 | 编号 | 标题 |
 |------|------|
-| 资产-22 | 做 Unity 资源系统时，最容易把哪几层混在一起 |
-| 资产-23 | 看到一个 Unity 资源问题时，先怀疑哪一层 |
-| 资产-24 | Unity 为什么资源挂脚本时问题特别多：脚本身份链、MonoScript 和程序集边界 |
-| 资产-25 | Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载 |
-| 资产-26 | Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线 |
+| ✅ 资产-22 | 做 Unity 资源系统时，最容易把哪几层混在一起 |
+| ✅ 资产-23 | 看到一个 Unity 资源问题时，先怀疑哪一层 |
+| ✅ 资产-24 | Unity 为什么资源挂脚本时问题特别多：脚本身份链、MonoScript 和程序集边界 |
+| ✅ 资产-25 | Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载 |
+| ✅ 资产-26 | Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线 |
+| ✅ 资产-27 | Unity 资源交付的优化边界：引擎已经替你做了什么，项目自己还要做什么 |
 
 ### 八·E — Unity 代码与资源裁剪（7 篇）
 

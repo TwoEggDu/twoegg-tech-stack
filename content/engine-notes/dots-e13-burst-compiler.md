@@ -169,6 +169,7 @@ public struct MyJob : IJob { ... }
 
 - `FloatMode.Strict`（默认）：严格遵守 IEEE 754，结果可重现，但 LLVM 无法重排 FP 运算。
 - `FloatMode.Fast`：允许 LLVM 重排浮点运算顺序（如 `a + b + c` 可被重写为 `(a + c) + b`），解锁 FMA 融合和更激进的向量化，通常带来 10-30% 的提升。代价是浮点结果可能与 Strict 模式有微小差异，`NaN` 传播行为也可能改变。物理模拟等对精度敏感的模块慎用。
+  > **[待验证 · e13-floatmode-fast]** 主张：FloatMode.Fast 通常带来 10–30% 提升。规格：Unity ? / Burst ? / Desktop AVX2，float3 运算循环，10k Entity。验证：Burst Inspector 汇编指令密度对比（FMA 融合出现与否）；Profiler Worker Thread 时间对比。
 
 **FloatPrecision**
 

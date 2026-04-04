@@ -17,6 +17,8 @@ series_role: "article"
 series_order: 6
 weight: 2306
 ---
+> 验证环境：Unity 6000.0.x · com.unity.netcode 1.4.x · com.unity.entities 1.3.x
+
 
 前面几篇已经把 NetCode 的世界地图、输入链和同步边界冻住了。到了 N06，问题会从“概念怎么分”变成“项目里最容易出事的对象到底该怎么拆”：Character、Projectile 和技能系统。
 

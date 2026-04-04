@@ -17,6 +17,8 @@ series_role: "article"
 series_order: 1
 weight: 2301
 ---
+> 验证环境：Unity 6000.0.x · com.unity.netcode 1.4.x · com.unity.entities 1.3.x
+
 
 多人同步最容易写歪的地方，不是某个 API 名字，而是把“谁在算、谁在改、谁在看”这三件事混成一件事。
 

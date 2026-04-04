@@ -164,6 +164,8 @@ ComponentLookup 的内部实现大致是：
 - 顺序遍历 100000 个 Entity 的 Component：约 **0.3–0.5 ms**
 - 随机 ComponentLookup 100000 次（完全随机分布）：约 **3–8 ms**
 
+> **[待验证 · e05-lookup-random]** 主张：顺序 ~0.3–0.5ms vs 随机 ~3–8ms（100k Entity）。规格：Unity ? / Entities ? / Device ?。验证：Profiler Worker Thread 时间轴，`IJobEntity` 顺序遍历 vs `ComponentLookup` 随机读取耗时对比。
+
 差距在 10 倍量级。这不是 ComponentLookup 的 bug，而是**随机内存访问的固有代价**。
 
 ---

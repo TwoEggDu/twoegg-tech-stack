@@ -1,22 +1,24 @@
 ---
-title: "Unity DOTS N04｜Prediction / Rollback：为什么“多跑一遍逻辑”远远不够"
-slug: "dots-n04-prediction-and-rollback"
-date: "2026-03-28"
+title: “Unity DOTS N04｜Prediction / Rollback：为什么”多跑一遍逻辑”远远不够”
+slug: “dots-n04-prediction-and-rollback”
+date: “2026-03-28”
 draft: true
-description: "Prediction 不是把逻辑再执行一次，Rollback 也不是把世界粗暴回退。先把确定性边界、输入重放和状态修正链路冻住，才能理解为什么这条链的成本会这么高。"
+description: “Prediction 不是把逻辑再执行一次，Rollback 也不是把世界粗暴回退。先把确定性边界、输入重放和状态修正链路冻住，才能理解为什么这条链的成本会这么高。”
 tags:
-  - "Unity"
-  - "DOTS"
-  - "NetCode"
-  - "Prediction"
-  - "Rollback"
-  - "Determinism"
-series: "Unity DOTS NetCode"
-primary_series: "unity-dots-netcode"
-series_role: "article"
+  - “Unity”
+  - “DOTS”
+  - “NetCode”
+  - “Prediction”
+  - “Rollback”
+  - “Determinism”
+series: “Unity DOTS NetCode”
+primary_series: “unity-dots-netcode”
+series_role: “article”
 series_order: 4
 weight: 2304
 ---
+
+> 验证环境：Unity 6000.0.x · com.unity.netcode 1.4.x · com.unity.entities 1.3.x
 
 N01 已经把 `Client World`、`Server World`、`Ghost` 和 `Authority` 的地图立住了，N02 也把 `CommandData` 这条输入链冻住了。到了 N04，真正要处理的是最容易被低估的一段：**Prediction / Rollback 不是“客户端先算一遍，错了再重来”这么简单，它要求你先划出确定性边界，再接受一次回滚可能会影响整条链的成本**。
 
@@ -68,33 +70,80 @@ Rollback 的成本不是单一的“回退一次”，而是三层叠加：
 
 如果你的预测窗口越长、输入越频繁、状态分支越多，Rollback 就越容易从“局部修正”变成“整段重算”。所以这件事必须一开始就按成本设计，而不是等到抖了再补。
 
-## 最小写法：按 Tick 保存输入和可回放状态
+## Unity NetCode 的 Prediction / Rollback 实际工作方式
+
+Unity NetCode 不要求你自己实现 Prediction Buffer 或 Rollback 循环——框架已经内置了这套机制。你需要做的是：用 `[GhostField]` 标注哪些字段参与快照，把预测逻辑写进 `PredictedSimulationSystemGroup`，其余由 NetCode 处理。
+
+**第一步：用 `[GhostField]` 声明哪些状态参与快照和回滚**
 
 ```csharp
-public struct PredictedFrame
+using Unity.Entities;
+using Unity.NetCode;
+using Unity.Mathematics;
+
+// Ghost 组件：标注 [GhostField] 的字段才会被 NetCode 包含在快照里
+// 快照 = 服务端权威状态 + Rollback 时可恢复的历史切片
+public struct PlayerCharacter : IComponentData
 {
-    public int Tick;
-    public PlayerCommand Input;
-    public float3 Position;
-    public quaternion Rotation;
+    [GhostField] public float3 Position;
+    [GhostField] public quaternion Rotation;
+    [GhostField] public int Health;
+
+    // 不加 [GhostField]：不同步、不回滚，纯本地状态（如冷却计时、动画混合权重）
+    public float LocalCooldownTimer;
+    public float LocalAnimBlend;
 }
+```
 
-public sealed class PredictionBuffer
+没有 `[GhostField]` 的字段在 Rollback 时不会被恢复。这是有意为之：本地表现层的状态不需要回滚，强行回滚反而会产生视觉抖动。
+
+**第二步：把预测逻辑写进 `PredictedSimulationSystemGroup`**
+
+```csharp
+using Unity.Burst;
+using Unity.Entities;
+using Unity.NetCode;
+using Unity.Transforms;
+using Unity.Mathematics;
+
+// PredictedSimulationSystemGroup 里的系统同时运行在 Client World 和 Server World
+// Client World：先行推进，回滚后重放（每 Tick 可能运行多次）
+// Server World：权威推进，每 Tick 只运行一次
+[BurstCompile]
+[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
+public partial struct PlayerMovementSystem : ISystem
 {
-    private readonly Queue<PredictedFrame> frames = new();
-
-    public void Save(PredictedFrame frame) => frames.Enqueue(frame);
-
-    public void RollbackTo(int tick)
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
     {
-        // 1. 找到 tick 对应的历史状态
-        // 2. 恢复该状态
-        // 3. 用后续输入重新重放
+        float dt = SystemAPI.Time.DeltaTime;
+
+        foreach (var (input, character, transform) in SystemAPI
+            .Query<RefRO<PlayerInput>, RefRO<PlayerCharacter>, RefRW<LocalTransform>>()
+            .WithAll<Simulate>())   // Simulate：NetCode 在重播 Tick 里自动添加/移除
+        {
+            var move = input.ValueRO.Movement;
+            if (math.lengthsq(move) > 0.01f)
+            {
+                var dir = math.normalize(new float3(move.x, 0, move.y));
+                transform.ValueRW.Position += dir * (5f * dt);
+            }
+        }
     }
 }
 ```
 
-这段伪代码真正想表达的是：Rollback 不是“把当前值减回去”，而是“恢复历史切片，再用可重放输入把后续链重新生成一遍”。如果没有历史输入和历史状态，Rollback 根本无从谈起。
+`Simulate` 组件是 NetCode 管理重播窗口的信号：在回滚重放期间，NetCode 会对需要重播的 Entity 加上 `Simulate`，让系统跳过不相关的 Entity，精确重放受影响的预测链。
+
+**框架如何处理 Rollback：三步自动执行**
+
+当服务端的权威快照抵达客户端时，NetCode 自动执行：
+
+1. **恢复历史状态**：把带 `[GhostField]` 的字段还原到快照对应 Tick 的值。
+2. **重放后续输入**：从快照 Tick 到当前 Tick，按顺序重跑 `PredictedSimulationSystemGroup` 里的所有预测系统，使用 `IInputComponentData` 缓存里的历史输入。
+3. **对齐派生状态**：重放完成后，当前帧的预测结果与权威结果重新对齐。
+
+你不需要写任何 Rollback 代码。你只需要保证预测逻辑满足一个前提：**给定相同的起始状态和相同的输入序列，必须得到相同的结果**——这就是确定性边界。
 
 ## 常见误区
 

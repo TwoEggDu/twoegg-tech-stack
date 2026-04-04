@@ -75,6 +75,8 @@ public partial struct MoveSystem : ISystem
 
 **性能数量级对比（参考值，10,000 个 Entity 规模）：**
 
+> **[待验证 · e04-query-rebuild]** 主张：每帧重建 ~0.3–0.8ms，缓存 ~0.01ms（10k Entity + LocalTransform+MoveSpeed）。规格：Unity ? / Entities ? / Device ?。验证：Profiler CPU Timeline，`Query.CreateArchetypeChunkArray` 字段耗时对比。
+
 | 操作 | 耗时（主线程） |
 |------|----------------|
 | 每帧重新构建 Query | ~0.3–0.8 ms |
