@@ -423,3 +423,27 @@ Unity Memory Profiler（本篇）：
   发现异常 → Memory Profiler 拍快照对比
   上线前 → adb dumpsys meminfo 检查总量是否在预算内
 ```
+
+---
+
+## 十、Memory Profiler 的失效条件
+
+Memory Profiler 的快照机制本身存在几个使用边界，在以下场景需要特别注意：
+
+**低端设备上拍快照可能触发 OOM**
+
+拍摄快照时，Unity 需要在内存中同时保留：原有游戏数据、快照副本（约等于当前内存占用的 1.2–1.5 倍）。在 2GB 设备上，如果游戏当前已占用 500MB+，拍快照的瞬间内存峰值可能超过 LMK 的危险线，导致系统主动杀进程。
+
+对策：在低端设备上只在"安全点"（加载完成后、非战斗状态）拍快照，不要在高负载场景中触发。也可以用 adb dumpsys meminfo 代替 Memory Profiler 来确认总量，只在内存可控时再用 Memory Profiler 做精细分析。
+
+**快照是静态时刻，无法捕捉"一闪而过"的分配**
+
+Memory Profiler 反映拍摄时刻的内存状态，对"每帧产生然后立即释放"的高频短生命周期分配无效。这类分配在帧时间里来去，但不在快照里留痕，却可能导致 GC 频繁触发。
+
+这种情况要用 Unity Profiler 的内存页（Memory → Allocated 趋势图 + GC.Alloc 样本）来捕捉，而不是 Memory Profiler 快照。
+
+**快照对比的"差量"可能被 GC 行为干扰**
+
+两次快照之间，如果发生了一次 GC.Collect，托管堆会回收大量对象，导致快照 B 比快照 A 的托管对象数量少很多——这不是泄漏消失了，而是 GC 清理了本来就是临时分配的对象。
+
+真正的泄漏在两次快照都应该可见：同一个对象类型的 Persistent 实例持续增长，且引用链指向的根节点不是临时变量（GCRoot 不是 Stack，而是 Static Field 或 MonoBehaviour 字段）。

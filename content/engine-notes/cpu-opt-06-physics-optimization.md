@@ -364,3 +364,27 @@ FixedTimestep：同样需要与目标帧率对齐
 | Sleep Threshold | 0.005 | 0.01-0.02 | 减少 Awake Rigidbody |
 | Solver 迭代次数 | Velocity=6, Position=1 | Velocity=4（一般游戏） | Solver 时间 -30% |
 | 不活跃物件 | Sleeping Rigidbody | Kinematic 或 Disabled | 完全不参与 Broad Phase |
+
+---
+
+## 九、优化清单的失效条件
+
+上表中的每项优化都有适用边界，盲目应用可能引入新问题：
+
+**降低 Solver 迭代次数（Velocity 从 6 降到 4）**
+
+适用于大多数动作游戏和赛车游戏。但布娃娃系统、布料模拟、绳索链式刚体对 Solver 迭代非常敏感——Velocity 迭代降到 4 以下时，关节约束收敛速度不足，会产生肉眼可见的抖动。
+
+判断方式：先用低迭代数跑场景，专门测试布娃娃坍塌、绳索拉伸、布料边缘的视觉效果。如果出现明显抖动，该场景保持默认值（6），不参与降迭代优化。
+
+**提高 Sleep Threshold**
+
+将 Sleep Threshold 从 0.005 提高到 0.02 能显著减少 Awake Rigidbody 数量，但对质量很轻的物理对象（如小道具、硬币、破碎碎片）会产生"悬浮感"——物体明明已经几乎静止，但还在轻微漂移，因为速度始终高于旧阈值却低于新阈值。
+
+判断方式：测试场景中质量最小的 Rigidbody 是否在合理时间内静止，如果出现持续小幅抖动则说明 Sleep Threshold 过高。
+
+**降低 FixedTimestep（如从 50Hz 降到 30Hz）**
+
+帧率预算有限时降低物理更新频率是有效选择，但 FixedTimestep 越大，单步物理模拟覆盖的时间窗口越长，快速移动的细小碰撞体可能在两次物理更新之间"穿越"碰撞体（Tunneling）。
+
+具体风险：FixedTimestep = 1/30 时，子弹（速度 > 碰撞体厚度 × 30m/s）一帧可以穿透墙壁。如果游戏有高速投射物，需要为这些对象单独开启 Collision Detection Mode = Continuous，不能依靠降低 FixedTimestep 来覆盖所有碰撞需求。
