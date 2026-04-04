@@ -150,6 +150,11 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 - [Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线]({{< relref "engine-notes/unity-resource-delivery-engineering-practices-baseline.md" >}})
 - [Unity 资源交付的优化边界：引擎已经替你做了什么，项目自己还要做什么]({{< relref "engine-notes/unity-resource-delivery-optimization-boundaries-engine-vs-project.md" >}})
 - [AssetBundle 文件内部结构：Header、Block、Directory 和 SerializedFile 是怎么组织的]({{< relref "engine-notes/unity-assetbundle-file-internal-structure-header-block-directory-serializedfile.md" >}})
+- [Unity 内置资源到底是什么：Builtin Resources、Default Resources、Always Included 和 Built-in Bundles 分别站在哪]({{< relref "engine-notes/unity-builtin-resources-default-resources-always-included-built-in-bundles.md" >}})
+- [Unity 的资源构建管线到底分几层：BuildPipeline、SBP、Addressables Build Script 各自站在哪]({{< relref "engine-notes/unity-buildpipeline-sbp-addressables-build-script-layering.md" >}})
+- [Addressables、YooAsset 和自研资源系统到底怎么选]({{< relref "engine-notes/unity-addressables-yooasset-or-self-built-how-to-choose.md" >}})
+- [Resources、StreamingAssets、AssetBundle、Addressables 到底各自该在什么场景下用]({{< relref "engine-notes/unity-resources-streamingassets-assetbundle-addressables-when-to-use.md" >}})
+- [怎么看 Unity 资源构建产物：Manifest、BuildLayout、Catalog 和缓存目录到底在告诉你什么]({{< relref "engine-notes/unity-how-to-read-resource-build-artifacts-manifest-buildlayout-catalog-cache.md" >}})
 
 这一组回答的是：
 
@@ -182,6 +187,8 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 
 ## 六、诊断与案例
 
+- [做 Unity 资源系统时，最容易把哪几层混在一起]({{< relref "engine-notes/unity-resource-system-what-layers-get-confused-most.md" >}})
+- [Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载]({{< relref "engine-notes/unity-resource-system-smoketests-and-regression.md" >}})
 - [看到一个 Unity 资源问题时，先怀疑哪一层]({{< relref "engine-notes/unity-resource-problem-which-layer-to-suspect-first.md" >}})
 - [一次 AssetBundle 构建后 Shader Variant 丢失问题的定位与修复]({{< relref "problem-solving/urp-shader-prefiltering-assetbundle.md" >}})
 
@@ -225,11 +232,15 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 
 先看：
 
-- [Unity 为什么需要 AssetBundle：它解决的不是“加载”，而是“交付”]({{< relref "engine-notes/unity-why-needs-assetbundle-delivery-not-loading.md" >}})
-- [Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么]({{< relref "engine-notes/unity-how-assets-become-assetbundles-dependencies-manifest-compression.md" >}})
-- [AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来]({{< relref "engine-notes/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md" >}})
+- [Unity 为什么需要 AssetBundle：它解决的不是”加载”，而是”交付”]({{< relref “engine-notes/unity-why-needs-assetbundle-delivery-not-loading.md” >}})
+- [Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么]({{< relref “engine-notes/unity-how-assets-become-assetbundles-dependencies-manifest-compression.md” >}})
+- [AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate、Unload 怎么接起来]({{< relref “engine-notes/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md” >}})
+- [Unity 内置资源到底是什么：Builtin Resources、Default Resources、Always Included 和 Built-in Bundles 分别站在哪]({{< relref “engine-notes/unity-builtin-resources-default-resources-always-included-built-in-bundles.md” >}})
+- [Unity 的资源构建管线到底分几层：BuildPipeline、SBP、Addressables Build Script 各自站在哪]({{< relref “engine-notes/unity-buildpipeline-sbp-addressables-build-script-layering.md” >}})
+- [Addressables、YooAsset 和自研资源系统到底怎么选]({{< relref “engine-notes/unity-addressables-yooasset-or-self-built-how-to-choose.md” >}})
+- [怎么看 Unity 资源构建产物：Manifest、BuildLayout、Catalog 和缓存目录到底在告诉你什么]({{< relref “engine-notes/unity-how-to-read-resource-build-artifacts-manifest-buildlayout-catalog-cache.md” >}})
 
-### 6. 你感觉“切包一开始还行，后来越来越失控”
+### 6. 你感觉”切包一开始还行，后来越来越失控”
 
 先看：
 
@@ -259,6 +270,8 @@ series_reading_hint: "第一次阅读建议先沿着资源本体、引用和 Imp
 先看：
 
 - [看到一个 Unity 资源问题时，先怀疑哪一层]({{< relref "engine-notes/unity-resource-problem-which-layer-to-suspect-first.md" >}})
+- [做 Unity 资源系统时，最容易把哪几层混在一起]({{< relref "engine-notes/unity-resource-system-what-layers-get-confused-most.md" >}})
+- [Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载]({{< relref "engine-notes/unity-resource-system-smoketests-and-regression.md" >}})
 
 ## 这组文章刻意不做什么
 
