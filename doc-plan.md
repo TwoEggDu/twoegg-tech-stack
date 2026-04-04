@@ -49,8 +49,8 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| 零B·深-01 | Mali 现代架构（Valhall / 5th Gen）：Execution Engine、带宽模型、对移动优化的含义 |
-| 零B·深-02 | Apple GPU：Tile Memory、Memoryless RT、Rasterization Order、与 Metal 的深度绑定 |
+| 零B·深-01 | Mali 现代架构（Valhall / 5th Gen）：Execution Engine、带宽模型、对移动优化的含义 ✅ |
+| 零B·深-02 | Apple GPU：Tile Memory、Memoryless RT、Rasterization Order、与 Metal 的深度绑定 ✅ |
 | 零B·深-03 | Adreno（高通）：Flex Render、Binning Pass 差异、与 Mali 的优化策略对比 |
 | 零B·深-04 | NVIDIA Ada / Ampere：SM 结构、RT Core、Tensor Core、DLSS 硬件基础 |
 | 零B·深-05 | AMD RDNA2 / RDNA3：CU 架构、Infinity Cache、主机 GPU（PS5/Xbox）与 PC 版的差异 |
@@ -283,7 +283,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 编号 | 标题 | 状态 |
 |------|------|------|
 | 硬件-01 | 移动端 SoC 总览：CPU、GPU、内存、闪存在一块芯片上意味着什么 | ✅ |
-| 硬件-02 | TBDR 架构详解：Tile、On-Chip Buffer、HSR 如何改变渲染逻辑 | |
+| 硬件-02 | TBDR 架构详解：Tile、On-Chip Buffer、HSR 如何改变渲染逻辑 | ✅ |
 | 硬件-03 | 移动端功耗与发热：为什么帧率稳定比峰值帧率更重要 | ✅ |
 | 硬件-04 | 移动端 vs 主机/PC：带宽瓶颈、内存带宽共享、驱动差异 | ✅ |
 | 硬件-05 | 移动端耗电：游戏功耗的构成、量化测量与节电设计 | ✅ |
@@ -298,8 +298,8 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 工具-04 | Snapdragon Profiler：Adreno GPU 的 Counter 体系与瓶颈定位 | ✅ |
 | 工具-05 | Xcode GPU Frame Capture：iOS / Metal 渲染调试 | ✅ |
 | 工具-06 | 如何读懂 GPU Counter：跨厂商对照与瓶颈判断框架 | ✅ |
-| 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 | |
-| 工具-08 | Unity Memory Profiler：Snapshot 对比、Native 对象追踪、托管堆分析、内存泄漏定位 | |
+| 工具-07 | 真机问题排查流程：从闪退到黑屏到画面异常的系统性方法 ✅ |
+| 工具-08 | Unity Memory Profiler：Snapshot 对比、Native 对象追踪、托管堆分析、内存泄漏定位 ✅ |
 | 工具-09 | 性能诊断工具选择指南：什么问题用 Frame Debugger / RenderDoc / Unity Profiler / Mali Debugger / Snapdragon Profiler | ✅ |
 | 工具-10 | 音频系统优化：Load Type 与内存、压缩格式（Vorbis/ADPCM）CPU 解码代价、AudioSource 并发控制、iOS/Android 平台差异 | |
 
@@ -307,13 +307,13 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 | 状态 |
 |------|------|------|
-| GPU优化-01 | Draw Call 与 Overdraw 优化：合批策略与 Alpha 排序（移动端视角补充）| |
-| GPU优化-02 | 带宽优化：纹理压缩（ASTC/ETC2）、RT 格式选择、Resolve 时机 | |
-| GPU优化-03 | Shader 优化：精度（half vs float）、分支、采样次数 | |
+| GPU优化-01 | Draw Call 与 Overdraw 优化：合批策略与 Alpha 排序（移动端视角补充）| ✅ |
+| GPU优化-02 | 带宽优化：纹理压缩（ASTC/ETC2）、RT 格式选择、Resolve 时机 | ✅ |
+| GPU优化-03 | Shader 优化：精度（half vs float）、分支、采样次数 | ✅ |
 | GPU优化-04 | 移动端阴影：Shadow Map 代价、CSM 配置与软阴影替代方案 | ✅ |
-| GPU优化-05 | 后处理在移动端的取舍与降质策略（移动端视角补充）| |
+| GPU优化-05 | 后处理在移动端的取舍与降质策略（移动端视角补充）| ✅ |
 | GPU优化-06 | URP 移动端 Pipeline 配置：Renderer Feature、Pass 裁剪与带宽优化 | ✅ |
-| GPU优化-07 | GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充、与 SRP Batcher 的关系 | |
+| GPU优化-07 | GPU Instancing 深度：DrawMeshInstanced vs Indirect、PerInstance Data 填充、与 SRP Batcher 的关系 ✅ |
 
 ### 三·D — CPU 性能优化（6 篇）
 
@@ -324,7 +324,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | CPU优化-03 | Update 调用链优化：减少 Update 数量、手动调度管理器 | ✅ |
 | CPU优化-04 | Unity Profiler CPU 深度分析：调用堆栈、GC.Alloc 定位、HierarchyMode | ✅ |
 | CPU优化-05 | 内存预算管理：按系统分配上限、Texture Streaming、OOM 防护 | ✅ |
-| CPU优化-06 | Unity 物理系统移动端优化：FixedTimestep 调参、Layer Collision Matrix、碰撞体精简、Physics Profiler 解读 | |
+| CPU优化-06 | Unity 物理系统移动端优化：FixedTimestep 调参、Layer Collision Matrix、碰撞体精简、Physics Profiler 解读 ✅ |
 
 ### 三·F — Unity 移动平台专项（2 篇）✅ 已写
 
@@ -354,23 +354,23 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 性能-策划-01 | 玩法设计怎么放大性能成本：同屏人数、召唤物、持续范围、链式效果与主城密度 | ✅ |
 | 性能-策划-02 | 首进、首开、首战为什么最容易卡：策划该怎么拆首次触发风险 | ✅ |
 | 性能-策划-03 | 策划怎么验收分档一致性：低中高档分别该保什么，不该保什么 | ✅ |
-| 性能-01 | 为什么某些操作会慢：给游戏开发的性能判断框架 |
-| 性能-02 | 一帧到底是怎么完成的：游戏里一个 Frame 到底在做什么 |
-| 性能-03 | 内存不是够不够，而是行为稳不稳 |
-| 性能-04 | 手机和 PC 为什么要用不同的性能直觉 |
+| 性能-01 | 为什么某些操作会慢：给游戏开发的性能判断框架 | ✅ |
+| 性能-02 | 一帧到底是怎么完成的：游戏里一个 Frame 到底在做什么 | ✅ |
+| 性能-03 | 内存不是够不够，而是行为稳不稳 | ✅ |
+| 性能-04 | 手机和 PC 为什么要用不同的性能直觉 | ✅ |
 | 性能-04b | 从型号表到能力指纹：Android 与 PC 的分档判断怎么设计 |
 | 性能-04c | 主流芯片档位参考表：四档判断依据与代码（Apple / Qualcomm / MediaTek / Kirin） | ✅ |
 | 性能-04d | 每档资产规格清单：贴图压缩、LOD 与包体分层（按游戏类型） | ✅ |
 | 性能-04e | 性能预算不够用时什么该最后砍：移动端视觉效果性价比排序 | ✅ |
 | 性能-04f | 四个档位的玩家应该感受到同一款游戏：体验一致性设计 | ✅ |
 | 性能-04g | 分档的隐藏成本：什么情况下多一档反而是负收益 | ✅ |
-| 性能-05 | 怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法 |
-| 性能-06 | Unity 里，这些性能问题通常怎么显形 |
-| 性能-07 | Unreal 里，这些性能问题通常怎么显形 |
-| 性能-08 | 读盘完成，为什么还是不等于资源可用 |
-| 性能-09 | 为什么一个大整文件，往往比很多小散文件更稳 |
-| 性能-10 | 什么事不能在什么时候做：游戏开发里最危险的时机管理 |
-| 性能-11 | 从现象到方法：把游戏性能判断连成一套工作流 |
+| 性能-05 | 怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法 | ✅ |
+| 性能-06 | Unity 里，这些性能问题通常怎么显形 | ✅ |
+| 性能-07 | Unreal 里，这些性能问题通常怎么显形 | ✅ |
+| 性能-08 | 读盘完成，为什么还是不等于资源可用 | ✅ |
+| 性能-09 | 为什么一个大整文件，往往比很多小散文件更稳 | ✅ |
+| 性能-10 | 什么事不能在什么时候做：游戏开发里最危险的时机管理 | ✅ |
+| 性能-11 | 从现象到方法：把游戏性能判断连成一套工作流 | ✅ |
 
 ---
 
@@ -883,79 +883,111 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 | 编号 | 标题 |
 |------|------|
-| DB-01 | 关系型 vs 非关系型：MySQL / PostgreSQL vs MongoDB，游戏数据的选择依据 |
-| DB-02 | 游戏数据库设计：玩家数据、背包、排行榜的表结构设计 |
-| DB-03 | 索引与查询优化：为什么慢，怎么看执行计划 |
-| DB-04 | 事务与并发：ACID、锁、为什么扣道具要用事务 |
-| DB-05 | 数据库分库分表：水平拆分、垂直拆分，游戏场景的拆分策略 |
+| ✅ DB-01 | 关系型 vs 非关系型：MySQL / PostgreSQL vs MongoDB，游戏数据的选择依据 |
+| ✅ DB-02 | 游戏数据库设计：玩家数据、背包、排行榜的表结构设计 |
+| ✅ DB-03 | 索引与查询优化：为什么慢，怎么看执行计划 |
+| ✅ DB-04 | 事务与并发：ACID、锁、为什么扣道具要用事务 |
+| ✅ DB-05 | 分库分表：水平拆分、垂直拆分，游戏场景的拆分策略 |
 
 ### 十三·B — 缓存系统（4 篇）
 
 | 编号 | 标题 |
 |------|------|
-| 缓存-01 | Redis 基础：数据结构（String / Hash / List / ZSet）与游戏场景对应 |
-| 缓存-02 | 缓存与数据库的一致性：Cache-Aside、Write-Through、常见踩坑 |
-| 缓存-03 | 排行榜、Session、匹配队列：Redis 在游戏后端的典型用法 |
-| 缓存-04 | 缓存穿透、击穿、雪崩：原理与防护方案 |
+| ✅ 缓存-01 | Redis 基础：数据结构（String / Hash / List / ZSet）与游戏场景对应 |
+| ✅ 缓存-02 | 缓存与数据库的一致性：Cache-Aside、Write-Through、常见踩坑 |
+| ✅ 缓存-03 | 排行榜、Session、匹配队列：Redis 在游戏后端的典型用法 |
+| ✅ 缓存-04 | 缓存穿透、击穿、雪崩：原理与防护方案 |
 
-### 十三·C — 后端架构（6 篇）
-
-| 编号 | 标题 |
-|------|------|
-| 后端-01 | 游戏后端架构总览：网关、逻辑服、数据服、推送服的职责划分 |
-| 后端-02 | 消息队列：Kafka / RabbitMQ 在游戏事件系统中的作用 |
-| 后端-03 | 微服务 vs 单体：游戏后端的拆分粒度权衡 |
-| 后端-04 | 负载均衡与服务发现：多服务器部署的基础设施 |
-| 后端-05 | 游戏服务器编排：Agones / 自建方案，服务器池的动态管理 |
-| 后端-06 | CDN 与资源分发：热更新包、Asset Bundle 的分发策略 |
-
-### 十三·D — Dedicated Server 实践（5 篇）
+### 十三·C — 后端基础设施（4 篇）
 
 | 编号 | 标题 |
 |------|------|
-| DS-01 | Dedicated Server 架构：无头模式、服务器与客户端的代码共享边界 |
-| DS-02 | Unity Dedicated Server：构建配置、启动参数、服务器专属逻辑 |
-| DS-03 | Unreal Dedicated Server：Cook、打包、启动流程 |
-| DS-04 | 服务器性能优化：Tick 率、物理精简、AI 关闭、渲染关闭 |
-| DS-05 | 容器化部署：Docker 打包游戏服务器，Kubernetes 动态扩缩容 |
+| ✅ 后端-01 | 游戏后端架构总览：网关、逻辑服、数据服、推送服的职责划分 |
+| ✅ 后端-02 | 消息队列：Kafka / RabbitMQ 在游戏事件系统中的作用 |
+| ✅ 后端-04 | 负载均衡与服务发现：多服务器部署的基础设施 |
+| ✅ 后端-06 | CDN 与资源分发：热更新包、Asset Bundle 的分发策略 |
 
-### 十三·E — 后端安全（4 篇）
-
-| 编号 | 标题 |
-|------|------|
-| 后端安全-01 | 游戏后端的安全威胁模型：常见攻击面（接口刷取、数据篡改、账号劫持）|
-| 后端安全-02 | 接口安全：JWT/OAuth 鉴权、接口签名验证、防重放攻击 |
-| 后端安全-03 | 数据安全：SQL 注入防护、敏感数据加密存储、GDPR 基本合规 |
-| 后端安全-04 | DDoS 防御与限流：Rate Limiting、IP 封禁、CDN 防护层设计 |
-
-### 十三·F — Live Service / GaaS 基础设施（4 篇）
+### 十三·D — 微服务与集群（7 篇）
 
 | 编号 | 标题 |
 |------|------|
-| GaaS-01 | 远程配置（Remote Config）：Feature Flag、参数热更新、A/B 测试基础设施 |
-| GaaS-02 | 赛季与活动系统：时间窗口内容、Battle Pass 数据模型、活动服务器压力 |
-| GaaS-03 | 玩家行为分析：埋点设计规范、漏斗分析、留存率计算 |
-| GaaS-04 | 游戏运营告警：关键指标监控（DAU、崩溃率、付费率）、告警阈值设计 |
+| ✅ 微服-01 | 微服务 vs 单体：游戏后端拆分粒度的决策依据（原后端-03） |
+| ✅ 微服-02 | 游戏后端服务边界划分：账号、匹配、战斗、排行榜、聊天、支付各自的职责与边界 |
+| ✅ 微服-03 | 服务间通信：同步 gRPC vs 异步消息队列，什么场景选哪种 |
+| ✅ 微服-04 | API 网关设计：鉴权、限流、路由、协议转换在游戏后端的实践 |
+| ✅ 微服-05 | 跨服务数据一致性：Saga 模式、最终一致性在游戏事务场景的应用 |
+| ✅ 微服-06 | 服务注册与发现深度：Consul / etcd / K8s Service 的机制与选型对比 |
+| ✅ 微服-07 | 集群运维基础：健康检查、滚动更新、灰度发布、多机房部署 |
 
-### 十三·G — 高性能游戏服务端 ECS（13 篇）
+### 十三·E — Dedicated Server 实践（9 篇）
+
+| 编号 | 标题 |
+|------|------|
+| ✅ DS-01 | Dedicated Server 架构：无头模式、服务器与客户端的代码共享边界 |
+| ✅ DS-02 | Unity Dedicated Server：构建配置、启动参数、服务器专属逻辑 |
+| ✅ DS-03 | Unreal Dedicated Server：Cook、打包、启动流程 |
+| ✅ DS-04 | 服务器性能优化：Tick 率、物理精简、AI 关闭、渲染关闭 |
+| ✅ DS-05 | 容器化部署：Docker 打包游戏服务器，Kubernetes 动态扩缩容 |
+| ✅ DS-06 | 游戏服务器编排：Agones 与自建方案，服务器池的动态管理（原后端-05） |
+| ✅ DS-07 | 游戏会话状态机：房间创建、玩家加入/离开、对局结算、会话销毁的完整流程 |
+| ✅ DS-08 | 断线重连与会话恢复：客户端重连协议设计，服务端会话保活与超时策略 |
+| ✅ DS-09 | DS 可观察性：结构化日志、Prometheus 指标、分布式追踪，无头服务器的调试方案 |
+
+### 十三·F — 后端安全（4 篇）
+
+| 编号 | 标题 |
+|------|------|
+| ✅ 后端安全-01 | 游戏后端的安全威胁模型：常见攻击面（接口刷取、数据篡改、账号劫持）|
+| ✅ 后端安全-02 | 接口安全：JWT/OAuth 鉴权、接口签名验证、防重放攻击 |
+| ✅ 后端安全-03 | 数据安全：SQL 注入防护、敏感数据加密存储、GDPR 基本合规 |
+| ✅ 后端安全-04 | DDoS 防御与限流：Rate Limiting、IP 封禁、CDN 防护层设计 |
+
+### 十三·G — Live Service / GaaS 基础设施（4 篇）
+
+| 编号 | 标题 |
+|------|------|
+| ✅ GaaS-01 | 远程配置（Remote Config）：Feature Flag、参数热更新、A/B 测试基础设施 |
+| ✅ GaaS-02 | 赛季与活动系统：时间窗口内容、Battle Pass 数据模型、活动服务器压力 |
+| ✅ GaaS-03 | 玩家行为分析：埋点设计规范、漏斗分析、留存率计算 |
+| ✅ GaaS-04 | 游戏运营告警：关键指标监控（DAU、崩溃率、付费率）、告警阈值设计 |
+
+### 十三·H — 网络选型（5 篇）
+
+| 编号 | 标题 |
+|------|------|
+| ✅ 网选-01 | 传输层选型：TCP vs UDP，游戏为什么不能只用 HTTP/TCP |
+| ✅ 网选-02 | 可靠 UDP 协议对比：KCP vs QUIC vs ENet，延迟、可靠性、实现成本的工程取舍 |
+| ✅ 网选-03 | 应用层协议选型：Protobuf vs FlatBuffers vs 自定义二进制，序列化性能与版本兼容 |
+| ✅ 网选-04 | WebSocket 的边界：适合 H5/小游戏的场景，以及原生 UDP 不可替代的理由 |
+| ✅ 网选-05 | 长连接管理：心跳设计、连接保活、断线检测，连接数的上限与优化 |
+
+### 十三·I — 游戏网络与同步（3 篇）
+
+| 编号 | 标题 |
+|------|------|
+| ✅ 同步-01 | 帧同步 vs 状态同步：两种同步模型的本质差异与选型依据 |
+| ✅ 同步-02 | 服务端权威与延迟补偿：客户端预测、服务端回滚的基本机制 |
+| ✅ 同步-03 | 匹配系统设计：ELO 评分算法、房间管理、等待队列实现思路 |
+
+### 十三·J — 高性能游戏服务端 ECS（13 篇）
 
 *服务端 ECS 与客户端的本质区别，以及 Flecs / EnTT / Bevy ECS / C# 方案在 Multi-World、异步 I/O、持久化、横向扩展上的取舍。详细规划见 [docs/game-server-ecs-high-performance-series-plan.md](docs/game-server-ecs-high-performance-series-plan.md)。*
 
 | 编号 | 标题 |
 |------|------|
 | ✅ SV-ECS-01 | 游戏服务端为什么需要 ECS：和客户端的问题空间有什么本质区别 |
-| SV-ECS-02 | 服务端 ECS 的五个核心约束：无渲染、有 I/O、有持久化、有多 World、有横向扩展 |
-| SV-ECS-03 | Flecs 深度：架构、Observer、REST API、Pipeline、World Streaming |
-| SV-ECS-04 | EnTT 深度：header-only C++、Signal、View、Group，Minecraft Bedrock 选型理由 |
-| SV-ECS-05 | Bevy ECS on Server：Rust 内存安全 + ECS 性能，无渲染环境下的用法 |
-| SV-ECS-06 | C# 服务端 ECS：Arch / Leopotam 定位，与 Unity DOTS Headless Server 的对比 |
-| SV-ECS-07 | Multi-World 隔离：每个房间一个 World，生命周期、资源共享与跨 World 边界 |
-| SV-ECS-08 | ECS + 异步 I/O：游戏逻辑的同步/并行世界与网络 I/O 的异步世界怎样接起来 |
-| SV-ECS-09 | 状态广播：哪些 Component 变化需要同步给哪些客户端，Delta 压缩与 AOI 的 ECS 实现 |
-| SV-ECS-10 | 持久化边界：ECS World 快照如何映射到数据库，冷热分离与宕机恢复策略 |
-| SV-ECS-11 | Tick 预算管理：固定时间步、服务器权威、Tick 超载的检测与降级策略 |
-| SV-ECS-12 | 案例拆解：大规模多人游戏服务端的 ECS 落地（SpatialOS 架构回顾 + 自研方案参考） |
-| SV-ECS-13 | 服务端 ECS 选型决策地图：语言 × 规模 × 团队栈 × 客户端代码共享程度的四维判断 |
+| ✅ SV-ECS-02 | 服务端 ECS 的五个核心约束：无渲染、有 I/O、有持久化、有多 World、有横向扩展 |
+| ✅ SV-ECS-03 | Flecs 深度：架构、Observer、REST API、Pipeline、World Streaming |
+| ✅ SV-ECS-04 | EnTT 深度：header-only C++、Signal、View、Group，Minecraft Bedrock 选型理由 |
+| ✅ SV-ECS-05 | Bevy ECS on Server：Rust 内存安全 + ECS 性能，无渲染环境下的用法 |
+| ✅ SV-ECS-06 | C# 服务端 ECS：Arch / Leopotam 定位，与 Unity DOTS Headless Server 的对比 |
+| ✅ SV-ECS-07 | Multi-World 隔离：每个房间一个 World，生命周期、资源共享与跨 World 边界 |
+| ✅ SV-ECS-08 | ECS + 异步 I/O：游戏逻辑的同步/并行世界与网络 I/O 的异步世界怎样接起来 |
+| ✅ SV-ECS-09 | 状态广播：哪些 Component 变化需要同步给哪些客户端，Delta 压缩与 AOI 的 ECS 实现 |
+| ✅ SV-ECS-10 | 持久化边界：ECS World 快照如何映射到数据库，冷热分离与宕机恢复策略 |
+| ✅ SV-ECS-11 | Tick 预算管理：固定时间步、服务器权威、Tick 超载的检测与降级策略 |
+| ✅ SV-ECS-12 | 案例拆解：大规模多人游戏服务端的 ECS 落地（SpatialOS 架构回顾 + 自研方案参考） |
+| ✅ SV-ECS-13 | 服务端 ECS 选型决策地图：语言 × 规模 × 团队栈 × 客户端代码共享程度的四维判断 |
 
 ---
 
@@ -1395,7 +1427,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列十（美术协作桥梁）| 17 |
 | 系列十一（Unreal 架构 + GAS + 网络 + 编辑器扩展）| 25 |
 | 系列十二（Unity 网络）| 4 |
-| 系列十三（游戏后端 + 后端安全 + Live Service + 服务端ECS）| 41 |
+| 系列十三（游戏后端：DB + 缓存 + 基础设施 + 微服务/集群 + DS + 安全 + GaaS + 网络选型 + 同步 + 服务端ECS）| 58 |
 | 系列十四（引擎架构：子系统 + 渲染架构 + 脚本 + 工程 + UE编辑器）| 29 |
 | 系列十五（本地化）| 5 |
 | 系列十五·B（Accessibility）| 3 |
@@ -1414,7 +1446,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 独立专题文章 | 5 |
 | 系列二十（Unity 源码）| 待定 |
 | 零·B 深度补充（主流 GPU 架构）| 5 |
-| **合计** | **约 629 篇（不含系列二十）** |
+| **合计** | **约 646 篇（不含系列二十）** |
 
 ---
 
@@ -1434,4 +1466,4 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-03-31（v23）——系列四按 TopHeroUnity 项目上下文重排当前批次 3 篇选题：天气-05、地形-04、场景-05；原“地形-07 地形 LOD”方向调整为更贴项目的“场景-05 场景植被 LOD 工程实践”。此前系列十八重构为 45 篇全系列；系列一新增 一·F CPU与内存体系 6 篇；系列十三新增 十三·G 高性能游戏服务端ECS 13 篇；系列三·E 面向美术与策划的桥接文章全部补齐，美术继续细分到角色、场景、特效、UI 四个工种入口；总计约 629 篇。一·F 硬件-F01~F06 全部写完；十八·B DOTS-E01~E18 全部写完。*
+*最后更新：2026-04-04（v24）——系列十三全面重构为 58 篇（原 41 篇）：十三·C 后端基础设施精简为 4 篇；新增十三·D 微服务与集群 7 篇（拆分粒度、服务边界、gRPC vs MQ、API网关、一致性、服务发现、集群运维）；十三·E Dedicated Server 扩展至 9 篇（新增 Agones、会话状态机、断线重连、DS可观察性）；新增十三·H 网络选型 5 篇（传输层、可靠UDP对比、序列化、WebSocket边界、长连接管理）；新增十三·I 游戏网络与同步 3 篇（帧同步vs状态同步、延迟补偿、匹配系统）；十三·J 服务端ECS 保持 13 篇不变；总计约 646 篇。*
