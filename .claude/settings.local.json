@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(mv \"e:/TwoEggWork/TechStackShow/.claude/skills/column-editor\" \"e:/TwoEggWork/TechStackShow/.claude/skills/col-editor\")",
-      "Bash(mv \"e:/TwoEggWork/TechStackShow/.claude/skills/tech-drilldown\" \"e:/TwoEggWork/TechStackShow/.claude/skills/col-drilldown\")"
+      "Bash(mv \"e:/TwoEggWork/TechStackShow/.claude/skills/tech-drilldown\" \"e:/TwoEggWork/TechStackShow/.claude/skills/col-drilldown\")",
+      "Write(E:/NHT/workspace/TechStackShow/content/engine-notes/*)"
     ]
   }
 }
