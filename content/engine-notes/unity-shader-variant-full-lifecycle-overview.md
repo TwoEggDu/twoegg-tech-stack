@@ -133,8 +133,8 @@ series:
 
 如果你现在关心的不是总览，而是源码口径的构建细账，可以继续读这两篇：
 
-- [Unity Shader Variant 在 Player 构建里到底吃了哪些输入：从 BuildPlayerOptions、场景对象、UsageTag 到写入产物]({{< relref "engine-notes/unity-shader-variant-player-build-inputs-processing-outputs.md" >}})
-- [Unity Shader Variant 在 AssetBundle 构建里到底吃了哪些输入：从 AssetBundleBuild、ObjectIdentifier、WriteParameters 到归档输出]({{< relref "engine-notes/unity-shader-variant-assetbundle-build-inputs-processing-outputs.md" >}})
+- [Unity Shader Variant 在 Player 构建里到底吃了哪些输入：从 BuildPlayerOptions、场景对象、UsageTag 到写入产物]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
+- [Unity Shader Variant 在 AssetBundle 构建里到底吃了哪些输入：从 AssetBundleBuild、ObjectIdentifier、WriteParameters 到归档输出]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
 
 ---
 

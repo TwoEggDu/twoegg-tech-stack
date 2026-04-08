@@ -2,7 +2,7 @@
 title: "匹配系统设计：ELO 评分算法、房间管理、等待队列的工程实现"
 slug: "game-backend-sync-03-matchmaking"
 date: "2026-04-04"
-description: "从玩家点击"开始匹配"到进入游戏房间的全流程拆解，覆盖 ELO/TrueSkill 评分原理、动态扩圈队列、DS 分配与反作弊卡口。"
+description: '从玩家点击"开始匹配"到进入游戏房间的全流程拆解，覆盖 ELO/TrueSkill 评分原理、动态扩圈队列、DS 分配与反作弊卡口。'
 tags:
   - "游戏后端"
   - "网络同步"

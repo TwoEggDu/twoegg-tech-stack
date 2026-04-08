@@ -1,19 +1,19 @@
----
-title: “Unity DOTS N04｜Prediction / Rollback：为什么”多跑一遍逻辑”远远不够”
-slug: “dots-n04-prediction-and-rollback”
-date: “2026-03-28”
+﻿---
+title: 'Unity DOTS N04｜Prediction / Rollback：为什么"多跑一遍逻辑"远远不够'
+slug: "dots-n04-prediction-and-rollback"
+date: "2026-03-28"
 draft: true
-description: “Prediction 不是把逻辑再执行一次，Rollback 也不是把世界粗暴回退。先把确定性边界、输入重放和状态修正链路冻住，才能理解为什么这条链的成本会这么高。”
+description: "Prediction 不是把逻辑再执行一次，Rollback 也不是把世界粗暴回退。先把确定性边界、输入重放和状态修正链路冻住，才能理解为什么这条链的成本会这么高。"
 tags:
-  - “Unity”
-  - “DOTS”
-  - “NetCode”
-  - “Prediction”
-  - “Rollback”
-  - “Determinism”
-series: “Unity DOTS NetCode”
-primary_series: “unity-dots-netcode”
-series_role: “article”
+  - "Unity"
+  - "DOTS"
+  - "NetCode"
+  - "Prediction"
+  - "Rollback"
+  - "Determinism"
+series: "Unity DOTS NetCode"
+primary_series: "unity-dots-netcode"
+series_role: "article"
 series_order: 4
 weight: 2304
 ---

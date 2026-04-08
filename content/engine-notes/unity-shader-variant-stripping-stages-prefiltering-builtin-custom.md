@@ -357,6 +357,6 @@ series:
 延伸读这几篇会更顺：
 
 - [URP 的 Shader Variant 管理：Prefiltering、Strip 设置和多 Pipeline Asset 对变体集合的影响]({{< relref "engine-notes/unity-urp-shader-variant-prefiltering-strip-settings.md" >}})
-- [Unity Shader Variant 到底怎样才会被保留下来：一个 variant 要过哪几关]({{< relref "engine-notes/unity-shader-variant-how-a-variant-survives-build.md" >}})
+- [Unity Shader Variant 到底怎样才会被保留下来：一个 variant 要过哪几关]({{< relref "engine-notes/unity-shader-variant-retention-and-survival.md" >}})
 - [Unity Shader Variant 缺失事故排查流程：从现象到根因的三层定位法]({{< relref "engine-notes/unity-shader-variant-missing-diagnosis-flow.md" >}})
 - [Unity Shader Variant 实操：怎么知道项目用了哪些、运行时缺了哪些、以及怎么剔除不需要的]({{< relref "engine-notes/unity-shader-variants-how-to-find-missing-and-strip.md" >}})

@@ -1,19 +1,19 @@
----
-title: “Unity DOTS N02｜IInputComponentData 与输入链：客户端输入怎样进入预测系统”
-slug: “dots-n02-commanddata-input-chain”
-date: “2026-03-28”
+﻿---
+title: "Unity DOTS N02｜IInputComponentData 与输入链：客户端输入怎样进入预测系统"
+slug: "dots-n02-commanddata-input-chain"
+date: "2026-03-28"
 draft: true
-description: “Prediction 的入口不是状态，而是输入。先把客户端采样、IInputComponentData、服务端权威消费和本地预测之间的输入链冻住，后面的 Prediction / Rollback 才不会写成一团。”
+description: "Prediction 的入口不是状态，而是输入。先把客户端采样、IInputComponentData、服务端权威消费和本地预测之间的输入链冻住，后面的 Prediction / Rollback 才不会写成一团。"
 tags:
-  - “Unity”
-  - “DOTS”
-  - “NetCode”
-  - “IInputComponentData”
-  - “Prediction”
-  - “Input”
-series: “Unity DOTS NetCode”
-primary_series: “unity-dots-netcode”
-series_role: “article”
+  - "Unity"
+  - "DOTS"
+  - "NetCode"
+  - "IInputComponentData"
+  - "Prediction"
+  - "Input"
+series: "Unity DOTS NetCode"
+primary_series: "unity-dots-netcode"
+series_role: "article"
 series_order: 2
 weight: 2302
 ---
