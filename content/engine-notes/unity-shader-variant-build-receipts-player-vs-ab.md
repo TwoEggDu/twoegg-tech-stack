@@ -422,7 +422,7 @@ compute shader 不走 scene usage 主链，不经过 `ComputeBuildUsageTagOnObje
 
 你可以顺着这条线去拆：
 
-1. 这个 variant 在 Player 里是靠什么保活的——是场景 material usage、Still Included 资产，还是 Always Included？
+1. 这个 variant 在 Player 里是靠什么保活的——是场景 material usage，还是 Always Included？
 2. 如果是 Always Included，AB Build 的对象闭包里根本没有对应来源
 3. 如果是场景 material usage，AB Build 的根资产定义里有没有覆盖到对应的 Material 或 Renderer 对象
 4. 如果有覆盖，`CalculateBuildUsageTags` 的根对象和依赖对象分离有没有导致 usage 算少了

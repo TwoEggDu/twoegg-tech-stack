@@ -136,6 +136,8 @@ Play Mode 运行 → 触发 EnableKeyword("_WET_SURFACE") → Unity 编译 _WET_
   → 记录里说明：这个组合从哪来、为什么要保留
 ```
 
+> 注意：`ShaderVariantDatabase` 不是 Unity 的内置类型。它是项目自定义的治理工具——可以是一个 `ScriptableObject`、一份 JSON 配置、或者一张 Google Sheet，具体形式由团队决定。核心是有一个明确的地方登记"哪些动态 keyword 组合是项目显式关心的"。
+
 对应上面的天气系统例子，开发者在数据库里手动添加这些记录：
 
 ```

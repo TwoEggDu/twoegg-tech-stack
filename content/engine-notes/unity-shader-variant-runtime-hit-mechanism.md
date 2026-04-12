@@ -63,7 +63,7 @@ SetPassSlow
 
 运行时查找 variant，不是精确匹配——Unity 用的是评分算法。
 
-每个 variant 的匹配分数计算规则大致如下：
+每个 variant 的匹配分数计算规则如下（源码位于 `LocalKeyword.cpp` 的 `ComputeKeywordMatch` 函数）：
 
 ```
 score = matchingCount - mismatchingCount × 16
@@ -168,7 +168,7 @@ WarmUp 预热了错误的 keyword 组合，等于白做。SVC 的收集来源要
 
 ### 4. DX12/Vulkan/Metal 上，首帧轻微抖动是正常的
 
-这是 API 层的 PSO 编译触发，不是 variant 缺失。考虑平台专用的 PSO 预热方案（如 `ShaderWarmup.WarmupShader` + `RequestSetPassShaders`，Unity 2023.3+）而不是简单地加 SVC。
+这是 API 层的 PSO 编译触发，不是 variant 缺失。考虑平台专用的 PSO 预热方案（如 `ShaderWarmup.WarmupShader`）而不是简单地加 SVC。
 
 ## 最后收成一句话
 

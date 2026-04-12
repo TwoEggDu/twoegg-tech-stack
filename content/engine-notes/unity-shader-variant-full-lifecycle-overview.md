@@ -131,7 +131,7 @@ series:
 - 真正逐阶段产出的，分别是 `理论空间`、`本次候选集`、`逐层裁剪后的保留集合`、`平台编译结果` 和 `运行时命中结果`
 - 所以现场一说"variant 怎么被剔除了"，最好先问的是 `它死在输入阶段、过滤阶段、stripping 阶段，还是其实已经留下来了，只是运行时没命中对`
 
-如果你现在关心的不是总览，而是源码口径的构建细账，可以继续读这两篇：
+如果你现在关心的不是总览，而是源码口径的构建细账，可以继续读这篇：
 
 - [Unity Shader Variant 构建账单：Player Build 与 AssetBundle Build 的差异]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
 
