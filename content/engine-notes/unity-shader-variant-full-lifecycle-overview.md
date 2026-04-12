@@ -133,8 +133,7 @@ series:
 
 如果你现在关心的不是总览，而是源码口径的构建细账，可以继续读这两篇：
 
-- [Unity Shader Variant 在 Player 构建里到底吃了哪些输入：从 BuildPlayerOptions、场景对象、UsageTag 到写入产物]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
-- [Unity Shader Variant 在 AssetBundle 构建里到底吃了哪些输入：从 AssetBundleBuild、ObjectIdentifier、WriteParameters 到归档输出]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
+- [Unity Shader Variant 构建账单：Player Build 与 AssetBundle Build 的差异]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
 
 ---
 
@@ -260,7 +259,7 @@ series:
 
 在 URP 项目里，当前生效的管线配置、`Renderer Feature`、平台能力、图形 API、质量档等，可能会先把一整段路径判成：`这次构建里根本不可能发生`——这意味着某些 variant 甚至不会走到后面常说的普通 stripping 逻辑里。
 
-你前面遇到的 `Decal Layers` 就很适合说明这件事：
+URP 的 `Decal Layers` 就是一个典型案例：
 
 - `Shader` 侧确实声明了相关路径
 - 项目里也可能有材质或 `SVC` 记录了对应 keyword
