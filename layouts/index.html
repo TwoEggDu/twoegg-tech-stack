@@ -100,23 +100,4 @@
     {{ end }}
   </section>
 
-  {{ with site.Params.externalSites }}
-    <section class="outbound-block">
-      <div class="page-title-block compact">
-        <p class="eyebrow">Elsewhere</p>
-        <h2>辅助入口</h2>
-        <p class="section-lead">站外页面放在这里，作为补充入口，不打断首页主线。</p>
-      </div>
-      <div class="external-grid">
-        {{ range . }}
-          <article class="external-card">
-            <p class="card-section">External</p>
-            <h2><a href="{{ .url }}" target="_blank" rel="noreferrer">{{ .title }}</a></h2>
-            <p>{{ .description }}</p>
-            <a class="card-link" href="{{ .url }}" target="_blank" rel="noreferrer">{{ with .cta }}{{ . }}{{ else }}打开站点{{ end }}</a>
-          </article>
-        {{ end }}
-      </div>
-    </section>
-  {{ end }}
 {{ end }}
