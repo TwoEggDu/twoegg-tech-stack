@@ -1,6 +1,6 @@
 ---
 date: "2026-04-12"
-title: "Shader Variant 全流程总览"
+title: "Shader 变体全流程总览"
 description: "按读者的认知顺序串起 Shader Variant 的完整链路：什么是变体、从哪里来、构建时怎么保留和裁剪、运行时怎么命中和预热、出了问题怎么定位、工程上怎么治理。每个环节给出关键机制和深入链接。"
 slug: "unity-shader-variant-full-lifecycle-overview"
 weight: 18
