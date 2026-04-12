@@ -23,14 +23,13 @@ series:
 ## 全链路概览
 
 ```mermaid
-flowchart TD
-    A["Shader 声明 keyword\n定义理论变体空间"] --> B["Material / SVC / Always Included\n提供本次构建的保留依据"]
-    B --> C["ComputeBuildUsageTagOnObjects\n收集使用证据，组装候选集"]
-    C --> D["URP Prefiltering\n按管线配置过滤不可能的路径"]
-    D --> E["Unity Builtin Stripping\n按全局设置裁剪雾/光照/Instancing"]
-    E --> F["SRP + 自定义 Stripping\nIPreprocessShaders 回调"]
-    F --> G["写入 Player 或 AssetBundle\n最终交付物"]
-    G --> H["运行时评分匹配\n命中最佳变体 → GPU 执行"]
+flowchart LR
+    A["Shader\n声明 keyword"] --> B["Material/SVC\n提供使用证据"]
+    B --> C["组装候选集"]
+    C --> D["四层裁剪"]
+    D --> E["写入交付物"]
+    E --> F["运行时\n评分匹配"]
+    F --> G["GPU 执行"]
 ```
 
 下面逐节展开。
@@ -57,24 +56,15 @@ Unity 的解决方式是：**在编译期就把不同的功能组合拆成独立
 
 变体的数量由 keyword 的声明方式和来源共同决定。keyword 不只是 Shader 代码里写的那几行，还有很多是管线和引擎自动注入的。
 
-```mermaid
-flowchart LR
-    subgraph Shader源码
-        A1["#pragma multi_compile\n所有组合都编译"]
-        A2["#pragma shader_feature\n只编译有使用证据的组合"]
-    end
-    subgraph 管线注入
-        B1["URP 功能开关\n阴影/附加光/SSAO/Decal..."]
-        B2["Renderer Feature\n每个 Feature 注入自己的 keyword"]
-    end
-    subgraph 引擎内置
-        C1["雾: FOG_LINEAR/EXP/EXP2"]
-        C2["光照贴图: LIGHTMAP_ON/DIRLIGHTMAP_COMBINED"]
-        C3["Instancing: INSTANCING_ON"]
-        C4["立体渲染: STEREO_INSTANCING_ON"]
-    end
-    A1 & A2 & B1 & B2 & C1 & C2 & C3 & C4 --> D["理论变体空间\n所有维度的笛卡尔积"]
-```
+keyword 的来源分三类：
+
+| 来源 | 示例 | 谁声明的 |
+|------|------|---------|
+| Shader 源码 | `#pragma multi_compile` / `#pragma shader_feature` | 开发者 |
+| 管线注入 | 阴影、附加光、SSAO、Decal、Renderer Feature | URP/HDRP |
+| 引擎内置 | `FOG_LINEAR`/`EXP`/`EXP2`、`LIGHTMAP_ON`、`INSTANCING_ON` | Unity 引擎 |
+
+所有来源的 keyword 维度相乘，形成理论变体空间。
 
 ### multi_compile 和 shader_feature 的核心区别
 
@@ -96,27 +86,24 @@ flowchart LR
 答案来自四个角色，它们各自提供不同类型的"保留依据"：
 
 ```mermaid
-flowchart TD
-    subgraph 保留依据来源
-        M["Material\n默认使用面：材质启用的 keyword\n通过 GetShaderKeywordState 提取"]
-        S["ShaderVariantCollection\n显式补充：登记项目关心的 keyword 组合\n和 Material 的证据是并集关系"]
-        AI["Always Included Shaders\n改变裁剪级别：跳过使用证据裁剪\nshader_feature 也会全量枚举"]
-        SC["场景对象\n贡献全局设置：哪些 Lightmap/Fog 模式被使用"]
-    end
-    M & S --> U["usedKeywords\n材质 + SVC 的使用证据并集"]
-    AI --> SK["kShaderStripGlobalOnly\n跳过 usedKeywords 裁剪"]
-    SC --> G["BuildUsageTagGlobal\n雾/光照/Instancing 全局标记"]
-    U & SK & G --> C["构建系统决定候选集"]
+flowchart LR
+    M["Material"] & S["SVC"] --> U["usedKeywords"]
+    AI["Always Included"] --> SK["跳过使用证据裁剪"]
+    URP["URP Asset"] --> PF["Prefiltering 依据"]
+    SC["场景 + Graphics Settings"] --> G["全局设置标记"]
+    U & SK & PF & G --> C["候选集"]
 ```
 
-### 四个角色的职责边界
+### 六个角色的职责边界
 
 | 角色 | 做什么 | 不做什么 |
 |------|--------|---------|
-| **Material** | 提供最直接的 keyword 使用证据 | 不保证变体一定被保留（后续还有裁剪） |
-| **SVC** | 补充场景里没直连的关键路径 | 不是"放进去就一定有"的保险箱 |
-| **Always Included** | 让 Shader 由 Player 全局兜底 | 不是精确治理工具，会增大包体 |
-| **场景** | 通过引用 Material 间接贡献使用证据，同时贡献全局设置 | 不直接声明 keyword |
+| **Material** | 提供最直接的 keyword 使用证据（`shader_feature` 的保留依据） | 不保证变体一定被保留（后续还有裁剪） |
+| **SVC** | 补充场景里没直连的关键路径（和 Material 是并集关系） | 不是"放进去就一定有"的保险箱 |
+| **Always Included** | 改变裁剪级别：让 Shader 由 Player 全局兜底，跳过使用证据裁剪 | 不是精确治理工具，会增大包体 |
+| **URP Asset / Renderer Feature** | 决定哪些管线功能参与构建，Prefiltering 的直接依据 | 不提供逐材质的使用证据 |
+| **Graphics Settings** | 提供全局裁剪前提（雾/光照/Instancing 等模式的使用情况） | 不控制逐 Shader 的变体保留 |
+| **场景对象** | 通过引用 Material 间接贡献使用证据，同时贡献全局 Lightmap/Fog 模式 | 不直接声明 keyword |
 
 ### 关键机制：ComputeBuildUsageTagOnObjects
 
@@ -131,13 +118,12 @@ flowchart TD
 收集到候选集以后，变体还要经过四层裁剪。每一层有不同的裁剪依据和职责：
 
 ```mermaid
-flowchart TD
-    A["候选变体集\n（理论空间 × 使用证据）"] --> B
-    B["① URP Prefiltering\n依据：URP Asset 功能开关\n裁掉管线配置中不可能的路径"]
-    B --> C["② Unity Builtin Stripping\n依据：BuildUsageTagGlobal\n裁掉未使用的雾/光照/Instancing 变体"]
-    C --> D["③ SRP Stripping\n依据：管线的 C# 回调\n裁掉更细粒度的不可能组合"]
-    D --> E["④ 自定义 IPreprocessShaders\n依据：项目规则\n裁掉项目确认永远不用的组合"]
-    E --> F["最终进入编译的变体"]
+flowchart LR
+    A["候选集"] --> B["① URP\nPrefiltering"]
+    B --> C["② Builtin\nStripping"]
+    C --> D["③ SRP\nStripping"]
+    D --> E["④ 自定义\nIPreprocessShaders"]
+    E --> F["最终编译"]
 ```
 
 ### 每层做什么
@@ -218,15 +204,11 @@ score = matchingCount - mismatchingCount × 16
 
 变体问题在项目里有三种典型表现，对应链路上的不同位置：
 
-```mermaid
-flowchart TD
-    A["变体问题的三种表现"] --> B["粉材质 / Error Shader\n= 完全没有可接受的变体"]
-    A --> C["效果不对但不粉\n= 退化命中了 fallback 变体"]
-    A --> D["首帧卡顿后续正常\n= 变体在但未提前准备"]
-    B --> B1["检查：构建期保留 → 交付边界"]
-    C --> C1["检查：精确变体是否被裁 → keyword 状态是否正确"]
-    D --> D1["检查：WarmUp 是否覆盖 → 时机是否正确"]
-```
+| 现象 | 含义 | 排查方向 |
+|------|------|---------|
+| 粉材质 / Error Shader | 完全没有可接受的变体 | 构建期保留 → 交付边界 |
+| 效果不对但不粉 | 退化命中了 fallback 变体 | 精确变体是否被裁 → keyword 状态 |
+| 首帧卡顿后续正常 | 变体在但未提前准备 | WarmUp 覆盖 → 时机 |
 
 ### 最短排查路径
 
