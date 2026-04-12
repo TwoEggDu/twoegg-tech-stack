@@ -20,6 +20,12 @@ disableKinds = ["taxonomy", "term"]
   description = "放对外主页、补充内容和其他站点导航。"
   cta = "打开站点"
 
+[[params.externalSites]]
+  title = "宏观全天候研究日志"
+  url = "https://twoeggdu.github.io/AllWeather/"
+  description = "全球宏观、跨资产研究与复盘日志，记录从宏观框架到交易表达的学习过程。"
+  cta = "打开研究日志"
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
