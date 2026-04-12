@@ -152,7 +152,7 @@ a {
 }
 
 .site-nav a {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
   color: var(--muted);
   transition: padding 160ms ease, background-color 160ms ease, color 160ms ease, transform 160ms ease;
@@ -168,8 +168,8 @@ a {
 .site-search {
   position: relative;
   flex: 0 0 auto;
-  min-width: 16rem;
-  width: min(22rem, 100%);
+  min-width: 0;
+  width: 14rem;
 }
 
 .site-search-field {
