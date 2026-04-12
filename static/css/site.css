@@ -89,9 +89,24 @@ a {
 
 .site-header-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 16px;
+}
+
+.header-external {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.header-external a {
+  transition: color 160ms ease;
+}
+
+.header-external a:hover {
+  color: var(--ink);
 }
 
 .sr-only {
