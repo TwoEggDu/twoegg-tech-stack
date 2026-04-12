@@ -83,15 +83,6 @@ keyword 的来源分三类：
 
 答案来自四个角色，它们各自提供不同类型的"保留依据"：
 
-```mermaid
-flowchart TD
-    M["Material"] & S["SVC"] --> U["usedKeywords"]
-    AI["Always Included"] --> SK["跳过使用证据裁剪"]
-    URP["URP Asset"] --> PF["Prefiltering 依据"]
-    SC["场景 + Graphics Settings"] --> G["全局设置标记"]
-    U & SK & PF & G --> C["候选集"]
-```
-
 ### 六个角色的职责边界
 
 | 角色 | 做什么 | 不做什么 |
