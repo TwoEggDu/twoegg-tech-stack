@@ -404,5 +404,5 @@ tags:
 
 如果你想把这套“先分层、再验证”的思路继续拉回更通用的方法，可以接着看：
 
-- [怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法]({{< relref "engine-notes/game-performance-diagnosis-method.md" >}})
+- [怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法]({{< relref "performance/game-performance-diagnosis-method.md" >}})
 - [首次加载卡顿或缓存失效：为什么看起来像下载慢，其实常常是准备链和内容身份没对齐]({{< relref "problem-solving/unity-first-load-stutter-or-cache-miss.md" >}})

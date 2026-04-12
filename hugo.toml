@@ -10,9 +10,9 @@ disableKinds = ["taxonomy", "term"]
   home = ["HTML", "RSS", "JSON"]
 
 [params]
-  description = "Projects, engine notes, code quality, problem solving, and engineering judgment."
+  description = "渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章与工程实践。"
   author = "TwoEgg"
-  tagline = "用项目、引擎理解、代码质量、问题拆解和职业判断来展示工程实力。"
+  tagline = "渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章。"
 
 [[params.externalSites]]
   title = "个人首页"
@@ -30,37 +30,55 @@ disableKinds = ["taxonomy", "term"]
 
 [permalinks]
   projects = "/projects/:slug/"
-  engine-notes = "/engine-notes/:slug/"
+  rendering = "/rendering/:slug/"
+  engine-toolchain = "/engine-toolchain/:slug/"
+  performance = "/performance/:slug/"
+  system-design = "/system-design/:slug/"
   code-quality = "/code-quality/:slug/"
   problem-solving = "/problem-solving/:slug/"
   essays = "/essays/:slug/"
 
 [[menu.main]]
-  name = "Projects"
+  name = "项目交付"
   pageRef = "/projects/"
   weight = 10
 
 [[menu.main]]
-  name = "Engine Notes"
-  pageRef = "/engine-notes/"
+  name = "渲染管线"
+  pageRef = "/rendering/"
   weight = 20
 
 [[menu.main]]
-  name = "Code Quality"
-  pageRef = "/code-quality/"
+  name = "引擎工具链"
+  pageRef = "/engine-toolchain/"
   weight = 30
 
 [[menu.main]]
-  name = "Problem Solving"
-  pageRef = "/problem-solving/"
+  name = "性能工程"
+  pageRef = "/performance/"
   weight = 40
 
 [[menu.main]]
-  name = "Essays"
-  pageRef = "/essays/"
+  name = "系统设计"
+  pageRef = "/system-design/"
   weight = 50
 
 [[menu.main]]
-  name = "About"
-  pageRef = "/about/"
+  name = "代码质量"
+  pageRef = "/code-quality/"
   weight = 60
+
+[[menu.main]]
+  name = "问题拆解"
+  pageRef = "/problem-solving/"
+  weight = 70
+
+[[menu.main]]
+  name = "工程判断"
+  pageRef = "/essays/"
+  weight = 80
+
+[[menu.main]]
+  name = "关于"
+  pageRef = "/about/"
+  weight = 90

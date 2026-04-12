@@ -340,7 +340,7 @@ series: "Code Quality"
 
 `机型分档真正要验证的，不只是“这台机子现在跑在哪个档”，而是这个档位的判定、性能、视觉、资源边界和异常兜底是否都成立；只有把代表机、边界机、固定 baseline、关键路径 smoke 和截图回归一起接进 nightly 与 release gate，分档才算从经验判断变成工程事实。`
 
-如果你接下来还想把“默认档位到底怎么判”这件事再往前收，最适合继续看的是 [从型号表到能力指纹：Android 与 PC 的分档判断怎么设计]({{< relref "engine-notes/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md" >}})。
+如果你接下来还想把“默认档位到底怎么判”这件事再往前收，最适合继续看的是 [从型号表到能力指纹：Android 与 PC 的分档判断怎么设计]({{< relref "performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md" >}})。
 
 因为分档验证解决的是“怎么证明没配错”，而那篇解决的是：
 

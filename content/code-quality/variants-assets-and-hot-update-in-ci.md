@@ -64,7 +64,7 @@ series: "Code Quality"
 - 发版前临时想起来补一次
 - 出事故后再回头追一次
 
-这也是为什么很多团队明明有 [Shader Variant 数量监控与 CI 集成：怎么把变体治理接入构建流程]({{< relref "engine-notes/unity-shader-variant-ci-monitoring.md" >}})、[Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线]({{< relref "engine-notes/unity-resource-delivery-engineering-practices-baseline.md" >}})、[HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-notes/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}}) 这类局部实践，整体流程还是会断。
+这也是为什么很多团队明明有 [Shader Variant 数量监控与 CI 集成：怎么把变体治理接入构建流程]({{< relref "rendering/unity-shader-variant-ci-monitoring.md" >}})、[Unity 资源交付工程实践：分组、命名、版本、缓存、回滚和烟测基线]({{< relref "engine-toolchain/unity-resource-delivery-engineering-practices-baseline.md" >}})、[HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-toolchain/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}}) 这类局部实践，整体流程还是会断。
 
 因为它们缺的不是“某个点会不会做”，而是：
 
@@ -147,7 +147,7 @@ variant 这条链真正进了 CI，价值不在“数字永远不变”，而在
 - 关键 group / bundle 的大小、数量、依赖变化
 - 关键入口实例化或首载烟测结果
 
-这和 [Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载]({{< relref "engine-notes/unity-resource-system-smoketests-and-regression.md" >}}) 讲的是同一件事：资源问题真正高发的地方，不是“能不能 build”，而是“内容映射和首次真实使用时会不会坏”。
+这和 [Unity 资源系统怎么做烟测和回归：从构建校验、入口实例化到 Shader 首载]({{< relref "engine-toolchain/unity-resource-system-smoketests-and-regression.md" >}}) 讲的是同一件事：资源问题真正高发的地方，不是“能不能 build”，而是“内容映射和首次真实使用时会不会坏”。
 
 所以资源链接进 CI，至少应该回答：
 

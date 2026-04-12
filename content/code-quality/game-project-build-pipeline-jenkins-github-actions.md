@@ -131,7 +131,7 @@ flowchart LR
 - 配置编译
 - 资源 bundle / manifest / catalog 生成
 
-这也是为什么前面那篇 [HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-notes/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}}) 特别重要。
+这也是为什么前面那篇 [HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景]({{< relref "engine-toolchain/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}}) 特别重要。
 
 它证明了一件很典型的事：
 

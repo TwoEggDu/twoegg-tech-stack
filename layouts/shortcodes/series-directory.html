@@ -1,10 +1,9 @@
 {{ $page := .Page }}
 {{ $seriesId := $page.Params.series_id | default "" }}
 {{ $seriesTitle := $page.Params.series_title | default ($page.Params.series | default $page.Title) }}
-{{ $section := $page.Section }}
 {{ $members := slice }}
 
-{{ range where site.RegularPages "Section" $section }}
+{{ range site.RegularPages }}
   {{ $candidate := . }}
   {{ if ne $candidate.RelPermalink $page.RelPermalink }}
     {{ $belongs := false }}

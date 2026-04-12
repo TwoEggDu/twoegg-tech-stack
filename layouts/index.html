@@ -2,25 +2,31 @@
   {{ $featured := slice }}
   {{ range (slice
     "/projects/vfx-checker-case.md"
-    "/engine-notes/player-input-and-game-content-to-screen.md"
-    "/engine-notes/unity-engine-insights.md"
+    "/rendering/player-input-and-game-content-to-screen.md"
+    "/system-design/unity-engine-insights.md"
     "/code-quality/code-quality-is-delivery-capability.md"
   ) }}
     {{ with site.GetPage . }}
       {{ $featured = $featured | append . }}
     {{ end }}
   {{ end }}
-  {{ $sections := slice "projects" "engine-notes" "code-quality" "problem-solving" "essays" }}
+  {{ $sections := slice "projects" "rendering" "engine-toolchain" "performance" "system-design" "code-quality" "problem-solving" "essays" }}
   {{ $sectionLabels := dict
-    "projects" "交付案例"
-    "engine-notes" "系统链路"
-    "code-quality" "演进约束"
+    "projects" "项目交付"
+    "rendering" "渲染管线"
+    "engine-toolchain" "引擎工具链"
+    "performance" "性能工程"
+    "system-design" "系统设计"
+    "code-quality" "代码质量"
     "problem-solving" "问题拆解"
-    "essays" "职业判断"
+    "essays" "工程判断"
   }}
   {{ $sectionCtas := dict
     "projects" "看代表案例"
-    "engine-notes" "看系统专题"
+    "rendering" "看渲染系列"
+    "engine-toolchain" "看工具链系列"
+    "performance" "看性能系列"
+    "system-design" "看系统设计"
     "code-quality" "看判断标准"
     "problem-solving" "看拆解过程"
     "essays" "看长期方法"
@@ -38,11 +44,11 @@
           {{ with site.GetPage "/projects" }}
             <a class="button" href="{{ .RelPermalink }}">看代表项目</a>
           {{ end }}
-          {{ with site.GetPage "/engine-notes" }}
-            <a class="button button-secondary" href="{{ .RelPermalink }}">看引擎与工具链</a>
+          {{ with site.GetPage "/rendering" }}
+            <a class="button button-secondary" href="{{ .RelPermalink }}">看渲染管线</a>
           {{ end }}
-          {{ with site.GetPage "/problem-solving" }}
-            <a class="button button-secondary" href="{{ .RelPermalink }}">看问题拆解</a>
+          {{ with site.GetPage "/system-design" }}
+            <a class="button button-secondary" href="{{ .RelPermalink }}">看系统设计</a>
           {{ end }}
         </div>
       </div>
@@ -51,9 +57,9 @@
 
   <section class="proof-bar" aria-label="Proof">
     <div class="meta-row">
-      <span class="tag">资源导入 / 构建打包 / CI / 渲染性能 / 工具平台</span>
+      <span class="tag">50+ 系列专题 | 700+ 篇技术文章</span>
+      <span class="tag">Unity & Unreal 双引擎</span>
       <span class="tag">PC / Mobile / Console</span>
-      <span class="tag">工具链 owner / 平台建设 / 质量门禁</span>
     </div>
   </section>
 
