@@ -23,7 +23,7 @@ series:
 ## 全链路概览
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["声明 keyword"] --> B["收集使用证据"]
     B --> C["裁剪"]
     C --> D["交付"]
@@ -84,7 +84,7 @@ keyword 的来源分三类：
 答案来自四个角色，它们各自提供不同类型的"保留依据"：
 
 ```mermaid
-flowchart LR
+flowchart TD
     M["Material"] & S["SVC"] --> U["usedKeywords"]
     AI["Always Included"] --> SK["跳过使用证据裁剪"]
     URP["URP Asset"] --> PF["Prefiltering 依据"]
