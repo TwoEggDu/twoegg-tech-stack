@@ -161,8 +161,12 @@ series: "Unity 资产系统与序列化"
 - Prefab 在，实例效果不对
 - 脚本组件挂着，但绑定失败
 
-所以运行时真正需要建立的，不只是“我拿到了哪个 bundle”，而是：
+所以运行时真正需要建立的，不只是”我拿到了哪个 bundle”，而是：
 `当前要恢复的这份内容，它所需的 bundle 依赖是否已经进入可用状态。`
+
+这里有一个很容易被忽视的事实需要显式钉住：**Unity 引擎本身不会自动加载依赖 bundle**。`AssetBundle` 类内部虽然有 `m_Dependencies` 记录了所有依赖的 bundle 名字，但引擎在 `LoadAsset` 时只检查”外部引用对应的 SerializedFile 是否已经被挂载进 PersistentManager”——如果没有，引用就直接是 null，引擎不会替你去查找和加载缺失的依赖。
+
+自动依赖加载完全是上层框架（Addressables / YooAsset / 自研资源系统）的职责。如果你在用裸 `AssetBundle` API，依赖链的加载顺序必须由自己的代码来保证。
 
 ### 2. 依赖问题经常伪装成渲染问题、脚本问题、实例问题
 
@@ -306,7 +310,11 @@ Scene 的情况又不一样。
 
 这也是为什么 `Unload(true)` 和 `Unload(false)` 经常不是性能优化问题，而是生命周期设计问题。
 
-### 3. 所以真正该问的不是“要不要 Unload”，而是“谁该活到什么时候”
+如果从源码层面看，这两个行为的机制会更具体：Unity 内部的 `PersistentManager` 维护着一张 stream（即 SerializedFile）到已加载 object 的映射表。`Unload(false)` 的实际操作是从 PersistentManager 中**移除该 SerializedFile stream**，但不销毁已经通过这个 stream 加载出来的 object。这些 object 就变成了”孤儿”——它们仍然活在内存中，但 PersistentManager 不再知道它们来自哪个 bundle。
+
+这带来一个很容易踩的坑：如果你在 `Unload(false)` 之后重新加载同一个 bundle 并 `LoadAsset` 同一个资源，PersistentManager 会创建**一份全新的 object**，而不是复用之前那个孤儿对象。这就是 `Unload(false)` 后重复加载导致”内存里出现两份相同资源”的源码根因。
+
+### 3. 所以真正该问的不是”要不要 Unload”，而是”谁该活到什么时候”
 
 从工程角度看，`Unload` 最该服务的不是“看见 API 就顺手调一下”，而是一个更前置的问题：
 

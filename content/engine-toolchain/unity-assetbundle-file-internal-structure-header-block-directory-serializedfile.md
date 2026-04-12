@@ -464,6 +464,8 @@ struct StorageBlock {
 
 blocks info 区域整体再套一层压缩（由 Archive Header 里的 `flags` 指定压缩类型），blocks info 之后才是 directory info（Node 列表），再之后才是真正的 data 区域。
 
+需要注意的是，当 `kArchiveBlocksAndDirectoryInfoCombined` 标志位被设置时（UnityFS 格式默认如此），blocks info 和 directory info 是**作为同一个压缩段一起存储**的，而不是两个独立的压缩区域。这个 combined section 内部的实际顺序是：先一个 `UncompressedDataHash`（Hash128，用于对整个 data 区域做内容完整性校验），然后是 StorageBlock 列表，最后是 Node 列表。
+
 ### 1. SerializedFile Header 的实际字段布局
 
 源码里有两个 Header struct，用来处理新旧版本的差异。
@@ -547,6 +549,8 @@ UInt32  m_MetaFlag      // 传输标志，对应 C++ 里的 TransferMetaFlags
 
 节点之间不用显式的父子指针，而是靠 `m_Level` 来隐式表示树结构：相邻两节点的 level 差决定它们是父子还是兄弟。这让整个 TypeTree 可以被存成一个扁平数组。
 
+TypeTree 在工程上还有一个很值得注意的 trade-off：构建时可以通过 `BuildAssetBundleOptions.DisableWriteTypeTree` 把 TypeTree 从 bundle 里去掉。去掉之后 bundle 更小、加载时少解析一层元数据。但代价是**丧失跨 Unity 版本加载能力**——因为没有 TypeTree，反序列化只能靠编译期类型布局硬匹配；如果 bundle 构建时和运行时的 Unity 版本不同（哪怕只是字段偏移变了），就会静默数据错位或直接加载失败。这也是为什么 Addressables 默认**不** strip TypeTree：对长线运营项目来说，跨版本维护资源包的兼容性风险远比省一点包体更重要。
+
 ### 5. ArchiveFileSystem 在代码里是什么
 
 `ArchiveFileSystem` 是 `FileSystemHandler` 的子类，实现了 Unity VFS 的文件系统接口（Open/Read/Close/Seek 等），并额外提供了：
@@ -569,7 +573,8 @@ bool UnmountArchive(const char* path);
 | v11  | MonoBehaviour 开始在元数据里存 script type index |
 | v13  | TypeTree hash 加入元数据 |
 | v15  | 支持 stripped 对象（去掉脚本类但保留组件数据） |
-| v16  | ClassID 扩展到 32-bit（Unity 5.5） |
+| v16  | Editor 版本字符串存储方式重构 |
+| v17  | ClassID 存储方式重构：从 object info 拆进独立类型表（Unity 5.5） |
 | v22  | 大文件支持，所有偏移改为 64-bit（Unity 2020.1） |
 
 如果你用工具解析一个 bundle 文件、看到某些字段不对，先对一下版本号，因为很多字段在某个版本之前根本不存在，或者占的字节数不同。

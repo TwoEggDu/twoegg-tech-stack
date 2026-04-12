@@ -85,9 +85,17 @@ series: "Unity 资产系统与序列化"
 - 但首帧显示仍然抖
 - 或者对象第一次出现时依然卡一下
 
-因为“bundle ready”和“内容 ready”根本不是一回事。
+因为”bundle ready”和”内容 ready”根本不是一回事。
 
-## 二、LZMA 和 LZ4 不是“谁更先进”，而是在不同成本之间做交换
+而且即便只看”拿到 bundle”这一步，选用的 API 不同，性能账也会差很多：
+
+- `LoadFromFile`：直接打开文件句柄，对 LZ4 bundle 走 memory-mapped I/O，bundle 几乎不占 native heap。这是本地 bundle 推荐的方式。
+- `LoadFromMemory`：把传入的 `byte[]` 整体拷贝到 native memory 再解析，会临时出现 managed 和 native 各一份的双倍内存占用。如果你从磁盘先 `File.ReadAllBytes` 再 `LoadFromMemory`，等于白白多了一轮拷贝。
+- `LoadFromStream`：从一个 managed `Stream` 逐段读取，内存可控，但每次 read 都要跨 managed→native 边界，频繁的跨界调用会带来额外开销。它更适合自定义读取场景（如加密 bundle 的运行时解密流）。
+
+项目里最常见的性能误用之一，就是对已经在本地磁盘上的 bundle 用 `LoadFromMemory`——多了一份完整的内存拷贝，还丢掉了 memory-mapped I/O 的全部好处。
+
+## 二、LZMA 和 LZ4 不是”谁更先进”，而是在不同成本之间做交换
 
 说到 AssetBundle 性能，最常被提到的就是 `LZMA` 和 `LZ4`。
 
@@ -126,8 +134,12 @@ series: "Unity 资产系统与序列化"
 - 但打开和读取更轻
 - 更适合运行时频繁访问或按需装载
 
-它不意味着“完全免费”，只是意味着：
+它不意味着”完全免费”，只是意味着：
 `你把更多代价放回了包体和分发，把更少代价留在运行时首载那一刻。`
+
+LZ4 在运行时更轻的根源，不只是”解压算法更快”——从源码看，更关键的原因是 `AssetBundle.LoadFromFile` 对 LZ4 压缩的 bundle 不需要一次性解压整个内容区。Unity 的 `ArchiveStorageReader` 只读取 header 和 blocks info，保持文件句柄打开；后续 `LoadAsset` 时，才根据请求定位到对应的 128 KB 压缩块，按需从磁盘读取并解压。在部分平台上（桌面端、iOS），底层文件访问还会走 memory-mapped file，进一步减少 native heap 占用。所以一个 200 MB 的 LZ4 bundle 用 `LoadFromFile` 打开后，在还没开始 `LoadAsset` 之前，它几乎不占堆内存。
+
+而 LZMA 因为是整段流压缩，想读任何一个内部文件都必须先解压整个 content section，无法走按需解压路径。这才是 LZMA 首载重、内存峰值高的底层原因。
 
 ### 3. 所以压缩格式不是性能参数，而是交付和运行时之间的预算分配
 
@@ -144,6 +156,14 @@ series: "Unity 资产系统与序列化"
 - 它的典型场景是“下载一次，少量用”，还是“反复打开，频繁用”
 
 压缩格式如果脱离使用场景单独讨论，通常讨论不出结果。
+
+### 4. Unity 内建了一条 LZMA 和 LZ4 之间的折中路径
+
+很多人把 LZMA 和 LZ4 看成二选一，但 Unity 实际上已经内建了一条折中链路：当你通过 `UnityWebRequestAssetBundle` 下载 LZMA 压缩的 bundle 时，Unity 的缓存系统会在写入本地磁盘之前**自动将其重压缩为 LZ4**。这个行为由 `Caching.compressionEnabled` 控制，默认开启。
+
+也就是说，你可以远端发布 LZMA 获取更小的下载体积，而本地缓存自动变成 LZ4，后续从磁盘读取时获得 memory-mapped 和随机访问的全部好处。这条路径正好桥接了 LZMA 的交付优势和 LZ4 的运行时优势。
+
+如果你不想在下载时同步承受重压缩的 CPU 开销，还可以用 `AssetBundle.RecompressAssetBundleAsync` 手动异步地做这件事——先把 LZMA 原文件存下来，在后台慢慢重压缩成 LZ4。
 
 ## 三、首次加载卡顿，通常是整条链一起在关键时刻收口
 

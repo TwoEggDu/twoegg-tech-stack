@@ -112,6 +112,12 @@ series_order: 50
 - 增量构建为什么命中或没命中
 - bundle 写出过程怎么被组合成一条可控流程
 
+如果想在 SBP 层做定制，最值得先知道的是它的四步核心 task chain：
+
+`GenerateBundlePacking → GenerateBundleCommands → WriteSerializedFiles → ArchiveAndCompressBundles`
+
+分别对应：打包分组计算、生成写包指令、写出序列化文件、归档压缩成最终 bundle。这四个 `IBuildTask` 实现都在 SBP package 的 `Tasks/` 目录下，是自定义构建流程时最常见的切入点。
+
 这也是为什么你一旦往更底层改 bundle 构建行为，很容易就会碰到 `SBP` 语境，而不只是 `BuildPipeline.BuildAssetBundles` 那层简单入口。
 
 但反过来说，`SBP` 也不是项目资源系统的最终管理层。它默认也不替你定义：
