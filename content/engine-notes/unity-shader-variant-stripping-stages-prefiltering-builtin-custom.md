@@ -254,13 +254,13 @@ series:
 核心看两件事：
 
 - 这条 shader / pass 的 variant 数量在构建里有没有明显下降
-- `After filtering`、`After builtin stripping`、`After IPreprocessShaders` 这些阶段性数字是怎么变的
+- `After settings filtering`、`After built-in stripping`、`After scriptable stripping` 这些阶段性数字是怎么变的
 
 它们对应的意思通常可以粗理解成：
 
-- `After filtering`：前面的设置过滤 / Prefiltering 之后
-- `After builtin stripping`：Unity 内置剔除之后
-- `After IPreprocessShaders`：项目或 SRP 脚本剔除之后
+- `After settings filtering`：前面的设置过滤 / Prefiltering 之后
+- `After built-in stripping`：Unity 内置剔除之后
+- `After scriptable stripping`：项目或 SRP 脚本剔除之后
 
 ### 2. 如果 `OnProcessShader` 从来没见过它，优先怀疑更早层
 

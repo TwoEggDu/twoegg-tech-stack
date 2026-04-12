@@ -1,7 +1,7 @@
 ---
-date: "2026-03-30"
-title: "Unity Shader Variant 全流程总览：从生产、保留、剔除到运行时使用"
-description: "把 Unity Shader Variant 的完整生命周期串成一条连续链路：它从哪里生产出来，谁为本次构建提供保留依据，哪些层会提前过滤或剔除它，最后怎样被写进交付物并在运行时命中到 GPU 程序。"
+date: "2026-04-12"
+title: "Unity Shader Variant 全流程总览：从定义、构建、运行到排障"
+description: "按读者的认知顺序串起 Shader Variant 的完整链路：什么是变体、从哪里来、构建时怎么保留和裁剪、运行时怎么命中和预热、出了问题怎么定位、工程上怎么治理。每个环节给出关键机制和深入链接。"
 slug: "unity-shader-variant-full-lifecycle-overview"
 weight: 18
 featured: false
@@ -16,457 +16,282 @@ series:
   - "Unity 资产系统与序列化"
   - "Unity Shader Variant 治理"
 ---
-项目里一旦开始系统排查 `Shader Variant`，团队通常会同时撞上几类问题：
+这篇文章是 Shader Variant 系列的总览。它不展开每个环节的细节，而是把完整链路按读者的认知顺序串起来，每个环节讲清楚"是什么"和"为什么"，然后给出深入链接。
 
-- 变体到底是从哪里来的
-- 为什么材质、场景、`SVC`、`Always Included` 都在提，但职责又不一样
-- 为什么有些路径明明写进了 `SVC`，最后构建里还是没留下来
-- 为什么有时是粉材质，有时只是效果不对，有时只是首帧卡一下
+如果你在项目里碰到了变体相关的问题，可以先从这篇定位问题在哪个阶段，再跳到对应的细节文章。
 
-这些问题之所以容易缠在一起，不是因为它们本身很玄，而是因为它们分属同一条生命周期的不同阶段。
+## 全链路概览
 
-如果只留一句话，我会这样压：
+```mermaid
+flowchart TD
+    A["Shader 声明 keyword\n定义理论变体空间"] --> B["Material / SVC / Always Included\n提供本次构建的保留依据"]
+    B --> C["ComputeBuildUsageTagOnObjects\n收集使用证据，组装候选集"]
+    C --> D["URP Prefiltering\n按管线配置过滤不可能的路径"]
+    D --> E["Unity Builtin Stripping\n按全局设置裁剪雾/光照/Instancing"]
+    E --> F["SRP + 自定义 Stripping\nIPreprocessShaders 回调"]
+    F --> G["写入 Player 或 AssetBundle\n最终交付物"]
+    G --> H["运行时评分匹配\n命中最佳变体 → GPU 执行"]
+```
 
-`Shader Variant` 问题本质上不是一个按钮有没有勾上的问题，而是一条从 `Shader 声明可能空间 -> 本次构建的真实使用面 -> 各层过滤与剔除 -> 写入正确交付物 -> 运行时命中 -> GPU 消费` 的连续链路问题。
-
-这篇文章只做一件事：
-
-`把一个 Shader Variant 从"为什么会出现"到"为什么会消失"再到"运行时怎么被 GPU 真正使用"，按顺序串成一条完整流程。`
-
-如果你在项目里已经遇到过下面这些说法，这篇就是把它们放回同一条链里：
-
-- `这个 keyword 明明有材质在用`
-- `这个 variant 我已经放进 SVC 了`
-- `不行就先放 Always Included`
-- `OnProcessShader 里我没删它`
-- `包里看起来有 shader，为什么运行时还是错`
+下面逐节展开。
 
 ---
 
-## 一、先把三层坐标钉住，不然后面一定会混
+## 一、什么是 Shader Variant，Unity 为什么要这样设计
 
-理解 `Shader Variant`，最怕一上来就把"资产""编译结果""运行时命中"混成一层。更稳的拆法是先分成三层：
+GPU 和 CPU 的执行模型有一个根本差异：CPU 擅长分支跳转，GPU 不擅长。
 
-1. `资产定义层`：项目里到底声明了什么、引用了什么、显式登记了什么
-2. `构建产物层`：哪些路径真的被保留下来，并写进了目标交付物
-3. `运行时消费层`：当前 draw call 到底命中了哪条现成路径，GPU 最终拿到的是哪份程序
+GPU 把线程组织成 Warp（NVIDIA）或 Wave（AMD），一个 Warp 里的所有线程在同一时刻执行同一条指令。如果 Shader 代码里有 `if/else` 分支，且 Warp 内的线程走了不同的分支方向，GPU 必须把两个分支都执行一遍，再用掩码丢掉不该要的结果。这叫 **Warp Divergence**，代价很高。
 
-只要这三层一混，后面的判断就会连续出错：
+Unity 的解决方式是：**在编译期就把不同的功能组合拆成独立的 GPU 程序**。每个程序对应一组特定的功能开关（keyword），运行时只需要选择正确的那份程序，不需要在 Shader 内部做分支判断。
 
-- 把 `Material` 当成"已经编译好的 GPU 程序"
-- 把 `SVC` 当成"保证一切都一定存在的保险箱"
-- 把"包里有 shader"误解成"运行时一定会命中正确 variant"
-- 把"首帧卡顿"误判成"变体被剔除了"
+`一个 Shader + 一组 keyword 状态 = 一个 Shader Variant（一份独立的 GPU 程序）`
 
-`资产存在`、`引用存在`、`正确平台结果存在`、`运行时命中正确路径`，是四件不同的事。它们之间任何一层断掉，最后都可能表现为"画面不对"。
+这意味着一个 Shader 在构建后不是一份程序，而是一批程序。keyword 的组合数决定了变体的数量——如果有 3 组 keyword，每组 2 个选项，理论变体数就是 2 × 2 × 2 = 8 个。
 
-后面每一节，都按这三层往前推。
+> 深入阅读：[Shader Variant 到底是什么：GPU 编译模型与变体本质]({{< relref "engine-notes/unity-shader-variant-what-is-a-variant-gpu-compilation-model.md" >}})
 
 ---
 
-## 二、再把整条生命周期压成一张图
+## 二、变体从哪里来：谁在定义 keyword
 
-理解 `Shader Variant`，最稳的方式不是先记工具名，而是先记阶段。
+变体的数量由 keyword 的声明方式和来源共同决定。keyword 不只是 Shader 代码里写的那几行，还有很多是管线和引擎自动注入的。
 
-一条 variant 从定义到被 GPU 使用，通常会经过下面这几站：
+```mermaid
+flowchart LR
+    subgraph Shader源码
+        A1["#pragma multi_compile\n所有组合都编译"]
+        A2["#pragma shader_feature\n只编译有使用证据的组合"]
+    end
+    subgraph 管线注入
+        B1["URP 功能开关\n阴影/附加光/SSAO/Decal..."]
+        B2["Renderer Feature\n每个 Feature 注入自己的 keyword"]
+    end
+    subgraph 引擎内置
+        C1["雾: FOG_LINEAR/EXP/EXP2"]
+        C2["光照贴图: LIGHTMAP_ON/DIRLIGHTMAP_COMBINED"]
+        C3["Instancing: INSTANCING_ON"]
+        C4["立体渲染: STEREO_INSTANCING_ON"]
+    end
+    A1 & A2 & B1 & B2 & C1 & C2 & C3 & C4 --> D["理论变体空间\n所有维度的笛卡尔积"]
+```
 
-<div class="lifecycle-flow">
-  <div class="lifecycle-step">
-    <span class="lifecycle-step-index">1</span>
-    <div class="lifecycle-step-copy">
-      <strong>理论空间</strong>
-      <p><code>Shader / Pass / keywords / 平台维度</code> 先定义"理论上可能有哪些 variant"。</p>
-    </div>
-  </div>
-  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
-  <div class="lifecycle-step">
-    <span class="lifecycle-step-index">2</span>
-    <div class="lifecycle-step-copy">
-      <strong>构建输入与保留依据</strong>
-      <p><code>Scene / Material / Bundle 输入 / SVC / Always Included / 活跃 URP Asset</code> 决定这次 build 真正要讨论哪些路径。</p>
-    </div>
-  </div>
-  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
-  <div class="lifecycle-step">
-    <span class="lifecycle-step-index">3</span>
-    <div class="lifecycle-step-copy">
-      <strong>本次构建候选集</strong>
-      <p><code>Build Usage</code> 把"项目里存在的路径"收缩成"这次构建真的要处理的路径"。</p>
-    </div>
-  </div>
-  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
-  <div class="lifecycle-step lifecycle-step-group">
-    <span class="lifecycle-step-index">4</span>
-    <div class="lifecycle-step-copy">
-      <strong>过滤与剔除</strong>
-      <ul>
-        <li><code>URP Prefiltering</code></li>
-        <li><code>Unity Builtin Stripping</code></li>
-        <li><code>SRP Stripping</code></li>
-        <li><code>Project Stripping / OnProcessShader</code></li>
-      </ul>
-    </div>
-  </div>
-  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
-  <div class="lifecycle-step">
-    <span class="lifecycle-step-index">5</span>
-    <div class="lifecycle-step-copy">
-      <strong>交付与平台编译</strong>
-      <p>活下来的路径会变成 <code>subprogram / program blob</code>，再写入 <code>Player</code> 或 <code>AssetBundle</code>。</p>
-    </div>
-  </div>
-  <div class="lifecycle-flow-arrow" aria-hidden="true">↓</div>
-  <div class="lifecycle-step">
-    <span class="lifecycle-step-index">6</span>
-    <div class="lifecycle-step-copy">
-      <strong>运行时命中与 GPU 消费</strong>
-      <p><code>SetPass / keyword 匹配</code> 决定最终命中的那份平台程序，再交给 GPU 真正执行。</p>
-    </div>
-  </div>
-</div>
+### multi_compile 和 shader_feature 的核心区别
 
-这里先澄清一个很容易混的点：
+这是整个变体系统最重要的设计决策，直接决定构建产物的大小：
 
-- `Material / Scene / Bundle 输入 / SVC / Always Included` 不是构建输出，它们是 `输入`、`保留依据` 和 `交付边界条件`
-- 真正逐阶段产出的，分别是 `理论空间`、`本次候选集`、`逐层裁剪后的保留集合`、`平台编译结果` 和 `运行时命中结果`
-- 所以现场一说"variant 怎么被剔除了"，最好先问的是 `它死在输入阶段、过滤阶段、stripping 阶段，还是其实已经留下来了，只是运行时没命中对`
+- **`multi_compile`**：声明的所有 keyword 组合都会被编译，无论有没有材质在使用。适合运行时会动态切换的全局功能（如雾、质量档切换）
+- **`shader_feature`**：只编译有材质或 SVC 提供了使用证据的 keyword 组合。没有证据的组合不会被编译。适合静态的材质功能开关（如法线贴图开关、自发光开关）
 
-如果你现在关心的不是总览，而是源码口径的构建细账，可以继续读这篇：
+在构建系统的源码（`ShaderImportUtils.cpp`）中，`multi_compile` 的 keyword 会被加入 `NonStrippedUserKeywords` 列表（不可裁剪），`shader_feature` 的不会。这个分叉从 Shader 导入阶段就开始了。
 
-- [Unity Shader Variant 构建账单：Player Build 与 AssetBundle Build 的差异]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
+> 深入阅读：[变体从哪里来：keyword 的六大来源]({{< relref "engine-notes/unity-shader-variant-where-variants-come-from.md" >}}) · [构建系统怎样把保留依据变成变体候选集]({{< relref "engine-notes/unity-shader-variant-build-usage-how-candidates-are-assembled.md" >}})
 
 ---
 
-## 三、生产阶段：变体的来源和资产定义层
+## 三、构建时谁决定保留哪些变体
 
-### 1. Shader 决定的是理论可能空间
+理论变体空间通常有成千上万个组合，不可能全部编译。构建系统需要回答：**这次构建到底要保留哪些变体？**
 
-很多团队第一反应会把 `Shader Variant` 理解成"材质 keyword 的不同组合"。这只说对了一部分。
+答案来自四个角色，它们各自提供不同类型的"保留依据"：
 
-从资产层看，`Shader` 最核心的职责，不是"直接交给 GPU 跑"，而是定义一套可被后续构建系统继续处理的渲染模板。它提供的是：
+```mermaid
+flowchart TD
+    subgraph 保留依据来源
+        M["Material\n默认使用面：材质启用的 keyword\n通过 GetShaderKeywordState 提取"]
+        S["ShaderVariantCollection\n显式补充：登记项目关心的 keyword 组合\n和 Material 的证据是并集关系"]
+        AI["Always Included Shaders\n改变裁剪级别：跳过使用证据裁剪\nshader_feature 也会全量枚举"]
+        SC["场景对象\n贡献全局设置：哪些 Lightmap/Fog 模式被使用"]
+    end
+    M & S --> U["usedKeywords\n材质 + SVC 的使用证据并集"]
+    AI --> SK["kShaderStripGlobalOnly\n跳过 usedKeywords 裁剪"]
+    SC --> G["BuildUsageTagGlobal\n雾/光照/Instancing 全局标记"]
+    U & SK & G --> C["构建系统决定候选集"]
+```
 
-- 有哪些 `SubShader` 和 `Pass`
-- 有哪些编译期分支（`multi_compile`、`shader_feature`、`shader_feature_local`）
-- 不同 `Pass` 各自拥有独立的 variant 空间
-- Unity 内置渲染路径和平台特性带来的分支
-- SRP 自己附加的全局或局部 keyword
-- `Renderer Feature`、光照、雾、阴影、Lightmap、Instancing、XR、图形 API、Quality 档等功能开关
+### 四个角色的职责边界
 
-所以 `Shader` 更像是：`后续构建系统可以继续展开、筛选和编译的源头定义`，而不是最终设备上那份稳定可执行的结果。
+| 角色 | 做什么 | 不做什么 |
+|------|--------|---------|
+| **Material** | 提供最直接的 keyword 使用证据 | 不保证变体一定被保留（后续还有裁剪） |
+| **SVC** | 补充场景里没直连的关键路径 | 不是"放进去就一定有"的保险箱 |
+| **Always Included** | 让 Shader 由 Player 全局兜底 | 不是精确治理工具，会增大包体 |
+| **场景** | 通过引用 Material 间接贡献使用证据，同时贡献全局设置 | 不直接声明 keyword |
 
-一条 variant 最早不是从 `Material` 开始的，而是从：`Shader 源码和渲染管线共同定义的"理论可能空间"` 开始的。
+### 关键机制：ComputeBuildUsageTagOnObjects
 
-如果某条编译路径根本没在 `Shader` 或管线侧被声明出来，后面所有"保留""预热""剔除"的讨论都无从谈起。
+构建系统通过 `ComputeBuildUsageTagOnObjects`（源码位于 `Editor/Src/BuildPipeline/`）遍历所有参与构建的对象，按 Material → SVC → Terrain 的顺序提取 keyword 使用。核心函数 `GetShaderFeatureUsage` 做的是材质的 keyword 状态和 Shader 声明的 keyword 的**交集**——只收集"Shader 认识且材质启用了"的 keyword。
 
-这也是为什么项目里常见的第一类误会是：`我把运行时参数设成这样了，为什么构建里没有自动出现对应 variant？`——运行时参数值变化，并不等于新增了一个编译期 variant。
-
-### 2. Material 决定的是"怎样使用某个 Shader"
-
-`Material` 保存的重点不是 GPU 程序本体，而是：
-
-- 指向哪个 `Shader`
-- 当前这份材质有哪些属性值
-- 当前启用了哪些功能状态
-- 某些 keyword 或等价功能路径当前处于什么状态
-
-所以 `Material` 更接近：`某个 Shader 的一份具体使用配置`。这也是为什么同一个 `Shader` 可以被许多 `Material` 以完全不同的方式使用，而这些使用方式最后又会反过来影响构建期对 variant 的保留判断。
-
-### 3. SVC 决定的是"哪些路径值得被显式记住"
-
-`ShaderVariantCollection` 很容易被误解成"把 shader 编译结果装进去"。但它更稳的定位是：`把项目显式关心的 shader / pass / keyword 组合登记出来`，价值在于：
-
-- 给构建期提供额外的保留依据
-- 给运行时 WarmUp 提供可操作的清单
-- 给团队提供一份可回归、可审计的关键路径名单
-
-所以 `SVC` 更像"清单"，不是"平台程序容器"。
-
-### 4. Graphics Settings 和 URP Asset 也是资产输入的一部分
-
-很多团队会把 `Shader`、`Material`、`SVC` 当成资产输入的全部，但这不够。下面这些配置同样会改变一条 variant 的命运：
-
-- `Graphics Settings` 和 `Always Included Shaders`
-- 当前生效的 `URP Asset` 和 `Renderer`
-- 某些全局图形开关和质量档
-
-因为它们会直接影响：哪些路径被视为"本次构建有可能发生"、哪些路径会被提早过滤、某份 shader 最后由谁负责交付。
+> 深入阅读：[保留与存活：四方角色和六道检查点]({{< relref "engine-notes/unity-shader-variant-retention-and-survival.md" >}}) · [SVC 是什么]({{< relref "engine-notes/unity-what-shadervariantcollection-is-for.md" >}}) · [Always Included 为什么能修问题]({{< relref "engine-notes/unity-why-always-included-shaders-fixes-assetbundle-problems.md" >}})
 
 ---
 
-## 四、保留依据阶段：谁在告诉构建系统"这条路径这次值得保留"
+## 四、构建时哪些层会裁掉变体
 
-理论上存在，不等于这次构建里一定会留下来。
+收集到候选集以后，变体还要经过四层裁剪。每一层有不同的裁剪依据和职责：
 
-接下来构建系统要回答的问题是：`这次 build 到底为什么要关心这条 variant？`
+```mermaid
+flowchart TD
+    A["候选变体集\n（理论空间 × 使用证据）"] --> B
+    B["① URP Prefiltering\n依据：URP Asset 功能开关\n裁掉管线配置中不可能的路径"]
+    B --> C["② Unity Builtin Stripping\n依据：BuildUsageTagGlobal\n裁掉未使用的雾/光照/Instancing 变体"]
+    C --> D["③ SRP Stripping\n依据：管线的 C# 回调\n裁掉更细粒度的不可能组合"]
+    D --> E["④ 自定义 IPreprocessShaders\n依据：项目规则\n裁掉项目确认永远不用的组合"]
+    E --> F["最终进入编译的变体"]
+```
 
-这一步最容易混在一起的，是下面几类东西：
+### 每层做什么
 
-### 1. Material 和场景：默认使用面的最前线
+**① URP Prefiltering**（发生在枚举前）
 
-大多数 variant 能留下来，最普通的原因不是你做了什么治理，而是：`参与本次构建的真实内容，确实在使用这条路径。`
+URP 在构建开始前扫描所有 Quality Level 引用的 URP Asset，收集功能开关。如果某个功能没开（比如 Decal Layers 关闭），对应的 keyword 直接从枚举中移除——**连候选集都进不了**。
 
-参与构建的材质、场景、资源引用链，构成了最自然的保留依据。但这里有一个关键限制：
+影响 Prefiltering 的关键配置：HDR、Main Light Shadows、Additional Lights、SSAO、Decal Layers、Forward+/Deferred 等。如果多个 Quality Level 引用了不同的 URP Asset，它们的功能开关取并集。
 
-`项目里存在` 不等于 `这次构建里参与了输入`
+**② Unity Builtin Stripping**（发生在枚举后）
 
-一个材质即使就在工程里，只要它没有进入这次 `Player` 或目标 `AssetBundle` 的构建输入，它就不一定会为这次构建贡献使用面。
+根据 `BuildUsageTagGlobal` 的标记逐个检查候选变体。如果没有场景使用 Exp2 雾，所有 `FOG_EXP2` 变体被裁掉。Lightmap 模式、Shadow Mask、Instancing、Stereo 同理。
 
-### 2. SVC：显式补充"场景里没直连，但项目仍然关心"的路径
+**③ SRP Stripping**（通过 C# 回调）
 
-`SVC` 的职责是：`把项目显式关心的某些路径补充进这次构建与运行时预热的讨论范围。`
+URP/HDRP 的 `IPreprocessShaders` 实现。比 Prefiltering 更细粒度——可以检查具体的 keyword 组合是否合理，裁掉不可能同时启用的组合。
 
-它解决的不是"无论前后发生什么，这条 variant 必须永远存活"，而是：`有些路径不容易仅靠场景直连被自然覆盖，但我们明确知道运行时会用到。`
+**④ 自定义 IPreprocessShaders**（项目自定义）
 
-所以 `SVC` 是保留依据的一部分，不是对后续所有剔除层的绝对免死金牌。
+项目团队通过 `OnProcessShader` 回调添加的自定义规则。注意：**你在这个回调里看到的变体，是经过前三层存活下来的**。如果某个变体根本没出现在回调里，不代表它没被裁——可能是更早的 Prefiltering 就把它干掉了。
 
-### 3. Always Included：不是补充使用面，而是改变交付责任
+### 构建日志的四个数字
 
-`Always Included Shaders` 容易被误解成"更强力的 SVC"。它更像是在改一件事：`这份 shader 到底由谁来负责被带进最终交付物。`
+Editor.log 里每个 Shader 的构建统计会输出四个数字，对应这条链的四个截面：
 
-也就是说：
+| 日志标签 | 含义 |
+|---------|------|
+| `Full variant space` | 所有声明维度的笛卡尔积（理论最大值） |
+| `After settings filtering` | URP Prefiltering + 使用证据枚举后 |
+| `After built-in stripping` | 全局设置裁剪后 |
+| `After scriptable stripping` | SRP + 自定义裁剪后（最终编译数量） |
 
-- `Material / 场景 / SVC` 更像在提供"这次构建为什么要保留它"的依据
-- `Always Included` 更像在改变"这份 shader 以怎样的全局边界被交付"
-
-所以现场那句常见的"实在不行就先放 Always Included"，本质上是在粗粒度地改交付边界，而不是在精确治理某个具体 variant。
-
-### 4. 这一阶段最容易犯的判断错误
-
-团队在这里最容易混淆三件事：
-
-- `项目里有这个材质`
-- `这次构建里有这个材质`
-- `这次构建里真的因此要保留这条 variant`
-
-如果这三层不分开，后面一旦遇到 `SVC` 明明加了、最终还是缺变体，就很容易把问题误判成"Unity 又失灵了"，而不是继续往后看过滤与剔除层。
-
----
-
-## 五、过滤与剔除阶段：不是所有候选都会活着走到正式编译
-
-到了这一步，构建系统已经知道"有哪些路径值得讨论"，但这仍然不等于它们都会留下来。
-
-从工程排查的角度，最关键的区分是两种完全不同的死亡方式：
-
-1. `它根本没进入普通候选集`
-2. `它进入候选后又被后面的 stripping 删掉`
-
-这两种情况看起来都像"最后没有这个 variant"，但排查手段不同。
-
-### 1. 更早的配置过滤和 URP Prefiltering
-
-这是很多项目最容易漏掉的一层。
-
-在 URP 项目里，当前生效的管线配置、`Renderer Feature`、平台能力、图形 API、质量档等，可能会先把一整段路径判成：`这次构建里根本不可能发生`——这意味着某些 variant 甚至不会走到后面常说的普通 stripping 逻辑里。
-
-URP 的 `Decal Layers` 就是一个典型案例：
-
-- `Shader` 侧确实声明了相关路径
-- 项目里也可能有材质或 `SVC` 记录了对应 keyword
-- 但如果本次构建真正生效的 `URP Asset / Renderer Feature` 没把相关功能打开
-- URP 可能在更早的预过滤阶段就把这条路径视为"不可能发生"
-
-这时现场看起来就会像：`明明在 SVC 里，怎么还是没留下来`——其实不是 `SVC` 无效，而是它补进来的路径没能越过更前面的配置真实性判断。
-
-### 2. Unity 内置 stripping
-
-如果路径已经进入普通候选，Unity 还会继续做内置的 stripping：
-
-- 删掉当前配置下明确不需要的变体
-- 压缩理论空间和真实目标之间的差距
-- 避免把大量永远不会命中的组合直接带进交付物
-
-### 3. SRP stripping
-
-SRP 自己也会在 Unity 内置逻辑之外继续裁剪。它更了解自己管线的功能开关、平台限制和组合约束，所以它删掉的往往是：`当前这条渲染管线在这次构建配置下明确不会走到的路径`。
-
-### 4. 项目自定义 IPreprocessShaders
-
-最后才轮到团队自己的自定义 stripping 规则。
-
-这一层是项目治理能力最强、也最危险的一层：好处是你能把项目内永远不会发生的组合明确写成规则，风险是很容易用局部经验删掉未来才会需要的路径。
-
-工程上最稳的思路不是一上来在这一层猛砍，而是先确认前面几层已经把"客观不可能"的东西自然滤掉。
-
-### 5. 这一阶段的核心结论
-
-`SVC 决定的是"有没有资格进候选面"，剔除层决定的是"进来之后还能不能活着出去"。`
-
-这两者不是同一件事，也不能互相替代。
+> 深入阅读：[裁剪阶段详解：Prefiltering、Builtin、SRP、Custom 四层]({{< relref "engine-notes/unity-shader-variant-stripping-stages-prefiltering-builtin-custom.md" >}}) · [URP Prefiltering 专项]({{< relref "engine-notes/unity-urp-shader-variant-prefiltering-strip-settings.md" >}})
 
 ---
 
-## 六、交付阶段：活下来的 variant 要被写进正确的交付边界
+## 五、运行时 Unity 怎么使用变体
 
-很多现场说"包里明明有 shader"时，问题其实已经不在"有没有留下来"，而在：`它最后到底被谁带进了目标交付物。`
+构建完成后，存活的变体被写进 Player 或 AssetBundle。运行时，每次 Draw Call 需要选择一个变体交给 GPU。
 
-### 1. Player 视角下的"留下来"
+```mermaid
+flowchart LR
+    A["Draw Call 提交\n当前 Material + 全局 keyword 状态"] --> B["评分匹配\nscore = matching - mismatching × 16"]
+    B --> C{找到精确匹配?}
+    C -->|是| D["使用精确变体"]
+    C -->|否| E["使用最高分的近似变体\n（fallback）"]
+    D & E --> F{该变体的 GPU 程序\n是否已准备好?}
+    F -->|是| G["直接交给 GPU 执行"]
+    F -->|否| H["延迟加载/编译\n首帧卡顿"]
+    H --> G
+```
 
-如果一条路径最终由 `Player` 全局负责，那它的含义更接近：`目标包体的全局图形环境里存在这份 shader 能力`——运行时很多对象只是在引用它，而不是自己再单独携带一整份可用结果。
+### 评分匹配，不是精确查找
 
-### 2. AssetBundle 视角下的"留下来"
+运行时查找变体用的是评分算法（源码位于 `LocalKeyword.cpp` 的 `ComputeKeywordMatch`）：
 
-一旦进入 `AssetBundle` 或多包协作场景，"留下来"的含义就会变得更具体：`这次由哪个交付物实际带着它，谁在承担它的存在责任`。
+```
+score = matchingCount - mismatchingCount × 16
+```
 
-你必须区分：
+- `matchingCount`：变体需要的 keyword 中，当前确实启用的数量（+1 分/个）
+- `mismatchingCount`：变体需要的 keyword 中，当前没有启用的数量（-16 分/个）
 
-- bundle 只是引用某份全局 shader 能力
-- 还是 bundle 自己负责带齐对应路径
+不匹配的惩罚是匹配奖励的 16 倍——引擎强烈倾向于选择不需要额外 keyword 的变体。
 
-这也是为什么同一条 shader 路径，在纯 `Player` 场景里正常，换到 bundle 场景里问题就会突然爆出来。
+### Fallback 和首帧卡顿
 
-### 3. Always Included 为什么经常看起来像一键修复
+- 如果精确变体不存在，引擎会退化到得分最高的近似变体。画面不会粉，但效果可能不对
+- 如果变体存在但对应的 GPU 程序尚未准备好，第一次使用时会触发延迟编译，造成一帧卡顿
+- `ShaderVariantCollection.WarmUp()` / `WarmUpProgressively(int)` 可以在 Loading Screen 期间提前编译，避免首帧卡顿
 
-当 `Always Included` 介入时，很多"bundle 加载后显示不对"的问题会暂时消失，原因通常不是它神奇地创造了新 variant，而是：`它把交付责任粗暴地改成了由 Player 全局兜底。`
-
-所以它经常能"修好现场"，但代价往往是：包体更大、全局责任更重、后面更难判断到底哪些内容真的需要被精确保留。
-
-### 4. 写进交付物的并不是抽象 keyword，而是平台相关程序数据
-
-从资产视角看，大家口头上都在说 `keyword`、`variant`、`shader`。但到了真正交付和运行时消费这一层，系统处理的已经不是抽象概念，而是：
-
-`某个 shader 的某个 pass，在某组 keyword 条件下，对应到目标平台的一份可用程序数据。`
-
-这也是为什么"看到 shader 资产在包里"本身不能证明运行时一定能命中到你预期的那条路径。
-
----
-
-## 七、运行时使用阶段：CPU 不是直接拿 shader 资产去喂 GPU
-
-运行时链路的关键点在于：`GPU 消费的不是"一个 shader 文件"，而是"当前 draw call 最终命中的那份平台程序"。`
-
-### 1. 运行时先要决定这次 draw call 用哪个 pass、哪组 keyword 状态
-
-当 CPU 提交一个 draw call，它需要基于当前材质状态、pass、全局与局部 keyword，去找一条最合适的 variant。真正被命中的对象是：某个 shader、某个 pass、某组当前生效的 keyword 状态、在目标平台上的具体程序。
-
-运行时不是在重新发明一条 variant，而是在已经留下来的结果里做命中——所以如果构建期根本没留下来，运行时再聪明也变不出来。
-
-### 2. 运行时不一定要求精确命中，可能会退化到最近似路径
-
-这一步非常重要，因为它直接解释了很多"效果不对但材质没粉"的现场。
-
-如果精确 variant 不存在，Unity 并不总是立刻报错或变粉，它可能会退化到一条"还能跑"的最近似路径。于是你会看到：材质没有粉、Draw call 正常提交了、但光照、阴影、开关效果、贴花、发光、额外 pass 等结果和预期不同。
-
-这不是"运行时随机出错"，而是：`命中到了 fallback variant，而不是你真正想要的那条。`
-
-### 3. 命中了，也不等于第一次就没有代价
-
-即使正确 variant 已经在包里，第一次真正使用它时，也仍然可能出现一次准备成本。这就是为什么首次进场景卡一下、第一次出现某个特效卡一帧、后面重复出现就恢复正常——这种现象往往不是"变体不存在"，而是：`变体存在，但对应的平台程序还没有提前准备好。`
-
-### 4. WarmUp 站在这条链的最后端
-
-`WarmUp` 特别容易被误放到前面，但它回答的不是 `这条路径有没有留下来`，而是：`这条已经存在的路径，要不要在真正首用之前先准备好`。
-
-所以 `WarmUp` 的前提一定是：
-
-- 这条路径已经被正确保留
-- 它已经被正确写进目标交付边界
-- 运行时也确实会走到它
-
-如果这三个前提里任何一个不成立，`WarmUp` 都不是解法。`SVC` 和 `WarmUp` 在这里解决的是"提前准备"，不是"凭空补出不存在的 variant"。
+> 深入阅读：[运行时命中机制：评分匹配、延迟加载与 WarmUp]({{< relref "engine-notes/unity-shader-variant-runtime-hit-mechanism.md" >}}) · [SVC 怎么收集、分组和回归]({{< relref "engine-notes/unity-shadervariantcollection-how-to-collect-group-and-regress.md" >}})
 
 ---
 
-## 八、为什么丢了 Shader Variant，显示结果有时会错、有时会粉、有时只是首帧卡
+## 六、缺了变体会怎样，怎么定位
 
-这一节单独拎出来，是因为它直接对应项目现场最常见的误判。
+变体问题在项目里有三种典型表现，对应链路上的不同位置：
 
-很多人把下面三种现象都笼统叫成"丢 variant 了"，但它们对应的链路位置并不一样。
+```mermaid
+flowchart TD
+    A["变体问题的三种表现"] --> B["粉材质 / Error Shader\n= 完全没有可接受的变体"]
+    A --> C["效果不对但不粉\n= 退化命中了 fallback 变体"]
+    A --> D["首帧卡顿后续正常\n= 变体在但未提前准备"]
+    B --> B1["检查：构建期保留 → 交付边界"]
+    C --> C1["检查：精确变体是否被裁 → keyword 状态是否正确"]
+    D --> D1["检查：WarmUp 是否覆盖 → 时机是否正确"]
+```
 
-### 1. 粉材质或关键 pass 彻底失效：通常是没有任何可接受路径
+### 最短排查路径
 
-当运行时找不到任何可接受的 variant，或者关键 pass 根本没有可用程序时，才更容易出现粉材质、Error Shader、关键 pass 彻底不工作。
+1. 开启 `Player Settings → Strict Shader Variant Matching`，把退化命中变成明确的错误日志
+2. 看日志，定位是哪个 Shader、哪个 Pass、哪组 keyword 缺失
+3. 判断缺失发生在哪个阶段：是构建输入没覆盖、Prefiltering 删了、Stripping 删了，还是交付边界配错了
+4. 对应修复：补 SVC、调 URP Asset 配置、修 Stripping 规则、或调整 Always Included
 
-这种情况通常优先怀疑：这条路径根本没有被保留进交付物，或者交付责任配错了，目标运行环境里根本拿不到它。
-
-### 2. 画面不对但不粉：通常是退化命中了 fallback variant
-
-你明明看到物体还能画出来，于是第一反应会觉得 `那应该不是 variant 的问题吧`——其实恰恰相反。
-
-如果精确 variant 缺失，但系统还能找到一条最近似的 fallback 路径，表面结果就会变成：物体还在、shader 也没报错、但功能开关不对、额外效果没生效、阴影或贴花结果异常。
-
-这类问题最危险，因为它不够"炸裂"，所以经常被误归类成美术资源问题、参数没配对、某个平台精度差异——实际上完全可能是：`精确 variant 缺了，运行时只好退到一条能跑但不正确的近似路径。`
-
-### 3. 首帧卡顿但之后正常：通常是 variant 在包里，但未提前准备
-
-这一类不是"缺失"，而是"准备时机太晚"。如果变体已经保留下来，运行时也能正确命中，只是第一次真正触发这条路径时才去加载或准备平台程序，就会出现首帧卡顿。
-
-把三种现象放在一起：
-
-- `粉` 更像是"没有任何可接受路径"
-- `显示不对` 更像是"命中到退化路径"
-- `第一次卡` 更像是"路径在，但准备发生得太晚"
-
-把这三种现象分开，排查才不会一上来就把所有责任都压到 stripping 上。
+> 深入阅读：[变体排障速查：从现象到修复的最短路径]({{< relref "engine-notes/unity-shader-variant-troubleshooting-quick-reference.md" >}}) · [变体缺失诊断流程]({{< relref "engine-notes/unity-shader-variant-missing-diagnosis-flow.md" >}})
 
 ---
 
-## 九、项目里怎么确认问题到底死在哪一关
+## 七、工程最佳实践
 
-真正排查时，不要从自己最熟悉的工具开始，而要按生命周期倒查。
+变体治理不是出了问题才做的事。以下是一条可执行的项目设置链：
 
-最短的问题顺序通常是：
+| 步骤 | 做什么 | 为什么 |
+|------|--------|--------|
+| ① 审计 keyword | 检查所有 `multi_compile` 和 `shader_feature` 声明，修正不合理的 | 源头不对，后面全白做 |
+| ② 检查管线配置 | 确保所有 Quality Level 的 URP Asset 功能开关覆盖实际需求 | Prefiltering 依赖这些配置 |
+| ③ 设置 Always Included | 把全局公共 Shader（URP/Lit、后处理、UI）加入 Always Included | 避免 AB 加载后缺 Shader |
+| ④ 分组建 SVC | 按入口（登录/主界面/战斗）创建 SVC，登记关键变体路径 | 保留 + 预热两用 |
+| ⑤ 配置裁剪日志 | 实现一个只记日志不裁剪的 `IPreprocessShaders` | 先观测，再治理 |
+| ⑥ 配置 WarmUp | 在 Loading Screen 期间调用 `WarmUp()` 或 `WarmUpProgressively(N)` | 消除首帧卡顿 |
+| ⑦ 构建验证 | 开 Strict Matching + Log Compilation 跑关键流程 | 确认无遗漏 |
 
-1. `这条路径在 Shader 理论空间里到底有没有被声明出来`
-2. `这次构建有没有真实输入在为它提供保留依据`
-3. `它是不是在 URP/SRP 的更早配置过滤里就被判成不可能`
-4. `它是不是进入候选后又被 builtin / SRP / custom stripping 删掉`
-5. `它最后到底写进了 Player 还是 Bundle，交付责任配对了吗`
-6. `运行时是完全没找到、退化命中，还是只是第一次准备太晚`
-7. `如果路径存在，是否只是首用时机没准备好`
-
-如果需要证据链，最常用的抓手通常是：
-
-- `Editor.log`：看构建侧到底留下了多少 variant，以及某些关键 shader 的构建统计
-- `Strict Shader Variant Matching`：把"模糊退化"变成更明确的缺失信号
-- `Log Shader Compilation`：看运行时是否第一次才开始准备平台程序
-- `Frame Debugger`：确认当前 draw call 实际走了哪个 pass 和哪条路径
-- `OnProcessShader` 日志：只证明"它有没有走到这层"，不能证明它更早没被预过滤
-
-这里最重要的一条经验是：
-
-`如果某条路径根本没进入你的自定义 stripping 回调，不要立刻得出"不是剔除问题"的结论，更可能是它死在更早的 Prefiltering 或构建输入阶段。`
+> 深入阅读：[变体实践：怎样确保项目的 Shader 变体被正确保留]({{< relref "engine-notes/unity-shader-variant-retention-practice-project-setup.md" >}}) · [CI 监控]({{< relref "engine-notes/unity-shader-variant-ci-monitoring.md" >}})
 
 ---
 
-## 十、团队应该怎样使用这条全流程视角
+## 系列导航
 
-这篇总览文的目标不是替代细分文章，而是给整个系列建立统一坐标。
+按阅读顺序，这个系列的完整文章列表：
 
-后面你们再看任何局部话题，都可以先问它在生命周期里属于哪一站：
+**基础概念**
+- [Shader Variant 到底是什么：GPU 编译模型与变体本质]({{< relref "engine-notes/unity-shader-variant-what-is-a-variant-gpu-compilation-model.md" >}})
+- [变体从哪里来：keyword 的六大来源]({{< relref "engine-notes/unity-shader-variant-where-variants-come-from.md" >}})
+- [为什么要有 Shader Variant：工程权衡与跨引擎对比]({{< relref "engine-notes/unity-shader-variants-why-and-tradeoffs.md" >}})
 
-- 如果讨论的是 `Material / 场景 / SVC / Always Included`，本质上是在讨论 `资产定义层的保留依据与交付责任`
-- 如果讨论的是 `URP Prefiltering`、内置 stripping、自定义 stripping，本质上是在讨论 `构建产物层的过滤与剔除`
-- 如果讨论的是 `SetPass`、fallback、`WarmUp`、首次卡顿，本质上是在讨论 `运行时消费层的命中与准备`
-- 如果讨论的是 `AssetBundle` 明明有 shader 却显示不对，本质上通常是在讨论 `交付边界和运行时命中` 的组合问题
+**构建期**
+- [构建系统怎样把保留依据变成变体候选集]({{< relref "engine-notes/unity-shader-variant-build-usage-how-candidates-are-assembled.md" >}})
+- [保留与存活：四方角色和六道检查点]({{< relref "engine-notes/unity-shader-variant-retention-and-survival.md" >}})
+- [构建账单：Player Build 与 AssetBundle Build 的差异]({{< relref "engine-notes/unity-shader-variant-build-receipts-player-vs-ab.md" >}})
+- [裁剪阶段详解：Prefiltering、Builtin、SRP、Custom 四层]({{< relref "engine-notes/unity-shader-variant-stripping-stages-prefiltering-builtin-custom.md" >}})
+- [URP Prefiltering 专项]({{< relref "engine-notes/unity-urp-shader-variant-prefiltering-strip-settings.md" >}})
 
-从治理角度，这条线最后应该沉淀的不是一个"万能开关"，而是几类长期资产：
+**工具与治理**
+- [SVC 是什么]({{< relref "engine-notes/unity-what-shadervariantcollection-is-for.md" >}})
+- [SVC 怎么收集、分组和回归]({{< relref "engine-notes/unity-shadervariantcollection-how-to-collect-group-and-regress.md" >}})
+- [SVC 覆盖率与 Keyword 使用契约]({{< relref "engine-notes/unity-shader-variant-collection-coverage-and-keyword-contract.md" >}})
+- [SVC vs Always Included vs Stripping 怎么选]({{< relref "engine-notes/unity-svc-always-included-stripping-when-to-use-which.md" >}})
+- [Always Included 为什么能修 AssetBundle 的问题]({{< relref "engine-notes/unity-why-always-included-shaders-fixes-assetbundle-problems.md" >}})
 
-- 哪些变体来源维度在持续制造规模
-- 哪些路径是项目显式关心的保留面
-- 哪些规则在稳定地剔除"不可能发生"的组合
-- 哪些关键场景和关键效果必须被持续回归
-- 哪些现象属于缺失，哪些属于退化命中，哪些属于未预热
+**运行时**
+- [运行时命中机制：评分匹配、延迟加载与 WarmUp]({{< relref "engine-notes/unity-shader-variant-runtime-hit-mechanism.md" >}})
 
----
+**AssetBundle 专项**
+- [Shader 在 AssetBundle 里怎么存]({{< relref "engine-notes/unity-how-shader-is-stored-in-assetbundle-definition-compiled-variants.md" >}})
+- [为什么变体问题在 AssetBundle 上会爆发]({{< relref "engine-notes/unity-why-shader-variant-problems-explode-on-assetbundle.md" >}})
 
-## 十一、把全文压成一句结论
+**诊断与实践**
+- [变体缺失诊断流程]({{< relref "engine-notes/unity-shader-variant-missing-diagnosis-flow.md" >}})
+- [变体排障速查：从现象到修复的最短路径]({{< relref "engine-notes/unity-shader-variant-troubleshooting-quick-reference.md" >}})
+- [变体实践：怎样确保项目的 Shader 变体被正确保留]({{< relref "engine-notes/unity-shader-variant-retention-practice-project-setup.md" >}})
+- [CI 监控]({{< relref "engine-notes/unity-shader-variant-ci-monitoring.md" >}})
 
-最后把整篇压成几句最值得记住的话：
-
-1. `Shader / Material / SVC` 是资产定义，不是 GPU 最终消费对象。
-2. 真正决定设备侧能不能用到某条路径的，是构建期保留下来的平台相关程序结果。
-3. `Always Included` 解决的是交付责任边界，`SVC` 解决的是显式保留与预热清单，它们不在同一层。
-4. 运行时只能命中"已经留下来的东西"，不能凭空救回构建期已经消失的 variant。
-5. GPU 消费链的正确心智模型，不是"shader 在不在包里"，而是：
-
-`这条路径有没有被资产层表达出来，有没有被构建层留下来，有没有被交付层带到目标环境里，最后有没有被运行时正确命中。`
-
-只要链路视角是对的，下面这些现场问题就不会再混成一团：
-
-- 为什么项目里有材质，这次构建却没留下对应路径
-- 为什么 `SVC` 里有记录，URP 还是能提前把它判掉
-- 为什么 `Always Included` 看起来像修好了问题，但代价很粗
-- 为什么有时会粉，有时只是画面不对，有时只是第一次卡
-
-后面每一篇细分文，其实都只是这条链上的某一站。
+**案例**
+- [案例：OnEnable 时序导致的管线状态污染]({{< relref "engine-notes/unity-shader-variant-sceneobject-onenable-pipeline-corruption.md" >}})

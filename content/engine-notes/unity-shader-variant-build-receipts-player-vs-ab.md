@@ -201,13 +201,13 @@ Calculate(usageCache)
 
 AB Build 里还有 `BuildUsageCache` 的缓存机制（`m_VisitedShaderUsages`、`m_ShaderUsageMap`、`m_ShaderVertexComponentsCache` 等），避免对同一 `<shader, keywordString>` 重复计算。
 
-### 差异：globalUsage 的约束来源不同
+### 差异：globalUsage 的注入方式不同
 
-Player Build 的 globalUsage 里带着图形设置的全局裁剪前提；AB Build 的 globalUsage 来自 `CalculateBuildUsageTags` 的计算结果，没有 Player 那边图形设置提前写入的过程。
+Player Build 的 globalUsage 由 `ApplyShaderStrippingToBuildUsageTagGlobal` 在构建早期直接注入图形设置。
 
-这意味着：
+AB Build（传统路径）的 globalUsage 同样会经过 `ApplyShaderStrippingToBuildUsageTagGlobal` 注入（`AssetBundleBuilder.cpp` 第 224 行）。SBP（Scriptable Build Pipeline）路径则通过 `ContentBuildInterface.GetGlobalUsageFromGraphicsSettings()` 公开 API 获取图形设置，再传入 `CalculateBuildUsageTags`。
 
-`同一个 Material，在 Player Build 里，globalUsage 可能因为图形设置已经把某个 lightmap mode 关掉而少算一批 variant；在 AB Build 里，这个约束不一定以同样方式介入。`
+两条路径最终都会拿到图形设置，但注入方式和时机不同。如果使用自定义构建管线且没有正确调用这些 API，globalUsage 可能缺少图形设置的约束，导致两边 stripping 结果不一致。
 
 ---
 
@@ -359,7 +359,7 @@ Player Build 里图形设置提前写进 `globalUsage`，会在 `ComputeBuildUsa
 | 根内容定义 | `scenes`（场景路径） | `AssetBundleBuild.assetNames`（显式根资产） |
 | 对象枚举起点 | 场景对象 + 全局 manager + Resources + Always Included | `GetPlayerObjectIdentifiersInAsset` 产出 `ObjectIdentifier` |
 | 依赖展开方式 | `GameReleaseCollector` 展开 `allObjects` | `GetPlayerDependenciesForObjects` 展开依赖闭包 |
-| globalUsage 来源 | `ApplyShaderStrippingToBuildUsageTagGlobal` 提前注入图形设置 | `CalculateBuildUsageTags` 计算结果 |
+| globalUsage 来源 | `ApplyShaderStrippingToBuildUsageTagGlobal` 提前注入图形设置 | 传统路径同样调用 `ApplyShaderStrippingToBuildUsageTagGlobal`；SBP 路径通过 `GetGlobalUsageFromGraphicsSettings()` API 获取 |
 | Always Included 介入 | 显式参与 `ComputeBuildUsageTagOnObjects` | 不自动注入 |
 
 ### 处理层
