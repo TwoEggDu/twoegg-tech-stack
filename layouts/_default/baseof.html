@@ -22,19 +22,13 @@
   <body{{ if .IsHome }} class="is-home"{{ end }}>
     <div class="site-shell">
       <header class="site-header">
-        <a class="brand" href="{{ site.Home.RelPermalink }}">
-          <span class="brand-mark">TE</span>
-          <span class="brand-copy">
-            <strong>{{ site.Title }}</strong>
-            <small>{{ site.Params.tagline }}</small>
-          </span>
-        </a>
-        <div class="site-header-bar">
-          <nav class="site-nav" aria-label="Primary">
-            {{ range site.Menus.main }}
-              <a href="{{ .URL | relURL }}" {{ if $.IsMenuCurrent "main" . }}class="is-active"{{ end }}>{{ .Name }}</a>
-            {{ end }}
-          </nav>
+        <div class="site-header-top">
+          <a class="brand" href="{{ site.Home.RelPermalink }}">
+            <span class="brand-mark">TE</span>
+            <span class="brand-copy">
+              <strong>{{ site.Title }}</strong>
+            </span>
+          </a>
           {{ with site.Home.OutputFormats.Get "JSON" }}
             <form class="site-search" data-search data-search-index-url="{{ .RelPermalink }}" role="search">
               <label class="sr-only" for="site-search-input">搜索站内内容</label>
@@ -59,6 +53,11 @@
             </form>
           {{ end }}
         </div>
+        <nav class="site-nav" aria-label="Primary">
+          {{ range site.Menus.main }}
+            <a href="{{ .URL | relURL }}" {{ if $.IsMenuCurrent "main" . }}class="is-active"{{ end }}>{{ .Name }}</a>
+          {{ end }}
+        </nav>
       </header>
 
       <main class="page-shell">

@@ -87,9 +87,10 @@ a {
   border-radius: 0 0 30px 30px;
 }
 
-.site-header-bar {
+.site-header-top {
   display: flex;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
   gap: 16px;
 }
 
@@ -147,8 +148,8 @@ a {
 .site-nav {
   display: flex;
   flex-wrap: wrap;
-  flex: 1 1 auto;
   gap: 6px;
+  justify-content: center;
 }
 
 .site-nav a {
@@ -168,8 +169,7 @@ a {
 .site-search {
   position: relative;
   flex: 0 0 auto;
-  min-width: 0;
-  width: 14rem;
+  width: min(20rem, 40%);
 }
 
 .site-search-field {
