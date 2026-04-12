@@ -399,8 +399,183 @@ Unity 官方对 AssetBundle 内部文件的描述很明确：
 
 所以“下载完成”距离“对象可用”，中间其实还隔着好几层。
 
+## 八、从源码看：这几层在代码里长什么样
+
+前面的描述都基于官方文档，但如果你翻 Unity 引擎源码，这几层会更具体。
+
+### 0. 外层：Archive Header（ArchiveStorageHeader）
+
+这是打开 `.bundle` 文件时最先看到的那一层，对应源码里的 `ArchiveStorageHeader::Header`。
+
+```cpp
+struct Header {
+    core::string  signature;                // "UnityFS"（当前），旧版有 "UnityWeb"/"UnityRaw"/"UnityArchive"
+    UInt32        version;                  // Archive 格式版本（不是 SerializedFile 版本）
+    core::string  unityWebBundleVersion;    // Unity 引擎版本字符串，如 "2021.3.4f1"
+    core::string  unityWebMinimumRevision;  // 最低兼容版本
+    UInt64        size;                     // 整个 archive 文件的总大小
+    UInt32        compressedBlocksInfoSize; // blocks+directory 区域的压缩后大小
+    UInt32        uncompressedBlocksInfoSize;
+    UInt32        flags;                    // ArchiveFlags
+};
+```
+
+`flags` 字段里的关键位（`ArchiveFlags` 枚举）：
+
+```
+0x3F  kArchiveCompressionTypeMask         低 6 位 = blocks info 的压缩类型
+0x40  kArchiveBlocksAndDirectoryInfoCombined   blocks 和 directory 合并存储
+0x80  kArchiveBlocksInfoAtTheEnd              blocks info 在文件末尾
+0x200 kArchiveBlockInfoNeedPaddingAtStart      16 字节对齐填充
+```
+
+Archive 文件内部有几种可能的布局，源码注释里写得很清楚：
+
+```
+header [ blocks_directory ] [ data ]   — Unity3d/UnityArchive，最常见
+header [ data ] [ blocks_directory ]   — 某些情况下 blocks info 在末尾
+header blocks [ directory data ]       — UnityRaw/UnityWeb，整体压缩（LZMA）
+```
+
+每个内部虚拟文件（`Node`）有以下字段：
+
+```cpp
+struct Node {
+    UInt64       offset;   // 在 archive data 区域里的字节偏移
+    UInt64       size;     // 文件大小
+    UInt32       flags;    // 0x1=目录, 0x2=已删除, 0x4=SerializedFile ← 关键标志
+    core::string path;     // 虚拟文件路径，如 "CAB-a1b2c3d4..."
+};
+```
+
+`flags & 0x4 == kNodeSerializedFile` 这一位告诉 Unity：这个内部文件是 SerializedFile，需要按序列化格式解析，而不是当成普通二进制 blob。
+
+所以 `.resS`、`.resource` 这类大块数据文件的 Node 不带这个标志，Unity 不会尝试解析它们的内容，只会按字节读取。
+
+blocks info 区域存放的是所有 StorageBlock 的列表：
+
+```cpp
+struct StorageBlock {
+    UInt32  uncompressedSize;  // 解压后大小（通常 128 KB）
+    UInt32  compressedSize;    // 压缩后实际大小
+    UInt16  flags;             // 低 6 位 = 压缩类型，第 6 位 = 是否 Streamed
+};
+```
+
+blocks info 区域整体再套一层压缩（由 Archive Header 里的 `flags` 指定压缩类型），blocks info 之后才是 directory info（Node 列表），再之后才是真正的 data 区域。
+
+### 1. SerializedFile Header 的实际字段布局
+
+源码里有两个 Header struct，用来处理新旧版本的差异。
+
+旧版（SerializedFile format < version 22，即 Unity 2020.1 之前）用的是 `SerializedFileHeader32`：
+
+```
+UInt32  m_MetadataSize     // 元数据段大小
+UInt32  m_FileSize         // 整个文件大小
+UInt32  m_Version          // 序列化格式版本号
+UInt32  m_DataOffset       // 数据段起始偏移（32-bit）
+UInt8   m_Endianess        // 字节序
+```
+
+新版（version 22 = `kLargeFilesSupport`，Unity 2020.1+）用的是 `SerializedFileHeader`，偏移是固定的（源码里有 `CompileTimeAssert` 保证）：
+
+```
+offset  0 : 8 bytes reserved
+offset  8 : m_Version     (UInt32)
+offset 16 : m_MetadataSize (UInt64)   — 切换到 64-bit 以支持大文件
+offset 24 : m_FileSize    (UInt64)
+offset 32 : m_DataOffset  (UInt64)
+offset 40 : m_Endianess   (UInt8)
+```
+
+从 version 9 开始，文件内部布局从 `[header][data][metadata]` 改成了更自然的 `[header][metadata][data]`。
+
+### 2. 元数据段的读取顺序
+
+`ReadMetadata()` 在源码里按这个顺序从头到尾读取：
+
+1. Unity 版本字符串（null-terminated，从 version 7 开始有）
+2. 目标平台 ID（UInt32，从 version 8 开始有）
+3. 是否启用 TypeTree（bool，从 version 13 开始有）
+4. 类型表：类型数量（SInt32）+ 各类型条目
+5. 对象表：对象数量（SInt32）+ 各对象条目
+6. 脚本类型引用表（MonoBehaviour 的 MonoScript 引用）
+7. 外部文件引用表（跨文件的 PPtr 目标）
+
+每个对象条目包含：
+
+```
+fileID    (SInt32 或 SInt64，版本 14 之后用 64-bit)
+byteStart (UInt32 或 UInt64，version 22 之前用 32-bit)
+byteSize  (UInt32)
+typeID    (UInt32，是类型表的索引)
+```
+
+所以你看到的 `byteStart` 就是这个对象的数据在数据段里的字节偏移，`byteSize` 是它占的字节数。
+
+### 3. SerializedType 里的脚本 ID 是什么
+
+对于 MonoBehaviour 类型，`SerializedType` 里有一个 `m_ScriptID`（Hash128）：
+
+```cpp
+Hash128 m_ScriptID;  // Hash generated from assembly name, namespace, and class name
+```
+
+这个 hash 由 `MdFourGenerator` 对三个字符串依次 Feed 后生成：
+
+```
+MD4(className + namespace + assemblyName)
+```
+
+这意味着只要这三个字符串中任何一个改变，ScriptID 就变了，序列化文件里记的类型条目就和当前运行时对不上——这是 missing script 的底层来源之一。
+
+### 4. TypeTree 节点的实际字段
+
+TypeTree 的每个节点（`TypeTreeNode`）包含以下字段：
+
+```cpp
+SInt16  m_Version       // 这个类型当前的序列化版本
+UInt8   m_Level         // 层级深度（0 = 根节点）
+UInt8   m_TypeFlags     // 标记位：是否数组、是否托管引用等
+UInt32  m_TypeStrOffset // 类型名在字符串表里的偏移，如 “Vector3f”
+UInt32  m_NameStrOffset // 属性名在字符串表里的偏移，如 “m_LocalPosition”
+SInt32  m_ByteSize      // 固定大小；-1 表示变长（数组）
+SInt32  m_Index         // 属性索引（Prefab override bitset 用到）
+UInt32  m_MetaFlag      // 传输标志，对应 C++ 里的 TransferMetaFlags
+```
+
+节点之间不用显式的父子指针，而是靠 `m_Level` 来隐式表示树结构：相邻两节点的 level 差决定它们是父子还是兄弟。这让整个 TypeTree 可以被存成一个扁平数组。
+
+### 5. ArchiveFileSystem 在代码里是什么
+
+`ArchiveFileSystem` 是 `FileSystemHandler` 的子类，实现了 Unity VFS 的文件系统接口（Open/Read/Close/Seek 等），并额外提供了：
+
+```cpp
+bool MountArchive(const char* path, const char* prefix = NULL);
+bool MountArchiveFromMemory(const void* data, size_t size);
+bool UnmountArchive(const char* path);
+```
+
+内部用一张 `UNITY_MAP<string, ArchiveItem>` 维护所有已挂载的虚拟文件路径到实际 `ArchiveStorageReader*` 节点的映射。这张 map 就是上文说的”虚拟文件目录”的具体实现：`MountArchive` 把 bundle 文件里的所有内部虚拟文件（CAB 主文件、`.resS`、`.resource` 等）展开成路径条目，存进这张 map，后续的 Open/Read 就可以按路径透明找到任何一个内部文件。
+
+### 6. 序列化版本号的演变
+
+源码里有一个完整的 `SerializedFileFormatVersion` 枚举，每条都有注释。和工程理解关系最大的几个里程碑是：
+
+| 版本 | 含义 |
+|------|------|
+| v9   | 文件布局改为 `[header][metadata][data]` |
+| v11  | MonoBehaviour 开始在元数据里存 script type index |
+| v13  | TypeTree hash 加入元数据 |
+| v15  | 支持 stripped 对象（去掉脚本类但保留组件数据） |
+| v16  | ClassID 扩展到 32-bit（Unity 5.5） |
+| v22  | 大文件支持，所有偏移改为 64-bit（Unity 2020.1） |
+
+如果你用工具解析一个 bundle 文件、看到某些字段不对，先对一下版本号，因为很多字段在某个版本之前根本不存在，或者占的字节数不同。
+
 ## 最后收成一句话
 
 如果把这篇最后再压回一句话，我会这样说：
 
-`AssetBundle 文件内部最稳的理解，不是“一个压缩包里塞着资源”，而是“一个会被挂进 Unity VFS 的 Archive”：Header 先定义怎么读这份归档，Block 决定内容区怎么被压缩和随机访问，Directory 语义负责把内部虚拟文件组织起来，而 SerializedFile 才是真正承载 Unity 对象图的那层。`
+`AssetBundle 文件内部最稳的理解，不是”一个压缩包里塞着资源”，而是”一个会被挂进 Unity VFS 的 Archive”：Header 先定义怎么读这份归档，Block 决定内容区怎么被压缩和随机访问，Directory 语义负责把内部虚拟文件组织起来，而 SerializedFile 才是真正承载 Unity 对象图的那层。`
