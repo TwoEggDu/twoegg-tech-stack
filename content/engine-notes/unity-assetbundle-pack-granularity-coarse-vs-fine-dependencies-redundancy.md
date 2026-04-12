@@ -3,7 +3,7 @@ date: "2026-04-08"
 title: "Asset Bundle 打包粒度：粗粒度 vs 细粒度，依赖关系与冗余控制"
 description: "把 AssetBundle 的切包问题拉回交付边界、变化频率和依赖闭合来讨论，讲清粗粒度与细粒度各自代价，什么时候该抽公共包，以及怎样判断当前粒度是否失控。"
 slug: "unity-assetbundle-pack-granularity-coarse-vs-fine-dependencies-redundancy"
-weight: 66
+weight: 64
 featured: false
 tags:
   - "Unity"
