@@ -86,23 +86,13 @@ URP 内置的 ShaderPreprocessor 在决定是否剔除 shadow 变体时，读的
 
 | 值 | 含义 |
 |----|------|
-| 0 | Remove ALL：所有 shadow 变体全部剔除 |
+| 0 | Remove：所有 shadow 变体全部剔除 |
 | 1 | SelectMainLight：只保留 `_MAIN_LIGHT_SHADOWS` |
+| 2 | SelectMainLightAndOff：保留主光和关闭状态 |
 | 3 | SelectMainLightAndCascades：保留主光 + cascade 变体 |
 | 4 | SelectAll：保留全部 shadow 变体 |
 
-值为 0 时，URP 的处理逻辑是：
-
-```csharp
-if (mode == PrefilteringModeMainLightShadow.Remove)
-{
-    if (keywords.IsEnabled(ShaderKeywordStrings.MainLightShadows))         return true; // strip
-    if (keywords.IsEnabled(ShaderKeywordStrings.MainLightShadowsCascades)) return true; // strip
-    if (keywords.IsEnabled(ShaderKeywordStrings.MainLightShadowsScreen))   return true; // strip
-}
-```
-
-只要变体包含任何一个 shadow keyword，就被删掉。
+值为 0（Remove）时，URP 通过 `[ShaderKeywordFilter.RemoveIf]` 声明式属性（位于 `UniversalRenderPipelineAssetPrefiltering.cs`）把所有 shadow keyword 标记为移除。在构建期的 settings filtering 阶段，任何包含 `_MAIN_LIGHT_SHADOWS`、`_MAIN_LIGHT_SHADOWS_CASCADE` 或 `_MAIN_LIGHT_SHADOWS_SCREEN` 的变体都会被剔除。
 
 用 SVN diff 对比工作副本和仓库里的 `AndroidPipelineAssetLow.asset`，发现了两行差异：
 
@@ -146,8 +136,8 @@ private void OnEnable()
 ```
 反射找到 QualitySettings.renderPipeline 对象
     ↓ FieldInfo.SetValue 把 m_MainLightShadowsSupported 写为 0
-    ↓ URP 内部 OnValidate 检测到变化，调用 UpdatePrefilteringModes()
-    ↓ m_MainLightShadowsSupported = 0 → m_PrefilteringModeMainLightShadows = 0（Remove ALL）
+    ↓ URP 内部检测到变化，更新 prefiltering 数据（UpdateShaderKeywordPrefiltering）
+    ↓ m_MainLightShadowsSupported = 0 → m_PrefilteringModeMainLightShadows = 0（Remove）
     ↓ 打包结束，Unity 调用 AssetDatabase.SaveAssets()
     ↓ 两个 0 被序列化写入 .asset 文件磁盘
     ↓ 下次打包，ShaderPreprocessor 读到 0/0

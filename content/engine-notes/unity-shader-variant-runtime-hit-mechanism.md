@@ -44,20 +44,19 @@ series:
 
 每当 Unity 提交一次 draw call，渲染系统需要确认这次 draw call 用哪个 shader、哪个 pass、哪组 keyword 状态。
 
-这个过程的入口在 `Material::SetPass`（内部有 `SetPassFast` 和 `SetPassSlow` 两个路径）。
-
-`SetPassFast` 会先尝试从缓存里查：如果当前材质状态（keyword 组合 + pass）和上次一样，直接复用。
-
-`SetPassSlow` 则是走完整的查找流程，核心链路是：
+这个过程的入口在 `Material::SetPass`，内部会走到 `ApplyMaterialPass`，核心链路是：
 
 ```
-SetPassSlow
-  → ApplyMaterialPass
-    → ShaderState::FindSubProgramsToUse
-      → Program::GetMatchingSubProgram
-        → 缓存查找 → 找不到 → FindBestMatchingSubProgram（评分匹配）
-          → 找到最佳 variant → 延迟加载 blob
+Material::SetPass
+  → Pass::ApplyPass
+    → ShaderState::ApplyShaderState
+      → ShaderState::FindSubProgramsToUse
+        → Program::GetMatchingSubProgram
+          → m_Lookup 缓存查找 → 未命中 → FindBestMatchingSubProgram（评分匹配）
+            → 找到最佳 variant → 延迟加载 blob
 ```
+
+其中 `GetMatchingSubProgram` 内部有一层 `m_Lookup` 哈希表缓存：如果当前 keyword 状态已经命中过，直接返回缓存结果，不再重新评分。只有缓存未命中时才走 `FindBestMatchingSubProgram` 做评分匹配。
 
 ## 二、评分匹配：怎么找到"最佳" variant
 
@@ -70,8 +69,10 @@ score = matchingCount - mismatchingCount × 16
 ```
 
 其中：
-- `matchingCount`：当前材质 keyword 状态里有多少个 keyword 与这条 variant 的 keyword 定义相符
-- `mismatchingCount`：有多少个 keyword 出现了不匹配（一方有、另一方没有）
+- `matchingCount`：变体要求的 keyword 中，当前确实启用的数量（+1 分/个）
+- `mismatchingCount`：变体要求的 keyword 中，当前没有启用的数量（-16 分/个）
+
+注意：当前启用了但变体不要求的 keyword **不扣分**——惩罚是单向的，只惩罚"变体要了但当前没给"的情况。
 
 Unity 会遍历同一个 pass 下所有可用 variant，选评分最高的那条作为本次使用的结果。
 
