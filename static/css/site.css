@@ -639,8 +639,10 @@ a {
 }
 
 .article-body .mermaid-block svg {
-  max-width: none;
+  max-width: 100%;
+  max-height: 420px;
   height: auto;
+  width: auto;
 }
 
 .article-body .lifecycle-flow {
