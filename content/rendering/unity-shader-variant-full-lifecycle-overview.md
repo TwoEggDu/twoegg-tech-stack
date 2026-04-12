@@ -241,6 +241,13 @@ score = matchingCount - mismatchingCount × 16
 
 ---
 
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+- [IPreprocessShaders](https://docs.unity3d.com/ScriptReference/Build.IPreprocessShaders.html)
+- [Graphics Settings](https://docs.unity3d.com/Manual/class-GraphicsSettings.html)
+
 ## 系列导航
 
 按阅读顺序，这个系列的完整文章列表：

@@ -52,6 +52,20 @@ series:
 2. `编译产物层`
 3. `运行时命中层`
 
+```mermaid
+flowchart TD
+    A["资源定义层"] --> B["构建产物层"]
+    B --> C["运行时命中层"]
+
+    A1["Shader/Material/SVC"] -.-> A
+    B1["SubProgram/blob"] -.-> B
+    C1["SetPass/命中"] -.-> C
+
+    style A fill:#4a90d9,color:#fff
+    style B fill:#e8a838,color:#fff
+    style C fill:#5bb55b,color:#fff
+```
+
 只要这三层一混，后面很多现场现象都会被误判：
 
 - 以为 `Material` 里已经“自带 shader”
@@ -397,11 +411,17 @@ series:
 
 这三刀一旦先切开，很多看起来一团雾的 `Shader` 问题，马上就会从“玄学”变回结构问题。
 
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+- [Shader loading](https://docs.unity3d.com/Manual/shader-loading.html)
+
 ## 最后收成一句话
 
 如果把这篇最后再压回一句话，我会这样说：
 
-`Shader 在 AssetBundle 里，最不该被理解成“一个完整效果资源被塞进包里”；更稳的理解是：bundle 里有资源定义，构建期决定平台编译结果，运行时再去命中具体 variant，而问题往往就出在你把这三层当成了一层。`
+`Shader 在 AssetBundle 里，最不该被理解成”一个完整效果资源被塞进包里”；更稳的理解是：bundle 里有资源定义，构建期决定平台编译结果，运行时再去命中具体 variant，而问题往往就出在你把这三层当成了一层。`
 
 这也是为什么后面再继续讲：
 

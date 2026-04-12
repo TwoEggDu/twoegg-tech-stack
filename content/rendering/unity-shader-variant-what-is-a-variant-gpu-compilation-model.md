@@ -83,6 +83,17 @@ Unity 对这两行做笛卡尔积，编译出所有组合：
 
 每个组合编译出**一份独立的 GPU 机器码**。这就是 6 个 Shader Variant。
 
+```mermaid
+flowchart TD
+    A[Shader 源码] --> B[multi_compile 分组]
+    B --> C[笛卡尔积展开]
+    C --> D[编译器]
+    D --> E1[GPU 程序 1]
+    D --> E2[GPU 程序 2]
+    D --> E3[...]
+    D --> E4[GPU 程序 N]
+```
+
 在每个变体的编译过程里，`#ifdef` 决定哪些代码段被纳入这个版本：
 
 ```hlsl
@@ -152,6 +163,13 @@ Shader.EnableKeyword("_HIGH_QUALITY_SHADOWS");
 降级的结果不是报错，而是**静默地渲染出错误效果**——阴影质量不对、表面效果不对，或者在最糟糕的情况下，出现粉色材质。
 
 这就是为什么变体的收集和管理如此重要：漏掉一个变体不会崩溃，但会在特定条件下产生静默的视觉错误，而且这类问题很难在编辑器里复现（编辑器里所有变体都在）。
+
+---
+
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+- [Shader compilation](https://docs.unity3d.com/Manual/shader-compilation.html)
 
 ---
 

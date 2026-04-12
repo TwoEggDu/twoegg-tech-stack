@@ -276,6 +276,10 @@ Unity 选择的是：
 
 两边面对的是同一个矛盾，只是工程组织方式不同。
 
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+
 ## 六、总结
 
 最后可以把这件事压缩成三句话：

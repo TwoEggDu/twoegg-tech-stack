@@ -205,6 +205,12 @@ series:
 
 ---
 
+## 官方文档参考
+
+- [Graphics Settings](https://docs.unity3d.com/Manual/class-GraphicsSettings.html)
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+- [Shader loading](https://docs.unity3d.com/Manual/shader-loading.html)
+
 ## 排障决策树（最短路径）
 
 ```

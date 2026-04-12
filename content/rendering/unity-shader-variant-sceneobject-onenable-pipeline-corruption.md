@@ -30,6 +30,14 @@ URPGraphicsSettings.MainLightCastShadows = false;
 
 但这行代码本身没有问题。它在 Play Mode 下工作得很好，功能完全正确。问题在于，它所在的方法，在一个没有人预料到的时机被执行了。
 
+```mermaid
+flowchart TD
+    A[Batchmode 构建] --> B[Feature.OnEnable]
+    B --> C[Shadows = false]
+    C --> D[Prefilter 读取]
+    D --> E[阴影变体被裁]
+```
+
 ---
 
 ## 一、阴影丢了，但代码看起来没有问题

@@ -34,7 +34,24 @@ series:
 前者是作者在源码里显式写出来的编译分叉。  
 后者是 Unity 在构建时、管线配置里、平台适配里，额外叠加进来的编译条件。
 
-这两个层次都能制造变体，但它们的“来源方式”不一样。
+这两个层次都能制造变体，但它们的”来源方式”不一样。
+
+```mermaid
+flowchart TD
+    subgraph S1[Shader 声明]
+        A1[multi_compile]
+        A2[shader_feature]
+        A3[Pass]
+    end
+    subgraph S2[外部注入]
+        B1[URP / SRP]
+        B2[Renderer Feature]
+        B3[Fog / Lightmap]
+        B4[Instancing / XR]
+    end
+    S1 --> C[理论变体空间]
+    S2 --> C
+```
 
 ---
 
@@ -158,6 +175,13 @@ URP/HDRP 会根据管线资产、Renderer Feature、全局设置，把一批 key
 - `UniversalRenderPipelineAssetPrefiltering.cs` 则把一部分功能开关直接映射成 shader feature 轴，比如 `DecalLayers`。
 
 这些位置说明了一件事：**变体来源不是一个单点，而是一条由 Shader、管线、平台和全局配置共同拼出来的链。**
+
+---
+
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+- [Shader compilation](https://docs.unity3d.com/Manual/shader-compilation.html)
 
 ---
 

@@ -40,6 +40,15 @@ series:
 
 `运行时 shader variant 命中，是一个从 SetPass 触发、经过 keyword 评分匹配、找到最佳子程序、再延迟加载 GPU 可用代码的过程；WarmUp 的作用，是提前把这个过程走一遍，让第一次真正渲染时不再临时做准备工作。`
 
+```mermaid
+flowchart TD
+    A[SetPass] --> B[变体查找]
+    B --> C[评分匹配]
+    C --> D[命中或 fallback]
+    D --> E[GPU 程序准备]
+    E --> F[GPU 执行]
+```
+
 ## 一、命中的起点：SetPass
 
 每当 Unity 提交一次 draw call，渲染系统需要确认这次 draw call 用哪个 shader、哪个 pass、哪组 keyword 状态。
@@ -170,6 +179,13 @@ WarmUp 预热了错误的 keyword 组合，等于白做。SVC 的收集来源要
 ### 4. DX12/Vulkan/Metal 上，首帧轻微抖动是正常的
 
 这是 API 层的 PSO 编译触发，不是 variant 缺失。考虑平台专用的 PSO 预热方案（如 `ShaderWarmup.WarmupShader`）而不是简单地加 SVC。
+
+## 官方文档参考
+
+- [Shader loading](https://docs.unity3d.com/Manual/shader-loading.html)
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+
+---
 
 ## 最后收成一句话
 

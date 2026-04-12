@@ -339,33 +339,50 @@ After scriptable stripping: N
 
 ## 八、把这条链收成一张图
 
+```mermaid
+flowchart TD
+    A["Shader声明keyword"] --> B["multi_compile"]
+    A --> C["shader_feature"]
+
+    B --> B1["NonStrippedUser\n不可裁剪"]
+    C --> C1["需要使用证据"]
+
+    D["ComputeBuildUsage\n遍历构建输入"] --> D1["Material"]
+    D --> D2["SVC"]
+    D --> D3["Terrain"]
+
+    D1 --> U["usedKeywords"]
+    D2 --> U
+    D3 --> U
+
+    B1 --> E["构建候选集"]
+    U --> E
+
+    E --> E1["multi_compile\n笛卡尔积"]
+    E --> E2["shader_feature\n仅used组合"]
+    E --> E3["URP Prefiltering"]
+
+    E1 --> F["全局设置裁剪"]
+    E2 --> F
+    E3 --> F
+
+    F --> G["IPreprocessShaders"]
+    G --> G1["SRP stripping"]
+    G --> G2["自定义stripping"]
+
+    G1 --> H["最终编译候选集"]
+    G2 --> H
+
+    style A fill:#4a90d9,color:#fff
+    style E fill:#e8a838,color:#fff
+    style F fill:#d9534f,color:#fff
+    style H fill:#5bb55b,color:#fff
 ```
-Shader 声明 keyword
-  ├── multi_compile → 进入 NonStrippedUserKeywords（不可裁剪）
-  └── shader_feature → 不进入 NonStrippedUserKeywords（需要使用证据）
 
-ComputeBuildUsageTagOnObjects 遍历构建输入
-  ├── Material → GetShaderFeatureUsage → keyword 交集 → usedKeywords
-  ├── SVC → GetShaderKeywordUsageForShader → usedKeywords
-  └── Terrain → 内部材质 → 同 Material 路径
+## 官方文档参考
 
-SettingsFilteredShaderVariantEnumeration 构建候选集
-  ├── multi_compile 维度：笛卡尔积（所有组合）
-  ├── shader_feature 维度：只枚举 usedKeywords 中的组合
-  └── URP Prefiltering：按管线配置过滤不可能的 keyword
-
-ShouldShaderKeywordVariantBeStripped 全局设置裁剪
-  ├── Lightmap 模式未使用 → 裁掉
-  ├── Fog 模式未使用 → 裁掉
-  ├── Instancing 未使用 → 裁掉
-  └── Stereo/Editor/DOTS 按需裁掉
-
-OnPreprocessShaderVariants (IPreprocessShaders)
-  ├── SRP stripping
-  └── 项目自定义 stripping
-
-最终进入编译的候选集
-```
+- [IPreprocessShaders](https://docs.unity3d.com/ScriptReference/Build.IPreprocessShaders.html)
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
 
 ## 这一篇真正想立住的判断
 

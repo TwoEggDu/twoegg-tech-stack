@@ -40,9 +40,18 @@ series:
 
 `Unity Shader Variant 到底会在哪几层被剔除，以及我们怎么快速判断它死在哪一层。`
 
+```mermaid
+flowchart TD
+    A[候选集] --> B[URP Prefiltering]
+    B --> C[内置 Stripping]
+    C --> D[SRP Stripping]
+    D --> E[自定义 IPreprocessShaders]
+    E --> F[最终编译]
+```
+
 ---
 
-## 一、先把“没进入候选”与“进入候选后被删”分开
+## 一、先把”没进入候选”与”进入候选后被删”分开
 
 这是整篇最重要的分界线。
 
@@ -338,6 +347,14 @@ series:
 不能说明：
 
 `它前面几层就一定没死。`
+
+---
+
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+- [IPreprocessShaders](https://docs.unity3d.com/ScriptReference/Build.IPreprocessShaders.html)
+- [GraphicsSettings](https://docs.unity3d.com/ScriptReference/Rendering.GraphicsSettings.html)
 
 ---
 

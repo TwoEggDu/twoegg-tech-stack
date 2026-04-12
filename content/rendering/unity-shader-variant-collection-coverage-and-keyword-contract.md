@@ -188,6 +188,11 @@ keyword 组合: _SNOW_SURFACE + _HIGH_QUALITY_SHADOWS    source: manual  reason:
 
 ---
 
+## 官方文档参考
+
+- [Shader variants and keywords](https://docs.unity3d.com/Manual/shader-variants-and-keywords.html)
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+
 ## 实际操作建议
 
 **在代码里写动态开关时，同步更新数据库**：

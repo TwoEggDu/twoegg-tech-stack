@@ -62,6 +62,13 @@ series:
 > 如果只留一句话，我会这样压：  
 > `Material / 场景 / SVC` 更像在提供"这次构建为什么要保留这条路径"的依据，`Always Included` 更像在改变"谁来负责把这份 shader 带进交付物"的边界。
 
+```mermaid
+flowchart TD
+    A[Material & SVC] -->|使用的 keywords| D[候选集]
+    B[Always Included] -->|跳过使用证据裁剪| D
+    C[场景 / Resources] -->|全局设置与依赖| D
+```
+
 ---
 
 ## 二、Material 和场景：默认的保留依据，站位最靠前
@@ -183,6 +190,15 @@ series:
 按构建顺序摊开，链路更接近这样：
 
 `Shader 声明可能空间 → 本次构建的使用面 → 渲染管线配置过滤 → Unity 内置 stripping → SRP / 项目 stripping → 写进正确交付物`
+
+```mermaid
+flowchart TD
+    G1[Shader 声明空间] --> G2[构建使用面]
+    G2 --> G3[管线配置过滤]
+    G3 --> G4[内置 Stripping]
+    G4 --> G5[SRP / 项目 Stripping]
+    G5 --> G6[写进交付物]
+```
 
 ### 第一关：这条 variant 得先在"理论上存在"
 
@@ -419,6 +435,14 @@ series:
 6. 它最后是不是被写进了正确的 `Player / AssetBundle` 边界？
 
 只要这六问按顺序问，很多现场讨论会立刻从"为什么它又玄学地没了"变成"它到底死在哪一关"。
+
+---
+
+## 官方文档参考
+
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+- [GraphicsSettings](https://docs.unity3d.com/ScriptReference/Rendering.GraphicsSettings.html)
+- [IPreprocessShaders](https://docs.unity3d.com/ScriptReference/Build.IPreprocessShaders.html)
 
 ---
 

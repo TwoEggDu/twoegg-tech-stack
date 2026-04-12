@@ -298,6 +298,11 @@ Unity 2023.1 脚本 API 还专门提醒过：
 - 全局兜底开关
 - 跳过构建和交付边界的万能保险
 
+## 官方文档参考
+
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+- [Shader loading](https://docs.unity3d.com/Manual/shader-loading.html)
+
 ## 最后收成一句话
 
 如果把这篇最后再压回一句话，我会这样说：

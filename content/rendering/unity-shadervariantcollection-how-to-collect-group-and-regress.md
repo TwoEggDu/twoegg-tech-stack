@@ -55,6 +55,19 @@ series:
 - 一个只在某次排障里短暂有用的临时资产
 - 一份越积越大、没人敢删、也没人知道它还对不对的历史包袱
 
+## SVC 落地工作流总览
+
+```mermaid
+flowchart TD
+    A[收集来源] --> B[分组策略]
+    B --> C[WarmUp 配置]
+    C --> D[回归验证]
+    A -- "运行时路径\n构建期记录\n人工补充" --> A
+    B -- "按入口分\n按生命周期分" --> B
+    C -- "对齐首次命中\n跟内容边界走" --> C
+    D -- "构建回归\n缺口回归\n烟测回归" --> D
+```
+
 ## 零、先把 SVC 在构建流程里的位置说清楚
 
 很多团队在落地 SVC 前，对它在构建期的行为有一个关键误解：
@@ -426,6 +439,11 @@ series:
 - 收集面不会太虚
 - 资产规模不会一开始就失控
 - 回归也能先从最值钱的入口做起
+
+## 官方文档参考
+
+- [ShaderVariantCollection](https://docs.unity3d.com/ScriptReference/ShaderVariantCollection.html)
+- [Shader loading](https://docs.unity3d.com/Manual/shader-loading.html)
 
 ## 最后收成一句话
 
