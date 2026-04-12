@@ -87,11 +87,10 @@ a {
   border-radius: 0 0 30px 30px;
 }
 
-.site-header-top {
+.site-header-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .sr-only {
@@ -148,8 +147,8 @@ a {
 .site-nav {
   display: flex;
   flex-wrap: wrap;
+  flex: 1 1 auto;
   gap: 6px;
-  justify-content: center;
 }
 
 .site-nav a {
