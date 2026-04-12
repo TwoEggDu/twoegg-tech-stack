@@ -136,6 +136,8 @@ tags:
 - 原本指向外部对象的 `PPtr` 找不到原目标
 - `Prefab Variant` 或 override 的引用关系被改坏了
 
+特别值得注意的是嵌套 Prefab 和 Prefab Variant 的情况：它们内部通过 `m_CorrespondingSourceObject` 和 `m_PrefabInstance` 等字段记录与源 Prefab 的关系，其中的 `fileID` 值是从源 Prefab 的内部对象 ID 确定性计算出来的。如果源 Prefab 被重新导入（比如 `.meta` 文件在 VCS 冲突解决后重新生成，或者执行了强制重导入），这些内部 ID 就可能变化，导致所有引用它的 Prefab Variant 和嵌套实例的 override 链断裂。症状包括：Prefab override 静默回退到基础值、组件出现重复、或者整个嵌套 Prefab 引用变成 `"Missing Prefab"`。这和 `MonoScript` 身份问题不同——这是 Prefab 内部在 `fileID` 层面的身份问题。
+
 这类问题的共同点是：
 
 `对象本体和脚本本体都可能还在，但“它原来到底指向谁”这件事已经丢了。`
@@ -180,6 +182,16 @@ tags:
 
 Unity 资源上挂脚本，不是直接存一个“类对象”，而是通过 `MonoScript` 去接回程序集和类型身份。
 
+具体来说，在 `.prefab` 或 `.unity` 文件（YAML 文本模式）中，一个 `MonoBehaviour` 的脚本引用序列化后长这样：
+
+```yaml
+m_Script: {fileID: 11500000, guid: a1b2c3d4e5f67890abcdef1234567890, type: 3}
+```
+
+其中 `fileID: 11500000` 是 `MonoScript` 资产的固定 ID，`guid` 指向对应 `.cs.meta` 文件。构建时，这个 GUID 会被解析为一条 `MonoScript` 记录，包含三个字段：`m_AssemblyName`（如 `”Assembly-CSharp”`）、`m_Namespace`（如 `”Game.UI”`）、`m_ClassName`（如 `”HealthBar”`）。运行时，反序列化链用这三个字符串去已加载的程序集里匹配具体的 `System.Type`。只要三者中任意一个变了——程序集重命名（`asmdef` 改名）、命名空间变了、类名改了——`MonoScript` 解析就会失败，产生 `”Missing (Mono Script)”`，即使那个类在项目里还好好存在着。
+
+这就是为什么 “missing script” 往往不是”类被删了”，而是”身份三元组对不上了”。
+
 所以只要下面这些东西变了：
 
 - 程序集拆分
@@ -188,7 +200,7 @@ Unity 资源上挂脚本，不是直接存一个“类对象”，而是通过 `
 - 类移动了
 - 热更和主包的脚本身份不一致
 
-现场就会非常像“脚本没了”。
+现场就会非常像”脚本没了”。
 
 ## 3. 这类问题常常会被误归因为“资源损坏”
 
@@ -203,6 +215,26 @@ Unity 资源上挂脚本，不是直接存一个“类对象”，而是通过 `
 但从工程上看，真正该先问的往往是：
 
 `这份资源上记录的脚本身份，还能不能映射到当前运行时那份代码世界。`
+
+## 补充：HybridCLR / 热更方案下最常见的脚本引用断裂模式
+
+在 HybridCLR（或类似的 IL2CPP 热更方案）中，程序集被分为 AOT（提前编译，随主包出）和热更（运行时通过 `Assembly.Load` 加载）两部分。这里最关键的交互是：
+
+1. IL2CPP 的托管链接器（`UnityLinker`）会从 AOT 程序集中裁剪掉它认为在 AOT 代码路径里没有被引用的类型
+2. 但一个 AssetBundle 里的 Prefab 可能通过 `MonoScript` 身份引用了某个 `MonoBehaviour` 类型
+3. 如果这个类型被从 AOT 程序集中裁剪掉了（因为 AOT 侧的 C# 代码没有直接引用它），运行时 `MonoScript` 解析就会失败——即使这个类型存在于热更程序集中
+
+解法是 `link.xml` 保留规则：
+
+```xml
+<linker>
+  <assembly fullname="Assembly-CSharp">
+    <type fullname="Game.UI.HealthBar" preserve="all"/>
+  </assembly>
+</linker>
+```
+
+这条规则告诉链接器：即使 AOT 代码没有直接引用这个类型，也要保留它。使用 HybridCLR 的团队应该系统性地为所有出现在 AssetBundle 中的 Prefab / Scene 上的 `MonoBehaviour` 类型添加 `link.xml` 条目。
 
 ## 四、第三种现场：编辑器正常，构建后或热更后才开始丢
 

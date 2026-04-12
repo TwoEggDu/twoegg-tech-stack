@@ -126,6 +126,21 @@ tags:
 
 `你只是把下载异步了，但没有把准备链真正摊开。`
 
+## 补充：PreloadManager 的帧预算机制
+
+上面提到"异步不等于没有重活"，这里值得展开一层：Unity 引擎里真正控制异步加载工作如何分摊到每帧的，是 `PreloadManager`。
+
+`PreloadManager` 是引擎内部负责协调异步加载工作分配的组件。它控制的不是"下载"本身，而是"集成工作"——也就是对象激活、`Awake` / `OnEnable` 回调、组件初始化这些事情每帧允许花多少时间。这个预算由 `Application.backgroundLoadingPriority` 控制：
+
+- `ThreadPriority.Low`（默认值）：每帧约 2ms 用于集成
+- `ThreadPriority.BelowNormal`：每帧约 4ms
+- `ThreadPriority.Normal`：每帧约 10ms
+- `ThreadPriority.High`：不限制，尽可能快地完成集成
+
+当多个 bundle 或资源同时加载时，它们各自产生的集成工作会共用同一个帧预算。如果某一帧里积累的集成工作总量超出预算，剩余部分会被推迟到后续帧。这就是为什么"同时加载 5 个 bundle"不会造成 5 倍帧耗——帧预算把每帧的峰值成本封顶了，但代价是总加载时间被拉长。
+
+这个机制是工程上在加载速度和帧平滑之间做权衡的主要杠杆。很多项目卡顿的直接原因，就是 `backgroundLoadingPriority` 设得太高，导致集成工作一帧内全部结账。
+
 ## 二、首次加载卡顿真正常落在哪几段准备链上
 
 如果只看现场经验，我更建议把首载卡顿先怀疑到下面几段。
@@ -244,6 +259,21 @@ tags:
 
 缓存层就算实现本身没错，也很难给出稳定结果。
 
+## 补充：Unity 缓存系统的具体行为
+
+上面讲到"内容身份没对齐"会导致缓存失效，这里展开讲一下 Unity 的 bundle 缓存实际是怎么工作的。
+
+`Caching` API 以 `(bundleName, Hash128)` 作为缓存键。当通过 `UnityWebRequestAssetBundle.GetAssetBundle(url, new CachedAssetBundle(name, hash))` 下载时，Unity 会检查本地是否存在 `[CachePath]/[name]/[hash hex]/__data` 这个文件。如果存在，就是缓存命中，不需要下载；如果不存在，才会从远端拉取并写入该路径。
+
+实际工程中有几个关键细节：
+
+- "缓存未命中"不一定是"本地没有文件"——更常见的情况是"hash 不匹配"。Manifest 里记录的 hash 更新了，同一个 bundle name 对应了新的 hash 目录，旧文件还在但不会被命中。
+- `Caching.ClearOtherCachedVersions(bundleName)` 可以清理同一个 bundle 下旧 hash 目录，防止磁盘膨胀。如果不主动调用，每次热更都会在本地多留一份旧版本。
+- `Caching.compressionEnabled`（默认 true）会在缓存写入时将 LZMA 格式的下载重新压缩为 LZ4。如果这个设置在不同 app 版本之间发生了变化，旧缓存条目的压缩格式会和当前预期不一致，可能触发意料之外的行为。
+- 当本地缓存总量超过 `Caching.maximumAvailableStorageSpace` 时，系统会按 LRU 策略静默淘汰旧条目。这意味着玩家可能在不知情的情况下丢失已缓存的 bundle。
+
+所以回到前面的判断："本地有文件"和"缓存能复用"之间，差的就是这套 `(name, hash)` 身份匹配机制。
+
 ## 四、为什么首载卡顿和缓存失效总会一起让人困惑
 
 因为玩家感知到的，往往都是：
@@ -323,6 +353,18 @@ tags:
 - 当前客户端到底兼容哪套内容世界
 
 这一步如果不看，很多“缓存失效”最后都只能停在体感猜测。
+
+## 补充：用 Profiler Marker 精确定位卡顿环节
+
+上面的诊断切入思路是"先判断卡在准备链还是身份链"，但落到实际排查时，最直接的工具还是 Unity Profiler 里的 marker。以下是首载卡顿场景下最值得关注的几个：
+
+- `Loading.AsyncRead`：磁盘 I/O 耗时。如果这个 marker 时间长，瓶颈在存储速度或文件体积上。
+- `Loading.ReadObject` / `Loading.ContentLoadInterface`：反序列化耗时。如果这里长，说明 bundle 内对象数量多或结构复杂。
+- `Shader.CreateGPUProgram`：shader PSO 创建阻塞。如果这个 marker 出现在主线程的首帧渲染里，说明需要 shader 预热（warmup）。
+- `Loading.IntegrateAssets`：集成工作耗时，也就是 `Awake` / `OnEnable` 等回调。如果这里出现尖峰，要么 `backgroundLoadingPriority` 设得太高，要么同一帧激活了太多对象。
+- `AssetBundle.LoadFromFileAsync`：整个 bundle 打开操作的总耗时。把它的时长和上面各子 marker 的总和对比，就能定位瓶颈落在加载链的哪一段。
+
+这些 marker 的价值在于把模糊的"加载慢"拆成了可归因的环节。看到 `AsyncRead` 长就查 I/O 和压缩格式，看到 `IntegrateAssets` 尖峰就查帧预算和激活策略，看到 `CreateGPUProgram` 就查 shader warmup 覆盖率。每个 marker 直接指向一个具体的优化方向，而不是在"感觉慢"上反复猜测。
 
 ## 六、真正该怎么收这类问题
 

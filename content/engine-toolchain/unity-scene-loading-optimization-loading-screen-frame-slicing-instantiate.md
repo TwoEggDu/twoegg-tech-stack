@@ -74,6 +74,8 @@ series: "Unity 资产系统与序列化"
 
 准备完毕后，设置 `allowSceneActivation = true` 激活场景，然后再关闭 Loading Screen。
 
+需要注意的是，当 `allowSceneActivation` 设为 `false` 时，`AsyncOperation.progress` 会停在约 `0.9`（精确值是 `0.8999...f`），而不是 `1.0`。最后的 10% 代表的是场景激活阶段——调用所有场景对象的 `Awake()`、`OnEnable()` 以及运行初始化逻辑。这个 0.9 阈值是常见的困惑来源：开发者经常在 Loading Screen 逻辑中检查 `progress >= 1.0f`，结果发现永远不会触发。正确的做法是检查 `progress >= 0.9f` 来判断"资源已就绪，可以激活"。两阶段模式是：先让加载跑到 0.9（资源加载完毕，对象尚未激活），然后在 Loading Screen 过渡动画准备好后设置 `allowSceneActivation = true`，触发最终的激活阶段。
+
 ## 三、分帧实例化：为什么不能一帧内创建所有对象
 
 ### 1. 一帧内大量 Instantiate 是最常见的卡顿来源
@@ -109,6 +111,8 @@ series: "Unity 资产系统与序列化"
 
 可以用 `Time.realtimeSinceStartup` 在每帧的实例化循环中检查已用时间，作为动态调节的依据。不需要精确到微秒，只要保证不超预算就行。
 
+从 Unity 2022.3 LTS 开始，`Object.InstantiateAsync` 提供了内置的异步实例化能力，自带自动时间分片。它返回一个 `AsyncInstantiateOperation`，引擎会自动把实例化工作分散到多帧执行，不需要手动写协程控制。对于 2022.3 及以上版本的项目，这是比手动分帧更推荐的方案——引擎侧的工作分配比用户侧的 yield 逻辑能优化得更好。上面描述的手动协程方案对老版本 Unity 仍然有效。
+
 ### 4. 对象池和分帧实例化的关系
 
 对象池（Object Pool）是分帧实例化的进阶方案：
@@ -124,6 +128,8 @@ series: "Unity 资产系统与序列化"
 ### 1. 为什么 Shader 会导致首帧卡顿
 
 Unity 的 Shader 在首次渲染某个变体组合时，需要在 GPU 上编译该变体。这个编译过程发生在主线程，通常耗时几毫秒到几十毫秒。如果首帧有大量 Shader 变体首次可见，编译时间叠加后会导致明显的卡顿。
+
+严格来说，运行时发生的并不是 Shader 编译（把着色器源码翻译成 GPU ISA 的过程在构建期已经完成）。运行时真正发生的是 **GPU 程序对象 / Pipeline State Object (PSO) 的创建**：在 Vulkan 上是创建 `VkPipeline`，Metal 上是创建 `MTLRenderPipelineState`，OpenGL ES 上则是 Shader Program 的链接。这个过程每个变体可能耗时 5–50ms。D3D11 上这个开销很小，因为 Shader 字节码可以直接使用；D3D12 上 PSO 创建同样可能造成卡顿；主机平台使用预编译 Shader，这个问题基本不存在。区分这一点对平台特定优化很重要：Shader 预热在移动端（Vulkan / Metal / GLES）是关键优化项，但在主机上可能完全不需要。
 
 ### 2. ShaderVariantCollection 预热
 

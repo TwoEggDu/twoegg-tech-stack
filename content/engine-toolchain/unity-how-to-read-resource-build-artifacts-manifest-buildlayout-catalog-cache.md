@@ -128,6 +128,44 @@ Unity 官方文档写得很清楚：
 - 根 `.manifest` 会记录生成出来的所有 bundle 及其依赖关系
 - manifest bundle 里则包含 `AssetBundleManifest` 对象，运行时可以用它来解析依赖
 
+一个典型的 `.manifest` 文本文件长这样：
+
+```yaml
+ManifestFileVersion: 0
+CRC: 2616977439
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 1a2b3c4d5e6f7890abcdef1234567890
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Textures/hero_diffuse.png
+- Assets/Materials/hero_material.mat
+Dependencies:
+- shared_textures
+- shared_shaders
+```
+
+逐段看：
+
+- `CRC`：内容校验哈希，用于加载时验证 bundle 完整性
+- `AssetFileHash`：资产文件哈希，增量构建时 Unity 用它来判断 bundle 内容是否需要重新生成
+- `TypeTreeHash`：类型树哈希，反映 bundle 内序列化类型结构的变化
+- `ClassTypes`：列出 bundle 里实际存在的序列化类 ID，比如 `28` 是 `Texture2D`，`213` 是 `Sprite`
+- `Assets`：明确列出被打进这个 bundle 的资产路径
+- `Dependencies`：列出当前 bundle 依赖的其他 bundle 名称
+
+有一点要特别强调：这份 `.manifest` 文本文件是给人调试用的。运行时并不读它，而是读 manifest bundle 里的二进制 `AssetBundleManifest` 对象。
+
 ## 1. Manifest 最适合回答什么
 
 它最适合回答的是：
@@ -262,6 +300,17 @@ Unity 官方文档对 content catalog 的定义很直接：
 
 这就把它和 Manifest、BuildLayout 的位置彻底分开了。
 
+实际打开一个 `catalog.json`，你会发现它是一个序列化的 `ContentCatalogData` 对象，顶层字段包括：
+
+- `m_LocatorId`：catalog 标识符
+- `m_InternalIds`：字符串数组，包含所有 bundle 路径和资产地址
+- `m_KeyDataString`：Base64 编码的 key-to-bucket 映射，把用户面对的 address 映射到内部索引
+- `m_BucketDataString`：Base64 编码的 bucket-to-entry 映射
+- `m_EntryDataString`：Base64 编码的 entry 记录数组，每条记录指向一个 InternalId 索引、provider 索引、依赖 key 列表和 data 索引
+- `m_ResourceProviderData`：序列化的 provider 类型引用数组，比如 `BundledAssetProvider`、`AssetBundleProvider`
+
+大部分数据都做了 Base64 编码以减小体积，所以直接打开 JSON 文件基本看不出什么。Addressables 在 Editor 里提供了 `AddressableAssetSettings > Inspect > Catalog` 面板，可以用人类可读的方式浏览 catalog 内容。
+
 ## 1. Catalog 最适合回答什么
 
 它最适合回答的是：
@@ -308,6 +357,18 @@ Unity 官方文档对 content catalog 的定义很直接：
 - 目录里有没有多一份副本
 
 但这层其实最容易让人误解。
+
+实际磁盘上，Unity 的 AssetBundle 缓存按这个结构存储：
+
+`[CachePath]/[BundleName]/[Hash128 hex string]/__data`
+
+默认缓存路径因平台而异：
+
+- Windows：`%LOCALAPPDATA%Low/Unity/[CompanyName_ProductName]/`
+- Android：内部存储 `/data/data/[package]/cache/`
+- iOS：`Library/Caches/`
+
+每个 bundle 的每个版本都有自己独立的 hash 子目录。当 `Caching.compressionEnabled` 为 true（默认值）时，以 LZMA 压缩下载的 bundle 会在写入 `__data` 前被重压缩为 LZ4。可以用 `Caching.GetCachedVersions(bundleName, outList)` 查看某个 bundle 本地缓存了哪些版本，用 `Caching.ClearOtherCachedVersions(bundleName)` 清理旧版本。
 
 ## 1. 缓存目录最适合回答什么
 

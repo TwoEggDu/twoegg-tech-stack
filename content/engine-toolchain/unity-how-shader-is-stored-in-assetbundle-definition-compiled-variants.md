@@ -160,9 +160,11 @@ flowchart TD
 
 `后续构建系统可以继续拿来生成不同平台编译结果的源头。`
 
-它本身并不等于“这次目标平台最终一定会跑的那批 variant”。
+它本身并不等于”这次目标平台最终一定会跑的那批 variant”。
 
-### 2. Material 存的是 shader 引用和材质状态，不是“编译结果缓存”
+如果再往引擎内部看一层，Unity 源码里一个 `Shader` 资产序列化出来对应的就是一个 `SerializedShader` 对象。它内部包含 `SerializedSubShader[]`（每个 `SubShader` 块一个），每个 `SerializedSubShader` 又包含 `SerializedPass[]`（每个 `Pass` 一个），而每个 `Pass` 里真正决定”有几条编译分叉”的，是 `SerializedSubProgram[]`。每个 `SubProgram` 的索引键是一组 `(ShaderCompilerPlatform, passType, keywordSet)` 三元组——这才是运行时用来定位具体 GPU 程序的最小可寻址单元。`SubProgram` 本身并不直接内嵌编译后的字节码，而是携带一个 blob index，指向独立的编译产物数据段。所以当我们说”一个 shader 有 N 个 variant”的时候，更准确的含义是：这个 `SerializedShader` 里包含 N 条不同的 `SubProgram` 条目，每条代表一组唯一的（平台、Pass、keyword）组合。
+
+### 2. Material 存的是 shader 引用和材质状态，不是”编译结果缓存”
 
 这也是项目里最容易混的一层。
 
@@ -236,7 +238,9 @@ flowchart TD
 
 这三件事是完全可能同时成立的。
 
-### 3. 真正进入交付物的，是“资源定义 + 目标平台相关编译结果”的组合
+从数据结构上看，编译好的 shader 程序并不是内嵌在 `SubProgram` 元数据旁边的，而是存在 `SerializedFile` 内一个独立的 blob 段里（对应 `SerializedShader` 上的 `compressedBlob` / `decompressedSize` 数组）。构建期，shader 编译器针对目标平台的每个 `ShaderCompilerPlatform` 枚举值生成 GPU 程序，这些编译产物被压缩后连续存放在这个 blob 段中。加载时，Unity 先解压整个 blob 段，然后建立一张从（SubProgram 索引键）到（blob 偏移 + 长度）的查找表。如果某个 `SubProgram` 条目引用的 blob 并不存在——比如因为 stripping 在构建期把它移除了——运行时就无法找到对应 variant 的编译结果，这个路径就会失败。
+
+### 3. 真正进入交付物的，是”资源定义 + 目标平台相关编译结果”的组合
 
 如果站在项目交付视角去理解，最终交到设备上的 shader 世界，更接近是这样一组东西：
 
@@ -300,9 +304,11 @@ flowchart TD
 - 某些场景入口、某些平台才错
 - 首次命中某条路径时出现明显卡顿
 
-所以“引用接回去了”和“效果一定正确”并不是一回事。
+所以”引用接回去了”和”效果一定正确”并不是一回事。
 
-### 3. SVC 在这里更像“帮助准备或显式保留某些命中路径”
+从引擎内部路径看，运行时一个材质真正要渲染的时候，`ShaderLab::IntShader::FindSubProgram` 会拿当前激活的 keyword 位掩码（由 `globalKeywordIndices` 和 `localKeywordIndices` 合并而来）去匹配已存储的 `SubProgram` 条目。如果精确命中，就取出对应的编译 GPU 程序 blob 加载执行；如果没有精确匹配，Unity 会尝试回退到 keyword 更少的 `SubProgram`，最终兜底到内部 error shader（也就是粉色材质）。这也是为什么”variant 缺失”和”shader 缺失”的现场表现不同：缺 variant 通常是效果错了或走了回退路径，而 shader 整体丢失才会直接出粉色。还有一个容易被忽略的点：即使某个 variant 在序列化数据里确实存在，第一次真正被使用时，`GfxDevice::CreateGPUProgram` 还需要为目标图形 API 创建平台 GPU 程序对象（Vulkan/Metal 上是 Pipeline State Object，OpenGL 上是 program object）。这个创建过程单个 variant 可能耗时 5-50ms，这就是所谓”shader warmup”卡顿的来源。`ShaderVariantCollection.WarmUp` 的作用就是提前触发这条路径，把首次使用时的卡顿提前消化掉。
+
+### 3. SVC 在这里更像”帮助准备或显式保留某些命中路径”
 
 如果把 `SVC` 放回这一层，它的角色也会更清楚。
 

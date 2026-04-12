@@ -119,7 +119,9 @@ tags:
 
 但工程上它远比这更麻烦。
 
-## 1. 最常见的起点是“不敢共享”
+先看引擎层面到底发生了什么。AssetBundle 构建时，构建管线会从每个 bundle 的根资源出发，沿着 PPtr 引用向外遍历所有依赖（在 SBP 中对应 `CalculateAssetDependencyData` 阶段）。遍历到的每一个资源，如果已经通过 AssetBundle Name 或 build map 被显式分配到某个 bundle，构建系统就只记录一条跨 bundle 引用；但如果这个资源没有任何显式分配，它就会被”拉进”当前正在构建的 bundle。问题出在：当 Bundle X 和 Bundle Y 都引用了同一个未分配的 Asset A（比如一张共享贴图），构建系统会各自独立地把 Asset A 拷贝进去，最终产物里 Asset A 就有了两份。这不是 bug，而是共享边界没有被显式建模时的确定性默认行为——构建系统不会替你猜”这个资源是不是该共享”，它只看”这个资源有没有被显式分配到某个 bundle”。
+
+## 1. 最常见的起点是”不敢共享”
 
 项目里最容易重复的，不一定是最不重要的资源，反而常常是最关键的那批：
 
@@ -177,6 +179,18 @@ tags:
 这类问题表面上看像“发布不一致”，但更早的根因其实是：
 
 `本来该是同一个内容身份的东西，已经被复制成了多个交付身份。`
+
+## 4. 怎么在工程里找到重复资源
+
+光靠直觉很难准确定位哪些资源在重复、重复了几份、贡献了多少体积。实际项目里有几种比较可靠的诊断手段：
+
+- **BuildLayout 报告**：在 Addressables 设置中启用 `BuildLayoutGenerationTask`，构建后会生成 `buildlayout.txt` 或 `Library/com.unity.addressables/buildlayout.json`。这份报告列出了每个资源被打进了哪个 bundle、体积贡献多少。搜索同一条资源路径出现在不同 bundle header 下，就能直接看到重复。
+- **Addressables 内置分析规则 `CheckBundleDupeDependencies`**：这条规则会扫描构建布局，找出同时出现在多个 bundle 依赖闭包中的资源，并建议创建共享 group。入口在 Window > Asset Management > Addressables > Analyze。
+- **SBP `BundleWriteData`**：如果项目使用自定义 `IBuildTask`，可以在构建管线中检查 `IBundleWriteData.AssetToFiles`，找出被映射到多个输出文件的资源。这种方式可以接入 CI，做自动化的重复资源检测。
+
+## 5. 容易被忽视的一种重复：场景 bundle 的 sharedassets
+
+还有一种重复资源经常被忽视，出现在场景打包场景下。当 Scene 被构建为 AssetBundle 时，每个场景 bundle 会按照 Player 构建布局产生自己的 `sharedassets` 区段。如果 Scene Bundle A 和 Scene Bundle B 都引用了同一张地形贴图，而这张贴图没有被显式分配到一个独立的共享 bundle，它就会被分别拷贝进两个场景 bundle 的 sharedassets 区段里。这是使用 Additive Scene Loading 做关卡流式加载的项目中最常见的重复形式。修法和前面一样：把共享资源（地形贴图、公共材质、通用环境 Prefab）显式分配到专门的 bundle，让场景 bundle 里只保留场景自身的 GameObject 和引用关系，而不是资源本体。
 
 ## 三、依赖爆炸怎么长出来：因为“不敢重复”，于是一路往外抽
 

@@ -109,7 +109,9 @@ series: "Unity 资产系统与序列化"
 - 发布版本负责指向一组内容
 - Hash 负责精确识别每个交付单元
 
-## 二、Manifest 真正连接的，不只是依赖关系，还有“发布映射”
+值得补充的是，Unity 在 bundle 层级还提供了一层 CRC 校验机制，它和 Hash 身份配合，但代价容易被低估。`AssetBundle.LoadFromFile` 和 `UnityWebRequestAssetBundle.GetAssetBundle` 都接受一个可选的 CRC 参数；启用后，引擎会对 bundle 的未压缩内容计算一遍 CRC32，再与 `AssetBundleManifest.GetAssetBundleCrc()` 返回的期望值比对。问题在于，对 `LoadFromFile` 启用 CRC 会强制引擎做一次完整的读取 + 解压流程——即使是 LZ4（ChunkBased）包，也无法再利用 memory-mapped 按需读取的优势，退化为全量解压。这个开销在生产环境中足以被注意到，很多团队上线后才发现首次加载变慢，最终选择关闭 CRC，但也同时失去了完整性校验。治理层面的常见折中是：仅在首次下载写入缓存时（走 `UnityWebRequestAssetBundle`）开启 CRC 校验，后续从本地缓存 `LoadFromFile` 时跳过，把完整性验证限定在网络传输环节，而不让它反复拖慢本地加载。
+
+## 二、Manifest 真正连接的，不只是依赖关系，还有”发布映射”
 
 前面构建篇已经讲过，`Manifest` 不是附带说明书，而是交付单元的身份表和依赖表。
 
@@ -144,12 +146,14 @@ series: "Unity 资产系统与序列化"
 - 一组依赖关系
 - 一套环境与目标平台信息
 
-也就是说，真正该被发布、归档、回滚的，通常不是“几个散文件”，而是一份：
+也就是说，真正该被发布、归档、回滚的，通常不是”几个散文件”，而是一份：
 `完整内容快照。`
 
 只要这层不是快照化的，后面回滚和回归就很容易失控。
 
-## 三、缓存不是“本地存了一份文件”，而是“本地是否持有某个内容身份”
+从引擎接口层面看，`AssetBundleManifest` 提供的具体 API 正好覆盖了这些身份和依赖信息：`GetAllAssetBundles()` 返回所有 bundle 名称列表；`GetAssetBundleHash(bundleName)` 返回对应的 Hash128，用于版本比较和缓存命中判断；`GetAllDependencies(bundleName)` 返回传递性依赖列表（包含间接依赖）；`GetDirectDependencies(bundleName)` 返回仅一层的直接依赖。Manifest 本身从一个与输出目录同名的特殊 bundle 中加载——也就是说它自身也是一个 AssetBundle，需要先 `LoadFromFile` 再 `LoadAsset<AssetBundleManifest>`。对于 Addressables，等价角色由 `ContentCatalogData`（序列化在 `catalog.json` / `catalog.hash` 中）承担：每条 `ResourceLocationData` 记录了 key 到 provider ID、内部 bundle ID 和依赖列表的映射，功能上覆盖了传统 Manifest 的身份表和依赖表。
+
+## 三、缓存不是”本地存了一份文件”，而是”本地是否持有某个内容身份”
 
 缓存这一层也很容易被说浅。
 
@@ -207,10 +211,12 @@ series: "Unity 资产系统与序列化"
 - 某些共享 bundle 仍引用旧依赖
 - 新旧内容在局部路径上混用了
 
-所以缓存问题的本质，不是“本地有没有删干净”，而是：
+所以缓存问题的本质，不是”本地有没有删干净”，而是：
 `内容身份切换有没有沿整条分发链一致生效。`
 
-## 四、CDN 的职责不是“能下载”，而是稳定服务不可变内容
+这里有必要补充 Unity 内置缓存（`Caching` API）在实际项目中容易踩到的几个边界行为。Unity 的缓存以 `(bundleName, Hash128)` 为 key：当通过 `UnityWebRequestAssetBundle.GetAssetBundle(url, new CachedAssetBundle(bundleName, hash))` 下载时，hash 决定了缓存槽位。需要注意的边界情况包括：如果 bundle 名称发生了变化（例如 Addressables 的 group 重命名），旧名称对应的缓存条目会变成孤儿——它仍然占据磁盘空间，但新的请求永远不会命中它，必须通过 `Caching.ClearOtherCachedVersions(bundleName)` 手动清理。其次，`Caching.compressionEnabled`（默认 true）会让 LZMA 压缩的 bundle 在写入缓存时被重新压缩为 LZ4；如果两次构建之间这个设置发生了变化，旧缓存条目的压缩格式可能与当前预期不一致。最后，缓存磁盘用量可以通过 `Caching.maximumAvailableStorageSpace` 设定上限，但超限后引擎会静默驱逐最近最少使用的条目（LRU），团队排查”为什么客户端又重新下载了”时，往往遗漏了这一层静默回收。
+
+## 四、CDN 的职责不是”能下载”，而是稳定服务不可变内容
 
 很多团队提到 CDN，会把它理解成一个纯网络层组件：
 把包放上去，客户端能拉就行。

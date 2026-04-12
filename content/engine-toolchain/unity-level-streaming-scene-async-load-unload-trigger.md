@@ -51,6 +51,17 @@ Unity 实现 Level Streaming 的基本单元是 Scene。一个大世界被拆成
 
 这是 Level Streaming 的基础：永远保留一个"主场景"或"管理场景"，动态加载和卸载的都是 Additive 子场景。
 
+### PreloadManager 的帧预算机制
+
+`SceneManager.LoadSceneAsync` 返回的 `AsyncOperation` 背后对应的是引擎层的 `PreloadManager::LoadSceneOperation`。场景加载的实际工作——对象激活、`Awake`/`OnEnable` 回调——并不是一帧做完的，而是由 `PreloadManager` 按每帧时间预算分摊到多帧执行。这个预算通过 `Application.backgroundLoadingPriority` 控制：
+
+- `ThreadPriority.Low`（默认值）：每帧的集成工作上限约 2ms
+- `ThreadPriority.BelowNormal`：约 4ms
+- `ThreadPriority.Normal`：约 10ms
+- `ThreadPriority.High`：不限制，尽可能快地完成集成（可能导致明显的帧率尖刺）
+
+这是控制场景加载平滑度的最关键引擎参数。当多个场景同时执行异步加载时，每个场景的集成工作共享同一个帧预算。如果当前帧所有场景的集成工作总量超出预算，剩余部分会被推迟到下一帧。所以"同时加载 3 个场景"并不意味着每帧开销是 3 倍——帧预算会封顶单帧成本，但总加载时间会相应拉长。
+
 ### 2. 异步卸载
 
 `SceneManager.UnloadSceneAsync(sceneName)` 异步卸载一个已加载的场景。卸载后，该场景中的所有 GameObject 和关联的资源引用会被清理。
@@ -103,6 +114,16 @@ Unity 实现 Level Streaming 的基本单元是 Scene。一个大世界被拆成
 
 如果加载半径不够，玩家就会跑进一片还没加载完的空白区域——这就是开放世界游戏里常见的"pop-in"问题。
 
+### 5. allowSceneActivation 两阶段预加载
+
+距离和触发器解决了"什么时候开始加载"，但还有一个问题：即使提前开始加载，加载完成到场景激活之间能不能再加一层控制？
+
+标准做法是利用 `AsyncOperation.allowSceneActivation`。发起加载时把它设为 `false`，加载过程会正常执行 I/O 和反序列化，但当 `progress` 到达 `0.9`（准确值是 `0.8999...f`）时会暂停——场景的资产已经读入内存，但对象尚未激活，`Awake`/`OnEnable` 不会被调用。等玩家真正到达触发边界时，再把 `allowSceneActivation` 设为 `true`，完成最后 10% 的对象激活。
+
+这个两阶段模式是 Level Streaming 里隐藏加载时间的标准手段：开销最大的磁盘读取和反序列化在玩家还在前一块区域时就已完成，过渡时刻只需要执行相对轻量的激活步骤。
+
+有一个容易踩的坑：当 `allowSceneActivation` 为 `false` 时，`AsyncOperation.progress` 永远不会到达 `1.0`。很多开发者写 `progress >= 1.0f` 来判断加载完成，然后发现永远进不去——正确的检查点是 `progress >= 0.9f`。
+
 ## 四、跨场景引用怎么处理
 
 多个 Additive Scene 共存时，一个常见的工程问题是：Scene A 里的对象引用了 Scene B 里的对象。
@@ -119,6 +140,10 @@ Unity 默认不支持跨 Scene 的序列化引用。如果你在编辑器里把 
 - 全局管理器：把需要被多个 Scene 引用的对象放在一个常驻的管理 Scene 里，这个 Scene 永远不卸载
 - 事件系统：通过事件/消息系统解耦。Scene B 不直接引用 Scene A 的对象，而是发布/订阅事件
 - ScriptableObject：共享数据通过 ScriptableObject 承载，它不依附于任何 Scene
+
+### 3. sharedassets 重复与场景 Bundle 边界
+
+跨场景引用还有一个容易被忽略的资产层面的问题。当场景被构建为 AssetBundle 时，每个场景 Bundle 会按照 Player 构建的布局生成自己的 `sharedassets` 文件。如果两个场景 Bundle 都引用了同一张贴图（比如一张地形纹理），但这张贴图没有被显式分配到独立的 Bundle 中，它就会被分别复制到两个场景 Bundle 的 sharedassets 里。这种 sharedassets 重复是 Level Streaming 项目中最常见的资产冗余形式。修复方式是把共享资产——地形纹理、公用材质、通用预制体——显式分配到专门的共享 Bundle 中，确保场景 Bundle 里只包含场景专属的对象。
 
 ## 五、常见问题和应对
 

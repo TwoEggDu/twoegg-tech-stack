@@ -150,6 +150,8 @@ series: "Unity 资产系统与序列化"
 
 `你已经失去了内容交付的解释能力。`
 
+这背后有一个具体的引擎层面原因。构建时，Unity 会把项目里所有 `Resources/` 文件夹下的资产统一打入 `resources.assets`（以及溢出文件 `resources.assets.resS`）。启动时，引擎内部的 `ResourceManager` 会为 `resources.assets` 里的全部路径建一棵完整的内存查找树。这个启动开销和 Resources 里的资产总量线性相关——即使某些资产在运行期间从不被加载，开销一样会被支付。而 `Resources.Load` 本身是一个主线程同步调用，在这棵查找树上做字符串匹配。所以 Resources 不适合大规模使用的原因不仅仅是"没有显式交付边界"，更是可以实测的启动开销和只有同步加载这一条路，且两者都会随资产数量增长而恶化。
+
 所以更稳的定位是：
 
 `Resources 适合少量稳定内置内容，不适合承担中大型项目的资源交付治理。`
@@ -203,6 +205,8 @@ series: "Unity 资产系统与序列化"
 - 为了“可直接读文件”，把大量本应进入资源交付系统的内容塞进来
 - 结果后面远端更新、依赖治理、平台差异和包体控制都越来越难做
 
+还有一个在生产中极容易踩到的坑：`Application.streamingAssetsPath` 在不同平台指向的位置和可用的文件访问方式差异很大。**Android** 上 StreamingAssets 被打在 APK 内部（压缩包），`System.IO.File.ReadAllBytes()` 和 `File.Exists()` 都无法使用，必须走 `UnityWebRequest.Get()` 或者 `AndroidJNI` 来读取——这是跨平台时最常见的报错来源。**iOS** 上路径在 app bundle 内部，可以用普通文件 API 读取，但严格只读。**WebGL** 上 StreamingAssets 由服务器通过 HTTP 提供，所有读取都是异步的，不存在同步文件访问。**Windows / macOS / Linux** 上则是普通文件系统路径，完全可读。很多团队直到 QA 阶段才发现 Android 上的限制，不得不临时改架构。如果项目目标平台包含移动端，最稳的做法是统一使用 `UnityWebRequest` 读取 StreamingAssets，以确保跨平台安全。
+
 所以更稳的定位是：
 
 `StreamingAssets 适合原生文件，不适合替代完整的 Unity 资源交付系统。`
@@ -224,7 +228,9 @@ series: "Unity 资产系统与序列化"
 
 `Unity 资产对象怎样被输出成可独立交付单元。`
 
-这也是为什么它站在交付层，而不是简单的“加载路径”。
+这也是为什么它站在交付层，而不是简单的”加载路径”。
+
+从具体性能机制来看，`Resources.Load` 在引擎内部做的是：在启动时构建的内存路径树上执行字符串查找，然后在主线程上同步反序列化——没有异步变体。而 `AssetBundle.LoadAssetAsync` 使用的是 bundle 内部 SerializedFile 对象表中的预计算索引，支持通过加载线程进行异步反序列化，对于 LZ4 压缩的 bundle 还能按需做块解压。性能差异不只是”交付灵活性”的区别，而是可以实测的：异步加载避免了主线程卡帧，预计算索引也比字符串树查找更快。这也是即使资源只在本地使用、不需要远端更新，从 Resources 迁移到 AssetBundle / Addressables 仍然有技术收益的具体原因之一。
 
 ## 2. 它最不擅长什么
 
