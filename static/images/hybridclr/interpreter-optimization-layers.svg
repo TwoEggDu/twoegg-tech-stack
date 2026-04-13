@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .band-label { font: 600 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #7F3420; letter-spacing: 0.05em; }
+      .box-a { fill: #FBE8D9; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-b { fill: #E5F1EE; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-c { fill: #E8EEF7; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+      .arrow-line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="520" rx="28" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="64" y="50" class="subtitle">TRANSFORM OPTIMIZATION PIPELINE</text>
+  <text x="64" y="86" class="title">CIL 到 HiOpcode 的优化层次</text>
+
+  <!-- Band 1: CIL 输入 -->
+  <rect x="64" y="108" width="1072" height="68" rx="22" class="band"/>
+  <text x="88" y="132" class="band-label">CIL 输入</text>
+  <rect x="88" y="138" width="240" height="28" rx="8" class="box-a"/>
+  <text x="104" y="157" class="label" style="font-size:14px">CIL 栈机指令</text>
+  <!-- Arrow from box to output text -->
+  <line x1="336" y1="152" x2="368" y2="152" class="arrow-line"/>
+  <text x="388" y="157" class="copy">ldloc.0; ldloc.1; add (3条)</text>
+
+  <!-- Arrow from Band 1 to Band 2 -->
+  <line x1="600" y1="176" x2="600" y2="196" class="arrow-line"/>
+
+  <!-- Band 2: 社区版 Transform -->
+  <rect x="64" y="210" width="1072" height="108" rx="22" class="band"/>
+  <text x="88" y="236" class="band-label">社区版 Transform</text>
+
+  <!-- 4 boxes in Band 2 -->
+  <rect x="88" y="246" width="232" height="60" rx="10" class="box-b"/>
+  <text x="104" y="268" class="label" style="font-size:15px">类型特化</text>
+  <text x="104" y="290" class="copy">多态 → i4/i8/f4/f8</text>
+
+  <rect x="340" y="246" width="232" height="60" rx="10" class="box-b"/>
+  <text x="356" y="268" class="label" style="font-size:15px">指令折叠</text>
+  <text x="356" y="290" class="copy">3条 CIL → 1条 HiOpcode</text>
+
+  <rect x="592" y="246" width="232" height="60" rx="10" class="box-b"/>
+  <text x="608" y="268" class="label" style="font-size:15px">调用特化</text>
+  <text x="608" y="290" class="copy">≤4参数 → CallCommon</text>
+
+  <rect x="844" y="246" width="232" height="60" rx="10" class="box-b"/>
+  <text x="860" y="268" class="label" style="font-size:15px">内置替换</text>
+  <text x="860" y="290" class="copy">BCL → 专用指令</text>
+
+  <!-- Arrow from Band 2 to Band 3 -->
+  <line x1="600" y1="318" x2="600" y2="338" class="arrow-line"/>
+
+  <!-- Band 3: 商业版追加 -->
+  <rect x="64" y="352" width="1072" height="108" rx="22" class="band"/>
+  <text x="88" y="378" class="band-label">商业版追加</text>
+
+  <!-- 4 boxes in Band 3 -->
+  <rect x="88" y="388" width="232" height="60" rx="10" class="box-c"/>
+  <text x="104" y="410" class="label" style="font-size:15px">分派优化</text>
+  <text x="104" y="432" class="copy">switch → computed goto</text>
+
+  <rect x="340" y="388" width="232" height="60" rx="10" class="box-c"/>
+  <text x="356" y="410" class="label" style="font-size:15px">指令合并</text>
+  <text x="356" y="432" class="copy">多条 HiOpcode → 复合指令</text>
+
+  <rect x="592" y="388" width="232" height="60" rx="10" class="box-c"/>
+  <text x="608" y="410" class="label" style="font-size:15px">死指令消除</text>
+  <text x="608" y="432" class="copy">移除无用结果</text>
+
+  <rect x="844" y="388" width="232" height="60" rx="10" class="box-c"/>
+  <text x="860" y="410" class="label" style="font-size:15px">特化扩展</text>
+  <text x="860" y="432" class="copy">更多专用 opcode</text>
+
+  <!-- Output arrow from Band 3 -->
+  <line x1="600" y1="460" x2="600" y2="476" class="arrow-line"/>
+  <text x="316" y="494" class="copy" style="font-weight:600; fill:#14211F">BinOpVarVarVar_Add_i4 { ret, op1, op2 } (1条)</text>
+
+  <!-- Caption -->
+  <text x="600" y="514" class="caption" text-anchor="middle">社区版已做 8 种优化；商业版在此基础上再做 4 种，数值计算提升 280%-735%。</text>
+</svg>
