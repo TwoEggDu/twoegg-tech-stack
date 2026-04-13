@@ -1496,4 +1496,38 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
-*最后更新：2026-04-04（v24）——系列十三全面重构为 58 篇（原 41 篇）：十三·C 后端基础设施精简为 4 篇；新增十三·D 微服务与集群 7 篇（拆分粒度、服务边界、gRPC vs MQ、API网关、一致性、服务发现、集群运维）；十三·E Dedicated Server 扩展至 9 篇（新增 Agones、会话状态机、断线重连、DS可观察性）；新增十三·H 网络选型 5 篇（传输层、可靠UDP对比、序列化、WebSocket边界、长连接管理）；新增十三·I 游戏网络与同步 3 篇（帧同步vs状态同步、延迟补偿、匹配系统）；十三·J 服务端ECS 保持 13 篇不变；总计约 646 篇。*
+*最后更新：2026-04-13（v25）——新增跨系统深挖计划（7 篇）：URP × Shader 变体 × 打包三系列交叉的源码级深挖和结构性补充。总计约 653 篇。*
+
+---
+
+## 跨系统深挖计划（7 篇）
+
+*URP 深度、Shader 变体治理、打包/加载系列三者交叉的源码级深挖和结构性补充。按优先级排列。*
+
+### 第一梯队——源码差异化（3 篇）
+
+利用 Unity 源码追踪，写别的知识库写不出来的内容。
+
+| 编号 | 标题 | 归属系列 | 核心问题 |
+|------|------|---------|---------|
+| 深挖-01 | Vulkan/Metal PSO 预热：WarmUp() 解决不了的首帧卡顿 | Shader 变体 | `ShaderVariantCollection.WarmUp()` 只解决 Unity 层的变体查找，不解决 driver 层的 PSO 编译。从源码追踪 `CreateGPUProgram` 到 Vulkan `VkPipeline` / Metal `MTLRenderPipelineState` 的完整路径，讲清 `ShaderWarmup.WarmupShader` 的作用边界、VkPipelineCache 持久化、Metal MTLBinaryArchive、以及实际项目的预热策略 |
+| 深挖-02 | RenderGraph 编译器内部：Pass 裁剪、RT 别名和 NativeRenderPass 合并为什么会失败 | URP 深度 | 现有 RenderGraph 文章只讲 API 用法。从源码追踪 `RenderGraph.CompileRenderGraph()` 和 `NativePassCompiler`，讲清 Pass 依赖图怎么被编译、未使用的 Pass 怎么被裁剪、RT 内存别名怎么决定、NativeRenderPass 合并的成功/失败条件、以及怎么用 RenderGraph Viewer 诊断合并失败 |
+| 深挖-03 | 异步上传管线源码解析：Texture/Mesh 上传调度和 asyncUploadTimeSlice 的真实行为 | 打包/加载 | 当前全站近乎零覆盖。从源码追踪 `AsyncUploadManager` 的上传环形缓冲区机制，讲清 `asyncUploadTimeSlice`/`asyncUploadBufferSize`/`asyncUploadPersistentBuffer` 三个参数的真实行为、哪些贴图走异步哪些阻塞主线程、压缩格式（ASTC/ETC2）对上传成本的影响、以及 Loading Screen 期间的调优策略 |
+
+### 第二梯队——结构性补充（2 篇）
+
+填读者读完现有系列后自然会追问的缺口。
+
+| 编号 | 标题 | 归属系列 | 核心问题 |
+|------|------|---------|---------|
+| 深挖-04 | Shader 变体构建耗时优化：为什么构建要几十分钟，怎么缩短 | Shader 变体 | 变体系列讲了怎么管数量、怎么裁剪、怎么验证，但没讲构建本身为什么慢。覆盖：编译器并行化机制与瓶颈、增量编译缓存（ShaderCache）的失效条件、平台编译成本差异（Vulkan SPIR-V / Metal MSL / GLES HLSLcc）、`shader_feature_local` 缩小组合空间、CI 共享 ShaderCache、以及多档位构建对构建时间的叠加影响 |
+| 深挖-05 | 移动端 Shader 变体的 GPU 内存预算：到底能负担多少变体 | Shader 变体 | 变体系列讲了构建侧（包体）和运行时侧（命中），但没讲内存侧。覆盖：单个编译变体在 Mali/Adreno/Apple GPU 上的实际内存占用、变体数量和 GPU 内存的非线性关系（指令缓存共享）、不同内存预算等级（2GB/3GB/4GB）下的变体上限估算、怎么用 Mali Offline Compiler / Xcode GPU Report / Snapdragon Profiler 测量 Shader 内存、WarmUp 常驻数量和内存压力的权衡 |
+
+### 第三梯队——专项补充（2 篇）
+
+更窄的专题，可按需排期。
+
+| 编号 | 标题 | 归属系列 | 核心问题 |
+|------|------|---------|---------|
+| 深挖-06 | Compute Shader 变体：和图形 Shader 变体的差异 | Shader 变体 | 整个变体系列只覆盖图形 Shader（Vertex/Fragment）。Compute Shader 也支持 `multi_compile`/`shader_feature`，但 SVC 不支持注册 Compute Kernel、WarmUp 对 Compute 无效、裁剪行为不同。用 Compute 做 GPU Skinning/Culling/粒子模拟的项目需要这个 |
+| 深挖-07 | 从运行时 Trace 自动生成 SVC：让 SVC 维护不再靠人 | Shader 变体 | 现有 SVC 文章讲了原则和分组策略，但没有自动化采集的实现。覆盖：运行时 hook 每次 `Shader.Find` + keyword 命中、日志转 SVC 资产的脚本实现、两次 SVC 快照的 diff 检测新路径、集成到 QA 工作流（QA 跑流程 → 自动生成 SVC → CI 对比基线）|
