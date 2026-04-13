@@ -12,8 +12,6 @@ tags:
   - "Troubleshooting"
   - "Debug"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 这篇是排障速查卡，不讲原理。如果你需要理解为什么会出现这些问题，请回到[变体全流程总览]({{< relref "rendering/unity-shader-variant-full-lifecycle-overview.md" >}})。
 

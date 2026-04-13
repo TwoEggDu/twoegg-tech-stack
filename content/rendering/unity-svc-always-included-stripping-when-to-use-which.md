@@ -12,8 +12,6 @@ tags:
   - "Stripping"
   - "AssetBundle"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 写到这里，shader 这条线其实已经把几个关键部件分别拆开了：
 

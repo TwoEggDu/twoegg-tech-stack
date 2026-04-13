@@ -12,8 +12,6 @@ tags:
   - "Build"
   - "Variant"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 Shader variant 数量为什么会失控，最终能追溯到源头的问题通常只有一个：
 

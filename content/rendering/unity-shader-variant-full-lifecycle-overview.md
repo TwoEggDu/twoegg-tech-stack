@@ -13,8 +13,6 @@ tags:
   - "Rendering"
   - "URP"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 这篇文章是 Shader Variant 系列的总览。它不展开每个环节的细节，而是把完整链路按读者的认知顺序串起来，每个环节讲清楚"是什么"和"为什么"，然后给出深入链接。
 

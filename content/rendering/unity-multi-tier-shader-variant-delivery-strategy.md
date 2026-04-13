@@ -13,7 +13,6 @@ tags:
   - "AssetBundle"
   - "Quality Tiers"
 series: "Unity Shader Variant 治理"
-  - "Unity Shader Variant 治理"
 ---
 如果你的项目只有一个质量档、一个 URP Asset、一次 Player Build 包含所有内容——变体交付不会有太大问题，前面的文章已经覆盖了。
 

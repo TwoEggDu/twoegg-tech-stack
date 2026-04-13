@@ -12,8 +12,6 @@ tags:
   - "Build"
   - "Source Code"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面的文章讲了变体的保留依据有四方角色（Material、Scene、SVC、Always Included），也讲了变体的裁剪有四层（URP Prefiltering、Builtin Stripping、SRP Stripping、Custom IPreprocessShaders）。但中间最关键的一步一直是个黑盒：
 

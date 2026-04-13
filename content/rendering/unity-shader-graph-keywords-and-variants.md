@@ -13,8 +13,6 @@ tags:
   - "Variant"
   - "URP"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 上一篇把手写 shader 的 keyword 设计讲清楚了：
 

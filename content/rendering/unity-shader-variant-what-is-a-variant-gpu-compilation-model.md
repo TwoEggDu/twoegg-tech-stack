@@ -13,8 +13,6 @@ tags:
   - "Keyword"
   - "Compilation"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 > 如果只用一句话概括这篇，我会这样说：Shader Variant 不是"带条件的 Shader"，而是"同一段 Shader 逻辑按不同关键字组合预先编译出的多份独立 GPU 程序"。
 

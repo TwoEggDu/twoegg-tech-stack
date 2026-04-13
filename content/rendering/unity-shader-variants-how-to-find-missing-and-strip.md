@@ -11,8 +11,6 @@ tags:
   - "Build"
   - "Rendering"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 上一篇我主要在讲：
 

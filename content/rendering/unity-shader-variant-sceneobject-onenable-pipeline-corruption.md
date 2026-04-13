@@ -12,7 +12,6 @@ tags:
   - "Build"
   - "Debugging"
 series: "Unity Shader Variant 治理"
-  - "Unity Shader Variant 治理"
 ---
 做过 Unity 项目的人，大概都遇到过这种情况：
 

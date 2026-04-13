@@ -2,10 +2,8 @@
 title: "HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法"
 date: "2026-03-26"
 series: "HybridCLR"
-  - "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 tags:
-  - "HybridCLR"
   - "async"
   - "UniTask"
   - "IL2CPP"

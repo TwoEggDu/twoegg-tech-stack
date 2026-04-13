@@ -13,8 +13,6 @@ tags:
   - "SVC"
   - "Practice"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面的文章已经把 Shader Variant 的生命周期、保留机制、裁剪层级和运行时命中都拆清楚了。但有一个问题一直没有被单独回答：
 

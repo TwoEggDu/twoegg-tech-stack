@@ -14,8 +14,6 @@ tags:
   - "AssetBundle"
   - "Source Code"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面几篇已经把 `Shader Variant` 的保留依据、剔除层级和运行时命中拆过了。  
 到了构建阶段，项目现场最常见的误判不是"不知道有 stripping"，而是：

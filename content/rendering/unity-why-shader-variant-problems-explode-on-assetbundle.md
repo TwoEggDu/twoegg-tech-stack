@@ -12,8 +12,6 @@ tags:
   - "Variant"
   - "Build"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前一篇我已经先把一个更底层的问题拆开了：
 

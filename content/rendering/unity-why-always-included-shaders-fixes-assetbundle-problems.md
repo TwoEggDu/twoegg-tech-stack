@@ -12,8 +12,6 @@ tags:
   - "Variant"
   - "GraphicsSettings"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 做 Unity 资源交付时，很多人都会碰到一个非常具体、也非常迷惑的现象：
 

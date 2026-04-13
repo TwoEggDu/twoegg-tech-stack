@@ -12,8 +12,6 @@ tags:
   - "Variant"
   - "Build"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面几篇把变体的通用机制都讲清楚了：keyword 设计、构建期枚举、stripping、SVC、Always Included、运行时命中。
 

@@ -12,8 +12,6 @@ tags:
   - "AssetBundle"
   - "Debugging"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 包里缺了 shader variant，是一个很常见但很难快速定位的问题。
 

@@ -12,8 +12,6 @@ tags:
   - "Variant"
   - "Warmup"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面这条 shader 线，已经把几件事分别拆开了：
 

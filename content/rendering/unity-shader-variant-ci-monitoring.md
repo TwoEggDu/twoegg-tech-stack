@@ -12,8 +12,6 @@ tags:
   - "CI"
   - "Variant"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面这条线，把 shader variant 的原理、工具选择、运行时机制和排查流程都覆盖了。
 

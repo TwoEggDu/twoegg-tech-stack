@@ -12,8 +12,6 @@ tags:
   - "Regression"
   - "Build"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 上一篇我已经把 `ShaderVariantCollection` 的定位压清了：
 

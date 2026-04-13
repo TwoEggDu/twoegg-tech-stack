@@ -14,8 +14,6 @@ tags:
   - "SVC"
   - "Always Included"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 很多团队讨论 `Shader Variant` 时，最容易把两个不同层面的问题混在一起：
 

@@ -2,10 +2,8 @@
 title: "HybridCLR 打包工程化｜GenerateAll 必须进 CI 流程，Development 一致性与 Launcher-only 场景"
 date: "2026-03-26"
 series: "HybridCLR"
-  - "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 tags:
-  - "HybridCLR"
   - "CI/CD"
   - "Android"
   - "IL2CPP"

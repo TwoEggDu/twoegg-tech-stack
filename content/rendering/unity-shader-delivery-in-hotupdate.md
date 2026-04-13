@@ -13,8 +13,6 @@ tags:
   - "Variant"
   - "Addressables"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前面的文章已经把这个核心问题讲清楚了：
 

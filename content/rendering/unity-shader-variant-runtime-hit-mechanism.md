@@ -12,8 +12,6 @@ tags:
   - "Rendering"
   - "Warmup"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 前几篇把 shader variant 的构建期行为讲清了：
 

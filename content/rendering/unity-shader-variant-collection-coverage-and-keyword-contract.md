@@ -13,8 +13,6 @@ tags:
   - "Keyword"
   - "Workflow"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 > 如果只用一句话概括这篇，我会这样说：静态收集器只能看到写在资产文件里的 keyword 状态，它永远看不到运行时代码动态开关的那部分变体；消灭这个盲区最可靠的方法不是更强的扫描器，而是在项目里约定"凡是动态开关 keyword 的代码，必须在数据库里提前声明"。
 

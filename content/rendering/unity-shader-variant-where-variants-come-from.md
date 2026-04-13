@@ -14,8 +14,6 @@ tags:
   - "URP"
   - "XR"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 > 如果只用一句话概括这篇，我会这样说：Shader Variant 不是“某个 keyword 打开了就多一份程序”，而是“多个编译轴交叉后形成的一张版本网”。
 

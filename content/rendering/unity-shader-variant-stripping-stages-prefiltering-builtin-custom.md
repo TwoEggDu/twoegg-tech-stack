@@ -13,8 +13,6 @@ tags:
   - "URP"
   - "Stripping"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 `Shader Variant` 丢失现场里，最常见的一句误判是：
 

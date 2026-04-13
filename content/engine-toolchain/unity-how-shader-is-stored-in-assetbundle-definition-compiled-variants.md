@@ -12,8 +12,6 @@ tags:
   - "Variant"
   - "Rendering"
 series: "Unity 资产系统与序列化"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 写到这里，`AssetBundle` 这条线其实已经把交付、构建、运行时加载和工程治理都铺出来了。
 

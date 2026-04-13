@@ -11,8 +11,6 @@ tags:
   - "Rendering"
   - "Shader"
 series: "Unity Shader Variant 治理"
-  - "Unity 资产系统与序列化"
-  - "Unity Shader Variant 治理"
 ---
 做 Unity 图形开发的人，迟早都会碰到一个词：`Shader Variants`。
 
