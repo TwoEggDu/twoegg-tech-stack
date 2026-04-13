@@ -12,7 +12,7 @@ tags:
   - "阴影"
   - "渲染管线"
 series: "URP 深度"
-weight: 1680
+weight: 1645
 ---
 URP 自带的 Lit Shader 功能完整，但高度封装——想加一个效果、改一个细节，要在几千行代码里找位置。手写 Shader 的价值在于：你完全清楚每一行代码在做什么，改起来没有障碍。
 
@@ -672,6 +672,13 @@ URP Pipeline Asset 里的 `Additional Lights` 要设为 `Per Pixel`，同时 Sha
 **Q：SRP Batcher 显示不兼容**
 
 Frame Debugger 里点击 Draw Call，看右侧的 SRP Batcher 状态说明。最常见的原因是某个属性没有放在 `CBUFFER_START(UnityPerMaterial)` 里，或者 CBUFFER 里声明了 Properties 里没有的属性。
+
+---
+
+## 导读
+
+- 上一篇：[URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 与迁移策略]({{< relref "rendering/urp-ext-06-migration.md" >}})
+- 下一篇：[URP 深度平台 01｜移动端专项配置：为什么这么设、怎么验证]({{< relref "rendering/urp-platform-01-mobile.md" >}})
 
 ---
 

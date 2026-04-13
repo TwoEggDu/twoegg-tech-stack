@@ -195,6 +195,11 @@ color += LightingPhysicallyBased(brdfData, mainLight, normalWS, viewDirWS);
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度配置 03｜Camera Stack：Base Camera、Overlay Camera 与多摄像机组织]({{< relref "rendering/urp-config-03-camera-stack.md" >}})
+- 下一篇：[URP 深度光照 02｜URP Shadow 深度：Cascade 机制、Shadow Atlas、Bias 调参]({{< relref "rendering/urp-lighting-02-shadow.md" >}})
+
 ## 小结
 
 | 概念 | 要点 |

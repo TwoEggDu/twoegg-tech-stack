@@ -11,7 +11,7 @@ tags:
   - "升级"
   - "渲染管线"
 series: "URP 深度"
-weight: 1580
+weight: 1640
 ---
 Unity 2022.3 LTS 到 Unity 6 的 URP 升级不是简单的版本号跳跃，`ScriptableRenderPass` 的核心 API 发生了结构性变化。本篇梳理实际会遇到的 Breaking Change，以及一套不用一次性全改就能先让项目跑起来的迁移策略。
 
@@ -218,6 +218,13 @@ _tempRT?.Release()            → （不需要，自动释放）
 Blitter.BlitCameraTexture(cmd, src, dst, mat, pass)
   → Blitter.BlitTexture(ctx.cmd, src, new Vector4(1,1,0,0), mat, pass)
 ```
+
+---
+
+## 导读
+
+- 上一篇：[URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass]({{< relref "rendering/urp-ext-05-renderdoc.md" >}})
+- 下一篇：[URP Shader 手写｜从骨架到完整光照：接入主光、附加光与阴影]({{< relref "rendering/urp-shader-custom-lit.md" >}})
 
 ---
 

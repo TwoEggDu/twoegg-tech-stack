@@ -218,6 +218,11 @@ Shadows（Renderer 层的参数，和 Pipeline Asset 里的 Bias 是两套）
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度配置 01｜Pipeline Asset 解读：每个参数背后的渲染行为]({{< relref "rendering/urp-config-01-pipeline-asset.md" >}})
+- 下一篇：[URP 深度配置 03｜Camera Stack：Base Camera、Overlay Camera 与多摄像机组织]({{< relref "rendering/urp-config-03-camera-stack.md" >}})
+
 ## 小结
 
 | 参数 | 核心作用 | 移动端建议 |

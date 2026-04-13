@@ -211,6 +211,11 @@ Overlay Camera 的 Pass 紧跟在 Base Camera 的 Post-processing 之后，按 S
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度配置 02｜Universal Renderer Settings：渲染路径、Depth Priming、Native RenderPass]({{< relref "rendering/urp-config-02-renderer-settings.md" >}})
+- 下一篇：[URP 深度光照 01｜URP 光照系统：主光、附加光、Light Layer、Light Cookie]({{< relref "rendering/urp-lighting-01-lighting-system.md" >}})
+
 ## 小结
 
 | 概念 | 含义 |

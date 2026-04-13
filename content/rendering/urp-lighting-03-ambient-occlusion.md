@@ -191,6 +191,11 @@ Blur Quality: Low
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度光照 02｜URP Shadow 深度：Cascade 机制、Shadow Atlas、Bias 调参]({{< relref "rendering/urp-lighting-02-shadow.md" >}})
+- 下一篇：[URP 深度扩展 01｜Renderer Feature 完整开发：从零写一个 ScriptableRendererFeature]({{< relref "rendering/urp-ext-01-renderer-feature.md" >}})
+
 ## 小结
 
 | 参数 | 核心作用 | 移动端建议 |

@@ -304,6 +304,11 @@ public class MyPass : ScriptableRenderPass
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度前置 01｜CommandBuffer：Blit、SetRenderTarget、DrawRenderers]({{< relref "rendering/urp-pre-01-commandbuffer.md" >}})
+- 下一篇：[URP 深度前置 03｜Forward、Deferred、Forward+：三条渲染路径对比]({{< relref "rendering/urp-pre-03-rendering-paths.md" >}})
+
 ## 小结
 
 | 方式 | 适用场景 | 生命周期管理 |

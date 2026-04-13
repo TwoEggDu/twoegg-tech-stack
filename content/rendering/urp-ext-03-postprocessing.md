@@ -11,7 +11,7 @@ tags:
   - "Renderer Feature"
   - "渲染管线"
 series: "URP 深度"
-weight: 1550
+weight: 1610
 ---
 URP 的后处理不是一个独立系统，而是 Volume Framework + Renderer Feature 两层配合的结果。理解这两层的分工，才能写出既能在 Inspector 里调参、又能在 Renderer Feature 里驱动效果的完整后处理扩展。
 
@@ -217,6 +217,13 @@ Scene 视图有独立的相机，默认不使用 Post Processing。在 Scene 视
 var tex = _comp.LutTexture.value;
 _material.SetTexture(LutTexId, tex != null ? tex : Texture2D.whiteTexture);
 ```
+
+---
+
+## 导读
+
+- 上一篇：[URP 深度扩展 02｜RenderGraph 实战：Unity 6 的新写法]({{< relref "rendering/urp-ext-02-rendergraph.md" >}})
+- 下一篇：[URP 深度扩展 04｜DrawRenderers 与 FilteringSettings：有选择地重绘物体]({{< relref "rendering/urp-ext-04-draw-renderers.md" >}})
 
 ---
 

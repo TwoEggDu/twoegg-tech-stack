@@ -382,6 +382,13 @@ if (renderingData.cameraData.cameraType == CameraType.SceneView) return;
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度扩展 03｜URP 后处理扩展：Volume Framework 与自定义效果]({{< relref "rendering/urp-ext-03-postprocessing.md" >}})
+- 下一篇：[URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass]({{< relref "rendering/urp-ext-05-renderdoc.md" >}})
+
+---
+
 ## 小结
 
 - `FilteringSettings`：控制画哪些物体——Layer、RenderQueue、Rendering Layer Mask

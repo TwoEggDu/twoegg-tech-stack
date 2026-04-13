@@ -245,6 +245,11 @@ QualitySettings.SetQualityLevel(2, applyExpensiveChanges: true);
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度前置 03｜Forward、Deferred、Forward+：三条渲染路径对比]({{< relref "rendering/urp-pre-03-rendering-paths.md" >}})
+- 下一篇：[URP 深度配置 02｜Universal Renderer Settings：渲染路径、Depth Priming、Native RenderPass]({{< relref "rendering/urp-config-02-renderer-settings.md" >}})
+
 ## 小结
 
 Pipeline Asset 参数的优先级，按移动端优化影响排序：

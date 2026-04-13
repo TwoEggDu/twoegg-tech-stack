@@ -348,6 +348,10 @@ CommandBufferPool.Release(cmd);
 
 ---
 
+## 导读
+
+- 下一篇：[URP 深度前置 02｜RenderTexture 与 RTHandle：临时 RT、RTHandle 体系]({{< relref "rendering/urp-pre-02-rthandle.md" >}})
+
 ## 小结
 
 | 操作 | 推荐写法 | 主要陷阱 |
