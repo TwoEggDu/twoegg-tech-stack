@@ -1,7 +1,7 @@
 ---
 title: "HybridCLR 修法决策｜DisStripCode、link.xml、补充元数据分别在什么时候用"
 date: "2026-03-31"
-series:
+series: "HybridCLR"
   - "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 tags:

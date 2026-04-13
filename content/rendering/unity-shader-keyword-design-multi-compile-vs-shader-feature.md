@@ -11,7 +11,7 @@ tags:
   - "Keyword"
   - "Build"
   - "Variant"
-series:
+series: "Unity Shader Variant 治理"
   - "Unity 资产系统与序列化"
   - "Unity Shader Variant 治理"
 ---

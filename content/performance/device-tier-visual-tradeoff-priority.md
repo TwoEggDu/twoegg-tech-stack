@@ -11,8 +11,7 @@ tags:
   - Performance
   - Rendering
   - Client
-series: "游戏性能判断"
-primary_series: "device-tiering"
+series: "机型分档"
 series_order: 6
 ---
 

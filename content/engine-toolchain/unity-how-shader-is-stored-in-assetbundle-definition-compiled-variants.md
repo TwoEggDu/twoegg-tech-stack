@@ -11,7 +11,7 @@ tags:
   - "AssetBundle"
   - "Variant"
   - "Rendering"
-series:
+series: "Unity 资产系统与序列化"
   - "Unity 资产系统与序列化"
   - "Unity Shader Variant 治理"
 ---

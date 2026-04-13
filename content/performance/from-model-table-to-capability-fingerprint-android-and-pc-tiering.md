@@ -12,8 +12,7 @@ tags:
   - Performance
   - Compatibility
   - Client
-series: "游戏性能判断"
-primary_series: "device-tiering"
+series: "机型分档"
 series_order: 4.5
 ---
 很多团队第一次做机型分档时，最自然的实现方式会是：

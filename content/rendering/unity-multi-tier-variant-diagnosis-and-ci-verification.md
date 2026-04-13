@@ -13,7 +13,7 @@ tags:
   - "AssetBundle"
   - "CI"
   - "Troubleshooting"
-series:
+series: "Unity Shader Variant 治理"
   - "Unity Shader Variant 治理"
 ---
 上一篇解决了"怎么做对"——多档位项目的变体交付策略。这篇解决"怎么验证"和"出了问题怎么定位"。
