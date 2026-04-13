@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box-a { fill: #FBE8D9; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-b { fill: #E5F1EE; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-c { fill: #E8EEF7; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+      .layer-num { font: 700 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #7F3420; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="480" rx="28" fill="url(#bg)"/>
+  <text x="64" y="56" class="subtitle">BUILD PIPELINE GUARDRAILS</text>
+  <text x="64" y="96" class="title">CI 检查 4 层结构</text>
+
+  <!-- Outer band -->
+  <rect x="56" y="120" width="1088" height="310" rx="22" class="band"/>
+
+  <!-- Layer 1 -->
+  <text x="90" y="162" class="layer-num">第 1 层</text>
+  <rect x="150" y="140" width="340" height="48" rx="14" class="box-a"/>
+  <text x="320" y="170" class="label" text-anchor="middle">生成物有没有跑</text>
+
+  <path d="M490 164H540" class="line"/>
+
+  <rect x="540" y="140" width="570" height="48" rx="14" class="box-a" style="opacity:0.7"/>
+  <text x="825" y="170" class="copy" text-anchor="middle">检查 GenerateAll 是否执行</text>
+
+  <!-- Vertical connector 1→2 -->
+  <path d="M320 188V200" class="line" style="marker-end:none"/>
+
+  <!-- Layer 2 -->
+  <text x="90" y="232" class="layer-num">第 2 层</text>
+  <rect x="150" y="210" width="340" height="48" rx="14" class="box-a"/>
+  <text x="320" y="240" class="label" text-anchor="middle">生成物是否同源</text>
+
+  <path d="M490 234H540" class="line"/>
+
+  <rect x="540" y="210" width="570" height="48" rx="14" class="box-a" style="opacity:0.7"/>
+  <text x="825" y="234" class="copy" text-anchor="middle">Development 标志一致、metadata DLL 同一次构建</text>
+
+  <!-- Vertical connector 2→3 -->
+  <path d="M320 258V270" class="line" style="marker-end:none"/>
+
+  <!-- Layer 3 -->
+  <text x="90" y="302" class="layer-num">第 3 层</text>
+  <rect x="150" y="280" width="340" height="48" rx="14" class="box-b"/>
+  <text x="320" y="310" class="label" text-anchor="middle">需求清单有没有更新</text>
+
+  <path d="M490 304H540" class="line"/>
+
+  <rect x="540" y="280" width="570" height="48" rx="14" class="box-b" style="opacity:0.7"/>
+  <text x="825" y="310" class="copy" text-anchor="middle">AOTGenericReferences 是否重新生成</text>
+
+  <!-- Vertical connector 3→4 -->
+  <path d="M320 328V340" class="line" style="marker-end:none"/>
+
+  <!-- Layer 4 -->
+  <text x="90" y="372" class="layer-num">第 4 层</text>
+  <rect x="150" y="350" width="340" height="48" rx="14" class="box-c"/>
+  <text x="320" y="380" class="label" text-anchor="middle">新增缺口有没有被覆盖</text>
+
+  <path d="M490 374H540" class="line"/>
+
+  <rect x="540" y="350" width="570" height="48" rx="14" class="box-c" style="opacity:0.7"/>
+  <text x="825" y="380" class="copy" text-anchor="middle">diff AOTGenericReferences 检测新注释行</text>
+
+  <text x="64" y="458" class="caption">4 层由粗到细，第 1 层不过其他层都没意义。</text>
+</svg>

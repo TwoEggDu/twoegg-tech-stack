@@ -11,6 +11,7 @@ tags:
   - "Troubleshooting"
   - "Runtime"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > HybridCLR 排错最浪费时间的，不是修 bug，而是把不同层的问题混成一锅；真正稳的诊断方式，不是先搜报错，而是先判断这次坏的是哪一层。
 
@@ -36,6 +37,10 @@ HybridCLR 的排错第一步不是问”它支不支持”，而是问——
 `这次失败发生在把程序集接进来之前、把 metadata 接起来之前、把方法调起来之前，还是跨 ABI 和资源身份链时。`
 
 一旦层次先分对，很多报错其实都没有那么神秘。
+
+![5 层诊断决策树](../../images/hybridclr/diagnostic-decision-tree.svg)
+
+*图：报错信号 → 所属层次 → 检查方向。先按这张图归位，再展开排查。*
 
 ## 不要先背报错，先背这 5 层
 

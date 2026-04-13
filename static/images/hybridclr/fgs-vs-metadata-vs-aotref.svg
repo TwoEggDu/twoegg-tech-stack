@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAF4EB"/>
+      <stop offset="100%" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { fill: #14211F; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 30px; }
+      .subtitle { fill: #7F3420; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+      .label { fill: #14211F; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 18px; }
+      .copy { fill: #596563; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 400; font-size: 14px; }
+      .caption { fill: #596563; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 400; font-size: 13px; }
+      .box-a { fill: #FBE8D9; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-b { fill: #E5F1EE; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-c { fill: #E8EEF7; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="540" rx="28" fill="url(#bg)"/>
+
+  <!-- Title block -->
+  <text x="600" y="50" text-anchor="middle" class="subtitle">THREE MECHANISMS AT DIFFERENT LAYERS</text>
+  <text x="600" y="88" text-anchor="middle" class="title">FGS vs 补 metadata vs AOTGenericReference</text>
+
+  <!-- Layer 1: AOTGenericReference (box-a) -->
+  <rect class="band" x="60" y="115" width="1080" height="100" rx="22"/>
+  <rect class="box-a" x="90" y="130" width="240" height="70" rx="12"/>
+  <text x="210" y="172" text-anchor="middle" class="label">AOTGenericReference</text>
+
+  <line class="line" x1="330" y1="165" x2="420" y2="165" marker-end="url(#arrow)"/>
+
+  <rect class="box-a" x="430" y="130" width="380" height="70" rx="12"/>
+  <text x="620" y="162" text-anchor="middle" class="copy">发现缺口：</text>
+  <text x="620" y="182" text-anchor="middle" class="copy">哪些泛型实例不在 AOT 里</text>
+
+  <line class="line" x1="810" y1="165" x2="900" y2="165" marker-end="url(#arrow)"/>
+
+  <rect class="box-a" x="910" y="130" width="200" height="70" rx="12"/>
+  <text x="1010" y="172" text-anchor="middle" class="copy">build-time 分析</text>
+
+  <!-- Layer 2: LoadMetadataForAOTAssembly (box-b) -->
+  <rect class="band" x="60" y="235" width="1080" height="100" rx="22"/>
+  <rect class="box-b" x="90" y="250" width="320" height="70" rx="12"/>
+  <text x="250" y="278" text-anchor="middle" class="label" font-size="16">LoadMetadataForAOT</text>
+  <text x="250" y="298" text-anchor="middle" class="label" font-size="16">Assembly</text>
+
+  <line class="line" x1="410" y1="285" x2="500" y2="285" marker-end="url(#arrow)"/>
+
+  <rect class="box-b" x="510" y="250" width="300" height="70" rx="12"/>
+  <text x="660" y="292" text-anchor="middle" class="copy">补回 metadata 可见性</text>
+
+  <line class="line" x1="810" y1="285" x2="900" y2="285" marker-end="url(#arrow)"/>
+
+  <rect class="box-b" x="910" y="250" width="200" height="70" rx="12"/>
+  <text x="1010" y="292" text-anchor="middle" class="copy">runtime 加载</text>
+
+  <!-- Layer 3: Full Generic Sharing (box-c) -->
+  <rect class="band" x="60" y="355" width="1080" height="100" rx="22"/>
+  <rect class="box-c" x="90" y="370" width="240" height="70" rx="12"/>
+  <text x="210" y="412" text-anchor="middle" class="label">Full Generic Sharing</text>
+
+  <line class="line" x1="330" y1="405" x2="420" y2="405" marker-end="url(#arrow)"/>
+
+  <rect class="box-c" x="430" y="370" width="380" height="70" rx="12"/>
+  <text x="620" y="398" text-anchor="middle" class="copy">改变 generic 调用模型：</text>
+  <text x="620" y="418" text-anchor="middle" class="copy">所有类型参数统一为 canonical 类型</text>
+
+  <line class="line" x1="810" y1="405" x2="900" y2="405" marker-end="url(#arrow)"/>
+
+  <rect class="box-c" x="910" y="370" width="200" height="70" rx="12"/>
+  <text x="1010" y="412" text-anchor="middle" class="copy">AOT 编译期</text>
+
+  <!-- Caption -->
+  <text x="600" y="500" text-anchor="middle" class="caption">三者不是替代关系：AOTGenericReference 发现问题，metadata 补可见性，FGS 改调用模型。</text>
+</svg>

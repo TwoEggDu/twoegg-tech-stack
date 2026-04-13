@@ -11,6 +11,7 @@ tags:
   - "Runtime"
   - "SourceCode"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 如果说前几篇是在拆 HybridCLR 的零件，那这一篇要做的，就是沿着一条真实调用链，把这些零件重新装回一台会跑的机器。
 
@@ -70,7 +71,12 @@ public static int Add(int a, int b)
 因为对于 HybridCLR 来说，复杂业务逻辑不是重点。  
 重点是：这个方法属于热更程序集，因此它不会走普通 AOT 方法那条路。
 
+![热更方法调用链 8 步](../../images/hybridclr/call-chain-8-steps.svg)
+
+*图：整条链可以压成 8 步。装载期、初始化期和调用期的边界决定了 transform 发生在第一次调用时。*
+
 ## 先给源码地图
+> 本文源码分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）。如果你使用的版本差异较大，部分文件路径或函数签名可能有变化。
 
 这篇主要看这些文件：
 

@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 17px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .label-sm { font: 700 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .col-head { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.06em; fill: #7F3420; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="600" rx="28" fill="url(#bg)"/>
+  <text x="64" y="64" class="subtitle">Error Signal -> Layer -> Check Direction</text>
+  <text x="64" y="104" class="title">5 层诊断决策树</text>
+
+  <!-- Column headers -->
+  <text x="120" y="148" class="col-head">错误信号</text>
+  <text x="530" y="148" class="col-head">所属层</text>
+  <text x="790" y="148" class="col-head">排查方向</text>
+
+  <!-- Row 1 -->
+  <rect x="56" y="164" width="420" height="50" rx="16" class="box box-a"/>
+  <text x="80" y="195" class="label-sm">TypeLoadException / BAD_IMAGE</text>
+
+  <path d="M476 189H510" class="line"/>
+
+  <rect x="510" y="164" width="140" height="50" rx="16" class="box box-b"/>
+  <text x="543" y="195" class="label">装载层</text>
+
+  <path d="M650 189H690" class="line"/>
+
+  <rect x="690" y="164" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="195" class="label-sm">检查 DLL 加载顺序和 strip</text>
+
+  <!-- Row 2 -->
+  <rect x="56" y="230" width="420" height="50" rx="16" class="box box-a"/>
+  <text x="80" y="261" class="label-sm">MissingMethodException</text>
+
+  <path d="M476 255H510" class="line"/>
+
+  <rect x="510" y="230" width="140" height="50" rx="16" class="box box-b"/>
+  <text x="530" y="261" class="label">metadata 层</text>
+
+  <path d="M650 255H690" class="line"/>
+
+  <rect x="690" y="230" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="261" class="label-sm">检查补 metadata 顺序和 DLL</text>
+
+  <!-- Row 3 -->
+  <rect x="56" y="296" width="420" height="50" rx="16" class="box box-a"/>
+  <text x="80" y="322" class="label-sm">AOT generic not instantiated /</text>
+  <text x="80" y="338" class="label-sm">SIGSEGV+hybridclr::</text>
+
+  <path d="M476 321H510" class="line"/>
+
+  <rect x="510" y="296" width="140" height="50" rx="16" class="box box-b"/>
+  <text x="530" y="327" class="label">AOT 泛型层</text>
+
+  <path d="M650 321H690" class="line"/>
+
+  <rect x="690" y="296" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="327" class="label-sm">检查 AOTGenericReferences</text>
+
+  <!-- Row 4 -->
+  <rect x="56" y="362" width="420" height="50" rx="16" class="box box-a"/>
+  <text x="80" y="393" class="label-sm">NotSupportedException: bridge missing</text>
+
+  <path d="M476 387H510" class="line"/>
+
+  <rect x="510" y="362" width="140" height="50" rx="16" class="box box-b"/>
+  <text x="549" y="393" class="label">ABI 层</text>
+
+  <path d="M650 387H690" class="line"/>
+
+  <rect x="690" y="362" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="393" class="label-sm">重新 Generate/All</text>
+
+  <!-- Row 5 -->
+  <rect x="56" y="428" width="420" height="50" rx="16" class="box box-a"/>
+  <text x="80" y="459" class="label-sm">Missing (Mono Script)</text>
+
+  <path d="M476 453H510" class="line"/>
+
+  <rect x="510" y="428" width="140" height="50" rx="16" class="box box-b"/>
+  <text x="524" y="459" class="label">资源身份层</text>
+
+  <path d="M650 453H690" class="line"/>
+
+  <rect x="690" y="428" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="459" class="label-sm">检查程序集名和热更 DLL 注册</text>
+
+  <!-- Bottom caption -->
+  <text x="64" y="530" class="caption">错误信号直接定位到具体层级，避免在错误层级排查浪费时间。</text>
+</svg>

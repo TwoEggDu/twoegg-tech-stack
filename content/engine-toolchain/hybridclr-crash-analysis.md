@@ -14,6 +14,7 @@ tags:
   - "AOTGeneric"
   - "MethodBridge"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > HybridCLR 的 native crash 和普通 IL2CPP 项目的 native crash 看起来很像，但调用栈里多了几类 HybridCLR 特有的函数——学会识别这些函数，就能快速判断这次崩溃属于哪一层。
 

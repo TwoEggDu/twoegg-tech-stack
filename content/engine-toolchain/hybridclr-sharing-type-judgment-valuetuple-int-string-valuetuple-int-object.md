@@ -11,6 +11,7 @@ tags:
   - "DisStripCode"
   - "SharingType"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > AOT 泛型修法里最容易把人带偏的一步，不是“到底该不该补 metadata”，而是“日志里看到的类型名，到底是不是你该写进 DisStripCode 的类型”。
 

@@ -13,6 +13,7 @@ tags:
   - "NativeCrash"
   - "CaseStudy"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 很多 HybridCLR 问题不是在第一行报错里，而是第一行报错修完之后，后面那层才真正暴露出来。
 

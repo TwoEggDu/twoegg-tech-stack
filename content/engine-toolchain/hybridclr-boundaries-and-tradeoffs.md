@@ -11,6 +11,7 @@ tags:
   - "Architecture"
   - "Tradeoff"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 说 HybridCLR “支持热更新”当然没错，但这句话最大的问题，是它把几类完全不同的缺口、几层不同的能力、以及几笔不同的工程代价，全部压扁成了一个口号。
 
@@ -43,6 +44,10 @@ series: "HybridCLR"
 也就是说，这个方案真正强的地方，不是“没有 trade-off”，而是：
 
 `它把原本几乎无解的全平台热更新问题，转化成了一组可以工程化管理的 trade-off。`
+
+![HybridCLR 6 种缺口矩阵](../../images/hybridclr/six-problems-matrix.svg)
+
+*图：6 类问题 × 对应机制 × 工程代价。不要把它们混成一件事。*
 
 ## 先把几类问题拆开：HybridCLR 其实在补 6 种不同的缺口
 

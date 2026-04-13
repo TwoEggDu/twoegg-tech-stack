@@ -10,6 +10,7 @@ tags:
   - "HybridCLR"
   - "Runtime"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > HybridCLR 不是“把 DLL load 进来就能跑”，而是在一个原本偏静态、偏 AOT 的 IL2CPP runtime 上，补了一整条从 metadata 装载到解释执行的运行时链路。
 
@@ -114,6 +115,7 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 - MethodBridge / ReversePInvokeWrapper
 
 ## 先给源码地图
+> 本文源码分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）。如果你使用的版本差异较大，部分文件路径或函数签名可能有变化。
 
 本文基于一个接入 HybridCLR 的 Unity 工程源码：
 
@@ -768,7 +770,7 @@ MethodBridge 的位置不是“锦上添花”，而是 interpreter / AOT / nati
 
 没有它，很多跨边界调用不是慢一点，而是语义根本接不上。
 
-## 最后一句
+## 收束
 
 如果你准备继续往下深挖，我建议下一步不要立刻去啃 `TransformContext.cpp`。
 
@@ -778,9 +780,7 @@ MethodBridge 的位置不是“锦上添花”，而是 interpreter / AOT / nati
 2. 然后带着一个具体方法，追 `MethodBodyCache -> Transform -> GetInterpMethodInfo -> Execute`
 3. 最后再去看 `AOTGenericReference` 和 `MethodBridge` 这两条支线
 
-因为对 HybridCLR 来说，真正的难点从来不是“有没有解释器”，而是：
-
-`它是怎么把一个原本偏静态、偏 AOT 的 IL2CPP runtime，扩成一套真的能接收新 metadata、解析方法体并执行的系统。`
+因为对 HybridCLR 来说，真正的难点从来不是”有没有解释器”，而是它怎么把一个原本偏静态、偏 AOT 的 IL2CPP runtime，扩成一套真的能接收新 metadata、解析方法体并执行的系统。
 
 ## 系列位置
 

@@ -11,6 +11,7 @@ tags:
   - "FAQ"
   - "Architecture"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 这篇不再讲新的源码细节。它只做一件事：把前面几篇里最容易混掉、但又最影响项目判断的 10 句话重新拉直。因为很多时候，团队不是“不会用 HybridCLR”，而是脑子里默认站着几句错判断。
 
@@ -30,6 +31,10 @@ series: "HybridCLR"
 HybridCLR 最常见的误解，不是某个 API 名字记错了，而是把本来不在一层的东西误当成同一种能力：装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享、函数级分流。
 
 只要先把层分对，很多误解其实会自动消失。
+
+![高频误解对照](../../images/hybridclr/faq-wrong-vs-right.svg)
+
+*图：5 个最常见的错误判断与实际情况对照。完整 10 条见下文。*
 
 ## FAQ 1：HybridCLR 本质上只是一个解释器
 

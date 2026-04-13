@@ -11,6 +11,7 @@ tags:
   - "BestPractice"
   - "Architecture"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 真正让 HybridCLR 在项目里长期稳定的，不是“把原理看懂了”，而是把程序集边界、加载顺序、生成物一致性和问题诊断顺序，变成团队共同遵守的硬约束。
 

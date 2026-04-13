@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box-a { fill: #FBE8D9; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-b { fill: #E5F1EE; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+      .row-num { font: 700 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #7F3420; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="500" rx="28" fill="url(#bg)"/>
+  <text x="64" y="56" class="subtitle">WRONG ASSUMPTION → CORRECT UNDERSTANDING</text>
+  <text x="64" y="96" class="title">10 个高频误解对照</text>
+
+  <!-- Column headers -->
+  <rect x="56" y="120" width="1088" height="320" rx="22" class="band"/>
+
+  <rect x="90" y="138" width="480" height="36" rx="12" class="box-a"/>
+  <text x="330" y="162" class="label" text-anchor="middle">常见说法</text>
+
+  <rect x="630" y="138" width="480" height="36" rx="12" class="box-b"/>
+  <text x="870" y="162" class="label" text-anchor="middle">实际情况</text>
+
+  <!-- Row 1 -->
+  <text x="106" y="206" class="row-num">①</text>
+  <rect x="124" y="188" width="440" height="36" rx="10" class="box-a"/>
+  <text x="344" y="212" class="copy" text-anchor="middle">HybridCLR 只是解释器</text>
+
+  <rect x="636" y="188" width="468" height="36" rx="10" class="box-b"/>
+  <text x="870" y="212" class="copy" text-anchor="middle">build-time + runtime 系统链路</text>
+
+  <path d="M564 206H636" class="line"/>
+
+  <!-- Row 2 -->
+  <text x="106" y="254" class="row-num">②</text>
+  <rect x="124" y="236" width="440" height="36" rx="10" class="box-a"/>
+  <text x="344" y="260" class="copy" text-anchor="middle">补 metadata 就解决泛型</text>
+
+  <rect x="636" y="236" width="468" height="36" rx="10" class="box-b"/>
+  <text x="870" y="260" class="copy" text-anchor="middle">metadata 可见性 ≠ AOT 实例存在</text>
+
+  <path d="M564 254H636" class="line"/>
+
+  <!-- Row 3 -->
+  <text x="106" y="302" class="row-num">③</text>
+  <rect x="124" y="284" width="440" height="36" rx="10" class="box-a"/>
+  <text x="344" y="308" class="copy" text-anchor="middle">AOTGenericReference 自动修复</text>
+
+  <rect x="636" y="284" width="468" height="36" rx="10" class="box-b"/>
+  <text x="870" y="308" class="copy" text-anchor="middle">清单 + 提示，不是修复器</text>
+
+  <path d="M564 302H636" class="line"/>
+
+  <!-- Row 4 -->
+  <text x="106" y="350" class="row-num">④</text>
+  <rect x="124" y="332" width="440" height="36" rx="10" class="box-a"/>
+  <text x="344" y="356" class="copy" text-anchor="middle">MethodBridge 只是优化</text>
+
+  <rect x="636" y="332" width="468" height="36" rx="10" class="box-b"/>
+  <text x="870" y="356" class="copy" text-anchor="middle">ABI 必要桥，缺了调不通</text>
+
+  <path d="M564 350H636" class="line"/>
+
+  <!-- Row 5 -->
+  <text x="106" y="398" class="row-num">⑤</text>
+  <rect x="124" y="380" width="440" height="36" rx="10" class="box-a"/>
+  <text x="344" y="404" class="copy" text-anchor="middle">PreJit = 提前 JIT</text>
+
+  <rect x="636" y="380" width="468" height="36" rx="10" class="box-b"/>
+  <text x="870" y="404" class="copy" text-anchor="middle">预热 transform 缓存，不生成 native</text>
+
+  <path d="M564 398H636" class="line"/>
+
+  <text x="64" y="472" class="caption">完整 10 条见正文。每条都有源码引用和系列交叉链接。</text>
+</svg>

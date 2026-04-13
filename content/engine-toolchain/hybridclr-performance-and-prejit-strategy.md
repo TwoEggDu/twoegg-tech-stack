@@ -11,6 +11,7 @@ tags:
   - "Performance"
   - "Runtime"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > HybridCLR 的性能问题，最容易被一句“解释器比 AOT 慢”带过去；但真正能指导工程决策的，不是这句大而化之的判断，而是先分清你现在付出的成本，到底来自首调 transform、长期解释执行，还是跨 ABI 边界。
 
@@ -348,11 +349,9 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 
 在做上面的分层判断之前，你需要先确认一个方法到底跑在哪一侧。最直接的方式是用平台原生 profiler（iOS 用 Instruments，Android 用 Perfetto 或 Simpleperf）抓 CPU 采样，然后在调用栈里找 `hybridclr::interpreter::Interpreter::Execute` 这个帧。如果某个函数的调用栈里出现了这个帧并且占比显著，说明它正在走解释器路径；反之则是 AOT 或 native 路径。这一步做完，后面的”该前移还是该留”才有数据依据。
 
-## 最后压一句话
+## 收束
 
-如果只允许我用一句话收这篇文章，我会写成：
-
-`HybridCLR 的性能治理，核心不是把解释器“调得像 AOT 一样快”，而是先把成本拆层，再决定哪些首调该前移、哪些热点该回到 AOT、哪些跨边界调用该收缩。`
+HybridCLR 的性能治理，核心不是把解释器”调得像 AOT 一样快”，而是先把成本拆层，再决定哪些首调该前移、哪些热点该回到 AOT、哪些跨边界调用该收缩。
 
 ## 系列位置
 

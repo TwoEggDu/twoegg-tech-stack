@@ -10,6 +10,7 @@ tags:
   - "HybridCLR"
   - "Generics"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > HybridCLR 的补充 metadata 解决的是“运行时能不能看懂这段 AOT metadata”，不是“凭空生成一份原本没有被 AOT 出来的泛型 native 实现”。
 
@@ -40,7 +41,11 @@ HybridCLR 的补充 metadata 主要解决第一类。
 3. `HomologousImageMode.Consistent` 和 `SuperSet` 的差别到底是什么。
 4. `AOTGenericReference`、MethodBridge、补充 metadata 分别解决哪一层问题。
 
-这篇不是“教你怎么点菜单”，而是把这些菜单和 runtime 行为重新对上。
+这篇不是”教你怎么点菜单”，而是把这些菜单和 runtime 行为重新对上。
+
+![AOT 泛型两层失败](../../images/hybridclr/aot-generic-two-failures.svg)
+
+*图：AOT 泛型问题要先分清两层失败——metadata 不足和 AOT 实例不存在。后文围绕这个分叉展开。*
 
 ## 先给一个最小泛型背景
 
@@ -112,6 +117,7 @@ HybridCLR 的补充 metadata 主要解决第一类。
 因为“看得懂”和“调得到”是两回事。
 
 ## 先给源码地图
+> 本文源码分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）。如果你使用的版本差异较大，部分文件路径或函数签名可能有变化。
 
 这一篇还是基于同一个接入 HybridCLR 的 Unity 工程：
 
@@ -581,17 +587,11 @@ GenerateMethodBridgeCppFile(..., outputFile);
 
 一旦某个具体实例需要跨 interpreter / AOT / native 边界被调用，MethodBridge 就会进入问题现场。
 
-## 最后一句
+## 收束
 
-如果上一篇回答的是：
+如果上一篇回答的是”HybridCLR 怎么把热更方法一路带到 Interpreter::Execute”，那么这一篇回答的其实是：为什么”能看到 metadata”不等于”这个泛型实例真的能在 IL2CPP 世界里被调用起来”。
 
-`HybridCLR 怎么把热更方法一路带到 Interpreter::Execute`
-
-那么这一篇回答的其实是：
-
-`为什么“能看到 metadata”不等于“这个泛型实例真的能在 IL2CPP 世界里被调用起来”。`
-
-我觉得这是理解 HybridCLR 最容易掉坑、也最值得单独拆开的一层。
+这是理解 HybridCLR 最容易掉坑、也最值得单独拆开的一层。
 
 ## 系列位置
 

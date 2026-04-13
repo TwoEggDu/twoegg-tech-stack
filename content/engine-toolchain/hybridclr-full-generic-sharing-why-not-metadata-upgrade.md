@@ -11,6 +11,7 @@ tags:
   - "Generics"
   - "Runtime"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 这篇不写“商业版内幕揭秘”。能确定的部分，只来自公开文档、当前系列已经拆出来的 runtime 边界，以及 `libil2cpp` 公开字段名暴露出的方向；凡是涉及具体内部实现的地方，我都会明确按“高可信推断”来写，而不是把猜测写成事实。
 
@@ -47,6 +48,10 @@ series: "HybridCLR"
 - `Full Generic Sharing` 解决的是“能不能不再强依赖每个具体泛型实例都提前 AOT 出一份独立 native 实现”。
 
 只要这条边界不先立住，后面所有判断都会偏。
+
+![FGS vs 补 metadata vs AOTGenericReference](../../images/hybridclr/fgs-vs-metadata-vs-aotref.svg)
+
+*图：三者不是替代关系——AOTGenericReference 发现问题，metadata 补可见性，FGS 改调用模型。*
 
 ## 先把真正的问题立住：AOT 泛型的上限，不只是一份 metadata 文件
 

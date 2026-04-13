@@ -10,6 +10,7 @@ tags:
   - "DisStripCode"
   - "Generics"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 真正让 DisStripCode 难写的，从来不是“这段代码有多长”，而是你写进去的那一行，到底有没有让 IL2CPP 看见你真正缺的那个 AOT 泛型实例。
 

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 17px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .col-head { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.06em; fill: #7F3420; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="600" rx="28" fill="url(#bg)"/>
+  <text x="64" y="64" class="subtitle">Problems x Mechanisms x Costs</text>
+  <text x="64" y="104" class="title">HybridCLR 补的 6 种缺口</text>
+
+  <!-- Column headers -->
+  <text x="172" y="148" class="col-head">缺口</text>
+  <text x="502" y="148" class="col-head">机制</text>
+  <text x="848" y="148" class="col-head">代价</text>
+
+  <!-- Row 1 -->
+  <rect x="72" y="164" width="250" height="50" rx="16" class="box box-a"/>
+  <text x="140" y="195" class="label">动态装载</text>
+
+  <rect x="346" y="164" width="310" height="50" rx="16" class="box box-b"/>
+  <text x="396" y="195" class="label">Assembly::LoadFromBytes</text>
+
+  <rect x="680" y="164" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="190" class="copy">内存：DLL metadata 副本</text>
+
+  <!-- Row 2 -->
+  <rect x="72" y="230" width="250" height="50" rx="16" class="box box-a"/>
+  <text x="121" y="261" class="label">metadata 可见</text>
+
+  <rect x="346" y="230" width="310" height="50" rx="16" class="box box-b"/>
+  <text x="388" y="261" class="label">AOTHomologousImage</text>
+
+  <rect x="680" y="230" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="256" class="copy">内存：同源 image 长期驻留</text>
+
+  <!-- Row 3 -->
+  <rect x="72" y="296" width="250" height="50" rx="16" class="box box-a"/>
+  <text x="140" y="327" class="label">方法执行</text>
+
+  <rect x="346" y="296" width="310" height="50" rx="16" class="box box-b"/>
+  <text x="385" y="327" class="label">HiTransform + Execute</text>
+
+  <rect x="680" y="296" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="322" class="copy">性能：10x-100x vs AOT</text>
+
+  <!-- Row 4 -->
+  <rect x="72" y="362" width="250" height="50" rx="16" class="box box-a"/>
+  <text x="138" y="393" class="label">ABI 桥接</text>
+
+  <rect x="346" y="362" width="310" height="50" rx="16" class="box box-b"/>
+  <text x="404" y="393" class="label">MethodBridge.cpp</text>
+
+  <rect x="680" y="362" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="388" class="copy">每次跨边界调用付搬运成本</text>
+
+  <!-- Row 5 -->
+  <rect x="72" y="428" width="250" height="50" rx="16" class="box box-a"/>
+  <text x="122" y="459" class="label">资源身份链</text>
+
+  <rect x="346" y="428" width="310" height="50" rx="16" class="box box-b"/>
+  <text x="370" y="459" class="label">InterpreterImage 类型注册</text>
+
+  <rect x="680" y="428" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="454" class="copy">Prefab 序列化依赖一致</text>
+
+  <!-- Row 6 -->
+  <rect x="72" y="494" width="250" height="50" rx="16" class="box box-a"/>
+  <text x="135" y="525" class="label">AOT 泛型</text>
+
+  <rect x="346" y="494" width="310" height="50" rx="16" class="box box-b"/>
+  <text x="360" y="525" class="label">AOTGenericReference + DisStripCode</text>
+
+  <rect x="680" y="494" width="440" height="50" rx="16" class="box box-c"/>
+  <text x="720" y="520" class="copy">构建期显式维护</text>
+
+  <!-- Bottom caption -->
+  <text x="64" y="578" class="caption">六种缺口对应六种不同的机制和不同维度的代价，不能笼统地用"HybridCLR 就是解释器"一句话概括。</text>
+</svg>

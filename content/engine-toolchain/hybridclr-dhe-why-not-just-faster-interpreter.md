@@ -11,6 +11,7 @@ tags:
   - "Runtime"
   - "Performance"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 这篇同样不写“商业版实现揭秘”。能确定的部分，只来自官方公开文档已经明说的行为；凡是落到 runtime 细部怎么拼起来，我都会按“高可信推断”来写，而不是把猜测写成源码事实。
 
@@ -52,7 +53,11 @@ series: "HybridCLR"
 
 `AOT 与 interpreter 之间的分流策略。`
 
-## 先把真正的问题立住：普通热更主线并不直接回答“修改现有 AOT 程序集”这件事
+![DHE 函数级分流](../../images/hybridclr/dhe-function-routing.svg)
+
+*图：DHE 的粒度是函数级。未修改的方法保持 AOT 性能，只有变更的方法走解释器。*
+
+## 先把真正的问题立住：普通热更主线并不直接回答”修改现有 AOT 程序集”这件事
 
 前面整条社区版主线，默认回答的问题更像是：
 

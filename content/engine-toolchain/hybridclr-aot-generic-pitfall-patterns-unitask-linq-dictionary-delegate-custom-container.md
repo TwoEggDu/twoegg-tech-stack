@@ -11,6 +11,7 @@ tags:
   - "UniTask"
   - "LINQ"
 series: "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
 > 项目里真正拖慢排障的，往往不是“没有思路”，而是每次都把同一类 AOT 泛型坑当成第一次见的新事故。
 

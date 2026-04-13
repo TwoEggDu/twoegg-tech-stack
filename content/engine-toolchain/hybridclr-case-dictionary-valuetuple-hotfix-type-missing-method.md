@@ -3,6 +3,7 @@ title: "HybridCLR 案例｜Dictionary<ValueTuple, 热更类型> 的 MissingMetho
 date: "2026-03-27"
 series:
   - "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 tags:
   - "HybridCLR"
   - "IL2CPP"

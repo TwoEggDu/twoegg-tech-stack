@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAF4EB"/>
+      <stop offset="100%" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { fill: #14211F; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 30px; }
+      .subtitle { fill: #7F3420; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+      .label { fill: #14211F; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 18px; }
+      .copy { fill: #596563; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 400; font-size: 14px; }
+      .caption { fill: #596563; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 400; font-size: 13px; }
+      .box-a { fill: #FBE8D9; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-b { fill: #E5F1EE; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-c { fill: #E8EEF7; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="480" rx="28" fill="url(#bg)"/>
+
+  <!-- Title block -->
+  <text x="600" y="50" text-anchor="middle" class="subtitle">AOT VS INTERPRETER PER FUNCTION</text>
+  <text x="600" y="88" text-anchor="middle" class="title">DHE 函数级分流</text>
+
+  <!-- Center: dhao file (box-a) -->
+  <rect class="box-a" x="490" y="130" width="220" height="70" rx="12"/>
+  <text x="600" y="172" text-anchor="middle" class="label">dhao 文件</text>
+
+  <!-- Left arrow from dhao -->
+  <line class="line" x1="490" y1="165" x2="490" y2="260" marker-end="url(#arrow)"/>
+  <path class="line" d="M 530 200 L 280 260" marker-end="url(#arrow)"/>
+
+  <!-- Right arrow from dhao -->
+  <path class="line" d="M 670 200 L 920 260" marker-end="url(#arrow)"/>
+
+  <!-- Left side band: AOT path -->
+  <rect class="band" x="60" y="250" width="480" height="170" rx="22"/>
+
+  <!-- Functions A, B, C -->
+  <rect class="box-b" x="90" y="270" width="200" height="60" rx="12"/>
+  <text x="190" y="297" text-anchor="middle" class="label" font-size="16">未修改的函数</text>
+  <text x="190" y="317" text-anchor="middle" class="copy">A, B, C</text>
+
+  <line class="line" x1="290" y1="300" x2="340" y2="300" marker-end="url(#arrow)"/>
+
+  <rect class="box-b" x="350" y="270" width="170" height="60" rx="12"/>
+  <text x="435" y="297" text-anchor="middle" class="copy">继续走</text>
+  <text x="435" y="317" text-anchor="middle" class="label" font-size="16">AOT native 执行</text>
+
+  <!-- Left side label -->
+  <text x="300" y="400" text-anchor="middle" class="copy" font-style="italic">原生性能保持</text>
+
+  <!-- Right side band: interpreter path -->
+  <rect class="band" x="660" y="250" width="480" height="170" rx="22"/>
+
+  <!-- Function D -->
+  <rect class="box-c" x="690" y="270" width="200" height="60" rx="12"/>
+  <text x="790" y="297" text-anchor="middle" class="label" font-size="16">已修改的函数</text>
+  <text x="790" y="317" text-anchor="middle" class="copy">D</text>
+
+  <line class="line" x1="890" y1="300" x2="940" y2="300" marker-end="url(#arrow)"/>
+
+  <rect class="box-c" x="950" y="270" width="170" height="60" rx="12"/>
+  <text x="1035" y="297" text-anchor="middle" class="copy">走</text>
+  <text x="1035" y="317" text-anchor="middle" class="label" font-size="16">interpreter 解释执行</text>
+
+  <!-- Right side label -->
+  <text x="900" y="400" text-anchor="middle" class="copy" font-style="italic">热更灵活性</text>
+
+  <!-- Caption -->
+  <text x="600" y="458" text-anchor="middle" class="caption">DHE 的粒度是函数级，不是程序集级。未修改的方法保持 AOT 性能。</text>
+</svg>

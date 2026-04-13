@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAF4EB"/>
+      <stop offset="100%" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { fill: #14211F; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 30px; }
+      .subtitle { fill: #7F3420; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+      .label { fill: #14211F; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 18px; }
+      .copy { fill: #596563; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 400; font-size: 14px; }
+      .caption { fill: #596563; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 400; font-size: 13px; }
+      .box-a { fill: #FBE8D9; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-b { fill: #E5F1EE; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-c { fill: #E8EEF7; stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; }
+      .step-num { fill: #7F3420; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; font-weight: 700; font-size: 13px; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="560" rx="28" fill="url(#bg)"/>
+
+  <!-- Title block -->
+  <text x="600" y="44" text-anchor="middle" class="subtitle">DEVELOPMENT FLAG - METADATA MISMATCH - INFINITE RECURSION</text>
+  <text x="600" y="80" text-anchor="middle" class="title">async 崩溃因果链</text>
+
+  <!-- Phase labels on left side -->
+  <text x="80" y="165" class="copy" font-weight="600" font-size="13" fill="#7F3420">构建阶段</text>
+  <line x1="80" y1="172" x2="140" y2="172" stroke="#7F3420" stroke-width="1" opacity="0.4"/>
+
+  <text x="80" y="305" class="copy" font-weight="600" font-size="13" fill="#7F3420">运行时</text>
+  <line x1="80" y1="312" x2="140" y2="312" stroke="#7F3420" stroke-width="1" opacity="0.4"/>
+
+  <text x="80" y="405" class="copy" font-weight="600" font-size="13" fill="#7F3420">崩溃</text>
+  <line x1="80" y1="412" x2="140" y2="412" stroke="#7F3420" stroke-width="1" opacity="0.4"/>
+
+  <!-- Step 1 -->
+  <text x="175" y="118" class="step-num">1</text>
+  <rect class="box-a" x="190" y="100" width="280" height="48" rx="10"/>
+  <text x="330" y="130" text-anchor="middle" class="copy">GenerateAll 未进 CI</text>
+
+  <!-- Arrow 1->2 -->
+  <line class="line" x1="470" y1="124" x2="520" y2="124" marker-end="url(#arrow)"/>
+
+  <!-- Step 2 -->
+  <text x="535" y="118" class="step-num">2</text>
+  <rect class="box-a" x="550" y="100" width="340" height="48" rx="10"/>
+  <text x="720" y="130" text-anchor="middle" class="copy">StripAOTDlls 的 Development 标志不可控</text>
+
+  <!-- Arrow 2->3 -->
+  <line class="line" x1="890" y1="124" x2="940" y2="124" marker-end="url(#arrow)"/>
+
+  <!-- Step 3 -->
+  <text x="955" y="118" class="step-num">3</text>
+  <rect class="box-a" x="970" y="100" width="180" height="48" rx="10"/>
+  <text x="1060" y="124" text-anchor="middle" class="copy">裁剪后 DLL</text>
+  <text x="1060" y="140" text-anchor="middle" class="copy">与最终包不匹配</text>
+
+  <!-- Vertical connector 3->4 -->
+  <path class="line" d="M 1060 148 L 1060 190 L 330 190 L 330 230" marker-end="url(#arrow)"/>
+
+  <!-- Step 4 -->
+  <text x="175" y="255" class="step-num">4</text>
+  <rect class="box-b" x="190" y="240" width="280" height="48" rx="10"/>
+  <text x="330" y="270" text-anchor="middle" class="copy">补充 metadata 失效</text>
+
+  <!-- Arrow 4->5 -->
+  <line class="line" x1="470" y1="264" x2="520" y2="264" marker-end="url(#arrow)"/>
+
+  <!-- Step 5 -->
+  <text x="535" y="255" class="step-num">5</text>
+  <rect class="box-b" x="550" y="240" width="280" height="48" rx="10"/>
+  <text x="690" y="270" text-anchor="middle" class="copy">解释器找不到方法体</text>
+
+  <!-- Vertical connector 5->6 -->
+  <path class="line" d="M 690 288 L 690 330 L 330 330 L 330 370" marker-end="url(#arrow)"/>
+
+  <!-- Step 6 -->
+  <text x="175" y="395" class="step-num">6</text>
+  <rect class="box-c" x="190" y="380" width="320" height="48" rx="10"/>
+  <text x="350" y="410" text-anchor="middle" class="copy">退化到 FullySharedGenericAny</text>
+
+  <!-- Arrow 6->7 -->
+  <line class="line" x1="510" y1="404" x2="560" y2="404" marker-end="url(#arrow)"/>
+
+  <!-- Step 7 -->
+  <text x="575" y="395" class="step-num">7</text>
+  <rect class="box-c" x="590" y="378" width="420" height="52" rx="10"/>
+  <text x="800" y="401" text-anchor="middle" class="label" font-size="15">Start - Execute - Start - ... 死循环</text>
+  <text x="800" y="421" text-anchor="middle" class="copy" fill="#7F3420" font-weight="600">SIGSEGV</text>
+
+  <!-- Caption -->
+  <text x="600" y="480" text-anchor="middle" class="caption">每一步都是确定性的。只要 Development 标志不一致，这条链就会走完。</text>
+</svg>

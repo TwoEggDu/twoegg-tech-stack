@@ -3,6 +3,7 @@ title: "HybridCLR 修法决策｜DisStripCode、link.xml、补充元数据分别
 date: "2026-03-31"
 series:
   - "HybridCLR"
+hybridclr_version: "v6.x (main branch, 2024-2025)"
 tags:
   - "HybridCLR"
   - "IL2CPP"
