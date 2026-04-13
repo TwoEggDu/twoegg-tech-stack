@@ -22,7 +22,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 那篇只用几段讲了现象和推荐模式。这篇要从一个真实生产事故出发，把这个"半更新状态"从触发条件到源码根因到恢复路径完整追一遍。
 
-> 以下源码路径基于 Addressables 1.21.x（`com.unity.addressables`）和 YooAsset 2.x。
+> **版本基线：** 本文基于 Addressables 1.21.x 和 YooAsset 2.x 源码。
 
 ## 一、现场还原：更新完 catalog 但 bundle 没下完
 
@@ -142,6 +142,8 @@ flowchart TD
 ```
 
 核心差异在 **Step 1 结束时**：新 manifest 下载完成后，YooAsset 不会立刻用它替换当前活跃的 manifest。当前的 `PackageManifest` 对象——也就是 `_assetDic` 和 `_bundleDic` 指向的那个——保持不变。
+
+> **版本注记：** 以上行为基于 YooAsset 2.x 的标准三步更新流程（UpdateManifest → CreateDownloader → BeginDownload）。不同 2.x 小版本的 `UpdatePackageManifestAsync` 实现可能有差异——部分版本在调用后立即激活新 manifest，部分版本保持旧 manifest 直到显式切换。项目接入时应对照实际使用版本的源码确认行为。
 
 ### 源码路径
 
@@ -363,7 +365,7 @@ async UniTask RetryDownload(string label, int maxRetries = 3)
 
 这个方案的前提是 CDN 上的 bundle 和当前 catalog 版本一致。如果 CDN 已经更新到更新的版本，旧 catalog 引用的 bundle 路径可能已经失效。
 
-**方案 2：先下载再更新 catalog（预防性方案）**
+**方案 2：更新 Catalog 后立即预下载所有 Bundle（最小化风险窗口）**
 
 与其在 `UpdateCatalogs` 之后补救，不如改变更新顺序：先检查新内容的下载量，下载完成后再替换 catalog。
 

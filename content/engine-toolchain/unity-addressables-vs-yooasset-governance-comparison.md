@@ -34,7 +34,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 文末给出综合治理能力矩阵和工程判断表。
 
-版本基线：Addressables 1.21.x（Unity 6 随附 2.x 有注记），YooAsset 2.x。
+> **版本基线：** 本文基于 Addressables 1.21.x 和 YooAsset 2.x 源码。
 
 ---
 
@@ -145,9 +145,9 @@ Addressables 不自管缓存。它的远程 bundle 下载走 `UnityWebRequestAss
 
 源码位置：`com.unity.addressables/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs`（下载 → 缓存的入口）
 
-### YooAsset：自管 CacheFileSystem
+### YooAsset：自管 CacheSystem
 
-[Yoo-03]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) 已经把 `CacheFileSystem` 的磁盘结构和索引机制拆到了字段级别。这里不重复内部实现，只提取对比需要的关键特征。
+[Yoo-03]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) 已经把 `CacheSystem` 的磁盘结构和索引机制拆到了字段级别。这里不重复内部实现，只提取对比需要的关键特征。
 
 YooAsset 的缓存完全由应用层自管：
 
@@ -158,7 +158,7 @@ YooAsset 的缓存完全由应用层自管：
 │   └── __info        ← 元数据（FileHash、FileCRC、FileSize）
 ```
 
-**索引机制**：`CacheFileSystem` 初始化时扫描 `CacheFiles/` 目录，读取每个 `__info` 文件构建内存字典 `_cacheRecords`。判断某个 bundle 是否已缓存就是一次字典查找。
+**索引机制**：`CacheSystem` 初始化时扫描 `CacheFiles/` 目录，读取每个 `__info` 文件构建内存字典 `_cacheRecords`。判断某个 bundle 是否已缓存就是一次字典查找。
 
 **清理 API**：`ClearUnusedCacheFilesAsync()` 遍历所有缓存条目，删除当前 manifest 中不存在的 FileHash 对应的文件。
 
@@ -168,7 +168,7 @@ YooAsset 的缓存完全由应用层自管：
 
 | 维度 | Addressables | YooAsset |
 |------|-------------|---------|
-| 缓存管理者 | Unity `Caching` API（引擎层） | `CacheFileSystem`（应用层自管） |
+| 缓存管理者 | Unity `Caching` API（引擎层） | `CacheSystem`（应用层自管） |
 | 缓存目录结构 | 引擎内部管理，应用层不透明 | `{BundleGUID}/__data + __info`，结构公开 |
 | 缓存索引 | 引擎内部维护 | 启动时扫描 `__info` 文件，构建内存字典 |
 | "已下载" vs "下载中" | 原子写入——要么完整存在，要么完全不存在 | `__data` + `__info` = 已下载；`.temp` 文件 = 下载中 |
@@ -439,7 +439,7 @@ initParameters.RemoteServices = new RemoteServices(
 |---------|-------------------|-------------------|--------------|--------------|
 | **版本标识** | catalog.hash（纯哈希） | 项目自维护版本映射表 | PackageVersion 显式版本号 | 项目自定义版本号格式 |
 | **更新判定** | hash 文件比对 | — | PackageVersion 比对 + per-bundle FileHash | — |
-| **缓存结构** | Unity Caching API 托管 | 无法扩展底层结构 | `CacheFileSystem` 自管，`__data` + `__info` | 可继承扩展缓存策略 |
+| **缓存结构** | Unity Caching API 托管 | 无法扩展底层结构 | `CacheSystem` 自管，`__data` + `__info` | 可继承扩展缓存策略 |
 | **缓存清理** | LRU + `ClearOtherCachedVersions` | — | `ClearUnusedCacheFilesAsync`（显式调用） | 可按 tag / 时间 / 大小自定义清理逻辑 |
 | **磁盘空间限制** | `Caching.maximumAvailableDiskSpace` | — | 无内置限制 | 项目自行统计和限制 |
 | **下载队列** | 无 | 自定义 Provider + 外部队列管理 | `ResourceDownloaderOperation` 三态队列 | 可配置调度策略 |
@@ -469,7 +469,7 @@ initParameters.RemoteServices = new RemoteServices(
 | 已有成熟的发布系统和 CDN 管理平台 | 两者皆可 | 如果发布系统已经维护了"构建 → 版本号 → CDN 路径"的完整映射，Addressables 的 hash 模型也能工作 |
 | 需要部分资源灰度发布（A/B test、分区域推送） | YooAsset | 多 Package 实例原生支持包级别的灰度，Addressables 需要多 catalog 方案 |
 | 官方生态集成和长期维护是首要考虑 | Addressables | Unity 官方维护，和 Unity Editor、SBP、Cloud Content Delivery 深度集成 |
-| 缓存需要精细管理（按 tag 分级清理、保留指定版本） | YooAsset | CacheFileSystem 应用层自管，可遍历、可操作单个缓存条目 |
+| 缓存需要精细管理（按 tag 分级清理、保留指定版本） | YooAsset | CacheSystem 应用层自管，可遍历、可操作单个缓存条目 |
 | 缓存管理越简单越好，不想写清理代码 | Addressables | `Caching` API + LRU + `maximumAvailableDiskSpace`，设好参数即可 |
 | 项目需要审计所有已缓存的 bundle（安全合规场景） | YooAsset | `CacheFiles/` 目录结构公开，`__info` 元数据可读，支持遍历审计 |
 | 下载过程需要完整的 UI 集成（进度条、下载速度、文件计数） | YooAsset | `ResourceDownloaderOperation` 直接暴露所有进度数据，不需要自行汇总 |

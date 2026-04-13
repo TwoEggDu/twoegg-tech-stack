@@ -21,7 +21,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 这篇不是在说 YooAsset 哪里"不好"。它是一篇工程评估：哪些能力 YooAsset 已经覆盖，哪些它设计上选择不覆盖，哪些是项目必须自己补的基础设施。理解边界是选型判断的前提——知道框架做到哪里，才能规划团队需要投入多少工程量。
 
-> 本文基于 YooAsset 2.x 源码和文档。
+> **版本基线：** 本文源码分析基于 YooAsset 2.x（https://github.com/tuyoogame/YooAsset）。
 
 ## 一、为什么要谈边界
 

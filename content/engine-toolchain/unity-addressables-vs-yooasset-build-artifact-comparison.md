@@ -30,7 +30,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 每个维度先各拆一遍结构，再放到一起比。文末给出构建期选型的判断表。
 
-版本基线：Addressables 1.21.x（Unity 6 随附 2.x 有注记），YooAsset 2.x。
+> **版本基线：** 本文基于 Addressables 1.21.x 和 YooAsset 2.x 源码。
 
 ---
 
@@ -482,4 +482,4 @@ flowchart TD
 
 3. **内容更新的操作模型不同**——Addressables 的 catalog 替换是不可逆的单步操作，有半更新风险；YooAsset 的三步分离（版本检查 → manifest 更新 → bundle 下载）给项目更多控制点。
 
-下一步如果想看版本控制、缓存管理、下载治理和回滚机制的对比，可以等 Cmp-03。如果想回去看两套系统各自的运行时调度差异，入口在 [Cmp-01]({{< relref "engine-toolchain/unity-addressables-vs-yooasset-runtime-scheduling-comparison.md" >}})。
+下一步如果想看版本控制、缓存管理、下载治理和回滚机制的对比，见 [Cmp-03 治理能力对比]({{< relref "engine-toolchain/unity-addressables-vs-yooasset-governance-comparison.md" >}})。如果想回去看两套系统各自的运行时调度差异，入口在 [Cmp-01]({{< relref "engine-toolchain/unity-addressables-vs-yooasset-runtime-scheduling-comparison.md" >}})。

@@ -22,7 +22,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 把这套机制拆清楚之后，再回去看 Case-04 里的那些泄漏模式，就不是在"背修法"，而是能从系统设计层推导出来"为什么那样写就会漏"。
 
-> 以下源码路径和行为基于 Addressables 1.21.x（`com.unity.addressables`）。Unity 6 / Addressables 2.x 的差异会在相关位置标注。
+> **版本基线：** 本文源码分析基于 Addressables 1.21.x（com.unity.addressables）。Unity 6 随附的 Addressables 2.x 差异之处会以注记标出。
 
 ## 一、引用计数的底层数据结构
 
@@ -92,6 +92,20 @@ var handle2 = handle1; // 这只是结构体复制，refcount 不变，仍然是
 ## 二、Operation Cache 和 Handle 复用
 
 引用计数不是孤立存在的。它和 ResourceManager 的操作缓存机制紧密配合。
+
+```mermaid
+flowchart TD
+    A["LoadAssetAsync(key)"] --> B["key → Locate → IResourceLocation"]
+    B --> C["计算 cache key<br/>location.Hash(desiredType)"]
+    C --> D{"m_AssetOperationCache<br/>命中?"}
+    D -->|"是"| E["取出已有操作"]
+    E --> F["IncrementReferenceCount()"]
+    F --> G["返回已有 handle"]
+    D -->|"否"| H["创建新 AsyncOperation"]
+    H --> I["refcount = 1"]
+    I --> J["存入 m_AssetOperationCache"]
+    J --> K["返回新 handle"]
+```
 
 ### 1. m_AssetOperationCache 的结构
 

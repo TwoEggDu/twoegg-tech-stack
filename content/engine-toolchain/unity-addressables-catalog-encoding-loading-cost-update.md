@@ -28,6 +28,8 @@ series: "Addressables 与 YooAsset 源码解读"
 
 这三个问题不搞清楚，项目里遇到初始化卡顿、热更失败、半更新状态的时候，就只能靠猜。
 
+> **版本基线：** 本文源码分析基于 Addressables 1.21.x（com.unity.addressables）。Unity 6 随附的 Addressables 2.x 差异之处会以注记标出。
+
 ## 一、Catalog 在 Addressables 里的位置
 
 先把 catalog 在整条链路里的角色锚住。

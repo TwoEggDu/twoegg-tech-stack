@@ -22,7 +22,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 这不是一篇批评文章。Addressables 在 AssetBundle 之上提供了一套完整的寻址、加载、引用计数和更新抽象——前四篇已经看到这套抽象的质量。但它是一个框架，不是一个完整的资源交付系统。框架和交付系统之间的差距，就是项目必须自己补的东西。
 
-> 以下分析基于 Addressables 1.21.x（`com.unity.addressables`）。Addressables 2.x / Unity 6 的改进会在相关位置标注。
+> **版本基线：** 本文源码分析基于 Addressables 1.21.x（com.unity.addressables）。Unity 6 随附的 Addressables 2.x 差异之处会以注记标出。
 
 ## 一、为什么要谈边界
 
@@ -218,10 +218,11 @@ Addressables.InternalIdTransformFunc = (location) =>
 };
 ```
 
-但这个机制有几个限制：
+但这个机制有几个需要理解的特性：
 
+- `InternalIdTransformFunc` 在所有 `IResourceLocation` 的 InternalId 被使用前都会被调用——包括 catalog 本身的 location。因此如果在 `InitializeAsync` 之前设置，它可以影响 catalog 的加载地址
+- 但它不能改变 catalog 的发现逻辑（hash 对比仍然走固定路径）
 - 它是全局的、per-session 的，不是 per-user-segment 的配置系统
-- 它只在 `Locate` 之后、provider 请求之前生效——不能改变"选哪个 catalog"的逻辑
 - 需要项目自己维护 user segment → catalog URL 的映射
 
 ### 项目需要补什么

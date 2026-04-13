@@ -11,7 +11,7 @@ tags:
   - "AssetBundle"
   - "Runtime"
   - "ResourceManager"
-series: "Unity 资产系统与序列化"
+series: "Addressables 与 YooAsset 源码解读"
 ---
 [上一篇]({{< relref "engine-toolchain/unity-addressables-and-assetbundle-format-vs-management-layer.md" >}})把 Addressables 和 AssetBundle 的层次关系讲清了：AssetBundle 更像底层交付格式，Addressables 更像建在它之上的定位、调度和生命周期管理层。
 
@@ -30,6 +30,8 @@ series: "Unity 资产系统与序列化"
 
 这些问题的根因，全在 Addressables 内部链路里。
 而这条链路并不短。
+
+> **版本基线：** 本文源码分析基于 Addressables 1.21.x（com.unity.addressables）。Unity 6 随附的 Addressables 2.x 差异之处会以注记标出。
 
 ## 一、Addressables 运行时的四个核心角色
 
@@ -307,41 +309,11 @@ ResourceManager 对此的处理策略是：
   3. 从 bundle_b 提取 B
 ```
 
-### 2. Catalog 更新的运行时流程
+### 2. Catalog 远程更新
 
-Catalog 更新是 Addressables 热更的核心路径。它分两步：
+Catalog 远程更新的完整流程（hash 校验 → 下载 → 替换 locator → 半更新风险）在 [Addr-02]({{< relref "engine-toolchain/unity-addressables-catalog-encoding-loading-cost-update.md" >}}) 中有源码级拆解，这里不再展开。
 
-**检查更新：**
-```
-Addressables.CheckForCatalogUpdates()
-```
-这个调用会去远端下载 catalog 的 `.hash` 文件，和本地存储的 hash 做比较。如果不同，说明有新 catalog。返回值是需要更新的 catalog 列表。
-
-**执行更新：**
-```
-Addressables.UpdateCatalogs(catalogs)
-```
-这个调用下载新的 catalog 文件（`.json` 或 `.bin`），解析成新的 `ContentCatalogData`，构建新的 `ResourceLocationMap`，然后替换 `AddressablesImpl` 内部的 `IResourceLocator`。
-
-替换后，新的 `Locate` 调用会返回新 catalog 里的 location，可能指向新的 bundle 路径或 URL。旧的操作缓存会被清理。
-
-### 3. Catalog 更新的关键失败模式
-
-这里有一个在项目里非常容易踩到的陷阱：
-
-**新 catalog + 旧 bundle：** `UpdateCatalogs` 成功了，新 catalog 已经替换了旧的。但新 catalog 里引用的某些 bundle 还没下载到本地。这时候如果立刻 `LoadAssetAsync`，会发现 location 指向的 bundle 本地不存在、远端也可能因为 CDN 还没同步完成而 404。
-
-结果就是：`LoadAssetAsync` 返回的 handle 状态是 Failed，但调用方可能没有检查 `handle.Status`，直接拿 `handle.Result` 用，拿到 null，然后崩溃。
-
-更稳的做法是严格分步：
-
-```
-1. CheckForCatalogUpdates → 确认有更新
-2. UpdateCatalogs → 替换 catalog
-3. Addressables.DownloadDependenciesAsync(key) → 预下载新 bundle
-4. 全部成功后，再切换到新内容
-5. 任何一步失败，回退到旧内容或提示重试
-```
+核心要点：`CheckForCatalogUpdates` 对比远端 hash，`UpdateCatalogs` 下载并替换 locator，之后必须用 `DownloadDependenciesAsync` 预下载新 bundle，三步全部成功再切换内容——否则会陷入"新 catalog + 旧 bundle"的半更新状态。
 
 ## 六、项目里最常踩的三个坑
 
@@ -363,21 +335,7 @@ Addressables.UpdateCatalogs(catalogs)
 
 ### 2. Catalog 更新半途失败 → 新 catalog + 旧 bundles → 加载报错
 
-上一节已经详细讲过机制。这里补充项目里最常见的触发场景：
-
-玩家在弱网环境下触发了热更流程。`UpdateCatalogs` 成功了（catalog 文件很小，几 KB），但后续的 bundle 下载因为网络波动失败了。客户端切到了新 catalog，但缺少对应的 bundle。所有依赖新 bundle 的 `LoadAssetAsync` 全部失败。
-
-**建议的防御方式：**
-
-```
-1. UpdateCatalogs 成功后，不立刻切换游戏内容
-2. 先 DownloadDependenciesAsync 所有关键资源组
-3. 对下载结果逐个检查 handle.Status
-4. 全部成功 → 切换到新内容
-5. 任一失败 → 保持当前版本，提示玩家重试或稍后再试
-```
-
-关键点在于：catalog 更新和 bundle 下载必须是一个原子事务。只完成一半是最危险的状态。
+弱网环境下最常见：`UpdateCatalogs` 成功（catalog 文件只有几 KB），但后续 bundle 下载失败，客户端陷入"新 catalog + 旧 bundle"的半更新状态。完整的失败模式分析和安全更新代码模板见 [Addr-02 Section 5]({{< relref "engine-toolchain/unity-addressables-catalog-encoding-loading-cost-update.md" >}})。
 
 ### 3. WaitForCompletion() 同步等待 → 主线程阻塞
 

@@ -29,7 +29,7 @@ series: "Addressables 与 YooAsset 源码解读"
 - content_state.bin 丢了为什么 Content Update Build 就废了
 - Content Update Build 到底"增量"了什么
 
-> 以下源码路径和行为基于 Addressables 1.21.x（`com.unity.addressables`）和 SBP 1.x（`com.unity.scriptablebuildpipeline`）。Addressables 2.x / Unity 6 的差异会在相关位置标注。
+> **版本基线：** 本文源码分析基于 Addressables 1.21.x（com.unity.addressables）。Unity 6 随附的 Addressables 2.x 差异之处会以注记标出。
 
 ## 一、构建期在整个 Addressables 体系中的位置
 
@@ -278,7 +278,7 @@ bundle 路径的生成取决于 Group Schema 的配置：
 
 `RemoteLoadPath` 通常是一个模板，比如 `https://cdn.example.com/bundles/{BuildTarget}`。运行时 Addressables 会把 `{BuildTarget}` 替换成实际平台标识。
 
-源码位置：`com.unity.addressables/Editor/Build/DataBuilders/BuildScriptPackedMode.cs` 中的 `ProcessCatalogEntries()` 相关方法。
+源码位置：`com.unity.addressables/Editor/Build/DataBuilders/BuildScriptPackedMode.cs` 中的 `ProcessAllGroups()` 及其辅助方法（如 `AddDataEntry()`、`BuildCatalog()`）。
 
 Addr-02 详细讲过 `ContentCatalogData` 的编码结构——`m_KeyDataString`、`m_BucketDataString`、`m_EntryDataString` 怎么编码、怎么查找。这里不重复。构建期做的事情就是把构建结果填充到这个结构里，然后序列化写盘。
 

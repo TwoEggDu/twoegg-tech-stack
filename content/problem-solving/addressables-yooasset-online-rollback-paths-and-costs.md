@@ -23,7 +23,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 半更新是"更新没做完"，回滚是"更新做完了但做错了"。两个方向，两种风险，两种恢复路径。
 
-> 以下源码路径基于 Addressables 1.21.x（`com.unity.addressables`）和 YooAsset 2.x。
+> **版本基线：** 本文基于 Addressables 1.21.x 和 YooAsset 2.x 源码。
 
 ## 一、现场还原——紧急回滚场景
 
@@ -407,6 +407,8 @@ void HandleForceRollback()
     Addressables.InitializeAsync();
 }
 ```
+
+> **风险提示：** 在同一进程生命周期内重新调用 `Addressables.InitializeAsync()` 可能存在内部状态残留（部分 Provider 和 Operation 缓存未完全清理）。更安全的做法是在清理缓存后引导用户重启 App，让下次启动时自然走干净的初始化路径。
 
 这个方案的代价很大：`Caching.ClearCache()` 会清掉所有已缓存的 bundle，回滚后客户端需要从 CDN 重新下载全部旧版 bundle。对用户来说，相当于一次全量更新。
 

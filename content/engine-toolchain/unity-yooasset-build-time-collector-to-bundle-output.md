@@ -31,7 +31,7 @@ series: "Addressables 与 YooAsset 源码解读"
 
 这篇接上这些口子，沿 YooAsset 构建期的完整链路走一遍。
 
-> 本文基于 YooAsset 2.x 源码（GitHub: `https://github.com/tuyoogame/YooAsset`）。
+> **版本基线：** 本文源码分析基于 YooAsset 2.x（https://github.com/tuyoogame/YooAsset）。
 
 ## 一、构建期在整个 YooAsset 体系中的位置
 
