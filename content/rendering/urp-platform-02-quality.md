@@ -326,6 +326,13 @@ public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingD
 
 ---
 
+## 导读
+
+- 上一篇：[URP 深度平台 01｜移动端专项配置：为什么这么设、怎么验证]({{< relref "rendering/urp-platform-01-mobile.md" >}})
+- 下一篇：[URP 深度平台 03｜线上质量治理：运营期的渲染质量监控与配置下发]({{< relref "rendering/urp-platform-03-online-governance.md" >}})
+
+---
+
 ## 小结
 
 - Quality Level + URP Asset 配对：每档独立 Asset，Shader 变体和配置始终一致

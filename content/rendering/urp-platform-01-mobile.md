@@ -281,6 +281,13 @@ LOAD_FRAMEBUFFER_INPUT(0) → 直接读当前 Tile 的颜色，零带宽代价
 
 ---
 
+## 导读
+
+- 上一篇：[URP Shader 手写｜从骨架到完整光照：接入主光、附加光与阴影]({{< relref "rendering/urp-shader-custom-lit.md" >}})
+- 下一篇：[URP 深度平台 02｜多平台质量分级：三档配置的工程实现]({{< relref "rendering/urp-platform-02-quality.md" >}})
+
+---
+
 ## 小结
 
 - TBR 的核心代价模型：减少 RT 切换（Store/Load）、不要打断 Early-Z
