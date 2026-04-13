@@ -113,6 +113,8 @@ series: "Unity 资产系统与序列化"
 
 从 Unity 2022.3 LTS 开始，`Object.InstantiateAsync` 提供了内置的异步实例化能力，自带自动时间分片。它返回一个 `AsyncInstantiateOperation`，引擎会自动把实例化工作分散到多帧执行，不需要手动写协程控制。对于 2022.3 及以上版本的项目，这是比手动分帧更推荐的方案——引擎侧的工作分配比用户侧的 yield 逻辑能优化得更好。上面描述的手动协程方案对老版本 Unity 仍然有效。
 
+> **Unity 6 注记：** `Object.InstantiateAsync` 在 Unity 2022.3 引入后，Unity 6 进一步完善了其 API：支持传入父 Transform、指定世界坐标空间、以及批量实例化场景。对于 Unity 6 项目，这是分帧实例化的首选 API。
+
 ### 4. 对象池和分帧实例化的关系
 
 对象池（Object Pool）是分帧实例化的进阶方案：

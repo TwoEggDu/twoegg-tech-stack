@@ -52,6 +52,28 @@ series: "Unity 资产系统与序列化"
 
 只要把这些边界混了，排查就会立刻失真。
 
+下面这张图把运行时加载链从头到尾画出来，可以看到从定位内容到最终进入生命周期管理，中间要跨多少层边界：
+
+```mermaid
+flowchart TD
+    A["定位内容<br/>URL / 本地路径"] --> B["下载 / 读盘<br/>UnityWebRequest / LoadFromFile"]
+    B --> C{"缓存命中?"}
+    C -->|是| D["使用本地副本"]
+    C -->|否| E["下载并缓存"]
+    D --> F["打开 bundle 容器"]
+    E --> F
+    F --> G["依赖 bundle<br/>是否已加载?"]
+    G -->|否| H["先加载依赖 bundle"]
+    H --> G
+    G -->|是| I["LoadAsset / LoadScene"]
+    I --> J["反序列化 → Native Object → Managed Binding"]
+    J --> K{"Prefab?"}
+    K -->|是| L["Instantiate → 运行时实例"]
+    K -->|否| M["资产对象可用"]
+    L --> N["Unload 生命周期管理"]
+    M --> N
+```
+
 ## 一、先拿到 bundle，不等于资源已经可用
 
 很多人第一次接触 AssetBundle，最容易把“拿到 bundle 文件”和“拿到可用资源”当成同一件事。
@@ -309,6 +331,8 @@ Scene 的情况又不一样。
 - 场景过渡、对象池、共享资源在后续帧才暴露异常
 
 这也是为什么 `Unload(true)` 和 `Unload(false)` 经常不是性能优化问题，而是生命周期设计问题。
+
+> **Unity 6 注记：** Unity 6 引入了 `AssetBundle.UnloadAsync`，允许异步卸载 bundle，避免在主线程同步执行卸载时的帧尖峰。对于大 bundle 或对象数量多的场景，这比同步 `Unload` 更安全。
 
 如果从源码层面看，这两个行为的机制会更具体：Unity 内部的 `PersistentManager` 维护着一张 stream（即 SerializedFile）到已加载 object 的映射表。`Unload(false)` 的实际操作是从 PersistentManager 中**移除该 SerializedFile stream**，但不销毁已经通过这个 stream 加载出来的 object。这些 object 就变成了”孤儿”——它们仍然活在内存中，但 PersistentManager 不再知道它们来自哪个 bundle。
 

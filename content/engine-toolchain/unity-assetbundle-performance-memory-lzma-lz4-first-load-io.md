@@ -95,6 +95,8 @@ series: "Unity 资产系统与序列化"
 
 项目里最常见的性能误用之一，就是对已经在本地磁盘上的 bundle 用 `LoadFromMemory`——多了一份完整的内存拷贝，还丢掉了 memory-mapped I/O 的全部好处。
 
+> **Unity 6 注记：** Unity 6 扩展了 `AsyncReadManager` 的能力，支持更细粒度的异步 I/O 调度和优先级控制。对于需要精细管理加载优先级的项目（如开放世界流式加载），Unity 6 的 `ReadCommand` API 提供了比 `LoadFromFileAsync` 更底层的控制能力。
+
 ## 二、LZMA 和 LZ4 不是”谁更先进”，而是在不同成本之间做交换
 
 说到 AssetBundle 性能，最常被提到的就是 `LZMA` 和 `LZ4`。
@@ -107,7 +109,23 @@ series: "Unity 资产系统与序列化"
 更接近工程现实的问法应该是：
 `你想把成本放在分发阶段，还是更放在运行时阶段？`
 
-### 1. `LZMA` 更像“更省交付体积，运行时更重”
+下面这张图把 LZMA 和 LZ4 的核心取舍放在一起对比，可以直观看到它们各自的优势和代价分布在哪些环节：
+
+```mermaid
+flowchart LR
+    subgraph LZMA[“LZMA”]
+        A1[“下载体积 ✅ 小”] --> A2[“首次打开 ❌ 必须整段解压”]
+        A2 --> A3[“内存峰值 ❌ 高<br/>（解压中间态）”]
+        A3 --> A4[“随机访问 ❌ 不支持”]
+    end
+    subgraph LZ4[“LZ4”]
+        B1[“下载体积 ⚠ 较大”] --> B2[“首次打开 ✅ 按需解压 128KB 块”]
+        B2 --> B3[“内存峰值 ✅ 低<br/>（memory-mapped）”]
+        B3 --> B4[“随机访问 ✅ 支持”]
+    end
+```
+
+### 1. `LZMA` 更像”更省交付体积，运行时更重”
 
 高层理解上，`LZMA` 的特点更接近：
 

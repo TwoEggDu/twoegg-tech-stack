@@ -34,6 +34,20 @@ series: "Unity 资产系统与序列化"
 
 `拿到一个 .bundle 文件，不看构建日志，能查出什么、怎么查？`
 
+```mermaid
+flowchart TD
+    A[".bundle 文件"] --> B["Archive Header<br/>签名 · 版本 · 压缩方式"]
+    A --> C["Blocks Info<br/>压缩块列表 → 压缩率"]
+    A --> D["Node 列表<br/>内部文件 → 大小分布"]
+    D --> E{"flags & 0x4?"}
+    E -->|SerializedFile| F["类型表 → 有哪些 ClassID"]
+    E -->|二进制 blob| G["记录大小即可"]
+    F --> H["对象表 → 每个对象类型 + 大小"]
+    F --> I["外部引用表 → 依赖了谁"]
+    F --> J["脚本类型表 → MonoScript 身份"]
+    H --> K["诊断：包体归因 · 重复检测 · Shader 验证 · 脚本审计"]
+```
+
 ## 一、从 Archive 外层能读出什么
 
 拿到一个 `.bundle` 文件，最先能读的是 Archive 外层。这层不需要解压任何内容，就能告诉你几件非常关键的事。

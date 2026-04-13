@@ -120,6 +120,8 @@ series_order: 50
 
 这也是为什么你一旦往更底层改 bundle 构建行为，很容易就会碰到 `SBP` 语境，而不只是 `BuildPipeline.BuildAssetBundles` 那层简单入口。
 
+> **Unity 6 注记：** Unity 6 附带的 SBP 升级到 2.x 版本，主要变化包括：构建缓存从 Library/BuildCache 迁移到新路径、部分 task 接口签名调整、以及对 Content Pipeline 的更深集成。如果项目从 2022 LTS 升级到 Unity 6，自定义 `IBuildTask` 实现可能需要适配新的接口。
+
 但反过来说，`SBP` 也不是项目资源系统的最终管理层。它默认也不替你定义：
 
 - 地址系统
@@ -190,7 +192,28 @@ bundle / catalog / content_state / build layout 等产物
 需要整包时，再进入 BuildPipeline.BuildPlayer
 ```
 
-注意这里的关键不是“谁一定先调用谁”，而是“谁在回答哪一层问题”。从职责分层看，它们不是三选一；从工程流程看，它们又经常会在一次完整构建里前后接起来。这两件事要同时成立，文章才不会把层次写歪。
+注意这里的关键不是”谁一定先调用谁”，而是”谁在回答哪一层问题”。从职责分层看，它们不是三选一；从工程流程看，它们又经常会在一次完整构建里前后接起来。这两件事要同时成立，文章才不会把层次写歪。
+
+```mermaid
+flowchart TD
+    A[“CI / Editor 菜单 / 批处理入口”] --> B
+    subgraph Layer3[“Addressables Build Script”]
+        B[“AddressableAssetSettings<br/>Profile · Group · ActivePlayerDataBuilder”]
+        B --> C[“组织内容 + 生成 Catalog / content_state”]
+    end
+    C --> D
+    subgraph Layer2[“SBP（Scriptable Build Pipeline）”]
+        D[“GenerateBundlePacking”]
+        D --> E[“GenerateBundleCommands”]
+        E --> F[“WriteSerializedFiles”]
+        F --> G[“ArchiveAndCompressBundles”]
+    end
+    G --> H
+    subgraph Layer1[“BuildPipeline（编辑器原生）”]
+        H[“BuildPipeline.BuildPlayer<br/>（整包构建时）”]
+    end
+    G --> I[“输出：bundle · catalog · content_state · BuildLayout”]
+```
 
 ## 项目判断：讨论打包问题时，应该先怀疑哪一层
 

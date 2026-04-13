@@ -13,7 +13,9 @@ tags:
   - "Packaging"
 series: "Unity 资产系统与序列化"
 ---
-在 Unity 的资源系统里，真正决定后期维护成本的，通常不是“能不能打包”，而是“打出来的包是不是可控”。很多项目早期看起来都正常：能加载、能热更、能进包，直到内容规模上来以后，才暴露出三个典型问题：Group 越分越细，Bundle 越切越碎；共享资源被反复引用，最后更新边界失控；为了“方便热更”把一切都塞进远端，结果首包、下载、回滚全都变差。
+关于 AssetBundle 与 Addressables 的分层关系，见 [格式层与管理层]({{< relref “engine-toolchain/unity-addressables-and-assetbundle-format-vs-management-layer.md” >}})；关于 Addressables 与 YooAsset 各自强在哪一层，见 [资源交付主战场]({{< relref “engine-toolchain/unity-addressables-yooasset-main-battlefield-of-resource-delivery.md” >}})。这里直接从打包配置决策开始。
+
+在 Unity 的资源系统里，真正决定后期维护成本的，通常不是”能不能打包”，而是”打出来的包是不是可控”。很多项目早期看起来都正常：能加载、能热更、能进包，直到内容规模上来以后，才暴露出三个典型问题：Group 越分越细，Bundle 越切越碎；共享资源被反复引用，最后更新边界失控；为了”方便热更”把一切都塞进远端，结果首包、下载、回滚全都变差。
 
 这篇文章只讨论配置决策本身，不重复框架选型，也不展开构建管线层级。重点是：Group 应该按什么边界划分，Bundle 布局该怎么选，哪些默认值对中型项目足够安全，哪些错误会直接把更新体系做坏。
 

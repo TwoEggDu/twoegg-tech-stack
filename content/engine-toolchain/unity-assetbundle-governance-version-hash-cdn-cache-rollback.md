@@ -109,6 +109,18 @@ series: "Unity 资产系统与序列化"
 - 发布版本负责指向一组内容
 - Hash 负责精确识别每个交付单元
 
+```mermaid
+flowchart TD
+    A["客户端版本<br/>App Version (1.2.0)"] --> D["版本兼容校验"]
+    B["发布版本<br/>Release Snapshot ID"] --> D
+    C["内容 Hash<br/>每个 bundle 的 Hash128"] --> E["缓存命中判断"]
+    D --> F["决定是否需要更新"]
+    E --> F
+    F -->|需要更新| G["下载变化的 bundle"]
+    F -->|无需更新| H["使用本地缓存"]
+    G --> I["回滚 = 切换到<br/>旧 Release Snapshot"]
+```
+
 值得补充的是，Unity 在 bundle 层级还提供了一层 CRC 校验机制，它和 Hash 身份配合，但代价容易被低估。`AssetBundle.LoadFromFile` 和 `UnityWebRequestAssetBundle.GetAssetBundle` 都接受一个可选的 CRC 参数；启用后，引擎会对 bundle 的未压缩内容计算一遍 CRC32，再与 `AssetBundleManifest.GetAssetBundleCrc()` 返回的期望值比对。问题在于，对 `LoadFromFile` 启用 CRC 会强制引擎做一次完整的读取 + 解压流程——即使是 LZ4（ChunkBased）包，也无法再利用 memory-mapped 按需读取的优势，退化为全量解压。这个开销在生产环境中足以被注意到，很多团队上线后才发现首次加载变慢，最终选择关闭 CRC，但也同时失去了完整性校验。治理层面的常见折中是：仅在首次下载写入缓存时（走 `UnityWebRequestAssetBundle`）开启 CRC 校验，后续从本地缓存 `LoadFromFile` 时跳过，把完整性验证限定在网络传输环节，而不让它反复拖慢本地加载。
 
 ## 二、Manifest 真正连接的，不只是依赖关系，还有”发布映射”

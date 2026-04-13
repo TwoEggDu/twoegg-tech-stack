@@ -89,7 +89,29 @@ Unity 官方近年的文档更常说的是：
 
 这也是为什么 Unity 官方会直接把 AssetBundle 归到 `Archive file format` 上来讲，而不是只把它当“压缩过的资源包”。
 
-## 二、Header：先说明“这是什么包，以及后面怎么读”
+下面这张图把 AssetBundle 文件从外到内的四层结构画出来，可以看到从 Archive Header 一直到 SerializedFile 内部，每一层各自负责什么：
+
+```mermaid
+flowchart TD
+    subgraph Archive[“.bundle 文件”]
+        A[“Archive Header<br/>签名 · 版本 · 压缩标志 · 文件大小”]
+        B[“Blocks Info + Directory<br/>（可能合并压缩）”]
+        C[“Data 区域”]
+    end
+    A --> B
+    B --> D[“StorageBlock[]<br/>每块 128KB 压缩单元”]
+    B --> E[“Node[]<br/>内部虚拟文件表”]
+    E --> F[“CAB-xxx<br/>（SerializedFile）”]
+    E --> G[“.resS / .resource<br/>（二进制 blob）”]
+    F --> H[“SerializedFile”]
+    subgraph SF[“SerializedFile 内部”]
+        H --> I[“SF Header<br/>版本 · 元数据偏移 · 数据偏移”]
+        I --> J[“类型表 · 对象表 · 引用表”]
+        J --> K[“对象数据”]
+    end
+```
+
+## 二、Header：先说明”这是什么包，以及后面怎么读”
 
 最外层先看到的，就是 `Header`。
 
@@ -578,6 +600,8 @@ bool UnmountArchive(const char* path);
 | v22  | 大文件支持，所有偏移改为 64-bit（Unity 2020.1） |
 
 如果你用工具解析一个 bundle 文件、看到某些字段不对，先对一下版本号，因为很多字段在某个版本之前根本不存在，或者占的字节数不同。
+
+> **Unity 6 注记：** Unity 6（内部版本 2023.3）的 SerializedFile 格式版本仍为 v22（`kLargeFilesSupport`），没有引入新的格式版本号。Archive 签名仍然是 `UnityFS`。这意味着 Unity 2020.1+ 构建的 bundle 在二进制格式层面与 Unity 6 兼容，但 TypeTree 内容可能因类型字段变更而不匹配——这正是 TypeTree stripping 的跨版本风险所在。
 
 ## 最后收成一句话
 

@@ -59,9 +59,27 @@ series_order: 49.5
 | 交付治理层 | 版本、灰度、回滚、多环境发布、校验、修复 | `YooAsset` 放得更前台 |
 | 团队 ownership 层 | 多少复杂度交给官方抽象，多少复杂度由团队自己长期持有 | 真正的选型分水岭 |
 
-这里最重要的一句是：`Addressables != AssetBundle`，`YooAsset` 也不是新的底层资源格式。真正的底层交付容器仍然是 `AssetBundle`。两者的差异，主要不在“有没有重新发明一套资源二进制格式”，而在“它们分别把哪部分工程问题包装得更成熟”。
+```mermaid
+flowchart TD
+    subgraph Layers["资源交付五层"]
+        L1["格式层<br/>AssetBundle Archive"]
+        L2["打包层<br/>切包 · 依赖 · 压缩"]
+        L3["运行时层<br/>定位 · 加载 · 卸载"]
+        L4["治理层<br/>版本 · 缓存 · 回滚"]
+        L5["团队层<br/>规则 · 流程 · CI"]
+    end
+    L1 --- L2 --- L3 --- L4 --- L5
+    A["Addressables<br/>强在 L2-L3<br/>官方抽象一致性"] -.-> L2
+    A -.-> L3
+    Y["YooAsset<br/>强在 L3-L4<br/>交付工程控制力"] -.-> L3
+    Y -.-> L4
+    B["两者共用"] -.-> L1
+    T["团队自己负责"] -.-> L5
+```
 
-所以如果你一边用“底层格式”的标准要求 `Addressables`，一边又用“运营级交付治理”的标准要求它像 `YooAsset` 一样显式，最后一定会觉得它哪里都差一点。反过来，如果你只用“加载资源”这个层来理解 `YooAsset`，又会把它真正有价值的部分看窄。
+关于 AssetBundle 和 Addressables 的分层关系——为什么一个是底层交付格式，另一个是管理层——见[前文]({{< relref “engine-toolchain/unity-addressables-and-assetbundle-format-vs-management-layer.md” >}})。这里只补一句：`YooAsset` 同样不是新的底层资源格式，它和 `Addressables` 一样站在 `AssetBundle` 之上，差异在于各自把哪部分工程问题包装得更成熟。
+
+所以如果你一边用”底层格式”的标准要求 `Addressables`，一边又用”运营级交付治理”的标准要求它像 `YooAsset` 一样显式，最后一定会觉得它哪里都差一点。反过来，如果你只用”加载资源”这个层来理解 `YooAsset`，又会把它真正有价值的部分看窄。
 
 ## Addressables 真正强在哪里
 

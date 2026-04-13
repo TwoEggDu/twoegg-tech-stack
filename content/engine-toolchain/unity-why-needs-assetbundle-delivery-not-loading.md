@@ -107,6 +107,26 @@ series: "Unity 资产系统与序列化"
 
 `异步加载只是它进入运行时后的使用方式之一；它更本质的价值，是让资源可以脱离 Player 主包成为独立交付单元。`
 
+下面这张图把交付链和加载链放在一起，可以更直观地看到它们各自解决的问题完全不同，而 AssetBundle 站在两条链的衔接位置：
+
+```mermaid
+flowchart LR
+    subgraph 交付链["交付链（构建期决定）"]
+        A[资产文件] --> B[依赖收集]
+        B --> C[序列化 + 压缩]
+        C --> D[AssetBundle]
+        D --> E[CDN / 本地分发]
+    end
+    subgraph 加载链["加载链（运行时执行）"]
+        F[下载 / 读盘] --> G[缓存命中?]
+        G --> H[依赖满足]
+        H --> I[LoadAsset]
+        I --> J[反序列化]
+        J --> K[Instantiate]
+    end
+    E --> F
+```
+
 ## 二、为什么 Unity 不能只靠 Player 主包交付所有资源
 
 如果项目很小，当然可以。
@@ -228,6 +248,17 @@ series: "Unity 资产系统与序列化"
 
 `交付单元`
 
+下面这张表把 Player Build 产物和 AssetBundle 产物做一次并排对比，可以更直观地看到 AssetBundle 在交付维度上到底多出了什么：
+
+| 维度 | Player Build 产物 | AssetBundle 产物 |
+|------|------------------|-----------------|
+| 内容边界 | 由 Scenes in Build + Resources 隐式定义 | 由 AssetBundle Name / Build Map 显式定义 |
+| 独立更新 | 必须重新发布整个 Player | 可以只更新变化的 bundle |
+| 依赖关系 | 引擎内部管理，不可见 | Manifest / Catalog 显式记录 |
+| 压缩方式 | Player 级别统一 | 每个 bundle 可独立选择 LZMA / LZ4 / None |
+| 版本控制 | App 版本号 | 每个 bundle 有独立 Hash128 |
+| 交付路径 | App Store / Google Play | CDN / 本地 / StreamingAssets |
+
 ## 四、为什么 `Resources / Scene / StreamingAssets` 不足以替代 AssetBundle
 
 这是最常见的问题，也最值得正面比较。
@@ -247,6 +278,14 @@ series: "Unity 资产系统与序列化"
 `隐式打包`
 
 这对小项目方便，对中大型项目治理反而会越来越吃力。
+
+这里补一个引擎层面的具体原因。
+
+构建时，所有位于任何 `Resources/` 目录下的资产都会被打入 `resources.assets`（以及溢出文件如 `resources.assets.resS`）。启动时，引擎内部的 ResourceManager（不是 Addressables 的 ResourceManager）会为 `resources.assets` 里的所有路径构建一棵完整的内存查找树。这个启动开销与 Resources 目录下的资产总数成线性关系——即使其中大部分资产在整个生命周期内从未被加载过，这笔开销也照付不误。
+
+更进一步，`Resources.Load` 在运行时执行的是主线程上的同步字符串查找，没有异步变体。
+
+所以 Resources 不能规模化的原因不是设计层面的选择限制，而是一个可测量的启动开销 + 同步独占访问模式的硬约束。作为对比，`AssetBundle.LoadAssetAsync` 使用的是 SerializedFile 对象表中的预计算索引，并通过加载线程支持异步反序列化。
 
 ### 2. `Scene` 能交付一整张世界，但粒度太粗
 
@@ -386,6 +425,21 @@ AssetBundle 更接近：
 - 但 AssetBundle 自己又确实引入了新的交付层复杂度
 
 这两件事并不矛盾。
+
+回到最具体的一步：整条交付链的起点，其实就是一个构建 API 调用：
+
+```csharp
+// 最简构建调用——真正的起点不是 Load API，而是这一步
+var manifest = BuildPipeline.BuildAssetBundles(
+    outputPath: "AssetBundles",
+    assetBundleOptions: BuildAssetBundleOptions.ChunkBasedCompression, // LZ4
+    targetPlatform: BuildTarget.Android
+);
+// 输出：一组 .bundle 文件 + 一个 manifest bundle
+// 从这一刻起，资源就脱离了 Player 主包，成为独立交付单元
+```
+
+这一次调用，就是"资源跟着 Player 主包走"和"资源可以独立交付"之间的分界线。后续整个系列要讨论的依赖、压缩、缓存、版本控制，全部从这条分界线开始。
 
 ## 总结
 
