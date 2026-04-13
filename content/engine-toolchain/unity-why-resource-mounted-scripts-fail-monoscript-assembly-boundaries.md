@@ -401,18 +401,22 @@ Prefab、Scene、AssetBundle 上挂脚本时，Unity 起点拿到的不是一个
 
 只要你强迫自己按这条链走，很多原本像玄学的 missing 和实例化异常都会开始变回结构问题。
 
-## 九、从源码看：MonoScript 内部是怎么工作的
+## 九、MonoScript 内部是怎么工作的
 
-如果你翻 Unity 引擎源码，前面说的这条链会变得更具体。
+根据引擎的外部行为和公开信息，前面说的这条链可以更具体地描述。
 
 ### 1. MonoScript 真正序列化了哪三个字段
 
-`MonoScript::Transfer()` 在源码里的写法是这样的（简化）：
+`MonoScript::Transfer()` 的行为可以归纳为：
 
-```cpp
-transfer.Transfer(m_ClassName,    “m_ClassName”,    kNotEditableMask);
-transfer.Transfer(m_Namespace,    “m_Namespace”,    kNotEditableMask);
-transfer.Transfer(m_AssemblyName, “m_AssemblyName”, kNotEditableMask);
+以下为基于引擎行为的推断伪代码：
+
+```text
+MonoScript::Transfer(transfer)
+  序列化字段：
+    m_ClassName    （字符串，不可编辑）
+    m_Namespace    （字符串，不可编辑）
+    m_AssemblyName （字符串，不可编辑）
 ```
 
 就这三个字符串字段。没有别的类型信息，没有 GUID，没有 typeHash——只有这三段文本构成脚本的”可序列化身份”。
@@ -421,45 +425,38 @@ transfer.Transfer(m_AssemblyName, “m_AssemblyName”, kNotEditableMask);
 
 ### 2. GetClass() 做的事比你想的要少
 
-`MonoScript::GetClass()` 的实现是：
+`MonoScript::GetClass()` 的行为非常简单：
 
-```cpp
-ScriptingClassPtr MonoScript::GetClass()
-{
-    if (m_ScriptCache)
-        return m_ScriptCache->klass;
-    else
-        return SCRIPTING_NULL;
-}
+以下为基于引擎行为的推断伪代码：
+
+```text
+MonoScript::GetClass()
+  如果 m_ScriptCache 存在：
+    返回 m_ScriptCache->klass
+  否则：
+    返回 SCRIPTING_NULL
 ```
 
 它本身不查找任何东西。它只返回缓存里的 `klass`。
 
 真正的查找发生在 `RebuildFromAwake()`：
 
-```cpp
-void MonoScript::RebuildFromAwake()
-{
-    if (GetMonoManager().GetAssemblyCount() == 0)
-        return;  // 程序集还没加载，直接放弃
+以下为基于引擎行为的推断伪代码：
 
-    ScriptingClassPtr klass = SCRIPTING_NULL;
+```text
+MonoScript::RebuildFromAwake()
+  如果当前程序集数量 == 0：
+    直接返回（程序集还没加载，放弃查找）
 
-#if ENABLE_MONO
-    klass = GetMonoManager().GetMonoClassWithAssemblyName(
-        GetScriptClassName().c_str(),
-        GetNameSpace().c_str(),
-        GetAssemblyName());
-#else
-    // IL2CPP 路径
-    klass = scripting_class_from_fullname(
-        GetAssemblyName().c_str(),
-        GetNameSpace().c_str(),
-        GetScriptClassName().c_str());
-#endif
+  klass = SCRIPTING_NULL
 
-    Rebuild(klass);
-}
+  Mono 路径：
+    klass = 通过 MonoManager 用 (className, namespace, assemblyName) 查找类型
+
+  IL2CPP 路径：
+    klass = 通过 (assemblyName, namespace, className) 查找类型
+
+  调用 Rebuild(klass) 完成缓存重建
 ```
 
 这个函数在 `AwakeFromLoad()` 和 `AwakeFromLoadThreaded()` 里都会被调用——也就是每次 MonoScript 对象从磁盘恢复出来时，都会重新触发一次类型查找。
@@ -476,11 +473,14 @@ void MonoScript::RebuildFromAwake()
 
 ### 4. 如果程序集还没加载，查找直接跳过
 
-源码里有一个很小但很关键的提前返回：
+这里有一个很小但很关键的提前返回：
 
-```cpp
-if (GetMonoManager().GetAssemblyCount() == 0)
-    return;
+以下为基于引擎行为的推断伪代码：
+
+```text
+RebuildFromAwake() 入口处：
+  如果当前已加载的程序集数量 == 0：
+    直接返回，不执行任何类型查找
 ```
 
 这意味着：如果 MonoScript 对象被加载时，相应的程序集还没被加入运行时，`GetClass()` 会一直返回 `SCRIPTING_NULL`，对象不会报错，但脚本不会工作。
@@ -489,20 +489,21 @@ if (GetMonoManager().GetAssemblyCount() == 0)
 
 ### 5. ScriptID hash 是怎么算出来的
 
-在 `SerializedFile` 的类型表里，每个 MonoBehaviour 类型条目都会存一个 `m_ScriptID`（Hash128）。它的计算方式是：
+在 `SerializedFile` 的类型表里，每个 MonoBehaviour 类型条目都会存一个 `m_ScriptID`（Hash128）。它的计算逻辑可以归纳为：
 
-```cpp
-Hash128 MonoScript::GenerateScriptID()
-{
-    MdFourGenerator generator;
-    generator.Feed(this->GetScriptClassName());
-    generator.Feed(this->GetNameSpace());
-    generator.Feed(this->GetAssemblyName());
-    return generator.Finish();
-}
+以下为基于引擎行为的推断伪代码：
+
+```text
+MonoScript::GenerateScriptID() -> Hash128
+  创建 MD4 哈希生成器
+  依次输入：
+    1. className
+    2. namespace
+    3. assemblyName
+  返回最终 Hash128 值
 ```
 
-MD4 哈希，按 className + namespace + assemblyName 顺序 Feed。
+MD4 哈希，按 className + namespace + assemblyName 顺序输入。
 
 这个 hash 在序列化文件里用来标识”这个 MonoBehaviour 属于哪个脚本”。如果运行时计算出的 hash 和文件里存的 hash 不一致，Unity 会认为这个类型不匹配。
 
@@ -512,11 +513,14 @@ MD4 哈希，按 className + namespace + assemblyName 顺序 Feed。
 
 `m_ScriptCache` 是一个 `shared_ptr<MonoScriptCache>`，里面存了：
 
-```cpp
-ScriptingClassPtr klass;                   // 解析出来的类型
-dynamic_array<ScriptingMethodPtr> methods; // Update/LateUpdate/Awake 等方法指针
-MonoScriptType scriptType;                 // 运行时脚本类型
-IdentifierHashType identifierHash;         // 用于快速去重
+以下为基于引擎行为的推断伪代码：
+
+```text
+MonoScriptCache 包含的字段：
+  klass           — 解析出来的类型引用
+  methods         — Update / LateUpdate / Awake 等方法指针数组
+  scriptType      — 运行时脚本类型枚举
+  identifierHash  — 用于快速去重的哈希值
 ```
 
 一旦 `RebuildFromAwake()` 成功找到了 `klass`，就会调用 `FindOrCreateMonoScriptCache(klass, ...)` 把结果缓存起来，后续 `GetClass()` 就直接走缓存，不再重新查找。

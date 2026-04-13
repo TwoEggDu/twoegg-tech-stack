@@ -10,7 +10,7 @@ tags:
   - "Shader"
   - "Variant"
   - "Build"
-  - "Source Code"
+  - "Pseudocode"
 series: "Unity Shader Variant 治理"
 ---
 前面的文章讲了变体的保留依据有四方角色（Material、Scene、SVC、Always Included），也讲了变体的裁剪有四层（URP Prefiltering、Builtin Stripping、SRP Stripping、Custom IPreprocessShaders）。但中间最关键的一步一直是个黑盒：
@@ -38,10 +38,12 @@ series: "Unity Shader Variant 治理"
 
 每个参与构建的 Shader 都有一份 `BuildUsageTag`，里面最关键的字段是：
 
-```cpp
-ShaderUsageKeywordNames shaderUsageKeywordNames;  // 从材质和 SVC 收集到的 keyword 组合列表
-bool shaderIncludeInstancingVariants;              // 是否有材质启用了 GPU Instancing
-```
+以下为基于引擎行为的观测字段：
+
+| 字段名 | 类型 | 行为描述 |
+|--------|------|---------|
+| shaderUsageKeywordNames | 字符串数组 | 从材质和 SVC 收集到的 keyword 组合列表 |
+| shaderIncludeInstancingVariants | 布尔值 | 标记是否有材质启用了 GPU Instancing |
 
 `ShaderUsageKeywordNames` 的底层类型是 `dynamic_array<core::string>`——一个字符串数组，每个元素是一组排序后的 keyword 名称（比如 `"_EMISSION _NORMALMAP"`），代表一种被实际使用的 keyword 组合。
 
@@ -51,16 +53,18 @@ bool shaderIncludeInstancingVariants;              // 是否有材质启用了 G
 
 同一个头文件里还有 `BuildUsageTagGlobal`，记录的是整个构建范围内的全局渲染设置使用情况：
 
-```cpp
-UInt32 m_LightmapModesUsed;        // 哪些 Lightmap 模式被场景使用了
-UInt32 m_LegacyLightmapModesUsed;  // 旧版 Lightmap 模式
-UInt32 m_DynamicLightmapsUsed;     // 动态 Lightmap
-UInt32 m_FogModesUsed;             // 哪些雾模式被使用了（Linear/Exp/Exp2）
-bool   m_ShadowMasksUsed;          // 是否有 Shadow Mask
-bool   m_SubtractiveUsed;          // 是否用了 Subtractive 光照
-bool   m_ForceInstancingStrip;     // 是否强制裁掉 Instancing 变体
-bool   m_ForceInstancingKeep;      // 是否强制保留 Instancing 变体
-```
+以下为基于引擎行为的观测字段：
+
+| 字段名 | 类型 | 行为描述 |
+|--------|------|---------|
+| m_LightmapModesUsed | 整型位掩码 | 记录哪些 Lightmap 模式被场景使用了 |
+| m_LegacyLightmapModesUsed | 整型位掩码 | 记录旧版 Lightmap 模式的使用情况 |
+| m_DynamicLightmapsUsed | 整型位掩码 | 记录动态 Lightmap 的使用情况 |
+| m_FogModesUsed | 整型位掩码 | 记录哪些雾模式被使用了（Linear/Exp/Exp2） |
+| m_ShadowMasksUsed | 布尔值 | 标记是否有场景使用 Shadow Mask |
+| m_SubtractiveUsed | 布尔值 | 标记是否用了 Subtractive 光照 |
+| m_ForceInstancingStrip | 布尔值 | 标记是否强制裁掉 Instancing 变体 |
+| m_ForceInstancingKeep | 布尔值 | 标记是否强制保留 Instancing 变体 |
 
 这些标记会在后续的 Builtin Stripping 阶段使用——如果构建中没有任何场景使用了 Exp2 雾，那么所有 `FOG_EXP2` 变体都会被裁掉。
 
@@ -78,53 +82,55 @@ bool   m_ForceInstancingKeep;      // 是否强制保留 Instancing 变体
 
 ### 1. 处理顺序有讲究
 
-源码第 519 行定义了一个优先处理的类型列表：
+源码中定义了一个优先处理的类型列表：
 
-```cpp
-static const Unity::Type *gTypeOrder[] = {
-    TypeOf<Material>(),
-    TypeOf<ShaderVariantCollection>(),
-    TypeOf<Terrain>()
-};
+```text
+以下为基于引擎行为的推断伪代码：
+
+gTypeOrder[] 优先处理顺序 = {
+    Material,
+    ShaderVariantCollection,
+    Terrain
+}
+（不在此列表中的类型在这三者之后处理）
 ```
 
 Material 最先处理，然后是 SVC，然后是 Terrain，最后才是其他类型。这个顺序保证了 keyword 使用面的收集是从最直接的来源开始的。
 
 ### 2. 从 Material 提取 keyword 使用
 
-这是最核心的路径。当遍历到一个 Material 时，调用 `UpdateShaderUsageTagRecursive`（第 376–428 行）：
+这是最核心的路径。当遍历到一个 Material 时，调用 `UpdateShaderUsageTagRecursive`：
 
 - 获取这个 Material 引用的 Shader
 - 从 Material 的 keyword 状态（`material->GetShaderKeywordState()`）中提取当前启用的 keyword
 - 用 Shader 的 keyword space 把状态转换成排序后的 keyword 名称字符串
 - 插入到 usage set 中
 
-然后调用 `BuildUsageCache::UpdateShaderFeatureUsage`，这个函数内部会调用真正的核心函数 `GetShaderFeatureUsage`（位于 `Runtime/Shaders/GpuPrograms/ShaderSnippet.cpp` 第 422–439 行）：
+然后调用 `BuildUsageCache::UpdateShaderFeatureUsage`，这个函数内部会调用真正的核心函数 `GetShaderFeatureUsage`（位于 `Runtime/Shaders/GpuPrograms/ShaderSnippet.cpp`）：
 
-```cpp
-void GetShaderFeatureUsage(Shader* shader,
-    const keywords::LocalKeywordState& materialKeywords,
-    ShaderUsageKeywordSet& inoutUsage)
-{
-    // 取出这个 Shader 所有 snippet 声明的全部 keyword 的并集
-    keywords::LocalKeywordState keywords(shader->GetKeywordSpace(), kMemShader);
-    for (auto it = snippets.begin(); it != snippets.end(); ++it)
-        keywords.Union(it->second.m_AllKeywordsMask);
+```text
+以下为基于引擎行为的推断伪代码：
 
-    // 和材质的 keyword 状态做交集——只保留"Shader 认识且材质启用了"的 keyword
-    keywords.Mask(materialKeywords);
+function GetShaderFeatureUsage(shader, materialKeywords, inoutUsage):
+    // 第一步：收集 Shader 所有 snippet 声明的全部 keyword 的并集
+    keywords = 空的 keyword 状态
+    for each snippet in shader.snippets:
+        keywords = keywords UNION snippet.m_AllKeywordsMask
 
-    // 转成排序后的 keyword 名称字符串，插入 usage set
-    shader->GetKeywordSpace().KeywordNamesFromState(keywords, keywords::SortingMode::kSort, keywordString);
-    inoutUsage.insert(keywordString);
-}
+    // 第二步：和材质的 keyword 状态做交集
+    //   只保留"Shader 自身声明了 且 材质也启用了"的 keyword
+    keywords = keywords INTERSECT materialKeywords
+
+    // 第三步：把交集结果转成排序后的 keyword 名称字符串，插入 usage set
+    keywordString = shader.KeywordSpace.转为排序名称(keywords)
+    inoutUsage.insert(keywordString)
 ```
 
 这里有一个关键细节：**交集操作**。不是材质启用的所有 keyword 都会被收集，而是只收集"Shader 自身声明了的且材质启用了的"keyword。如果材质启用了一个 Shader 根本不认识的 keyword，它会被忽略。
 
 ### 3. 从 SVC 提取 keyword 使用
 
-当遍历到一个 ShaderVariantCollection 时（第 440–473 行），处理方式和 Material 类似：
+当遍历到一个 ShaderVariantCollection 时，处理方式和 Material 类似：
 
 - 调用 `collection->GetShaderKeywordUsageForShader(shader, keywords)` 获取 SVC 为该 Shader 登记的所有 keyword 组合
 - 同样通过 `BuildUsageCache::UpdateShaderFeatureUsage` 插入 usage set
@@ -133,7 +139,7 @@ SVC 的 keyword 组合和 Material 的 keyword 组合最终进入同一个 usage
 
 ### 4. 从 Terrain 提取 keyword 使用
 
-Terrain 比较特殊（第 475–501 行）。它会调用 `terrain->CollectInternallyCreatedMaterials()` 收集 Terrain 内部自动生成的材质，然后对每个材质走和普通 Material 一样的流程。
+Terrain 比较特殊。它会调用 `terrain->CollectInternallyCreatedMaterials()` 收集 Terrain 内部自动生成的材质，然后对每个材质走和普通 Material 一样的流程。
 
 如果 Terrain 配置了 GPU Instancing 绘制树木和草地，还会强制设置 `SetEnableInstancingVariants(true)`。
 
@@ -151,14 +157,15 @@ Terrain 比较特殊（第 475–501 行）。它会调用 `terrain->CollectInte
 
 源码位于 `Tools/UnityShaderCompiler/Utilities/ShaderImportUtils.cpp`。
 
-当 Shader 编译器解析 `#pragma` 声明时，`multi_compile` 和 `shader_feature` 走的是同一个解析入口，但有一个关键分叉（第 655–662 行）：
+当 Shader 编译器解析 `#pragma` 声明时，`multi_compile` 和 `shader_feature` 走的是同一个解析入口，但有一个关键分叉：
 
-```cpp
-if (variantType == VariantDirectiveType::kMultiCompile ||
-    (variantType == VariantDirectiveType::kDynamicBranch && !surfaceShaderGen))
-{
-    m_Data.m_NonStrippedUserKeywords.push_back(str);
-}
+```text
+以下为基于引擎行为的推断伪代码：
+
+// 在 ShaderImportUtils.cpp 的 pragma 解析阶段
+if variantType 是 multi_compile 或 (variantType 是 dynamic_branch 且不是 surface shader 生成):
+    将该 keyword 加入 m_NonStrippedUserKeywords 列表
+// shader_feature 的 keyword 不会进入此列表
 ```
 
 **只有 `multi_compile` 的 keyword 会被加入 `m_NonStrippedUserKeywords`。`shader_feature` 的 keyword 不会。**
@@ -177,19 +184,19 @@ if (variantType == VariantDirectiveType::kMultiCompile ||
 
 源码位于 `Editor/Src/AssetPipeline/ShaderImporting/ShaderVariantEnumerationKeywords.cpp`。
 
-当构建系统创建 `SettingsFilteredShaderVariantEnumeration` 时（`ShaderWriter.cpp` 第 1730 行），会把 `m_NonStrippedUserKeywordsMask`（即 `multi_compile` keyword 的位掩码）传进去。
+当构建系统创建 `SettingsFilteredShaderVariantEnumeration` 时（`ShaderWriter.cpp`），会把 `m_NonStrippedUserKeywordsMask`（即 `multi_compile` keyword 的位掩码）传进去。
 
-在 `ShaderVariantEnumerationUsage::PrepareEnumeration`（第 493–603 行）中，发生了关键分叉：
+在 `ShaderVariantEnumerationUsage::PrepareEnumeration` 中，发生了关键分叉：
 
 **对于 `multi_compile` keyword（在 NonStrippedUserKeywords 里的）：**
 - 保留在笛卡尔积枚举中
 - 所有声明的选项都会被枚举，无论有没有材质使用
 
 **对于 `shader_feature` keyword（不在 NonStrippedUserKeywords 里的）：**
-- 从笛卡尔积枚举中移除（第 554–571 行）
+- 从笛卡尔积枚举中移除
 - 改为只枚举材质和 SVC 实际提供了使用证据的组合（从 `m_UsedKeywords` 集合中取）
 
-具体来说，第 554–571 行的逻辑会遍历所有 keyword tuple，如果一个 tuple 里没有任何 `multi_compile` keyword，它就会被从枚举列表中删除——因为它全部由 `shader_feature` keyword 组成，应该完全由使用证据驱动。
+具体来说，该阶段的逻辑会遍历所有 keyword tuple，如果一个 tuple 里没有任何 `multi_compile` keyword，它就会被从枚举列表中删除——因为它全部由 `shader_feature` keyword 组成，应该完全由使用证据驱动。
 
 ### 4. 最终的变体数量公式
 
@@ -205,14 +212,15 @@ if (variantType == VariantDirectiveType::kMultiCompile ||
 
 ### 5. shader_feature 的一个隐含行为
 
-源码第 687–695 行还有一个细节：
+源码中还有一个细节：
 
-```cpp
-// shader_feature FOOBAR 等价于 shader_feature _ FOOBAR
-if (variantType != VariantDirectiveType::kMultiCompile && curKeywords.size() == 1)
-{
-    curKeywords.insert(curKeywords.begin(), "_");
-}
+```text
+以下为基于引擎行为的推断伪代码：
+
+// 当 shader_feature 只声明了单个 keyword 时，自动补充空状态 "_"
+if variantType 不是 multi_compile 且 curKeywords 只有 1 个元素:
+    在 curKeywords 开头插入 "_"
+// 即 shader_feature FOOBAR 等价于 shader_feature _ FOOBAR
 ```
 
 如果 `shader_feature` 只声明了一个 keyword（比如 `#pragma shader_feature FOOBAR`），编译器会自动在前面插入一个 `_`（空状态）。这意味着 `shader_feature FOOBAR` 实际上是 `shader_feature _ FOOBAR`——关闭状态也是一个有效的变体。
@@ -223,15 +231,16 @@ if (variantType != VariantDirectiveType::kMultiCompile && curKeywords.size() == 
 
 ### 1. 裁剪级别的差异
 
-源码位于 `ShaderWriter.cpp` 第 1603–1613 行：
+源码位于 `ShaderWriter.cpp`：
 
-```cpp
-ShaderVariantStripping strippingLevel = kShaderStripFull;
+```text
+以下为基于引擎行为的推断伪代码：
 
-bool isAlwaysIncludedShader = IsAlwaysIncludedShaderOrDependency(
-    options.parentShader->GetInstanceID());
-if (isAlwaysIncludedShader)
-    strippingLevel = kShaderStripGlobalOnly;
+strippingLevel = 完全裁剪（使用证据 + 全局设置）
+
+isAlwaysIncludedShader = 检查该 Shader 是否在 Always Included 列表中（含其依赖）
+if isAlwaysIncludedShader:
+    strippingLevel = 仅全局设置裁剪（跳过使用证据裁剪）
 ```
 
 普通 Shader 使用 `kShaderStripFull`——同时应用使用证据裁剪和全局设置裁剪。
@@ -248,13 +257,9 @@ Always Included Shader 使用 `kShaderStripGlobalOnly`——**跳过使用证据
 
 ### 3. 源码注释的解释
 
-`ShaderWriter.cpp` 第 1605–1607 行的注释说明了原因：
+`ShaderWriter.cpp` 中的注释说明了原因：
 
-```
-// Always included shaders usages were previously untrackable from analyzing scene objects
-// because they are skipped from consideration in AddBuildAssetInfoChecked.
-// But now they are, but we remain the same behaviour that only strip variants based on global usage.
-```
+> Always Included Shader 的使用面过去无法通过分析场景对象来追踪，因为它们在 `AddBuildAssetInfoChecked` 阶段被跳过了。现在虽然已经可以追踪了，但引擎仍然保持了旧的行为——只基于全局使用情况来裁剪变体。
 
 历史原因：Always Included Shader 曾经无法通过场景对象分析来追踪使用面，所以被设计为跳过使用证据裁剪。虽然现在已经可以追踪了，但行为没有改变。
 
@@ -262,7 +267,7 @@ Always Included Shader 使用 `kShaderStripGlobalOnly`——**跳过使用证据
 
 ### 1. 全局设置裁剪的时机
 
-全局设置裁剪发生在变体枚举完成之后、scriptable stripping 之前。入口是 `ShouldShaderKeywordVariantBeStripped`（`ShaderSnippet.cpp` 第 568–663 行）。
+全局设置裁剪发生在变体枚举完成之后、scriptable stripping 之前。入口是 `ShouldShaderKeywordVariantBeStripped`（`ShaderSnippet.cpp`）。
 
 ### 2. 裁剪了什么
 
@@ -284,16 +289,13 @@ Always Included Shader 使用 `kShaderStripGlobalOnly`——**跳过使用证据
 
 两者共同作用，才得到最终进入编译的候选集。
 
-源码第 630–631 行的注释明确了这个关系：
+`ShaderSnippet.cpp` 中的注释明确了这个关系：
 
-```
-// Note: regular (kShaderStripFull) stripping assumes that shaderUsage.usedKeywords decisions
-// are already handled above this code, e.g. by using ShaderVariantEnumerationUsage.PrepareEnumeration/Enumerate.
-```
+> 常规的完全裁剪（kShaderStripFull）假设 usedKeywords 的决策已经在此代码之前完成，即由 `ShaderVariantEnumerationUsage.PrepareEnumeration` / `Enumerate` 处理。
 
 ## 六、构建日志的四个数字
 
-当你在 Editor.log 里看到一个 Shader 的构建统计时，会看到四个数字（`ShaderWriter.cpp` 第 1940–1944 行）：
+当你在 Editor.log 里看到一个 Shader 的构建统计时，会看到四个数字（`ShaderWriter.cpp`）：
 
 ```
 Full variant space:         N
