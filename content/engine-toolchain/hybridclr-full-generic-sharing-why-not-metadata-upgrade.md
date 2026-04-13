@@ -35,9 +35,9 @@ series: "HybridCLR"
 4. 如果只按公开资料和现有 runtime 线索推断，`Full Generic Sharing` 大概率改的是哪一层。
 5. 它在项目里真正换来了什么，又额外付出了什么代价。
 
-## 先给一句总判断
+## 收束
 
-如果先把这篇压成一句话，我的判断是：
+一句话总判断：
 
 `Full Generic Sharing` 想解决的，不是“让 runtime 看见更多 metadata”，而是“让更多原本需要单独 AOT 实例化的 generic 调用，收敛到可共享的 native generic 执行路径上”。
 
@@ -159,7 +159,20 @@ HybridCLR 的补充 metadata 技术，价值非常大，但它的层级必须摆
 - 为什么它能减少 metadata dll 带来的包体和内存负担
 - 为什么它会直接影响 generic function 的运行时成本
 
-因为它已经不再是“多带一份信息”，而是“换了一种 generic 执行模型”。
+因为它已经不再是”多带一份信息”，而是”换了一种 generic 执行模型”。
+
+### 底层机制：Full Generic Sharing 到底在编译层做了什么
+
+Full Generic Sharing 的做法是：在 AOT 编译阶段，为每个泛型方法编译出一份”完全共享”的版本，其中所有类型参数都被当作一个规范的指针大小类型来处理。在 IL2CPP 生成的 C++ 代码里，这类函数的名称会带有 `Il2CppFullySharedGenericAny` 标记。
+
+这不是 HybridCLR 自己发明的机制，而是 Unity 自身的 IL2CPP 能力。Unity 2021 开始提供（需要配合 `Code Generation = Faster (smaller) builds`），Unity 2022 默认开启。
+
+这也是它和补充 metadata 之间最根本的区别：
+
+- Full Generic Sharing 改变的是 AOT 编译层的泛型分发模型——编译器直接生成一份共享实现。
+- 补充 metadata 只是在运行时增加可查询的元数据信息，不改变泛型代码的编译方式。
+
+一个在编译期就决定了代码形态，一个在运行时才补信息。这就是为什么它们不在同一层。
 
 ## 如果只按公开线索推断，它大概率会碰到哪几层
 
@@ -277,7 +290,11 @@ HybridCLR 的补充 metadata 技术，价值非常大，但它的层级必须摆
 
 这些地方多付出一些成本。
 
-所以它的真实语义不是“又全又快还不要钱”，而是：
+具体来说，共享泛型代码可能需要通过 `ConstrainedCall` 路径做间接分发，而值类型操作在共享实现里可能产生本不必要的装箱。  
+如果同一个泛型方法有具体实例化的 AOT 版本，那份专属实现不会有这些额外开销。  
+FGS 的代价正是用这种运行时折价，换取更广的泛型覆盖面。
+
+所以它的真实语义不是”又全又快还不要钱”，而是：
 
 `用更高的 generic 覆盖率、更轻的 workflow，换取一部分 generic function 的运行时折价。`
 
@@ -323,11 +340,11 @@ HybridCLR 的补充 metadata 技术，价值非常大，但它的层级必须摆
 
 那它就不一定是你最先该上的能力。
 
-## 最后压一句话
+## 收束
 
-如果只允许我用一句话收这篇文章，我会写成：
-
-`Full Generic Sharing` 真正抬高的，不是 metadata 可见性，而是 IL2CPP generic runtime 的共享上限；它把一部分原本只能靠“补 metadata + interpreter”兜底的泛型场景，重新拉回 shared native path，但代价是更复杂的 generic 调用模型、对 Unity 版本更强的依赖，以及一部分泛型函数性能折价。`
+`Full Generic Sharing` 真正抬高的，不是 metadata 可见性，而是 IL2CPP generic runtime 的共享上限。  
+它把一部分原本只能靠”补 metadata + interpreter”兜底的泛型场景，重新拉回 shared native path。  
+代价是更复杂的 generic 调用模型、对 Unity 版本更强的依赖，以及一部分泛型函数性能折价。
 
 ## 系列位置
 

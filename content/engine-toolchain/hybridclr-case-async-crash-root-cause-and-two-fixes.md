@@ -95,7 +95,7 @@ AOTReferenceGeneratorCommand.GenerateAOTGenericReference(target);
 
 这样 StripAOTDlls 生成的裁剪 DLL 与最终 APK 是同模式构建的产物，补充元数据不会失配，解释器能正常找到方法体，FullySharedGenericAny 死循环根本不会触发。
 
-这是**根治**，推荐优先选这条路。详细实现见 HCLR-16。
+这是**根治**，推荐优先选这条路。流程修法之所以优先于代码修法（修法二），是因为它解决的是根因——Development 标志不一致导致补充元数据失效。而代码修法（在 AOT 程序集里添加 `AOTGenericReferences`）只是一个 workaround，它只能覆盖你已经遇到并手动添加的那些具体泛型实例，无法防御未来新增的泛型用法。详细实现见 HCLR-16。
 
 ---
 
@@ -168,6 +168,6 @@ static class UniTaskAOTHelper
 
 ---
 
-## 把这件事压成一句话
+## 收束
 
-> async 崩溃的根因不是 `RefMethods()` 是空的，而是 GenerateAll 没进流程导致补充元数据失效，解释器找不到方法体才退化到 FullySharedGenericAny 死循环——修法是让 GenerateAll 进流程并对齐 Development 标志，主动引用法只是应急。
+async 崩溃的根因不是 `RefMethods()` 是空的，而是 GenerateAll 没进流程导致补充元数据失效。解释器找不到方法体才退化到 FullySharedGenericAny 死循环。修法是让 GenerateAll 进流程并对齐 Development 标志；主动引用法只是应急。

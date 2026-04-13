@@ -31,9 +31,9 @@ series: "HybridCLR"
 
 ## 先给一句总判断
 
-如果先把这篇压成一句话，我的判断是：
+HybridCLR 的排错第一步不是问”它支不支持”，而是问——
 
-`HybridCLR 的排错第一步不是问“它支不支持”，而是问“这次失败发生在把程序集接进来之前、把 metadata 接起来之前、把方法调起来之前，还是跨 ABI 和资源身份链时”。`
+`这次失败发生在把程序集接进来之前、把 metadata 接起来之前、把方法调起来之前，还是跨 ABI 和资源身份链时。`
 
 一旦层次先分对，很多报错其实都没有那么神秘。
 
@@ -42,19 +42,24 @@ series: "HybridCLR"
 我建议团队内部先统一这张最小地图：
 
 1. 装载层  
-   DLL 字节到底有没有被当成正确程序集接进 runtime。
+   DLL 字节到底有没有被当成正确程序集接进 runtime。  
+   典型信号：`TypeLoadException`（assembly 加载顺序或 stripping）、`LoadImageErrorCode:BAD_IMAGE`。
 
 2. metadata 层  
-   runtime 到底能不能找到对应 image、type、method、method body。
+   runtime 到底能不能找到对应 image、type、method、method body。  
+   典型信号：`MissingMethodException`（MethodBridge 缺失或 AOT 泛型未实例化）、`Method body is null`。
 
 3. AOT 泛型实例层  
-   runtime 就算看懂了 metadata，AOT 世界里到底有没有那个具体实例的可调用实现。
+   runtime 就算看懂了 metadata，AOT 世界里到底有没有那个具体实例的可调用实现。  
+   典型信号：`AOT generic method not instantiated in aot`、`SIGSEGV` 且堆栈含 `hybridclr::` 前缀（AOT 泛型回退无限递归）。
 
 4. ABI / bridge 层  
-   interpreter、AOT、native、reverse P/Invoke 之间到底有没有正确桥起来。
+   interpreter、AOT、native、reverse P/Invoke 之间到底有没有正确桥起来。  
+   典型信号：`NotSupportedException: method call bridge missing`（`MethodBridge.cpp` 未重新生成）、`GetReversePInvokeWrapper fail`。
 
 5. 资源身份链层  
-   Prefab/Scene/AssetBundle 里的脚本引用，最后能不能沿程序集身份链回到真实热更程序集。
+   Prefab/Scene/AssetBundle 里的脚本引用，最后能不能沿程序集身份链回到真实热更程序集。  
+   典型信号：Inspector 中脚本显示 `Missing (Mono Script)`、`AddComponent` 正常但 Prefab 实例化后组件丢失。
 
 这 5 层背下来之后，后面的报错基本都能先归位。
 
@@ -289,8 +294,12 @@ series: "HybridCLR"
 
 如果你问我，真实项目里最稳的诊断顺序是什么，我会建议下面这个压缩版：
 
-1. 先判现场属于哪一层  
-   装载、metadata、AOT 泛型实例、ABI bridge、资源身份链。
+1. 先判现场属于哪一层（按下面的入口信号快速归位）  
+   - 装载层 → 日志含 `LoadImageErrorCode` 或 `TypeLoadException`  
+   - metadata 层 → 日志含 `Method body is null` 或 `MissingMethodException`  
+   - AOT 泛型实例层 → 日志含 `AOT generic method not instantiated` 或 `SIGSEGV` + `hybridclr::`  
+   - ABI bridge 层 → 日志含 `GetReversePInvokeWrapper fail` 或 `NotSupportNative2Managed`  
+   - 资源身份链层 → Inspector 脚本 missing，但 `Assembly.Load` 本身成功
 
 2. 先找这一层最短的入口断点  
    不要一开始就钻大文件。
@@ -300,6 +309,15 @@ series: "HybridCLR"
 
 4. 只有在上一层被证伪后，才进入下一层  
    不要一口气同时怀疑 5 条链。
+
+## 移动端崩溃的取日志方式
+
+上面的分层和断点都假设你能看到完整日志。在移动端崩溃时，日志获取本身是第一步：
+
+- **Android**：`adb logcat -s Unity CRASH DEBUG`，过滤出 Unity 引擎日志和 native crash 信息。如果 `logcat` 被截断，可加 `-b crash` 单独拉崩溃缓冲区。
+- **iOS**：在 Xcode 的 Devices & Simulators 窗口拉取崩溃日志。`libil2cpp.so` / framework 地址需要用 `atos` 或 `llvm-symbolizer` 结合 dSYM 符号化，才能看到 `hybridclr::` 相关的真实堆栈。
+
+拿到可读堆栈后，再按上面 5 层定位。
 
 ## 最容易浪费时间的 4 种误判
 
@@ -325,17 +343,15 @@ series: "HybridCLR"
 
 ## 我最推荐团队统一的 1 句话排障口令
 
-如果要把这篇文章压成团队里最有用的一句口令，我会写成：
+团队里最值得统一的一句口令：
 
 `先判层，再下断点；先证伪上一层，再进入下一层。`
 
 这句话听起来很朴素，但对 HybridCLR 这种 build-time 和 runtime 强耦合的系统，特别值钱。
 
-## 最后压一句话
+## 收束
 
-如果只允许我用一句话收这篇文章，我会写成：
-
-`HybridCLR 的报错并不神秘，真正麻烦的是把装载、metadata、AOT 泛型实例、ABI bridge、资源身份链这些不同层的问题混成了一次“热更新失败”；而诊断的关键，就是先把这几层重新拆开。`
+`HybridCLR 的报错并不神秘，真正麻烦的是把装载、metadata、AOT 泛型实例、ABI bridge、资源身份链这些不同层的问题混成了一次”热更新失败”；而诊断的关键，就是先把这几层重新拆开。`
 
 ## 系列位置
 

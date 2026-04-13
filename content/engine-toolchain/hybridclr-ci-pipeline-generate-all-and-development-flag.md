@@ -32,6 +32,8 @@ CompileDll → Il2CppDef → LinkXml → StripAOTDlls → MethodBridge → AOTGe
 
 **如果 StripAOTDlls 跑的那次内部构建与最终 APK 构建的环境不一致，这批 DLL 就是错的。** 拿错误的 DLL 生成的 MethodBridge 和 AOTGenericReference 也会是错的，运行时补充元数据失效，热更代码里的泛型调用找不到方法体，退化到 FullySharedGenericAny 路径，进而引发死循环崩溃。
 
+"环境一致"不仅指 Development 标志，还包括 Unity 版本。CI 中 `GenerateAll` 必须使用与最终构建相同的 Unity 版本和 scripting defines。如果用不同的 Unity 版本运行 Generate，产出的 `MethodBridge.cpp` 或 `UnityVersion.h` 可能不兼容，导致编译失败或运行时行为异常。
+
 如果打包流程里没有 GenerateAll，用的是上次手动生成的产物，这个问题就完全取决于"上次手动跑 Generate 的时候环境是否恰好一致"——在 CI 里这是不可接受的。
 
 ---
@@ -184,6 +186,6 @@ CompileDllCommand.CompileDll(buildTarget, development);
 
 ---
 
-## 把这件事压成一句话
+## 收束
 
-> CI 打包流程里，`GenerateAll` 之前必须先把 `EditorUserBuildSettings.development` 写成与最终 Player Build 一致的值；`StripAOTDlls` 之前把场景列表临时切为 Launcher-only。这两件事不做，补充元数据在真机上就是随机失效的。
+CI 打包流程里，`GenerateAll` 之前必须先把 `EditorUserBuildSettings.development` 写成与最终 Player Build 一致的值。`StripAOTDlls` 之前把场景列表临时切为 Launcher-only。这两件事不做，补充元数据在真机上就是随机失效的。

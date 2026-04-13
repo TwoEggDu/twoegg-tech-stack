@@ -24,6 +24,8 @@ series: "HybridCLR"
 - Android 符号化操作在 [崩溃分析系列第 1 篇]({{< relref "engine-toolchain/crash-analysis-01-android.md" >}})
 - 真实案例在 [HybridCLR 案例诊断篇]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}})
 
+> **iOS 符号化补充**：iOS 崩溃日志使用 `arm64e` 地址，需要做 ASLR slide 调整。使用 `atos` 命令符号化：`atos -arch arm64 -o UnityFramework.framework/UnityFramework -l <load_address> <crash_address>`。其中 `<load_address>` 从崩溃日志的 Binary Images 段获取，`<crash_address>` 是崩溃栈帧里的原始地址。
+
 ---
 
 ## HybridCLR 给调用栈带来的变化
@@ -182,6 +184,17 @@ E Unity: Exception: System.TypeLoadException: Could not load type 'Namespace.Cla
 - logcat 里可能看到：`CRASH: signal 6 (SIGABRT)` 或 IL2CPP metadata 相关日志
 - Unity log 里出现：`Failed to initialize Unity Metadata` 或 IL2CPP 初始化错误
 - 调用栈更像 IL2CPP metadata 初始化阶段，而不是业务方法、`Interpreter::Execute` 或 `IlCppFullySharedGenericAny` 这类运行中痕迹
+
+**典型调用栈**：
+
+```
+E CRASH: signal 6 (SIGABRT)
+E CRASH: backtrace:
+  #00  abort
+  #01  il2cpp::vm::MetadataLoader::LoadMetadataFile (...)
+  #02  il2cpp::vm::GlobalMetadata::Initialize (...)
+  #03  il2cpp::vm::Runtime::Init (...)
+```
 
 **根因**：`global-metadata.dat` 是随包体编译的，和 `libil2cpp.so` 的版本强绑定。如果热更流程错误地替换了 `global-metadata.dat`（例如把下一个版本的 metadata 推给了旧版本的包），IL2CPP 在启动时校验失败，直接 abort。这里常见的是主动 `SIGABRT`，不是随机 `SIGSEGV`，因为 IL2CPP 在 metadata 初始化阶段就已经判定“这份结构不能继续跑了”。
 

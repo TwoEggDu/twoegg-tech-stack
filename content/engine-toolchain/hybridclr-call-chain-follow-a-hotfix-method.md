@@ -180,6 +180,8 @@ newMethod->isInterpterImpl = hybridclr::interpreter::InterpreterModule::IsImplem
 
 这两句要连在一起看。
 
+补一个容易被忽略的细节：`SetupMethods` 通常在 `Class::Init` 路径中被调用，而 `Class::Init` 会先获取一把锁，所以同一个 class 的方法初始化是串行的，不会出现两个线程同时给同一个方法写 invoker 的情况。
+
 第一句先根据 `image + token` 去拿 `invoker_method`。  
 第二句再根据这个 `invoker_method` 判断，这个方法是不是 interpreter 实现。
 
@@ -267,6 +269,8 @@ static void InterpreterInvoke(Il2CppMethodPointer methodPointer, const MethodInf
 2. 反射或普通调用传进来的 `void** __args`，不会直接交给解释器，而是先转换成 HybridCLR 自己的 `StackObject` 参数布局。
 3. 真正的执行入口依然是 `Interpreter::Execute(method, args, __ret)`。
 
+注意这里的 `alloca`：它把 `StackObject` 参数数组分配在 native 调用栈上，分配和释放几乎零成本。但代价是，如果解释器方法层层嵌套调用，每一层都会在 native stack 上分配一段参数缓冲区。调用链足够深时，native stack 会先于托管栈溢出。
+
 也就是说，`InterpreterInvoke` 的职责并不是“解释执行方法体”。  
 它更像一个桥：
 
@@ -300,6 +304,8 @@ InterpMethodInfo* imi = transform::HiTransform::Transform(methodInfo);
 const_cast<MethodInfo*>(methodInfo)->interpData = imi;
 return imi;
 ```
+
+这里还有一个前置动作容易被跳过：在进入 `Transform` 之前，`GetInterpMethodInfo` 会先调用 `Class::Init(methodInfo->klass)`，确保方法所属类的 runtime 结构已经就绪。如果跳过这一步，transform 过程中访问字段偏移、vtable 等信息就可能拿到未初始化的值。
 
 这一步的意义非常大。  
 它说明 HybridCLR 的执行链不是：
@@ -458,9 +464,7 @@ LoopStart:
 
 只跟这一条线，不去扩展 `TransformContext.cpp` 的所有细节，基本就已经能把 HybridCLR 的“方法调用主链”立住。
 
-## 最后压一句话
-
-如果只用一句话概括这篇文章，我会写成：
+## 收束
 
 `HybridCLR 让热更方法跑起来，不是靠 Assembly.Load 之后直接解释 DLL，而是先把程序集注册成 InterpreterImage，再把方法绑定到解释器 invoker，第一次调用时懒生成 InterpMethodInfo，最后由 Execute 去跑 transform 之后的内部指令。`
 

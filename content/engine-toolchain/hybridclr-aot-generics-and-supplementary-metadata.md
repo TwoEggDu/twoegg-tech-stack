@@ -89,7 +89,7 @@ HybridCLR 的补充 metadata 主要解决第一类。
 
 但从源码看，它们根本不是一回事。
 
-我觉得最稳的理解方式，是先把问题拆成两种失败：
+最稳的理解方式，是先把问题拆成两种失败：
 
 ### 失败一：runtime 看不懂
 
@@ -183,6 +183,8 @@ LoadImageErrorCode Assembly::LoadMetadataForAOTAssembly(const void* dllBytes, ui
 }
 ```
 
+> 注意：这个函数内部在调用 `RegisterLocked` 之前会获取锁（参数中有一个 `lock` 变量传入），因此多线程环境下并发调用 `LoadMetadataForAOTAssembly` 是安全的。
+
 这段代码说明补充 metadata 的完整动作是：
 
 1. 先创建一种 `AOTHomologousImage`
@@ -208,6 +210,8 @@ AOTHomologousImage* AOTHomologousImage::FindImageByAssembly(const Il2CppAssembly
     return FindImageByAssemblyLocked(ass, lock);
 }
 ```
+
+> `FindImageByAssembly` 同样通过 `FastAutoLock` 获取全局 metadata 锁，意味着后续 runtime 查询 AOTHomologousImage 的操作也是线程安全的。
 
 这件事非常重要。
 
@@ -308,7 +312,7 @@ type.aotIl2CppType = _defaultIl2CppType;
 
 ## 补充 metadata 到底能解决什么
 
-如果只看运行时这一层，我觉得它最核心的价值是两件事。
+如果只看运行时这一层，它最核心的价值是两件事。
 
 ### 1. 让 runtime 能重新拿到 method body 和泛型相关 metadata
 
@@ -527,7 +531,9 @@ pinvokeAnalyzer.Run();
 GenerateMethodBridgeCppFile(..., outputFile);
 ```
 
-这说明 MethodBridge 的位置不是“小优化”，而是：
+> 实际上 `MethodBridgeGeneratorCommand` 还会运行 `nativeAdjustThunkAnalyzer`，用于处理 native adjust thunk 的签名分析。上面的代码片段省略了这一步，完整流程共五种分析器。
+
+这说明 MethodBridge 的位置不是”小优化”，而是：
 
 `当某个具体泛型实例真的要跨边界被调起来时，runtime 需要的另一套签名桥。`
 
@@ -542,13 +548,9 @@ GenerateMethodBridgeCppFile(..., outputFile);
 
 原因很简单。到这一步读者最容易误判成“MethodBridge 只是工具层产物”。但真正跟一次生成流程就会发现，它分析的是具体签名，不是在做抽象概念补丁。
 
-## 把这件事压成一句话
+## 收束
 
-如果把这篇压成一句话，我会这样描述 HybridCLR 在 AOT 泛型问题上的位置：
-
-`补充 metadata 让 runtime 重新拥有解释和解析 AOT 泛型 metadata 的能力；当具体泛型实例在 AOT 世界里根本不存在时，IL2CPP/HybridCLR 会退到 \`IlCppFullySharedGenericAny\` 这类 fallback 路径，这不是“metadata 没补上”，而是“具体实例没进 AOT 世界”；AOTGenericReference 告诉你这些实例到底缺谁；MethodBridge 则负责这些具体实例跨 interpreter / AOT / native 边界时的调用问题。`
-
-这三者各自站在不同层上，不能混。
+`补充 metadata 给 runtime 补解析能力；AOTGenericReference 列出缺失的具体泛型实例；MethodBridge 处理跨边界调用签名。三者各自站在不同层上，不能混。`
 
 ## 常见误解
 

@@ -31,9 +31,10 @@ series: "HybridCLR"
 
 ## 先给一句总判断
 
-如果先把这篇压成一句话，我的判断是：
+这篇文章的核心判断只有一条：
 
-`HybridCLR 的性能治理，不是想办法把所有热更逻辑都“优化成 AOT”，而是先把成本拆层：该前移的前移，该避免跨边界的避免跨边界，该留在解释器的留在解释器。`
+`HybridCLR 的性能治理，不是想办法把所有热更逻辑都”优化成 AOT”，而是先把成本拆层。`  
+`该前移的前移，该避免跨边界的避免跨边界，该留在解释器的留在解释器。`
 
 这件事一旦按层理解，很多策略都会自然很多。
 
@@ -77,6 +78,8 @@ series: "HybridCLR"
 - function pointer / `calli`
 
 这些路径除了正确性，还会带来桥接和参数搬运成本。
+
+具体来说，每个 `MethodBridge` stub 都要在解释器的 `StackObject` 内存布局和平台原生调用约定之间做参数搬运（例如 ARM64 AAPCS 会把整型参数放进 x0-x7 寄存器，浮点参数放进 d0-d7）。这个 marshaling 成本是每次调用都要付的，不会被摊销。
 
 ### 4. 启动期集中爆发成本
 
@@ -140,6 +143,8 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 这就把语义钉死了：
 
 `PreJitMethod / PreJitClass 预热的是解释器方法链，也就是提前触发 transform 并把 InterpMethodInfo 缓存到 method->interpData。`
+
+有一个容易忽略的实现细节：`PreJitMethod` 内部调用 `InterpreterModule::GetInterpMethodInfo`，这个函数会获取 `g_MetadataLock`。如果需要预热的方法数量较多，建议在加载画面期间用单线程顺序调用，避免多线程同时 PreJit 引发锁竞争。
 
 所以它的价值是：
 
@@ -280,11 +285,11 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 
 在 `Packages/HybridCLR/Runtime/RuntimeOptionId.cs` 和 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeConfig.cpp` 里，HybridCLR 暴露了一些运行时选项，比如：
 
-- `InterpreterThreadObjectStackSize`
-- `InterpreterThreadFrameStackSize`
-- `MaxMethodBodyCacheSize`
-- `MaxMethodInlineDepth`
-- `MaxInlineableMethodBodySize`
+- `InterpreterThreadObjectStackSize` — 控制每个线程的解释器对象栈大小（源码层名称 `RuntimeOptionId::InterpreterThreadObjectStackSize`）
+- `InterpreterThreadFrameStackSize` — 控制每个线程的解释器帧栈大小
+- `MaxMethodBodyCacheSize` — 控制 transform 结果缓存上限
+- `MaxMethodInlineDepth` — 控制解释器内联深度
+- `MaxInlineableMethodBodySize` — 控制可被内联的方法体大小上限
 
 这些东西确实能影响运行时行为。  
 但我不建议把它们当成第一选择。
@@ -337,7 +342,11 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 3. 让 AOT 承担稳定底座，让 HotUpdate 承担变化层  
    真正高频、稳定、强性能敏感的逻辑，不要默认留在 interpreter。
 
-这三条通常比“盲调运行时选项”更有效。
+这三条通常比”盲调运行时选项”更有效。
+
+## 补充：怎么确认热点到底在解释器还是 AOT
+
+在做上面的分层判断之前，你需要先确认一个方法到底跑在哪一侧。最直接的方式是用平台原生 profiler（iOS 用 Instruments，Android 用 Perfetto 或 Simpleperf）抓 CPU 采样，然后在调用栈里找 `hybridclr::interpreter::Interpreter::Execute` 这个帧。如果某个函数的调用栈里出现了这个帧并且占比显著，说明它正在走解释器路径；反之则是 AOT 或 native 路径。这一步做完，后面的”该前移还是该留”才有数据依据。
 
 ## 最后压一句话
 

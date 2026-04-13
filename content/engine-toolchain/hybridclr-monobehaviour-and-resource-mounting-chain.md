@@ -68,6 +68,8 @@ series: "HybridCLR"
 
 `资源反序列化那一刻，脚本所属程序集和脚本身份能不能被正确解析。`
 
+需要注意的是，Unity 在 Editor 里序列化 MonoBehaviour 时会记录 `scriptGuid`（.meta 文件里的 GUID）和 `fileID`（脚本在程序集内的唯一标识）。这些映射关系在 build 时就已经确定，HybridCLR 并不修改这层匹配——它只保证目标类型在 runtime 的 metadata 世界里确实存在，能被反序列化链按程序集名和类型名找到。
+
 HybridCLR 对 MonoBehaviour 的支持，真正补的是这条链。
 
 ## 先给一个最小背景：`AddComponent` 路径和资源反序列化路径不是一回事
@@ -332,7 +334,9 @@ void Assembly::InitializePlaceHolderAssemblies()
 
 这段代码非常关键。
 
-它说明 runtime 在真正加载热更 DLL 之前，就已经先把一批“只有程序集身份、还没有真实 metadata 内容”的 placeholder assembly 注册进了 `MetadataCache`。
+它说明 runtime 在真正加载热更 DLL 之前，就已经先把一批”只有程序集身份、还没有真实 metadata 内容”的 placeholder assembly 注册进了 `MetadataCache`。
+
+值得补充一个后续细节：当真正的热更 DLL 加载时，HybridCLR 的 `InterpreterImage` 会把 DLL 里的所有类型（包括热更 MonoBehaviour）注册进 `MetadataCache`。Unity 的反序列化系统在解析脚本引用时，最终是通过程序集名 + 命名空间 + 类名（即 fully qualified name）去 `MetadataCache` 查找对应的 `Il2CppClass`。placeholder 阶段先占住了程序集身份，`InterpreterImage` 阶段再把真实类型填进去，两步合在一起才能让反序列化链走通。
 
 所以到这一步，资源反序列化链已经有了两样东西：
 
@@ -349,7 +353,7 @@ void Assembly::InitializePlaceHolderAssemblies()
 
 ## 第六段链路：真正的热更 DLL 加载进来时，不是新建程序集，而是把 placeholder 填实
 
-这一步才是我觉得最关键、也最值得精读的地方。
+这一步是整条链最关键、也最值得精读的地方。
 
 还是看 `Assembly.cpp`，在真正创建热更程序集时，它先做了一件事：
 
@@ -447,13 +451,9 @@ HybridCLR 真正补的是这套链。
 这一节不再重讲 `LoadMetadataForAOTAssembly` 的运行时语义。  
 这里只强调一件事：placeholder 解决的是程序集身份链，但项目层面仍然应该把“代码加载完成”放在“资源世界全面启动”之前。
 
-## 把这件事压成一句话
+## 收束
 
-如果把这篇文章压成一句话，我会这样说：
-
-`HybridCLR 支持资源上挂着的热更 MonoBehaviour，靠的不是“运行时后来能拿到 Type”，而是 build-time 先把热更程序集名字补回 Unity 的 scripting assembly 清单，runtime 再提前注册同名 placeholder assembly，最后让真正加载进来的热更 DLL 去填实这层 placeholder。`
-
-这才是它能正确接回 Unity 资源工作流的原因。
+HybridCLR 支持资源上挂着的热更 MonoBehaviour，靠的不是”运行时后来能拿到 Type”。它做了三件事：build-time 把热更程序集名字补回 Unity 的 scripting assembly 清单；runtime 提前注册同名 placeholder assembly；真正加载进来的热更 DLL 填实这层 placeholder。三步合在一起，才能正确接回 Unity 资源工作流。
 
 ## 常见误解
 
@@ -491,7 +491,7 @@ HybridCLR 真正补的是这套链。
 
 `为什么 HybridCLR 不只是能跑热更代码，还能把 Unity 原本最难接回来的资源挂脚本链也接回来。`
 
-我觉得这是它最像“原生工作流扩展”而不是“外挂热更框架”的地方。
+这是它最像”原生工作流扩展”而不是”外挂热更框架”的地方。
 
 ## 系列位置
 

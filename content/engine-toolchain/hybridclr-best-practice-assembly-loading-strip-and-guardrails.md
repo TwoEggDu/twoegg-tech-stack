@@ -31,9 +31,9 @@ series: "HybridCLR"
 
 ## 先给一句总判断
 
-如果先把这篇压成一句话，我的判断是：
+整篇收成一个核心判断：
 
-`HybridCLR 不是“加一个热更新包”这么简单，它更像是给项目引入了一套新的运行时契约；最佳实践的核心，不是多背几个菜单名，而是让这套契约在构建期、启动期和诊断期都被明确执行。`
+`HybridCLR 不是”加一个热更新包”这么简单，它更像是给项目引入了一套新的运行时契约。`最佳实践的核心，不是多背几个菜单名，而是让这套契约在构建期、启动期和诊断期都被明确执行。
 
 也就是说，真正稳定的项目，靠的不是“某个同学很懂 HybridCLR”，而是：
 
@@ -105,6 +105,7 @@ HybridCLR 第二个最容易出错的地方，是加载顺序。
 
 - `LoadMetadataForAOTAssembly` 不是加载热更 DLL，它是在给 AOT 世界补可查询 metadata。
 - `Assembly.Load(bytes)` 才是在把热更程序集接进 runtime。
+- 不仅是依赖顺序的问题：`LoadMetadataForAOTAssembly` 必须在 `Assembly.Load` 之前完成，因为解释器在热更程序集初始化阶段就需要解析类型引用。如果 AOT metadata 还没就位，解释器在 resolve type reference 时就会找不到目标，直接表现为 `TypeLoadException` 或 `MissingMethodException`。
 - `MonoBehaviour` 资源挂载依赖的是程序集身份链和真实程序集对象已经接上。
 - 一旦资源世界先启动，Prefab/Scene/AssetBundle 里的脚本引用可能会比你想象得更早触发。
 
@@ -255,6 +256,8 @@ HybridCLR 很强的一点，是它确实能支持资源上直接挂热更 `MonoB
 - 委托和接口回调里的泛型实例
 - 容器类型嵌套和值类型组合
 
+还有一类风险容易和 AOT 泛型混淆，但本质不同——类型定义本身被裁剪。举一个具体的例子：热更代码里用了 `System.Collections.Generic.Dictionary<int, string>`，如果 `link.xml` 没有显式保留它，IL2CPP 裁剪可能直接把 `Dictionary` 的类型定义从 `mscorlib` 中移除。运行时报的是 `TypeLoadException`，而不是 `AOT generic method not instantiated`。区别在于：AOT 泛型缺失是”类型定义存在，但特定泛型实例没有被提前实例化”；裁剪问题是”类型定义本身已经不在 AOT 产物里了”。后者只有 `link.xml` 能兜住，补 metadata 是救不回来的。
+
 ### 对 “补 metadata 就完了” 保持警惕
 
 项目里一旦出现下面这种症状：
@@ -346,13 +349,15 @@ HybridCLR 真出问题时，最耗时间的通常不是修，而是找层。
 - 关键热更 DLL 和 AOT metadata DLL 是否进入最终资源目录
 - 必要的 `MethodBridge` 和 `AOTGenericReference` 是否已刷新
 
-这些检查不一定昂贵，但它们能提前挡住很多“明明是流程错了，却要等到 runtime 才爆”的问题。
+最低成本的 CI 卡点只需要两条断言：一是 `HybridCLRData/AssembliesPostIl2CppStrip/{target}/` 目录不为空，确认裁剪后的 AOT 程序集确实产出了；二是 `MethodBridge.cpp` 中包含与当前构建配置匹配的 `DEVELOPMENT` 标志。如果这两条过不了，后面所有步骤都不必继续。
 
-## 最后压一句话
+这些检查不一定昂贵，但它们能提前挡住很多”明明是流程错了，却要等到 runtime 才爆”的问题。
 
-如果只允许我用一句话收这篇文章，我会写成：
+## 最后收一个判断
 
-`HybridCLR 的最佳实践，本质上不是“把热更新接起来”，而是把运行时依赖的那几条隐含前提显式化：程序集边界不能乱、加载顺序不能反、生成物必须一致、风险要前移、诊断要分层。`
+如果整篇只留一条可执行的结论：
+
+`HybridCLR 的最佳实践，本质上不是”把热更新接起来”，而是把运行时依赖的几条隐含前提显式化。`程序集边界不能乱、加载顺序不能反、生成物必须一致、风险要前移、诊断要分层。
 
 这几条一旦立住，HybridCLR 在项目里就会更像一套可管理的工程系统，而不是一组偶尔有效的技巧。
 

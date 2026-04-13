@@ -128,7 +128,9 @@ E CRASH:   #07 pc 00000000039394f0  /data/app/.../lib/arm64/libil2cpp.so
 
 ### 第二步：提取 symbols，符号化地址
 
-Unity 打包时会产出一个 `*-IL2CPP.symbols.zip`，里面包含带 debug 符号的 `libil2cpp.so`。解压出 `arm64-v8a/libil2cpp.so`，用 Unity 内置 NDK 的 `llvm-addr2line` 做符号化：
+Unity 打包时会产出一个 `*-IL2CPP.symbols.zip`，里面包含带 debug 符号的 `libil2cpp.so`。解压出 `arm64-v8a/libil2cpp.so`，用 Unity 内置 NDK 的 `llvm-addr2line` 做符号化。
+
+> **注意**：对于 ARM64 Android 构建，必须使用 Android NDK 提供的 `aarch64-linux-android-addr2line`（或 Unity 内置 NDK 的 `llvm-addr2line`），不能用系统自带的 `addr2line`——系统版本通常是 x86 host 工具，无法正确解析 ARM64 ELF。需要符号化的二进制是构建产出 `unstripped` 目录下的 `libil2cpp.so`（即 symbols.zip 里的那份），不是安装到设备上被 strip 过的版本。
 
 ```bash
 ADDR2LINE="<Unity_NDK>/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-addr2line.exe"
@@ -242,6 +244,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 **2. SIGSEGV in libil2cpp.so，帧地址重复 = 栈溢出 = 死循环，不是真的空指针**
 
 `signal 11 (SIGSEGV), Cause: null pointer dereference` 这个描述是栈溢出的常见表现形式——栈指针超出了 guard page，访问到了未映射内存，内核报 null pointer dereference。看到帧地址重复就应该先往递归/死循环方向想，而不是找哪个对象是 null。
+
+Android 上原生线程的默认栈大小通常是 1 MB（可通过 `pthread_attr_setstacksize` 配置）。HybridCLR 解释器的每一层 `Interpreter::Execute` 调用都消耗原生栈帧，因此深度解释器递归（包括本案例中 FullySharedGeneric 引发的无限递归）会很快撞到这个上限。
 
 **3. `AOTGenericReferences.cs` 里有注释没有代码 = 什么都没做**
 

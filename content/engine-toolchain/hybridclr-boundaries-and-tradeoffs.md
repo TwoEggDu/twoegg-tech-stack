@@ -36,9 +36,9 @@ series: "HybridCLR"
 
 ## 先给一句总判断
 
-如果先把整件事压成一句话，我的判断是：
+一句总判断：
 
-`HybridCLR 不是一个单点能力，而是一组按层分开的补丁：它分别补了动态程序集装载、metadata 可见性、方法执行、跨 ABI 调用、资源脚本身份链；但这些补丁并不会自动消灭 AOT 泛型、构建一致性、首帧延迟、内存占用和版本差异这些代价。`
+`HybridCLR 不是一个单点能力，而是一组按层分开的补丁：它分别补了动态程序集装载、metadata 可见性、方法执行、跨 ABI 调用、资源脚本身份链。但这些补丁并不会自动消灭 AOT 泛型、构建一致性、首帧延迟、内存占用和版本差异这些代价。`
 
 也就是说，这个方案真正强的地方，不是“没有 trade-off”，而是：
 
@@ -72,7 +72,9 @@ series: "HybridCLR"
 
 `运行时如果需要读取某个 AOT 程序集的 method body、泛型 metadata 或签名信息，这些信息还能不能拿到。`
 
-这一层解决的是“可见性问题”。  
+对应源码入口：`hybridclr::metadata::AOTHomologousImage::LoadMetadata` 和 `MetadataModule::LoadMetadataForAOTAssembly`。
+
+这一层解决的是”可见性问题”。  
 注意，它解决的是：
 
 `让 runtime 看得见更多 AOT metadata`
@@ -90,7 +92,9 @@ series: "HybridCLR"
 
 `热更方法进入 runtime 之后，到底是怎么从 MethodInfo 走到真正执行的。`
 
-这一层解决的是“执行问题”。  
+对应源码入口：`hybridclr::interpreter::InterpreterModule::Execute` 和 `HiTransform::Transform`（将 CIL 转为内部 `HiOpcode` 指令）。
+
+这一层解决的是”执行问题”。  
 也就是我们前面整篇整篇在追的那条主链。
 
 ### 4. interpreter、AOT、native 之间怎么跨边界调用
@@ -100,7 +104,9 @@ series: "HybridCLR"
 
 `就算方法本身能执行，跨到 AOT、本机 ABI、reverse P/Invoke、delegate、calli 的时候，参数和返回值怎么过边界。`
 
-这一层解决的是“ABI 边界问题”。
+对应源码入口：生成工具 `MethodBridgeGeneratorCommand` 产出的 `MethodBridge.cpp`，以及运行时的 `InterpreterModule::GetMethodBridge`。
+
+这一层解决的是”ABI 边界问题”。
 
 如果这层没补齐，热更方法不一定是“不能运行”，更常见的是：
 
@@ -117,7 +123,9 @@ series: "HybridCLR"
 
 `Prefab、Scene、AssetBundle 上挂着的热更 MonoBehaviour，在反序列化阶段为什么还能被正确解析。`
 
-这一层解决的是“资源脚本身份问题”。
+对应源码入口：`hybridclr::metadata::InterpreterImage::InitScriptingAssembly`，它让 Unity 反序列化流程中的 `Assembly::GetScriptingClass` 能找到热更类型。
+
+这一层解决的是”资源脚本身份问题”。
 
 它跟 `Assembly.Load` 能不能成功，不是同一个问题。  
 前者关心的是“新程序集能不能进来”，后者关心的是“资源里的脚本引用能不能沿着同一条程序集身份链回到真实脚本类型”。
@@ -137,10 +145,10 @@ series: "HybridCLR"
 
 这和“普通热更程序集解释执行”已经不是一回事。
 
-同理，`Full Generic Sharing` 也不该和“补充 metadata”混成一件事。  
+同理，`Full Generic Sharing` 和”补充 metadata”属于不同层次的能力。  
 从 `libil2cpp` 侧代码看，它已经深入到 `MethodInfo.has_full_generic_sharing_signature`、generic method 形态和调用方式本身，属于 runtime 更底层的一条扩展轴。
 
-所以如果要给这一层一个准确判断，我会这么写：
+准确判断：
 
 `DHE 和 Full Generic Sharing 不是前面几层能力的同义词，而是更高一层、也更接近性能与泛型覆盖率上限的扩展能力。`
 
@@ -220,7 +228,7 @@ HybridCLR 的工程价值，不是让热更新变成零代价。
 
 `把原本几乎做不到的全平台热更新，转成一套你可以接受、调优、规避、自动化检查的成本结构。`
 
-我会把这些成本分成 5 类。
+这些成本可以分成 5 类。
 
 ## 第一类代价：构建链更长，而且必须保持一致
 
@@ -257,6 +265,8 @@ HybridCLR 的工程价值，不是让热更新变成零代价。
 - MethodBridge、ReversePInvokeWrapper 的表也会常驻
 - 资源挂载场景还会有 placeholder assembly 这类身份对象
 
+值得注意的两个具体来源：每个 `InterpreterImage` 持有整份 DLL metadata 的解析副本，这份副本在 image 卸载前不会释放；每个方法在首次 transform 后产生的 `InterpMethodInfo`（含展开后的 `HiOpcode` 指令流）同样会缓存到 image 卸载，不做单独回收。所以热更程序集越多、方法越多，常驻内存增量越明显。
+
 这些代价不一定大到不可接受。  
 但它们不是“没有”，只是“多数项目愿意拿这点空间，换全平台热更新能力”。
 
@@ -272,7 +282,7 @@ HybridCLR 的性能讨论最容易被一句“解释器比 AOT 慢”带偏。
 
 1. 纯 AOT 当然还是最快。
 2. 热更方法走 interpreter 主线时，会天然比纯 AOT 慢。
-3. 但 HybridCLR 又不是“直接解释原始 IL”，而是先 transform 成寄存器式内部指令再执行。
+3. 但 HybridCLR 又不是”直接解释原始 IL”，而是先 transform 成寄存器式 `HiOpcode` IR 再执行，省掉了 CIL 栈式求值的逐条 push/pop 开销。因此性能差距比朴素 IL interpreter 小，但对计算密集型循环仍然典型慢 10x-100x。
 4. 跨边界调用、值类型搬运、泛型兜底、桥接路径，都会继续放大性能差距。
 
 所以项目里的真实经验通常不是“它快”或“它慢”，而是：
@@ -396,9 +406,7 @@ HybridCLR 的性能讨论最容易被一句“解释器比 AOT 慢”带偏。
 
 - [HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版]({{< relref "engine-toolchain/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}})
 
-## 最后压一句话
-
-如果只允许我用一句话收这篇文章，我会写成：
+## 收束
 
 `HybridCLR 的价值，不在于神奇地消灭了 IL2CPP 热更新的所有困难，而在于它把“动态装载、metadata 可见性、方法执行、ABI 桥接、资源身份链、性能回退”这些原本混在一起的难题拆成了可工程化管理的几层能力；而你真正需要学会的，不是背结论，而是分清每个问题到底属于哪一层。`
 

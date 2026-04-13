@@ -25,11 +25,9 @@ series: "HybridCLR"
 2. 每个判断为什么不对，它真正混掉的是哪两层。
 3. 如果项目现场又出现类似说法，第一反应应该改成什么。
 
-## 先给一句总判断
+## 收束
 
-如果先把这篇压成一句话，我的判断是：
-
-`HybridCLR 最常见的误解，不是某个 API 名字记错了，而是把“装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享、函数级分流”这些本来就不在一层的东西，误当成同一种能力。`
+HybridCLR 最常见的误解，不是某个 API 名字记错了，而是把本来不在一层的东西误当成同一种能力：装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享、函数级分流。
 
 只要先把层分对，很多误解其实会自动消失。
 
@@ -46,7 +44,11 @@ series: "HybridCLR"
 
 `HybridCLR` 是一套把 `IL2CPP` 热更补成可工程化方案的 runtime 体系，解释器只是其中负责“热更方法怎么执行”的那一层。
 
-如果项目里有人说“它不就是个解释器”，你最好立刻追问：
+源码层面，`RuntimeApi.cpp` 里的入口就已经分成了 `LoadAssembly`（装载）、`LoadMetadataForAOTAssembly`（metadata 补充）、`PreJitMethod`（预热）等多条不同职责的链。仅看 `Interpreter::Execute` 一跳会丢掉前后大量工程细节。
+
+> 完整拆解见：<a href=”{{< relref “engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md” >}}”>HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute</a>
+
+如果项目里有人说”它不就是个解释器”，你最好立刻追问：
 
 `你现在说的是方法执行层，还是把整条装载到执行的链都压扁了？`
 
@@ -71,6 +73,10 @@ series: "HybridCLR"
 
 - 热更 DLL 根本没装进来
 - AOT metadata 补错了 DLL 或顺序不对
+
+源码上，`Assembly::Load` 走的是 `RawImage -> Assembly` 注册链，而 `Assembly::LoadMetadataForAOTAssembly` 走的是 `AOTHomologousImage` 注册链，两者在 `metadata/Assembly.cpp` 里是完全独立的函数。
+
+> 详细拆解见：<a href="{{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}">HybridCLR AOT 泛型与补充元数据</a>
 
 更准确的说法应该是：
 
@@ -101,9 +107,14 @@ series: "HybridCLR"
 
 `这个具体实例到底有没有被 AOT 出来。`
 
+运行时报出的 `AOT generic method not instantiated in aot` 来自 IL2CPP 的 `il2cpp::vm::Runtime::GetGenericVirtualMethod` 路径，它检查的是 native instantiation 是否存在，和 metadata 补充与否无关。
+
+> 两层区别的完整分析见：<a href="{{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}">HybridCLR AOT 泛型与补充元数据</a>
+
 更准确的说法应该是：
 
-`补 metadata 能让更多 AOT 泛型场景退回 interpreter 兜底，但它不是 generic native instantiation 的总开关。`
+补 metadata 能让更多 AOT 泛型场景退回 interpreter 兜底。  
+但它不是 generic native instantiation 的总开关。
 
 ## FAQ 4：`AOTGenericReference` 一生成，运行时就自动安全了
 
@@ -128,9 +139,13 @@ series: "HybridCLR"
 
 `运行时已经天然安全`
 
+生成逻辑在 `Editor/AOT/AOTReferenceGeneratorCommand.cs` 的 `GenerateAOTGenericReference` 里，它只是从已编译的热更 DLL 中静态扫描泛型实例列表，无法覆盖运行时动态组合出的新实例。
+
+> 工具链生成流程的完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-toolchain-what-generate-buttons-do.md" >}}">HybridCLR 工具链拆解</a>
+
 更准确的说法应该是：
 
-`AOTGenericReference` 是显式暴露和前移泛型风险的工具，不是对泛型问题的运行时担保。`
+`AOTGenericReference` 是显式暴露和前移泛型风险的工具，不是对泛型问题的运行时担保。
 
 ## FAQ 5：MethodBridge 只是性能优化
 
@@ -148,11 +163,15 @@ series: "HybridCLR"
 
 `interpreter / AOT / native 之间的 ABI 正确性`
 
-性能只是在“桥已经正确存在”的前提下，才有资格继续讨论。
+性能只是在”桥已经正确存在”的前提下，才有资格继续讨论。
+
+源码上，`MethodBridge.cpp` 是 `Generate/All` 产出的桥接表，构建时 `CheckSettings` 会校验其 DEVELOPMENT flag 一致性；缺桥时 runtime 直接在 `InterpreterModule` 的 invoker 查找阶段报错。
+
+> 边界拆解见：<a href=”{{< relref “engine-toolchain/hybridclr-boundaries-and-tradeoffs.md” >}}”>HybridCLR 的边界与 trade-off</a>
 
 更准确的说法应该是：
 
-`MethodBridge` 是跨边界调用契约的一部分，先是正确性能力，其次才是性能问题。`
+`MethodBridge` 是跨边界调用契约的一部分，先是正确性能力，其次才是性能问题。
 
 ## FAQ 6：支持 MonoBehaviour，就等于支持 `AddComponent`
 
@@ -171,9 +190,14 @@ series: "HybridCLR"
 - 一个偏代码实例化路径
 - 一个偏资源反序列化和程序集身份链
 
+Unity 在 build 时把 `scriptGuid`（.meta GUID）和 `fileID` 写入序列化数据；反序列化时沿程序集名 + 类型名去查找。HybridCLR 保证的是目标类型在 runtime 的 metadata 世界里存在，能被这条查找链命中。
+
+> 身份链的完整拆解见：<a href=”{{< relref “engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md” >}}”>HybridCLR MonoBehaviour 与资源挂载链路</a>
+
 更准确的说法应该是：
 
-`HybridCLR` 对资源挂载 `MonoBehaviour` 的支持，本质上是脚本身份链问题，不是“这个类能不能继承 MonoBehaviour”这么简单。`
+`HybridCLR` 对资源挂载 `MonoBehaviour` 的支持，本质上是脚本身份链问题。  
+不是”这个类能不能继承 `MonoBehaviour`”这么简单。
 
 ## FAQ 7：`Assembly.Load(byte[])` 之后，方法就已经“编译好了”
 
@@ -189,11 +213,15 @@ series: "HybridCLR"
 - 某些方法第一次执行时还会现场走 transform
 - 真正调用时还要看 `MethodInfo`、`invoker_method`、桥接路径和 interpreter 主链
 
-所以如果有人把 `Assembly.Load` 理解成“相当于已经编译完成”，那通常会立刻看错首调尖峰、transform 成本和实际调用路径。
+所以如果有人把 `Assembly.Load` 理解成”相当于已经编译完成”，那通常会立刻看错首调尖峰、transform 成本和实际调用路径。
+
+源码上，`Assembly.Load` 完成后方法的 `interpData` 仍为空；直到首次调用时 `InterpreterModule::GetInterpMethodInfo` 才触发 `HiTransform::Transform`，把 IL 翻译成解释器指令并缓存到 `InterpMethodInfo`。
+
+> 调用链的完整跟踪见：<a href=”{{< relref “engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md” >}}”>HybridCLR 调用链实战</a>
 
 更准确的说法应该是：
 
-`Assembly.Load` 是装载入口，不是“方法已经 ready”的终点。`
+`Assembly.Load` 是装载入口，不是”方法已经 ready”的终点。
 
 ## FAQ 8：`PreJitMethod` 真的是“提前 JIT 成 native 代码”
 
@@ -215,9 +243,13 @@ series: "HybridCLR"
 
 那后面你一定会高估它的能力边界。
 
+源码上，`PreJitMethod0` 内部调用的是 `InterpreterModule::GetInterpMethodInfo`，产出的是 `InterpMethodInfo`（解释器方法信息），不是 native code。它还会获取 `g_MetadataLock`，大量方法同时 PreJit 时需注意锁竞争。
+
+> 预热策略的完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}}">HybridCLR 性能与预热策略</a>
+
 更准确的说法应该是：
 
-`PreJit` 是把解释器首调成本前移，不是给 IL2CPP 补一个真正的 runtime native JIT。`
+`PreJit` 是把解释器首调成本前移，不是给 IL2CPP 补一个真正的 runtime native JIT。
 
 ## FAQ 9：`Full Generic Sharing` 是补充 metadata 的升级版
 
@@ -241,9 +273,13 @@ series: "HybridCLR"
 
 这些都已经不是 metadata 文件层能单独解释的事了。
 
+源码上，FGS 开启后 IL2CPP 生成的 C++ 代码里会出现带 `Il2CppFullySharedGenericAny` 标记的完全共享版本函数，调用模型本身发生了变化。
+
+> 完整对比见：<a href=”{{< relref “engine-toolchain/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md” >}}”>HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版</a>
+
 更准确的说法应该是：
 
-`Full Generic Sharing` 改的是 generic 调用模型，不是“metadata 更多一点”的升级版。`
+`Full Generic Sharing` 改的是 generic 调用模型，不是”metadata 更多一点”的升级版。
 
 ## FAQ 10：`DHE` 就是普通解释执行更快一点
 
@@ -263,19 +299,23 @@ series: "HybridCLR"
 - 更严格的加载顺序
 - 对资源挂载和 `extern` 的更保守边界
 
-所以它真正改的不是“解释器速度曲线”，而是：
+所以它真正改的不是”解释器速度曲线”，而是：
 
 `AOT 与 interpreter 在同一程序集里的函数级分流策略`
 
+其中 `dhao` 文件保存的就是离线差分计算出的”哪些类型和函数发生了变化”的结果，运行时据此决定每个函数走 AOT 还是 interpreter。
+
+> 完整拆解见：<a href=”{{< relref “engine-toolchain/hybridclr-dhe-why-not-just-faster-interpreter.md” >}}”>HybridCLR DHE｜为什么它不是普通解释执行更快一点</a>
+
 更准确的说法应该是：
 
-`DHE` 不是普通解释器的加速补丁，而是“修改现有 AOT 模块”这件事的函数级混合执行方案。`
+`DHE` 不是普通解释器的加速补丁，而是”修改现有 AOT 模块”这件事的函数级混合执行方案。
 
-## 最后压一句话
+## 收束
 
-如果只允许我用一句话收这篇 FAQ，我会写成：
+这 10 个判断几乎都指向同一个根因：把不在一层的能力误当成同一种东西。
 
-`HybridCLR` 最容易混掉的 10 个判断，几乎都指向同一个根因：把不在一层的能力误当成同一种东西；真正稳的做法，不是多记几个结论，而是先问自己现在讨论的到底是装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享，还是函数级分流。`
+真正稳的做法，不是多记几个结论，而是先问自己现在讨论的到底是装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享，还是函数级分流。
 
 ## 系列位置
 

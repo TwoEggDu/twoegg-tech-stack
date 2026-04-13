@@ -33,11 +33,9 @@ series: "HybridCLR"
 3. 补充 metadata 为什么能让报错消失，但不一定回到 native 路径。
 4. 这三样东西在真实项目里应该按什么顺序协作。
 
-## 先给一句总判断
+## 收束
 
-如果先把整件事压成一句话，我的判断是：
-
-`AOTGenericReferences 告诉你热更侧需要什么，DisStripCode 负责把需要的 AOT 泛型实例真正做进 native 世界，补 metadata 负责让解释器在必要时还能把 AOT 世界看懂；它们是上下游关系，不是同义词。`
+AOTGenericReferences 告诉你热更侧需要什么。DisStripCode 负责把需要的 AOT 泛型实例真正做进 native 世界。补 metadata 负责让解释器在必要时还能把 AOT 世界看懂。三者是上下游关系，不是同义词。
 
 所以你要先问的，不是“我该改哪个文件”，而是：
 
@@ -133,21 +131,25 @@ DisStripCode 做的是：
 ```text
 热更代码变化
   ↓
-Generate / AOTGenericReferences
+1. AOTGenericReferences 识别缺口
+   Generate 流程扫描热更 DLL，输出”哪些 AOT 泛型实例是需求点”
   ↓
-你拿到“哪些 AOT 泛型实例是需求点”
+2. DisStripCode 保留 AOT 实例
+   在 AOT 程序集里显式写出共享实例引用，
+   让 IL2CPP 构建时为它们生成 native 实现
   ↓
-判断这些需求点里：
-  - 哪些只要补 metadata 就能先恢复运行
-  - 哪些必须补 DisStripCode 才能回到 native
-  - 哪些其实是裁剪问题，应走 link.xml / [Preserve]
+3. 补充 metadata 补齐运行时可见性
+   调用 LoadMetadataForAOTAssembly，
+   让解释器能读取 AOT method body 和泛型定义
 ```
+
+注意这三步是因果链，不是并列选项。AOTGenericReferences 先告诉你缺什么，DisStripCode 把能做进 native 的实例补进去，补充 metadata 再为解释器兜底。裁剪问题（类型 / 成员被 strip）不在这条链上，应走 `link.xml` / `[Preserve]`。
 
 这条链里，三者分别站在：
 
-- `AOTGenericReferences`：需求发现
-- `DisStripCode`：native 实现实装
-- 补 metadata：解释路径兜底
+- `AOTGenericReferences`：需求发现（识别缺口）
+- `DisStripCode`：native 实现实装（保留实例）
+- 补 metadata：解释路径兜底（运行时可见性）
 
 只要把这三个位置站稳，很多“到底改哪”的争论其实会自动消失。
 
@@ -209,9 +211,12 @@ Generate / AOTGenericReferences
 - 以为看到了清单，就等于已经修了
 - 以为报错没了，就等于已经回到 native 了
 
-## 把这件事压成一句话
+## 收束
 
-> `AOTGenericReferences` 告诉你热更侧缺口可能在哪，DisStripCode 决定这些缺口哪些真正要被做进 AOT native 世界，补 metadata 负责在必要时让解释器还能继续工作；三者是上下游，不是同义词。
+> `AOTGenericReferences` 告诉你热更侧缺口可能在哪。
+> DisStripCode 决定这些缺口哪些真正要被做进 AOT native 世界。
+> 补 metadata 负责在必要时让解释器还能继续工作。
+> 三者是上下游，不是同义词。
 
 ---
 

@@ -23,7 +23,7 @@ series: "HybridCLR"
 - 这些按钮为什么这么多
 - 它们到底在生成什么，少点一步会怎样
 
-我觉得这篇文章就该把这件事讲透。
+这篇文章就该把这件事讲透。
 
 ## 这篇要回答什么
 
@@ -208,6 +208,8 @@ BashUtil.CopyDir($"{libil2cppWithHybridclrSourceDir}", dstLibil2cppDir, true);
 BashUtil.RemoveDir($"{SettingsUtil.ProjectDir}/Library/Il2cppBuildCache", true);
 ```
 
+> 安装完成后，Installer 还会在本地写入一个 `.hybridclr_version` 文件，记录当前安装的 package 和 libil2cpp 版本。后续 `CheckSettings` 在正式构建前会读取这个文件，校验 package 版本和本地 libil2cpp 版本是否一致——版本不匹配时会阻止构建。
+
 这几句已经把 `Installer` 的真正语义说透了：
 
 - 先准备一份带 `hybridclr` 的 `libil2cpp`
@@ -244,9 +246,9 @@ if (curIl2cppPath != SettingsUtil.LocalIl2CppDir)
 而且 `CheckSettings.cs` 做的还不止这一件事。  
 它还会在正式构建前强制确认几件前提：
 
-- 当前脚本后端是不是 `IL2CPP`
+- 当前脚本后端是不是 `IL2CPP`（如果是 Mono，直接报错阻止构建——HybridCLR 只能工作在 IL2CPP 后端）
 - `Installer` 有没有真正跑过
-- package 版本和本地安装的 `libil2cpp` 版本是否一致
+- package 版本和本地安装的 `libil2cpp` 版本是否一致（通过读取 Installer 写入的 `.hybridclr_version` 文件进行比对，不一致则阻止构建）
 
 也就是说，HybridCLR 的 build-time 链路不是“尽量帮你做对”，而是：
 
@@ -347,7 +349,7 @@ linkXmlWriter.Write($"{Application.dataPath}/{ls.outputLinkFile}", refTypes);
 
 ## `AOTDlls`：先做一次 `buildScriptsOnly`，再把裁剪后的 AOT DLL 快照拷出来
 
-这一层我觉得是菜单里最容易被误解的一步。
+这一层是菜单里最容易被误解的一步。
 
 很多人会把 `Generate/AOTDlls` 误解成“生成 AOT 版本的热更 DLL”。
 
@@ -448,6 +450,8 @@ CleanIl2CppBuildCache();
 再对照 runtime 侧，`InterpreterModule::Initialize()` 会显式调用 `InitMethodBridge()` 去消费这些生成出来的 stub 表。也就是说：
 
 `MethodBridge.cpp` 是 build-time 生成、runtime 真消费的产物。`
+
+> 生成 `MethodBridge.cpp` 时，生成器还会在文件头部嵌入一行 `// DEVELOPMENT=0` 或 `// DEVELOPMENT=1` 注释，记录生成时的 `EditorUserBuildSettings.development` 状态。正式构建前，`CheckSettings` 会用正则读取这行注释，与当前 `EditorUserBuildSettings.development` 做比对——如果不一致，说明 bridge 是在另一种构建模式下生成的，`CheckSettings` 会报错并要求重新执行 `Generate/All`。这个机制保证了桥接代码和最终包体的 Development/Release 模式始终匹配。
 
 ### MethodBridge 在 runtime 里怎么被消费——以及缺失时发生了什么
 
@@ -589,13 +593,11 @@ foreach(var method in methodTypeAndNames)
 
 `把这几段硬依赖按正确顺序串起来执行。`
 
-## 把这条工具链压成一句话
+## 收束
 
-如果把这篇文章压成一句话，我会这样描述 HybridCLR 的 build-time 工具链：
+HybridCLR 的 build-time 工具链先把改造后的 libil2cpp 安装到项目本地，再围绕当前 BuildTarget 产出热更 DLL、generated 版本适配文件、防裁剪信息、裁剪后的 AOT 快照、桥接 C++ 代码和泛型风险清单，最后在正式构建前通过 `UNITY_IL2CPP_PATH` 把 Unity 的打包链路接到这套本地产物上。
 
-`它先把改造后的 libil2cpp 安装到项目本地，再围绕当前 BuildTarget 产出热更 DLL、generated 版本适配文件、防裁剪信息、裁剪后的 AOT 快照、桥接 C++ 代码和泛型风险清单，最后在正式构建前通过 UNITY_IL2CPP_PATH 把 Unity 的打包链路接到这套本地产物上。`
-
-我觉得这句话比“点一下 Generate/All”更接近源码里的真实结构。
+这句话比”点一下 Generate/All”更接近源码里的真实结构。
 
 ## 常见误解
 

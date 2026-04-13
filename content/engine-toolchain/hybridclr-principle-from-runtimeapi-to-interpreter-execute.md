@@ -95,7 +95,7 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 
 但如果不先建立因果关系，这些东西很容易看起来互相平行。
 
-我对这套源码的一个基本判断是：
+一个核心判断先立住：
 
 `HybridCLR 不是一个解释器，而是一套 build-time 和 runtime 共同完成的系统链路。`
 
@@ -237,7 +237,7 @@ void Runtime::Initialize()
 - `InterpreterModule`：初始化解释器和桥接表
 - `TransformModule`：初始化 transform 侧的运行环境
 
-这也是为什么我一直觉得，读 HybridCLR 不能从 `Interpreter_Execute.cpp` 直接开始。
+这也是为什么读 HybridCLR 不应该从 `Interpreter_Execute.cpp` 直接开始。
 
 因为如果你不先看到 `Runtime::Initialize()`，就会下意识把它理解成“解释器实现细节”。
 
@@ -283,10 +283,14 @@ public static extern LoadImageErrorCode LoadMetadataForAOTAssembly(byte[] dllByt
 void RuntimeApi::RegisterInternalCalls()
 {
     il2cpp::vm::InternalCalls::Add("HybridCLR.RuntimeApi::LoadMetadataForAOTAssembly(...)", (Il2CppMethodPointer)LoadMetadataForAOTAssembly);
+    il2cpp::vm::InternalCalls::Add("HybridCLR.RuntimeApi::GetRuntimeOption(HybridCLR.RuntimeOptionId)", (Il2CppMethodPointer)RuntimeApi::_QueryRuntimeOption);
+    il2cpp::vm::InternalCalls::Add("HybridCLR.RuntimeApi::SetRuntimeOption(HybridCLR.RuntimeOptionId,System.Int32)", (Il2CppMethodPointer)RuntimeApi::_SetRuntimeOption);
     il2cpp::vm::InternalCalls::Add("HybridCLR.RuntimeApi::PreJitClass(System.Type)", (Il2CppMethodPointer)PreJitClass);
     il2cpp::vm::InternalCalls::Add("HybridCLR.RuntimeApi::PreJitMethod(System.Reflection.MethodInfo)", (Il2CppMethodPointer)PreJitMethod);
 }
 ```
+
+注意这里一共注册了 5 个 internal call，不是 3 个。中间两个 `GetRuntimeOption` / `SetRuntimeOption` 容易被忽略，但它们是后面 `RuntimeOptionId` 运行时选项的入口——性能篇会展开。
 
 这一步只是在做绑定。
 
@@ -517,7 +521,7 @@ MethodBody* MethodBodyCache::GetMethodBody(hybridclr::metadata::Image* image, ui
 }
 ```
 
-这层设计我觉得非常合理，因为它刚好卡在 CLI metadata 的天然边界上。
+这层设计刚好卡在 CLI metadata 的天然边界上。
 
 如果对照 ECMA-335，一个方法定义最终会对应到 `MethodDef` 及其 method body 信息。method body 的物理布局则在 `II.25.4 Common Intermediate Language physical layout` 里定义，包括：
 
@@ -567,14 +571,17 @@ InterpMethodInfo* HiTransform::Transform(const MethodInfo* methodInfo)
 }
 ```
 
-这里的控制流已经很清楚了：
+控制流可以拆成 5 步：
 
 1. 先拿到底层 `Image`
-2. 再按 `token` 取 `MethodBody`
-3. 然后构造 `TransformContext`
-4. 最后把 `MethodBody` 改写成 `InterpMethodInfo`
+2. 暂停 `MethodBodyCache` 的自动淘汰（`EnableShrinkMethodBodyCache(false)`），避免 transform 过程中刚拿到的 method body 被回收
+3. 再按 `token` 取 `MethodBody`
+4. 然后构造 `TransformContext`，把 `MethodBody` 改写成 `InterpMethodInfo`
+5. transform 完成后恢复淘汰策略（`EnableShrinkMethodBodyCache(true)`）
 
-这说明 HybridCLR 不是“直接拿原始 CIL 一条条解释”，而是先做了一层中间转换。
+其中第 2、5 步很容易被略过，但它们说明 `MethodBodyCache` 不是一个只增不减的缓存——HybridCLR 会主动淘汰不再需要的 method body 来控制内存占用。transform 期间必须暂停淘汰，否则正在使用的 method body 可能被回收。
+
+这说明 HybridCLR 不是”直接拿原始 CIL 一条条解释”，而是先做了一层中间转换。
 
 为什么一定要这样做？
 
@@ -618,6 +625,7 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
         return (InterpMethodInfo*)methodInfo->interpData;
     }
     ...
+    il2cpp::vm::Class::Init(methodInfo->klass);
     InterpMethodInfo* imi = transform::HiTransform::Transform(methodInfo);
     il2cpp::os::Atomic::FullMemoryBarrier();
     const_cast<MethodInfo*>(methodInfo)->interpData = imi;
@@ -625,15 +633,21 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 }
 ```
 
-这段代码等于把前面几节的结论压实了。
+这段代码有 3 个值得注意的细节。
 
-它的含义是：
+**第一，线程安全。** 入口处的 `FastAutoLock lock(&g_MetadataLock)` 说明 transform 是加锁串行的。如果多个线程同时首次调用同一个热更方法，只有一个线程会真正执行 transform，其他线程会在锁外等待。这也意味着启动期如果大量热更方法集中首调，锁竞争会成为瓶颈——这正是 `PreJitMethod` 存在的工程理由：把 transform 提前到单线程预热阶段。
 
-- 解释器方法第一次真正需要执行时，先检查 `MethodInfo` 上有没有已经缓存好的 `interpData`
-- 如果没有，就现场跑 `HiTransform::Transform`
-- 然后把产物挂回 `methodInfo->interpData`
+**第二，`Class::Init` 在 transform 之前。** transform 需要解析方法体里的类型引用，如果目标类的 runtime 结构还没初始化，解析会失败。所以 `GetInterpMethodInfo` 先确保方法所属类已经 Init 完成。
 
-这也是为什么前面说 `PreJitMethod` 的语义其实是“提前触发 transform 并缓存结果”。
+**第三，`FullMemoryBarrier` 在写回之前。** `interpData` 的写回没有第二次加锁，而是靠一次 full memory barrier 保证 transform 产物的所有内存写入对其他线程可见。后续线程走到 `if (methodInfo->interpData)` 时，读到的一定是完整的 `InterpMethodInfo`，不会读到半初始化的对象。
+
+整个流程压成一句：
+
+- 先查缓存（`interpData`）
+- 没有就加锁做 transform
+- 结果写回 `interpData`，下次调用直接走缓存
+
+这也是 `PreJitMethod` 的底层语义：提前触发 transform 并缓存结果，把首调 transform 的延迟从业务帧挪到预热阶段。
 
 ### 真正的执行循环
 
@@ -704,13 +718,13 @@ LoopStart:
 它们都很重要，但都不是这篇的主线。  
 总论里只需要知道：HybridCLR 不是只补解释器，它还补了泛型风险显式化和 ABI 边界。更细的边界分别放到 AOT 泛型篇和工具链篇里讲。
 
-## 把整条链压成一句话
+## 收束
 
-如果把全文压成一条尽量精确的链路，我会这样描述 HybridCLR：
+整条链路可以压成两句：
 
-`构建期先生成热更 DLL、防裁剪信息、裁剪后的 AOT 快照和 bridge；运行时再把热更程序集装成 InterpreterImage，把 AOT 补充 metadata 装成 AOTHomologousImage，随后按 image + token 取 MethodBody，经 HiTransform 产出 InterpMethodInfo，最后由 Interpreter::Execute 解释执行。`
+`构建期生成热更 DLL、防裁剪 link.xml、裁剪后 AOT 快照和 MethodBridge；运行时把热更 DLL 装成 InterpreterImage，AOT 补充 metadata 装成 AOTHomologousImage。`
 
-我觉得这句话比“HybridCLR 是 IL2CPP 热更新方案”更接近它在源码里的真实位置。
+`调用时按 image + token 取 MethodBody，经 HiTransform 产出 InterpMethodInfo，最后由 Interpreter::Execute 在 HiOpcode dispatch loop 里解释执行。`
 
 ## 常见误解
 

@@ -34,11 +34,9 @@ series: "HybridCLR"
 3. 每一类的优先判断顺序是什么。
 4. 每一类到底更偏向补 metadata、补 DisStripCode，还是查裁剪。
 
-## 先给一句总判断
+## 收束
 
-如果先把整件事压成一句话，我的判断是：
-
-`AOT 泛型问题最稳的排法，不是盯着单条日志猜，而是先判断它属于哪种坑型；坑型一旦分对，后面的共享类型判断、DisStripCode 写法和 metadata 取舍才会稳定。`
+AOT 泛型问题最稳的排法，不是盯着单条日志猜，而是先判断它属于哪种坑型。坑型一旦分对，后面的共享类型判断、DisStripCode 写法和 metadata 取舍才会稳定。
 
 ## 第一类：async / UniTask 型
 
@@ -65,6 +63,12 @@ series: "HybridCLR"
 
 `隐藏泛型`
 
+### 根因补充
+
+UniTask 里最常见的 AOT 泛型缺口来源是 `AsyncUniTaskMethodBuilder<T>.Start<TStateMachine>`。每个 `async UniTask<T>` 方法在编译后都会生成一个独立的编译器状态机类型 `<MethodName>d__N`，它就是 `TStateMachine` 的实际类型参数。因为这些状态机类型始终属于热更程序集，IL2CPP 在 AOT 构建时永远不会为它们生成具体实例。
+
+这意味着：即使你在 DisStripCode 里补了 `AsyncUniTaskMethodBuilder<int>`，只要有新的热更 async 方法，就可能产生新的状态机类型缺口。排查时要从 `TStateMachine` 侧入手，而不只盯 `T`。
+
 ## 第二类：Dictionary / List / ValueTuple 容器型
 
 这是最容易被肉眼识别出来的一类。
@@ -87,6 +91,12 @@ series: "HybridCLR"
 3. 再决定补的是类型实例化还是方法实例化
 
 这类坑最容易犯的错，是直接照抄日志里的泛型签名。
+
+### 根因补充
+
+`Dictionary<TKey, TValue>` 在 `TKey` 是值类型时尤其容易出问题。原因是 `Dictionary` 内部依赖 `EqualityComparer<TKey>.Default` 来做键比较，而这需要一个针对该值类型的 comparer 具体 AOT 实例。如果 `TKey` 是热更侧定义的枚举或结构体，IL2CPP 不会预生成对应的 `EqualityComparer<TKey>`，运行时就会缺方法。
+
+排查时除了看 `Dictionary` 本身的泛型签名，还要检查 `EqualityComparer<TKey>` 是否有对应实例。
 
 ## 第三类：LINQ / 扩展方法型
 
@@ -115,7 +125,13 @@ series: "HybridCLR"
 2. 先看最终缺的是容器、delegate 还是扩展方法本身
 3. 再决定是补共享类型、delegate 签名，还是先回 builder / iterator 路径
 
-这类坑常见于“代码很短，但链条很长”。
+这类坑常见于”代码很短，但链条很长”。
+
+### 根因补充
+
+`Select`、`Where`、`OrderBy` 等 LINQ 方法内部使用泛型迭代器和委托。每个独立的 lambda 表达式都会让编译器生成一个闭包类（如 `<>c__DisplayClassN`），这个闭包类可能触发新的 AOT 泛型需求。
+
+举例：`.Select(x => x.Name)` 实际上会展开为 `Enumerable.Select<TSource, TResult>` 加上一个 `Func<TSource, TResult>` 委托实例化，再加上闭包类的泛型路径。三层叠加后，只补其中一层往往不够。
 
 ## 第四类：委托 / 泛型回调型
 
@@ -186,9 +202,10 @@ series: "HybridCLR"
 | 委托 / 回调 | `Action<T>`、`Func<T>`、泛型事件 | 先认签名实例 | 只保了被调方法，没保签名 |
 | 自定义泛型容器 | 项目自写 `Pool<T>`、`Cache<K,V>` | 先拆类型 / 方法层 | 套用标准库经验太早 |
 
-## 把这件事压成一句话
+## 收束
 
-> AOT 泛型问题真正高效的排法，不是每次都从一条日志重新猜，而是先判断它属于哪种坑型；坑型分对之后，共享类型、DisStripCode 和 metadata 的处理顺序才会稳定。
+> AOT 泛型问题真正高效的排法，不是每次都从一条日志重新猜，而是先判断它属于哪种坑型。
+> 坑型分对之后，共享类型、DisStripCode 和 metadata 的处理顺序才会稳定。
 
 ---
 
