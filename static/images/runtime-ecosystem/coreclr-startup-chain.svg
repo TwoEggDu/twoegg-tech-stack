@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="400" rx="28" fill="url(#bg)"/>
+  <text x="64" y="52" class="subtitle">FROM DOTNET RUN TO JIT EXECUTION</text>
+  <text x="64" y="88" class="title">CoreCLR 启动链路</text>
+
+  <!-- Band 1: Host layer -->
+  <rect x="40" y="108" width="1120" height="74" rx="22" class="band"/>
+  <text x="66" y="132" class="subtitle">Host 层</text>
+
+  <rect x="66" y="140" width="150" height="34" rx="14" class="box box-a"/>
+  <text x="96" y="163" class="label">dotnet.exe</text>
+
+  <path d="M216 157H256" class="line"/>
+
+  <rect x="256" y="140" width="150" height="34" rx="14" class="box box-a"/>
+  <text x="299" y="163" class="label">hostfxr</text>
+
+  <path d="M406 157H446" class="line"/>
+
+  <rect x="446" y="140" width="170" height="34" rx="14" class="box box-a"/>
+  <text x="481" y="163" class="label">hostpolicy</text>
+
+  <path d="M616 157H656" class="line"/>
+
+  <rect x="656" y="140" width="260" height="34" rx="14" class="box box-a"/>
+  <text x="690" y="163" class="label">coreclr_initialize</text>
+
+  <!-- Band 2: Runtime Init -->
+  <rect x="40" y="200" width="1120" height="74" rx="22" class="band"/>
+  <text x="66" y="224" class="subtitle">Runtime Init</text>
+
+  <rect x="66" y="232" width="160" height="34" rx="14" class="box box-b"/>
+  <text x="100" y="255" class="label">EEStartup</text>
+
+  <path d="M226 249H276" class="line"/>
+
+  <rect x="276" y="232" width="150" height="34" rx="14" class="box box-b"/>
+  <text x="315" y="255" class="label">GC Init</text>
+
+  <path d="M426 249H476" class="line"/>
+
+  <rect x="476" y="232" width="150" height="34" rx="14" class="box box-b"/>
+  <text x="514" y="255" class="label">JIT Init</text>
+
+  <path d="M626 249H676" class="line"/>
+
+  <rect x="676" y="232" width="220" height="34" rx="14" class="box box-b"/>
+  <text x="710" y="255" class="label">Assembly Load</text>
+
+  <!-- Band 3: Execution -->
+  <rect x="40" y="292" width="1120" height="74" rx="22" class="band"/>
+  <text x="66" y="316" class="subtitle">Execution</text>
+
+  <rect x="66" y="324" width="170" height="34" rx="14" class="box box-c"/>
+  <text x="100" y="347" class="label">EntryPoint</text>
+
+  <path d="M236 341H286" class="line"/>
+
+  <rect x="286" y="324" width="150" height="34" rx="14" class="box box-c"/>
+  <text x="322" y="347" class="label">PreStub</text>
+
+  <path d="M436 341H486" class="line"/>
+
+  <rect x="486" y="324" width="150" height="34" rx="14" class="box box-c"/>
+  <text x="524" y="347" class="label">RyuJIT</text>
+
+  <path d="M636 341H686" class="line"/>
+
+  <rect x="686" y="324" width="220" height="34" rx="14" class="box box-c"/>
+  <text x="720" y="347" class="label">Native Code</text>
+
+  <!-- Cross-band arrows -->
+  <path d="M916 174V232" class="line"/>
+  <path d="M896 266V324" class="line"/>
+
+  <!-- Caption -->
+  <text x="64" y="390" class="caption">从命令行到第一行 native code 执行，CoreCLR 的启动链路经过 3 层 9 个节点。</text>
+</svg>

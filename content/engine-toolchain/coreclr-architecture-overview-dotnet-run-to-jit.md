@@ -21,6 +21,10 @@ series_id: "coreclr"
 
 前面的 ECMA-335 基础层解决的是规范本身——CLI 的类型系统、元数据格式、CIL 指令集、执行模型。这篇开始进入第一个具体实现：CoreCLR。目标不是把每个子系统讲透（后续 B2~B10 各有专题），而是先把从 `dotnet run` 到 native code 执行的完整链路走一遍，建立一张够用的全景地图。
 
+![CoreCLR 启动链路](../../images/runtime-ecosystem/coreclr-startup-chain.svg)
+
+*图：从 dotnet run 到 native code 执行，经过 Host、Runtime Init、Execution 三层。*
+
 ## 为什么要分析 CoreCLR
 
 CoreCLR 是 .NET 的参考实现，开源在 github.com/dotnet/runtime 仓库的 `src/coreclr/` 目录下。
