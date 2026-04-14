@@ -432,7 +432,7 @@ libil2cpp 的内部结构可以归纳为三个核心层次：
 - 系列：.NET Runtime 生态全景系列 — IL2CPP 模块
 - 位置：IL2CPP-D3
 - 上一篇：[IL2CPP-D2 il2cpp.exe 转换器：IL → C++ 代码生成策略]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md" >}})
-- 下一篇：IL2CPP-D4 global-metadata.dat
+- 下一篇：[IL2CPP-D4 global-metadata.dat：格式、加载与 runtime 的绑定]({{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}})
 
 **相关阅读**
 
