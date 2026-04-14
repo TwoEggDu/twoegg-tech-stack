@@ -237,7 +237,7 @@ Mono 的类型系统围绕三个核心结构展开。理解它们，是后续分
 
 | 概念 | Mono | CoreCLR | IL2CPP | LeanCLR |
 |------|------|---------|--------|---------|
-| 类型描述 | `MonoClass` | `MethodTable` + `EEClass` | `Il2CppClass` | `RtClassInfo` |
+| 类型描述 | `MonoClass` | `MethodTable` + `EEClass` | `Il2CppClass` | `RtClass` |
 | 方法描述 | `MonoMethod` | `MethodDesc` | `MethodInfo` | `RtMethodInfo` |
 | 程序集镜像 | `MonoImage` | `Module` | `Il2CppImage` | `CliImage` |
 

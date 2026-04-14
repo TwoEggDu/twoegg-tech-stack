@@ -44,7 +44,7 @@ series_id: "index"
 |----|--------|------|
 | **线 1：Unity 工程师线** | 做热更新的人 | ECMA-335 → IL2CPP → HybridCLR |
 | **线 2：Runtime 工程师线** | 想理解 CLR 实现的人 | ECMA-335 → CoreCLR → Mono → LeanCLR |
-| **线 3：H5/小游戏线** | WebAssembly/小游戏开发者 | ECMA-335 → LeanCLR（尤其 F9 WASM） |
+| **线 3：H5/小游戏线** | WebAssembly/小游戏开发者 | ECMA-335 → LeanCLR F1（调研）→ F9（WASM）→ F10（选型）→ G8（体积对比） |
 | **线 4：架构对比线** | 做技术选型的人 | ECMA-335 → 横切对比 G1~G8 |
 
 所有线共享同一个 ECMA-335 基础层。

@@ -21,6 +21,8 @@ series_id: "mono"
 
 C1 到 C5 分别拆解了 Mono 的架构总览、解释器、Mini JIT、SGen GC 和 AOT 模式。这篇从 Unity 的工程决策视角出发，把前五篇分析的技术特性放回它们实际产生影响的场景中：Unity 为什么选了 Mono、怎样改造了 Mono、又为什么转向了 IL2CPP、为什么编辑器至今仍在用 Mono、以及 CoreCLR 是否会成为下一个替代方案。
 
+> 本文聚焦技术决策层面的分析，不展开 Mono 源码细节。源码层面的分析见 C1~C5。
+
 ## Unity + Mono 的历史
 
 ### 2005 年的技术环境

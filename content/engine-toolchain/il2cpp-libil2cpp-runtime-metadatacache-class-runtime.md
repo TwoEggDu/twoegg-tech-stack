@@ -428,17 +428,7 @@ libil2cpp 的内部结构可以归纳为三个核心层次：
 
 ---
 
-**系列导航**
+## 系列位置
 
-- 系列：.NET Runtime 生态全景系列 — IL2CPP 模块
-- 位置：IL2CPP-D3
-- 上一篇：[IL2CPP-D2 il2cpp.exe 转换器：IL → C++ 代码生成策略]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md" >}})
-- 下一篇：[IL2CPP-D4 global-metadata.dat：格式、加载与 runtime 的绑定]({{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}})
-
-**相关阅读**
-
-- [IL2CPP-D1 架构总览：从 C# → C++ → native 的完整管线]({{< relref "engine-toolchain/il2cpp-architecture-csharp-to-cpp-to-native-pipeline.md" >}})
-- [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})
-- [HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
-- [LeanCLR 源码分析｜对象模型：RtObject、RtClass、VTable 与单指针头设计]({{< relref "engine-toolchain/leanclr-object-model-rtobject-rtclass-vtable.md" >}})
-- [LeanCLR 源码分析｜Internal Calls 与 Intrinsics：61 个 icall 和 BCL 适配策略]({{< relref "engine-toolchain/leanclr-internal-calls-intrinsics-bcl-adaptation.md" >}})
+- 上一篇：<a href="{{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md" >}}">IL2CPP 实现分析｜il2cpp.exe 转换器</a>
+- 下一篇：<a href="{{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}}">IL2CPP 实现分析｜global-metadata.dat</a>

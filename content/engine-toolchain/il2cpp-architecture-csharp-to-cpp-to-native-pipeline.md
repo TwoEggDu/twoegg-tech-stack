@@ -293,16 +293,7 @@ IL2CPP 模块总共规划 8 篇，这是第 1 篇。后续 4 篇的预告：
 
 这是后续所有 IL2CPP 深度分析的基础坐标系。
 
----
+## 系列位置
 
-**系列导航**
-
-- 系列：.NET Runtime 生态全景系列 — IL2CPP 模块
-- 位置：IL2CPP 模块首篇（D1）
-- 下一篇：IL2CPP-D2 il2cpp.exe 转换器
-
-**相关阅读**
-
-- [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})
-- [HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
-- [ECMA-335 基础｜CLI Type System：值类型 vs 引用类型、泛型、接口、约束]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}})
+- 上一篇：无。IL2CPP 模块首篇。
+- 下一篇：<a href="{{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md" >}}">IL2CPP 实现分析｜il2cpp.exe 转换器</a>
