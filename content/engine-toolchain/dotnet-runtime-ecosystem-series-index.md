@@ -40,6 +40,10 @@ series_id: "index"
 
 不需要从头到尾顺读。根据你的角色选一条线进入：
 
+![四条阅读线](../../images/runtime-ecosystem/reading-lines-overview.svg)
+
+*图：4 条阅读线从同一个 ECMA-335 基础层出发，分别通向不同的 runtime 模块。*
+
 | 线 | 适合谁 | 路径 |
 |----|--------|------|
 | **线 1：Unity 工程师线** | 做热更新的人 | ECMA-335 → IL2CPP → HybridCLR |
