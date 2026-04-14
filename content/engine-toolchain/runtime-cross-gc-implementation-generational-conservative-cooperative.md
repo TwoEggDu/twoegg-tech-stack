@@ -23,6 +23,8 @@ series_id: "runtime-cross"
 
 CROSS-G3 对比了方法执行——五个 runtime 怎么让同一段 CIL 字节码跑起来。但方法执行过程中分配的对象怎么管理、什么时候回收、回收时怎么找到所有存活对象——这些问题的答案在五个 runtime 里差异巨大。这篇把五种 GC 实现并排摊开。
 
+{{< svg "images/runtime-ecosystem/cross-gc-strategies.svg" >}}
+
 ## ECMA-335 的 GC 契约：只定义语义，不定义算法
 
 ECMA-335 Partition I 8.4 对自动内存管理的规定可以压成三条：
