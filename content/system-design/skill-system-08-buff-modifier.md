@@ -12,6 +12,7 @@ tags:
   - Modifier
   - Architecture
 series: "技能系统深度"
+series_order: 8
 ---
 
 > 很多战斗系统不是死在“放技能”上，而是死在“Buff 到底怎么叠、怎么算、什么时候失效”上。

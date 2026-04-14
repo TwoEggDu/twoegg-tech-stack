@@ -11,6 +11,7 @@ tags:
   - Targeting
   - Hit Resolution
 series: "技能系统深度"
+series_order: 6
 ---
 
 > 技能系统里，`“我想打谁”` 和 `“最后真的打到了谁”` 不是同一件事。

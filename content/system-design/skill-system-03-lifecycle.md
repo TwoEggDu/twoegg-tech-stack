@@ -11,6 +11,7 @@ tags:
   - State Machine
   - Architecture
 series: "技能系统深度"
+series_order: 3
 ---
 
 > 技能系统里最容易被低估的一件事是：`技能不是“执行一次函数”，而是“走完一段生命周期”。`

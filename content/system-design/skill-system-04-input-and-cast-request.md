@@ -11,6 +11,7 @@ tags:
   - Combat
   - Architecture
 series: "技能系统深度"
+series_order: 4
 ---
 
 > 玩家按下一个键，不等于技能已经释放。更准确地说：`玩家按下的是输入，技能系统消费的是施法请求。`

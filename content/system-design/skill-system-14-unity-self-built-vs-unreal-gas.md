@@ -11,6 +11,7 @@ tags:
   - GAS
   - Architecture
 series: "技能系统深度"
+series_order: 14
 ---
 
 > 最短的一句话是：`GAS 值得借的，不是它那套 API 外形，而是它把能力、效果、标签、表现和多人预测拆开的那套边界意识。`

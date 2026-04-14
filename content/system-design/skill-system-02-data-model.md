@@ -11,6 +11,7 @@ tags:
   - Data Model
   - Architecture
 series: "技能系统深度"
+series_order: 2
 ---
 
 > 技能系统的数据模型真正要回答的，不是“字段要不要全”，而是：`什么东西是定义，什么东西是这一次施法的运行时状态。`

@@ -11,6 +11,7 @@ tags:
   - Behavior Tree
   - Combat
 series: "技能系统深度"
+series_order: 10
 ---
 
 > 最短的一句话是：`AI 是技能系统的调用方，不是技能系统的执行者。`

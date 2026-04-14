@@ -11,6 +11,7 @@ tags:
   - Effect System
   - Architecture
 series: "技能系统深度"
+series_order: 7
 ---
 
 > 如果前几篇在做“拆边界”和“立骨架”，那这一篇要做的就是把发动机装上：`真正改世界状态的，不是 Skill 的名字，而是 Effect。`

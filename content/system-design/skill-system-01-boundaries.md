@@ -11,6 +11,7 @@ tags:
   - Buff
   - Architecture
 series: "技能系统深度"
+series_order: 1
 ---
 
 > 技能系统真正的第一步，不是写 `UseSkill()`，而是先回答：`到底什么是 Skill，什么不是 Skill。`
