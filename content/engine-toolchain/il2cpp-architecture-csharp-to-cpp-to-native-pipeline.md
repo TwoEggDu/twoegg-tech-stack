@@ -38,6 +38,10 @@ HybridCLR 系列已经从"补丁"视角间接分析了 IL2CPP 的部分模块：
 > - C++ 编译器优化（Clang / MSVC 对生成代码的优化行为不在本文范围）
 > - global-metadata.dat 格式（二进制结构和版本校验在 D4 专题展开）
 
+![IL2CPP 完整管线](../../images/runtime-ecosystem/il2cpp-pipeline-5-stages.svg)
+
+*图：从 C# 源代码到最终包体，IL2CPP 的 5 阶段管线。Stage 3（il2cpp.exe 转换）是核心。*
+
 ## IL2CPP 的整体管线
 
 从 Unity 编辑器点下 Build 到最终包体生成，IL2CPP 的完整管线可以拆成 5 个阶段。
