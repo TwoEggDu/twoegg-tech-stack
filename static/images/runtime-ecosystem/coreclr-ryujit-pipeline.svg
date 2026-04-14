@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="380" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .phase { font: 600 12px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.05em; fill: #7F3420; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="380" rx="28" fill="url(#bg)"/>
+  <text x="64" y="52" class="subtitle">IL → HIR → LIR → NATIVE CODE</text>
+  <text x="64" y="88" class="title">RyuJIT 编译管线</text>
+
+  <!-- Phase labels band -->
+  <rect x="40" y="108" width="1120" height="34" rx="14" class="band"/>
+  <text x="92" y="130" class="phase">前端</text>
+  <text x="442" y="130" class="phase">优化</text>
+  <text x="742" y="130" class="phase">后端</text>
+
+  <!-- Main pipeline band -->
+  <rect x="40" y="150" width="1120" height="100" rx="22" class="band"/>
+
+  <!-- Box 1: Importer -->
+  <rect x="66" y="172" width="130" height="56" rx="14" class="box box-a"/>
+  <text x="86" y="204" class="label">Importer</text>
+
+  <path d="M196 200H226" class="line"/>
+
+  <!-- Box 2: Morph -->
+  <rect x="226" y="172" width="120" height="56" rx="14" class="box box-a"/>
+  <text x="255" y="204" class="label">Morph</text>
+
+  <path d="M346 200H376" class="line"/>
+
+  <!-- Box 3: SSA -->
+  <rect x="376" y="172" width="100" height="56" rx="14" class="box box-b"/>
+  <text x="407" y="204" class="label">SSA</text>
+
+  <path d="M476 200H506" class="line"/>
+
+  <!-- Box 4: Optimizer -->
+  <rect x="506" y="172" width="146" height="56" rx="14" class="box box-b"/>
+  <text x="528" y="204" class="label">Optimizer</text>
+
+  <path d="M652 200H682" class="line"/>
+
+  <!-- Box 5: Lowering -->
+  <rect x="682" y="172" width="140" height="56" rx="14" class="box box-c"/>
+  <text x="706" y="204" class="label">Lowering</text>
+
+  <path d="M822 200H852" class="line"/>
+
+  <!-- Box 6: LSRA -->
+  <rect x="852" y="172" width="110" height="56" rx="14" class="box box-c"/>
+  <text x="882" y="204" class="label">LSRA</text>
+
+  <path d="M962 200H992" class="line"/>
+
+  <!-- Box 7: CodeGen -->
+  <rect x="992" y="172" width="140" height="56" rx="14" class="box box-c"/>
+  <text x="1016" y="204" class="label">CodeGen</text>
+
+  <!-- Sub-labels -->
+  <text x="80" y="244" class="copy">IL → HIR</text>
+  <text x="234" y="244" class="copy">形态规范化</text>
+  <text x="386" y="244" class="copy">数据流</text>
+  <text x="516" y="244" class="copy">内联/CSE/去虚化</text>
+  <text x="696" y="244" class="copy">HIR → LIR</text>
+  <text x="860" y="244" class="copy">寄存器分配</text>
+  <text x="1000" y="244" class="copy">LIR → native</text>
+
+  <!-- Tier annotation band -->
+  <rect x="40" y="268" width="1120" height="74" rx="22" class="band"/>
+
+  <!-- Tier0 indicator -->
+  <rect x="66" y="282" width="280" height="30" rx="12" class="box box-a"/>
+  <text x="130" y="302" class="copy">Tier0: 仅 Importer + Morph + 最小后端</text>
+
+  <!-- Tier1 indicator -->
+  <rect x="376" y="282" width="756" height="30" rx="12" class="box box-b"/>
+  <text x="600" y="302" class="copy">Tier1: 完整优化管线 (SSA → Optimizer → Lowering → LSRA → CodeGen)</text>
+
+  <text x="66" y="326" class="copy">Tier0 跳过 SSA/Optimizer 直出 native，热方法升 Tier1 走完整管线。</text>
+
+  <!-- Caption -->
+  <text x="64" y="368" class="caption">Tier0 跳过大部分优化直出 native，Tier1 走完整管线。</text>
+</svg>

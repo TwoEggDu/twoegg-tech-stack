@@ -21,6 +21,8 @@ series_id: "coreclr"
 
 B1 讲了 CoreCLR 的启动链路，B2 拆了 AssemblyLoadContext 的加载与卸载机制，B3 深入了 MethodTable + EEClass 的类型系统。这篇聚焦 CoreCLR 执行链路上最关键的环节：JIT 编译。
 
+{{< figure src="/images/runtime-ecosystem/coreclr-ryujit-pipeline.svg" caption="RyuJIT 编译管线：Tier0 跳过大部分优化直出 native，Tier1 走完整管线。" >}}
+
 ## RyuJIT 在 CoreCLR 中的位置
 
 回顾 B1 建立的启动链路：
