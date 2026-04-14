@@ -39,6 +39,8 @@ CoreCLR 用 JIT，Mono 有解释器和 AOT 两条路，IL2CPP 做全量 AOT，Le
 
 把类型系统讲清楚，后面每个 runtime 的实现分析才有共同的参照坐标。
 
+{{< figure src="/images/runtime-ecosystem/ecma335-type-hierarchy.svg" caption="CLI 类型分类体系：值类型继承 ValueType 但内存布局完全不同——无对象头、直接嵌入容器、赋值复制内容。" >}}
+
 ## 值类型与引用类型的本质区别
 
 C# 层面的直觉是：struct 是值类型，class 是引用类型。这个直觉在语法上没错，但它掩盖了真正的区分标准。
