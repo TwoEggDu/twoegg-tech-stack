@@ -292,4 +292,4 @@ LeanCLR 的 WASM 构建不是一个需要大量适配工作的移植项目，而
 ## 系列位置
 
 - 上一篇：[LEAN-F8 Internal Calls 与 Intrinsics]({{< ref "leanclr-internal-calls-intrinsics-bcl-adaptation" >}})
-- 下一篇：[LEAN-F10 LeanCLR vs HybridCLR 对比]({{< ref "leanclr-vs-hybridclr-two-routes-one-team" >}})
+- 下一篇：[LEAN-F10 LeanCLR vs HybridCLR 对比]({{< ref "leanclr-vs-hybridclr-two-routes-same-team" >}})
