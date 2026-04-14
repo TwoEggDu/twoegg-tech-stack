@@ -414,4 +414,4 @@ PeImageReader 从 PE 文件中定位 metadata root。CliImage 解析 5 个 strea
 ## 系列位置
 
 - 上一篇：[LEAN-F1 调研报告：架构总览与源码地图]({{< ref "leanclr-survey-architecture-source-map" >}})
-- 下一篇：LEAN-F3 双解释器（计划中）
+- 下一篇：[LEAN-F3 双解释器架构]({{< ref "leanclr-dual-interpreter-hl-ll-transform-pipeline" >}})
