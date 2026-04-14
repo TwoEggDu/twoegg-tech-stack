@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 28px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 13px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 16px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 12px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="480" rx="28" fill="url(#bg)"/>
+  <text x="64" y="44" class="subtitle">JIT VS AOT VS INTERPRETER VS HYBRID</text>
+  <text x="64" y="78" class="title">5 个 Runtime 的方法执行路径</text>
+
+  <!-- Top entry box: CIL 方法体 -->
+  <rect x="480" y="100" width="240" height="44" rx="12" class="box box-a"/>
+  <text x="600" y="128" class="label" text-anchor="middle">CIL 方法体</text>
+
+  <!-- 5 branch lines from top box -->
+  <!-- Path 1: CoreCLR -->
+  <line x1="520" y1="144" x2="120" y2="180" class="line"/>
+  <!-- Path 2: Mono -->
+  <line x1="550" y1="144" x2="340" y2="180" class="line"/>
+  <!-- Path 3: IL2CPP -->
+  <line x1="600" y1="144" x2="560" y2="180" class="line"/>
+  <!-- Path 4: HybridCLR -->
+  <line x1="650" y1="144" x2="780" y2="180" class="line"/>
+  <!-- Path 5: LeanCLR -->
+  <line x1="680" y1="144" x2="1000" y2="180" class="line"/>
+
+  <!-- Column 1: CoreCLR (box-b) -->
+  <rect x="30" y="184" width="180" height="40" rx="10" class="box box-b"/>
+  <text x="120" y="210" class="label" text-anchor="middle">CoreCLR</text>
+  <line x1="120" y1="224" x2="120" y2="248" class="line"/>
+  <rect x="30" y="252" width="180" height="40" rx="10" class="box box-b"/>
+  <text x="120" y="278" class="label" text-anchor="middle">RyuJIT</text>
+  <line x1="120" y1="292" x2="120" y2="316" class="line"/>
+  <rect x="30" y="320" width="180" height="40" rx="10" class="box box-b"/>
+  <text x="120" y="346" class="label" text-anchor="middle">native code</text>
+
+  <!-- Column 2: Mono (box-b) -->
+  <rect x="240" y="184" width="200" height="40" rx="10" class="box box-b"/>
+  <text x="340" y="210" class="label" text-anchor="middle">Mono</text>
+  <line x1="340" y1="224" x2="340" y2="248" class="line"/>
+  <rect x="240" y="252" width="200" height="40" rx="10" class="box box-b"/>
+  <text x="340" y="278" class="label" text-anchor="middle">Mini JIT / Interpreter</text>
+  <line x1="340" y1="292" x2="340" y2="316" class="line"/>
+  <rect x="240" y="320" width="200" height="40" rx="10" class="box box-b"/>
+  <text x="340" y="346" class="label" text-anchor="middle">native / 解释执行</text>
+
+  <!-- Column 3: IL2CPP (box-c) -->
+  <rect x="470" y="184" width="190" height="40" rx="10" class="box box-c"/>
+  <text x="565" y="210" class="label" text-anchor="middle">IL2CPP</text>
+  <line x1="565" y1="224" x2="565" y2="248" class="line"/>
+  <rect x="470" y="252" width="190" height="40" rx="10" class="box box-c"/>
+  <text x="565" y="278" class="label" text-anchor="middle">il2cpp.exe (构建时)</text>
+  <line x1="565" y1="292" x2="565" y2="316" class="line"/>
+  <rect x="470" y="320" width="190" height="40" rx="10" class="box box-c"/>
+  <text x="565" y="346" class="label" text-anchor="middle">C++ → native</text>
+
+  <!-- Column 4: HybridCLR (box-c) -->
+  <rect x="690" y="184" width="190" height="40" rx="10" class="box box-c"/>
+  <text x="785" y="210" class="label" text-anchor="middle">HybridCLR</text>
+  <line x1="785" y1="224" x2="785" y2="248" class="line"/>
+  <rect x="690" y="252" width="190" height="40" rx="10" class="box box-c"/>
+  <text x="785" y="278" class="label" text-anchor="middle">HiTransform (1级)</text>
+  <line x1="785" y1="292" x2="785" y2="316" class="line"/>
+  <rect x="690" y="320" width="190" height="40" rx="10" class="box box-c"/>
+  <text x="785" y="346" class="label" text-anchor="middle">HiOpcode 解释执行</text>
+
+  <!-- Column 5: LeanCLR (box-a) -->
+  <rect x="910" y="184" width="210" height="40" rx="10" class="box box-a"/>
+  <text x="1015" y="210" class="label" text-anchor="middle">LeanCLR</text>
+  <line x1="1015" y1="224" x2="1015" y2="248" class="line"/>
+  <rect x="910" y="252" width="210" height="40" rx="10" class="box box-a"/>
+  <text x="1015" y="278" class="label" text-anchor="middle">HL+LL Transform (2级)</text>
+  <line x1="1015" y1="292" x2="1015" y2="316" class="line"/>
+  <rect x="910" y="320" width="210" height="40" rx="10" class="box box-a"/>
+  <text x="1015" y="346" class="label" text-anchor="middle">LL-IL 解释执行</text>
+
+  <!-- Caption -->
+  <text x="600" y="410" class="caption" text-anchor="middle">同一份 CIL 方法体，5 条执行路线的核心差异在于代码转换发生在什么时候、转换成什么形式。</text>
+</svg>
