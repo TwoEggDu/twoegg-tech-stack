@@ -193,4 +193,4 @@ V13 建立了四层验证体系：
 ---
 
 **上一篇**：[稳定性测试]({{< relref "delivery-engineering/delivery-verification-testing-05-stability.md" >}})
-**下一个系列**：[V14 性能预算与监控]({{< relref "delivery-engineering/delivery-performance-budget-series-index.md" >}}) — 从性能预算定义到线上性能监控的完整闭环
+**下一个系列**：[V14 性能与稳定性工程]({{< relref "delivery-engineering/delivery-performance-stability-series-index.md" >}}) — 从性能预算定义到 Crash 治理的完整工程体系
