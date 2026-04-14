@@ -429,4 +429,4 @@ RtObject 提供 16 字节的双指针头，单线程版可裁剪到 8 字节。R
 ## 系列位置
 
 - 上一篇：[LEAN-F3 双解释器架构]({{< ref "leanclr-dual-interpreter-hl-ll-transform-pipeline" >}})
-- 下一篇：LEAN-F5 类型系统（计划中）
+- 下一篇：[LEAN-F5 类型系统]({{< ref "leanclr-type-system-generic-inflation-interface-dispatch" >}})
