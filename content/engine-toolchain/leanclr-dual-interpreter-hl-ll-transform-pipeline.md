@@ -485,4 +485,4 @@ LeanCLR 的 `interp/` 目录用 31,829 行 C++ 实现了一个完整的三级 tr
 ## 系列位置
 
 - 上一篇：[LEAN-F2 Metadata 解析]({{< ref "leanclr-metadata-parsing-cli-image-module-def" >}})
-- 下一篇：LEAN-F4 对象模型（计划中）
+- 下一篇：[LEAN-F4 对象模型]({{< ref "leanclr-object-model-rtobject-rtclass-vtable" >}})

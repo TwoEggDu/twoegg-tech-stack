@@ -58,13 +58,13 @@
 |------|------|------|------|
 | ECMA-A1 | CLI Metadata 基础：TypeDef、MethodDef、Token、Stream | ✅ 已有（Pre-A） | 对应 ECMA-335 Partition II §22-24 |
 | ECMA-A2 | CIL 指令集与栈机模型：ldloc、add、call | ✅ 已有（Pre-B） | 对应 ECMA-335 Partition III |
-| ECMA-A3 | CLI Type System：值类型 vs 引用类型、泛型、接口、约束 | 待写 | 对应 ECMA-335 Partition I §8 |
-| ECMA-A4 | CLI Execution Model：方法调用约定、虚分派、异常处理模型 | 待写 | 对应 ECMA-335 Partition I §12 |
-| ECMA-A5 | CLI Assembly Model：程序集身份、strong naming、版本策略 | 待写 | 对应 ECMA-335 Partition II §6 |
-| ECMA-A6 | CLI Memory Model：对象布局、GC 契约、finalization 语义 | 待写 | 对应 ECMA-335 Partition I §12.6 |
+| ECMA-A3 | CLI Type System：值类型 vs 引用类型、泛型、接口、约束 | ✅ 已写 | 对应 ECMA-335 Partition I §8 |
+| ECMA-A4 | CLI Execution Model：方法调用约定、虚分派、异常处理模型 | ✅ 已写 | 对应 ECMA-335 Partition I §12 |
+| ECMA-A5 | CLI Assembly Model：程序集身份、strong naming、版本策略 | ✅ 已写 | 对应 ECMA-335 Partition II §6 |
+| ECMA-A6 | CLI Memory Model：对象布局、GC 契约、finalization 语义 | ✅ 已写 | 对应 ECMA-335 Partition I §12.6 |
 | ECMA-A7 | CLI 泛型实例化模型：开放类型 vs 封闭类型、共享与特化 | ✅ 部分已有（Bridge-D） | 需要从 IL2CPP 视角扩展为规范视角 |
 
-**小计：7 篇（3 篇已有，4 篇待写）**
+**小计：7 篇（6 篇已有，1 篇待写）**
 
 ---
 
