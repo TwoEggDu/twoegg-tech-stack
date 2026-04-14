@@ -85,6 +85,82 @@ delivery_reading_lines:
 - 某个特定 Crash 签名在 30 分钟内新增 100+ 次 → Warning
 - 资源下载失败率在 15 分钟内从 < 1% 跳到 > 5% → Critical（可能是 CDN 故障）
 
+### Prometheus 风格的告警规则示例
+
+以下是实际使用的告警规则配置示例，供参考：
+
+```yaml
+# 阈值告警：Crash-free rate 低于 99.5%
+- alert: CrashFreeRateCritical
+  expr: |
+    1 - (
+      sum(rate(app_crash_total{version="current"}[1h]))
+      /
+      sum(rate(app_session_total{version="current"}[1h]))
+    ) < 0.995
+  for: 10m
+  labels:
+    severity: critical
+  annotations:
+    summary: "Crash-free rate 低于 99.5%"
+    description: "当前版本 Crash-free rate {{ $value | humanizePercentage }}，持续 10 分钟"
+    runbook: "https://wiki/runbook/crash-rate-critical"
+
+# 趋势告警：Crash 率比前一版本同期高 0.3 个百分点
+- alert: CrashRateRegression
+  expr: |
+    (
+      sum(rate(app_crash_total{version="current"}[1h]))
+      /
+      sum(rate(app_session_total{version="current"}[1h]))
+    )
+    -
+    (
+      sum(rate(app_crash_total{version="previous"}[1h]))
+      /
+      sum(rate(app_session_total{version="previous"}[1h]))
+    ) > 0.003
+  for: 30m
+  labels:
+    severity: warning
+  annotations:
+    summary: "Crash 率劣化超过 0.3 个百分点"
+
+# 突增告警：Crash 数量是过去同时段的 3 倍
+- alert: CrashSpike
+  expr: |
+    sum(rate(app_crash_total{version="current"}[30m]))
+    >
+    3 * avg_over_time(
+      sum(rate(app_crash_total{version="current"}[30m]))[24h:30m]
+    )
+  for: 5m
+  labels:
+    severity: critical
+  annotations:
+    summary: "Crash 数量突增（是过去 24h 同时段均值的 3 倍以上）"
+
+# 资源下载失败率突增
+- alert: ResourceDownloadFailure
+  expr: |
+    1 - (
+      sum(rate(resource_download_success_total[15m]))
+      /
+      sum(rate(resource_download_total[15m]))
+    ) > 0.05
+  for: 5m
+  labels:
+    severity: critical
+  annotations:
+    summary: "资源下载失败率超过 5%，可能 CDN 故障"
+```
+
+**关于 `for` 持续时间的经验**：
+
+- Critical 告警的 `for` 设 5-10 分钟，不要设太短（瞬时波动触发误报）也不要设太长（延迟响应）
+- Warning 告警的 `for` 设 15-30 分钟，给足观察窗口
+- 某次我们把 Crash 率的 `for` 从 15 分钟改到了 5 分钟——因为复盘发现一次事故中，告警延迟了 15 分钟才触发，而那 15 分钟里已经有数千用户受到影响
+
 ## 告警严重程度与升级机制
 
 | 级别 | 含义 | 响应要求 | 通知方式 |
@@ -100,6 +176,17 @@ delivery_reading_lines:
 
 告警太多 = 没有告警。当团队每天收到 50+ 条告警时，真正重要的告警会被淹没。
 
+**一个真实的告警疲劳案例**：某个项目在上线初期配置了 35 条告警规则，每天平均触发 60+ 条告警。两个月后出了一次严重的数据库连接池耗尽事故，事后复盘发现——告警确实触发了（P1 级别），但 On-call 的企业微信群里每天有 60 多条告警，这条 P1 被淹没在了一堆 P3 告警里，没人注意到。
+
+更讽刺的是，那 60 条告警中有超过 40 条是同一类问题（日志磁盘使用率反复在阈值附近波动），但没有配置聚合规则，每次波动都触发一条新告警。
+
+这次事故后我们做了三件事：
+1. 把告警规则从 35 条砍到 15 条——删掉了所有"看了也不知道该干什么"的告警
+2. 给所有告警加了聚合窗口——同一规则 1 小时内最多触发 1 次
+3. Critical 级别告警单独走电话通知，和 IM 频道完全分开
+
+效果：每天告警数从 60+ 降到了 8-12 条，Critical 告警的平均响应时间从 25 分钟降到了 4 分钟。
+
 **防治策略**：
 
 | 策略 | 做法 |
@@ -109,6 +196,17 @@ delivery_reading_lines:
 | 聚合同类 | 同一 Crash 签名 1 小时内只告警一次，附带计数 |
 | 分级路由 | Info/Warning 只发看板和异步频道，Critical 以上才电话 |
 | 定期审计 | 每月检查：哪些告警从未被 actionable？考虑删除或降级 |
+
+### 告警规则的"黄金比例"
+
+经验上来看，一个健康的告警体系应该满足以下比例：
+
+- **每日告警总数 < 20 条**（超过 20 条人脑就开始选择性忽视）
+- **Critical 占比 < 5%**（如果经常有 Critical 要么是系统真的不稳定，要么是阈值设得太严）
+- **告警被 actionable 的比例 > 80%**（收到告警后确实需要做点什么的比例）
+- **误报率 < 10%**（超过 10% 团队就开始不信任告警系统）
+
+一个简单的判断方法：如果 On-call 值班人员在看到告警通知后的第一反应是"又来了，不用管"，那这条告警规则需要被删掉或重新配置。
 
 ## 发布后监控窗口
 

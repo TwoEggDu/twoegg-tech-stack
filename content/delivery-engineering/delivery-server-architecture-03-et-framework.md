@@ -109,4 +109,4 @@ Docker 镜像打包（.NET Runtime + 产物）
 
 **下一步应读**：[Server ECS 选型]({{< relref "delivery-engineering/delivery-server-architecture-04-server-ecs.md" >}})
 
-**扩展阅读**：[ET 框架源码解析系列]({{< relref "et-framework/" >}}) — ET9 的完整架构和源码分析
+**扩展阅读**：[ET 框架源码解析系列]({{< relref "et-framework/_index.md" >}}) — ET9 的完整架构和源码分析

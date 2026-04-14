@@ -161,4 +161,4 @@ Shader 预热的详细工程化设计在本站渲染管线栏的 Shader Variant 
 
 **下一步应读**：[Catalog 与 Manifest 版本比对]({{< relref "delivery-engineering/delivery-resource-pipeline-06-catalog-versioning.md" >}}) — 客户端怎么知道需要下载哪些新资源
 
-**扩展阅读**：[问题拆解：首次加载卡顿]({{< relref "problem-solving/" >}}) — 首次加载卡顿的排障方法和优化案例
+**扩展阅读**：[问题拆解：首次加载卡顿]({{< relref "problem-solving/unity-first-load-stutter-or-cache-miss.md" >}}) — 首次加载卡顿的排障方法和优化案例

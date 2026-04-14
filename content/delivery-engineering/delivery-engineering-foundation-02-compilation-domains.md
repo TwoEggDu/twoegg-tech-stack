@@ -126,4 +126,4 @@ ThirdParty/X   → ThirdPartyX.asmdef → ThirdPartyX.dll
 
 **下一步应读**：[Unity 实践：asmdef / Package / 编译优化]({{< relref "delivery-engineering/delivery-engineering-foundation-03-unity-asmdef.md" >}}) — 编译域原则在 Unity 中的具体落地方式
 
-**扩展阅读**：[脚本编译管线系列]({{< relref "engine-toolchain/" >}}) — Unity 脚本从 C# 到 IL 到运行时的完整编译链路
+**扩展阅读**：[脚本编译管线系列]({{< relref "engine-toolchain/unity-script-compilation-pipeline-series-index.md" >}}) — Unity 脚本从 C# 到 IL 到运行时的完整编译链路

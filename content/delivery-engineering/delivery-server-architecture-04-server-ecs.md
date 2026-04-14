@@ -92,4 +92,4 @@ ComponentV2: { CurrentHP: int, MaxHP: int }
 
 **下一步应读**：[服务端编译与容器化]({{< relref "delivery-engineering/delivery-server-architecture-05-build-containerize.md" >}})
 
-**扩展阅读**：[Server ECS 系列]({{< relref "system-design/" >}}) — FLECS、EnTT、Bevy、C# ECS 的完整对比和实现深挖
+**扩展阅读**：[Server ECS 系列]({{< relref "system-design/server-ecs-series-index.md" >}}) — FLECS、EnTT、Bevy、C# ECS 的完整对比和实现深挖

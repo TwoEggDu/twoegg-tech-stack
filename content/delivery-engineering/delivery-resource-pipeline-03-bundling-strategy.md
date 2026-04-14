@@ -205,4 +205,4 @@ bundle_B 依赖 bundle_shared
 
 **下一步应读**：[Unity 实践：AB vs Addressables vs YooAsset]({{< relref "delivery-engineering/delivery-resource-pipeline-04-unity-solutions.md" >}}) — 三套方案怎么回答打包策略的问题
 
-**扩展阅读**：[AssetBundle 系列]({{< relref "engine-toolchain/" >}}) — AssetBundle 打包粒度、依赖管理和冗余控制的完整技术深挖
+**扩展阅读**：[AssetBundle 系列]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}}) — AssetBundle 打包粒度、依赖管理和冗余控制的完整技术深挖

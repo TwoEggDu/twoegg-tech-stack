@@ -130,4 +130,4 @@ Unity 提供了 Google Play Asset Delivery 插件（`com.google.play.assetdelive
 
 **下一步应读**：[iOS 分发]({{< relref "delivery-engineering/delivery-package-distribution-04-ios.md" >}}) — iOS 平台的 App Thinning 和 On-Demand Resources
 
-**扩展阅读**：[Android AAB/PAD 系列]({{< relref "engine-toolchain/" >}}) — Unity 中 AAB 和 PAD 集成的完整技术深挖
+**扩展阅读**：[Android AAB/PAD 系列]({{< relref "engine-toolchain/unity-android-aab-pad-series-index.md" >}}) — Unity 中 AAB 和 PAD 集成的完整技术深挖

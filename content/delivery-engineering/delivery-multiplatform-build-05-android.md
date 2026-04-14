@@ -171,4 +171,4 @@ configurations.all {
 
 **下一步应读**：[微信小游戏构建专项]({{< relref "delivery-engineering/delivery-multiplatform-build-06-wechat.md" >}}) — WebGL 到微信小游戏的转换链路
 
-**扩展阅读**：[Android AAB/PAD 系列]({{< relref "engine-toolchain/" >}}) — Unity 中 Android 构建的完整技术深挖
+**扩展阅读**：[Android AAB/PAD 系列]({{< relref "engine-toolchain/unity-android-aab-pad-series-index.md" >}}) — Unity 中 Android 构建的完整技术深挖

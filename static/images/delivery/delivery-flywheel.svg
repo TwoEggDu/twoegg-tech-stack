@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A90D9"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="400" y="40" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">交付飞轮模型</text>
+  <text x="400" y="62" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#666">Delivery Flywheel</text>
+
+  <!-- Center circle -->
+  <circle cx="400" cy="320" r="60" fill="#EEF2FF" stroke="#4A90D9" stroke-width="2"/>
+  <text x="400" y="315" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2D5BA0">交付</text>
+  <text x="400" y="335" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2D5BA0">飞轮</text>
+
+  <!-- Stage positions (8 stages around a circle, radius 200) -->
+  <!-- 0: 生产 (top) -->
+  <g filter="url(#shadow)">
+    <rect x="355" y="88" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="400" y="114" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">生产</text>
+  </g>
+
+  <!-- 1: 集成 (top-right) -->
+  <g filter="url(#shadow)">
+    <rect x="497" y="138" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="542" y="164" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">集成</text>
+  </g>
+
+  <!-- 2: 构建 (right) -->
+  <g filter="url(#shadow)">
+    <rect x="555" y="298" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="600" y="324" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">构建</text>
+  </g>
+
+  <!-- 3: 验证 (bottom-right) -->
+  <g filter="url(#shadow)">
+    <rect x="497" y="452" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="542" y="478" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">验证</text>
+  </g>
+
+  <!-- 4: 发布 (bottom) -->
+  <g filter="url(#shadow)">
+    <rect x="355" y="508" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="400" y="534" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">发布</text>
+  </g>
+
+  <!-- 5: 监控 (bottom-left) -->
+  <g filter="url(#shadow)">
+    <rect x="213" y="452" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="258" y="478" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">监控</text>
+  </g>
+
+  <!-- 6: 闭环 (left) -->
+  <g filter="url(#shadow)">
+    <rect x="155" y="298" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="200" y="324" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">闭环</text>
+  </g>
+
+  <!-- 7: 改进 (top-left) -->
+  <g filter="url(#shadow)">
+    <rect x="213" y="138" width="90" height="40" rx="20" fill="#4A90D9"/>
+    <text x="258" y="164" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">改进</text>
+  </g>
+
+  <!-- Curved arrows connecting stages (clockwise) -->
+  <path d="M 445,108 Q 480,108 497,148" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 575,178 Q 590,220 595,298" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 595,338 Q 590,400 575,452" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 497,478 Q 460,500 445,518" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 355,528 Q 320,510 303,478" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 225,452 Q 210,400 205,338" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 205,298 Q 210,230 225,178" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <path d="M 303,148 Q 330,118 355,108" fill="none" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Gate 1: 质量门 (between 集成 and 构建) -->
+  <g>
+    <rect x="574" y="218" width="76" height="30" rx="4" fill="#F5A623" opacity="0.9"/>
+    <text x="612" y="238" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">质量门</text>
+  </g>
+
+  <!-- Gate 2: 验证门 (between 构建 and 验证) -->
+  <g>
+    <rect x="564" y="388" width="76" height="30" rx="4" fill="#F5A623" opacity="0.9"/>
+    <text x="602" y="408" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">验证门</text>
+  </g>
+
+  <!-- Gate 3: 发布门 (between 验证 and 发布) -->
+  <g>
+    <rect x="434" y="488" width="76" height="30" rx="4" fill="#F5A623" opacity="0.9"/>
+    <text x="472" y="508" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">发布门</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(30, 560)">
+    <rect x="0" y="0" width="16" height="16" rx="8" fill="#4A90D9"/>
+    <text x="22" y="13" font-family="sans-serif" font-size="12" fill="#555">阶段</text>
+    <rect x="80" y="0" width="16" height="16" rx="2" fill="#F5A623"/>
+    <text x="102" y="13" font-family="sans-serif" font-size="12" fill="#555">质量关卡</text>
+  </g>
+</svg>

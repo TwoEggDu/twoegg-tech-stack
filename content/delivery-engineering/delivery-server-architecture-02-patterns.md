@@ -109,4 +109,4 @@ delivery_reading_lines:
 
 **下一步应读**：[C# 服务端实践：ET Framework]({{< relref "delivery-engineering/delivery-server-architecture-03-et-framework.md" >}})
 
-**扩展阅读**：[游戏后端系列]({{< relref "system-design/" >}}) — 微服务、Actor 和 ECS 的完整功能设计
+**扩展阅读**：[游戏后端系列]({{< relref "system-design/game-backend-series-index.md" >}}) — 微服务、Actor 和 ECS 的完整功能设计

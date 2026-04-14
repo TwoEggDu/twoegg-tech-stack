@@ -161,4 +161,4 @@ delivery_reading_lines:
 
 **下一步应读**：[HybridCLR 工程化]({{< relref "delivery-engineering/delivery-hot-update-03-hybridclr.md" >}}) — HybridCLR 在 CI 中怎么集成
 
-**扩展阅读**：[HybridCLR 系列索引]({{< relref "engine-toolchain/" >}}) — 解释器原理、AOT 泛型、DHE 的完整技术深挖
+**扩展阅读**：[HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) — 解释器原理、AOT 泛型、DHE 的完整技术深挖

@@ -138,5 +138,5 @@ V02 资源生产 → V05 资源管线（打包/加载/版本/生命周期）→ 
 **下一步应读**：[资源加载与生命周期]({{< relref "delivery-engineering/delivery-resource-pipeline-05-loading-lifecycle.md" >}}) — 加载时机、引用计数和内存管理的工程设计
 
 **扩展阅读**：
-- [Addressables 系列]({{< relref "engine-toolchain/" >}}) — Addressables 的格式、构建时、Catalog、加载、生命周期完整深挖
-- [YooAsset 系列]({{< relref "engine-toolchain/" >}}) — YooAsset 的架构、打包和加载流程深挖
+- [Addressables 系列]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}}) — Addressables 的格式、构建时、Catalog、加载、生命周期完整深挖
+- [YooAsset 系列]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}}) — YooAsset 的架构、打包和加载流程深挖

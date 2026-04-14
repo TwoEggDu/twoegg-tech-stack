@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#666"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4A90D9"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#27AE60"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="500" fill="#FAFBFC" rx="8"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">交付管线全景</text>
+  <text x="450" y="56" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">Delivery Pipeline Landscape - Client / Server Dual Track</text>
+
+  <!-- ===== CLIENT TRACK (Top) ===== -->
+  <text x="450" y="90" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#4A90D9">CLIENT TRACK</text>
+
+  <!-- Content -->
+  <g>
+    <rect x="40" y="110" width="130" height="60" rx="6" fill="#EEF2FF" stroke="#4A90D9" stroke-width="2"/>
+    <text x="105" y="137" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2D5BA0">内容生产</text>
+    <text x="105" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#5A7DB5">Content</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="170" y1="140" x2="208" y2="140" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+  <!-- Build -->
+  <g>
+    <rect x="216" y="110" width="130" height="60" rx="6" fill="#EEF2FF" stroke="#4A90D9" stroke-width="2"/>
+    <text x="281" y="137" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2D5BA0">构建打包</text>
+    <text x="281" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#5A7DB5">Build</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="346" y1="140" x2="384" y2="140" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+  <!-- Platform outputs (3 boxes side by side) -->
+  <g>
+    <rect x="392" y="105" width="100" height="28" rx="4" fill="#4A90D9"/>
+    <text x="442" y="124" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">iOS</text>
+  </g>
+  <g>
+    <rect x="500" y="105" width="100" height="28" rx="4" fill="#4A90D9"/>
+    <text x="550" y="124" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">Android</text>
+  </g>
+  <g>
+    <rect x="608" y="105" width="110" height="28" rx="4" fill="#4A90D9"/>
+    <text x="663" y="124" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">WeChat Mini</text>
+  </g>
+
+  <!-- Arrow from platforms to release -->
+  <line x1="550" y1="142" x2="550" y2="142" stroke="none"/>
+  <g>
+    <line x1="492" y1="133" x2="740" y2="133" stroke="none"/>
+  </g>
+
+  <!-- Arrows converging to Release -->
+  <line x1="442" y1="133" x2="442" y2="155" stroke="#4A90D9" stroke-width="1.5"/>
+  <line x1="550" y1="133" x2="550" y2="155" stroke="#4A90D9" stroke-width="1.5"/>
+  <line x1="663" y1="133" x2="663" y2="155" stroke="#4A90D9" stroke-width="1.5"/>
+  <line x1="442" y1="155" x2="663" y2="155" stroke="#4A90D9" stroke-width="1.5"/>
+  <line x1="550" y1="155" x2="550" y2="170" stroke="#4A90D9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+  <!-- Client Release -->
+  <g>
+    <rect x="490" y="178" width="120" height="44" rx="6" fill="#2D5BA0"/>
+    <text x="550" y="205" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="white">客户端发布</text>
+  </g>
+
+  <!-- Divider line -->
+  <line x1="30" y1="248" x2="870" y2="248" stroke="#DDD" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ===== SERVER TRACK (Bottom) ===== -->
+  <text x="450" y="278" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#27AE60">SERVER TRACK</text>
+
+  <!-- Code -->
+  <g>
+    <rect x="40" y="296" width="130" height="60" rx="6" fill="#E8F5E9" stroke="#27AE60" stroke-width="2"/>
+    <text x="105" y="323" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1B7A3D">代码提交</text>
+    <text x="105" y="341" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#4CAF50">Code</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="170" y1="326" x2="208" y2="326" stroke="#27AE60" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Build -->
+  <g>
+    <rect x="216" y="296" width="130" height="60" rx="6" fill="#E8F5E9" stroke="#27AE60" stroke-width="2"/>
+    <text x="281" y="323" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1B7A3D">编译构建</text>
+    <text x="281" y="341" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#4CAF50">Build</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="346" y1="326" x2="408" y2="326" stroke="#27AE60" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Docker -->
+  <g>
+    <rect x="416" y="296" width="130" height="60" rx="6" fill="#E8F5E9" stroke="#27AE60" stroke-width="2"/>
+    <text x="481" y="323" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1B7A3D">容器化</text>
+    <text x="481" y="341" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#4CAF50">Docker</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="546" y1="326" x2="608" y2="326" stroke="#27AE60" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Deploy -->
+  <g>
+    <rect x="616" y="296" width="130" height="60" rx="6" fill="#1B7A3D"/>
+    <text x="681" y="323" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="white">部署上线</text>
+    <text x="681" y="341" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#A5D6A7">Deploy</text>
+  </g>
+
+  <!-- ===== PROTOCOL COORDINATION (Bottom) ===== -->
+  <rect x="140" y="408" width="620" height="60" rx="8" fill="#FFF8E1" stroke="#F5A623" stroke-width="2"/>
+  <text x="450" y="435" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#E67E22">协议协调层</text>
+  <text x="450" y="455" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#B7791F">Protocol Coordination - Version Sync / Config Sync / Hot Update Channel</text>
+
+  <!-- Connecting lines from client and server to protocol layer -->
+  <line x1="550" y1="222" x2="550" y2="240" stroke="#4A90D9" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="550" y1="248" x2="450" y2="408" stroke="#F5A623" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="681" y1="356" x2="681" y2="380" stroke="#27AE60" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="681" y1="380" x2="450" y2="408" stroke="#F5A623" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Legend -->
+  <g transform="translate(30, 480)">
+    <rect x="0" y="0" width="14" height="14" rx="3" fill="#4A90D9"/>
+    <text x="20" y="12" font-family="sans-serif" font-size="11" fill="#555">客户端管线</text>
+    <rect x="110" y="0" width="14" height="14" rx="3" fill="#27AE60"/>
+    <text x="130" y="12" font-family="sans-serif" font-size="11" fill="#555">服务端管线</text>
+    <rect x="220" y="0" width="14" height="14" rx="3" fill="#F5A623"/>
+    <text x="240" y="12" font-family="sans-serif" font-size="11" fill="#555">协议协调</text>
+  </g>
+</svg>

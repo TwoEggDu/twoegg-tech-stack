@@ -194,6 +194,6 @@ V02 内容生产与配置管线到这里结束。
 
 六篇文章覆盖了：概念边界（01）、美术管线（02）、资源规范（03）、导表管线（04）、配置验证（05）和多端差异（06）。
 
-**推荐下一步**：[V03 工程基建]({{< relref "delivery-engineering/" >}}) — 从生产段进入工程基建段：项目结构、编译管线和依赖管理怎样支撑多端交付
+**推荐下一步**：[V03 工程基建]({{< relref "delivery-engineering/delivery-engineering-foundation-series-index.md" >}}) — 从生产段进入工程基建段：项目结构、编译管线和依赖管理怎样支撑多端交付
 
 **扩展阅读**：[Unity 资源交付工程实践]({{< relref "engine-toolchain/unity-resource-delivery-engineering-practices-baseline.md" >}}) — 从 Unity 项目的实际经验看资源交付的工程化方法

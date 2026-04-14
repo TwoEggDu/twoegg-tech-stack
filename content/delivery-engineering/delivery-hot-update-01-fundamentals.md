@@ -139,4 +139,4 @@ V06 CDN 部署 → 热更包部署到 CDN
 
 **下一步应读**：[热更新架构选型]({{< relref "delivery-engineering/delivery-hot-update-02-architecture.md" >}}) — Lua / C# 解释 / HybridCLR / DHE 怎么选
 
-**扩展阅读**：[HybridCLR 系列索引]({{< relref "engine-toolchain/" >}}) — HybridCLR 解释器原理、AOT 泛型、元数据桥接的完整技术深挖
+**扩展阅读**：[HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) — HybridCLR 解释器原理、AOT 泛型、元数据桥接的完整技术深挖
