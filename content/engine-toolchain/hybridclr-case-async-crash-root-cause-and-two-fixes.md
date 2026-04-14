@@ -174,3 +174,8 @@ static class UniTaskAOTHelper
 ## 收束
 
 async 崩溃的根因不是 `RefMethods()` 是空的，而是 GenerateAll 没进流程导致补充元数据失效。解释器找不到方法体才退化到 FullySharedGenericAny 死循环。修法是让 GenerateAll 进流程并对齐 Development 标志；主动引用法只是应急。
+
+## 系列位置
+
+- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}}">HybridCLR 打包工程化</a>
+- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}}">HybridCLR 案例｜Dictionary ValueTuple</a>

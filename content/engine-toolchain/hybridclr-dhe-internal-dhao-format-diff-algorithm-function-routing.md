@@ -333,8 +333,7 @@ DHE 的内部机制可以用三句话收住：
 
 整条链路的设计哲学是：把差分计算的成本推到构建期，运行时只做查表和指针替换——这正是 dhao 文件存在的意义。
 
-## 系列导航
+## 系列位置
 
-上一篇：[HCLR-24 HybridCLR AOT 泛型回归防线｜怎么把这些坑前移到 Generate、CI 和构建检查里]({{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}})
-
-下一篇：HCLR-26（待发布）
+- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}}">HybridCLR 桥接篇｜IL2CPP GC 模型</a>
+- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-dhe-function-injection-dirty-contagion.md" >}}">HybridCLR DHE 函数注入与脏函数传染</a>

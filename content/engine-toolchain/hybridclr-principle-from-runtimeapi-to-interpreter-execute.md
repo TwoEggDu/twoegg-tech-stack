@@ -206,7 +206,7 @@ public static void GenerateAll()
 
 ### 这一层到底解决了什么问题
 
-如果把这一节压成一句话，就是：
+一句话收束：
 
 `HybridCLR 菜单不是在做杂活，而是在提前生成 runtime 真正要吃的输入。`
 

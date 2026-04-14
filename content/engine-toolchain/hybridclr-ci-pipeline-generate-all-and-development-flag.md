@@ -188,3 +188,8 @@ CompileDllCommand.CompileDll(buildTarget, development);
 ## 收束
 
 CI 打包流程里，`GenerateAll` 之前必须先把 `EditorUserBuildSettings.development` 写成与最终 Player Build 一致的值。`StripAOTDlls` 之前把场景列表临时切为 Launcher-only。这两件事不做，补充元数据在真机上就是随机失效的。
+
+## 系列位置
+
+- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-crash-analysis.md" >}}">HybridCLR 崩溃定位专题</a>
+- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}}">HybridCLR 案例续篇｜async 崩溃</a>

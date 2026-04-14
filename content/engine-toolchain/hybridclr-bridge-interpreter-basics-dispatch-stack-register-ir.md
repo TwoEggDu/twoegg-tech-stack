@@ -360,8 +360,7 @@ IR 风格:    register-style（非 stack machine）
 
 ---
 
-**系列位置**
+## 系列位置
 
-上一篇：[HCLR-24 AOT 泛型回归防线｜怎么把这些坑前移到 Generate、CI 和构建检查里]({{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}})
-
-下一篇：[HCLR-25 DHE 内部机制｜dhao 文件格式、差分算法与函数级分流实现]({{< relref "engine-toolchain/hybridclr-dhe-internal-dhao-format-diff-algorithm-function-routing.md" >}})
+- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}">HybridCLR AOT 泛型回归防线</a>
+- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}}">HybridCLR 桥接篇｜IL2CPP GC 模型</a>

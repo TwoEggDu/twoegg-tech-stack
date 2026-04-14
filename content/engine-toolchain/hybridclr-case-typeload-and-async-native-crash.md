@@ -281,6 +281,10 @@ for addr in 046951fc 03939604 03946358 046978d8 039394f0; do
 done
 ```
 
+## 收束
+
+这篇案例的两个问题分别卡在不同层：TypeLoadException 是加载顺序错误，native crash 是 AOTGenericReferences 为空导致 async 方法在解释器和 AOT 之间无限递归。诊断路径是 adb logcat 拿到崩溃地址，再用 llvm-addr2line 符号化回溯栈帧，最终定位到具体函数。
+
 ## 系列位置
 
 - 上一篇：[HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断]({{< relref "engine-toolchain/hybridclr-faq-10-most-confused-judgments.md" >}})

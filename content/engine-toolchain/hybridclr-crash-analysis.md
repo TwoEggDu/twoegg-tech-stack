@@ -323,6 +323,10 @@ public void RefMethods()
 
 ---
 
+## 收束
+
+HybridCLR 崩溃定位的核心流程：先用 logcat/crash log 判断崩溃类型，再用符号化工具还原函数名，最后根据栈帧判断问题出在哪一层（加载、生成物、AOT 泛型、还是解释器本身）。每次打包前跑一遍预防性检查清单，能挡住大部分"等到真机才爆"的问题。
+
 ## 系列位置
 
 - 上一篇：[HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}})
