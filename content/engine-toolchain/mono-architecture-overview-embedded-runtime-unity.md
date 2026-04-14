@@ -36,6 +36,8 @@ series_id: "mono"
 > - Unity Editor 脚本编译管线（编辑器侧的 Roslyn 编译、域加载流程不在本文范围）
 > - IL2CPP 详细实现（IL2CPP 的管线拆解在 D 系列专题展开）
 
+{{< svg "images/runtime-ecosystem/mono-architecture-modules.svg" >}}
+
 ## Mono 的历史定位
 
 Mono 的历史线可以分成四个阶段。

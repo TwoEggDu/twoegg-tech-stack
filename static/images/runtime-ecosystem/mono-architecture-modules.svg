@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="380" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="380" rx="28" fill="url(#bg)"/>
+  <text x="64" y="52" class="subtitle">ARCHITECTURE MODULES</text>
+  <text x="64" y="88" class="title">Mono 六大架构模块</text>
+
+  <!-- Row 1 -->
+  <!-- metadata -->
+  <rect x="64" y="120" width="340" height="80" rx="14" class="box box-a"/>
+  <text x="84" y="152" class="label">metadata</text>
+  <text x="84" y="178" class="copy">image loader / class.c</text>
+
+  <!-- mini -->
+  <rect x="430" y="120" width="340" height="80" rx="14" class="box box-b"/>
+  <text x="450" y="152" class="label">mini</text>
+  <text x="450" y="178" class="copy">JIT 编译器</text>
+
+  <!-- interp -->
+  <rect x="796" y="120" width="340" height="80" rx="14" class="box box-b"/>
+  <text x="816" y="152" class="label">interp</text>
+  <text x="816" y="178" class="copy">解释器 fallback</text>
+
+  <!-- Row 2 -->
+  <!-- sgen -->
+  <rect x="64" y="224" width="340" height="80" rx="14" class="box box-c"/>
+  <text x="84" y="256" class="label">sgen</text>
+  <text x="84" y="282" class="copy">精确式分代 GC</text>
+
+  <!-- io-layer -->
+  <rect x="430" y="224" width="340" height="80" rx="14" class="box box-a"/>
+  <text x="450" y="256" class="label">io-layer</text>
+  <text x="450" y="282" class="copy">OS 抽象层</text>
+
+  <!-- icall -->
+  <rect x="796" y="224" width="340" height="80" rx="14" class="box box-a"/>
+  <text x="816" y="256" class="label">icall</text>
+  <text x="816" y="282" class="copy">内部调用</text>
+
+  <!-- Caption -->
+  <text x="64" y="346" class="caption">Mono 同时提供 JIT + AOT + Interpreter 三条执行路径，这种灵活性在 CoreCLR 和 IL2CPP 中都不存在。</text>
+</svg>
