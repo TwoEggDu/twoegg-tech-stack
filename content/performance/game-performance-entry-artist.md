@@ -24,18 +24,18 @@ series_order: 2
 
 - 哪些资源最容易超预算。
 - 预算不够时哪些效果该先砍，哪些该最后砍。
-- 低档设备上的玩家还能不能感受到“这是同一款游戏”。
+- 低档设备上的玩家还能不能感受到"这是同一款游戏"。
 
 ## 第一轮先读这几篇
 
 1. [美术资源性能自检表：贴图、材质、LOD、UI、特效提交前先看什么]({{< relref "performance/game-performance-artist-self-checklist.md" >}})
-   先把“提交前到底该先查什么”这条线建立起来，再去看后面的规格和取舍。
+   先把"提交前到底该先查什么"这条线建立起来，再去看后面的规格和取舍。
 2. [每档资产规格清单：贴图压缩、LOD 与包体分层]({{< relref "performance/device-tier-asset-spec-texture-and-package.md" >}})
    这是最适合美术拿来做自检的预算入口。
 3. [性能预算不够用时，什么该最后砍：移动端视觉效果性价比排序]({{< relref "performance/device-tier-visual-tradeoff-priority.md" >}})
    帮你判断哪些效果最贵，哪些效果该最后保。
 4. [四个档位的玩家应该感受到同一款游戏：体验一致性设计]({{< relref "performance/device-tier-experience-consistency.md" >}})
-   帮你判断哪些是“画质可以降”，哪些是“降了就变味”。
+   帮你判断哪些是"画质可以降"，哪些是"降了就变味"。
 5. [什么事不能在什么时候做：游戏开发里最危险的时机管理]({{< relref "performance/game-performance-dangerous-operations-timing.md" >}})
    先知道哪些内容最不适合在首开 UI、首放特效、切场景、进战斗的瞬间一起压上去。
 
@@ -63,15 +63,15 @@ series_order: 2
 ## 继续补直觉就读这两篇
 
 - [为什么这个资源看起来不重，进项目却会贵：透明、阴影、后处理与特效叠层的成本直觉]({{< relref "performance/game-performance-art-hidden-cost-intuition.md" >}})
-  这篇负责把“为什么它看起来不重却会贵”的成本直觉立起来。
+  这篇负责把"为什么它看起来不重却会贵"的成本直觉立起来。
 - [低档不是粗暴砍效果：角色、场景、UI 与特效怎么降级而不变味]({{< relref "performance/game-performance-art-downgrade-without-losing-identity.md" >}})
-  这篇负责把“低档怎么降而不变味”的降级直觉立起来。
+  这篇负责把"低档怎么降而不变味"的降级直觉立起来。
 
 ## 按你手上的问题跳转
 
 - 场景一复杂，手机就开始掉帧或发热：
   先看 [每档资产规格清单]({{< relref "performance/device-tier-asset-spec-texture-and-package.md" >}})，再按需要进 [LOD 与 Culling]({{< relref "rendering/unity-rendering-supp-c-lod-culling.md" >}})、[移动端阴影]({{< relref "performance/gpu-opt-04-shadow-mobile.md" >}})、[后处理在移动端的取舍]({{< relref "performance/gpu-opt-05-postprocess-mobile.md" >}})。
-- 特效一叠就炸，或者某些粒子看起来“没多少”却很重：
+- 特效一叠就炸，或者某些粒子看起来"没多少"却很重：
   先看 [性能预算不够用时，什么该最后砍]({{< relref "performance/device-tier-visual-tradeoff-priority.md" >}})，再看 [粒子与特效]({{< relref "rendering/unity-rendering-04-particles-vfx.md" >}}) 和 [后处理在移动端的取舍]({{< relref "performance/gpu-opt-05-postprocess-mobile.md" >}})。
 - UI 首开、切页或叠层时明显抖动：
   先看 [什么事不能在什么时候做]({{< relref "performance/game-performance-dangerous-operations-timing.md" >}})，再看 [UI 渲染：Canvas 合批、Rebuild、Overdraw、Atlas]({{< relref "rendering/unity-rendering-supp-d-ui-rendering.md" >}})。
@@ -82,7 +82,7 @@ series_order: 2
 
 - 这页不要求你独自负责最终瓶颈定位。
 - 它更关心资源自检和高风险效果识别，而不是线程调度或运行时证据链。
-- 第一轮先不要硬啃 `Draw Call`、`Culling`、`Pass`、`Shader` 这些术语；等你先知道“自己该保什么、该砍什么、哪里最危险”之后，再回来看它们会顺得多。
+- 第一轮先不要硬啃 `Draw Call`、`Culling`、`Pass`、`Shader` 这些术语；等你先知道"自己该保什么、该砍什么、哪里最危险"之后，再回来看它们会顺得多。
 - 如果你发现问题已经落到材质规则、Shader 关键词、质量分档和渲染配置治理，下一步应转到 [游戏性能判断入口｜TA 先看渲染链路、材质治理和分档策略]({{< relref "performance/game-performance-entry-ta.md" >}})。
 
 如果你想回到总地图，去看 [游戏性能判断系列索引｜先看判断框架，再按角色入口或问题类型进入正文]({{< relref "performance/game-performance-judgment-series-index.md" >}})。

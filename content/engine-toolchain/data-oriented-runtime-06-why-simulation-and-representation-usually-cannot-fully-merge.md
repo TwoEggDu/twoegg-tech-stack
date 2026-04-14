@@ -17,7 +17,7 @@ series: "数据导向运行时"
 
 > 这篇只回答一个问题：`为什么仿真层和表示层通常不能彻底合并。`
 >
-> 真正需要被解释的，不是“ECS 能不能渲染”，而是当 runtime 数据已经被收敛出来之后，它到底怎样再接回 GameObject、Actor、ISM、LOD、相机和渲染表现，而不把仿真世界重新拖回对象泥潭里。
+> 真正需要被解释的，不是"ECS 能不能渲染"，而是当 runtime 数据已经被收敛出来之后，它到底怎样再接回 GameObject、Actor、ISM、LOD、相机和渲染表现，而不把仿真世界重新拖回对象泥潭里。
 
 前面几篇已经把数据导向运行时的主骨架立起来了：
 
@@ -32,7 +32,7 @@ series: "数据导向运行时"
 
 那接下来的问题就非常自然：
 
-`当这套仿真世界已经被收成更纯的数据形态之后，它怎样再长回“能被玩家看见和交互”的表现世界？`
+`当这套仿真世界已经被收成更纯的数据形态之后，它怎样再长回"能被玩家看见和交互"的表现世界？`
 
 这就是这篇要回答的事。
 
@@ -40,7 +40,7 @@ series: "数据导向运行时"
 
 这篇主要回答 5 个问题：
 
-1. 为什么“一个实体对应一个表现对象”不是稳定前提。
+1. 为什么"一个实体对应一个表现对象"不是稳定前提。
 2. Unity 里 `Entities Graphics`、`Companion Components` 和 `GameObject / MonoBehaviour` 的边界到底怎么切。
 3. Unreal 里 `Actor`、`Mass Representation`、`LOD`、`ISM` 的关系到底说明了什么。
 4. 为什么表示层和仿真层在更新频率、身份粒度、线程约束上天然不同。
@@ -54,7 +54,7 @@ series: "数据导向运行时"
 
 这句话里最重要的一个提醒是：
 
-`“实体”` 和 `“看得见的东西”`，并不总是同一层概念。
+`"实体"` 和 `"看得见的东西"`，并不总是同一层概念。
 
 有时候是：
 
@@ -66,7 +66,7 @@ series: "数据导向运行时"
 - 一实体对零表现
 - 一实体在不同 LOD 下切换不同表现类型
 
-只要这一点成立，“仿真 == 表现”的直觉就已经不稳了。
+只要这一点成立，"仿真 == 表现"的直觉就已经不稳了。
 
 ## 证据地图
 
@@ -120,9 +120,9 @@ series: "数据导向运行时"
 3. `多实体对一表现批次`
    instancing、批渲染、群体表示都会把多个实体压进一组渲染表示。
 
-一旦这些情况成立，你就很难再把表示层简单写成“仿真数据附带的一个字段”。
+一旦这些情况成立，你就很难再把表示层简单写成"仿真数据附带的一个字段"。
 
-## Unity 这边，官方直接把 ECS 渲染写成“桥”，而不是新渲染管线
+## Unity 这边，官方直接把 ECS 渲染写成"桥"，而不是新渲染管线
 
 先看 Unity。
 
@@ -141,7 +141,7 @@ series: "数据导向运行时"
 
 因为它直接说明：
 
-`Unity 并没有把“ECS 渲染”写成一套完全脱离现有渲染体系的新世界。`
+`Unity 并没有把"ECS 渲染"写成一套完全脱离现有渲染体系的新世界。`
 
 更准确地说法是：
 
@@ -160,7 +160,7 @@ series: "数据导向运行时"
 - 某些图形相关组件会被转成 companion components
 - Camera 转换默认还是禁用的，因为 scene main camera 不能作为 companion component entity
 
-这几条事实比“Unity 支持混合”更有信息量。
+这几条事实比"Unity 支持混合"更有信息量。
 
 它们直接把边界写出来了：
 
@@ -169,11 +169,11 @@ series: "数据导向运行时"
 - 一旦你跨进 managed / MonoBehaviour 世界，Burst 和线程约束就会回来
 - 某些关键表现对象，比如主相机，本来就不适合被当成普通 companion entity
 
-### 工程判断：Unity 的表示层边界是“桥接优先”，不是“彻底同化”
+### 工程判断：Unity 的表示层边界是"桥接优先"，不是"彻底同化"
 
 基于上面这些事实，对 Unity 更稳的判断是：
 
-`Unity 在表示层问题上的真实答案，不是“GameObject 退场”，而是“尽量让仿真层留在 ECS 世界，再用 Entities Graphics 和 companion components 有选择地接回现有表现体系”。`
+`Unity 在表示层问题上的真实答案，不是"GameObject 退场"，而是"尽量让仿真层留在 ECS 世界，再用 Entities Graphics 和 companion components 有选择地接回现有表现体系"。`
 
 它暴露出来的边界至少有三层：
 
@@ -186,7 +186,7 @@ series: "数据导向运行时"
 3. `传统对象路径`
    某些对象天然还是相机、主表现对象、复杂 MonoBehaviour 驱动世界的一部分，不会因为你有了 ECS 就自然消失。
 
-所以 Unity 这里最关键的结论不是“都能兼容”。
+所以 Unity 这里最关键的结论不是"都能兼容"。
 
 更关键的是：
 
@@ -223,16 +223,16 @@ series: "数据导向运行时"
 
 - `Mass LOD` 负责为每个 entity 计算 LOD
 - `Mass (Representation/Visualization) LOD` 不只算距离，还会算可见性和 frustum 相关条件
-- 这个系统会把 entities 按“距离裁掉、视锥裁掉、可见”这些状态分进不同 chunks
+- 这个系统会把 entities 按"距离裁掉、视锥裁掉、可见"这些状态分进不同 chunks
 - `Mass Simulation LOD` 则是为了负载均衡实体计算，会把同 LOD 的 entities 分成 chunks，甚至支持 variable frequency update
 
 这几组事实放在一起，其实已经把 Unreal 的边界讲得很透了。
 
-### 工程判断：Unreal 直接承认“仿真 LOD”和“表现 LOD”是两回事
+### 工程判断：Unreal 直接承认"仿真 LOD"和"表现 LOD"是两回事
 
 对 Unreal `Mass` 最稳的判断，我会压成这样一句：
 
-`Unreal 没有假装“表示层只是仿真层的附属字段”，它直接把 representation、simulation LOD、replication LOD 都拆成了独立子系统。`
+`Unreal 没有假装"表示层只是仿真层的附属字段"，它直接把 representation、simulation LOD、replication LOD 都拆成了独立子系统。`
 
 这背后其实有三个很强的信号。
 
@@ -245,7 +245,7 @@ series: "数据导向运行时"
 - ISM
 - 或直接不显示
 
-这已经直接推翻了“一实体永久对应一个对象”的直觉。
+这已经直接推翻了"一实体永久对应一个对象"的直觉。
 
 第二，`表现层和仿真层的更新目标不同`。
 
@@ -282,7 +282,7 @@ Representation 子系统会：
 | 关键限制 | managed companion 不能 Burst，需主线程 | representation、simulation、replication 各有自己的 LOD / lifecycle | 第一版不要把表现对象塞回仿真内核 |
 | 暴露的边界 | ECS 渲染不是新管线，而是桥 | 表示层、仿真层、复制层直接分开 | 一开始就显式做桥，而不是偷着耦合 |
 
-这张表最重要的地方，不是“它们完全等价”。
+这张表最重要的地方，不是"它们完全等价"。
 
 而是你会更容易看到一个更稳的结论：
 
@@ -339,7 +339,7 @@ Unreal 那边虽然表达方式不同，但 high-res actor、low-res actor、ISM
 
 `表示层天然要和更重的引擎对象体系协作。`
 
-这意味着它不太可能完全沿用仿真层那种“纯 chunk 批处理 + 线程友好”的成本模型。
+这意味着它不太可能完全沿用仿真层那种"纯 chunk 批处理 + 线程友好"的成本模型。
 
 ### 4. 生命周期不同
 
@@ -390,7 +390,7 @@ Unreal 那边虽然表达方式不同，但 high-res actor、low-res actor、ISM
 
 而不是一开始就双向乱接。
 
-### 3. 第一版就要接受“一实体可以没有表现”
+### 3. 第一版就要接受"一实体可以没有表现"
 
 这点要尽早写进设计里。
 
@@ -451,7 +451,7 @@ Unreal 那边虽然表达方式不同，但 high-res actor、low-res actor、ISM
 不够准确。
 
 `Mass Representation` 官方就是把这些东西作为独立子系统写出来的。
-这说明它们不是“后处理小技巧”，而是实体世界如何对接默认表现世界的正式结构。
+这说明它们不是"后处理小技巧"，而是实体世界如何对接默认表现世界的正式结构。
 
 ### 误解四：第一版自研先把仿真做出来，表示以后再说
 
@@ -464,7 +464,7 @@ Unreal 那边虽然表达方式不同，但 high-res actor、low-res actor、ISM
 
 如果一定要把这篇压成一句话，我会这样写：
 
-> 仿真层和表示层通常不能彻底合并，不是因为“技术还不够强”，而是因为它们在关注目标、身份粒度、线程约束和生命周期上天然不同；Unity 用 `Entities Graphics + companion components` 承认这层桥，Unreal 用 `Mass Representation + Actor / ISM / LOD` 承认这层桥，自研第一版也最好一开始就做显式的 `Representation Bridge`，而不是让 ECS 内核偷偷长回对象世界。
+> 仿真层和表示层通常不能彻底合并，不是因为"技术还不够强"，而是因为它们在关注目标、身份粒度、线程约束和生命周期上天然不同；Unity 用 `Entities Graphics + companion components` 承认这层桥，Unreal 用 `Mass Representation + Actor / ISM / LOD` 承认这层桥，自研第一版也最好一开始就做显式的 `Representation Bridge`，而不是让 ECS 内核偷偷长回对象世界。
 
 顺着这条线继续往下走，下一篇最自然就该讲：
 

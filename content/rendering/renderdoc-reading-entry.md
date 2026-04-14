@@ -22,11 +22,11 @@ tags:
 
 站里其实已经有几篇不错的 RenderDoc 文章，但它们分散在 `Unity 渲染系统`、`Shader` 和 `URP` 这些不同主线里。
 
-如果直接把这些文章平铺给读者，最常见的问题不是“没有内容”，而是：
+如果直接把这些文章平铺给读者，最常见的问题不是"没有内容"，而是：
 
 - 不知道哪些是公共前置，哪些是工具本体。
 - 不知道应该先学抓帧和看界面，还是先看 Shader 调试。
-- 不知道自己的问题属于“数据正确性排查”还是“性能诊断”。
+- 不知道自己的问题属于"数据正确性排查"还是"性能诊断"。
 - 不知道碰到 URP、自定义 Pass、移动端平台差异时该转去哪条线。
 
 所以这页的目标不是重复写一遍 RenderDoc，而是先把路径理顺。
@@ -44,18 +44,18 @@ tags:
 
 如果把站里现有的 RenderDoc 相关文章压成一句话，我会这样描述：
 
-`Frame Debugger 先告诉你“哪一个 Pass / Draw Call 可疑”，RenderDoc 再告诉你“GPU 实际收到了什么、写出了什么、这个像素到底怎么被算出来的”。`
+`Frame Debugger 先告诉你"哪一个 Pass / Draw Call 可疑"，RenderDoc 再告诉你"GPU 实际收到了什么、写出了什么、这个像素到底怎么被算出来的"。`
 
 所以 RenderDoc 在这里的定位很清楚：
 
-- 它不是 Unity 视角的“执行顺序浏览器”。
+- 它不是 Unity 视角的"执行顺序浏览器"。
 - 它不是性能分析器的替代品。
 - 它更像是把某一帧切开之后，直接看 GPU 数据与状态的工具。
 
 也正因为这样，RenderDoc 相关内容最怕两种读法：
 
-- 把它当成“只要会按 F12 就够了”的按钮教程。
-- 把它当成“可以替代 Frame Debugger / Profiler / 平台工具”的万能调试器。
+- 把它当成"只要会按 F12 就够了"的按钮教程。
+- 把它当成"可以替代 Frame Debugger / Profiler / 平台工具"的万能调试器。
 
 这页就是用来避免这两个误区的。
 
@@ -71,14 +71,14 @@ tags:
 那我建议先补两个最小前置：
 
 1. [Unity 渲染系统 01c｜Render Target 与帧缓冲区：GPU 把结果写到哪里]({{< relref "rendering/unity-rendering-01c-render-target-and-framebuffer.md" >}})
-   先把 RT、Depth、Stencil、MRT 这些“RenderDoc 里天天会看到，但新手最容易看花”的对象讲清楚。
+   先把 RT、Depth、Stencil、MRT 这些"RenderDoc 里天天会看到，但新手最容易看花"的对象讲清楚。
 
 2. [Unity 渲染系统 01d｜Frame Debugger：逐个 Draw Call 看一帧是怎么画出来的]({{< relref "rendering/unity-rendering-01d-frame-debugger.md" >}})
-   先建立“在 Unity 里怎么找可疑 Pass / Draw Call”的直觉，再进 RenderDoc 才不会一上来就迷路。
+   先建立"在 Unity 里怎么找可疑 Pass / Draw Call"的直觉，再进 RenderDoc 才不会一上来就迷路。
 
 如果你连 `Draw Call`、材质、Mesh、贴图和渲染资产本身都还不稳定，建议再往前补：
 
-- [Unity 渲染系统 01b｜Draw Call 与批处理：为什么“多画一次”会变慢]({{< relref "rendering/unity-rendering-01b-draw-call-and-batching.md" >}})
+- [Unity 渲染系统 01b｜Draw Call 与批处理：为什么"多画一次"会变慢]({{< relref "rendering/unity-rendering-01b-draw-call-and-batching.md" >}})
 - [Unity 渲染系统 00｜从一张图看完 Mesh、Material、Texture 在一帧里的角色]({{< relref "rendering/unity-rendering-00-asset-overview.md" >}})
 
 ## 推荐阅读顺序
@@ -86,7 +86,7 @@ tags:
 如果你准备第一次系统读，我建议按下面这个顺序：
 
 0. [RenderDoc 阅读入口｜先读哪篇，遇到什么问题该回看哪篇]({{< relref "rendering/renderdoc-reading-entry.md" >}})
-   先建地图，不然很容易把“公共前置”“工具使用”“Shader 调试”“URP 实战”混成一团。
+   先建地图，不然很容易把"公共前置""工具使用""Shader 调试""URP 实战"混成一团。
 
 1. [Unity 渲染系统 01c｜Render Target 与帧缓冲区：GPU 把结果写到哪里]({{< relref "rendering/unity-rendering-01c-render-target-and-framebuffer.md" >}})
    先认识 RenderDoc 里最常看的对象：Color Buffer、Depth Buffer、Stencil Buffer、MRT。
@@ -95,21 +95,21 @@ tags:
    先学会在 Unity 里定位，再学会在 RenderDoc 里验证。
 
 3. [Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它]({{< relref "rendering/unity-rendering-01e-renderdoc-basics.md" >}})
-   这是正式入门篇，解决“怎么抓第一帧、界面怎么看、第一轮排查怎么走”。
+   这是正式入门篇，解决"怎么抓第一帧、界面怎么看、第一轮排查怎么走"。
 
 4. [Unity 渲染系统 01f｜RenderDoc 进阶：顶点数据、贴图采样、Pipeline State 调试]({{< relref "rendering/unity-rendering-01f-renderdoc-advanced.md" >}})
    这是正式进阶篇，把 Mesh Viewer、Texture Viewer、Pipeline State 和 Shader Debugger 都接起来。
 
 5. [Shader 语法基础 06｜调试技巧：颜色可视化、Frame Debugger、RenderDoc]({{< relref "rendering/shader-basic-06-debugging.md" >}})
-   这篇的价值不是再讲一遍工具界面，而是把 RenderDoc 放回 Shader 调试方法里，建立“颜色可视化 / Frame Debugger / RenderDoc”三者如何配合的直觉。
+   这篇的价值不是再讲一遍工具界面，而是把 RenderDoc 放回 Shader 调试方法里，建立"颜色可视化 / Frame Debugger / RenderDoc"三者如何配合的直觉。
 
 6. [项目实战 08｜Shader 调试与性能分析工作流]({{< relref "rendering/shader-project-08-debug-workflow.md" >}})
    到这里再看一次完整工作流，读者会更清楚 RenderDoc 处在排查链的哪一环。
 
 7. [URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass]({{< relref "rendering/urp-ext-05-renderdoc.md" >}})
-   这是场景化实战篇，用来回答“到了 URP、自定义 Pass、RT 链和 Blit 链以后，RenderDoc 具体怎么帮你”。
+   这是场景化实战篇，用来回答"到了 URP、自定义 Pass、RT 链和 Blit 链以后，RenderDoc 具体怎么帮你"。
 
-这条顺序不是按“功能按钮”排，而是按读者心智排：
+这条顺序不是按"功能按钮"排，而是按读者心智排：
 
 - 先知道自己在看什么
 - 再知道应该先在哪里定位
@@ -142,11 +142,11 @@ tags:
 - 在 `OM` 确认当前写的是哪张 RT
 - 在 `Texture Viewer` 查看 Color / Depth / 通道 / mip
 - 用 `Pick` 获取像素精确值
-- 避免把“看错 RT”误判成“Shader 写错了”
+- 避免把"看错 RT"误判成"Shader 写错了"
 
 如果你关心的是 Stencil 本身怎么查看，可以补这篇：
 
-- [Shader 进阶 02｜Stencil：为什么它像“看不见的筛子”]({{< relref "rendering/shader-advanced-02-stencil.md" >}})
+- [Shader 进阶 02｜Stencil：为什么它像"看不见的筛子"]({{< relref "rendering/shader-advanced-02-stencil.md" >}})
 
 ### 3. 我想确认顶点、UV、法线、Tangent 这些数据到底有没有问题
 
@@ -154,7 +154,7 @@ tags:
 
 - [Unity 渲染系统 01f｜RenderDoc 进阶：顶点数据、贴图采样、Pipeline State 调试]({{< relref "rendering/unity-rendering-01f-renderdoc-advanced.md" >}})
 
-这一篇里 `Mesh Viewer` 是核心，因为它处理的是“GPU 实际收到的顶点数据”，而不是 Unity Inspector 里“看起来应该是这样”的数据。
+这一篇里 `Mesh Viewer` 是核心，因为它处理的是"GPU 实际收到的顶点数据"，而不是 Unity Inspector 里"看起来应该是这样"的数据。
 
 如果你的问题和角色蒙皮或动画形变有关，还可以回看：
 
@@ -171,7 +171,7 @@ tags:
 - [Shader 语法基础 06｜调试技巧：颜色可视化、Frame Debugger、RenderDoc]({{< relref "rendering/shader-basic-06-debugging.md" >}})
 - [项目实战 08｜Shader 调试与性能分析工作流]({{< relref "rendering/shader-project-08-debug-workflow.md" >}})
 
-这里最关键的判断不是“会不会打开 Shader Debugger”，而是：
+这里最关键的判断不是"会不会打开 Shader Debugger"，而是：
 
 - 这个问题是不是已经该进逐像素调试
 - 这个问题是不是其实先该做颜色可视化
@@ -189,7 +189,7 @@ tags:
 - 怎么看 RT 内容
 - 怎么追 Blit 链
 - 怎么确认当前 Draw Call 用的是哪个 Shader / 变体
-- 怎么处理“Pass 执行了但结果全黑”“UV 不对”“根本没执行”这类问题
+- 怎么处理"Pass 执行了但结果全黑""UV 不对""根本没执行"这类问题
 
 如果你对 URP 扩展主线本身不熟，建议先回补：
 
@@ -255,7 +255,7 @@ tags:
 RenderDoc 最容易被用错的地方，不是按钮不会点，而是进得太早，或者进得太晚。
 
 - 进得太早：还没在 Unity 里把问题范围缩小，就一头扎进成百上千个 Draw Call。
-- 进得太晚：明明已经确认是数据和状态问题，却还停留在“猜 Shader / 猜贴图 / 猜 RT”的阶段。
+- 进得太晚：明明已经确认是数据和状态问题，却还停留在"猜 Shader / 猜贴图 / 猜 RT"的阶段。
 
 所以最稳的顺序始终是：
 

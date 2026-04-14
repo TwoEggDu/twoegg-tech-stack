@@ -24,7 +24,7 @@ series_level: "进阶"
 series_best_for: "当你想把 Unity 裁剪从 managed code、engine code、反射缺口到 link.xml / Preserve 的边界看清"
 series_summary: "把 Unity 裁剪拆回 managed、engine、反射和保留手段几条边界，不再靠经验硬试。"
 series_intro: "这组文章关心的是 Unity 的裁剪到底分几层、各自根据什么证据工作，以及为什么反射、泛型、字符串路径和资源挂载总会把问题密度抬高。它不是保命清单，而是先把裁剪判断拉回结构化问题。"
-series_reading_hint: "第一次读建议先看“到底分几层”和 managed stripping 级别，再去看反射缺口、友好代码模式和 link.xml / Preserve 实战。"
+series_reading_hint: '第一次读建议先看"到底分几层"和 managed stripping 级别，再去看反射缺口、友好代码模式和 link.xml / Preserve 实战。'
 ---
 {{< series-directory >}}
 

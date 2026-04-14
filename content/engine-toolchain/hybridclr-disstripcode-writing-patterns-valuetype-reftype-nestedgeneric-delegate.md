@@ -12,11 +12,11 @@ tags:
 series: "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
-> 真正让 DisStripCode 难写的，从来不是“这段代码有多长”，而是你写进去的那一行，到底有没有让 IL2CPP 看见你真正缺的那个 AOT 泛型实例。
+> 真正让 DisStripCode 难写的，从来不是"这段代码有多长"，而是你写进去的那一行，到底有没有让 IL2CPP 看见你真正缺的那个 AOT 泛型实例。
 
 这是 HybridCLR 系列第 21 篇。
 
-上一篇 [HCLR-20｜HybridCLR 共享类型判断｜为什么报错是 ValueTuple<int,string>，你写的却可能是 ValueTuple<int,object>]({{< relref "engine-toolchain/hybridclr-sharing-type-judgment-valuetuple-int-string-valuetuple-int-object.md" >}}) 已经把“该写什么类型”这一步拆开了。
+上一篇 [HCLR-20｜HybridCLR 共享类型判断｜为什么报错是 ValueTuple<int,string>，你写的却可能是 ValueTuple<int,object>]({{< relref "engine-toolchain/hybridclr-sharing-type-judgment-valuetuple-int-string-valuetuple-int-object.md" >}}) 已经把"该写什么类型"这一步拆开了。
 
 这一篇继续往下走，只回答更工程化的一步：
 
@@ -28,17 +28,17 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 
 1. DisStripCode 在整条修法链里到底负责什么。
 2. 值类型、引用类型、嵌套泛型、委托分别怎么写。
-3. 什么叫“看起来像写了，其实没保住”。
+3. 什么叫"看起来像写了，其实没保住"。
 4. 项目里怎么把这类代码长期维护下去。
 
 ## 收束
 
-DisStripCode 不是”随手写一行看起来相关的代码”。它是你显式地在 AOT 世界里造出一个足够接近目标共享实例的真实调用点，让 IL2CPP 在构建时愿意为它生成或保留那份 native 实现。
+DisStripCode 不是"随手写一行看起来相关的代码"。它是你显式地在 AOT 世界里造出一个足够接近目标共享实例的真实调用点，让 IL2CPP 在构建时愿意为它生成或保留那份 native 实现。
 
 所以判断对了共享类型，只是开始。  
 真正落地时，还要回答第二个问题：
 
-`你到底该引用“类型”，还是“方法”，还是“委托签名”，还是某个 builder 路径。`
+`你到底该引用"类型"，还是"方法"，还是"委托签名"，还是某个 builder 路径。`
 
 ## 先把 DisStripCode 的职责钉死
 
@@ -87,13 +87,13 @@ static void ForceAOTRefs()
 这类写法适合：
 
 - 缺的是构造函数
-- 缺的是”有一个真实对象被造出来”这条路径
+- 缺的是"有一个真实对象被造出来"这条路径
 - 该类型本身的共享实例已经足够覆盖目标函数
 
 **为什么 `new List<object>()` 能覆盖 `List<HotfixType>`：** IL2CPP 的引用类型共享规则会把所有引用类型泛型参数归并到 `object`。`List<string>`、`List<MyClass>`、`List<HotfixType>` 在 native 层共享同一份 `List<object>` 实现。因此只要保住 `List<object>` 的构造路径，所有引用类型参数的构造都被覆盖。
 
 这类写法的优点是直观。  
-缺点是它只保证”你造出来的这条路”被看见，不自动保证同类所有方法都已经覆盖。
+缺点是它只保证"你造出来的这条路"被看见，不自动保证同类所有方法都已经覆盖。
 
 ## 第二类写法：泛型方法实例化
 
@@ -106,7 +106,7 @@ Enumerable.ToList<object>(...)
 MyGenericUtility.Show<ValueTuple<int, object>>(...)
 ```
 
-这时真正要保的是**方法实例**，而不是“这个类型存在”。
+这时真正要保的是**方法实例**，而不是"这个类型存在"。
 
 更稳的写法是直接写出目标方法调用：
 
@@ -127,7 +127,7 @@ static void ForceAOTGenericMethods()
 
 **为什么 `Show<ValueTuple<int, object>>` 需要精确匹配：** 值类型泛型参数在 IL2CPP 里每个不同组合都是独立实现。`Show<ValueTuple<int, object>>` 和 `Show<ValueTuple<int, int>>` 是两份完全分开的 native 代码，不能互相覆盖。引用类型参数的方法则可以通过 `object` 共享。
 
-不要只写一个”看起来长得像”的变量声明，然后假设构建器会替你脑补。
+不要只写一个"看起来长得像"的变量声明，然后假设构建器会替你脑补。
 
 ## 第三类写法：值类型和嵌套泛型
 
@@ -167,7 +167,7 @@ static void ForceDictionaryAOT()
 
 ## 第四类写法：委托、接口回调、async builder
 
-这类坑最容易出现在“表面看不见泛型”的地方。
+这类坑最容易出现在"表面看不见泛型"的地方。
 
 例如：
 
@@ -176,7 +176,7 @@ static void ForceDictionaryAOT()
 - `IUniTaskSource<T>`
 - `AsyncUniTaskMethodBuilder<T>`
 
-这些东西表面上不像“容器”，但背后照样会形成 AOT 泛型实例。
+这些东西表面上不像"容器"，但背后照样会形成 AOT 泛型实例。
 
 委托类型如 `Action<T>` 和 `Func<T, TResult>` 遵循相同的引用类型共享规则：`Action<object>` 可以覆盖所有 `Action<HotUpdateType>` 的使用。但 `Action<int>` 必须单独保留，因为 `int` 是值类型，不会被归并到 `object`。
 
@@ -199,7 +199,7 @@ static void ForceDelegateAOT()
 }
 ```
 
-这类写法的意义不在于“运行时真的会这么执行”，而在于：
+这类写法的意义不在于"运行时真的会这么执行"，而在于：
 
 `你给 IL2CPP 造了一个足够明确、足够真实的 AOT 可见点。`
 
@@ -244,7 +244,7 @@ _ = new SomeGenericType<...>();
 - 标上 `[Preserve]`
 - 尽量集中放在固定 helper 文件里
 
-否则你以为“已经写了”，最后只是又给 Stripper 新增了一次删除机会。
+否则你以为"已经写了"，最后只是又给 Stripper 新增了一次删除机会。
 
 ## 项目里怎么维护这类代码
 
@@ -259,11 +259,11 @@ _ = new SomeGenericType<...>();
 4. **热路径和非热路径分开维护**
    真正热路径要优先恢复 native；非热路径未必要第一时间把实例补全。
 
-这样后面你再看这一坨代码时，它更像“项目级 AOT 泛型配置层”，而不是一堆没人敢动的遗留补丁。
+这样后面你再看这一坨代码时，它更像"项目级 AOT 泛型配置层"，而不是一堆没人敢动的遗留补丁。
 
 ## 收束
 
-> DisStripCode 的本质，不是”写一段看起来相关的 C#”。
+> DisStripCode 的本质，不是"写一段看起来相关的 C#"。
 > 它是有意识地在 AOT 世界里造出一个足够准确的共享实例引用，让 IL2CPP 愿意为你真正缺的那个泛型函数生成或保留 native 实现。
 
 ---

@@ -1,7 +1,7 @@
 ---
 date: "2026-04-13"
 title: "技能系统深度 15｜GAS 运行时链路深挖：AbilitySystemComponent → GameplayEffect → AttributeSet 的执行主链"
-description: "大多数 GAS 教程停在"怎么用"，没有讲清 ASC 内部的 Ability 激活链、GE 的 Modifier 求值顺序、AttributeSet 的钩子时机、以及 Tag 查询的运行时代价。这篇从 ActivateAbility 开始，一路追到属性变更落地。"
+description: '大多数 GAS 教程停在"怎么用"，没有讲清 ASC 内部的 Ability 激活链、GE 的 Modifier 求值顺序、AttributeSet 的钩子时机、以及 Tag 查询的运行时代价。这篇从 ActivateAbility 开始，一路追到属性变更落地。'
 slug: "skill-system-15-gas-runtime-chain"
 weight: 8015
 tags:

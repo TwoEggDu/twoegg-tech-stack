@@ -45,32 +45,32 @@ Unity 的 Player Settings 里，有一组参数特别容易被一起讨论：
 1. 这 5 个参数分别影响哪一层。
 2. 哪些参数真的会影响 Unity 裁剪和构建链。
 3. 哪些参数主要影响构建速度、包体和运行时性能。
-4. 哪些参数经常被误会成“能解决别的层面的问题”。
+4. 哪些参数经常被误会成"能解决别的层面的问题"。
 5. 项目里如果只能先做一轮粗配置，应该优先怎么理解和选择。
 
 如果先压成一个最短版答案，可以写成这样：
 
 - `Scripting Backend` 先决定你是在聊 `Mono` 还是 `IL2CPP`。
 - `API Compatibility Level` 决定你能用哪些 .NET API，以及第三方库更容易兼容哪一档。
-- `IL2CPP Code Generation` 决定 IL2CPP 在“更快运行”还是“更快构建/更小代码”之间怎么取舍。
+- `IL2CPP Code Generation` 决定 IL2CPP 在"更快运行"还是"更快构建/更小代码"之间怎么取舍。
 - `C++ Compiler Configuration` 决定原生编译器优化有多激进。
 - `Use incremental GC` 是运行时平滑度参数，不是裁剪参数。
 
 ## 先给一张总表
 
-如果把这 5 个设置先按“它到底控制哪一层”排一遍，大概可以先得到这样一张表：
+如果把这 5 个设置先按"它到底控制哪一层"排一遍，大概可以先得到这样一张表：
 
 | 参数 | 它主要控制什么 | 更直接影响什么 | 最容易被误会成什么 |
 | --- | --- | --- | --- |
-| `Scripting Backend` | 托管代码最终怎么执行 | `Mono` / `IL2CPP`、AOT、构建链、部分平台可选项 | “只是另一个编译开关” |
-| `API Compatibility Level` | 可用 .NET API 面 | 第三方库兼容性、跨平台性、部分包体差异 | “能解决运行时性能或裁剪问题” |
-| `IL2CPP Code Generation` | IL2CPP 生成 C++ 的策略 | 构建时间、生成代码体量、泛型代码运行时性能 | “等同于 stripping level” |
-| `C++ Compiler Configuration` | 原生编译优化档位 | 编译时间、运行时性能、二进制大小、可调试性 | “等同于 IL2CPP Code Generation” |
-| `Use incremental GC` | GC 工作如何摊到多帧 | 帧时间尖峰、运行时卡顿表现 | “能减小包体或减少代码裁剪风险” |
+| `Scripting Backend` | 托管代码最终怎么执行 | `Mono` / `IL2CPP`、AOT、构建链、部分平台可选项 | "只是另一个编译开关" |
+| `API Compatibility Level` | 可用 .NET API 面 | 第三方库兼容性、跨平台性、部分包体差异 | "能解决运行时性能或裁剪问题" |
+| `IL2CPP Code Generation` | IL2CPP 生成 C++ 的策略 | 构建时间、生成代码体量、泛型代码运行时性能 | "等同于 stripping level" |
+| `C++ Compiler Configuration` | 原生编译优化档位 | 编译时间、运行时性能、二进制大小、可调试性 | "等同于 IL2CPP Code Generation" |
+| `Use incremental GC` | GC 工作如何摊到多帧 | 帧时间尖峰、运行时卡顿表现 | "能减小包体或减少代码裁剪风险" |
 
 这张表最重要的不是背选项名，而是先记住：
 
-`前四个都和构建链有关，但只有前一个半真正决定“你在裁什么”；最后一个主要是运行时行为，不是构建链行为。`
+`前四个都和构建链有关，但只有前一个半真正决定"你在裁什么"；最后一个主要是运行时行为，不是构建链行为。`
 
 顺手再记一个很实用的边界：
 
@@ -118,7 +118,7 @@ Unity 的 Player Settings 里，有一组参数特别容易被一起讨论：
 
 `它先决定你后面谈的是 Mono 裁剪，还是 IL2CPP + native build 这整条链。`
 
-所以很多“为什么这个选项在我这里没有”“为什么 Strip Engine Code 不生效”的问题，第一步都不是先看 `Managed Stripping Level`，而是先看 `Scripting Backend`。
+所以很多"为什么这个选项在我这里没有""为什么 Strip Engine Code 不生效"的问题，第一步都不是先看 `Managed Stripping Level`，而是先看 `Scripting Backend`。
 
 ### 它不会直接决定什么
 
@@ -137,7 +137,7 @@ Unity 的 Player Settings 里，有一组参数特别容易被一起讨论：
 
 如果把它压成一句工程判断，我会这么说：
 
-`Scripting Backend 不是“优化档位”，而是你整个构建和执行模型的分岔口。`
+`Scripting Backend 不是"优化档位"，而是你整个构建和执行模型的分岔口。`
 
 所以这组设置里，永远先看它。
 
@@ -145,7 +145,7 @@ Unity 的 Player Settings 里，有一组参数特别容易被一起讨论：
 
 第二个最容易被误会的参数，是 `API Compatibility Level`。
 
-它看起来像个偏“底层”的设置，但它真正管的是：
+它看起来像个偏"底层"的设置，但它真正管的是：
 
 `你项目里能依赖哪一档 .NET API。`
 
@@ -193,7 +193,7 @@ Unity 的 Player Settings 里，有一组参数特别容易被一起讨论：
 
 `API Compatibility Level 不是性能开关，也不是裁剪开关。`
 
-它更像“API 和依赖兼容性边界”的设置。
+它更像"API 和依赖兼容性边界"的设置。
 
 ### 实战上怎么理解
 
@@ -212,7 +212,7 @@ Unity 的 Player Settings 里，有一组参数特别容易被一起讨论：
 
 `不要把第三方兼容问题、裁剪问题和运行时性能问题都甩给 API Compatibility Level。`
 
-## 三、IL2CPP Code Generation：它是“生成多少代码、偏向什么目标”的取舍
+## 三、IL2CPP Code Generation：它是"生成多少代码、偏向什么目标"的取舍
 
 这个选项只在 `IL2CPP` backend 下有意义。
 
@@ -256,7 +256,7 @@ Unity 官方文档里常见的两档表述是：
 
 `它可能降低泛型代码的运行时性能。`
 
-这句话非常值得记，因为它说明这个参数的核心不是“画质档位”，而是：
+这句话非常值得记，因为它说明这个参数的核心不是"画质档位"，而是：
 
 `代码生成策略的取舍。`
 
@@ -282,12 +282,12 @@ Unity 官方文档里常见的两档表述是：
 
 更准确的说法应该是：
 
-- `Managed Stripping Level` 更关心“删什么”
-- `IL2CPP Code Generation` 更关心“剩下的这些代码怎么生成”
+- `Managed Stripping Level` 更关心"删什么"
+- `IL2CPP Code Generation` 更关心"剩下的这些代码怎么生成"
 
 ## 四、C++ Compiler Configuration：它决定 IL2CPP 生成代码怎么被原生编译
 
-如果说 `IL2CPP Code Generation` 还处在“生成什么 C++”这一层，那 `C++ Compiler Configuration` 就已经到了下一层：
+如果说 `IL2CPP Code Generation` 还处在"生成什么 C++"这一层，那 `C++ Compiler Configuration` 就已经到了下一层：
 
 `这些 C++ 最后用什么优化档位编出来。`
 
@@ -335,8 +335,8 @@ Unity 官方文档常见的几档是：
 
 这两个参数经常被一起提，但它们其实不是一回事：
 
-- `IL2CPP Code Generation` 解决的是“生成多少、生成成什么形态”
-- `C++ Compiler Configuration` 解决的是“这些生成出来的 C++ 怎么优化编译”
+- `IL2CPP Code Generation` 解决的是"生成多少、生成成什么形态"
+- `C++ Compiler Configuration` 解决的是"这些生成出来的 C++ 怎么优化编译"
 
 所以从工程视角看，这两者更像是：
 
@@ -408,9 +408,9 @@ Unity 官方文档的表述很明确：它会把 GC 工作摊到多个 frame 上
 
 `先定执行模型，再定 API 面，再定 IL2CPP 生成策略，再定原生优化档位，最后再看运行时 GC 节奏。`
 
-## 七、如果你的目标是“更小包体、更快构建、更稳运行”，这些参数该怎么配合看
+## 七、如果你的目标是"更小包体、更快构建、更稳运行"，这些参数该怎么配合看
 
-很多人真正想问的，其实不是“每个参数是什么意思”，而是：
+很多人真正想问的，其实不是"每个参数是什么意思"，而是：
 
 `我到底该优先调哪一个？`
 
@@ -466,7 +466,7 @@ Unity 官方文档的表述很明确：它会把 GC 工作摊到多个 frame 上
 
 - `Scripting Backend` 决定你是在 `Mono` 还是 `IL2CPP` 世界里，这是后面所有构建与裁剪讨论的前提。
 - `API Compatibility Level` 管的是 API 面和第三方库兼容性，`IL2CPP Code Generation` 和 `C++ Compiler Configuration` 管的是 IL2CPP 后半段的生成与编译取舍，`Incremental GC` 管的是运行时回收节奏。
-- 真想把 Player Settings 配对，先别把所有问题混成一个“优化开关”；先问自己当前面对的是兼容性、裁剪、构建时间，还是运行时卡顿。
+- 真想把 Player Settings 配对，先别把所有问题混成一个"优化开关"；先问自己当前面对的是兼容性、裁剪、构建时间，还是运行时卡顿。
 
 ## 延伸阅读
 

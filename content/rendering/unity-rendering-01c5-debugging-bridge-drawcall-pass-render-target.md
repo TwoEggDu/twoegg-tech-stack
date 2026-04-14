@@ -15,7 +15,7 @@ tags:
   - "RenderTarget"
 series: "Unity 渲染系统"
 ---
-> 如果只用一句话概括这篇，我会这样说：Frame Debugger 和 RenderDoc 看起来总在盯着 Draw Call、Pass 和 Render Target，不是因为工具设计得古怪，而是因为这三个对象正好是“引擎请求”“渲染阶段”“GPU 输出”这三层最稳定的连接点。
+> 如果只用一句话概括这篇，我会这样说：Frame Debugger 和 RenderDoc 看起来总在盯着 Draw Call、Pass 和 Render Target，不是因为工具设计得古怪，而是因为这三个对象正好是"引擎请求""渲染阶段""GPU 输出"这三层最稳定的连接点。
 
 很多人第一次打开渲染调试工具时，最大的困惑不是按钮不会点，而是：
 
@@ -24,11 +24,11 @@ series: "Unity 渲染系统"
 - 为什么一会儿看 Pass，一会儿看 Draw Call，一会儿又在看 RT
 - 为什么 Frame Debugger 和 RenderDoc 看起来像两套完全不同的语言
 
-这些问题如果不先补一层桥，后面的工具文很容易变成“会点面板，但不知道自己在看什么”。
+这些问题如果不先补一层桥，后面的工具文很容易变成"会点面板，但不知道自己在看什么"。
 
 ---
 
-## 先说结论：工具不会直接显示“场景”
+## 先说结论：工具不会直接显示"场景"
 
 你在 Unity 里最熟悉的对象是：
 
@@ -40,13 +40,13 @@ series: "Unity 渲染系统"
 
 但 GPU 真正执行时，根本不认识这些对象。
 
-对 GPU 来说，更接近“工作单位”的其实是：
+对 GPU 来说，更接近"工作单位"的其实是：
 
 - 一次 Draw Call
 - 一个 Pass
 - 一张当前被写入或读取的 Render Target
 
-所以调试工具不直接显示“场景”，不是因为它做不到，而是因为：
+所以调试工具不直接显示"场景"，不是因为它做不到，而是因为：
 
 `场景对象不是渲染执行的最小单位。`
 
@@ -84,7 +84,7 @@ series: "Unity 渲染系统"
 
 这是新手最容易误判的地方。
 
-在场景里你看到的是“一个物体”，但进入渲染链以后，它经常会拆成很多次工作。
+在场景里你看到的是"一个物体"，但进入渲染链以后，它经常会拆成很多次工作。
 
 例如一个看起来普通的角色，可能会出现在：
 
@@ -104,11 +104,11 @@ series: "Unity 渲染系统"
 
 `一个物体在不同 Pass 里，可能会变成多次 Draw Call。`
 
-这也是为什么工具里你会不断看到“同一个名字反复出现”，但每次含义并不一样。
+这也是为什么工具里你会不断看到"同一个名字反复出现"，但每次含义并不一样。
 
 ---
 
-## 为什么 Frame Debugger 更像“Pass 浏览器”
+## 为什么 Frame Debugger 更像"Pass 浏览器"
 
 Frame Debugger 站在 Unity 这一侧。
 
@@ -136,11 +136,11 @@ Camera
 
 换句话说，Frame Debugger 更像是：
 
-`把 Unity 侧的渲染组织方式“显形”。`
+`把 Unity 侧的渲染组织方式"显形"。`
 
 ---
 
-## 为什么 RenderDoc 更像“GPU 数据浏览器”
+## 为什么 RenderDoc 更像"GPU 数据浏览器"
 
 RenderDoc 站在 GPU API 这一侧。
 
@@ -162,12 +162,12 @@ Render Pass / API Event
   → 输出
 ```
 
-这时你看到的已经不是“Unity 以为自己在做什么”，而是“GPU 真正收到了什么”。
+这时你看到的已经不是"Unity 以为自己在做什么"，而是"GPU 真正收到了什么"。
 
 所以 RenderDoc 不是 Frame Debugger 的替代品，而是另一个层次：
 
-- Frame Debugger 看“顺序和组织”
-- RenderDoc 看“真实数据和状态”
+- Frame Debugger 看"顺序和组织"
+- RenderDoc 看"真实数据和状态"
 
 ---
 
@@ -210,7 +210,7 @@ Render Pass / API Event
 
 这时就该进 RenderDoc。
 
-所以一个看起来只是“角色太暗”的问题，实际上会自然地穿过三种对象：
+所以一个看起来只是"角色太暗"的问题，实际上会自然地穿过三种对象：
 
 ```
 Pass
@@ -256,13 +256,13 @@ Pass
 
 ## 最常见的四个误解
 
-### 1. “一个 Draw Call 就是一个物体”
+### 1. "一个 Draw Call 就是一个物体"
 
 不是。
 
 一个物体可能拆成多个 Draw Call，一个 Draw Call 也可能是 Instancing 后的一批实例。
 
-### 2. “一个 Pass 就是一次完整功能”
+### 2. "一个 Pass 就是一次完整功能"
 
 也不是。
 
@@ -274,7 +274,7 @@ Pass 更像一个阶段片段。
 - 若干全屏 Pass
 - 若干临时 RT 切换
 
-### 3. “Render Target 就是最终屏幕”
+### 3. "Render Target 就是最终屏幕"
 
 通常不是。
 
@@ -288,7 +288,7 @@ Pass 更像一个阶段片段。
 
 最终上屏的那张图，只是很多 RT 里的最后一张。
 
-### 4. “只要看 Draw Call 数量就能判断问题”
+### 4. "只要看 Draw Call 数量就能判断问题"
 
 也不行。
 
@@ -318,4 +318,4 @@ Draw Call 数量是一个信号，但不是结论。
 2. [Unity 渲染系统 01e｜RenderDoc 入门：捕获第一帧并读懂它]({{< relref "rendering/unity-rendering-01e-renderdoc-basics.md" >}})
 3. [Unity 渲染系统 01f｜RenderDoc 进阶：顶点数据、贴图采样、Pipeline State 调试]({{< relref "rendering/unity-rendering-01f-renderdoc-advanced.md" >}})
 
-如果你能先把这层桥补上，后面的工具面板就不再只是“会点”，而是能真正读懂。
+如果你能先把这层桥补上，后面的工具面板就不再只是"会点"，而是能真正读懂。

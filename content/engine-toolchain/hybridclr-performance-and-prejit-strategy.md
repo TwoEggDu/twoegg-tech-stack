@@ -13,7 +13,7 @@ tags:
 series: "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
-> HybridCLR 的性能问题，最容易被一句“解释器比 AOT 慢”带过去；但真正能指导工程决策的，不是这句大而化之的判断，而是先分清你现在付出的成本，到底来自首调 transform、长期解释执行，还是跨 ABI 边界。
+> HybridCLR 的性能问题，最容易被一句"解释器比 AOT 慢"带过去；但真正能指导工程决策的，不是这句大而化之的判断，而是先分清你现在付出的成本，到底来自首调 transform、长期解释执行，还是跨 ABI 边界。
 
 这是 HybridCLR 系列第 9 篇。  
 前面几篇已经把主链、工具链、AOT 泛型、资源挂载、best practice 和故障诊断都立住了；这一篇不再补新的系统边界，而是回到一个更工程的问题：
@@ -24,28 +24,28 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 
 这篇主要回答 5 个问题：
 
-1. HybridCLR 的性能成本，真正来自哪几层，而不是笼统地说“解释器慢”。
+1. HybridCLR 的性能成本，真正来自哪几层，而不是笼统地说"解释器慢"。
 2. `PreJitMethod / PreJitClass` 到底在预热什么，它为什么不等于 native JIT。
 3. 哪些逻辑适合长期留在 interpreter，哪些更应该前移或回到 AOT。
 4. 高频跨 interpreter / AOT / native 边界时，什么才是真正该担心的成本。
-5. `RuntimeOptionId` 这类运行时选项该怎么理解，哪些是调优旋钮，哪些不是“性能魔法开关”。
+5. `RuntimeOptionId` 这类运行时选项该怎么理解，哪些是调优旋钮，哪些不是"性能魔法开关"。
 
 ## 先给一句总判断
 
 这篇文章的核心判断只有一条：
 
-`HybridCLR 的性能治理，不是想办法把所有热更逻辑都”优化成 AOT”，而是先把成本拆层。`  
+`HybridCLR 的性能治理，不是想办法把所有热更逻辑都"优化成 AOT"，而是先把成本拆层。`  
 `该前移的前移，该避免跨边界的避免跨边界，该留在解释器的留在解释器。`
 
 这件事一旦按层理解，很多策略都会自然很多。
 
 ![HybridCLR 性能分层图](../../images/hybridclr/performance-layers.svg)
 
-*图：如果不先把成本拆成“首调、稳态、跨边界、启动期聚集”这几层，后面的优化动作很容易打错位置。*
+*图：如果不先把成本拆成"首调、稳态、跨边界、启动期聚集"这几层，后面的优化动作很容易打错位置。*
 
-## 不要把性能问题压扁成一句“解释器慢”
+## 不要把性能问题压扁成一句"解释器慢"
 
-如果只用一句“解释器比 AOT 慢”来讲 HybridCLR，工程上几乎没有指导价值。  
+如果只用一句"解释器比 AOT 慢"来讲 HybridCLR，工程上几乎没有指导价值。  
 因为项目里真实会感觉到的成本，至少来自 4 层。
 
 ### 1. 首次调用成本
@@ -92,13 +92,13 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 - 首批关键方法的首次执行
 - 资源世界大规模启动
 
-都堆在同一帧，那用户感知到的就不是“解释器慢”，而是明显的启动抖动。
+都堆在同一帧，那用户感知到的就不是"解释器慢"，而是明显的启动抖动。
 
 所以这篇后面所有建议，都会围着这 4 层展开。
 
 ## `PreJitMethod / PreJitClass` 真正预热的不是 native 代码，而是解释器方法信息
 
-这件事必须先说死，不然后面所有“预热”讨论都会歪。
+这件事必须先说死，不然后面所有"预热"讨论都会歪。
 
 先看 `Packages/HybridCLR/Runtime/RuntimeApi.cs`：
 
@@ -171,15 +171,15 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 
 也就是说：
 
-`PreJit` 不是“给任何方法加速”的万能按钮，而是“对满足条件的解释器方法，提前完成 transform 和缓存”。`
+`PreJit` 不是"给任何方法加速"的万能按钮，而是"对满足条件的解释器方法，提前完成 transform 和缓存"。`
 
-这也是为什么我不建议把它宣传成“性能修复总开关”。
+这也是为什么我不建议把它宣传成"性能修复总开关"。
 
 ## 什么时候该用 `PreJit`
 
 我觉得最稳的判断很简单：
 
-`只对“马上就会被用户感觉到的首次调用路径”做预热。`
+`只对"马上就会被用户感觉到的首次调用路径"做预热。`
 
 ### 适合 `PreJit` 的场景
 
@@ -196,18 +196,18 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 
 ### 不适合 `PreJit` 的场景
 
-- 想对整个大程序集一股脑“全预热”
+- 想对整个大程序集一股脑"全预热"
 - 大量并不一定会执行的方法
 - 泛型和边界复杂、成功率本来就不稳定的整类路径
 - 你其实根本没有首调问题，只是长期每帧热点在解释器里
 
 因为这类做法只是把成本提前堆到启动期，并不会真的减少总成本。
 
-## 真正该前移的，通常不是“所有解释器方法”，而是“首调尖峰”
+## 真正该前移的，通常不是"所有解释器方法"，而是"首调尖峰"
 
 这是我对 `PreJit` 最核心的工程判断。
 
-很多项目会本能地把“预热”理解成“先做越多越好”。  
+很多项目会本能地把"预热"理解成"先做越多越好"。  
 但对 HybridCLR，这个判断通常不成立。
 
 因为如果你把几十上百个方法的 transform 全堆到启动期：
@@ -251,7 +251,7 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 - 高频跨 interpreter / AOT / native 边界调用
 - 强依赖原生性能的底层系统
 
-这类逻辑的问题往往不是“首调慢一下”，而是长期路径一直在付费。  
+这类逻辑的问题往往不是"首调慢一下"，而是长期路径一直在付费。  
 这时候最有效的策略通常不是多做 `PreJit`，而是重新放置边界：
 
 - 把稳定核心段留回 AOT
@@ -343,15 +343,15 @@ InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* metho
 3. 让 AOT 承担稳定底座，让 HotUpdate 承担变化层  
    真正高频、稳定、强性能敏感的逻辑，不要默认留在 interpreter。
 
-这三条通常比”盲调运行时选项”更有效。
+这三条通常比"盲调运行时选项"更有效。
 
 ## 补充：怎么确认热点到底在解释器还是 AOT
 
-在做上面的分层判断之前，你需要先确认一个方法到底跑在哪一侧。最直接的方式是用平台原生 profiler（iOS 用 Instruments，Android 用 Perfetto 或 Simpleperf）抓 CPU 采样，然后在调用栈里找 `hybridclr::interpreter::Interpreter::Execute` 这个帧。如果某个函数的调用栈里出现了这个帧并且占比显著，说明它正在走解释器路径；反之则是 AOT 或 native 路径。这一步做完，后面的”该前移还是该留”才有数据依据。
+在做上面的分层判断之前，你需要先确认一个方法到底跑在哪一侧。最直接的方式是用平台原生 profiler（iOS 用 Instruments，Android 用 Perfetto 或 Simpleperf）抓 CPU 采样，然后在调用栈里找 `hybridclr::interpreter::Interpreter::Execute` 这个帧。如果某个函数的调用栈里出现了这个帧并且占比显著，说明它正在走解释器路径；反之则是 AOT 或 native 路径。这一步做完，后面的"该前移还是该留"才有数据依据。
 
 ## 收束
 
-HybridCLR 的性能治理，核心不是把解释器”调得像 AOT 一样快”，而是先把成本拆层，再决定哪些首调该前移、哪些热点该回到 AOT、哪些跨边界调用该收缩。
+HybridCLR 的性能治理，核心不是把解释器"调得像 AOT 一样快"，而是先把成本拆层，再决定哪些首调该前移、哪些热点该回到 AOT、哪些跨边界调用该收缩。
 
 ## 系列位置
 

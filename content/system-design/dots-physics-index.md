@@ -24,7 +24,7 @@ series_audience:
 series_level: "进阶"
 series_best_for: "当你想把 Unity Physics / Havok Physics 放回 ECS 世界里理解，而不是把它当成 Rigidbody 的平移版"
 series_summary: "从物理世界地图、数据模型、查询、事件和 Baking，一路接到角色控制与调试排障。"
-series_intro: "这组文章处理的不是“DOTS 版 Rigidbody 教程”，而是物理世界怎样接进 ECS 世界。它先把 Unity Physics / Havok Physics 在运行时里各站哪一层讲清，再拆 Collider、PhysicsBody、Query、Events、Baking 和 Character Controller 的边界，最后把这些结论收回调试与性能判断。"
+series_intro: '这组文章处理的不是"DOTS 版 Rigidbody 教程"，而是物理世界怎样接进 ECS 世界。它先把 Unity Physics / Havok Physics 在运行时里各站哪一层讲清，再拆 Collider、PhysicsBody、Query、Events、Baking 和 Character Controller 的边界，最后把这些结论收回调试与性能判断。'
 series_reading_hint: "第一次读建议按 P01 → P04 建立物理世界地图，再按需进入 P06（Baking）、P05（Character Controller）和 P07（调试排障）。如果你是带着具体问题来查，可直接从 Query、Events 或 Character Controller 那几篇切入。"
 weight: 2100
 ---

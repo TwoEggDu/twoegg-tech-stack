@@ -20,10 +20,10 @@ series_order: 50
 
 项目里最常见的混乱也正是从这里开始的：
 
-- “我们这里是 `BuildPipeline` 打的”
-- “其实底下已经走 `SBP` 了”
-- “我们改的是 `Addressables Data Builder`”
-- “那这三个到底谁才是真正的构建管线”
+- "我们这里是 `BuildPipeline` 打的"
+- "其实底下已经走 `SBP` 了"
+- "我们改的是 `Addressables Data Builder`"
+- "那这三个到底谁才是真正的构建管线"
 
 这些说法之所以容易越说越乱，不是因为名字难记，而是因为它们根本不站在同一层。这篇就只做一件事：把这三层边界钉住，让后面讨论 bundle、Catalog、内容更新、构建缓存和压缩代价时，不再把问题说串。
 
@@ -51,9 +51,9 @@ series_order: 50
 
 这三件事如果不拆开，后面就很容易出现几种典型误判：
 
-- 把 `Addressables` 当成“新版 BuildPipeline”
-- 把 `SBP` 当成“Addressables 的别名”
-- 把“换了一个 Data Builder”理解成“重写了整套 Unity 构建系统”
+- 把 `Addressables` 当成"新版 BuildPipeline"
+- 把 `SBP` 当成"Addressables 的别名"
+- 把"换了一个 Data Builder"理解成"重写了整套 Unity 构建系统"
 
 所以这一篇最重要的任务不是列 API，而是先把职责边界钉住。只有层次先站稳，后面的调用链才不会被说反。
 
@@ -61,7 +61,7 @@ series_order: 50
 
 `BuildPipeline` 是 Unity 编辑器原生暴露出来的构建入口类。官方脚本 API 对它的定义非常直接：它允许你以代码方式构建 player 或 AssetBundle。
 
-这句话已经把它的角色说清楚了。`BuildPipeline` 解决的是“向 Unity 编辑器发起一次构建请求”，而不是“替你定义资源交付模型”。
+这句话已经把它的角色说清楚了。`BuildPipeline` 解决的是"向 Unity 编辑器发起一次构建请求"，而不是"替你定义资源交付模型"。
 
 放到资源系统语境里，它最常见地站在两个入口：
 
@@ -70,7 +70,7 @@ series_order: 50
 
 如果你看的是 `BuildPipeline.BuildAssetBundles`，它更像一个编辑器侧的构建调用边界：给它输出目录、平台、构建选项，或者一份 `AssetBundleBuild[]` build map，它就去产出 bundle 以及相应的 `AssetBundleManifest`。
 
-所以更准确的说法应该是：`BuildPipeline` 更像 Unity 编辑器原生提供的“构建发起和编排边界”，而不是项目资源系统自己的内容组织层。
+所以更准确的说法应该是：`BuildPipeline` 更像 Unity 编辑器原生提供的"构建发起和编排边界"，而不是项目资源系统自己的内容组织层。
 
 它默认并不关心这些项目语义：
 
@@ -96,7 +96,7 @@ series_order: 50
 - `可脚本化`
 - `更灵活 / 更增量 / 更可组合`
 
-也就是说，`SBP` 解决的不是“资源在项目里该怎么分组、怎么起地址”，而是：
+也就是说，`SBP` 解决的不是"资源在项目里该怎么分组、怎么起地址"，而是：
 
 `在你已经定义了内容边界之后，Unity 怎样更可控地执行 bundle 构建流程。`
 
@@ -144,11 +144,11 @@ Addressables 的 `AddressableAssetSettings.BuildPlayerContent()` 官方描述很
 - `IDataBuilder`
 - `addressables_content_state.bin`
 
-默认的 `BuildScriptPackedMode` 本身就是一类 `IDataBuilder`。这已经说明 `Addressables Build Script` 讨论的重点，不只是“把 bundle 写出来”，而是“用什么项目语义去组织输入内容，并且生成运行时需要的那套数据世界”。
+默认的 `BuildScriptPackedMode` 本身就是一类 `IDataBuilder`。这已经说明 `Addressables Build Script` 讨论的重点，不只是"把 bundle 写出来"，而是"用什么项目语义去组织输入内容，并且生成运行时需要的那套数据世界"。
 
 再往下看 Addressables API，你会看到 `AddressableAssetsBuildContext` 这种类型。官方文档对它的说明也很关键：它是一个在 Addressables 不同部分之间、并通过 `SBP` 传递数据的上下文对象。
 
-这句话基本已经把关系说透了：`Addressables Build Script` 不是在取代 bundle 构建执行层，而是在上面再加一层“项目内容组织、构建配置和运行时数据生成”的语义层。
+这句话基本已经把关系说透了：`Addressables Build Script` 不是在取代 bundle 构建执行层，而是在上面再加一层"项目内容组织、构建配置和运行时数据生成"的语义层。
 
 所以如果把 `Addressables Build Script` 的职责压一下，它更像在回答这些问题：
 
@@ -162,7 +162,7 @@ Addressables 的 `AddressableAssetSettings.BuildPlayerContent()` 官方描述很
 
 也就是说：
 
-`Addressables Build Script` 关心的不是“能不能把 bundle 写出来”这么简单，而是“这一整套可定位、可更新、可发布的资源世界怎样成立”。`
+`Addressables Build Script` 关心的不是"能不能把 bundle 写出来"这么简单，而是"这一整套可定位、可更新、可发布的资源世界怎样成立"。`
 
 ## 这三层之间到底怎么串起来
 
@@ -192,27 +192,27 @@ bundle / catalog / content_state / build layout 等产物
 需要整包时，再进入 BuildPipeline.BuildPlayer
 ```
 
-注意这里的关键不是”谁一定先调用谁”，而是”谁在回答哪一层问题”。从职责分层看，它们不是三选一；从工程流程看，它们又经常会在一次完整构建里前后接起来。这两件事要同时成立，文章才不会把层次写歪。
+注意这里的关键不是"谁一定先调用谁"，而是"谁在回答哪一层问题"。从职责分层看，它们不是三选一；从工程流程看，它们又经常会在一次完整构建里前后接起来。这两件事要同时成立，文章才不会把层次写歪。
 
 ```mermaid
 flowchart TD
-    A[“CI / Editor 菜单 / 批处理入口”] --> B
-    subgraph Layer3[“Addressables Build Script”]
-        B[“AddressableAssetSettings<br/>Profile · Group · ActivePlayerDataBuilder”]
-        B --> C[“组织内容 + 生成 Catalog / content_state”]
+    A["CI / Editor 菜单 / 批处理入口"] --> B
+    subgraph Layer3["Addressables Build Script"]
+        B["AddressableAssetSettings<br/>Profile · Group · ActivePlayerDataBuilder"]
+        B --> C["组织内容 + 生成 Catalog / content_state"]
     end
     C --> D
-    subgraph Layer2[“SBP（Scriptable Build Pipeline）”]
-        D[“GenerateBundlePacking”]
-        D --> E[“GenerateBundleCommands”]
-        E --> F[“WriteSerializedFiles”]
-        F --> G[“ArchiveAndCompressBundles”]
+    subgraph Layer2["SBP（Scriptable Build Pipeline）"]
+        D["GenerateBundlePacking"]
+        D --> E["GenerateBundleCommands"]
+        E --> F["WriteSerializedFiles"]
+        F --> G["ArchiveAndCompressBundles"]
     end
     G --> H
-    subgraph Layer1[“BuildPipeline（编辑器原生）”]
-        H[“BuildPipeline.BuildPlayer<br/>（整包构建时）”]
+    subgraph Layer1["BuildPipeline（编辑器原生）"]
+        H["BuildPipeline.BuildPlayer<br/>（整包构建时）"]
     end
-    G --> I[“输出：bundle · catalog · content_state · BuildLayout”]
+    G --> I["输出：bundle · catalog · content_state · BuildLayout"]
 ```
 
 ## 项目判断：讨论打包问题时，应该先怀疑哪一层
@@ -229,7 +229,7 @@ flowchart TD
 | Catalog、content state、内容更新为什么会把某些资源重新打包 | `Addressables Build Script` | 这是运行时数据和更新语义层，不只是写包层 |
 | 整包能出，但 Addressables 内容世界不对 | 先看 `Addressables Build Script`，再下钻 `SBP` | 先判断是项目语义错了，还是底下执行层出了问题 |
 
-更短的判断法其实就一句：先问你在改“构建怎么被发起”，还是“bundle 怎么被执行出来”，还是“项目资源世界怎样被定义”。
+更短的判断法其实就一句：先问你在改"构建怎么被发起"，还是"bundle 怎么被执行出来"，还是"项目资源世界怎样被定义"。
 
 ## 最常见的三个误判
 
@@ -243,12 +243,12 @@ flowchart TD
 
 ### 3. 误判三：我们写了一个自定义构建脚本，就等于重写了整套 Unity 构建管线
 
-更准确的说法应该是：先问清你改的是入口编排、bundle 执行流程，还是项目内容组织层。很多团队其实只是包了一层 Editor 菜单、CI 调度或替换了一个 `Data Builder`，这和“重写完整资源构建管线”不是一个量级。
+更准确的说法应该是：先问清你改的是入口编排、bundle 执行流程，还是项目内容组织层。很多团队其实只是包了一层 Editor 菜单、CI 调度或替换了一个 `Data Builder`，这和"重写完整资源构建管线"不是一个量级。
 
 ## 最后只压一句
 
 `BuildPipeline` 负责发起和编排构建，`SBP` 负责执行 AssetBundle 构建流程，`Addressables Build Script` 负责把项目资源组织、运行时数据和发布语义挂到这条构建链上。把这三层拆开以后，后面再讨论 bundle、Catalog、内容更新、构建缓存和压缩代价，才不会把问题说成同一种。`
 
-如果你下一步想继续追“真正把资源编成 AssetBundle 时，中间到底发生了什么”，接着读 [Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么]({{< relref "engine-toolchain/unity-how-assets-become-assetbundles-dependencies-manifest-compression.md" >}})。
+如果你下一步想继续追"真正把资源编成 AssetBundle 时，中间到底发生了什么"，接着读 [Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么]({{< relref "engine-toolchain/unity-how-assets-become-assetbundles-dependencies-manifest-compression.md" >}})。
 
 如果你想把这篇放回前一篇总论的判断里看，回去读 [Addressables 和 YooAsset 到底谁强：你选的不是框架，是资源交付问题的主战场]({{< relref "engine-toolchain/unity-addressables-yooasset-main-battlefield-of-resource-delivery.md" >}})。

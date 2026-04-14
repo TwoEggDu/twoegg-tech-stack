@@ -12,12 +12,12 @@ tags:
 series: "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
-> HybridCLR 不是“把 DLL load 进来就能跑”，而是在一个原本偏静态、偏 AOT 的 IL2CPP runtime 上，补了一整条从 metadata 装载到解释执行的运行时链路。
+> HybridCLR 不是"把 DLL load 进来就能跑"，而是在一个原本偏静态、偏 AOT 的 IL2CPP runtime 上，补了一整条从 metadata 装载到解释执行的运行时链路。
 
 这是 HybridCLR 系列第 1 篇，先把总地图和 runtime 主链立住。
 本文只把工具链、AOT 泛型、MethodBridge 压到够建立地图的程度；更细的边界留给后面的专题篇。
 
-如果只看功能描述，HybridCLR 很容易被理解成“IL2CPP 上的 C# 热更新方案”。
+如果只看功能描述，HybridCLR 很容易被理解成"IL2CPP 上的 C# 热更新方案"。
 
 这句话当然没错，但它太粗了。粗到会把最关键的边界一起抹平。
 
@@ -42,7 +42,7 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 
 这篇不是接入教程，也不是源码目录索引。
 
-它更像一篇“源码导读版总论”。目标不是把所有文件列出来，而是建立一张够用的因果地图，让读者可以顺着文章自己进源码。
+它更像一篇"源码导读版总论"。目标不是把所有文件列出来，而是建立一张够用的因果地图，让读者可以顺着文章自己进源码。
 
 如果你现在对 `IL2CPP` 最终产物这一层还不够熟，比如还没把 `global-metadata.dat`、`GameAssembly`、`libil2cpp` 这三样东西的分工立住，我建议先补这篇公共前置：
 
@@ -58,7 +58,7 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 
 ## 先给一段最小 IL2CPP 背景
 
-如果不先把 IL2CPP 的坐标立住，后面很容易把 HybridCLR 理解成“另起炉灶”。
+如果不先把 IL2CPP 的坐标立住，后面很容易把 HybridCLR 理解成"另起炉灶"。
 
 但它其实不是。
 
@@ -66,13 +66,13 @@ Unity 托管代码的大致路径可以先压成一句话：
 
 `C# -> IL -> il2cpp 转换 -> C++ -> native binary`
 
-这句话的重点不在“会转成 C++”，而在于它背后的运行时假设：
+这句话的重点不在"会转成 C++"，而在于它背后的运行时假设：
 
 - 运行时里要执行的方法，理想状态下已经提前 AOT 成 native 代码
 - 类型、方法、metadata 的主体结构，理想状态下在构建时就已经基本确定
 - 默认运行时并不是一个可以继续接收新 IL、再现场 JIT 执行的 CLR
 
-所以 IL2CPP 的问题从来不是“看不懂 DLL 文件”，而是它原本并不打算在运行时天然支持这样一条链路：
+所以 IL2CPP 的问题从来不是"看不懂 DLL 文件"，而是它原本并不打算在运行时天然支持这样一条链路：
 
 `新程序集进来 -> 建立运行时 metadata 映射 -> 找到 method body -> 现场把它跑起来`
 
@@ -166,15 +166,15 @@ HybridCLR 干的，恰恰就是把这条链补出来。
 如果只做第一轮跟读，我建议先下 4 个断点：
 
 - `Runtime::Initialize`：先确认 HybridCLR 到底是怎么挂进 `libil2cpp` 的
-- `RuntimeApi::LoadMetadataForAOTAssembly`：先把“补 metadata”和“加载热更 DLL”分开
+- `RuntimeApi::LoadMetadataForAOTAssembly`：先把"补 metadata"和"加载热更 DLL"分开
 - `Assembly::Create`：先看热更程序集是怎么落成 `InterpreterImage` 的
-- `HiTransform::Transform`：先看到“method body -> InterpMethodInfo”这一步
+- `HiTransform::Transform`：先看到"method body -> InterpMethodInfo"这一步
 
 先走通这 4 跳，再往 `Interpreter::Execute` 深挖，阅读阻力会低很多。
 
 ## 先看 Editor 工具链：运行时到底提前需要哪些输入
 
-很多人第一次看到 HybridCLR 菜单，会把它理解成“编辑器上的一组便利按钮”。
+很多人第一次看到 HybridCLR 菜单，会把它理解成"编辑器上的一组便利按钮"。
 
 但如果你直接看 `PrebuildCommand.cs`，你会发现它本质上是在按固定依赖顺序准备 runtime 的输入。
 
@@ -192,13 +192,13 @@ public static void GenerateAll()
 }
 ```
 
-这段代码对应的不是“功能列表”，而是一条依赖链。
+这段代码对应的不是"功能列表"，而是一条依赖链。
 
 在总论里，这些按钮不需要逐个展开到源码细节。先记住它们分别在准备 4 类输入就够了：
 
 - `Installer` 和 `Il2CppDef` 负责把当前工程和本地 `libil2cpp` 对齐
 - `CompileDll`、`LinkXml` 负责把热更程序集和裁剪可见性准备好
-- `AOTDlls` 负责拿到“最终裁剪后的 AOT 世界是什么样”
+- `AOTDlls` 负责拿到"最终裁剪后的 AOT 世界是什么样"
 - `MethodBridge`、`AOTGenericReference` 分别补 ABI 边界和泛型风险显式化
 
 这一层在系列里的任务，只是先把 build-time 因果关系立住。  
@@ -210,7 +210,7 @@ public static void GenerateAll()
 
 `HybridCLR 菜单不是在做杂活，而是在提前生成 runtime 真正要吃的输入。`
 
-少了它们，后面的 runtime 不是“性能差一点”，而是整个链条根本搭不起来。
+少了它们，后面的 runtime 不是"性能差一点"，而是整个链条根本搭不起来。
 
 顺便说一句，如果你自己的项目菜单里还有 `Define Symbols`、`BuildAssets And CopyTo AssemblyTextAssetPath`、`AOT引用热更检查` 这类入口，那通常是项目自己的封装，不是 HybridCLR package runtime 原理本身。本文后面只按 package 主线讲。
 
@@ -230,7 +230,7 @@ void Runtime::Initialize()
 
 这段代码非常短，但信息密度很高。
 
-第一，它说明 HybridCLR 并不是一个“外部解释器”，而是直接挂进 `libil2cpp` 的一组 runtime 模块。
+第一，它说明 HybridCLR 并不是一个"外部解释器"，而是直接挂进 `libil2cpp` 的一组 runtime 模块。
 
 第二，它说明这套 runtime 至少有四个启动点：
 
@@ -241,18 +241,18 @@ void Runtime::Initialize()
 
 这也是为什么读 HybridCLR 不应该从 `Interpreter_Execute.cpp` 直接开始。
 
-因为如果你不先看到 `Runtime::Initialize()`，就会下意识把它理解成“解释器实现细节”。
+因为如果你不先看到 `Runtime::Initialize()`，就会下意识把它理解成"解释器实现细节"。
 
 但实际上，它首先是一套被接进 IL2CPP runtime 的系统模块。
 
-如果你准备自己跟一次，这里最值得观察的不是“有没有调到 Initialize”，而是 4 行调用的先后顺序。
+如果你准备自己跟一次，这里最值得观察的不是"有没有调到 Initialize"，而是 4 行调用的先后顺序。
 
 - `RuntimeApi::RegisterInternalCalls()` 决定 C# 侧那几个 API 最后能不能落到 native 语义
 - `MetadataModule::Initialize()` 决定后面 image、assembly、method body 这条 metadata 主线能不能成立
 - `InterpreterModule::Initialize()` 决定解释器 invoker 和桥接表是否就位
 - `TransformModule::Initialize()` 决定 transform 所需的运行时环境是否就位
 
-也就是说，这里不是单纯的“启动代码”，而是在把后文四条主线一次性挂好。
+也就是说，这里不是单纯的"启动代码"，而是在把后文四条主线一次性挂好。
 
 ## C# 的 RuntimeApi 调到 native 后，语义到底是什么
 
@@ -310,7 +310,7 @@ int32_t RuntimeApi::LoadMetadataForAOTAssembly(Il2CppArray* dllBytes, int32_t mo
 
 这句代码非常值得停一下。
 
-因为它说明 `LoadMetadataForAOTAssembly` 的语义不是“执行热更 DLL”，而是把字节数组交给 `metadata::Assembly::LoadMetadataForAOTAssembly`。
+因为它说明 `LoadMetadataForAOTAssembly` 的语义不是"执行热更 DLL"，而是把字节数组交给 `metadata::Assembly::LoadMetadataForAOTAssembly`。
 
 也就是说，它首先在解决的是 metadata 问题，不是代码执行问题。
 
@@ -325,7 +325,7 @@ int32_t RuntimeApi::LoadMetadataForAOTAssembly(Il2CppArray* dllBytes, int32_t mo
 
 ### `PreJitMethod` 真正在做什么
 
-很多人第一次看到 `PreJitMethod`，会下意识把它理解成“提前 JIT”。
+很多人第一次看到 `PreJitMethod`，会下意识把它理解成"提前 JIT"。
 
 但 HybridCLR 这里并不是把方法 JIT 成 native 代码，而是在提前做 transform 和缓存。
 
@@ -358,7 +358,7 @@ int32_t PreJitMethod0(const MethodInfo* methodInfo)
 
 这一节是整篇文章最重要的基础层。
 
-因为解释器最终执行什么，不是由 `Execute` 决定的，而是由 metadata 层先把“它到底是什么方法、方法体在哪、该用哪份 image”这些事情定下来。
+因为解释器最终执行什么，不是由 `Execute` 决定的，而是由 metadata 层先把"它到底是什么方法、方法体在哪、该用哪份 image"这些事情定下来。
 
 ### 第一条线：热更程序集本身怎么进来
 
@@ -416,7 +416,7 @@ Il2CppAssembly* Assembly::Create(const byte* assemblyData, uint64_t length, ...)
 4. 初始化 runtime metadata
 5. 把这份 assembly 正式注册进 `MetadataCache`
 
-这里最重要的点不是“加载文件”，而是：
+这里最重要的点不是"加载文件"，而是：
 
 `热更程序集在 runtime 里被包装成了一个可以参与后续 metadata 解析与执行的 InterpreterImage。`
 
@@ -428,11 +428,11 @@ Il2CppAssembly* Assembly::Create(const byte* assemblyData, uint64_t length, ...)
 `给已有 AOT 程序集挂一份可查询的同源 metadata image。`
 
 这篇只需要先把这个判断立住。  
-至于 `Consistent / SuperSet`、`AOTHomologousImage` 注册表，以及为什么“看得懂 metadata”不等于“native 实现一定存在”，后面的 AOT 泛型篇再展开。
+至于 `Consistent / SuperSet`、`AOTHomologousImage` 注册表，以及为什么"看得懂 metadata"不等于"native 实现一定存在"，后面的 AOT 泛型篇再展开。
 
 ## MetadataModule 到底解决了什么问题
 
-如果说 `Assembly.cpp` 在做“装载”，那 `MetadataModule.cpp` 做的就是“统一入口”。
+如果说 `Assembly.cpp` 在做"装载"，那 `MetadataModule.cpp` 做的就是"统一入口"。
 
 先看初始化：
 
@@ -474,13 +474,13 @@ Image* MetadataModule::GetUnderlyingInterpreterImage(const MethodInfo* methodInf
 }
 ```
 
-这段代码是全链路里一个非常关键的“分流点”。
+这段代码是全链路里一个非常关键的"分流点"。
 
 它回答的是：
 
-`当后面有人拿着一个 MethodInfo 来问“对应的 metadata image 在哪”时，到底该去热更 InterpreterImage 里找，还是去 AOT 同源 image 里找？`
+`当后面有人拿着一个 MethodInfo 来问"对应的 metadata image 在哪"时，到底该去热更 InterpreterImage 里找，还是去 AOT 同源 image 里找？`
 
-也就是说，从这一层开始，后面的 `MethodBodyCache`、`Transform`、`Interpreter` 就不用再关心“这份 metadata 到底来自热更程序集还是补充 AOT image”。
+也就是说，从这一层开始，后面的 `MethodBodyCache`、`Transform`、`Interpreter` 就不用再关心"这份 metadata 到底来自热更程序集还是补充 AOT image"。
 
 它们只需要认 `Image*` 这一层统一抽象。
 
@@ -538,8 +538,8 @@ HybridCLR 在 runtime 里要拿 method body，最自然的键就是：
 
 因为：
 
-- `token` 决定“这是谁”
-- `image` 决定“这份 token 应该在哪个 metadata 空间里解释”
+- `token` 决定"这是谁"
+- `image` 决定"这份 token 应该在哪个 metadata 空间里解释"
 
 如果没有 `image`，同一个 token 在不同程序集里当然可能根本不是同一个方法。
 
@@ -549,13 +549,13 @@ HybridCLR 在 runtime 里要拿 method body，最自然的键就是：
 
 它解决的是：
 
-`把“逻辑上的方法”稳定地映射成“可以被 transform 消费的 MethodBody”。`
+`把"逻辑上的方法"稳定地映射成"可以被 transform 消费的 MethodBody"。`
 
 没有这一步，后面的解释器根本还没有输入。
 
 ## 为什么 HybridCLR 不直接解释 IL，而要先 Transform
 
-很多人第一次看 HybridCLR，会先入为主地以为它是“直接解释 IL”。
+很多人第一次看 HybridCLR，会先入为主地以为它是"直接解释 IL"。
 
 但只要看 `Transform.cpp`，这个理解就会立刻被纠正。
 
@@ -583,7 +583,7 @@ InterpMethodInfo* HiTransform::Transform(const MethodInfo* methodInfo)
 
 其中第 2、5 步很容易被略过，但它们说明 `MethodBodyCache` 不是一个只增不减的缓存——HybridCLR 会主动淘汰不再需要的 method body 来控制内存占用。transform 期间必须暂停淘汰，否则正在使用的 method body 可能被回收。
 
-这说明 HybridCLR 不是”直接拿原始 CIL 一条条解释”，而是先做了一层中间转换。
+这说明 HybridCLR 不是"直接拿原始 CIL 一条条解释"，而是先做了一层中间转换。
 
 为什么一定要这样做？
 
@@ -591,11 +591,11 @@ InterpMethodInfo* HiTransform::Transform(const MethodInfo* methodInfo)
 
 栈机的优点是表达紧凑，缺点是如果执行器每一步都严格按栈语义实时还原，运行期开销会比较重，而且很多局部分析也更难做。
 
-所以 HybridCLR 的路线不是“直接解释原始 IL”，而是：
+所以 HybridCLR 的路线不是"直接解释原始 IL"，而是：
 
 `先把 MethodBody 变成更适合自己执行器消费的内部表示，再进入 execute。`
 
-如果你继续往下看 `TransformContext.h`，会发现它不是一个“轻薄上下文”，而是整个转换过程的状态容器。它同时拿着：
+如果你继续往下看 `TransformContext.h`，会发现它不是一个"轻薄上下文"，而是整个转换过程的状态容器。它同时拿着：
 
 - 当前 `Image`
 - 当前 `MethodInfo`
@@ -603,7 +603,7 @@ InterpMethodInfo* HiTransform::Transform(const MethodInfo* methodInfo)
 - 中间解析状态
 - resolve 结果
 
-这就意味着 transform 在 HybridCLR 里不是“预处理小功能”，而是 runtime 正式链路里的一层。
+这就意味着 transform 在 HybridCLR 里不是"预处理小功能"，而是 runtime 正式链路里的一层。
 
 ### 这一层到底解决了什么问题
 
@@ -683,7 +683,7 @@ LoopStart:
 
 这和上一节完全对上了：transform 的产物已经不是原始 IL，而是 HybridCLR 自己的高层解释指令。
 
-第二，`Execute` 先做的是 frame 和 machine state 的准备，而不是“先解析 IL”。
+第二，`Execute` 先做的是 frame 和 machine state 的准备，而不是"先解析 IL"。
 
 也就是说，到进入 `switch` dispatch loop 的这一刻，解释器需要的结构已经都准备完了：
 
@@ -697,7 +697,7 @@ LoopStart:
 
 `metadata -> method body -> transform -> execute`
 
-而不是简单写成“它有个解释器”。
+而不是简单写成"它有个解释器"。
 
 ### 这一层到底解决了什么问题
 
@@ -705,17 +705,17 @@ LoopStart:
 
 `把前面已经准备好的 InterpMethodInfo 真正按执行帧、参数和内部指令调度跑起来。`
 
-这一步才是热更代码“真的开始执行”的那一刻。
+这一步才是热更代码"真的开始执行"的那一刻。
 
 ## AOT 泛型和 MethodBridge，为什么不是附加优化，而是必要能力
 
 到这里，主链已经走完了。  
-但如果只讲到 `Interpreter::Execute` 就停，读者很容易误以为“剩下的都只是附加优化”。
+但如果只讲到 `Interpreter::Execute` 就停，读者很容易误以为"剩下的都只是附加优化"。
 
 地图层面其实还要记住两件事：
 
-- `AOTGenericReference` 关注的是“热更代码到底触发到了哪些 AOT 泛型实例”
-- `MethodBridge` 关注的是“这些调用跨 interpreter / AOT / native 边界时，ABI 怎么接起来”
+- `AOTGenericReference` 关注的是"热更代码到底触发到了哪些 AOT 泛型实例"
+- `MethodBridge` 关注的是"这些调用跨 interpreter / AOT / native 边界时，ABI 怎么接起来"
 
 它们都很重要，但都不是这篇的主线。  
 总论里只需要知道：HybridCLR 不是只补解释器，它还补了泛型风险显式化和 ABI 边界。更细的边界分别放到 AOT 泛型篇和工具链篇里讲。
@@ -744,7 +744,7 @@ LoopStart:
 - transform
 - bridge 初始化
 
-如果把它简化成“一个解释器”，很多关键问题都会被误判。
+如果把它简化成"一个解释器"，很多关键问题都会被误判。
 
 ### 误解二：`LoadMetadataForAOTAssembly` 就是在加载热更 DLL
 
@@ -754,7 +754,7 @@ LoopStart:
 
 热更程序集自身的装载主线，是 `AppDomain.cpp -> MetadataCache::LoadAssemblyFromBytes -> Assembly::LoadFromBytes`。
 
-### 误解三：`PreJitMethod` 真的是“提前 JIT 成 native 代码”
+### 误解三：`PreJitMethod` 真的是"提前 JIT 成 native 代码"
 
 也不对。
 
@@ -766,7 +766,7 @@ LoopStart:
 
 不对。
 
-MethodBridge 的位置不是“锦上添花”，而是 interpreter / AOT / native 三个世界之间的 ABI 桥。
+MethodBridge 的位置不是"锦上添花"，而是 interpreter / AOT / native 三个世界之间的 ABI 桥。
 
 没有它，很多跨边界调用不是慢一点，而是语义根本接不上。
 
@@ -780,7 +780,7 @@ MethodBridge 的位置不是“锦上添花”，而是 interpreter / AOT / nati
 2. 然后带着一个具体方法，追 `MethodBodyCache -> Transform -> GetInterpMethodInfo -> Execute`
 3. 最后再去看 `AOTGenericReference` 和 `MethodBridge` 这两条支线
 
-因为对 HybridCLR 来说，真正的难点从来不是”有没有解释器”，而是它怎么把一个原本偏静态、偏 AOT 的 IL2CPP runtime，扩成一套真的能接收新 metadata、解析方法体并执行的系统。
+因为对 HybridCLR 来说，真正的难点从来不是"有没有解释器"，而是它怎么把一个原本偏静态、偏 AOT 的 IL2CPP runtime，扩成一套真的能接收新 metadata、解析方法体并执行的系统。
 
 ## 系列位置
 

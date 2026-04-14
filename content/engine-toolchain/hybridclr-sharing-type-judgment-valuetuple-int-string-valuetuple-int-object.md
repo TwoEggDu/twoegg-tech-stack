@@ -13,11 +13,11 @@ tags:
 series: "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
-> AOT 泛型修法里最容易把人带偏的一步，不是“到底该不该补 metadata”，而是“日志里看到的类型名，到底是不是你该写进 DisStripCode 的类型”。
+> AOT 泛型修法里最容易把人带偏的一步，不是"到底该不该补 metadata"，而是"日志里看到的类型名，到底是不是你该写进 DisStripCode 的类型"。
 
 这是 HybridCLR 系列第 20 篇。
 
-前一篇 [HCLR-19｜HybridCLR 修法决策｜DisStripCode、link.xml、补充元数据分别在什么时候用]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md" >}}) 已经把入口判断收成了一张图，但那张图只解决了“该走哪条路”。
+前一篇 [HCLR-19｜HybridCLR 修法决策｜DisStripCode、link.xml、补充元数据分别在什么时候用]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md" >}}) 已经把入口判断收成了一张图，但那张图只解决了"该走哪条路"。
 
 真正落到 `DisStripCode` 时，读者马上会遇到第二个更细的坑：
 
@@ -30,15 +30,15 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 这篇主要回答 4 个问题：
 
 1. 为什么日志里的具体类型和你最终该写进 `DisStripCode` 的类型，经常不是同一个。
-2. 什么叫“具体闭包类型”，什么叫“共享类型”。
+2. 什么叫"具体闭包类型"，什么叫"共享类型"。
 3. 值类型、引用类型、嵌套泛型在共享判断上为什么规则不同。
-4. 遇到一个 AOT 泛型报错时，怎么把它稳定地翻译成“该写什么”。
+4. 遇到一个 AOT 泛型报错时，怎么把它稳定地翻译成"该写什么"。
 
 ## 收束
 
 日志告诉你的，是当前缺口长什么样。DisStripCode 真正要你写进去的，往往是这组泛型在共享规则下该落到什么类型。
 
-所以这一步最容易错的，不是“不知道该写”，而是：
+所以这一步最容易错的，不是"不知道该写"，而是：
 
 `以为日志里写什么，你就照抄什么。`
 
@@ -59,16 +59,16 @@ MissingMethodException: AOT generic method not instantiated in aot module
 
 这条直觉不是总错，但它不稳定。
 
-原因在于：AOT 泛型修法里，至少有两层“类型”在同时出现：
+原因在于：AOT 泛型修法里，至少有两层"类型"在同时出现：
 
 - **具体闭包类型**：也就是你在日志、调用栈、泛型签名里直接看到的那个封闭后的类型
-- **共享类型**：也就是 IL2CPP / HybridCLR 在共享泛型实现时，真正拿来判断“这类实例能不能复用同一份实现”的那组类型
+- **共享类型**：也就是 IL2CPP / HybridCLR 在共享泛型实现时，真正拿来判断"这类实例能不能复用同一份实现"的那组类型
 
 日志里出现的是前者，AOT 修法很多时候需要你判断的是后者。
 
 如果这两层不先拆开，后面 `ValueTuple<int,string>`、`List<HotfixType>`、`Dictionary<K,V>`、`async builder` 这些问题一定会混。
 
-## 为什么会有“共享类型”这一步
+## 为什么会有"共享类型"这一步
 
 如果只从项目层面理解，你可以把它先压成一个足够工程化的判断：
 
@@ -84,7 +84,7 @@ MissingMethodException: AOT generic method not instantiated in aot module
 
 也就是说：
 
-`是不是值类型，不只决定“能不能共享”，还决定“共享之后到底落成什么”。`
+`是不是值类型，不只决定"能不能共享"，还决定"共享之后到底落成什么"。`
 
 ## 第一条规则：class 引用类型经常直接落到 object
 
@@ -100,7 +100,7 @@ MissingMethodException: AOT generic method not instantiated in aot module
 
 这也是为什么前一篇 [HCLR-18｜Dictionary<ValueTuple, 热更类型> 的 MissingMethodException 与 object 替代法]({{< relref "engine-toolchain/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}}) 里，值位置上的热更引用类型可以用 `object` 兜住。
 
-这个判断成立的关键，不是“`object` 很万能”，而是：
+这个判断成立的关键，不是"`object` 很万能"，而是：
 
 `对于引用类型参数，共享规则本来就经常把它们归并到 object 这一类。`
 
@@ -112,7 +112,7 @@ Action<HotfixType>
 Dictionary<int, HotfixType>
 ```
 
-不要先问“这里能不能强行写 HotfixType”，而要先问：
+不要先问"这里能不能强行写 HotfixType"，而要先问：
 
 `这个位置在共享判断里，是不是本来就该落到 object。`
 
@@ -135,7 +135,7 @@ Dictionary<int, HotfixType>
 
 原因很简单：
 
-`值类型本身的布局和共享路径，不是“整个类型直接掉成 object”这么粗暴。`
+`值类型本身的布局和共享路径，不是"整个类型直接掉成 object"这么粗暴。`
 
 最小例子就是：
 
@@ -158,8 +158,8 @@ Dictionary<ValueTuple<int, string>, List<HotfixType>>
 
 你如果只盯着表面类型名，很容易误判成两种极端：
 
-- 要么觉得“全都照抄”
-- 要么觉得“全都换 object”
+- 要么觉得"全都照抄"
+- 要么觉得"全都换 object"
 
 这两种都不稳。
 
@@ -175,7 +175,7 @@ Dictionary<ValueTuple<int, string>, List<HotfixType>>
 - `K` 是 `ValueTuple<int,string>`，因为外层是 struct，所以它要继续保留成 `ValueTuple<int,object>` 这类共享结果
 - `V` 是 `List<HotfixType>`，它本身是 class，所以共享后很容易继续落到 `object`
 
-所以你真正该做的，不是“照着报错抄一遍”，而是：
+所以你真正该做的，不是"照着报错抄一遍"，而是：
 
 `把这组签名拆开，再逐层翻译成共享后的目标形态。`
 
@@ -194,7 +194,7 @@ Dictionary<ValueTuple<int, string>, List<HotfixType>>
 - 还是泛型方法
 - 还是某个委托 / async builder 路径
 
-因为共享判断最终落到的是**函数实例**，不是“这个类型看起来像谁”。
+因为共享判断最终落到的是**函数实例**，不是"这个类型看起来像谁"。
 
 ### 第二步：把函数所属的类型参数和方法参数分开
 
@@ -206,7 +206,7 @@ Dictionary<ValueTuple<int, string>, List<HotfixType>>
 YourGenericClass<T1, T2>.Show<M1>(A1, A2)
 ```
 
-里面的四层参数全部混成一句“这是个泛型”，后面就很难判断。
+里面的四层参数全部混成一句"这是个泛型"，后面就很难判断。
 
 更稳的方式是分别问：
 
@@ -222,7 +222,7 @@ YourGenericClass<T1, T2>.Show<M1>(A1, A2)
 - 值类型，看它是不是需要保留外壳、再继续翻里面的参数
 - 嵌套泛型，看外层是 class 还是 struct
 
-到这一步，你拿到的才是“该写什么”的真正输入。
+到这一步，你拿到的才是"该写什么"的真正输入。
 
 ## 三组最小例子
 
@@ -236,7 +236,7 @@ new List<string>()
 
 共享判断里，`List<T>` 是 class，`string` 是引用类型。
 
-这种情况下，真正要优先想到的不是“必须把 `List<string>` 原样写出来”，而是：
+这种情况下，真正要优先想到的不是"必须把 `List<string>` 原样写出来"，而是：
 
 `它有没有可能直接被 object 这条共享路径覆盖。`
 

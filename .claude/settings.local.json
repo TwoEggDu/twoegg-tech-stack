@@ -168,7 +168,16 @@
       "Bash(./startup.exe)",
       "Bash(bash /tmp/analyze.sh)",
       "Bash(./lean.exe -l \"E:/workspace/LeanCLR/src/libraries/dotnetframework4.x\" -l \"E:/workspace/LeanCLR/src/tests/managed/MiscDlls\" CoreTests -e test.App::Main)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(find /e/workspace/TechStackShow/content -type f -name \"_index.md\" -exec wc -l {} \\\\;)",
+      "Read(//e/workspace/LeanCLR/src/runtime/vm/**)",
+      "Bash(grep -l \"URP\\\\|urp\" /e/workspace/TechStackShow/docs/*.md)",
+      "Bash(mkdir -p E:/workspace/wiki/static/software)",
+      "Bash(cp \"E:/workspace/DP/Data/Tools/安装软件/TortoiseSVN-1.14.1.29085-x64-svn-1.14.1.msi\" E:/workspace/wiki/static/software/)",
+      "Read(//c/Program Files/GitHub CLI/**)",
+      "Read(//c/Users/IGG/scoop/shims/**)"
     ]
   }
 }

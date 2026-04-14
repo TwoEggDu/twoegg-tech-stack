@@ -24,7 +24,7 @@ series_audience:
 series_level: "进阶"
 series_best_for: "当你想把 TopHeroUnity 里的 CachedShadows 从工作原理、项目生效链、Shader 交付边界到验证排查一起看清"
 series_summary: "把 CachedShadows 放回 TopHeroUnity 的真实工程里，讲清它为什么存在、怎么接管 URP 主光阴影、怎么验证，以及效果不对时该先查哪里。"
-series_intro: "这组文章处理的不是抽象的“阴影基础”或零散的“某个选项怎么点”，而是 TopHeroUnity 当前主光 CachedShadows 这套真实系统。它从 URP 原生主光阴影链路出发，讲清 CachedShadows 替代了哪一段、一帧里如何缓存和叠加、为什么低配 Android 还能有影子，以及为什么编辑器正常、真机却可能失效。"
+series_intro: '这组文章处理的不是抽象的"阴影基础"或零散的"某个选项怎么点"，而是 TopHeroUnity 当前主光 CachedShadows 这套真实系统。它从 URP 原生主光阴影链路出发，讲清 CachedShadows 替代了哪一段、一帧里如何缓存和叠加、为什么低配 Android 还能有影子，以及为什么编辑器正常、真机却可能失效。'
 series_reading_hint: "如果你已经知道 Shadow Map、URP 层级、Renderer Feature 和 Quality 各在管什么，建议先按 01、02、03 顺着主线读，再看 04 和 05。若你是从 0 基础进来，先补 Shadow Map、URP 架构、Pipeline Asset、Renderer Feature 和多平台质量分级，再回到本索引。带着问题来查时，可以直接跳到 05 症状总表，再反查对应原理或资源边界文章。"
 ---
 这组文章不是在重讲 `Shadow Map`、`Renderer Feature` 或 `SVC` 的基础，而是在补它们和项目真实系统之间那条最容易缺失的桥。
@@ -42,7 +42,7 @@ series_reading_hint: "如果你已经知道 Shadow Map、URP 层级、Renderer F
 
 如果只用一句话概括这整个专题，我会这样说：
 
-`TopHeroUnity 的 CachedShadows 不是另一套光照系统，而是一套“接管主光阴影生成、仍沿用 URP receiver 语义、并且把静态成本尽量缓存下来”的工程化阴影方案。`
+`TopHeroUnity 的 CachedShadows 不是另一套光照系统，而是一套"接管主光阴影生成、仍沿用 URP receiver 语义、并且把静态成本尽量缓存下来"的工程化阴影方案。`
 
 ## 如果你是从 0 基础进来
 
@@ -120,7 +120,7 @@ series_reading_hint: "如果你已经知道 Shadow Map、URP 层级、Renderer F
 - 完全没影子先看哪层
 - 为什么 Editor 有、Android 没有
 - 为什么相机动一下才有影子
-- 怎么用 Frame Debugger / RenderDoc / 日志把“猜测”收成“证据”
+- 怎么用 Frame Debugger / RenderDoc / 日志把"猜测"收成"证据"
 - 阴影质量不好时先调哪一层
 
 ### 四、如果你已经能看懂实现，再回来看工程取舍
@@ -133,23 +133,23 @@ series_reading_hint: "如果你已经知道 Shadow Map、URP 层级、Renderer F
 
 ## 如果你不是系统读，而是带着问题来查
 
-### 我只想知道“为什么低配 Android 明明关了主光阴影还能有影子”
+### 我只想知道"为什么低配 Android 明明关了主光阴影还能有影子"
 
 - 先看 [01｜它替代了 URP 主光阴影链路里的哪一段]({{< relref "rendering/cachedshadows-01-overview.md" >}})
 - 再看 [03｜从 Quality 到 Camera 的生效链路]({{< relref "rendering/cachedshadows-03-activation-chain.md" >}})
 
-### 我只想知道“它一帧里到底怎么省成本”
+### 我只想知道"它一帧里到底怎么省成本"
 
 - 先看 [02｜一帧里到底发生了什么]({{< relref "rendering/cachedshadows-02-frame-flow.md" >}})
 - 再看 [08｜为什么低端 Android 选缓存阴影]({{< relref "rendering/cachedshadows-08-tradeoffs-and-tiering.md" >}})
 
-### 我现在最关心“编辑器有，真机没有”
+### 我现在最关心"编辑器有，真机没有"
 
 - 先看 [05｜症状总表]({{< relref "rendering/cachedshadows-05-troubleshooting-symptoms.md" >}})
 - 再看 [04｜Shader / Hidden Shader / preload 的交付边界]({{< relref "rendering/cachedshadows-04-shader-delivery.md" >}})
 - 最后看 [06｜怎么证明当前阴影来自哪条链路]({{< relref "rendering/cachedshadows-06-validation-and-proof.md" >}})
 
-### 我现在最关心“有阴影，但就是不刷新”
+### 我现在最关心"有阴影，但就是不刷新"
 
 - 先看 [05｜症状总表]({{< relref "rendering/cachedshadows-05-troubleshooting-symptoms.md" >}})
 - 再回看 [02｜一帧里到底发生了什么]({{< relref "rendering/cachedshadows-02-frame-flow.md" >}})
@@ -159,7 +159,7 @@ series_reading_hint: "如果你已经知道 Shadow Map、URP 层级、Renderer F
 
 - 直接看 [06｜怎么证明当前阴影来自哪条链路]({{< relref "rendering/cachedshadows-06-validation-and-proof.md" >}})
 
-### 我现在不是“有没有影子”，而是“阴影画质很差”
+### 我现在不是"有没有影子"，而是"阴影画质很差"
 
 - 先看 [07｜阴影画质问题怎么查]({{< relref "rendering/cachedshadows-07-visual-quality-debug.md" >}})
 - 再补 [unity-rendering-02b-shadow-map.md]({{< relref "rendering/unity-rendering-02b-shadow-map.md" >}})
@@ -170,7 +170,7 @@ series_reading_hint: "如果你已经知道 Shadow Map、URP 层级、Renderer F
 这个专题第一期只聚焦 TopHeroUnity 当前主光 CachedShadows 主线，还没有系统展开：
 
 - `CachedAdditionalShadowsRenderFeature` 的附加光缓存链
-- 一个完整的“Editor 有、真机没有”的真实事故复盘
+- 一个完整的"Editor 有、真机没有"的真实事故复盘
 - 项目内专用调试面板或最小日志工具怎么做
 - 脱离 TopHeroUnity 的通用插件介绍和跨项目复用策略
 

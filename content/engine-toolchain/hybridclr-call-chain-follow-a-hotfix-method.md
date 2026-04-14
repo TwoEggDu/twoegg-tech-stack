@@ -26,7 +26,7 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 
 这篇就专门回答这个问题。
 
-它不是再讲一遍“HybridCLR 原理综述”，而是把一条完整调用链重新走一遍。  
+它不是再讲一遍"HybridCLR 原理综述"，而是把一条完整调用链重新走一遍。  
 目标也很明确：
 
 `让读者可以跟着这篇文章进源码，知道每个关键转折点为什么会发生。`
@@ -36,7 +36,7 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 这篇主要回答 5 个问题：
 
 1. 业务代码里的 `Assembly.Load(byte[])`，最后是怎么接进 HybridCLR runtime 的。
-2. 一个热更程序集里的方法，什么时候会被标记成“由 interpreter 实现”。
+2. 一个热更程序集里的方法，什么时候会被标记成"由 interpreter 实现"。
 3. `MethodInfo.Invoke` 最终为什么会掉到 `InterpreterInvoke`，而不是普通 AOT invoker。
 4. `Interpreter::Execute` 在第一次执行前，为什么还要先经过一次 transform。
 5. 这一整条链里，哪些动作发生在装载时，哪些动作是第一次调用时才懒执行的。
@@ -125,7 +125,7 @@ Il2CppAssembly* newAssembly = hybridclr::metadata::Assembly::LoadFromBytes(
     assemblyBytes, length, rawSymbolStoreBytes, rawSymbolStoreLength);
 ```
 
-也就是说，从“字节数组装载程序集”这个入口开始，HybridCLR 就已经接管了这件事。
+也就是说，从"字节数组装载程序集"这个入口开始，HybridCLR 就已经接管了这件事。
 
 ## 第二跳：`Assembly::LoadFromBytes` 真正做了什么
 
@@ -163,7 +163,7 @@ il2cpp::vm::MetadataCache::RegisterInterpreterAssembly(ass);
 3. 把它包装成 `Il2CppAssembly` / `Il2CppImage`，让外部世界仍然通过标准 IL2CPP 结构访问它。
 4. 把这个 assembly 注册回 `MetadataCache`。
 
-这一步最容易被误解成“只是把 DLL 读进内存”。  
+这一步最容易被误解成"只是把 DLL 读进内存"。  
 但它真实的语义更接近：
 
 `把一个新的解释型程序集正式接进 IL2CPP 的 metadata 世界。`
@@ -220,7 +220,7 @@ return hybridclr::interpreter::InterpreterModule::GetMethodInvoker(methodDef);
 
 ## 第四跳：`MethodInfo.Invoke` 真正调的其实是 `invoker_method`
 
-很多人会在这里误以为“反射调用是另外一套逻辑”。  
+很多人会在这里误以为"反射调用是另外一套逻辑"。  
 其实在 `libil2cpp` 里，反射最终还是会回到方法自己的 `invoker_method`。
 
 看 `libil2cpp/vm/Runtime.cpp`：
@@ -241,7 +241,7 @@ if (method->return_type->type == IL2CPP_TYPE_VOID)
 如果这个 `method` 来自 AOT image，`invoker_method` 就是普通 native invoker。  
 如果这个 `method` 来自 `InterpreterImage`，`invoker_method` 就已经是 `InterpreterInvoke` 了。
 
-这也是为什么上一节那条“method 初始化时如何选择 invoker”这么关键。
+这也是为什么上一节那条"method 初始化时如何选择 invoker"这么关键。
 
 对这篇文章来说，可以把中间这段压成一句话：
 
@@ -277,7 +277,7 @@ static void InterpreterInvoke(Il2CppMethodPointer methodPointer, const MethodInf
 
 注意这里的 `alloca`：它把 `StackObject` 参数数组分配在 native 调用栈上，分配和释放几乎零成本。但代价是，如果解释器方法层层嵌套调用，每一层都会在 native stack 上分配一段参数缓冲区。调用链足够深时，native stack 会先于托管栈溢出。
 
-也就是说，`InterpreterInvoke` 的职责并不是“解释执行方法体”。  
+也就是说，`InterpreterInvoke` 的职责并不是"解释执行方法体"。  
 它更像一个桥：
 
 `把 IL2CPP 世界里的调用约定，整理成解释器能接的参数布局，然后把控制权交给 Execute。`
@@ -292,7 +292,7 @@ static void InterpreterInvoke(Il2CppMethodPointer methodPointer, const MethodInf
 
 ## 第六跳：第一次执行时，为什么还要先 `GetInterpMethodInfo`
 
-这一跳决定了这篇文章是不是能把“transform 为什么存在”说实。
+这一跳决定了这篇文章是不是能把"transform 为什么存在"说实。
 
 `InterpreterInvoke` 里最容易被忽略的一句是：
 
@@ -368,14 +368,14 @@ MethodBody* methodBody = image->GetMethodBody(token);
 
 所以这一跳最值得记住的一句话是：
 
-`transform 的输入不是 MethodInfo 本身，而是“MethodInfo 所指向的 method body + runtime 解析结果”。`
+`transform 的输入不是 MethodInfo 本身，而是"MethodInfo 所指向的 method body + runtime 解析结果"。`
 
 跟这一跳时，最好顺便看一下 `image` 的实际类型。
 
 - 如果它是 `InterpreterImage`，你看到的是热更程序集自己的 method body
 - 如果它是 `AOTHomologousImage`，你看到的是 AOT 程序集补回来的那份同源 metadata 视图
 
-这个观察点很值钱，因为它正好把“热更程序集执行”和“AOT 解释兜底”这两条路径在 transform 入口处收束到了一起。
+这个观察点很值钱，因为它正好把"热更程序集执行"和"AOT 解释兜底"这两条路径在 transform 入口处收束到了一起。
 
 ## 第八跳：`Interpreter::Execute` 跑的已经不是原始 IL，而是 HiOpcode
 
@@ -402,14 +402,14 @@ LoopStart:
 1. 它先通过 `PREPARE_NEW_FRAME_FROM_NATIVE` 建立 `InterpFrame` 和当前方法的执行现场。
 2. `switch` 分派的已经不是原始 CIL opcode，而是 `HiOpcodeEnum`。
 
-第一点说明解释器并不是“拿着一个 `MethodInfo` 就直接跑”。  
+第一点说明解释器并不是"拿着一个 `MethodInfo` 就直接跑"。  
 第二点说明 transform 的产物是真正会被执行的内部指令，而不是原始 IL 字节流。
 
 如果把这一层再压缩一下，可以得到一个很重要的判断：
 
 `HybridCLR 的 interpreter 是在执行 transform 之后的内部 IR，而不是直接解释 ECMA-335 意义上的原始 CIL。`
 
-这也是它和“纯 IL 解释器”非常不一样的地方。
+这也是它和"纯 IL 解释器"非常不一样的地方。
 
 ## 把整条链压成 8 步
 
@@ -433,10 +433,10 @@ LoopStart:
 
 ## 这一条链里，最容易看错的 4 个地方
 
-### 误解一：`Assembly.Load(byte[])` 之后，方法就已经“编译好了”
+### 误解一：`Assembly.Load(byte[])` 之后，方法就已经"编译好了"
 
 不对。  
-装载阶段解决的是“程序集如何进入 runtime metadata 世界”，不是“每个方法都已经变成可执行的 `InterpMethodInfo`”。
+装载阶段解决的是"程序集如何进入 runtime metadata 世界"，不是"每个方法都已经变成可执行的 `InterpMethodInfo`"。
 
 ### 误解二：反射调用会绕开 HybridCLR 的解释链
 
@@ -468,7 +468,7 @@ LoopStart:
 - `HiTransform::Transform`
 - `Interpreter::Execute`
 
-只跟这一条线，不去扩展 `TransformContext.cpp` 的所有细节，基本就已经能把 HybridCLR 的“方法调用主链”立住。
+只跟这一条线，不去扩展 `TransformContext.cpp` 的所有细节，基本就已经能把 HybridCLR 的"方法调用主链"立住。
 
 ## 收束
 

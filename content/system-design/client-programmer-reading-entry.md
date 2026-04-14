@@ -17,7 +17,7 @@ tags:
 
 ## 为什么要有这页
 
-客户端程序最常见的阅读误区，不是看不懂某一篇，而是把所有问题都当成“代码问题”或“性能问题”。
+客户端程序最常见的阅读误区，不是看不懂某一篇，而是把所有问题都当成"代码问题"或"性能问题"。
 
 实际上，Unity 客户端里最常见的故障，通常会落到几条不同的链路上：
 
@@ -35,7 +35,7 @@ tags:
 1. [游戏性能判断入口｜客户端程序先看定位、证据链和引擎显形]({{< relref "performance/game-performance-entry-client-programmer.md" >}})
    如果你最常遇到的是卡顿、掉帧、首载慢、GC.Alloc 或 GPU bound，这就是最先该看的入口。
 2. [移动平台阅读入口｜客户端程序先建立硬件、渲染和平台差异地图]({{< relref "performance/mobile-platform-reading-entry.md" >}})
-   如果你经常碰到“同样的问题在手机和 PC 上完全不像一回事”，或者总被机型差异、热降频和平台碎片化带偏，这条线最适合先补。
+   如果你经常碰到"同样的问题在手机和 PC 上完全不像一回事"，或者总被机型差异、热降频和平台碎片化带偏，这条线最适合先补。
 3. [Unity 资产系统与序列化系列索引｜从资产通识到 Scene、Prefab、Shader 与 AssetBundle]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}})
    如果你经常在资源引用、Prefab、Scene、AssetBundle、Shader 交付这几层之间来回排障，这条线最关键。
 4. [HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})
@@ -71,7 +71,7 @@ tags:
 1. [Unity 资产系统与序列化系列索引｜从资产通识到 Scene、Prefab、Shader 与 AssetBundle]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}})
 2. [Unity 里到底有哪些资产：文件、Importer、Object、组件、实例，资源是怎么在游戏里被看见的]({{< relref "engine-toolchain/unity-assets-what-exists-and-how-they-become-visible-in-game.md" >}})
 3. [Unity 的 GUID、fileID、PPtr 到底在引用什么：为什么资源引用不是文件路径]({{< relref "engine-toolchain/unity-guid-fileid-pptr-what-do-they-reference.md" >}})
-4. [Unity 为什么需要 AssetBundle：它解决的不是“加载”，而是“交付”]({{< relref "engine-toolchain/unity-why-needs-assetbundle-delivery-not-loading.md" >}})
+4. [Unity 为什么需要 AssetBundle：它解决的不是"加载"，而是"交付"]({{< relref "engine-toolchain/unity-why-needs-assetbundle-delivery-not-loading.md" >}})
 
 如果你已经在做资源交付、热更资源或回归验证，可以继续看：
 
@@ -142,7 +142,7 @@ tags:
 
 ## 按系统进入
 
-如果你不是带着一个具体 bug 来读，而是想建立“客户端系统地图”，可以按下面这几个层次走。
+如果你不是带着一个具体 bug 来读，而是想建立"客户端系统地图"，可以按下面这几个层次走。
 
 ### 1. 运行时层
 
@@ -161,7 +161,7 @@ tags:
 建议先看：
 
 - [Unity 资产系统与序列化系列索引｜从资产通识到 Scene、Prefab、Shader 与 AssetBundle]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}})
-- [Unity 为什么需要 AssetBundle：它解决的不是“加载”，而是“交付”]({{< relref "engine-toolchain/unity-why-needs-assetbundle-delivery-not-loading.md" >}})
+- [Unity 为什么需要 AssetBundle：它解决的不是"加载"，而是"交付"]({{< relref "engine-toolchain/unity-why-needs-assetbundle-delivery-not-loading.md" >}})
 - [Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest、压缩到底发生了什么]({{< relref "engine-toolchain/unity-how-assets-become-assetbundles-dependencies-manifest-compression.md" >}})
 
 ### 3. 热更层
@@ -240,7 +240,7 @@ tags:
 
 ## 这个入口刻意不替你做什么
 
-- 它不把所有问题都塞进一个“客户端优化”大筐里。
+- 它不把所有问题都塞进一个"客户端优化"大筐里。
 - 它不假设你先懂完整的引擎原理。
 - 它不把性能、资源、热更、崩溃、编译和发布混成一条线。
 - 它不替代具体专题的正文，只负责把你送到对的地方。

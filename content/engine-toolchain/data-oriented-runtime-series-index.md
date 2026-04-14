@@ -23,7 +23,7 @@ series_audience:
 series_level: "进阶"
 series_best_for: "当你想把 DOTS、Mass 和自研 ECS 放回同一类运行时问题里比较"
 series_summary: "把数据导向运行时从问题动机、存储结构、结构变化、调度和表示层边界一路接起来。"
-series_intro: "这组文章处理的不是“ECS 语法怎么写”，而是现代引擎为什么都会在某些高密度场景里建数据导向孤岛。它先解释问题动机，再拆 Archetype / Chunk、结构变化、调度、构建期前移和表示层边界。"
+series_intro: '这组文章处理的不是"ECS 语法怎么写"，而是现代引擎为什么都会在某些高密度场景里建数据导向孤岛。它先解释问题动机，再拆 Archetype / Chunk、结构变化、调度、构建期前移和表示层边界。'
 series_reading_hint: "第一次读建议从总论、数据布局和结构变化开始，再看调度、Baking 和表示层边界。"
 ---
 > 这一组讲的是数据导向运行时的共性问题。  
