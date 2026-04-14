@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 600" width="700" height="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arrowD" viewBox="0 0 10 10" refX="5" refY="9" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 5 10 L 10 0 z" fill="#4a5568"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a5568"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000018"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="700" height="600" fill="#f7fafc" rx="8"/>
+
+  <!-- Title -->
+  <text x="350" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#1a202c">线上紧急问题决策树</text>
+
+  <!-- Start node -->
+  <rect x="225" y="56" width="250" height="44" rx="22" fill="#e53e3e" filter="url(#shadow)"/>
+  <text x="350" y="83" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">线上严重问题发现</text>
+
+  <!-- Arrow Start -> Decision 1 -->
+  <line x1="350" y1="100" x2="350" y2="126" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowD)"/>
+
+  <!-- Decision 1: Feature Flag -->
+  <polygon points="350,132 470,178 350,224 230,178" fill="#fffff0" stroke="#d69e2e" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="350" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#744210">Feature Flag</text>
+  <text x="350" y="188" text-anchor="middle" font-size="12" font-weight="600" fill="#744210">能解决?</text>
+
+  <!-- Yes -> Action 1 (green, fastest) -->
+  <line x1="470" y1="178" x2="520" y2="178" stroke="#4a5568" stroke-width="1.8" marker-end="url(#arrowR)"/>
+  <text x="498" y="172" text-anchor="middle" font-size="11" font-weight="600" fill="#38a169">Yes</text>
+
+  <rect x="528" y="156" width="154" height="44" rx="8" fill="#c6f6d5" stroke="#38a169" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="605" y="175" text-anchor="middle" font-size="12" font-weight="600" fill="#276749">配置热推</text>
+  <text x="605" y="192" text-anchor="middle" font-size="11" fill="#38a169">分钟级</text>
+
+  <!-- No -> Decision 2 -->
+  <line x1="350" y1="224" x2="350" y2="260" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowD)"/>
+  <text x="362" y="244" font-size="11" font-weight="600" fill="#e53e3e">No</text>
+
+  <!-- Decision 2: Hot Update -->
+  <polygon points="350,266 470,312 350,358 230,312" fill="#fffff0" stroke="#d69e2e" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="350" y="307" text-anchor="middle" font-size="12" font-weight="600" fill="#744210">热更新</text>
+  <text x="350" y="322" text-anchor="middle" font-size="12" font-weight="600" fill="#744210">能修复?</text>
+
+  <!-- Yes -> Action 2 (yellow-green, hours) -->
+  <line x1="470" y1="312" x2="520" y2="312" stroke="#4a5568" stroke-width="1.8" marker-end="url(#arrowR)"/>
+  <text x="498" y="306" text-anchor="middle" font-size="11" font-weight="600" fill="#38a169">Yes</text>
+
+  <rect x="528" y="286" width="154" height="52" rx="8" fill="#fefcbf" stroke="#d69e2e" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="605" y="305" text-anchor="middle" font-size="11" font-weight="600" fill="#744210">构建热更包</text>
+  <text x="605" y="319" text-anchor="middle" font-size="11" fill="#744210">+ 部署</text>
+  <text x="605" y="333" text-anchor="middle" font-size="11" fill="#b7791f">小时级</text>
+
+  <!-- No -> Decision 3 -->
+  <line x1="350" y1="358" x2="350" y2="394" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowD)"/>
+  <text x="362" y="378" font-size="11" font-weight="600" fill="#e53e3e">No</text>
+
+  <!-- Decision 3: Rollback -->
+  <polygon points="350,400 470,446 350,492 230,446" fill="#fffff0" stroke="#d69e2e" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="350" y="441" text-anchor="middle" font-size="12" font-weight="600" fill="#744210">回撤</text>
+  <text x="350" y="456" text-anchor="middle" font-size="12" font-weight="600" fill="#744210">可接受?</text>
+
+  <!-- Yes -> Action 3 (orange, hours) -->
+  <line x1="470" y1="446" x2="520" y2="446" stroke="#4a5568" stroke-width="1.8" marker-end="url(#arrowR)"/>
+  <text x="498" y="440" text-anchor="middle" font-size="11" font-weight="600" fill="#38a169">Yes</text>
+
+  <rect x="528" y="424" width="154" height="44" rx="8" fill="#feebc8" stroke="#dd6b20" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="605" y="443" text-anchor="middle" font-size="12" font-weight="600" fill="#7b341e">版本回撤</text>
+  <text x="605" y="460" text-anchor="middle" font-size="11" fill="#c05621">小时级</text>
+
+  <!-- No -> Action 4 (red, days) -->
+  <line x1="350" y1="492" x2="350" y2="528" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowD)"/>
+  <text x="362" y="512" font-size="11" font-weight="600" fill="#e53e3e">No</text>
+
+  <rect x="263" y="534" width="174" height="48" rx="8" fill="#fed7d7" stroke="#e53e3e" stroke-width="2" filter="url(#shadow)"/>
+  <text x="350" y="555" text-anchor="middle" font-size="13" font-weight="700" fill="#9b2c2c">紧急发版</text>
+  <text x="350" y="573" text-anchor="middle" font-size="12" fill="#c53030">天级</text>
+
+  <!-- Speed legend -->
+  <rect x="26" y="530" width="200" height="62" rx="6" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="126" y="548" text-anchor="middle" font-size="11" font-weight="600" fill="#4a5568">响应速度</text>
+  <circle cx="48" cy="563" r="5" fill="#c6f6d5" stroke="#38a169" stroke-width="1"/>
+  <text x="58" y="567" font-size="10" fill="#4a5568">分钟</text>
+  <circle cx="96" cy="563" r="5" fill="#fefcbf" stroke="#d69e2e" stroke-width="1"/>
+  <text x="106" y="567" font-size="10" fill="#4a5568">小时</text>
+  <circle cx="148" cy="563" r="5" fill="#feebc8" stroke="#dd6b20" stroke-width="1"/>
+  <text x="158" y="567" font-size="10" fill="#4a5568">小时+</text>
+  <circle cx="200" cy="563" r="5" fill="#fed7d7" stroke="#e53e3e" stroke-width="1"/>
+  <text x="210" y="567" font-size="10" fill="#4a5568">天</text>
+</svg>

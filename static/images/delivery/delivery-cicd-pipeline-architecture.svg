@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="flow-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="flow-arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="flow-arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+    </marker>
+    <filter id="cicd-shadow" x="-3%" y="-6%" width="106%" height="118%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="400" fill="#fafbfc" rx="6"/>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a2e">CI/CD 管线架构</text>
+
+  <!-- ========== Fast Track (top) ========== -->
+  <rect x="120" y="46" width="580" height="28" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="410" y="65" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">快速通道 (5min)  --  编译 + Lint 仅检查</text>
+
+  <!-- ========== Trigger: 代码提交 ========== -->
+  <g filter="url(#cicd-shadow)">
+    <circle cx="50" cy="210" r="30" fill="#1e293b"/>
+    <text x="50" y="207" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">代码</text>
+    <text x="50" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">提交</text>
+  </g>
+
+  <!-- Fan-out lines from trigger -->
+  <line x1="80" y1="195" x2="135" y2="130" stroke="#64748b" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
+  <line x1="80" y1="210" x2="135" y2="210" stroke="#64748b" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
+  <line x1="80" y1="225" x2="135" y2="290" stroke="#64748b" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
+
+  <!-- ========== iOS Lane (top, blue) ========== -->
+  <!-- iOS 构建 -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="140" y="100" width="120" height="50" rx="10" fill="#2563eb"/>
+    <text x="200" y="130" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">iOS 构建</text>
+  </g>
+  <line x1="260" y1="125" x2="290" y2="125" stroke="#2563eb" stroke-width="2" marker-end="url(#flow-arrow-blue)"/>
+  <!-- iOS 检查 -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="295" y="100" width="120" height="50" rx="10" fill="#3b82f6"/>
+    <text x="355" y="130" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">iOS 检查</text>
+  </g>
+
+  <!-- ========== Android Lane (middle, green) ========== -->
+  <!-- Android 构建 -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="140" y="185" width="120" height="50" rx="10" fill="#16a34a"/>
+    <text x="200" y="215" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">Android 构建</text>
+  </g>
+  <line x1="260" y1="210" x2="290" y2="210" stroke="#16a34a" stroke-width="2" marker-end="url(#flow-arrow-green)"/>
+  <!-- Android 检查 -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="295" y="185" width="120" height="50" rx="10" fill="#22c55e"/>
+    <text x="355" y="215" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">Android 检查</text>
+  </g>
+
+  <!-- ========== WebGL Lane (bottom, orange) ========== -->
+  <!-- WebGL 构建 -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="140" y="270" width="120" height="50" rx="10" fill="#ea580c"/>
+    <text x="200" y="300" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">WebGL 构建</text>
+  </g>
+  <line x1="260" y1="295" x2="290" y2="295" stroke="#ea580c" stroke-width="2" marker-end="url(#flow-arrow-orange)"/>
+  <!-- WebGL 检查 -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="295" y="270" width="120" height="50" rx="10" fill="#f97316"/>
+    <text x="355" y="300" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">WebGL 检查</text>
+  </g>
+
+  <!-- ========== Fan-in lines to 质量门汇总 ========== -->
+  <line x1="415" y1="130" x2="475" y2="195" stroke="#64748b" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
+  <line x1="415" y1="210" x2="475" y2="210" stroke="#64748b" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
+  <line x1="415" y1="290" x2="475" y2="225" stroke="#64748b" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
+
+  <!-- ========== 质量门汇总 ========== -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="480" y="185" width="120" height="50" rx="10" fill="#7c3aed"/>
+    <text x="540" y="215" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">质量门汇总</text>
+  </g>
+
+  <!-- Arrow to 部署 -->
+  <line x1="600" y1="210" x2="634" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+  <!-- ========== 部署 ========== -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="640" y="185" width="100" height="50" rx="10" fill="#0d9488"/>
+    <text x="690" y="215" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">部署</text>
+  </g>
+
+  <!-- Arrow to 通知 -->
+  <line x1="740" y1="210" x2="774" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#flow-arrow)"/>
+
+  <!-- ========== 通知 ========== -->
+  <g filter="url(#cicd-shadow)">
+    <rect x="780" y="185" width="100" height="50" rx="10" fill="#475569"/>
+    <text x="830" y="215" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">通知</text>
+  </g>
+
+  <!-- ========== 完整通道 label (bottom) ========== -->
+  <rect x="120" y="338" width="580" height="28" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="410" y="357" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">完整通道 (30-60min)  --  构建 + 检查 + 质量门 + 部署</text>
+
+  <!-- ========== Lane labels on the right side ========== -->
+  <text x="425" y="118" font-size="10" fill="#1e40af" font-weight="500">iOS</text>
+  <text x="425" y="203" font-size="10" fill="#166534" font-weight="500">Android</text>
+  <text x="425" y="288" font-size="10" fill="#9a3412" font-weight="500">WebGL</text>
+
+  <!-- Parallel indicator bracket -->
+  <line x1="128" y1="100" x2="128" y2="320" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="126" y="380" text-anchor="middle" font-size="10" fill="#94a3b8" transform="rotate(-90,126,380)">并行</text>
+
+  <line x1="430" y1="100" x2="430" y2="320" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="448" y="380" text-anchor="middle" font-size="10" fill="#94a3b8" transform="rotate(-90,448,380)">汇聚</text>
+</svg>

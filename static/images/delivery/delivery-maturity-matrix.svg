@@ -1,0 +1,210 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4a5568"/>
+      <stop offset="100%" stop-color="#2d3748"/>
+    </linearGradient>
+    <linearGradient id="rowHeaderGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#edf2f7"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="600" fill="#f7fafc" rx="8"/>
+
+  <!-- Title -->
+  <text x="500" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#1a202c">交付成熟度评估矩阵</text>
+
+  <!-- Column widths: rowHeader=100, each level col=175, starting x=30 -->
+  <!-- Row heights: header=44, each row=58, starting y=52 -->
+
+  <!-- Header row background -->
+  <rect x="30" y="52" width="100" height="44" rx="4" fill="url(#headerGrad)"/>
+  <rect x="132" y="52" width="172" height="44" rx="4" fill="#e53e3e"/>
+  <rect x="306" y="52" width="172" height="44" rx="4" fill="#dd6b20"/>
+  <rect x="480" y="52" width="172" height="44" rx="4" fill="#d69e2e"/>
+  <rect x="654" y="52" width="172" height="44" rx="4" fill="#38a169"/>
+  <rect x="828" y="52" width="142" height="44" rx="4" fill="#2b6cb0"/>
+
+  <!-- Header text -->
+  <text x="80" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">阶段</text>
+  <text x="218" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">L1</text>
+  <text x="218" y="87" text-anchor="middle" font-size="11" fill="#fff">手动</text>
+  <text x="392" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">L2</text>
+  <text x="392" y="87" text-anchor="middle" font-size="11" fill="#fff">可重复</text>
+  <text x="566" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">L3</text>
+  <text x="566" y="87" text-anchor="middle" font-size="11" fill="#fff">有门禁</text>
+  <text x="740" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">L4</text>
+  <text x="740" y="87" text-anchor="middle" font-size="11" fill="#fff">管线化</text>
+  <text x="899" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">L5</text>
+  <text x="899" y="87" text-anchor="middle" font-size="11" fill="#fff">持续改进</text>
+
+  <!-- Color definitions for cells by level -->
+  <!-- L1: #fff5f5, L2: #fffaf0, L3: #fffff0, L4: #f0fff4, L5: #ebf8ff -->
+
+  <!-- Row 1: 生产 y=98 -->
+  <rect x="30" y="98" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="132" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">生产</text>
+
+  <rect x="132" y="98" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="132" text-anchor="middle" font-size="12" fill="#742a2a">无规范</text>
+
+  <rect x="306" y="98" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="125" text-anchor="middle" font-size="12" fill="#7b341e">有规范</text>
+  <text x="392" y="141" text-anchor="middle" font-size="11" fill="#9c4221">靠人盯</text>
+
+  <rect x="480" y="98" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="132" text-anchor="middle" font-size="12" fill="#744210">自动检查</text>
+
+  <rect x="654" y="98" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="132" text-anchor="middle" font-size="12" fill="#22543d">门禁拦截</text>
+
+  <rect x="828" y="98" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="132" text-anchor="middle" font-size="12" fill="#2a4365">自动演进</text>
+
+  <!-- Row 2: 集成 y=158 -->
+  <rect x="30" y="158" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="192" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">集成</text>
+
+  <rect x="132" y="158" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="192" text-anchor="middle" font-size="12" fill="#742a2a">无策略</text>
+
+  <rect x="306" y="158" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="185" text-anchor="middle" font-size="12" fill="#7b341e">有策略</text>
+  <text x="392" y="201" text-anchor="middle" font-size="11" fill="#9c4221">手动合</text>
+
+  <rect x="480" y="158" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="192" text-anchor="middle" font-size="12" fill="#744210">CI 检查</text>
+
+  <rect x="654" y="158" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="192" text-anchor="middle" font-size="12" fill="#22543d">门禁运作</text>
+
+  <rect x="828" y="158" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="192" text-anchor="middle" font-size="12" fill="#2a4365">预防冲突</text>
+
+  <!-- Row 3: 构建 y=218 -->
+  <rect x="30" y="218" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="252" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">构建</text>
+
+  <rect x="132" y="218" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="252" text-anchor="middle" font-size="12" fill="#742a2a">手动打包</text>
+
+  <rect x="306" y="218" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="252" text-anchor="middle" font-size="12" fill="#7b341e">CI 构建</text>
+
+  <rect x="480" y="218" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="252" text-anchor="middle" font-size="12" fill="#744210">质量检查</text>
+
+  <rect x="654" y="218" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="252" text-anchor="middle" font-size="12" fill="#22543d">多端并行</text>
+
+  <rect x="828" y="218" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="252" text-anchor="middle" font-size="12" fill="#2a4365">持续优化</text>
+
+  <!-- Row 4: 验证 y=278 -->
+  <rect x="30" y="278" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="312" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">验证</text>
+
+  <rect x="132" y="278" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="312" text-anchor="middle" font-size="12" fill="#742a2a">全手动</text>
+
+  <rect x="306" y="278" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="312" text-anchor="middle" font-size="12" fill="#7b341e">冒烟脚本</text>
+
+  <rect x="480" y="278" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="305" text-anchor="middle" font-size="12" fill="#744210">自动测试</text>
+  <text x="566" y="321" text-anchor="middle" font-size="11" fill="#744210">+ 基线</text>
+
+  <rect x="654" y="278" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="312" text-anchor="middle" font-size="12" fill="#22543d">四维覆盖</text>
+
+  <rect x="828" y="278" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="312" text-anchor="middle" font-size="12" fill="#2a4365">自适应</text>
+
+  <!-- Row 5: 发布 y=338 -->
+  <rect x="30" y="338" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="372" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">发布</text>
+
+  <rect x="132" y="338" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="372" text-anchor="middle" font-size="12" fill="#742a2a">手动上传</text>
+
+  <rect x="306" y="338" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="372" text-anchor="middle" font-size="12" fill="#7b341e">脚本上传</text>
+
+  <rect x="480" y="338" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="372" text-anchor="middle" font-size="12" fill="#744210">有灰度</text>
+
+  <rect x="654" y="338" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="372" text-anchor="middle" font-size="12" fill="#22543d">管线发布</text>
+
+  <rect x="828" y="338" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="372" text-anchor="middle" font-size="12" fill="#2a4365">按需发布</text>
+
+  <!-- Row 6: 监控 y=398 -->
+  <rect x="30" y="398" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="432" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">监控</text>
+
+  <rect x="132" y="398" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="432" text-anchor="middle" font-size="12" fill="#742a2a">无</text>
+
+  <rect x="306" y="398" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="432" text-anchor="middle" font-size="12" fill="#7b341e">有数据</text>
+
+  <rect x="480" y="398" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="432" text-anchor="middle" font-size="12" fill="#744210">有看板</text>
+
+  <rect x="654" y="398" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="432" text-anchor="middle" font-size="12" fill="#22543d">有告警</text>
+
+  <rect x="828" y="398" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="432" text-anchor="middle" font-size="12" fill="#2a4365">预测告警</text>
+
+  <!-- Row 7: 闭环 y=458 -->
+  <rect x="30" y="458" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="492" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">闭环</text>
+
+  <rect x="132" y="458" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="492" text-anchor="middle" font-size="12" fill="#742a2a">修了就行</text>
+
+  <rect x="306" y="458" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="492" text-anchor="middle" font-size="12" fill="#7b341e">Bug 追踪</text>
+
+  <rect x="480" y="458" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="492" text-anchor="middle" font-size="12" fill="#744210">根因分析</text>
+
+  <rect x="654" y="458" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="492" text-anchor="middle" font-size="12" fill="#22543d">防复发</text>
+
+  <rect x="828" y="458" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="492" text-anchor="middle" font-size="12" fill="#2a4365">自动防御</text>
+
+  <!-- Row 8: 改进 y=518 -->
+  <rect x="30" y="518" width="100" height="58" rx="3" fill="url(#rowHeaderGrad)" stroke="#cbd5e0" stroke-width="0.5"/>
+  <text x="80" y="552" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3748">改进</text>
+
+  <rect x="132" y="518" width="172" height="58" rx="3" fill="#fff5f5" stroke="#feb2b2" stroke-width="0.5"/>
+  <text x="218" y="552" text-anchor="middle" font-size="12" fill="#742a2a">无</text>
+
+  <rect x="306" y="518" width="172" height="58" rx="3" fill="#fffaf0" stroke="#fbd38d" stroke-width="0.5"/>
+  <text x="392" y="552" text-anchor="middle" font-size="12" fill="#7b341e">偶尔复盘</text>
+
+  <rect x="480" y="518" width="172" height="58" rx="3" fill="#fffff0" stroke="#f6e05e" stroke-width="0.5"/>
+  <text x="566" y="552" text-anchor="middle" font-size="12" fill="#744210">定期复盘</text>
+
+  <rect x="654" y="518" width="172" height="58" rx="3" fill="#f0fff4" stroke="#9ae6b4" stroke-width="0.5"/>
+  <text x="740" y="545" text-anchor="middle" font-size="12" fill="#22543d">产出进</text>
+  <text x="740" y="561" text-anchor="middle" font-size="11" fill="#22543d">管线</text>
+
+  <rect x="828" y="518" width="142" height="58" rx="3" fill="#ebf8ff" stroke="#90cdf4" stroke-width="0.5"/>
+  <text x="899" y="552" text-anchor="middle" font-size="12" fill="#2a4365">持续进化</text>
+
+  <!-- Maturity arrow at bottom -->
+  <line x1="132" y1="588" x2="950" y2="588" stroke="#a0aec0" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+  <defs>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a0aec0"/>
+    </marker>
+  </defs>
+  <text x="540" y="598" text-anchor="middle" font-size="11" fill="#718096">成熟度递增</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="#fafbfc" rx="6"/>
+
+  <!-- Title -->
+  <text x="400" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a2e">资源管线四大核心问题</text>
+
+  <!-- Top: 打包 (Bundling) - blue -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="60" width="180" height="80" rx="12" fill="#2563eb"/>
+    <text x="400" y="98" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">打包</text>
+    <text x="400" y="122" text-anchor="middle" font-size="13" fill="#bfdbfe">Bundling</text>
+  </g>
+
+  <!-- Right: 加载 (Loading) - green -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="210" width="180" height="80" rx="12" fill="#16a34a"/>
+    <text x="650" y="248" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">加载</text>
+    <text x="650" y="272" text-anchor="middle" font-size="13" fill="#bbf7d0">Loading</text>
+  </g>
+
+  <!-- Bottom: 生命周期 (Lifecycle) - purple -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="360" width="180" height="80" rx="12" fill="#7c3aed"/>
+    <text x="400" y="398" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">生命周期</text>
+    <text x="400" y="422" text-anchor="middle" font-size="13" fill="#ddd6fe">Lifecycle</text>
+  </g>
+
+  <!-- Left: 版本 (Versioning) - orange -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="210" width="180" height="80" rx="12" fill="#ea580c"/>
+    <text x="150" y="248" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">版本</text>
+    <text x="150" y="272" text-anchor="middle" font-size="13" fill="#fed7aa">Versioning</text>
+  </g>
+
+  <!-- Arrow: 打包 → 加载 (top-right to right-top) -->
+  <path d="M 490 120 Q 560 150 580 220" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="500" y="140" width="130" height="26" rx="4" fill="#f0f9ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="565" y="158" text-anchor="middle" font-size="12" fill="#1e40af">粒度决定IO次数</text>
+
+  <!-- Arrow: 打包 → 版本 (top-left to left-top) -->
+  <path d="M 310 120 Q 240 150 220 220" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="150" y="140" width="150" height="26" rx="4" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text x="225" y="158" text-anchor="middle" font-size="12" fill="#9a3412">粒度决定热更包大小</text>
+
+  <!-- Arrow: 版本 → 生命周期 (left-bottom to bottom-left) -->
+  <path d="M 220 280 Q 240 330 320 370" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="160" y="318" width="170" height="26" rx="4" fill="#faf5ff" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="245" y="336" text-anchor="middle" font-size="12" fill="#6b21a8">依赖关系决定释放逻辑</text>
+
+  <!-- Arrow: 加载 → 生命周期 (right-bottom to bottom-right) -->
+  <path d="M 580 280 Q 560 330 480 370" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="460" y="318" width="170" height="26" rx="4" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="545" y="336" text-anchor="middle" font-size="12" fill="#166534">加载方式决定引用管理</text>
+
+  <!-- Center text -->
+  <rect x="320" y="230" width="160" height="36" rx="18" fill="#1a1a2e"/>
+  <text x="400" y="254" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">四个问题互相约束</text>
+</svg>
