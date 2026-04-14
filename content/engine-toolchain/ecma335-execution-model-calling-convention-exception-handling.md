@@ -21,6 +21,8 @@ series_id: "ecma335"
 
 上一篇讲的是类型系统——值类型 vs 引用类型、泛型、接口、约束。那些是静态结构：runtime 在加载程序集时解析 metadata，构建类型描述。这篇讲的是动态行为：当一个方法被调用时，runtime 怎么找到目标方法、怎么传参、怎么建栈帧、出了异常怎么处理。
 
+{{< figure src="/images/runtime-ecosystem/ecma335-two-pass-exception-handling.svg" caption="两遍而不是一遍：Pass 1 不修改栈，只查找；Pass 2 才真正展开栈。filter clause 在 Pass 1 中执行。" >}}
+
 ## 为什么要讲执行模型
 
 Metadata 和 CIL 是静态结构。TypeDef 表告诉 runtime 一个类型有哪些字段和方法，MethodDef 表告诉 runtime 一个方法的签名和 IL body。但光有这些结构不够——它们只描述了"有什么"，没有定义"怎么运行"。

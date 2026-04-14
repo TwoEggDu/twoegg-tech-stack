@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF4EB"/>
+      <stop offset="1" stop-color="#F2E9DA"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#5D645F"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .subtitle { font: 600 14px "IBM Plex Sans", "Segoe UI", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; fill: #7F3420; }
+      .label { font: 700 18px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .copy { font: 400 14px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .caption { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .tag { font: 400 13px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #596563; }
+      .step { font: 600 15px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .band-label { font: 700 16px "IBM Plex Sans", "Segoe UI", sans-serif; fill: #14211F; }
+      .box { stroke: rgba(20,33,31,0.12); stroke-width: 1.5; }
+      .box-a { fill: #FBE8D9; }
+      .box-b { fill: #E5F1EE; }
+      .box-c { fill: #E8EEF7; }
+      .line { stroke: #5D645F; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .line-plain { stroke: #5D645F; stroke-width: 2.5; fill: none; }
+      .band { fill: rgba(255,255,255,0.35); stroke: rgba(20,33,31,0.08); stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="420" rx="28" fill="url(#bg)"/>
+  <text x="64" y="52" class="subtitle">ECMA-335 TWO-PASS EXCEPTION HANDLING</text>
+  <text x="64" y="88" class="title">两遍扫描异常处理模型</text>
+
+  <!-- Band 1: Pass 1 -->
+  <rect x="40" y="118" width="1120" height="110" rx="22" class="band"/>
+  <rect x="60" y="128" width="320" height="34" rx="14" class="box box-b"/>
+  <text x="80" y="151" class="band-label">Pass 1: 查找 Handler</text>
+
+  <rect x="60" y="176" width="100" height="38" rx="14" class="box box-b"/>
+  <text x="85" y="201" class="step">throw</text>
+
+  <path d="M160 195H210" class="line"/>
+  <rect x="210" y="176" width="200" height="38" rx="14" class="box box-b"/>
+  <text x="238" y="201" class="step">沿调用栈向上</text>
+
+  <path d="M410 195H460" class="line"/>
+  <rect x="460" y="176" width="310" height="38" rx="14" class="box box-b"/>
+  <text x="488" y="201" class="step">检查每帧的 catch clause</text>
+
+  <path d="M770 195H820" class="line"/>
+  <rect x="820" y="176" width="300" height="38" rx="14" class="box box-b"/>
+  <text x="860" y="201" class="step">找到匹配 handler</text>
+
+  <!-- Band 2: Pass 2 -->
+  <rect x="40" y="246" width="1120" height="110" rx="22" class="band"/>
+  <rect x="60" y="256" width="380" height="34" rx="14" class="box box-c"/>
+  <text x="80" y="279" class="band-label">Pass 2: 执行 Finally + 跳转</text>
+
+  <rect x="60" y="304" width="180" height="38" rx="14" class="box box-c"/>
+  <text x="82" y="329" class="step">从 throw 点开始</text>
+
+  <path d="M240 323H290" class="line"/>
+  <rect x="290" y="304" width="280" height="38" rx="14" class="box box-c"/>
+  <text x="318" y="329" class="step">执行沿途 finally/fault</text>
+
+  <path d="M570 323H620" class="line"/>
+  <rect x="620" y="304" width="140" height="38" rx="14" class="box box-c"/>
+  <text x="658" y="329" class="step">栈展开</text>
+
+  <path d="M760 323H810" class="line"/>
+  <rect x="810" y="304" width="260" height="38" rx="14" class="box box-c"/>
+  <text x="848" y="329" class="step">跳转到 handler</text>
+
+  <!-- Caption -->
+  <text x="64" y="388" class="caption">两遍而不是一遍：Pass 1 不修改栈，只查找；Pass 2 才真正展开栈。</text>
+  <text x="64" y="408" class="caption">filter clause 在 Pass 1 中执行。</text>
+</svg>
