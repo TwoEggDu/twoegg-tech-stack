@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜Metadata 解析：5 个 runtime 怎么读同一份 .NET DLL"
+slug: "runtime-cross-metadata-parsing-five-runtimes"
 date: "2026-04-14"
 description: "同一份 ECMA-335 二进制格式，CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 的解析策略、缓存策略和惰性加载程度完全不同。这篇横切对比拆开这些差异，分析背后的设计决策。"
 weight: 80

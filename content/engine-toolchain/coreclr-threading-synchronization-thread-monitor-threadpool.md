@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜线程与同步：Thread、Monitor、ThreadPool"
+slug: "coreclr-threading-synchronization-thread-monitor-threadpool"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解线程与同步的完整实现：托管线程与 OS 线程的包装关系、Thread 结构中的 TLS / GC alloc context / exception state、线程状态机与 GC suspension、Monitor 的 thin lock 到 AwareLock 的锁升级机制、SyncBlock 数组的全局管理、ThreadPool 的 hill-climbing 算法与 I/O 完成端口、.NET 内存模型的 store-release 语义、Thread.MemoryBarrier 的使用场景，以及与 IL2CPP / LeanCLR 的线程模型对比。"
 weight: 47

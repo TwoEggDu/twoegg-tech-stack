@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜类型系统实现：MethodTable vs Il2CppClass vs RtClass"
+slug: "runtime-cross-type-system-methodtable-il2cppclass-rtclass"
 date: "2026-04-14"
 description: "同一个 ECMA-335 TypeDef，在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里各自长什么样。从字段数、内存占用、vtable 布局、泛型膨胀到接口分派，逐维度横切对比五种类型系统实现的设计 trade-off。"
 weight: 81

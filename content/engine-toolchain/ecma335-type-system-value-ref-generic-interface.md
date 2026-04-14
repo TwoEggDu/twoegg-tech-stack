@@ -1,5 +1,6 @@
 ---
 title: "ECMA-335 基础｜CLI Type System：值类型 vs 引用类型、泛型、接口、约束"
+slug: "ecma335-type-system-value-ref-generic-interface"
 date: "2026-04-14"
 description: "从 ECMA-335 规范出发，讲清 CLI 类型系统的核心模型：值类型与引用类型的本质区别、泛型的开放/封闭类型、接口与约束的运行时语义，以及这些概念在 IL2CPP、CoreCLR、LeanCLR 中的不同实现。"
 weight: 12

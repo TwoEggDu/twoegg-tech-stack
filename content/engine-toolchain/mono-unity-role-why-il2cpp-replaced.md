@@ -1,5 +1,6 @@
 ---
 title: "Mono 实现分析｜Mono 在 Unity 中的角色：为什么最终转向了 IL2CPP"
+slug: "mono-unity-role-why-il2cpp-replaced"
 date: "2026-04-14"
 description: "回溯 Unity 与 Mono 的完整技术关系线：2005 年选择 Mono 的三个理由（跨平台、可嵌入、MIT 许可），Unity 对 Mono 的深度 fork 定制（GC 调优、iOS Full AOT 适配、Scripting Backend 抽象层），转向 IL2CPP 的五个驱动力，编辑器仍然使用 Mono 的结构性原因，以及 Unity 6 评估 CoreCLR 替代编辑器 Mono 的动机。Mono 模块完结篇。"
 weight: 65

@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜ECMA-335 覆盖度：哪些支持、哪些不支持、为什么"
+slug: "il2cpp-ecma335-coverage-supported-unsupported"
 date: "2026-04-14"
 description: "系统梳理 IL2CPP 对 ECMA-335 规范的覆盖情况：完全支持的特性（泛型、异常处理、值类型、接口、委托、async/await、Span）、部分支持的特性（Reflection、P/Invoke）、不支持的特性（Reflection.Emit、Assembly.Load、AppDomain、动态代码生成）。从 AOT 模型的根因出发，解释每一项限制背后的技术约束，并对比 HybridCLR、CoreCLR、Mono、LeanCLR 的覆盖度差异。"
 weight: 56

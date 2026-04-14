@@ -1,5 +1,6 @@
 ---
 title: "ECMA-335 基础｜CLI Execution Model：方法调用约定、虚分派、异常处理模型"
+slug: "ecma335-execution-model-calling-convention-exception-handling"
 date: "2026-04-14"
 description: "从 ECMA-335 规范出发，拆解 CLI 执行模型的三大核心机制：方法调用指令的语义差异、虚方法与接口分派的 vtable 结构、两遍扫描的异常处理模型，以及这些机制在 CoreCLR、IL2CPP、HybridCLR、LeanCLR 中的不同实现。"
 weight: 13

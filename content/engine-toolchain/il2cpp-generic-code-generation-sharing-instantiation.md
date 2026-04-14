@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜泛型代码生成：共享、特化与 Full Generic Sharing"
+slug: "il2cpp-generic-code-generation-sharing-instantiation"
 date: "2026-04-14"
 description: "拆解 IL2CPP 泛型代码生成的三种策略：引用类型共享实例化、值类型独立实例化、Full Generic Sharing 统一路径。覆盖 ABI 层面的共享条件、代码膨胀的量化分析、Il2CppFullySharedGenericAny 的实现机制、supplementary metadata 与 AOTGenericReference 的关系、DisStripCode 的泛型保留策略，以及与 CoreCLR/LeanCLR 泛型处理的对比。"
 weight: 54

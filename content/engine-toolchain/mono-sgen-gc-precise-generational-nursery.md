@@ -1,5 +1,6 @@
 ---
 title: "Mono 实现分析｜SGen GC：精确式分代 GC 与 nursery 设计"
+slug: "mono-sgen-gc-precise-generational-nursery"
 date: "2026-04-14"
 description: "拆解 Mono SGen GC 的核心设计：nursery（copying collector，bump pointer 分配）与 major heap（mark-sweep / mark-compact）的分代模型、精确式 GC 与 BoehmGC 保守式的根本差异、write barrier 与 card table 的跨代引用追踪、并发标记策略，以及与 CoreCLR GC / IL2CPP BoehmGC / LeanCLR 的横向对比。"
 weight: 63

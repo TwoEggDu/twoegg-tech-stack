@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜类型系统：MethodTable、EEClass、TypeHandle 三层结构"
+slug: "coreclr-type-system-methodtable-eeclass-typehandle"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解类型系统的核心实现：TypeHandle 作为统一入口区分普通类型与特殊类型、MethodTable 的热路径字段布局与 vtable 内联、EEClass 的冷路径设计与缓存友好性、MethodDesc 的 PreStub → JIT → Stable Entry Point 转换、FieldDesc 的偏移计算、Interface Map 与 Virtual Stub Dispatch、泛型类型的 Canonical MethodTable 共享机制，以及与 IL2CPP / LeanCLR 的类型系统对比。"
 weight: 42

@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜Managed Code Stripping：裁剪策略与 link.xml"
+slug: "il2cpp-managed-code-stripping-linker-linkxml"
 date: "2026-04-14"
 description: "系统拆解 IL2CPP 的 Managed Code Stripping 机制：UnityLinker 基于可达性分析的裁剪原理、四级裁剪策略（Minimal/Low/Medium/High）的行为差异、link.xml 的保护语法与 HybridCLR 的自动生成、裁剪与反射的冲突（运行时 TypeLoadException 的根因）、裁剪与热更新的冲突（AOT 类型被裁导致热更 DLL 找不到依赖）。对比 CoreCLR PublishTrimmed、Mono linker、LeanCLR 的裁剪策略差异。"
 weight: 57

@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜global-metadata.dat：格式、加载与 runtime 的绑定"
+slug: "il2cpp-global-metadata-dat-format-loading-binding"
 date: "2026-04-14"
 description: "拆解 global-metadata.dat 的完整生命周期：il2cpp.exe 如何生成它、二进制文件头和各 section 的结构、MetadataLoader 的加载路径、Il2CppClass 如何通过 index 延迟绑定 metadata、加密与逆向工具、与 CoreCLR/Mono 的 metadata 存储对比、版本兼容性的 fast-fail 设计。"
 weight: 53

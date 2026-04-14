@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜异常处理：两遍扫描模型与 SEH 集成"
+slug: "coreclr-exception-handling-two-pass-seh-integration"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解异常处理的完整实现：两遍扫描模型的查找与展开阶段、Windows SEH 框架与 managed exception 的集成机制、PAL_TRY/PAL_EXCEPT 对非 Windows 平台的模拟、Linux 信号处理与 libunwind 栈展开、Exception 对象与 ExceptionDispatchInfo 的栈信息保留、filter clause 在 Pass 1 中的执行时机、零成本异常模型的性能特征，以及与 IL2CPP / HybridCLR / LeanCLR 的异常处理策略对比。"
 weight: 45

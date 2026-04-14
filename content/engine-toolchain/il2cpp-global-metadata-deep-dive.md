@@ -1,4 +1,5 @@
 ---
+slug: "il2cpp-global-metadata-deep-dive"
 date: "2026-03-26"
 title: "IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么"
 description: "独立专题。拆清楚 IL2CPP 构建产物的分工：libil2cpp 是什么、GameAssembly 是什么、global-metadata.dat 存什么、IL2CPP 启动时如何校验 metadata 版本、版本不匹配为什么直接 abort 而不是报错，以及这三个文件和 HybridCLR 的关系。"

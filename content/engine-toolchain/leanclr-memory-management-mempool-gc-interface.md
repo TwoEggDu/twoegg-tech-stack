@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-memory-management-mempool-gc-interface"
 date: "2026-04-14"
 title: "LeanCLR 源码分析｜内存管理：MemPool arena、GC 接口设计与精确协作式 GC 的架构意图"
 description: "拆解 LeanCLR 的内存管理实现：MemPool arena 分配器的 Region 链表与整体释放、GeneralAllocation 的 malloc 包装层、GeneralAllocator STL 适配器、GarbageCollector 的接口语义与 stub 实现，以及精确协作式 GC 的设计意图和当前 malloc-only 策略的适用场景。"

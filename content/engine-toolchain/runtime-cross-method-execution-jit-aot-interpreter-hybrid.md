@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜方法执行：JIT vs AOT vs Interpreter vs 混合执行"
+slug: "runtime-cross-method-execution-jit-aot-interpreter-hybrid"
 date: "2026-04-14"
 description: "同一个 CIL 方法体，在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里走出五条完全不同的执行路线：JIT 编译、AOT 预编译、解释执行、混合执行。从 IR 层级、首次调用延迟、稳态性能到热更新能力，逐维度横切对比五种执行策略的设计 trade-off。"
 weight: 82

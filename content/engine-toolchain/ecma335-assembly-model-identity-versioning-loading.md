@@ -1,5 +1,6 @@
 ---
 title: "ECMA-335 基础｜CLI Assembly Model：程序集身份、版本策略与加载模型"
+slug: "ecma335-assembly-model-identity-versioning-loading"
 date: "2026-04-14"
 description: "从 ECMA-335 规范出发，拆解 CLI 程序集模型的核心机制：程序集的四元组身份标识、AssemblyRef 跨程序集引用、版本绑定策略、五种 runtime 的加载模型差异，以及这些概念在热更新场景中的实际意义。"
 weight: 14

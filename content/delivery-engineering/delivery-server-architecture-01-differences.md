@@ -112,4 +112,4 @@ V10-V12 会逐一展开服务端在每个环节的工程实践。
 
 ---
 
-**下一步应读**：[游戏服务端架构选型]({{< relref "delivery-engineering/delivery-server-architecture-02-patterns.md" >}})
+**下一步应读**：[游戏服务端架构选型](#)

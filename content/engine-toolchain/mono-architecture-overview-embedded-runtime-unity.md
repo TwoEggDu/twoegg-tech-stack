@@ -1,5 +1,6 @@
 ---
 title: "Mono 实现分析｜架构总览：从嵌入式 runtime 到 Unity 集成"
+slug: "mono-architecture-overview-embedded-runtime-unity"
 date: "2026-04-14"
 description: "Mono 是开源跨平台 .NET 先驱，也是 Unity 的第一代 runtime。拆解 Mono 的六大架构模块（metadata、mini、interpreter、sgen、io-layer、icall），四种执行模式（JIT、Full AOT、Interpreter、Mixed），以及 Unity 为什么没有直接升级 Mono 而是走向 IL2CPP。"
 weight: 60

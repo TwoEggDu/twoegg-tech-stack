@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜GC 集成：BoehmGC 的接入层、write barrier 与 finalization"
+slug: "il2cpp-gc-integration-boehm-wbarrier-finalization"
 date: "2026-04-14"
 description: "拆解 IL2CPP 的 GC 集成层：为什么 C++ codegen 无法提供精确栈布局导致只能用保守式 BoehmGC、gc::GarbageCollector 包装层的抽象设计、Object::New 的对象分配路径、Unity 2021+ Incremental GC 引入 write barrier 的原因、GC_REGISTER_FINALIZER 的 finalization 机制、HybridCLR 解释器的 GC 集成策略，以及与 CoreCLR GC / Mono SGen / LeanCLR 的横向对比。"
 weight: 55

@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜泛型实现：共享 vs 特化 vs Full Generic Sharing"
+slug: "runtime-cross-generic-implementation-sharing-specialization-fgs"
 date: "2026-04-14"
 description: "同一个 ECMA-335 泛型模型（TypeSpec / MethodSpec），在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里走出五种完全不同的泛型实例化策略：JIT 按需实例化、AOT 静态实例化、引用类型共享、Full Generic Sharing、运行时泛型膨胀。从实例化时机、共享策略、缺失处理到代码膨胀，逐维度横切对比五种泛型实现的设计 trade-off。"
 weight: 84

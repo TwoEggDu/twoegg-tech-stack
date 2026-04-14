@@ -1,5 +1,6 @@
 ---
 title: "LeanCLR 源码分析｜对象模型：RtObject、RtClass、VTable 与单指针头设计"
+slug: "leanclr-object-model-rtobject-rtclass-vtable"
 date: "2026-04-14"
 description: "拆解 LeanCLR 对象模型的完整实现：RtObject 的 16 字节双指针头与 8 字节单指针头裁剪、RtClass 类型描述符的字段布局、VTable 虚分派机制、RtArray/RtString 的内存排列、Boxing/Unboxing 路径，以及反射对象的嵌入式 header 设计。"
 weight: 73

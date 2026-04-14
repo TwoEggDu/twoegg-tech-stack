@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜GC 实现：分代精确 vs 保守式 vs 协作式 vs stub"
+slug: "runtime-cross-gc-implementation-generational-conservative-cooperative"
 date: "2026-04-14"
 description: "同一份 ECMA-335 GC 契约，在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里走出五种完全不同的垃圾回收实现：分代精确式、轻量精确式、保守式非分代、保守式 + 动态根适配、stub 接口。从 GC 类型、分代策略、精确性、write barrier、finalization、根扫描到暂停模型，逐维度横切对比五种 GC 实现的设计 trade-off。"
 weight: 83

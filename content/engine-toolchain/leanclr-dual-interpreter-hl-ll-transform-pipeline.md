@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-dual-interpreter-hl-ll-transform-pipeline"
 date: "2026-04-14"
 title: "LeanCLR 源码分析｜双解释器架构：HL-IL → LL-IL 的三级 transform 管线"
 description: "拆解 LeanCLR 解释器的核心设计：MSIL(256) → HL-IL(182) → LL-IL(298) 三级变换管线，从 BasicBlockSplitter 到 HL Transformer 到 LL Transformer 的完整链路，以及与 HybridCLR 单级 HiOpcode 的架构差异。"

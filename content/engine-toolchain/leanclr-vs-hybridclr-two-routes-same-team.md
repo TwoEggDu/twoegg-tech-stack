@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-vs-hybridclr-two-routes-same-team"
 date: "2026-04-14"
 title: "LeanCLR vs HybridCLR｜同一团队的两条技术路线：独立 CLR vs IL2CPP 补丁"
 description: "从战略定位到架构实现的完整对比：15+ 维度架构总表、metadata 解析路径差异、解释器设计哲学分歧、类型系统复用与自建的取舍、方法调用链结构对比，以及两条路线在不同场景下的互补关系。"

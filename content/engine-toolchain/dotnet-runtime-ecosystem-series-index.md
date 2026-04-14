@@ -1,5 +1,6 @@
 ---
 title: ".NET Runtime 生态全景系列索引｜从 ECMA-335 到 5 个 CLR 实现的完整知识体系"
+slug: "dotnet-runtime-ecosystem-series-index"
 date: "2026-04-14"
 description: "从 ECMA-335 规范出发，系统拆解 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五大 CLR 实现的架构决策与工程 trade-off。86 篇文章，4 条阅读线，覆盖类型系统、执行模型、GC、泛型、热更新全链路。"
 weight: 1

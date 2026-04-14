@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜程序集加载：AssemblyLoadContext、Binder 与卸载支持"
+slug: "coreclr-assembly-loading-assemblyloadcontext-binder"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解程序集加载的完整链路：AssemblyLoadContext 的双模设计（Default 不可卸载 + Custom 可卸载）、AssemblyBinder 的名字解析与文件定位、Assembly.Load 到 TypeLoading 的六步链路、Collectible ALC 的协作式卸载机制与限制，以及与 IL2CPP / HybridCLR / LeanCLR / Mono 的加载能力对比。"
 weight: 41

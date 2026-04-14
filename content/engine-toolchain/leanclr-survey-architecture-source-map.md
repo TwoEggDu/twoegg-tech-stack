@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-survey-architecture-source-map"
 date: "2026-04-14"
 title: "LeanCLR 调研报告｜架构总览与源码地图：从零实现一个 600KB 的 CLR"
 description: "从 clone 编译到跑通测试，再到 73K LOC 源码逐模块摸底：metadata 解析、双解释器、对象模型、类型系统、内存管理、internal calls。给后续 LeanCLR 深度分析建立全景地图。"

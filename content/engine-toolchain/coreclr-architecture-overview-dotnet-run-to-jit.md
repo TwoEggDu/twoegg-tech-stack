@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜架构总览：从 dotnet run 到 JIT 执行的完整链路"
+slug: "coreclr-architecture-overview-dotnet-run-to-jit"
 date: "2026-04-14"
 description: "从 dotnet run 命令出发，拆解 CoreCLR 的完整执行链路：host → runtime init → assembly loading → type system → JIT compilation → native execution。定位 MethodTable、EEClass、RyuJIT、GC 在这条链里的职责。"
 weight: 40

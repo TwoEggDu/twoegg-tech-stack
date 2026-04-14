@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜泛型实现：代码共享、特化与 System.__Canon"
+slug: "coreclr-generics-sharing-specialization-canon"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解泛型的完整实现：JIT 按需实例化的运行时模型、引用类型代码共享与 System.__Canon canonical 类型、值类型独立 JIT 的特化路径、Generic Dictionary 的运行时类型查找、RGCTX 的 hidden parameter 传递机制、Constrained Call 的 boxing 避免优化，以及与 IL2CPP / LeanCLR 泛型处理策略的对比。"
 weight: 46

@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-method-invocation-chain-assembly-load-to-execute"
 date: "2026-04-14"
 title: "LeanCLR 源码分析｜方法调用链：从 Assembly.Load 到 Interpreter::execute"
 description: "跟着一个方法从 leanclr_load_assembly 到 Interpreter::execute 的完整路径：Assembly 加载、类初始化、三级 fallback 分派、首次 transform 触发、LL-IL 执行循环，以及与 HybridCLR 8 步链的逐步对比。"

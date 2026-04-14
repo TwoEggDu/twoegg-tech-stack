@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜RyuJIT：从 IL → IR → native code 的编译管线"
+slug: "coreclr-ryujit-il-to-ir-to-native-code"
 date: "2026-04-14"
 description: "拆解 CoreCLR 的 JIT 编译器 RyuJIT 的完整编译管线：Importer 构建 GenTree HIR、Morph / SSA / CSE / Inlining / Devirtualization 优化阶段、Lowering 降级为 LIR、LSRA 寄存器分配、Code Generation 产出 native code，以及 PreStub 触发机制和 Tiered Compilation 的分层编译策略。"
 weight: 43

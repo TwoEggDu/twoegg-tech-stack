@@ -1,5 +1,6 @@
 ---
 title: "ECMA-335 基础｜CLI Memory Model：对象布局、GC 契约与 finalization 语义"
+slug: "ecma335-memory-model-object-layout-gc-contract-finalization"
 date: "2026-04-14"
 description: "从 ECMA-335 规范出发，拆解 CLI 内存模型的三大核心：对象在内存中的布局规则、GC 的规范契约与各 runtime 的实现策略、finalization 的语义边界与工程陷阱。基础层最后一篇，为进入各 runtime 实现分析做收束。"
 weight: 15

@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-webassembly-build-h5-minigame-embedding"
 date: "2026-04-14"
 title: "LeanCLR 源码分析｜WebAssembly 构建与 H5 小游戏嵌入：从 C++ 到浏览器的完整链路"
 description: "分析 LeanCLR 编译到 WebAssembly 的完整链路：Emscripten 构建配置、Universal 版与 WASM 的架构匹配、嵌入 API 的 JS 调用方式、与 IL2CPP WebGL 的体积对比、H5 小游戏平台适配，以及从 600KB 到 300KB 的裁剪手段。"

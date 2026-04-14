@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜程序集加载与热更新：静态绑定 vs 动态加载 vs 卸载"
+slug: "runtime-cross-assembly-loading-hot-update-comparison"
 date: "2026-04-14"
 description: "同一份 ECMA-335 程序集模型（identity + loading + versioning），在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里走出五种完全不同的加载策略：AssemblyLoadContext 动态加载与卸载、AppDomain 加载但不卸载、构建时静态绑定、运行时注入 InterpreterImage、运行时解析 CliImage。从加载方式、加载时机、卸载支持、隔离边界到热更新能力，逐维度横切对比五种程序集加载实现的设计 trade-off。"
 weight: 86

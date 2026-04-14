@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-metadata-parsing-cli-image-module-def"
 date: "2026-04-14"
 title: "LeanCLR 源码分析｜Metadata 解析：CliImage、RtModuleDef 与 ECMA-335 表的对应关系"
 description: "从 PE 文件读取到 metadata stream 解析，再到 RtModuleDef 的运行时结构构建：拆解 LeanCLR 如何用 8,603 行代码实现 ECMA-335 metadata 的完整加载链路。"

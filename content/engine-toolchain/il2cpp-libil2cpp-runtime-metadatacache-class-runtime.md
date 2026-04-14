@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜libil2cpp runtime：MetadataCache、Class、Runtime 三层结构"
+slug: "il2cpp-libil2cpp-runtime-metadatacache-class-runtime"
 date: "2026-04-14"
 description: "拆解 libil2cpp 运行时的内部三层结构：MetadataCache 全局类型注册表、Il2CppClass 惰性初始化、Runtime 初始化序列。覆盖 Il2CppObject 对象头设计、BoehmGC 集成、icall 注册机制、线程模型，以及 HybridCLR 的嵌入点。"
 weight: 52

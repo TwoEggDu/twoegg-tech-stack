@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜体积与嵌入性：从 50MB CoreCLR 到 300KB LeanCLR"
+slug: "runtime-cross-size-embedding-50mb-to-300kb"
 date: "2026-04-14"
 description: "五个 .NET runtime 在体积和嵌入性维度的完整对比：CoreCLR 的 50MB 全量运行时与 PublishTrimmed 裁剪策略、Mono 的 10-15MB 中间地带、IL2CPP 的运行时 2-3MB 但 GameAssembly 可达 50-100MB、HybridCLR 在 IL2CPP 基础上增加 1-2MB、LeanCLR 的 600KB 极致轻量与 300KB 裁剪下限。从嵌入 API 设计、平台适配成本、构建链复杂度、WASM 体积四个维度横切对比五种嵌入策略，并覆盖 LTO、dead code elimination、wasm-opt、Brotli 等体积优化手段。"
 weight: 87

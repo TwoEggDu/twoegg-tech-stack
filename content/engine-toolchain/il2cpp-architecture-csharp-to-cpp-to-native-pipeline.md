@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜架构总览：从 C# → C++ → native 的完整管线"
+slug: "il2cpp-architecture-csharp-to-cpp-to-native-pipeline"
 date: "2026-04-14"
 description: "从 Unity 编辑器到最终包体，拆解 IL2CPP 的完整管线：C# 编译 → IL 产出 → il2cpp.exe 转换 → C++ 代码生成 → native 编译。定位 libil2cpp runtime 和 global-metadata.dat 在这条链里各自的职责。"
 weight: 50

@@ -1,5 +1,6 @@
 ---
 title: "Mono 实现分析｜解释器（mint/interp）：与 LeanCLR 双解释器的对比"
+slug: "mono-interpreter-mint-interp-vs-leanclr"
 date: "2026-04-14"
 description: "拆解 Mono 解释器的两代演进（mint → interp）、直接 IL 解释的执行模型、InterpFrame 与 InterpMethod 的结构，以及与 LeanCLR 双解释器和 HybridCLR HiOpcode 的三方对比。"
 weight: 61

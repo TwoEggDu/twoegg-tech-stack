@@ -1,4 +1,5 @@
 ---
+slug: "leanclr-internal-calls-intrinsics-bcl-adaptation"
 date: "2026-04-14"
 title: "LeanCLR 源码分析｜Internal Calls 与 Intrinsics：61 个 icall 和 BCL 适配策略"
 description: "拆解 LeanCLR 的 internal call 注册与分派机制、61 个 icall 实现的分类总览、18 个 intrinsic 的拦截策略，以及使用 .NET Framework 4.x / Unity IL2CPP BCL 而非自建 BCL 的适配决策。"

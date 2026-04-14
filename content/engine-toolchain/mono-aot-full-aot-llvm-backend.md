@@ -1,5 +1,6 @@
 ---
 title: "Mono 实现分析｜AOT：Full AOT 与 LLVM 后端"
+slug: "mono-aot-full-aot-llvm-backend"
 date: "2026-04-14"
 description: "拆解 Mono AOT 的两种模式（Normal AOT 与 Full AOT）、编译流程（IL → Mini JIT 管线 → native .o → 链接）、Full AOT 的泛型实例化限制、LLVM 后端的优化收益与代价，以及 Mono AOT 与 IL2CPP AOT 在 metadata 保留策略和产物形态上的结构性差异。"
 weight: 64

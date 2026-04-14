@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜Tiered Compilation：多级 JIT、动态降级与 PGO"
+slug: "coreclr-tiered-compilation-tier0-tier1-pgo"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解分层编译的完整实现：Tier0 最小优化快速启动、CallCountingStub 的调用计数与热方法标记、Tier1 完整优化后台编译与代码替换、On-Stack Replacement 在回边处的运行中升级、动态 PGO 的 profile 收集与 Guarded Devirtualization、ReadyToRun 预编译作为 Tier0 替代及与 IL2CPP AOT 的根本区别、CoreCLR / IL2CPP / HybridCLR / LeanCLR 四种执行策略的对比。CoreCLR 模块完结篇。"
 weight: 49

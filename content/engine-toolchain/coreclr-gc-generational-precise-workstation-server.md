@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜GC：分代精确 GC、Workstation vs Server、Pinned Object Heap"
+slug: "coreclr-gc-generational-precise-workstation-server"
 date: "2026-04-14"
 description: "从 CoreCLR GC 源码出发，拆解分代模型（Gen0/1/2）与晋升策略、Large Object Heap 的碎片问题与压缩选项、Pinned Object Heap 对固定对象的集中管理、精确式 GC Info 与保守式 BoehmGC 的根本差异、Card Table 驱动的 Write Barrier、GC 暂停与安全点的实现机制、Workstation vs Server GC 的线程模型、Background GC 的并发收集策略，以及与 IL2CPP BoehmGC / Mono SGen / LeanCLR 的横向对比。"
 weight: 44

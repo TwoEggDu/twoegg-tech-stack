@@ -1,5 +1,6 @@
 ---
 title: "IL2CPP 实现分析｜il2cpp.exe 转换器：IL → C++ 代码生成策略"
+slug: "il2cpp-converter-il-to-cpp-code-generation"
 date: "2026-04-14"
 description: "深入 il2cpp.exe 的内部转换策略：方法签名映射、类型布局生成、泛型实例化决策、虚方法表构建、异常处理翻译、字符串字面量处理。从具体的 C# → C++ 翻译示例出发，理解 source-to-source 转换器的工作边界。"
 weight: 51

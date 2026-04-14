@@ -1,5 +1,6 @@
 ---
 title: "Mono 实现分析｜Mini JIT：IL → SSA → native 的编译管线"
+slug: "mono-mini-jit-il-to-ssa-to-native"
 date: "2026-04-14"
 description: "拆解 Mono 默认执行引擎 Mini JIT 的编译管线：IL → Basic Blocks → SSA → 优化（内联、常量传播、死代码消除、循环优化）→ 图着色寄存器分配 → native code，Full AOT 与 LLVM 后端的可选路径，以及与 CoreCLR RyuJIT 的管线对比。"
 weight: 62

@@ -1,5 +1,6 @@
 ---
 title: "横切对比｜异常处理：两遍扫描 vs setjmp/longjmp vs 解释器展开"
+slug: "runtime-cross-exception-handling-seh-setjmp-interpreter"
 date: "2026-04-14"
 description: "同一份 ECMA-335 异常处理契约（catch / filter / finally / fault 四种 clause），在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里走出五种完全不同的实现路线：OS SEH 两遍扫描、setjmp/longjmp 单遍扫描、C++ exception、解释器内部展开。从异常机制、try 开销、throw 开销、filter 支持、栈展开方式到嵌套异常处理，逐维度横切对比五种异常处理实现的设计 trade-off。"
 weight: 85

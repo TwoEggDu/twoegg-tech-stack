@@ -1,5 +1,6 @@
 ---
 title: "LeanCLR 源码分析｜类型系统：泛型膨胀、接口分派与值类型判断"
+slug: "leanclr-type-system-generic-inflation-interface-dispatch"
 date: "2026-04-14"
 description: "拆解 LeanCLR 类型系统的核心实现：CorLibTypes 初始化路径、RtTypeSig 类型签名体系、值类型与引用类型的判断逻辑、Method::inflate 泛型膨胀机制、VTable 虚分派与接口分派的运行时路径、去虚化优化，以及与 IL2CPP/CoreCLR 的设计对比。"
 weight: 74

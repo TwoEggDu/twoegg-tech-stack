@@ -37,10 +37,10 @@ delivery_reading_lines:
 | 序号 | 标题 | 核心问题 |
 |------|------|---------|
 | 01 | [服务端交付与客户端交付的本质区别]({{< relref "delivery-engineering/delivery-server-architecture-01-differences.md" >}}) | 两条交付链路的差异在哪？为什么服务端交付需要单独讲？ |
-| 02 | [游戏服务端架构选型]({{< relref "delivery-engineering/delivery-server-architecture-02-patterns.md" >}}) | 单体/微服务/Actor/ECS——从交付视角怎么选？ |
-| 03 | [C# 服务端实践：ET Framework]({{< relref "delivery-engineering/delivery-server-architecture-03-et-framework.md" >}}) | ET 的架构、包化设计和运行时骨架从交付角度怎么理解？ |
-| 04 | [Server ECS 选型]({{< relref "delivery-engineering/delivery-server-architecture-04-server-ecs.md" >}}) | 服务端为什么需要 ECS？约束和实现方案怎么选？ |
-| 05 | [服务端编译与容器化]({{< relref "delivery-engineering/delivery-server-architecture-05-build-containerize.md" >}}) | .NET 构建、Docker 镜像、CI 集成怎么做？ |
+| 02 | [游戏服务端架构选型](#) | 单体/微服务/Actor/ECS——从交付视角怎么选？ |
+| 03 | [C# 服务端实践：ET Framework](#) | ET 的架构、包化设计和运行时骨架从交付角度怎么理解？ |
+| 04 | [Server ECS 选型](#) | 服务端为什么需要 ECS？约束和实现方案怎么选？ |
+| 05 | [服务端编译与容器化](#) | .NET 构建、Docker 镜像、CI 集成怎么做？ |
 
 ## 与其他栏目的关系
 

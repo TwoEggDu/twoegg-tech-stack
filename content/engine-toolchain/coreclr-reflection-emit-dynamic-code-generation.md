@@ -1,5 +1,6 @@
 ---
 title: "CoreCLR 实现分析｜Reflection 与 Emit：运行时类型查询与动态代码生成"
+slug: "coreclr-reflection-emit-dynamic-code-generation"
 date: "2026-04-14"
 description: "从 CoreCLR 源码出发，拆解反射与动态代码生成的完整实现：RuntimeType 对 MethodTable 的包装、RuntimeMethodInfo 对 MethodDesc 的包装、RuntimeFieldInfo 对 FieldDesc 的包装、MethodInfo.Invoke 的参数打包与安全检查开销、System.Reflection.Emit 的 DynamicMethod / ILGenerator 运行时 IL 生成与 JIT 编译路径、Emit 在 ORM / 序列化 / AOP 中的应用、IL2CPP 缺失 Emit 的根因与替代方案、LeanCLR 的 61 个 icall 反射实现、以及 Source Generator 作为编译期替代的趋势。"
 weight: 48
