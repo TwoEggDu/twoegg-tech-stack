@@ -35,6 +35,7 @@ disableKinds = ["taxonomy", "term"]
     endLevel = 3
 
 [permalinks]
+  delivery-engineering = "/delivery-engineering/:slug/"
   projects = "/projects/:slug/"
   rendering = "/rendering/:slug/"
   engine-toolchain = "/engine-toolchain/:slug/"
@@ -43,6 +44,11 @@ disableKinds = ["taxonomy", "term"]
   code-quality = "/code-quality/:slug/"
   problem-solving = "/problem-solving/:slug/"
   essays = "/essays/:slug/"
+
+[[menu.main]]
+  name = "交付工程"
+  pageRef = "/delivery-engineering/"
+  weight = 5
 
 [[menu.main]]
   name = "项目交付"
