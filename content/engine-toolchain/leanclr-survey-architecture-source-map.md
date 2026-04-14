@@ -331,4 +331,4 @@ LeanCLR 用 73K 行 C++ 回答了一个问题：实现一个最小可用的 CLR 
 ## 系列位置
 
 - 上一篇：无（LeanCLR 模块首篇）
-- 下一篇：LEAN-F2 Metadata 解析（计划中）
+- 下一篇：[LEAN-F2 Metadata 解析]({{< ref "leanclr-metadata-parsing-cli-image-module-def" >}})
