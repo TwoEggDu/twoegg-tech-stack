@@ -471,6 +471,7 @@ Part IX  组织篇        V18 组织治理  ·  V19 案例与模板
 | 13.4 | 性能测试：预算基线 / 采集方法 / 性能回归检测 | 原理+实践 |
 | 13.5 | 稳定性测试：Crash / ANR / 内存溢出 / 弱网 / 长时间运行 | 原理+实践 |
 | 13.6 | 兼容性测试：设备矩阵 / 云真机 / 图形兼容性 / OS 版本 | 原理+实践 |
+| 13.7 | AI 辅助验证：测试用例生成、覆盖分析、视觉回归检测 | 原理+实践 |
 
 **已有内容**：
 - [改写] `code-quality/game-quality-01-problem-space.md` → 拆原理层
@@ -552,6 +553,7 @@ Part IX  组织篇        V18 组织治理  ·  V19 案例与模板
 | 16.4 | 质量门自动化：编译检查 / 资源检查 / Shader 变体 / 性能基线 | 原理+实践 |
 | 16.5 | 部署自动化：fastlane / Gradle / 微信 CLI / CDN 发布 | 平台 |
 | 16.6 | CI 工具选型：Jenkins / GitHub Actions / GitLab CI 对比 | 实践 |
+| 16.7 | AI 辅助构建诊断：失败原因分析、修复方向推荐、日志摘要 | 原理+实践 |
 
 **已有内容**：
 - [改写] `code-quality/quality-gate-how-to-connect-automation-and-ai-review.md`
