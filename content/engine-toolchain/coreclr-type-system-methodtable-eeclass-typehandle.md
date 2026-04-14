@@ -21,6 +21,11 @@ series_id: "coreclr"
 
 B1 建立了 CoreCLR 从 `dotnet run` 到 JIT 执行的全景链路，B2 拆解了 AssemblyLoadContext 和 Binder 的加载机制。加载链路的最后一步是 `ClassLoader::LoadTypeHandleForTypeKey`——从 metadata 构建运行时类型描述。这篇从这个入口开始，深入类型系统的三层核心结构。
 
+> **本文明确不展开的内容：**
+> - JIT 如何使用 MethodTable（RyuJIT 读取 vtable slot、内联判断等在 B4 展开）
+> - GC descriptor 格式（GC 如何通过类型描述符精确扫描对象在 B5 展开）
+> - 反射实现（System.Reflection 如何从 MethodTable/EEClass 构建 API 不在本文范围）
+
 ## CoreCLR 类型系统在 runtime 中的位置
 
 B1 的模块结构表中，VM（`src/coreclr/vm/`）是最重的模块，承担执行引擎的核心职责。类型系统是 VM 的骨架——它定义了每个类型在运行时的完整描述，为 JIT 编译、GC 扫描、方法分派、反射查询提供数据基础。

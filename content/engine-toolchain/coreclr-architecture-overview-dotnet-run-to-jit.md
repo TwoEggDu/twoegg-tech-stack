@@ -35,6 +35,11 @@ CoreCLR 是 .NET 的参考实现，开源在 github.com/dotnet/runtime 仓库的
 
 这些选择都不是凭空出现的。它们是在 CoreCLR 建立的基线上，针对不同约束做出的取舍。CoreCLR 就是那条基线。
 
+> **本文明确不展开的内容：**
+> - JIT 内部优化细节（RyuJIT 的 SSA、内联、去虚化等在 B4 专题展开）
+> - GC 算法细节（分代策略、Write Barrier、Workstation vs Server 在 B5 专题展开）
+> - 具体平台 ABI（x64 / ARM64 调用约定、寄存器使用规则不在本文范围）
+
 ## 从 dotnet run 到 Main 方法
 
 在终端输入 `dotnet run`，到 C# 的 `Main` 方法开始执行，中间经过了一条分工明确的启动链路。这条链路是理解 CoreCLR 整体架构的入口。

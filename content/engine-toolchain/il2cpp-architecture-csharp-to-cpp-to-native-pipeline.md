@@ -33,6 +33,11 @@ HybridCLR 系列已经从"补丁"视角间接分析了 IL2CPP 的部分模块：
 
 这篇先建全景地图。
 
+> **本文明确不展开的内容：**
+> - il2cpp.exe 内部转换细节（IL → C++ 的具体 codegen 策略在 D2 专题展开）
+> - C++ 编译器优化（Clang / MSVC 对生成代码的优化行为不在本文范围）
+> - global-metadata.dat 格式（二进制结构和版本校验在 D4 专题展开）
+
 ## IL2CPP 的整体管线
 
 从 Unity 编辑器点下 Build 到最终包体生成，IL2CPP 的完整管线可以拆成 5 个阶段。
@@ -290,6 +295,8 @@ IL2CPP 模块总共规划 8 篇，这是第 1 篇。后续 4 篇的预告：
 当有人说"IL2CPP 不支持热更新"时，准确地说是 libil2cpp 这个运行时不具备执行 IL 的能力。当有人说"IL2CPP 包体太大"时，问题出在 il2cpp.exe 转换 + C++ 编译器编译后的 native code 膨胀。当有人说"IL2CPP 反射有限制"时，限制来自 UnityLinker 裁剪和 global-metadata.dat 的覆盖范围。
 
 把问题定位到管线的具体环节上，才能找到正确的解决方向。
+
+IL2CPP 作为 AOT 方案的核心 trade-off 可以压成一句：用构建时间和包体膨胀，换取运行时零 JIT 开销和跨平台一致性。这个 trade-off 在移动端和主机平台上是值得的（JIT 被平台禁止），在 WebGL 上是必要的（WASM 不支持 JIT），在编辑器上是不划算的（所以编辑器仍然用 Mono）。
 
 这是后续所有 IL2CPP 深度分析的基础坐标系。
 
