@@ -284,6 +284,7 @@ LeanCLR 解释器执行时的异常处理流程：
 | 栈展开方式 | DWARF / SEH 展开 | DWARF / longjmp | C++ unwind / longjmp | InterpFrame 链表遍历 | 帧链表遍历 |
 | nested exception | OS 机制原生支持 | 链表管理 | C++ 嵌套 throw | ExceptionFlowInfo 嵌套 | clause 数组嵌套搜索 |
 | 性能影响 | try 零成本，throw 昂贵 | AOT try 有开销，throw 中等 | 平台依赖 | try 零成本，throw 轻量 | try 零成本，throw 轻量 |
+| **源码锚点** | `src/coreclr/vm/exceptionhandling.cpp` | `mono/mini/mini-exceptions.c` | `il2cpp/vm/Exception.cpp` | `hybridclr/interpreter/Interpreter_Execute.cpp` | `src/runtime/interp/interpreter.cpp` |
 
 ## 为什么解释器的异常处理比 JIT 简单
 

@@ -145,6 +145,47 @@ HybridCLR 的 `MethodBodyCache` 缓存的就是解析后的这个结构。当一
 MethodDef 行 → RVA 字段 → 文件偏移 → method header → IL bytes
 ```
 
+## 贯穿全系列的参考类
+
+后续文章会反复用到同一组类型来展示不同 runtime 的实现差异。为了降低读者的上下文切换成本，这里先定义这组参考类：
+
+```csharp
+public interface IHittable
+{
+    void TakeDamage(int amount);
+}
+
+public class Unit : IHittable
+{
+    public int hp;
+    public virtual void TakeDamage(int amount) { hp -= amount; }
+}
+
+public class Player : Unit
+{
+    public List<Item> inventory = new();
+    public override void TakeDamage(int amount) { /* 带护甲计算 */ }
+    public T GetItem<T>(int index) where T : Item { return (T)inventory[index]; }
+}
+
+public class Item
+{
+    public string name;
+    public int weight;
+}
+```
+
+这组类型覆盖了 CLI 类型系统的核心场景：
+
+- **接口**（`IHittable`）→ 接口分派
+- **继承**（`Unit → Player`）→ 虚方法、vtable
+- **泛型方法**（`GetItem<T>`）→ 泛型实例化、约束
+- **值类型字段**（`hp: int`、`weight: int`）→ 内存布局
+- **引用类型字段**（`inventory: List<Item>`、`name: string`）→ GC 引用追踪
+- **异常处理**（可在 `TakeDamage` 中加 try/catch 示例）→ 异常模型
+
+后续各 runtime 模块的文章中，会尽量用这组类型来展示：metadata 表里 `Unit` 的 TypeDef 行、CIL 里 `TakeDamage` 的 IL 字节码、CoreCLR 里 `Unit` 的 MethodTable、IL2CPP 里 `TakeDamage` 的 C++ 翻译、LeanCLR 里 `Unit` 的 RtClass。
+
 ## 用 ildasm 看一个最小示例
 
 下面用一个最简单的 C# 类来展示 metadata 表里实际存了什么：

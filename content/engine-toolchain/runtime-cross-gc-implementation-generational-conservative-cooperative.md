@@ -242,6 +242,7 @@ newobj 指令
 | 暂停模型 | STW (Gen 0/1) + 后台并发 (Gen 2) | STW | STW (非增量) / 增量分步 | 同 BoehmGC | 设计目标协作式 |
 | 并行回收 | Server GC 多线程并行 | 单线程 | 单线程 | 单线程 | 无 |
 | 大对象处理 | LOH (>85KB) + POH | LOH | 无特殊处理 | 同 BoehmGC | 无 |
+| **源码锚点** | `src/coreclr/gc/gc.cpp` | `mono/sgen/sgen-gc.c` | `il2cpp/gc/GarbageCollector.cpp` | `hybridclr/interpreter/Engine.h` (MachineState) | `src/runtime/gc/garbage_collector.h` |
 
 ## 为什么没有"最好的 GC"
 

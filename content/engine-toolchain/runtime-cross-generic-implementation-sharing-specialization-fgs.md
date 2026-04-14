@@ -257,6 +257,7 @@ LeanCLR 的泛型膨胀在概念上和 CoreCLR 最接近——都是运行时按
 | 代码膨胀 | 值类型参数按种类膨胀 | 同 CoreCLR (JIT) / AOT 全量 | 值类型按种类 + FGS 通用 | AOT 侧同 IL2CPP | 无 native code 膨胀 |
 | 运行时开销 | JIT 编译 + RGCTX 查找 | JIT 编译 / AOT 零开销 | AOT 零开销 / FGS 间接开销 | AOT 零开销 / 解释器 transform | inflate + transform |
 | RGCTX | 有，传递类型参数信息 | 有 | 有（FGS 模式下） | AOT 侧有 / 热更侧不需要 | 无 |
+| **源码锚点** | `src/coreclr/vm/generics.cpp` | `mono/metadata/class-init.c` | il2cpp.exe generic code generation (closed source) | `hybridclr/metadata/AOTHomologousImage.cpp` | `src/runtime/metadata/generic_metadata.cpp` |
 
 ## 为什么泛型是 AOT runtime 的天然难题
 
