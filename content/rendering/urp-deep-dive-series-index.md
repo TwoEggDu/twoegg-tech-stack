@@ -50,11 +50,15 @@ series_reading_hint: "第一次读 URP，建议先按前置三篇和配置主线
 
 ## 阅读顺序
 
-### 入门与速查
+### 入门与速查（不属于深度主线，可按需跳过）
 
-0. [URP 从零上手｜新建项目、认识三件套、改第一个参数]({{< relref "rendering/urp-intro-00-getting-started.md" >}})
-0. [URP 常见问题速查｜按症状定位、不讲原理、直接修]({{< relref "rendering/urp-troubleshooting-quick-reference.md" >}})
-0. [URP Pipeline Asset 参数速查卡｜所有参数含义、推荐值与关联文章]({{< relref "rendering/urp-pipeline-asset-cheat-sheet.md" >}})
+- [URP 从零上手｜新建项目、认识三件套、改第一个参数]({{< relref "rendering/urp-intro-00-getting-started.md" >}})
+- [URP 常见问题速查｜按症状定位、不讲原理、直接修]({{< relref "rendering/urp-troubleshooting-quick-reference.md" >}})
+- [URP Pipeline Asset 参数速查卡｜所有参数含义、推荐值与关联文章]({{< relref "rendering/urp-pipeline-asset-cheat-sheet.md" >}})
+
+---
+
+### 深度主线（29 篇）
 
 ### 前置基础
 

@@ -58,6 +58,28 @@ Decal Renderer Feature 提供两种 Technique：**DBuffer** 和 **Screen Space**
 
 一句话：**DBuffer 更精确但受限于 Deferred 路径，Screen Space 更通用但精度有妥协。**
 
+### 为什么 Screen Space 在移动端更便宜
+
+DBuffer 需要在 Lighting 之前写入额外的 G-Buffer RT（通常是 3 张：Albedo、Normal、MAOS）。在 TBR 架构下，这意味着：
+
+1. 额外 3 张 RT 的 Store 操作（Tile Memory → 系统内存）
+2. Lighting Pass 读取时额外 3 次 Load 操作
+3. 打断 Native RenderPass 的 Pass 合并——因为 DBuffer Pass 插在 G-Buffer 和 Lighting 之间
+
+Screen Space 在不透明物体渲染完成后执行，只在已经存在的颜色 RT 上叠加一次 Blit。不增加额外 RT，不打断 Pass 合并。代价是一次全屏 Draw（覆盖 Decal 投影范围的像素），而不是额外的 RT 切换。
+
+在移动端带宽受限的环境下，这个差距可以很显著——特别是在 1080P+ 分辨率下，3 张额外 RT 的 Load/Store 带宽开销远大于一次局部区域的 Fragment 计算。
+
+### 真正需要 DBuffer 的场景
+
+只有当你需要 Decal **在光照计算之前修改表面属性**时，DBuffer 才不可替代：
+
+- 地面水坑改变粗糙度（让反射更强）
+- 雪地覆盖改变金属度和法线
+- 受损表面改变 AO
+
+如果 Decal 只是叠颜色和法线（弹孔、血迹、涂鸦），Screen Space 完全够用。
+
 ---
 
 ## 配置步骤
@@ -153,6 +175,24 @@ Projection Depth 设置过大，Decal 投影穿过了目标表面到达了背后
 **DBuffer Decal 在 Forward 路径下不工作**
 
 DBuffer 只在 Deferred 路径下生效。如果你的项目用的是 Forward 路径，切换到 Screen Space Technique。
+
+**Decal 在某些角度突然消失或闪烁**
+
+两个常见原因：
+1. **Projection Depth 刚好卡在表面边缘**——Decal 的投影体积是一个 Box，当表面法线和投影方向接近平行时，深度测试结果不稳定。解决方法：适当增大 Projection Depth，或在 Decal 材质里降低边缘区域的 Alpha
+2. **Decal 与 Z-Fighting**——Decal 的 Screen Space 模式在 Fragment Shader 里根据深度重建世界坐标，当 Decal 投影面和几何面几乎共面时，浮点精度不足会导致闪烁。在 RenderDoc 里抓一帧可以确认：如果 Decal 输出的深度值和几何面的深度值只差最后几位，就是 Z-Fighting
+
+**Decal 叠在半透明物体上不生效**
+
+这是设计限制，不是 bug。Screen Space Decal 在不透明 Pass 之后执行，半透明物体还没画。DBuffer Decal 写入 G-Buffer，半透明物体不走 G-Buffer。两种 Technique 都不能直接 Decal 到半透明表面上——如果确实需要，只能在半透明物体的 Shader 里手动采样 Decal 纹理。
+
+**从 10 个 Decal 到 200 个：性能怎么变化**
+
+Screen Space 模式下，每个可见 Decal 是一次 Draw Call（投影 Box 的 Mesh Draw）。10 个 Decal = 10 次 Draw Call，200 个 = 200 次 Draw Call。CPU 侧的提交开销是线性增长的。
+
+GPU 侧，Decal 的 Fragment Shader 只在投影覆盖的像素上执行。10 个不重叠的弹孔 Decal，GPU 开销很低（每个只覆盖几百像素）。但 200 个弹孔密集分布在同一面墙上，OverDraw 会很严重——某些像素可能被 10+ 个 Decal 的 Fragment Shader 执行。
+
+实际项目里的经验法则：同屏可见 Decal 控制在 20-30 个以内，配合 Max Draw Distance 裁剪远处的。超过这个数量，先在目标设备上用 Frame Debugger 确认 Decal Pass 的 Draw Call 数量和 GPU 耗时。
 
 ---
 

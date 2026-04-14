@@ -154,6 +154,26 @@ public static class BatchMaterialUpgrade
 - **在独立分支上跑**。材质文件一改就是 `.mat` 的序列化变更，版本控制里 diff 看不出什么实际内容。跑之前先开分支，万一出问题可以整体回退。
 - **超过 1000 个材质时分批处理**。一次性加载太多 Material 进内存会导致 Editor 卡死，可以按文件夹拆分或者加 `EditorUtility.DisplayProgressBar` 做进度反馈。
 
+### 脚本处理不了的边界情况
+
+批量脚本能搞定 80% 的材质，剩下 20% 需要人工介入。以下是最常见的边界情况：
+
+**Smoothness 通道位置不一致**
+
+Built-in Standard 的 Smoothness 默认存在 Metallic Map 的 Alpha 通道里（`_SmoothnessTextureChannel = 0`）。但有些资产包（特别是外包美术资产）用的是 Albedo Alpha 通道存 Smoothness（`_SmoothnessTextureChannel = 1`）。脚本只读 `_Glossiness` 数值是不够的——还要检查 `_SmoothnessTextureChannel`，如果是 1，迁移后需要在 URP Lit 材质里也切换到 Albedo Alpha 模式，否则金属度和粗糙度会全乱。
+
+**Alpha 行为差异**
+
+Built-in 的 Fade 模式和 Transparent 模式的区别：Fade 在 Alpha=0 时完全透明（包括高光），Transparent 在 Alpha=0 时高光仍然可见。URP Lit 的 Transparent Surface Type 默认行为更接近 Built-in 的 Transparent 模式。如果原材质用的是 Fade，迁移后高光区域可能会多出一层不该有的反光——需要人工确认并调整 `_Surface` 和 `_Blend` 属性。
+
+**Shader Property 丢失问题**
+
+`mat.shader = Shader.Find("Universal Render Pipeline/Lit")` 这行代码执行后，Unity 会**清除所有不属于新 Shader 的 SerializedProperty**。也就是说，如果你先切 Shader 再读旧属性，旧属性已经没了。脚本里必须**先读完所有旧属性，再切 Shader，再赋新值**——示例代码里的顺序是对的，但如果有人改了顺序就会丢数据，而且没有任何报错。
+
+**材质引用链断裂**
+
+如果多个 Prefab / ScriptableObject 通过 `Material` 字段引用同一个材质，批量脚本改了材质的 Shader 后，引用链不会断（因为是原地修改同一个 `.mat` 文件）。但如果脚本是"复制一份新材质再替换引用"的方式，所有引用都需要更新——这在大型项目里很容易遗漏。建议始终用原地修改，不要复制。
+
 ---
 
 ## 四、QA 验收流程
