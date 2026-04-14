@@ -78,26 +78,26 @@ series_reading_hint: "第一次读 URP，建议先按前置三篇和配置主线
 
 ### 扩展开发
 
-10. [URP 深度扩展 01｜Renderer Feature 完整开发：从零写一个 ScriptableRendererFeature]({{< relref “rendering/urp-ext-01-renderer-feature.md” >}})
-11. [URP 深度扩展 02｜RenderGraph 实战：Unity 6 的新写法]({{< relref “rendering/urp-ext-02-rendergraph.md” >}})
-12. [URP 深度扩展 03｜URP 后处理扩展：Volume Framework 与自定义效果]({{< relref “rendering/urp-ext-03-postprocessing.md” >}})
-13. [URP 深度扩展 04｜DrawRenderers 与 FilteringSettings：有选择地重绘物体]({{< relref “rendering/urp-ext-04-draw-renderers.md” >}})
-14. [URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass]({{< relref “rendering/urp-ext-05-renderdoc.md” >}})
-15. [URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 与迁移策略]({{< relref “rendering/urp-ext-06-migration.md” >}})
-16. [URP 深度扩展 07｜性能排查方法论：从掉帧到定位瓶颈的完整链路]({{< relref “rendering/urp-ext-07-performance-profiling.md” >}})
-17. [URP 深度扩展 08｜Decal System：URP 贴花的配置、Technique 选择与移动端优化]({{< relref “rendering/urp-ext-08-decal-system.md” >}})
-18. [URP 深度扩展 09｜RenderGraph 迁移实战：三个 Feature 的完整改写过程]({{< relref “rendering/urp-ext-09-rendergraph-migration-cases.md” >}})
-19. [URP 深度扩展 10｜GPU Resident Drawer 在 URP 中的落地：启用条件、Shader 适配与迁移决策]({{< relref “rendering/urp-ext-10-gpu-resident-drawer-in-urp.md” >}})
-20. [URP Shader 手写｜从骨架到完整光照：接入主光、附加光与阴影]({{< relref “rendering/urp-shader-custom-lit.md” >}})
+12. [URP 深度扩展 01｜Renderer Feature 完整开发：从零写一个 ScriptableRendererFeature]({{< relref “rendering/urp-ext-01-renderer-feature.md” >}})
+13. [URP 深度扩展 02｜RenderGraph 实战：Unity 6 的新写法]({{< relref “rendering/urp-ext-02-rendergraph.md” >}})
+14. [URP 深度扩展 03｜URP 后处理扩展：Volume Framework 与自定义效果]({{< relref “rendering/urp-ext-03-postprocessing.md” >}})
+15. [URP 深度扩展 04｜DrawRenderers 与 FilteringSettings：有选择地重绘物体]({{< relref “rendering/urp-ext-04-draw-renderers.md” >}})
+16. [URP 深度扩展 05｜RenderDoc 调试 URP 自定义 Pass]({{< relref “rendering/urp-ext-05-renderdoc.md” >}})
+17. [URP 深度扩展 06｜2022.3 → Unity 6 迁移指南：Breaking Change 与迁移策略]({{< relref “rendering/urp-ext-06-migration.md” >}})
+18. [URP 深度扩展 07｜性能排查方法论：从掉帧到定位瓶颈的完整链路]({{< relref “rendering/urp-ext-07-performance-profiling.md” >}})
+19. [URP 深度扩展 08｜Decal System：URP 贴花的配置、Technique 选择与移动端优化]({{< relref “rendering/urp-ext-08-decal-system.md” >}})
+20. [URP 深度扩展 09｜RenderGraph 迁移实战：三个 Feature 的完整改写过程]({{< relref “rendering/urp-ext-09-rendergraph-migration-cases.md” >}})
+21. [URP 深度扩展 10｜GPU Resident Drawer 在 URP 中的落地：启用条件、Shader 适配与迁移决策]({{< relref “rendering/urp-ext-10-gpu-resident-drawer-in-urp.md” >}})
+22. [URP Shader 手写｜从骨架到完整光照：接入主光、附加光与阴影]({{< relref “rendering/urp-shader-custom-lit.md” >}})
 
 ### 平台与优化
 
-17. [URP 深度平台 01｜移动端专项配置：为什么这么设、怎么验证]({{< relref “rendering/urp-platform-01-mobile.md” >}})
-18. [URP 深度平台 02｜多平台质量分级：三档配置的工程实现]({{< relref “rendering/urp-platform-02-quality.md” >}})
-19. [URP 深度平台 03｜机型分档怎样接线上：遥测回写、Remote Config、灰度与回滚]({{< relref “rendering/urp-platform-03-online-governance.md” >}})
-20. [URP 深度平台 04｜热机后的质量分档：冷机、热机、长时运行与动态降档策略]({{< relref “rendering/urp-platform-04-thermal-and-dynamic-tiering.md” >}})
-21. [URP 深度平台 05｜质量分档不只改 URP：资源、LOD、特效与包体怎么一起分层]({{< relref “rendering/urp-platform-05-content-tiering.md” >}})
-22. [URP 深度平台 06｜Built-in → URP 材质批量迁移：工具链、参数映射与验收流程]({{< relref “rendering/urp-platform-06-material-upgrade-workflow.md” >}})
-23. [URP 深度平台 07｜AssetBundle 里的 Shader Variant 交付：多档位项目的打包、预热与版本对齐]({{< relref “rendering/urp-platform-07-assetbundle-variant-delivery.md” >}})
+23. [URP 深度平台 01｜移动端专项配置：为什么这么设、怎么验证]({{< relref “rendering/urp-platform-01-mobile.md” >}})
+24. [URP 深度平台 02｜多平台质量分级：三档配置的工程实现]({{< relref “rendering/urp-platform-02-quality.md” >}})
+25. [URP 深度平台 03｜机型分档怎样接线上：遥测回写、Remote Config、灰度与回滚]({{< relref “rendering/urp-platform-03-online-governance.md” >}})
+26. [URP 深度平台 04｜热机后的质量分档：冷机、热机、长时运行与动态降档策略]({{< relref “rendering/urp-platform-04-thermal-and-dynamic-tiering.md” >}})
+27. [URP 深度平台 05｜质量分档不只改 URP：资源、LOD、特效与包体怎么一起分层]({{< relref “rendering/urp-platform-05-content-tiering.md” >}})
+28. [URP 深度平台 06｜Built-in → URP 材质批量迁移：工具链、参数映射与验收流程]({{< relref “rendering/urp-platform-06-material-upgrade-workflow.md” >}})
+29. [URP 深度平台 07｜AssetBundle 里的 Shader Variant 交付：多档位项目的打包、预热与版本对齐]({{< relref “rendering/urp-platform-07-assetbundle-variant-delivery.md” >}})
 
 {{< series-directory >}}
