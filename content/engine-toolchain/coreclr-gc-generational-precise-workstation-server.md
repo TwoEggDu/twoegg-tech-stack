@@ -21,6 +21,8 @@ series_id: "coreclr"
 
 B3 拆解了类型系统的 MethodTable / EEClass 分离设计，B4 走通了 RyuJIT 从 IL 到 native code 的编译管线。这篇进入 CoreCLR 的另一个核心子系统：垃圾收集器（GC）。GC 与类型系统和 JIT 的协作极为紧密——类型系统提供 GC 描述信息，JIT 在编译时插入 write barrier 和记录 GC Info，GC 在收集时依赖这些信息精确枚举所有存活对象。
 
+{{< figure src="/images/runtime-ecosystem/coreclr-gc-heap-layout.svg" caption="CoreCLR GC 堆布局：Gen0 最小最快，Gen2 最大最慢。LOH 和 POH 独立于分代体系。" >}}
+
 ## GC 在 CoreCLR 中的位置
 
 CoreCLR 的 GC 源码集中在 `src/coreclr/gc/` 目录下，与 VM（`src/coreclr/vm/`）和 JIT（`src/coreclr/jit/`）并列的独立模块。这个目录结构反映了一个设计决策：GC 被设计为可替换组件，通过 `IGCHeap` 接口与 VM 交互。
