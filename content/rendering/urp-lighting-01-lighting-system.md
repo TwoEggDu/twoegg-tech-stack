@@ -13,6 +13,10 @@ tags:
 series: "URP 深度"
 weight: 1560
 ---
+> **读这篇之前**：本篇会用到光照模型和 Shader 光照计算的基本概念。如果不熟悉，建议先看：
+> - [Unity 渲染系统 02｜光照资产：实时光、Lightmap、Light Probe]({{< relref "rendering/unity-rendering-02-lighting-assets.md" >}})
+> - [Shader 核心光照 01｜Blinn-Phong 高光]({{< relref "rendering/shader-lighting-01-blinn-phong.md" >}})
+
 URP 的光照系统不是"把所有光照信息传给 Shader"那么简单，它在 CPU 侧做了大量分类、排序、裁剪工作，才把一份经过精简的光源数据送到 GPU。理解这套机制，才能明白为什么场景里某盏灯"不生效"，以及 Shader 里的 `_MainLightColor` 和 `_AdditionalLightsBuffer` 分别是什么。
 
 ---

@@ -13,6 +13,10 @@ tags:
 series: "URP 深度"
 weight: 1640
 ---
+> **读这篇之前**：本篇假设你已经理解 URP 14 的完整开发方式和 RenderGraph 基础。如果不熟悉，建议先看：
+> - [URP 深度扩展 01｜Renderer Feature 完整开发]({{< relref "rendering/urp-ext-01-renderer-feature.md" >}})
+> - [URP 深度扩展 02｜RenderGraph 实战：Unity 6 的新写法]({{< relref "rendering/urp-ext-02-rendergraph.md" >}})
+
 Unity 2022.3 LTS 到 Unity 6 的 URP 升级不是简单的版本号跳跃，`ScriptableRenderPass` 的核心 API 发生了结构性变化。本篇梳理实际会遇到的 Breaking Change，以及一套不用一次性全改就能先让项目跑起来的迁移策略。
 
 ---

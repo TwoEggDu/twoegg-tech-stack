@@ -13,6 +13,10 @@ tags:
 series: "URP 深度"
 weight: 1540
 ---
+> **读这篇之前**：本篇会引用 Pipeline Asset 的参数和渲染路径概念。如果不熟悉，建议先看：
+> - [URP 深度配置 01｜Pipeline Asset 解读]({{< relref "rendering/urp-config-01-pipeline-asset.md" >}})
+> - [URP 深度前置 03｜Forward、Deferred、Forward+]({{< relref "rendering/urp-pre-03-rendering-paths.md" >}})
+
 `UniversalRenderer`（即 Renderer Asset，挂在 Pipeline Asset 的 Renderer List 里）控制的是渲染路径本身的行为——不是"渲什么"（那是 Pipeline Asset 的职责），而是"怎么渲"。这几个参数直接影响 GPU 的工作方式，是 URP 配置里最值得深入理解的部分。
 
 ---
@@ -141,6 +145,14 @@ Native RenderPass
 - **自定义 Pass 在两个 Subpass 之间插入了不兼容的操作**：如果你的 RendererFeature 在 G-Buffer Pass 和 Lighting Pass 之间插入了一个读取深度 Texture（而不是 Subpass Input）的操作，会破坏 Native RenderPass 的合并，退化到常规 Store/Load
 
 **如何确认有效**：开启后，用 Mali Graphics Debugger 或 Xcode GPU Frame Capture，可以看到多个 Pass 被标记为同一 RenderPass 的 Subpass，而不是独立的 RenderPass。
+
+### 动手验证：用 Frame Debugger 观察 Pass 数量
+
+1. 运行场景，打开 Window → Analysis → Frame Debugger
+2. 点击 Enable，观察左侧 Pass 列表和总 Draw Call 数量
+3. 在 Universal Renderer 的 Inspector 里切换 Native RenderPass 开关
+4. 回到 Frame Debugger 点击 Enable 重新捕获，对比 Pass 数量是否减少
+5. 如果 Pass 数量没变化，说明当前场景没有可合并的相邻 Pass
 
 ---
 

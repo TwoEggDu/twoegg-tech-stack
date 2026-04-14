@@ -13,6 +13,10 @@ tags:
 series: "URP 深度"
 weight: 1610
 ---
+> **读这篇之前**：本篇会用到 Volume Framework 和全屏 Blit 概念。如果不熟悉，建议先看：
+> - [Unity 渲染系统 05｜后处理：Volume 系统与全屏 Pass]({{< relref "rendering/unity-rendering-05-postprocessing.md" >}})
+> - [URP 深度扩展 01｜Renderer Feature 完整开发]({{< relref "rendering/urp-ext-01-renderer-feature.md" >}})
+
 URP 的后处理不是一个独立系统，而是 Volume Framework + Renderer Feature 两层配合的结果。理解这两层的分工，才能写出既能在 Inspector 里调参、又能在 Renderer Feature 里驱动效果的完整后处理扩展。
 
 ---

@@ -14,6 +14,11 @@ tags:
 series: "URP 深度"
 weight: 1645
 ---
+> **读这篇之前**：本篇会从零写 HLSL Shader，需要了解 ShaderLab 结构和 Vertex/Fragment Shader 基础语法。如果不熟悉，建议先看：
+> - [Shader 语法基础 07｜ShaderLab 结构：Properties、SubShader、Pass 与 Tags]({{< relref "rendering/shader-basic-07-shaderlab-structure.md" >}})
+> - [Shader 语法基础 08｜Vertex Shader 完整写法]({{< relref "rendering/shader-basic-08-vertex-shader.md" >}})
+> - [Shader 语法基础 09｜Fragment Shader 完整写法]({{< relref "rendering/shader-basic-09-fragment-shader.md" >}})
+
 URP 自带的 Lit Shader 功能完整，但高度封装——想加一个效果、改一个细节，要在几千行代码里找位置。手写 Shader 的价值在于：你完全清楚每一行代码在做什么，改起来没有障碍。
 
 这篇从一个空文件开始，一步步写出一个接入 URP 完整光照体系的 Shader：主光漫反射 + 高光、附加光循环、主光阴影接收、ShadowCaster Pass。

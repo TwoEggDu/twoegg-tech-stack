@@ -12,6 +12,10 @@ tags:
 series: "URP 深度"
 weight: 1530
 ---
+> **读这篇之前**：本篇假设你已经知道 Pipeline Asset 在项目里的位置和基本作用。如果刚接触 URP，建议先看：
+> - [URP 从零上手｜新建项目、认识三件套、改第一个参数]({{< relref "rendering/urp-intro-00-getting-started.md" >}})
+> - [URP 架构详解：从 Asset 到 RenderPass 的层级结构]({{< relref "rendering/unity-rendering-09-urp-architecture.md" >}})
+
 `UniversalRenderPipelineAsset`（以下简称 Pipeline Asset）是 URP 的全局配置入口，挂在 `Project Settings → Graphics` 或 `Quality Settings` 里。这篇逐块拆解每个参数的含义，以及为什么这样设置。
 
 系列九（unity-rendering-09）里已经介绍了它的整体定位，这篇不重复"它是什么"，直接讲每个参数背后的渲染行为。
@@ -72,6 +76,27 @@ MSAA 的工作原理是对每个像素采多个子采样点，只在几何边缘
 - 仅在 Forward 路径下生效。Deferred 路径不支持 MSAA（选 Deferred 时此选项灰掉）
 - 移动端 2x 是性价比最高的选择；PC 项目通常用 TAA 或 FXAA 替代硬件 MSAA
 
+### 动手验证：MSAA
+
+1. 打开你的 URP 项目，在 Scene 里放一个默认 Cube
+2. 选中 Pipeline Asset，把 Anti Aliasing (MSAA) 从 Disabled 改为 4x
+3. 在 Game View 里靠近 Cube 的几何边缘观察——锯齿是否减轻
+4. 改回 Disabled，对比边缘差异
+5. 如果打开了后处理 FXAA，关掉 FXAA 后再对比，能更清楚地看到 MSAA 的效果
+
+<!-- DATA-TODO: 在这里插入 MSAA 对比截图。截图操作：
+     1. 放一个默认 Cube，Camera 靠近几何边缘，关闭 FXAA
+     2. MSAA = Disabled → 截图
+     3. MSAA = 2x → 截图
+     4. MSAA = 4x → 截图
+     分辨率 1080P，Game View 截图。
+     截图存放：static/images/urp/msaa-disabled.png, msaa-2x.png, msaa-4x.png
+     插入格式：
+     | MSAA Disabled | MSAA 2x | MSAA 4x |
+     |---|---|---|
+     | ![](/images/urp/msaa-disabled.png) | ![](/images/urp/msaa-2x.png) | ![](/images/urp/msaa-4x.png) |
+-->
+
 ### Upscaling Filter
 
 Dynamic Resolution 时，以较低分辨率渲染后上采样到屏幕分辨率。选项：Auto / Point（最近邻）/ Linear / FSR（AMD FidelityFX Super Resolution）。
@@ -96,6 +121,25 @@ Quality
 移动端常用 0.75–0.9 配合 FSR 上采样，在中端机上换取帧率。
 
 运行时修改：`UniversalRenderPipeline.asset.renderScale = 0.75f`。
+
+### 动手验证：Render Scale
+
+1. 打开 Pipeline Asset，把 Render Scale 拖到 0.5
+2. 在 Game View 里观察——整体画面变糊，但 UI 不受影响（UI 不走 Render Scale）
+3. 拖到 1.5，观察超采样效果（画面更锐但 GPU 压力增大）
+4. 拖回 1.0 恢复默认
+
+<!-- DATA-TODO: 在这里插入 Render Scale 对比截图。截图操作：
+     同一场景，Game View 截图：
+     1. Render Scale = 0.5 → 画面明显模糊
+     2. Render Scale = 0.75 → 轻微模糊，可接受
+     3. Render Scale = 1.0 → 原生清晰度
+     截图存放：static/images/urp/renderscale-05.png, renderscale-075.png, renderscale-10.png
+     插入格式：
+     | Render Scale 0.5 | Render Scale 0.75 | Render Scale 1.0 |
+     |---|---|---|
+     | ![](/images/urp/renderscale-05.png) | ![](/images/urp/renderscale-075.png) | ![](/images/urp/renderscale-10.png) |
+-->
 
 ### HDR Precision
 

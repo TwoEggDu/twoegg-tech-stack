@@ -13,6 +13,11 @@ tags:
 series: "URP 深度"
 weight: 1650
 ---
+> **读这篇之前**：本篇会大量引用 TBR/TBDR 架构和 Pipeline Asset 参数。如果不熟悉，建议先看：
+> - [游戏图形系统 08｜移动 GPU 与桌面 GPU 的区别]({{< relref "rendering/game-graphics-stack-08-mobile-vs-desktop-gpu.md" >}})
+> - [移动端硬件 02｜TBDR 架构详解]({{< relref "rendering/hardware-02-tbdr.md" >}})
+> - [URP 深度配置 01｜Pipeline Asset 解读]({{< relref "rendering/urp-config-01-pipeline-asset.md" >}})
+
 移动端 URP 配置的常见误区是"照着最佳实践清单全关一遍"。问题在于：没有理解原因的配置，换个项目就不会用了，遇到效果和性能的取舍也无从判断。
 
 这篇从移动端 GPU 的架构特点出发，讲清楚每个配置项背后的代价是什么，以及怎么用工具验证你的配置确实起了作用。
@@ -94,6 +99,8 @@ Render Scale 直接线性缩放 GPU 填充率负担。0.85 意味着实际渲染
 开启后，URP 尝试把相邻的 Pass 合并成一个 Vulkan/Metal Native RenderPass，减少 Load/Store 次数。
 
 **为什么这对 TBR 很重要**：每次 RT 切换，TBR 需要把 Tile 内容写回系统内存（Store），下次再用时重新读回（Load）。如果两个 Pass 能合并，中间的 Store/Load 直接省掉，带宽节省可以很显著。
+
+<!-- DATA-TODO: 补充 Xcode GPU Frame Capture 或 Mali Graphics Debugger 截图，展示 Native RenderPass 开/关时 Load/Store 次数的对比。截图存放 static/images/urp/native-renderpass-bandwidth.png -->
 
 **什么情况下合并会失败**：
 - 中间有 `cmd.Blit` 或自定义 Pass 插在两个 URP Pass 之间

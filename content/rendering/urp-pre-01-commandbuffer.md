@@ -12,6 +12,11 @@ tags:
 series: "URP 深度"
 weight: 1500
 ---
+> **读这篇之前**：本篇会用到 CommandBuffer、Draw Call、Render Target 等概念。如果不熟悉，建议先看：
+> - [Unity 渲染系统 08｜SRP 核心概念]({{< relref "rendering/unity-rendering-08-srp-core-concepts.md" >}})
+> - [Unity 渲染系统 01b｜Draw Call 是什么]({{< relref "rendering/unity-rendering-01b-draw-call-and-batching.md" >}})
+> - [Unity 渲染系统 01c｜Render Target 与帧缓冲区]({{< relref "rendering/unity-rendering-01c-render-target-and-framebuffer.md" >}})
+
 这篇是 URP 深度系列的第一篇前置文章。系列八（unity-rendering-08）讲了 CommandBuffer 是什么，系列十（unity-rendering-10）展示了 Pass 骨架。这篇专门深入 CommandBuffer 最常用的三个操作——**Blit、SetRenderTarget、DrawRenderers**——把使用中真正会遇到的陷阱和选择讲清楚。
 
 ---

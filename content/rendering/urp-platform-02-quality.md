@@ -15,6 +15,10 @@ series: "URP 深度"
 primary_series: "device-tiering"
 weight: 1660
 ---
+> **读这篇之前**：本篇会引用 Quality Settings 和多 Pipeline Asset 配置。如果不熟悉，建议先看：
+> - [URP 深度配置 01｜Pipeline Asset 解读]({{< relref "rendering/urp-config-01-pipeline-asset.md" >}})
+> - [URP 深度平台 01｜移动端专项配置]({{< relref "rendering/urp-platform-01-mobile.md" >}})
+
 一套配置无法适配所有设备，质量分级是解决这个问题的工程方案。这篇讲三档分级的完整实现：为什么这样分、代码怎么写、配置差异在哪里、切换时机怎么选。
 
 ---

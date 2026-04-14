@@ -13,6 +13,10 @@ tags:
 series: "URP 深度"
 weight: 1520
 ---
+> **读这篇之前**：本篇会用到 Fragment Shader、深度测试、G-Buffer 等概念。如果不熟悉，建议先看：
+> - [Unity 渲染系统 01｜几何与表面：Mesh、Material、Texture]({{< relref "rendering/unity-rendering-01-mesh-material-texture.md" >}})
+> - [Shader 语法基础 09｜Fragment Shader 完整写法]({{< relref "rendering/shader-basic-09-fragment-shader.md" >}})
+
 三条渲染路径要解决的是同一个问题：**场景里有很多光源，怎么让每个 Mesh 的每个像素知道自己被哪些光照亮，以及如何高效地完成这个计算**。
 
 ---

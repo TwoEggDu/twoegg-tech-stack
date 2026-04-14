@@ -12,6 +12,10 @@ tags:
 series: "URP 深度"
 weight: 1510
 ---
+> **读这篇之前**：本篇会用到 RenderTexture、临时 RT、GPU 内存等概念。如果不熟悉，建议先看：
+> - [Unity 渲染系统 01c｜Render Target 与帧缓冲区]({{< relref "rendering/unity-rendering-01c-render-target-and-framebuffer.md" >}})
+> - [URP 深度前置 01｜CommandBuffer]({{< relref "rendering/urp-pre-01-commandbuffer.md" >}})
+
 在 URP 里，"渲染目标的生命周期管理"是写自定义 Pass 时最容易出错的地方。这篇从头讲清楚 RenderTexture 是什么、旧的临时 RT 模式有什么问题，以及 RTHandle 体系如何解决这些问题。
 
 ---

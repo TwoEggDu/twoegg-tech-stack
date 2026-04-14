@@ -14,6 +14,10 @@ tags:
 series: "URP 深度"
 weight: 1620
 ---
+> **读这篇之前**：本篇会用到 DrawRenderers 和 CommandBuffer 基础操作。如果不熟悉，建议先看：
+> - [URP 深度前置 01｜CommandBuffer：Blit、SetRenderTarget、DrawRenderers]({{< relref "rendering/urp-pre-01-commandbuffer.md" >}})
+> - [URP 深度扩展 01｜Renderer Feature 完整开发]({{< relref "rendering/urp-ext-01-renderer-feature.md" >}})
+
 Renderer Feature 里除了全屏 Blit，另一类常见需求是：**把场景里某些物体再画一遍**，但用不同的 Shader、不同的时机、不同的 RT。
 
 X 光效果（穿墙显示角色）、描边（选中高亮）、自定义透明排序——这些都依赖同一个 API：`context.DrawRenderers()`。

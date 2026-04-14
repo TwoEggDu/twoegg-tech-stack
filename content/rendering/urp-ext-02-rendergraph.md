@@ -15,6 +15,10 @@ weight: 1600
 ---
 > 版本说明：本篇针对 Unity 6（URP 17）的 RenderGraph API。Unity 2022.3 LTS 的写法见 URP扩展-01。两套 API 可以共存，但 Unity 6 中用旧写法会走 UnsafePass 包装，有警告且无法享受 RenderGraph 的自动优化。
 
+> **读这篇之前**：本篇假设你已经理解 Execute API 旧写法和 RT 生命周期。如果不熟悉，建议先看：
+> - [URP 深度扩展 01｜Renderer Feature 完整开发]({{< relref "rendering/urp-ext-01-renderer-feature.md" >}})
+> - [URP 深度前置 02｜RenderTexture 与 RTHandle]({{< relref "rendering/urp-pre-02-rthandle.md" >}})
+
 ---
 
 ## 为什么要换写法

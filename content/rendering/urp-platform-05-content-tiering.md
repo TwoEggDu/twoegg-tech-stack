@@ -14,6 +14,10 @@ series: "URP 深度"
 primary_series: "device-tiering"
 weight: 1690
 ---
+> **读这篇之前**：本篇是质量分档全链路的最后一层，假设你已经理解分档和动态降档。如果不熟悉，建议先看：
+> - [URP 深度平台 02｜多平台质量分级]({{< relref "rendering/urp-platform-02-quality.md" >}})
+> - [URP 深度平台 04｜热机后的质量分档]({{< relref "rendering/urp-platform-04-thermal-and-dynamic-tiering.md" >}})
+
 前面几篇平台文已经把三件事分别立住了：
 
 - [URP 深度平台 02｜多平台质量分级：三档配置的工程实现]({{< relref "rendering/urp-platform-02-quality.md" >}})：初始三档怎么配

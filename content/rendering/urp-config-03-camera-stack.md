@@ -12,6 +12,10 @@ tags:
 series: "URP 深度"
 weight: 1550
 ---
+> **读这篇之前**：本篇会引用 Pipeline Asset 参数和 Render Target 概念。如果不熟悉，建议先看：
+> - [URP 深度配置 01｜Pipeline Asset 解读]({{< relref "rendering/urp-config-01-pipeline-asset.md" >}})
+> - [Unity 渲染系统 01c｜Render Target 与帧缓冲区]({{< relref "rendering/unity-rendering-01c-render-target-and-framebuffer.md" >}})
+
 在 Built-in 管线里，多个摄像机直接叠加（每个 Camera 独立 Culling + 独立渲染），代价随摄像机数量线性增加。URP 的 Camera Stack 改变了这个模型：多个 Camera 共享 Base Camera 的 Culling 结果和深度，Overlay Camera 只负责"往上加内容"，而不是重新渲染整个场景。
 
 ---
@@ -52,6 +56,15 @@ Main Camera（Base）
 在 Overlay Camera 的 Inspector 里，`Camera Type` 必须设为 `Overlay`（否则 URP 不允许把它加入 Stack）。
 
 渲染顺序：Base Camera 先渲染，然后 Stack 列表里的 Overlay Camera 从上到下依次渲染，后面的叠加在前面的上面。
+
+### 动手验证：搭建一个最小 Camera Stack
+
+1. 在场景里创建两个 Camera：Main Camera 和 Overlay Camera
+2. 选中 Overlay Camera → Inspector → Render Type 改为 Overlay
+3. 选中 Main Camera → Inspector → Stack 区域 → 点 + → 添加 Overlay Camera
+4. 给 Overlay Camera 的 Culling Mask 只勾选 UI 层
+5. 运行场景，Main Camera 渲染 3D 场景，Overlay Camera 叠加 UI
+6. 在 Frame Debugger 里观察：两个 Camera 的 Draw Call 是分开的两组
 
 ---
 
