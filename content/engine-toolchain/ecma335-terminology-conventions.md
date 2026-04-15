@@ -103,11 +103,19 @@ series_id: "ecma335"
 
 这三个术语在中文社区中混用严重，但它们在技术层面指向不同的机制。
 
-**Hot Update**（热更新）——运行时替换或新增代码逻辑，不需要重新发布客户端。HybridCLR 的核心能力。技术实现：运行时加载新的 DLL，解释执行其中的 IL 代码。已加载的旧代码不卸载（社区版），新代码通过 metadata 注册覆盖旧的方法分派。
+**Hot Update**（热更新）——运行时加载新的代码逻辑，不需要重新发布客户端。这是一个通用概念，不绑定特定技术方案。实现热更新的路径有多种：
 
-**Hot Reload**（热重载）——卸载旧程序集并重新加载新版本。HybridCLR 商业版提供此能力（需要 `AssemblyLoadContext` 语义支持）。和 hot update 的关键区别：旧代码会被卸载，不只是被覆盖。.NET 6+ 的 Hot Reload（`dotnet watch`）也属于这个范畴，但实现机制是 EnC（Edit and Continue），通过 delta metadata 修改已加载的程序集。
+- **C# 热更**：HybridCLR 通过 `Assembly.Load` 把新 DLL 加载为 `InterpreterImage`，注册到 IL2CPP 的 `MetadataCache`。热更类型走解释器执行（CIL → HiOpcode transform → 解释执行），AOT 类型仍走原生路径。两者通过 `invoker_method` 分流，不是"覆盖"。
+- **Lua 热更**：xLua / ToLua 通过 Lua VM 执行新逻辑，C# 侧提供绑定层。
+- **ILRuntime**：独立的 IL 解释器，不依赖 IL2CPP runtime。
+- **LeanCLR**：独立 CLR，运行时加载 .NET DLL 直接解释执行。
 
-**Hot Fix**（热修复）——不是一个独立的技术机制，而是一个使用场景：用 hot update 或 hot reload 的能力修复线上 bug。"热修复"描述的是目的，不是手段。
+**Hot Reload**（热重载）——卸载旧程序集并重新加载新版本。和 hot update 的关键区别：旧代码的 metadata 和内存会被回收，不只是新增。两种实现路径：
+
+- **HybridCLR 商业版（热重载版）**：通过 `TryUnloadAssembly` / `ForceUnloadAssembly` 卸载 `InterpreterImage`，回收 99.9% metadata 内存，再重新加载。不依赖 `AssemblyLoadContext`。
+- **.NET 6+ Hot Reload**（`dotnet watch`）：通过 EnC（Edit and Continue）机制，用 delta metadata 修改已加载的程序集，不卸载不重加载。严格来说属于"增量更新"而非"重载"。
+
+**Hot Fix**（热修复）——描述的是使用场景，不是独立的技术机制。用 hot update 或 hot reload 的能力修复线上 bug。HybridCLR 旗舰版的 "Hotfix" 功能本质上是 DHE（差分混合执行）的一个应用场景。
 
 **约定：** 本系列中"热更新"专指技术机制层面的 hot update，不用它来指 hot fix 场景。讨论 HybridCLR 商业版的程序集卸载能力时用"热重载"。
 
