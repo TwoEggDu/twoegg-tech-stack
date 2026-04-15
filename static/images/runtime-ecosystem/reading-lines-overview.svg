@@ -28,90 +28,90 @@
 
   <rect width="1200" height="820" rx="28" fill="url(#bg)"/>
 
-  <text x="60" y="55" class="subtitle">EIGHT READING PATHS</text>
-  <text x="60" y="98" class="title">八条阅读线</text>
+  <text x="50" y="55" class="subtitle">EIGHT READING PATHS</text>
+  <text x="50" y="98" class="title">八条阅读线</text>
 
-  <!-- ECMA-335 Root -->
-  <rect x="260" y="125" width="680" height="66" rx="22" class="box box-root"/>
+  <!-- ECMA-335 Root — 居中 -->
+  <rect x="200" y="125" width="800" height="66" rx="22" class="box box-root"/>
   <text x="460" y="161" class="label">ECMA-335 基础层</text>
-  <text x="485" y="182" class="copy">8 篇 · 所有线的公共入口</text>
+  <text x="490" y="182" class="copy">8 篇 · 所有线的公共入口</text>
 
   <path d="M600 191V226" class="line"/>
-  <line x1="50" y1="232" x2="1150" y2="232" class="divider"/>
+  <line x1="30" y1="232" x2="1170" y2="232" class="divider"/>
 
   <!-- ===== 线 1: Unity 工程师 ===== -->
-  <rect x="40" y="250" width="1120" height="105" rx="20" class="band"/>
-  <text x="75" y="290" class="line-label">线 1：Unity 工程师</text>
-  <text x="75" y="316" class="line-desc">做热更新的人</text>
+  <rect x="25" y="250" width="1150" height="105" rx="20" class="band"/>
+  <text x="55" y="290" class="line-label">线 1：Unity 工程师</text>
+  <text x="55" y="316" class="line-desc">做热更新的人</text>
 
-  <rect x="310" y="267" width="250" height="68" rx="18" class="box box-b"/>
-  <text x="380" y="303" class="label">IL2CPP</text>
-  <text x="360" y="325" class="copy">8 篇 · AOT 转换管线</text>
+  <rect x="260" y="267" width="280" height="68" rx="18" class="box box-b"/>
+  <text x="345" y="303" class="label">IL2CPP</text>
+  <text x="320" y="325" class="copy">8 篇 · AOT 转换管线</text>
 
-  <path d="M560 301H620" class="line"/>
+  <path d="M540 301H590" class="line"/>
 
-  <rect x="630" y="267" width="420" height="68" rx="18" class="box box-b"/>
-  <text x="770" y="303" class="label">HybridCLR</text>
-  <text x="730" y="325" class="copy">37 篇 · 热更新补丁全链路</text>
+  <rect x="600" y="267" width="480" height="68" rx="18" class="box box-b"/>
+  <text x="760" y="303" class="label">HybridCLR</text>
+  <text x="720" y="325" class="copy">37 篇 · 热更新补丁全链路</text>
 
   <!-- ===== 线 2: Runtime 工程师 ===== -->
-  <rect x="40" y="373" width="1120" height="105" rx="20" class="band"/>
-  <text x="75" y="413" class="line-label">线 2：Runtime 工程师</text>
-  <text x="75" y="439" class="line-desc">想理解 CLR 实现的人</text>
+  <rect x="25" y="373" width="1150" height="105" rx="20" class="band"/>
+  <text x="55" y="413" class="line-label">线 2：Runtime 工程师</text>
+  <text x="55" y="439" class="line-desc">想理解 CLR 实现的人</text>
 
-  <rect x="310" y="390" width="220" height="68" rx="18" class="box box-c"/>
-  <text x="368" y="426" class="label">CoreCLR</text>
-  <text x="350" y="448" class="copy">10 篇 · JIT 标杆</text>
+  <rect x="260" y="390" width="240" height="68" rx="18" class="box box-c"/>
+  <text x="325" y="426" class="label">CoreCLR</text>
+  <text x="310" y="448" class="copy">10 篇 · JIT 标杆实现</text>
 
-  <path d="M530 424H570" class="line"/>
+  <path d="M500 424H540" class="line"/>
 
-  <rect x="580" y="390" width="190" height="68" rx="18" class="box box-c"/>
-  <text x="640" y="426" class="label">Mono</text>
-  <text x="615" y="448" class="copy">8 篇 · Unity 初代</text>
+  <rect x="550" y="390" width="210" height="68" rx="18" class="box box-c"/>
+  <text x="618" y="426" class="label">Mono</text>
+  <text x="590" y="448" class="copy">8 篇 · Unity 初代 runtime</text>
 
-  <path d="M770 424H810" class="line"/>
+  <path d="M760 424H800" class="line"/>
 
-  <rect x="820" y="390" width="240" height="68" rx="18" class="box box-c"/>
-  <text x="893" y="426" class="label">LeanCLR</text>
+  <rect x="810" y="390" width="270" height="68" rx="18" class="box box-c"/>
+  <text x="892" y="426" class="label">LeanCLR</text>
   <text x="860" y="448" class="copy">10 篇 · 600KB 独立 CLR</text>
 
   <!-- ===== 线 3: H5/小游戏 ===== -->
-  <rect x="40" y="496" width="1120" height="105" rx="20" class="band"/>
-  <text x="75" y="536" class="line-label">线 3：H5 / 小游戏</text>
-  <text x="75" y="562" class="line-desc">WebAssembly / 小游戏开发者</text>
+  <rect x="25" y="496" width="1150" height="105" rx="20" class="band"/>
+  <text x="55" y="536" class="line-label">线 3：H5 / 小游戏</text>
+  <text x="55" y="562" class="line-desc">WebAssembly / 小游戏开发者</text>
 
-  <rect x="310" y="513" width="150" height="68" rx="18" class="box box-a"/>
-  <text x="337" y="549" class="label">F1 调研</text>
-  <text x="340" y="571" class="copy">架构总览</text>
+  <rect x="260" y="513" width="170" height="68" rx="18" class="box box-a"/>
+  <text x="293" y="549" class="label">F1 调研</text>
+  <text x="296" y="571" class="copy">架构总览</text>
 
-  <path d="M460 547H490" class="line"/>
+  <path d="M430 547H465" class="line"/>
 
-  <rect x="500" y="513" width="170" height="68" rx="18" class="box box-a"/>
-  <text x="530" y="549" class="label">F9 WASM</text>
-  <text x="528" y="571" class="copy">H5 构建链路</text>
+  <rect x="475" y="513" width="190" height="68" rx="18" class="box box-a"/>
+  <text x="512" y="549" class="label">F9 WASM</text>
+  <text x="506" y="571" class="copy">H5 构建链路</text>
 
-  <path d="M670 547H700" class="line"/>
+  <path d="M665 547H700" class="line"/>
 
-  <rect x="710" y="513" width="150" height="68" rx="18" class="box box-a"/>
-  <text x="735" y="549" class="label">F10 选型</text>
-  <text x="728" y="571" class="copy">vs HybridCLR</text>
+  <rect x="710" y="513" width="170" height="68" rx="18" class="box box-a"/>
+  <text x="742" y="549" class="label">F10 选型</text>
+  <text x="730" y="571" class="copy">vs HybridCLR</text>
 
-  <path d="M860 547H890" class="line"/>
+  <path d="M880 547H915" class="line"/>
 
-  <rect x="900" y="513" width="160" height="68" rx="18" class="box box-a"/>
-  <text x="930" y="549" class="label">G8 体积</text>
-  <text x="915" y="571" class="copy">50MB → 300KB</text>
+  <rect x="925" y="513" width="180" height="68" rx="18" class="box box-a"/>
+  <text x="960" y="549" class="label">G8 体积</text>
+  <text x="940" y="571" class="copy">50MB → 300KB</text>
 
   <!-- ===== 线 4: 架构对比 ===== -->
-  <rect x="40" y="619" width="1120" height="105" rx="20" class="band"/>
-  <text x="75" y="659" class="line-label">线 4：架构对比</text>
-  <text x="75" y="685" class="line-desc">做技术选型的人</text>
+  <rect x="25" y="619" width="1150" height="105" rx="20" class="band"/>
+  <text x="55" y="659" class="line-label">线 4：架构对比</text>
+  <text x="55" y="685" class="line-desc">做技术选型的人</text>
 
-  <rect x="310" y="636" width="520" height="68" rx="18" class="box box-b"/>
-  <text x="470" y="672" class="label">横切对比 G1 ~ G9</text>
-  <text x="440" y="694" class="copy">9 篇 · 5 个 runtime 同维度对比</text>
+  <rect x="260" y="636" width="560" height="68" rx="18" class="box box-b"/>
+  <text x="430" y="672" class="label">横切对比 G1 ~ G9</text>
+  <text x="395" y="694" class="copy">9 篇 · 5 个 runtime 同维度对比</text>
 
   <!-- Caption -->
-  <text x="60" y="775" class="caption">按角色选线 1~4 进入。按专题（GC / 泛型 / 执行引擎 / 热更新）深入见下方表格。</text>
-  <text x="60" y="798" class="caption">所有线共享 ECMA-335 基础层。</text>
+  <text x="50" y="775" class="caption">按角色选线 1~4 进入。按专题（GC / 泛型 / 执行引擎 / 热更新）深入见下方表格。</text>
+  <text x="50" y="798" class="caption">所有线共享 ECMA-335 基础层。</text>
 </svg>
