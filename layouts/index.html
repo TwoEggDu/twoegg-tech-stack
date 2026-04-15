@@ -35,56 +35,30 @@
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">{{ with .Params.hero_eyebrow }}{{ . }}{{ else }}客户端工程 / 工具链 / 渲染性能 / 工程判断{{ end }}</p>
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}我用项目、引擎链路和工程判断，证明自己能把复杂问题做成可交付结果。{{ end }}</h1>
+        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}从资源构建到渲染上屏，把引擎的每一层拆开讲清楚。{{ end }}</h1>
         <div class="section-copy">
           {{ .Content }}
         </div>
-        <div class="button-row">
-          {{ with site.GetPage "/projects" }}
-            <a class="button" href="{{ .RelPermalink }}">看代表项目</a>
-          {{ end }}
-          {{ with site.GetPage "/rendering" }}
-            <a class="button button-secondary" href="{{ .RelPermalink }}">看渲染管线</a>
-          {{ end }}
-          {{ with site.GetPage "/system-design" }}
-            <a class="button button-secondary" href="{{ .RelPermalink }}">看系统设计</a>
-          {{ end }}
+        <div class="meta-row" style="margin-top:8px;">
+          <span class="tag">50+ 系列专题</span>
+          <span class="tag">700+ 篇文章</span>
+          <span class="tag">Unity & Unreal</span>
+          <span class="tag">PC / Mobile / Console</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="proof-bar" aria-label="Proof">
-    <div class="meta-row">
-      <span class="tag">50+ 系列专题 | 700+ 篇技术文章</span>
-      <span class="tag">Unity & Unreal 双引擎</span>
-      <span class="tag">PC / Mobile / Console</span>
     </div>
   </section>
 
   {{ if gt (len $featured) 0 }}
-    <section class="feature-block">
-      <div class="page-title-block compact">
-        <p class="eyebrow">Featured</p>
-        <h2>先看这几篇代表作</h2>
-        <p class="section-lead">先看最能证明交付能力、系统拆解和工程判断的 4 篇。</p>
-      </div>
-      <div class="post-grid">
-        {{ range $featured }}
-          <article class="post-card">
-            <p class="card-section">{{ .CurrentSection.Title }}</p>
-            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-            <p>{{ .Params.description }}</p>
-            <div class="meta-row">
-              {{ range .Params.tags }}
-                <span class="tag">{{ . }}</span>
-              {{ end }}
-            </div>
-          </article>
-        {{ end }}
-      </div>
-    </section>
+    <div class="post-grid">
+      {{ range $featured }}
+        <article class="post-card">
+          <p class="card-section">{{ .CurrentSection.Title }}</p>
+          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          <p>{{ .Params.description }}</p>
+        </article>
+      {{ end }}
+    </div>
   {{ end }}
 
   <section class="section-grid">
