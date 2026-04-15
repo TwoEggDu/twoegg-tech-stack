@@ -357,8 +357,8 @@ a {
 }
 
 .hero h1 {
-  max-width: 13ch;
-  font-size: clamp(2.8rem, 7vw, 5.6rem);
+  max-width: 18ch;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
 }
 
 .eyebrow,

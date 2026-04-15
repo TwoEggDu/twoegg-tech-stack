@@ -1,5 +1,5 @@
 ---
-title: "Problem Solving"
+title: "问题拆解"
 description: "复盘复杂约束下的问题定位、方案收敛和取舍逻辑，展示工程判断如何落地。"
 hero_title: "真正有价值的不是做过，而是能把问题拆开、收敛并交付。"
 ---
