@@ -340,6 +340,25 @@ a {
   display: block;
 }
 
+.hero-with-svg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.hero-svg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-svg svg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+}
+
 .hero h1,
 .page-title-block h1,
 .page-title-block h2,
