@@ -36,7 +36,9 @@ series_id: "mono"
 > - Unity Editor 脚本编译管线（编辑器侧的 Roslyn 编译、域加载流程不在本文范围）
 > - IL2CPP 详细实现（IL2CPP 的管线拆解在 D 系列专题展开）
 
-{{< svg "images/runtime-ecosystem/mono-architecture-modules.svg" >}}
+![Mono 六大架构模块](../../images/runtime-ecosystem/mono-architecture-modules.svg)
+
+*图：Mono 同时提供 JIT + AOT + Interpreter 三条执行路径。*
 
 ## Mono 的历史定位
 
