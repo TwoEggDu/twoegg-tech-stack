@@ -3,6 +3,7 @@ date: "2026-03-26"
 title: "Unity Player Settings 总览｜哪些参数真的会影响裁剪、构建速度和运行时"
 description: "把 Unity Player Settings 里最容易混在一起的 5 个参数拆开：Scripting Backend、API Compatibility Level、IL2CPP Code Generation、C++ Compiler Configuration 和 Use Incremental GC。"
 slug: "unity-player-settings-build-runtime-overview"
+series: "构建与调试前置"
 weight: 55
 featured: false
 tags:

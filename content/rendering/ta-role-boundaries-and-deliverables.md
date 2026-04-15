@@ -3,6 +3,7 @@ date: "2026-03-29"
 title: 'TA 不是"调效果的人"｜职责边界、协作接口和典型产出物'
 description: '把 TA 从"调效果"还原成"把视觉约束收成工程规则"的角色，讲清 TA 和美术、客户端、主程的边界，以及 TA 的典型产出物。'
 slug: "ta-role-boundaries-and-deliverables"
+series: "Unity 渲染系统"
 weight: 193
 featured: false
 tags:

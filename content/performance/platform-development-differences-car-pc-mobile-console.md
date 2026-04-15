@@ -2,6 +2,7 @@
 title: "车机、PC、移动端、游戏主机开发，到底有什么本质区别"
 description: "从系统控制权、输入方式、性能预算、分发更新和认证流程几个维度，解释四类平台开发为什么差异这么大。"
 slug: "platform-development-differences-car-pc-mobile-console"
+series: "移动端硬件与优化"
 weight: 25
 featured: false
 tags:

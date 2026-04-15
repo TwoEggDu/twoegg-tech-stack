@@ -2,6 +2,7 @@
 title: "电脑越来越卡：什么时候该先怀疑 Visual Studio，而不是直接怪配置"
 description: '从一次真实开发机卡顿现场出发，说明一组快照数据最多能把 Visual Studio 提升到什么嫌疑级别，以及怎样把"感觉卡"转成可操作的排查顺序。'
 slug: "visual-studio-long-run-slowness"
+series: "工程诊断案例"
 weight: 24
 featured: false
 tags:

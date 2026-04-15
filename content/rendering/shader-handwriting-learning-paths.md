@@ -3,6 +3,7 @@ date: "2026-03-28"
 title: "Shader 学习分层入口｜先分清入门基础、光照与常用技法、项目实战，再决定从哪条线进去"
 description: "给 Shader 手写技法系列补一个二级分流入口：当总目录已经很长时，先按学习阶段和目标进入，比直接在 70 多篇文章里横跳更稳。"
 slug: "shader-handwriting-learning-paths"
+series: "Shader 手写技法"
 weight: 3995
 featured: false
 tags:

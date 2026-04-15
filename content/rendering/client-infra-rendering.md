@@ -2,6 +2,7 @@
 date: "2026-03-11"
 title: "为什么我认为客户端基础架构应该同时懂工具链和渲染优化"
 description: "解释为什么客户端基础架构需要同时理解工具链和渲染优化。"
+series: "工程判断"
 weight: 20
 featured: false
 tags:

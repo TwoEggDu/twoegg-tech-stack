@@ -2,6 +2,7 @@
 title: "案例：性能优化项目 — 从 22fps 到稳定 45fps 的分层治理过程"
 description: "接手一个中低端机型帧率只有 22fps 的项目，不是靠一个银弹修好的，而是按 GPU → CPU → 内存 → 加载四层拆开，每层找到 Top 1 瓶颈，逐层治理。三周后中低端稳定 45fps，高端 60fps。"
 slug: "case-performance-optimization"
+series: "项目案例"
 weight: 22
 featured: false
 tags:

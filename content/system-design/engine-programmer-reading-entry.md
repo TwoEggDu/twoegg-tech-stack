@@ -3,6 +3,7 @@ date: "2026-03-29"
 title: "引擎开发阅读入口｜先立分层地图，再按图形、运行时和平台抽象进入"
 description: "给引擎开发方向补一个稳定入口：先说明从 Unity 客户端走向引擎开发时应该先建立哪些地图，再列出当前最稳的阅读路径。"
 slug: "engine-programmer-reading-entry"
+series: "工程判断"
 weight: 191
 featured: true
 tags:

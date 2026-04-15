@@ -1,6 +1,7 @@
 ---
 title: "代码质量不是洁癖，而是交付能力"
 description: "把代码质量放回协作、演进和交付语境里看，它本质上是在决定团队未来还能不能持续改。"
+series: "Code Quality"
 weight: 10
 featured: true
 tags:

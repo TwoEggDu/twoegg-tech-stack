@@ -2,6 +2,7 @@
 title: "从项目内工具到跨项目平台：我对 Unity 工程化成长路径的理解"
 description: "工具链工程师的三个成长阶段：解决项目痛点、走向交付链路、把经验抽象成跨项目平台能力。"
 date: "2026-03-08"
+series: "工程判断"
 weight: 40
 featured: false
 tags:

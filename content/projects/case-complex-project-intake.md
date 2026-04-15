@@ -2,6 +2,7 @@
 title: "案例：复杂 Unity 项目接手方法论 — 前两周怎么诊断"
 description: "接手一个已经跑了两年的大型 Unity 项目，前两周不是急着改代码，而是建立诊断地图：构建链路、资源管线、热更新、性能基线、崩溃分布各属于哪一层，哪些能碰、哪些先别动。"
 slug: "case-complex-project-intake"
+series: "项目案例"
 weight: 20
 featured: false
 tags:

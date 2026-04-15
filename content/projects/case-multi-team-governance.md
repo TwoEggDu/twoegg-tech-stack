@@ -2,6 +2,7 @@
 title: "案例：多团队工程治理 — 规则、流程、CI、回滚怎么落地"
 description: "当项目从 1 个团队扩展到 3 个团队并行开发时，代码冲突、资源覆盖、构建互锁成为常态。这篇复盘怎样通过分支策略、CI 门禁、资源锁和发布审批把工程治理从口头约定变成自动化链路。"
 slug: "case-multi-team-governance"
+series: "项目案例"
 weight: 23
 featured: false
 tags:

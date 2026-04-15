@@ -2,6 +2,7 @@
 title: "Scene / Prefab / 脚本引用丢失：为什么看起来像资源没了，其实常常是身份链断了"
 description: "从一个常见的 Unity 资源事故现场出发，拆解 Scene、Prefab 和脚本引用为什么总会一起出问题，以及它们如何分别断在资产身份链、对象恢复链和代码身份链上。"
 slug: "unity-scene-prefab-script-reference-loss"
+series: "工程诊断案例"
 weight: 22
 featured: false
 tags:

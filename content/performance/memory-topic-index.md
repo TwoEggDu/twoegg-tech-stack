@@ -3,6 +3,7 @@ date: "2026-03-29"
 title: "内存专题索引｜先分清运行时内存分布，再看预算、RT、流送、工作集和系统强杀"
 description: "给内存专题补一个稳定入口：先把运行时内存桶、预算线、工作集、RenderTexture、Shader Variant、资源生命周期，以及 Windows 的工作集/显存问题和移动端的 LMK / jetsam 看清，再按 Unity / 平台问题进入正文。"
 slug: "memory-topic-index"
+series: "游戏性能判断"
 weight: 172
 featured: false
 tags:

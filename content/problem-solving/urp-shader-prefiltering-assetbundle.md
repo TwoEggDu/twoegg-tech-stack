@@ -1,6 +1,7 @@
 ---
 title: "一次 AssetBundle 构建后 Shader Variant 丢失问题的定位与修复"
 description: "记录一次 AB 构建后 shader variant 未生成的问题排查，聚焦 URP ShaderPrefilteringData 链路，以及 URP 14.0.11 之前项目的变通方案为什么有效、为什么不合理。"
+series: "工程诊断案例"
 weight: 20
 featured: true
 tags:

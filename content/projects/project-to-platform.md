@@ -1,6 +1,7 @@
 ---
 title: "从项目内工具到跨项目平台：我对 Unity 工程化成长路径的理解"
 description: "把项目内工具经验抽象成跨项目平台能力，展示工程化成长路径。"
+series: "项目案例"
 weight: 20
 featured: true
 tags:
