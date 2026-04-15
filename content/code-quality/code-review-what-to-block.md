@@ -1,6 +1,7 @@
 ---
 title: "代码评审真正该拦什么，不该拦什么"
 description: "把 code review 从审美争论拉回工程判断：优先拦住会持续制造协作成本和回归风险的结构问题，而不是把时间耗在细碎风格上。"
+series: "Code Quality"
 weight: 11
 featured: false
 tags:

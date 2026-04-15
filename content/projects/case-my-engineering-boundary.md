@@ -2,6 +2,7 @@
 title: "我的工程边界：能解决什么、需要协作什么、不做什么"
 description: "770+ 篇技术文章不等于什么都能做。这篇把我的工程能力按'能独立交付 / 需要协作 / 不是我的领域'三层拆清楚，让合作方知道预期该放在哪。"
 slug: "case-my-engineering-boundary"
+series: "项目案例"
 weight: 25
 featured: false
 tags:

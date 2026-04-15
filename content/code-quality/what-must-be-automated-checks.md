@@ -1,6 +1,7 @@
 ---
 title: "什么问题必须做成自动检查，不能靠人盯"
 description: "人适合做上下文判断，机器适合做重复、确定、可枚举的检查。真正的工程质量，不是把所有希望都压在 review 和口头约定上，而是把该自动化的东西从流程里拿出来。"
+series: "Code Quality"
 weight: 12
 featured: false
 tags:

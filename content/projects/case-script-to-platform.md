@@ -2,6 +2,7 @@
 title: "案例：从项目内脚本到跨项目工具平台的边界判断"
 description: "一个项目里的资源检查脚本，从 500 行的 Editor 工具到跨 3 个项目复用的检查平台。这篇不是讲怎么写代码，而是讲什么时候该抽、什么时候不该抽、抽出来之后维护成本怎么控。"
 slug: "case-script-to-platform"
+series: "项目案例"
 weight: 24
 featured: false
 tags:

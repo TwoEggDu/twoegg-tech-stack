@@ -2,6 +2,7 @@
 title: "案例：一次热更新上线事故的复盘 — 从 CDN 缓存到 AB 依赖断裂"
 description: "一次热更新发布后，20% 的玩家卡在加载界面。表面原因是 CDN 缓存未刷新，真正根因是 AssetBundle 依赖链在增量构建时断裂。这篇从发现、定位、修复到防回归完整复盘。"
 slug: "case-hotupdate-production-incident"
+series: "项目案例"
 weight: 21
 featured: false
 tags:

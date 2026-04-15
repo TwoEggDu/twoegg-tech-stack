@@ -2,6 +2,7 @@
 title: "从上线流程反推主程价值"
 description: "为什么真正负责过上线链路的工程师，比只做功能开发的人多出边界意识、系统意识和风险意识。"
 date: "2026-03-01"
+series: "工程判断"
 weight: 30
 featured: false
 tags:

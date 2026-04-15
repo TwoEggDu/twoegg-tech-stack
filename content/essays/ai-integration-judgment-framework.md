@@ -3,6 +3,7 @@ title: '游戏工程团队引入 AI 的判断框架'
 slug: "ai-integration-judgment-framework"
 date: "2026-04-14"
 description: "不讲该不该拥抱 AI，讲怎么判断一个具体场景值不值得用 AI、用哪种模式、怎么评估收益。给技术负责人一套可复用的决策流程。"
+series: "工程判断"
 weight: 50
 featured: false
 tags:

@@ -1,6 +1,7 @@
 ---
 title: "特效性能检查器案例"
 description: "用特效性能检查器案例展示资源门禁、规则化检查和发布前质量控制。"
+series: "项目案例"
 weight: 10
 featured: true
 tags:

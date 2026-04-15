@@ -3,6 +3,7 @@ date: "2026-03-29"
 title: "客户端程序阅读入口｜先按问题类型，再按系统层级进入"
 description: "给 Unity 客户端程序补一个站点级总入口：先按性能、资源、热更、崩溃、编译、发布这些问题分类，再按系统层级和成长阶段进入后续专题。"
 slug: "client-programmer-reading-entry"
+series: "工程判断"
 weight: 190
 featured: true
 tags:

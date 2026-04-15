@@ -2,6 +2,7 @@
 title: "工具链负责人不是写几个工具的人"
 description: "为什么工具链岗位的核心价值不是 API 熟练度，而是把研发生产线设计成一条链。"
 date: "2026-02-15"
+series: "工程判断"
 weight: 20
 featured: false
 tags:

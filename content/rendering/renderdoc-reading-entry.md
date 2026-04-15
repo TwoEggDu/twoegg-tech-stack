@@ -3,6 +3,7 @@ date: "2026-04-01"
 title: "RenderDoc 阅读入口｜先读哪篇，遇到什么问题该回看哪篇"
 description: "给站里的 RenderDoc 相关文章补一个稳定入口：先区分公共前置、入门、进阶、Shader 调试和 URP 实战，再给出推荐阅读顺序与按问题回看路径。"
 slug: "renderdoc-reading-entry"
+series: "Unity 渲染系统"
 weight: 191
 featured: false
 tags:

@@ -2,6 +2,7 @@
 date: "2026-03-20"
 title: "Unity 工具链开发真正要懂的三条引擎链路"
 description: "从资源导入、构建打包、脚本编译三条链路讲清 Unity 工具链开发的系统边界。"
+series: "工程判断"
 weight: 10
 featured: true
 tags:
