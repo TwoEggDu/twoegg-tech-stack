@@ -39,6 +39,10 @@
               <strong>{{ site.Title }}</strong>
             </span>
           </a>
+          <nav class="header-external" aria-label="External sites">
+            <a href="https://twoeggdu.github.io/" target="_blank" rel="noreferrer">牵着蜗牛去长大</a>
+            <a href="https://twoeggdu.github.io/AllWeather/" target="_blank" rel="noreferrer">宏观全天候研究日志</a>
+          </nav>
           {{ with site.Home.OutputFormats.Get "JSON" }}
             <form class="site-search" data-search data-search-index-url="{{ .RelPermalink }}" role="search">
               <label class="sr-only" for="site-search-input">搜索站内内容</label>
