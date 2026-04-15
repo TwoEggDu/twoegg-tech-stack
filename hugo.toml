@@ -10,9 +10,9 @@ disableKinds = ["taxonomy", "term"]
   home = ["HTML", "RSS", "JSON"]
 
 [params]
-  description = "渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章与工程实践。"
+  description = "交付工程、渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章。"
   author = "TwoEgg"
-  tagline = "渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章。"
+  tagline = "交付工程、渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章。"
 
 [[params.externalSites]]
   title = "个人首页"
@@ -48,11 +48,6 @@ disableKinds = ["taxonomy", "term"]
 [[menu.main]]
   name = "交付工程"
   pageRef = "/delivery-engineering/"
-  weight = 5
-
-[[menu.main]]
-  name = "项目交付"
-  pageRef = "/projects/"
   weight = 10
 
 [[menu.main]]
@@ -74,21 +69,6 @@ disableKinds = ["taxonomy", "term"]
   name = "系统设计"
   pageRef = "/system-design/"
   weight = 50
-
-[[menu.main]]
-  name = "代码质量"
-  pageRef = "/code-quality/"
-  weight = 60
-
-[[menu.main]]
-  name = "问题拆解"
-  pageRef = "/problem-solving/"
-  weight = 70
-
-[[menu.main]]
-  name = "工程判断"
-  pageRef = "/essays/"
-  weight = 80
 
 [[menu.main]]
   name = "关于"

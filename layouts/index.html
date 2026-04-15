@@ -1,17 +1,18 @@
 {{ define "main" }}
-  {{ $featured := slice }}
-  {{ range (slice
-    "/projects/vfx-checker-case.md"
-    "/rendering/player-input-and-game-content-to-screen.md"
-    "/system-design/unity-engine-insights.md"
-    "/code-quality/code-quality-is-delivery-capability.md"
-  ) }}
-    {{ with site.GetPage . }}
-      {{ $featured = $featured | append . }}
-    {{ end }}
-  {{ end }}
-  {{ $sections := slice "projects" "rendering" "engine-toolchain" "performance" "system-design" "code-quality" "problem-solving" "essays" }}
-  {{ $sectionLabels := dict
+  {{ $sections := slice
+    "delivery-engineering"
+    "projects"
+    "rendering"
+    "engine-toolchain"
+    "performance"
+    "system-design"
+    "code-quality"
+    "problem-solving"
+    "essays"
+  }}
+
+  {{ $sectionNames := dict
+    "delivery-engineering" "交付工程"
     "projects" "项目交付"
     "rendering" "渲染管线"
     "engine-toolchain" "引擎工具链"
@@ -21,57 +22,47 @@
     "problem-solving" "问题拆解"
     "essays" "工程判断"
   }}
-  {{ $sectionCtas := dict
-    "projects" "看代表案例"
-    "rendering" "看渲染系列"
-    "engine-toolchain" "看工具链系列"
-    "performance" "看性能系列"
-    "system-design" "看系统设计"
-    "code-quality" "看判断标准"
-    "problem-solving" "看拆解过程"
-    "essays" "看长期方法"
-  }}
 
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-copy">
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}从资源构建到渲染上屏，把引擎的每一层拆开讲清楚。{{ end }}</h1>
+        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}从交付工程到渲染管线，把引擎的每一层拆开讲清楚。{{ end }}</h1>
         <div class="section-copy">
           {{ .Content }}
-        </div>
-        <div class="meta-row" style="margin-top:8px;">
-          <span class="tag">50+ 系列专题</span>
-          <span class="tag">700+ 篇文章</span>
-          <span class="tag">Unity & Unreal</span>
-          <span class="tag">PC / Mobile / Console</span>
         </div>
       </div>
     </div>
   </section>
 
-  {{ if gt (len $featured) 0 }}
-    <div class="post-grid">
-      {{ range $featured }}
-        <article class="post-card">
-          <p class="card-section">{{ .CurrentSection.Title }}</p>
-          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-          <p>{{ .Params.description }}</p>
-        </article>
-      {{ end }}
-    </div>
-  {{ end }}
-
-  <section class="section-grid">
+  <div class="section-grid">
     {{ range $sections }}
-      {{ with site.GetPage (printf "/%s" .) }}
+      {{ $sectionSlug := . }}
+      {{ $sectionName := index $sectionNames . }}
+      {{ with site.GetPage (printf "/%s" $sectionSlug) }}
+        {{ $pages := .RegularPages }}
+        {{ $count := len $pages }}
+        {{ $featuredPage := false }}
+        {{ range first 1 (where $pages "Params.featured" true) }}
+          {{ $featuredPage = . }}
+        {{ end }}
+        {{ if not $featuredPage }}
+          {{ range first 1 $pages.ByWeight }}
+            {{ $featuredPage = . }}
+          {{ end }}
+        {{ end }}
+
         <article class="section-card">
-          <p class="card-section">{{ index $sectionLabels .Section }}</p>
-          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-          <p>{{ .Params.description }}</p>
-          <a class="card-link" href="{{ .RelPermalink }}">{{ index $sectionCtas .Section }}</a>
+          <p class="card-section">{{ $sectionName }}</p>
+          {{ with $featuredPage }}
+            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+            <p>{{ .Params.description }}</p>
+          {{ else }}
+            <h2><a href="{{ $.RelPermalink }}">{{ .Title }}</a></h2>
+            <p>{{ .Params.description }}</p>
+          {{ end }}
+          <a class="card-link" href="{{ .RelPermalink }}">查看全部 {{ $count }} 篇 →</a>
         </article>
       {{ end }}
     {{ end }}
-  </section>
-
+  </div>
 {{ end }}
