@@ -23,43 +23,32 @@
     "essays" "工程判断"
   }}
 
-  <!-- ========== 方案 1: 管线流程 ========== -->
-  <section class="hero" style="margin-bottom:12px;">
-    <p class="eyebrow" style="margin-bottom:8px;">方案 1：管线流程</p>
+  <section class="hero">
     <div class="hero-with-svg">
       <div class="hero-copy">
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}交付工程、渲染管线到系统设计 — 1000+ 篇系统级技术文章。{{ end }}</h1>
+        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}把交付链路上的每一层拆开讲清楚。{{ end }}</h1>
         <div class="section-copy">{{ .Content }}</div>
       </div>
       <div class="hero-svg">
         <svg viewBox="0 0 420 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- 4 input streams converging to delivery -->
-          <!-- rendering -->
           <rect x="20" y="20" width="100" height="36" rx="8" fill="#1e5d5f" opacity="0.15"/>
           <text x="70" y="43" text-anchor="middle" fill="#1e5d5f" font-size="13" font-weight="600">渲染管线</text>
           <line x1="120" y1="38" x2="220" y2="120" stroke="#1e5d5f" stroke-width="2" opacity="0.4"/>
-          <!-- engine toolchain -->
           <rect x="20" y="76" width="100" height="36" rx="8" fill="#8b6a2e" opacity="0.15"/>
           <text x="70" y="99" text-anchor="middle" fill="#8b6a2e" font-size="13" font-weight="600">引擎工具链</text>
           <line x1="120" y1="94" x2="220" y2="130" stroke="#8b6a2e" stroke-width="2" opacity="0.4"/>
-          <!-- performance -->
           <rect x="20" y="132" width="100" height="36" rx="8" fill="#1e5d5f" opacity="0.15"/>
           <text x="70" y="155" text-anchor="middle" fill="#1e5d5f" font-size="13" font-weight="600">性能工程</text>
           <line x1="120" y1="150" x2="220" y2="140" stroke="#1e5d5f" stroke-width="2" opacity="0.4"/>
-          <!-- system design -->
           <rect x="20" y="188" width="100" height="36" rx="8" fill="#8b6a2e" opacity="0.15"/>
           <text x="70" y="211" text-anchor="middle" fill="#8b6a2e" font-size="13" font-weight="600">系统设计</text>
           <line x1="120" y1="206" x2="220" y2="150" stroke="#8b6a2e" stroke-width="2" opacity="0.4"/>
-          <!-- central delivery node -->
           <rect x="220" y="108" width="120" height="52" rx="12" fill="#a14d34" opacity="0.18"/>
           <rect x="222" y="110" width="116" height="48" rx="10" stroke="#a14d34" stroke-width="2" fill="none"/>
           <text x="280" y="140" text-anchor="middle" fill="#a14d34" font-size="16" font-weight="700">交付工程</text>
-          <!-- output arrow -->
           <line x1="340" y1="134" x2="400" y2="134" stroke="#a14d34" stroke-width="2.5"/>
           <polygon points="400,127 414,134 400,141" fill="#a14d34"/>
-          <!-- output labels -->
           <text x="280" y="195" text-anchor="middle" fill="#596563" font-size="11">构建 → 验证 → 发布 → 运营</text>
-          <!-- decorative dots -->
           <circle cx="180" cy="60" r="3" fill="#a14d34" opacity="0.2"/>
           <circle cx="190" cy="180" r="3" fill="#1e5d5f" opacity="0.2"/>
           <circle cx="370" cy="100" r="3" fill="#8b6a2e" opacity="0.2"/>
@@ -69,132 +58,6 @@
     </div>
   </section>
 
-  <!-- ========== 方案 2: 中心辐射 ========== -->
-  <section class="hero" style="margin-bottom:12px;">
-    <p class="eyebrow" style="margin-bottom:8px;">方案 2：中心辐射</p>
-    <div class="hero-with-svg">
-      <div class="hero-copy">
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}交付工程、渲染管线到系统设计 — 1000+ 篇系统级技术文章。{{ end }}</h1>
-        <div class="section-copy">{{ .Content }}</div>
-      </div>
-      <div class="hero-svg">
-        <svg viewBox="0 0 420 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- center circle: delivery -->
-          <circle cx="210" cy="140" r="52" fill="#a14d34" opacity="0.12"/>
-          <circle cx="210" cy="140" r="52" stroke="#a14d34" stroke-width="2" fill="none"/>
-          <text x="210" y="136" text-anchor="middle" fill="#a14d34" font-size="15" font-weight="700">交付工程</text>
-          <text x="210" y="153" text-anchor="middle" fill="#a14d34" font-size="11" opacity="0.7">核心主线</text>
-          <!-- spoke: rendering (top-left) -->
-          <line x1="170" y1="100" x2="95" y2="50" stroke="#1e5d5f" stroke-width="1.5" opacity="0.4"/>
-          <circle cx="80" cy="42" r="28" fill="#1e5d5f" opacity="0.1"/>
-          <text x="80" y="46" text-anchor="middle" fill="#1e5d5f" font-size="11" font-weight="600">渲染管线</text>
-          <!-- spoke: engine (top-right) -->
-          <line x1="250" y1="100" x2="330" y2="50" stroke="#8b6a2e" stroke-width="1.5" opacity="0.4"/>
-          <circle cx="345" cy="42" r="32" fill="#8b6a2e" opacity="0.1"/>
-          <text x="345" y="46" text-anchor="middle" fill="#8b6a2e" font-size="11" font-weight="600">引擎工具链</text>
-          <!-- spoke: performance (bottom-left) -->
-          <line x1="170" y1="180" x2="90" y2="230" stroke="#1e5d5f" stroke-width="1.5" opacity="0.4"/>
-          <circle cx="75" cy="238" r="28" fill="#1e5d5f" opacity="0.1"/>
-          <text x="75" y="242" text-anchor="middle" fill="#1e5d5f" font-size="11" font-weight="600">性能工程</text>
-          <!-- spoke: system design (bottom-right) -->
-          <line x1="250" y1="180" x2="335" y2="230" stroke="#8b6a2e" stroke-width="1.5" opacity="0.4"/>
-          <circle cx="350" cy="238" r="28" fill="#8b6a2e" opacity="0.1"/>
-          <text x="350" y="242" text-anchor="middle" fill="#8b6a2e" font-size="11" font-weight="600">系统设计</text>
-          <!-- subtle ring -->
-          <circle cx="210" cy="140" r="110" stroke="#14211f" stroke-width="0.5" opacity="0.08" stroke-dasharray="4 4"/>
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== 方案 3: 技术层叠 ========== -->
-  <section class="hero" style="margin-bottom:12px;">
-    <p class="eyebrow" style="margin-bottom:8px;">方案 3：技术层叠</p>
-    <div class="hero-with-svg">
-      <div class="hero-copy">
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}交付工程、渲染管线到系统设计 — 1000+ 篇系统级技术文章。{{ end }}</h1>
-        <div class="section-copy">{{ .Content }}</div>
-      </div>
-      <div class="hero-svg">
-        <svg viewBox="0 0 420 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- stacked layers, bottom to top -->
-          <!-- layer 4: system design (bottom) -->
-          <rect x="60" y="200" width="300" height="40" rx="8" fill="#8b6a2e" opacity="0.1"/>
-          <rect x="60" y="200" width="300" height="40" rx="8" stroke="#8b6a2e" stroke-width="1" opacity="0.3"/>
-          <text x="210" y="225" text-anchor="middle" fill="#8b6a2e" font-size="13" font-weight="500">系统设计</text>
-          <!-- layer 3: performance -->
-          <rect x="60" y="152" width="300" height="40" rx="8" fill="#1e5d5f" opacity="0.1"/>
-          <rect x="60" y="152" width="300" height="40" rx="8" stroke="#1e5d5f" stroke-width="1" opacity="0.3"/>
-          <text x="210" y="177" text-anchor="middle" fill="#1e5d5f" font-size="13" font-weight="500">性能工程</text>
-          <!-- layer 2: engine toolchain -->
-          <rect x="60" y="104" width="300" height="40" rx="8" fill="#8b6a2e" opacity="0.1"/>
-          <rect x="60" y="104" width="300" height="40" rx="8" stroke="#8b6a2e" stroke-width="1" opacity="0.3"/>
-          <text x="210" y="129" text-anchor="middle" fill="#8b6a2e" font-size="13" font-weight="500">引擎工具链</text>
-          <!-- layer 1: rendering -->
-          <rect x="60" y="56" width="300" height="40" rx="8" fill="#1e5d5f" opacity="0.1"/>
-          <rect x="60" y="56" width="300" height="40" rx="8" stroke="#1e5d5f" stroke-width="1" opacity="0.3"/>
-          <text x="210" y="81" text-anchor="middle" fill="#1e5d5f" font-size="13" font-weight="500">渲染管线</text>
-          <!-- top: delivery (highlighted) -->
-          <rect x="40" y="4" width="340" height="44" rx="10" fill="#a14d34" opacity="0.15"/>
-          <rect x="40" y="4" width="340" height="44" rx="10" stroke="#a14d34" stroke-width="2"/>
-          <text x="210" y="31" text-anchor="middle" fill="#a14d34" font-size="15" font-weight="700">交付工程</text>
-          <!-- vertical arrow on right -->
-          <line x1="390" y1="230" x2="390" y2="30" stroke="#a14d34" stroke-width="2" opacity="0.5"/>
-          <polygon points="384,30 390,14 396,30" fill="#a14d34" opacity="0.5"/>
-          <text x="390" y="258" text-anchor="middle" fill="#596563" font-size="10">技术底座 → 交付</text>
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== 方案 4: 抽象装饰 ========== -->
-  <section class="hero" style="margin-bottom:12px;">
-    <p class="eyebrow" style="margin-bottom:8px;">方案 4：抽象装饰</p>
-    <div class="hero-with-svg">
-      <div class="hero-copy">
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}交付工程、渲染管线到系统设计 — 1000+ 篇系统级技术文章。{{ end }}</h1>
-        <div class="section-copy">{{ .Content }}</div>
-      </div>
-      <div class="hero-svg">
-        <svg viewBox="0 0 420 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- abstract geometric composition -->
-          <!-- large circle -->
-          <circle cx="260" cy="130" r="90" stroke="#a14d34" stroke-width="1.5" opacity="0.2"/>
-          <circle cx="260" cy="130" r="60" stroke="#1e5d5f" stroke-width="1" opacity="0.15"/>
-          <circle cx="260" cy="130" r="30" fill="#a14d34" opacity="0.08"/>
-          <!-- floating rectangles -->
-          <rect x="80" y="40" width="70" height="8" rx="4" fill="#1e5d5f" opacity="0.2"/>
-          <rect x="90" y="56" width="50" height="8" rx="4" fill="#1e5d5f" opacity="0.12"/>
-          <rect x="85" y="72" width="60" height="8" rx="4" fill="#8b6a2e" opacity="0.15"/>
-          <rect x="80" y="160" width="70" height="8" rx="4" fill="#8b6a2e" opacity="0.2"/>
-          <rect x="90" y="176" width="45" height="8" rx="4" fill="#a14d34" opacity="0.15"/>
-          <rect x="85" y="192" width="55" height="8" rx="4" fill="#1e5d5f" opacity="0.12"/>
-          <!-- connecting lines -->
-          <line x1="155" y1="60" x2="200" y2="110" stroke="#1e5d5f" stroke-width="1" opacity="0.15"/>
-          <line x1="155" y1="175" x2="200" y2="150" stroke="#8b6a2e" stroke-width="1" opacity="0.15"/>
-          <!-- scattered dots -->
-          <circle cx="320" cy="50" r="4" fill="#a14d34" opacity="0.15"/>
-          <circle cx="350" cy="70" r="6" fill="#1e5d5f" opacity="0.1"/>
-          <circle cx="380" cy="180" r="5" fill="#8b6a2e" opacity="0.12"/>
-          <circle cx="140" cy="120" r="3" fill="#a14d34" opacity="0.2"/>
-          <circle cx="340" cy="220" r="4" fill="#1e5d5f" opacity="0.15"/>
-          <circle cx="180" cy="230" r="5" fill="#a14d34" opacity="0.1"/>
-          <!-- diagonal accent lines -->
-          <line x1="300" y1="40" x2="380" y2="80" stroke="#a14d34" stroke-width="1" opacity="0.1"/>
-          <line x1="310" y1="200" x2="370" y2="240" stroke="#1e5d5f" stroke-width="1" opacity="0.1"/>
-          <!-- subtle grid dots -->
-          <circle cx="210" cy="60" r="2" fill="#14211f" opacity="0.06"/>
-          <circle cx="240" cy="60" r="2" fill="#14211f" opacity="0.06"/>
-          <circle cx="270" cy="60" r="2" fill="#14211f" opacity="0.06"/>
-          <circle cx="210" cy="230" r="2" fill="#14211f" opacity="0.06"/>
-          <circle cx="240" cy="230" r="2" fill="#14211f" opacity="0.06"/>
-          <circle cx="270" cy="230" r="2" fill="#14211f" opacity="0.06"/>
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== 正式栏目卡片 ========== -->
   <div class="section-grid">
     {{ range $sections }}
       {{ $sectionSlug := . }}
