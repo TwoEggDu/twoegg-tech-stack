@@ -583,8 +583,8 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 **完整写作计划**：[`docs/game-programming-patterns-plan.md`](./docs/game-programming-patterns-plan.md)
 
 **进度概览**：
-- ✅ Unity 游戏应用线：7 / 7 完成（模式-01 ~ 07）
-- 📋 教科书线：0 / 27（Batch T-A ~ T-E）
+- ✅ Unity 游戏应用线：7 / 7 完成（模式-01 ~ 07，教科书写完后回流补充对比章节）
+- 📋 教科书线：0 / 48（Batch T-A ~ T-H，含 GoF + 游戏引擎 + 引擎架构 + 存量主题补齐）
 - 📋 构建系统应用线：0 / 5（本期目标，配合 DP+Zuma 共享构建系统）
 
 ---
@@ -650,6 +650,26 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | ✅ DS-21 | GC 通用原理与各平台横评：Java ART、.NET、iOS ARC、Unreal 自实现 GC |
 | ✅ DS-22 | Unity GC 深度：Boehm → 增量 GC，Alloc 热点，零 GC 编程实践 |
 | ✅ DS-23 | Unreal GC 深度：UObject 体系、UPROPERTY 引用追踪、智能指针与两阶段销毁 |
+
+---
+
+## 系列七·D：游戏与引擎算法（44 篇）
+
+*游戏和引擎开发中特有的专用算法。与系列七·C（通用数据结构与算法）互补，七·C 讲通用基础，七·D 讲游戏/引擎场景专用算法。*
+
+**完整写作计划**：[`docs/game-engine-algorithms-plan.md`](./docs/game-engine-algorithms-plan.md)
+
+**进度概览**：
+- 📋 待写 0 / 44，分 9 个批次（A-A ~ A-I）
+- Batch A-A：物理模拟（6 篇，Verlet/RK4、约束求解、CCD、柔体、SPH 流体）
+- Batch A-B：骨骼动画（5 篇，LBS/DQS、四元数插值、IK、动画压缩）
+- Batch A-C：网络同步（6 篇，帧同步 vs 状态同步、预测回滚、Snapshot、Delta、可靠 UDP）
+- Batch A-D：高级寻路（5 篇，JPS、NavMesh、Flow Field、RVO/ORCA、HPA*）
+- Batch A-E：并发调度（4 篇，Job System、Work Stealing、无锁队列/RingBuffer）
+- Batch A-F：游戏 AI（4 篇，决策树、Utility AI、GOAP、MCTS）
+- Batch A-G：过程化生成（4 篇，WFC、L-System、Dungeon Gen、Poisson Disk）
+- Batch A-H：音频算法（3 篇，HRTF、卷积混响、多普勒）
+- Batch A-I：引擎数学（7 篇，四元数深入、空间变换、贝塞尔、浮点稳定性、Morton/SIMD/视锥）
 
 ---
 
@@ -1445,8 +1465,9 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列六（AI 与游戏逻辑）| 7 |
 | 系列七（游戏核心系统）| 8 |
 | 系列七·A（软件工程基础与 SOLID 原则）| 13 |
-| 系列七·B（设计模式：教科书线 + 应用线）| 27+7+5 |
-| 系列七·C（数据结构与算法）| 23 |
+| 系列七·B（设计模式：教科书线 + 应用线）| 48+7+5 |
+| 系列七·C（通用数据结构与算法）| 23 |
+| 系列七·D（游戏与引擎算法）| 44 |
 | 系列八（打包、加载与流式系统）| 10 |
 | 系列八·D（Unity 资产系统与序列化原理）| 26 |
 | 系列八·E（Unity 代码与资源裁剪）| 7 |

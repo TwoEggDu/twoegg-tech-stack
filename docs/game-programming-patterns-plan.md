@@ -165,6 +165,48 @@ content/engine-toolchain/build-system/ # 构建系统工程案例
 | T-26 | 依赖注入与 Service Locator | patterns-27-di-vs-service-locator | 待写（教科书版本） |
 | T-27 | Plugin 系统架构 | patterns-28-plugin-architecture | 待写 |
 
+## Batch T-F：游戏引擎核心模式（10 篇）
+
+*游戏/实时系统特有的架构模式，来自《Game Programming Patterns》。引擎无关，讲原理。*
+
+| 编号 | 标题 | Slug | 状态 |
+|------|------|------|------|
+| T-28 | Game Loop：引擎的心跳 | patterns-29-game-loop | 待写 |
+| T-29 | Update Method：组件怎么驱动更新 | patterns-30-update-method | 待写 |
+| T-30 | Component：组合优于继承 | patterns-31-component | 待写 |
+| T-31 | Dirty Flag：延迟计算与变化检测 | patterns-32-dirty-flag | 待写 |
+| T-32 | Double Buffering：避免读写冲突 | patterns-33-double-buffering | 待写 |
+| T-33 | Spatial Partition：空间分区 | patterns-34-spatial-partition | 待写 |
+| T-34 | Event Queue：解耦时间维度的 Observer | patterns-35-event-queue | 待写 |
+| T-35 | Type Object：数据驱动类型 | patterns-36-type-object | 待写 |
+| T-36 | Subclass Sandbox：父类定义工具箱 | patterns-37-subclass-sandbox | 待写 |
+| T-37 | Bytecode：脚本虚拟机与 DSL | patterns-38-bytecode | 待写 |
+
+## Batch T-G：引擎架构模式（8 篇）
+
+*自研引擎或深度引擎定制时的核心架构模式。*
+
+| 编号 | 标题 | Slug | 状态 |
+|------|------|------|------|
+| T-38 | ECS 架构：Entity/Component/System 三段式 | patterns-39-ecs-architecture | 待写 |
+| T-39 | Scene Graph：场景图与变换继承 | patterns-40-scene-graph | 待写 |
+| T-40 | Render Pipeline 架构 | patterns-41-render-pipeline | 待写 |
+| T-41 | Render Pass / Render Feature：可扩展渲染 | patterns-42-render-pass-feature | 待写 |
+| T-42 | Command Buffer：GPU 命令延迟提交 | patterns-43-command-buffer | 待写 |
+| T-43 | Resource Management 架构：引用计数与生命周期 | patterns-44-resource-management | 待写 |
+| T-44 | Hot Reload 架构：HybridCLR / ILRuntime 的本质 | patterns-45-hot-reload | 待写 |
+| T-45 | Shader Variant 管理：变体生命周期 | patterns-46-shader-variant | 待写 |
+
+## Batch T-H：存量主题补教科书（3 篇）
+
+*存量 Unity 应用线已覆盖的主题，补写对应的教科书版本，让教科书线主题完整。*
+
+| 编号 | 标题 | Slug | 状态 |
+|------|------|------|------|
+| T-46 | Object Pool：对象池化通用原理 | patterns-47-object-pool | 待写（应用线已有 Unity 版） |
+| T-47 | State：状态模式与状态机 | patterns-48-state | 待写（应用线已有 FSM/行为树版） |
+| T-48 | 数据导向设计（DOD）：从 OOP 到 DOP | patterns-49-data-oriented-design | 待写（应用线已有 DOTS 版） |
+
 ---
 
 # 应用线
@@ -183,11 +225,69 @@ content/engine-toolchain/build-system/ # 构建系统工程案例
 | ✅ 模式-06 | State / FSM / 行为树 在游戏 AI 中 | pattern-06-state-fsm-behavior-tree | 已完成 |
 | ✅ 模式-07 | Data-Oriented Design 与 DOTS | pattern-07-data-oriented-design | 已完成 |
 
-**存量改进方向**（可选，不急）：
-- 加"对比其他做法"章节
-- 加"常见坑"章节
-- 性能类加实测数据
-- 末尾引用教科书版本
+详细改进方案见下方"存量处理策略"。
+
+## 存量处理策略
+
+*关于系列七·B 原有 7 篇（pattern-01 ~ 07）和新增教科书线如何共存。*
+
+### 核心决策
+
+1. **存量保留，不替换**：7 篇保持原有 Unity/游戏定位，不删除、不重写核心内容
+2. **教科书主题补齐**：存量覆盖但教科书线缺失的主题（Object Pool / State / DOD），通过 Batch T-H 补齐教科书版
+3. **存量改进回流**：教科书写完后，反过来给存量补"对比其他做法"和"常见坑"章节，并加上引用教科书版本的链接
+4. **命名与分类明确化**：通过目录、文件名前缀和 Hugo `series` 标签清晰区分两条线
+
+### 主题映射表
+
+| 存量（Unity 游戏应用线）| 教科书线对应 | 关系 |
+|-------------------------|-------------|------|
+| pattern-01（为什么游戏需要模式）| 无 | 导论类，不需要教科书版 |
+| pattern-02（Command）| T-09 patterns-06-command | 教科书讲本质、应用讲 Unity 落地 |
+| pattern-03（Observer / Event Bus）| T-10 patterns-07-observer | 同上 |
+| pattern-04（Object Pool）| **T-46 patterns-47-object-pool** | Batch T-H 新增 |
+| pattern-05（Service Locator / DI）| T-26 patterns-27-di-vs-service-locator | 教科书综合讲 DI + SL |
+| pattern-06（State / FSM / 行为树）| **T-47 patterns-48-state** | Batch T-H 新增，FSM/行为树留在应用线 |
+| pattern-07（DOD / DOTS）| **T-48 patterns-49-data-oriented-design** | Batch T-H 新增教科书讲 DOP 原理 |
+
+### 目录组织
+
+```
+content/system-design/
+├── pattern-01-*.md ~ pattern-07-*.md   # 存量 Unity 应用线（保持）
+│
+└── patterns/                            # 新教科书线
+    ├── _index.md
+    ├── patterns-02-template-method.md
+    ├── patterns-03-strategy.md
+    ├── ... (45 ~ 48 篇)
+```
+
+**Hugo 分类：**
+- 存量 7 篇：`series: "游戏编程设计模式"`
+- 教科书 48 篇：`series: "设计模式教科书"`
+- weight 区间：存量 729~734，教科书 902~949
+
+### 存量改进阶段（教科书写完后回流）
+
+待教科书线全部完成后，对 7 篇存量做二次改造：
+
+**每篇补充：**
+1. 开头加"**模式基础**：本文涉及 XXX 模式，纯理论请见 [XXX 教科书](../patterns/patterns-XX-xxx.md)"
+2. 中段加"**对比其他做法**"章节（如 Command vs Memento 的撤销对比）
+3. 末尾加"**常见坑**"章节
+4. pattern-04（Object Pool）加实测数据（GC 压力对比）
+
+工作量估计：7 篇 × 每篇 1000 字 ≈ 7000 字补充。
+
+### 命名冲突避免
+
+- 存量文件名前缀：`pattern-01-` ~ `pattern-07-`
+- 教科书文件名前缀：`patterns-02-` ~ `patterns-49-`（注意 `patterns` 带 s）
+- 通过目录（`./` vs `./patterns/`）和前缀（`pattern-` vs `patterns-`）双重区分
+- Slug 也保持一致，避免 Hugo 路由冲突
+
+---
 
 ## A-2：构建系统工程应用（5 篇）
 
@@ -300,12 +400,19 @@ content/engine-toolchain/build-system/ # 构建系统工程案例
 ## 完成度追踪
 
 **教科书线**：
-- 已完成：0 / 27
-- Batch T-A：0 / 8（优先）
-- Batch T-B：0 / 6
-- Batch T-C：0 / 5
-- Batch T-D：0 / 4
-- Batch T-E：0 / 4
+- 已完成：0 / 48
+- Batch T-A：0 / 8（优先，GoF 基础补齐）
+- Batch T-B：0 / 6（GoF 行为型补齐）
+- Batch T-C：0 / 5（GoF 结构型补齐）
+- Batch T-D：0 / 4（并发/异步）
+- Batch T-E：0 / 4（架构风格）
+- Batch T-F：0 / 10（游戏引擎核心模式）
+- Batch T-G：0 / 8（引擎架构模式）
+- Batch T-H：0 / 3（存量主题补教科书：Object Pool / State / DOD）
+
+**存量改进**：
+- 存量 Unity 应用线 7 篇：已完成基础版本
+- 存量改进（对比/反模式/引用教科书）：待教科书线完成后回流
 
 **应用线**：
 - Unity 游戏应用：7 / 7 ✅（保持现状）
