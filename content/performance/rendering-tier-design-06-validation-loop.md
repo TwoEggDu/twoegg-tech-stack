@@ -16,6 +16,7 @@ primary_series: "device-tiering"
 series_order: 6
 weight: 1950
 featured: false
+last_reviewed: "2026-04-17"
 ---
 
 如果前面几篇已经把"怎么设计渲染系统"讲清楚了，那还差最后一步：

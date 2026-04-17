@@ -15,6 +15,7 @@ primary_series: "device-tiering"
 series_order: 3
 weight: 1920
 featured: false
+last_reviewed: "2026-04-17"
 ---
 
 渲染链不是特效列表，也不是 URP 勾选项清单，而是一条把业务意图、可见结果和 GPU 存储位置连接起来的依赖图。真正该先定的，不是"要开多少个 Pass"，而是"哪些结果必须先产生，哪些结果可以不落地，哪些结果只能保留在这一段链路里"。

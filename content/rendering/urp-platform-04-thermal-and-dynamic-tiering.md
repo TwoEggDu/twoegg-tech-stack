@@ -13,6 +13,7 @@ tags:
 series: "URP 深度"
 primary_series: "device-tiering"
 weight: 1680
+last_reviewed: "2026-04-17"
 ---
 > **读这篇之前**：本篇建立在冷机分档和线上治理基础上。如果不熟悉，建议先看：
 > - [URP 深度平台 02｜多平台质量分级]({{< relref "rendering/urp-platform-02-quality.md" >}})

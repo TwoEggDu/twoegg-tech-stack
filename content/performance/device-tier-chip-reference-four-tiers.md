@@ -13,10 +13,12 @@ tags:
   - Client
 series: "机型分档"
 series_order: 5
+last_reviewed: "2026-04-17"
 ---
 
 三档结构在设备池两端收窄的市场里是够用的。但如果游戏要覆盖全球市场、底线低至 2014 年 iPhone 6 / Adreno 505 级别设备、同时又要追求旗舰机 60fps，三档装不下这个性能跨度。
 
+<!-- DATA-TODO: "iPhone 6 到 iPhone 16 Pro 差距 15-20 倍"需要标注来源。建议：用 GFXBench Metal Manhattan 3.1 Off-Screen 的分数对比（Kishonti 官方数据库有完整历代数据），或引用 Apple 发布会公开的"较前代提升 X 倍"连乘结果，并在括号里加来源"（数据来源：GFXBench Manhattan 3.1 离屏分数对比）"。 -->
 iPhone 6（A8）到 iPhone 16 Pro（A18 Pro）的 GPU 性能差距大约是 15-20 倍。用三档描述这个范围，要么低档太宽（A8 和 A11 行为差距巨大），要么高档太宽（A15 和 A18 视觉潜力完全不同）。
 
 本篇给出的**四档结构**：
@@ -34,6 +36,7 @@ iPhone 6（A8）到 iPhone 16 Pro（A18 Pro）的 GPU 性能差距大约是 15-2
 
 Apple 的判据是 **GPU 核心数 × 架构代际**。`graphicsMemorySize` 在 iOS 上不可信，驱动返回估算值；`Device.generation` 枚举直接映射硬件代际，是最可靠的判断入口。
 
+<!-- DATA-TODO: Apple 芯片档位表的"档位"列需要标注划档依据。建议：每档给一个 GFXBench 分数范围（如"高档 = Manhattan 3.1 Off-Screen ≥ 200 fps"），或在表前一段加"划档依据：Metal GPU Family 代际 + GFXBench Manhattan 3.1 分数区间 + 实际上线游戏的 60fps 可达性"。否则读者不知道"A14 中档"的 boundary 是怎么定的。"A11 比 A12 慢约 35%"的数字也需要出处，可加"来源：GFXBench Manhattan 3.1 Off-Screen 分数对比"。 -->
 ### 档位表
 
 | 芯片 | GPU 核心数 | 代表机型 | 档位 | 关键判据 |
@@ -99,6 +102,7 @@ public static QualityTier DetectIOSTier()
 
 Adreno 是 Android 市场覆盖最广的 GPU 家族，判断依据是**型号数字 + 代际系列**。Adreno 型号前两位代表代际，后两位代表档次（数字越大性能越高）。
 
+<!-- DATA-TODO: 下表里"Adreno 730 比 Adreno 660 快 30%"、"Manhattan ~15fps / ~12fps"等具体数字需要标注来源。建议：引用 GFXBench / Geekerwan 公开评测，或在表下加一行"划档依据：GFXBench Manhattan 3.1 Off-Screen 分数 + Vulkan 1.x 支持级别 + 实际上线游戏帧率表现"。"骁龙 888 热功耗大、实际不如 8 Gen 1 稳定"这个结论也需要数据支撑——引用持续性能评测（如 Geekerwan 的 3DMark Wild Life Extreme Stress Test）。 -->
 ### 档位表
 
 | GPU | 对应 SoC | 代表机型 | 档位 | 关键判据 |
@@ -157,6 +161,7 @@ private static int ParseAdrenoModel(string gpuName)
 
 ## MediaTek 天玑 / Helio 档位
 
+<!-- DATA-TODO: MediaTek 档位表里"Mali-G710 MP10 比 G78 快约 35%"等具体数字需要标注来源。建议引用 GFXBench Aztec Ruins High Tier Off-Screen 分数或 Geekerwan 评测，在表下加"数据来源：GFXBench 公开数据库 + 公开评测整理"。 -->
 MediaTek 在中国大陆中端机和东南亚入门机市场占有率极高。天玑系列（Dimensity）面向 5G 中高端，Helio G 系列面向游戏入门机，Helio P/A 系列面向超低端。
 
 GPU 家族两条线：
@@ -222,6 +227,7 @@ Kirin 是华为手机的自研 SoC，GPU 部分主要来自 ARM Mali（早期）
 
 ### 最重要的一个坑：Kirin 9000S ≠ Kirin 9000
 
+<!-- DATA-TODO: "Kirin 9000S GPU 性能实测大幅低于 9000"这句话需要有实测支撑，否则是本文最容易被挑战的断言（涉及华为，读者敏感）。建议：引用 Geekerwan 2023-09 发布的麒麟 9000S 深度评测（B 站公开可引用）或极客湾 GFXBench 对比数据，给出具体分数对比（例如 Kirin 9000 Manhattan 3.1 Off-Screen = X fps vs Kirin 9000S = Y fps）。在"实测"二字后加 `[^geekerwan-kirin9000s]` 脚注链接到来源。 -->
 | 芯片 | GPU | 档位 | 说明 |
 |------|-----|------|------|
 | Kirin 9000 | Mali-G78 MP24 | 高档 | 2020 年，Mate 40 Pro，24 核 G78，性能极强 |

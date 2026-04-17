@@ -14,6 +14,7 @@ series: "渲染系统分档设计"
 primary_series: "device-tiering"
 series_order: 1
 weight: 1900
+last_reviewed: "2026-04-17"
 ---
 很多团队一开始做分档，写出来的都是配置表：
 

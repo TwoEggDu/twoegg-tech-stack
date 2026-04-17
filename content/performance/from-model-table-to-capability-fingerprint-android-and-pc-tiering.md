@@ -14,6 +14,7 @@ tags:
   - Client
 series: "机型分档"
 series_order: 4.5
+last_reviewed: "2026-04-17"
 ---
 很多团队第一次做机型分档时，最自然的实现方式会是：
 

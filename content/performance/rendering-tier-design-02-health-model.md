@@ -14,6 +14,7 @@ series: "渲染系统分档设计"
 primary_series: "device-tiering"
 series_order: 2
 weight: 1910
+last_reviewed: "2026-04-17"
 ---
 只看 `GPU Time`，只能回答一件事：
 
@@ -86,6 +87,7 @@ weight: 1910
 
 最实用的做法，不是强行给全项目统一一个绝对值，而是先设一个经验范围：
 
+<!-- DATA-TODO: 80% / 80-90% / 90% 是经验阈值，没有具体出处。建议：在句子末尾加一句"这个阈值是基于多个移动端项目的经验总结，不同项目可以据此做微调；如果你有自己的历史数据，应当用项目基线替代这组通用值。"或加脚注引用 GDC / Unity Technologies 的公开资料。 -->
 - `80%` 以内，通常还保留一定余量
 - `80% - 90%`，开始接近上限，要观察是否持续
 - `90%` 以上并且持续出现在关键场景，基本就应该按 GPU Bound 处理
@@ -195,6 +197,7 @@ weight: 1910
 
 静态编译分析和运行时指标要一起看：
 
+<!-- DATA-TODO: Total Cycles 的 1.0 / 2.0 / 3.0 阈值需要指明出处和适用范围。"Total Cycles"在不同 GPU 厂商工具里的单位和基准不一样（Mali offline compiler / PVRShaderEditor / Snapdragon Profiler 各自的"cycles"语义不同）。建议：(1) 明确这组阈值对应的工具（比如"Mali Offline Compiler 的 Total Cycles 输出"）；(2) 加一句"这些阈值适用于 Adreno 6xx / Mali-G77 级别 GPU 的 fragment shader 经验判断，更老或更新架构需要单独校准"。 -->
 - `Total Cycles < 1.0`，通常可以视为轻量
 - `1.0 - 2.0`，通常还能接受
 - `> 3.0`，就应该认真拆原因
@@ -300,6 +303,7 @@ weight: 1910
 
 更稳的做法不是强行找"完全同名"的指标，而是先按五维找"语义等价"的替代项。可以先用下面这张对照表落地：
 
+<!-- DATA-TODO: 这张 counter 名称对照表的准确性需要用各厂商官方工具文档校对一次。建议：(1) 对照 Xcode Metal Debugger Counter Reference、Arm Streamline Counter Guide、Snapdragon Profiler 官方 counter 列表逐项核对——部分 counter 名称随工具版本会变（例如 Adreno 新版 Snapdragon Profiler 2.0 已经改名）；(2) 每列加一行小注"验证时间：YYYY-MM，基于 [工具版本号]"；(3) 如 counter 名实际抓不到，补充可用的替代 counter。 -->
 | 五维 | Apple（Xcode GPU Capture） | Mali（Streamline / Mali Graphics Debugger） | Adreno（Snapdragon Profiler） |
 |---|---|---|---|
 | GPU 总压力 | `GPU Time / Frame` | `GPU_ACTIVE` | `GPU Busy %` |

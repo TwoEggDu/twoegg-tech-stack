@@ -13,6 +13,7 @@ tags:
 series: "URP 深度"
 primary_series: "device-tiering"
 weight: 1670
+last_reviewed: "2026-04-17"
 ---
 > **读这篇之前**：本篇建立在质量分档基础上，假设你已经理解三档配置的工程实现。如果不熟悉，建议先看：
 > - [URP 深度平台 02｜多平台质量分级：三档配置的工程实现]({{< relref "rendering/urp-platform-02-quality.md" >}})

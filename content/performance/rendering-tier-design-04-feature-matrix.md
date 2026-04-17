@@ -15,6 +15,7 @@ primary_series: "device-tiering"
 series_order: 4
 weight: 1930
 featured: false
+last_reviewed: "2026-04-17"
 ---
 
 分档最容易写坏的地方，不是把参数填错，而是把特性当成"开 / 关"来处理。真实的系统设计里，特性通常要经过四种处理方式：

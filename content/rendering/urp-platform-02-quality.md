@@ -14,6 +14,7 @@ tags:
 series: "URP 深度"
 primary_series: "device-tiering"
 weight: 1660
+last_reviewed: "2026-04-17"
 ---
 > **读这篇之前**：本篇会引用 Quality Settings 和多 Pipeline Asset 配置。如果不熟悉，建议先看：
 > - [URP 深度配置 01｜Pipeline Asset 解读]({{< relref "rendering/urp-config-01-pipeline-asset.md" >}})

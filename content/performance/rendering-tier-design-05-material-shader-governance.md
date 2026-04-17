@@ -16,6 +16,7 @@ primary_series: "device-tiering"
 series_order: 5
 weight: 1940
 featured: false
+last_reviewed: "2026-04-17"
 ---
 
 如果前面几篇解决的是"渲染系统要花多少钱"，那这篇要解决的就是另一个更难的问题：

@@ -1,7 +1,7 @@
 ---
 date: "2026-04-05"
-title: "从型号表到能力指纹：Android 与 PC 的分档判断怎么设计"
-description: "设备分档不是查一张型号表，而是用硬件能力信号构建可靠的运行时判断。本篇讲清楚型号表的失效原因、能力指纹的设计逻辑，以及在 Android 碎片化和 PC GPU 长尾环境下，如何设计一套可维护的分档检测系统。"
+title: "Unity 分档判断的工程实现：可用信号、Android 碎片化与本地+云端双层架构"
+description: "把分档判断从规则模型落到代码：Unity SystemInfo 各平台能读到哪些信号、iOS 为什么用 DeviceGeneration 而不是 GPU 字符串、PC 独显/核显怎么区分、本地兜底逻辑和云端特例表如何分工，以及 Android 碎片化下的驱动黑名单怎么做。"
 slug: "game-performance-tier-detection-design"
 weight: 183
 featured: false
@@ -15,15 +15,17 @@ tags:
 series: "游戏性能判断"
 primary_series: "device-tiering"
 series_order: 4
+last_reviewed: "2026-04-17"
 ---
 
 > 如果只用一句话概括这篇文章，我会这样说：型号表是把每台设备当作独立案例处理，能力指纹是把每台设备的硬件能力先抽象成几个维度，再映射到档位——后者写一次可以运行多年，前者两个月就会过时。
 
-上一篇 [手机和 PC 为什么要用不同的性能直觉]({{< relref "performance/game-performance-mobile-vs-pc-intuition.md" >}}) 讲的是直觉层的东西：为什么同样的问题，在手机和 PC 上长相完全不同。
+[从型号表到能力指纹]({{< relref "performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md" >}}) 讲的是规则模型这一层：硬门槛、评分、黑白名单、玩家覆盖应该怎么组织。
+这一篇更具体，回答的是**这套规则落到 Unity 代码里该怎么写**：
 
-这篇要往下走一步，讲一个更具体的工程问题：
+`SystemInfo 里哪些字段可信、哪些不能信？iOS 为什么要用 Device.generation 而不是 GPU 字符串？PC 上怎么区分独显和核显？本地兜底和云端特例表怎么分工？`
 
-`你要让游戏在运行时知道自己跑在哪一档设备上，并据此做出渲染和资产配置的决策。这件事应该怎么设计？`
+两篇应该一起读。上面那篇回答"默认分档规则长什么样"，这一篇回答"实现这套规则时，代码里具体该读什么、设计什么架构"。
 
 ---
 
