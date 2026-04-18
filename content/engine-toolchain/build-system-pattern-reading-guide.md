@@ -388,13 +388,18 @@ public class ProjectABuildConfig : BuildConfig
 
 这些不是我们主动选的，但系统里自然出现，值得知道：
 
-### 7. Observer — `OnPreBuild / OnPostBuild` 钩子
+### 7. 构建生命周期钩子 — `OnPreBuild / OnPostBuild`（Hook Method，不是 Observer）
 
-BuildConfig 上的 `OnPreBuild(BuildPlan)` / `OnPostBuild(BuildPlan, string outputPath)` 是简化版的 Observer：允许子类"订阅"构建过程的关键时刻。
+BuildConfig 上的 `OnPreBuild(BuildPlan)` / `OnPostBuild(BuildPlan, string outputPath)` 允许子类在构建前后插入项目特有逻辑。
 
-和真正的 Observer 区别：我们这里是单一监听者（BuildConfig 子类），没有多播。所以本质更像 Template Method 的钩子方法，但命名习惯和 Observer 相同。
+**命名上看着像 Observer 的"订阅"，但本质是 Template Method 的钩子方法：**
+- 单一监听者（BuildConfig 子类），没有多播
+- 编译期通过继承绑定，不是运行时订阅
+- 没有 subject/observer 的双向解耦
 
-**参考：**[`patterns-07-observer.md`]({{< relref "system-design/patterns/patterns-07-observer.md" >}})
+严格来说这不算独立采用的模式，只是 Template Method（第 1 条）的自然延伸。
+
+**参考：**[`patterns-02-template-method.md`]({{< relref "system-design/patterns/patterns-02-template-method.md" >}})（Hook Method 章节）。想对比真正的 Observer 是什么、和 Hook Method 的区别在哪，可以看 [`patterns-07-observer.md`]({{< relref "system-design/patterns/patterns-07-observer.md" >}})。
 
 ### 8. Factory Method — `BuildConfigDiscovery.Find()`
 
