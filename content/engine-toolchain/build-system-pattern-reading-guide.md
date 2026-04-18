@@ -50,8 +50,8 @@ series: "构建系统工程实践"
 
 **用什么模式解决：**
 - **Command**（ITiangongCommand）— 每个功能是一个 Command 对象
-- **Chain of Responsibility**（CommandDispatcher）— 按名字路由到 Command
-- **Factory Method**（反射发现 Command 实现）— 加命令不改 Dispatcher
+- **选择式分发 / CoR 式心智模型**（CommandDispatcher）— 按名字路由到 Command（第 5 节详述为什么不是严格的 Chain of Responsibility）
+- **反射驱动的简单工厂**（BuildConfigDiscovery）— 加命令不改 Dispatcher（第 8 节详述为什么不是 GoF 意义的 Factory Method）
 
 **达到的效果：**
 - Jenkins 只调一个入口：`-executeMethod CIEntryPoint.Run --command xxx`
@@ -401,7 +401,9 @@ BuildConfig 上的 `OnPreBuild(BuildPlan)` / `OnPostBuild(BuildPlan, string outp
 
 **参考：**[`patterns-02-template-method.md`]({{< relref "system-design/patterns/patterns-02-template-method.md" >}})（Hook Method 章节）。想对比真正的 Observer 是什么、和 Hook Method 的区别在哪，可以看 [`patterns-07-observer.md`]({{< relref "system-design/patterns/patterns-07-observer.md" >}})。
 
-### 8. Factory Method — `BuildConfigDiscovery.Find()`
+### 8. 反射驱动的简单工厂 — `BuildConfigDiscovery.Find()`
+
+（discovery factory，不是 GoF 意义的 Factory Method）
 
 反射扫描唯一的 `BuildConfig` 子类并实例化：
 
@@ -428,9 +430,15 @@ public static class BuildConfigDiscovery
 }
 ```
 
-这是一个"运行时决定创建什么类型"的工厂，本质是 Factory Method。
+这是一个**反射驱动的发现式工厂（discovery factory）**，**不是 GoF 意义的 Factory Method**。
 
-**参考：**[`patterns-09-factory.md`]({{< relref "system-design/patterns/patterns-09-factory.md" >}})
+**两者的区别：**
+- **GoF Factory Method**：抽象基类定义一个 `CreateXxx()` 工厂方法，**由子类覆写决定具体产品类型**（通过多态，不通过反射）
+- **我们这里**：静态发现器在运行时扫描程序集找唯一匹配的类型，用 `Activator.CreateInstance` 实例化（通过反射，没有子类覆写工厂方法）
+
+更贴切的称呼是"**工厂式发现与创建**"或"**反射驱动的 simple factory**"。GoF 的 Factory Method 可以作为**对照阅读**来理解"工厂类思路"的大家族。
+
+**参考：**[`patterns-09-factory.md`]({{< relref "system-design/patterns/patterns-09-factory.md" >}})（教科书版讲清楚 Factory Method 的标准形态，用于对照）
 
 ### 9. Pipeline — 构建流程本身
 
