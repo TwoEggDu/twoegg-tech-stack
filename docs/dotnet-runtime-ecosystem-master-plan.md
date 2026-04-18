@@ -75,7 +75,7 @@
 | 编号 | 主题 | 说明 |
 |------|------|------|
 | CLR-B1 | CoreCLR 架构总览：从 dotnet run 到 JIT 执行 | 全景地图 |
-| CLR-B2 | 程序集加载：AssemblyLoadContext、Fusion、Binder | Assembly identity 的完整实现 |
+| CLR-B2 | 程序集加载：AssemblyLoadContext + AssemblyBinder（CoreCLR 主链） | Assembly identity 的完整实现 |
 | CLR-B3 | 类型系统：MethodTable、EEClass、TypeHandle | 与 IL2CPP 的 Il2CppClass 对比 |
 | CLR-B4 | JIT 编译器（RyuJIT）：IL → IR → native code | JIT 编译管线 |
 | CLR-B5 | GC：分代式精确 GC、Workstation vs Server、Pinned Object Heap | 与 BoehmGC 对比 |
