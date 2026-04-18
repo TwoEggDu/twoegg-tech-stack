@@ -1,4 +1,9 @@
-# 游戏开发全栈知识体系 v10
+﻿# 游戏开发全栈知识体系 v10
+
+> 历史快照：本文件不再作为 `doc-plan` 入口使用。
+> 当前 canonical 入口请看 [../doc-plan.md](../doc-plan.md)。
+> 如果需要旧版篇级明细，请优先看 [doc-plan-archive-v26.md](./doc-plan-archive-v26.md)。
+
 
 > 目标读者：有 Unity 开发经验的开发者。
 > 终极目标：能读懂 Unity / Unreal 源码，具备自研游戏引擎和游戏后端的基础。
