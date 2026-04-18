@@ -17,7 +17,9 @@ series: "设计模式教科书"
 ## 历史背景
 Coroutine 先于现代语言的 `async/await` 成熟。早期它出现在编译器、解释器和脚本 VM 里，用来把长流程拆成可暂停的步骤：读取字符流、驱动协作式任务、写出更像自然顺序的控制流。和线程不同，它不把控制权交给操作系统抢占；和回调不同，它不把后续逻辑拆成一串分散的闭包。
 
-真正关键的变化，是“保存现场”从手写变成了编译器和运行时的共同职责。Generator、semi-coroutine、full coroutine、fiber 这几条线，最后都收敛到一个问题：谁来保存 continuation，谁来恢复它。\n\n如果再往前追，协程思想一直在“表达力”和“代价”之间摆动。手写 continuation 最透明，但最难维护；stackful coroutine 更像自然调用栈，但栈切换和调试成本更高；stackless coroutine 牺牲了任意栈跳转，却换来了更低的保存成本和更容易做静态分析。现代语言大多选了后者，因为它更适合和 GC、异常、类型系统一起工作。
+真正关键的变化，是“保存现场”从手写变成了编译器和运行时的共同职责。Generator、semi-coroutine、full coroutine、fiber 这几条线，最后都收敛到一个问题：谁来保存 continuation，谁来恢复它。
+
+如果再往前追，协程思想一直在“表达力”和“代价”之间摆动。手写 continuation 最透明，但最难维护；stackful coroutine 更像自然调用栈，但栈切换和调试成本更高；stackless coroutine 牺牲了任意栈跳转，却换来了更低的保存成本和更容易做静态分析。现代语言大多选了后者，因为它更适合和 GC、异常、类型系统一起工作。
 
 ## 一、先看问题
 批处理任务最容易把 coroutine 的价值暴露出来。假设一个订单同步器要做三件事：拉列表、逐条校验、遇到限流就暂停一会儿再继续。你当然可以写回调，也可以写一个巨大的 `switch` 状态机，但代码会很快变成“流程图翻译器”，每加一步都在补洞。
@@ -321,7 +323,9 @@ Coroutine 和函数式编程的关系最直接：它接近 continuation-passing 
 ## 九、真实案例
 C# 的 iterator lowering 是 coroutine 思想最清楚的官方实现之一。Microsoft 文档说明，`yield return` 会记住当前位置，下次 `MoveNext()` 时从暂停点继续。对应的 Roslyn 实现位于 `https://github.com/dotnet/roslyn/tree/main/src/Compilers/CSharp/Portable/Lowering/IteratorRewriter`。这就是 stackless coroutine 的编译器版本。
 
-Python 的 generator 也是同一类东西。CPython 在 `Objects/genobject.c` 里维护 generator 对象的状态、帧和恢复逻辑。Python 的生成器后来又被扩展成协程语义，说明 coroutine 并不是某种语言专属技巧，而是一种通用控制流结构：保存执行点，再恢复它。\n\nLua 的官方手册把 coroutine 写得更直接：`coroutine.create`、`coroutine.resume`、`coroutine.yield` 形成一套对称接口，适合把解释器、脚本任务和协作式调度写成分段流程。它和 C# iterator 的差别在于，Lua 允许你更显式地把调度权交给上层，而 C# 更倾向把协程压进编译器降低后的状态机里。
+Python 的 generator 也是同一类东西。CPython 在 `Objects/genobject.c` 里维护 generator 对象的状态、帧和恢复逻辑。Python 的生成器后来又被扩展成协程语义，说明 coroutine 并不是某种语言专属技巧，而是一种通用控制流结构：保存执行点，再恢复它。
+
+Lua 的官方手册把 coroutine 写得更直接：`coroutine.create`、`coroutine.resume`、`coroutine.yield` 形成一套对称接口，适合把解释器、脚本任务和协作式调度写成分段流程。它和 C# iterator 的差别在于，Lua 允许你更显式地把调度权交给上层，而 C# 更倾向把协程压进编译器降低后的状态机里。
 
 如果想补一个官方文档视角，C# iterators 文档 `https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/iterators` 和 `yield` 参考页 `https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/yield` 都明确说明了“当前位置会被记住”这一点。这个行为就是 coroutine 的核心，不需要额外包装成别的术语。
 

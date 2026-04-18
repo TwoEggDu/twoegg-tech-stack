@@ -403,7 +403,7 @@ Factory 的成本通常很低，主要是多一层调用。真正值得关注的
 
 - [Builder](./patterns-04-builder.md)：Builder 解决分步构造，Factory 解决具体类型选择。
 - [Template Method](./patterns-02-template-method.md)：Factory Method 常常嵌在模板流程里，作为其中一个可变步骤。
-- [Adapter](./patterns-10-adapter.md)：Adapter 负责接口翻译，Factory 负责对象创建，二者常一起出现在集成层。
+- [Adapter](./patterns-11-adapter.md)：Adapter 负责接口翻译，Factory 负责对象创建，二者常一起出现在集成层。
 
 ## 十四、在实际工程里怎么用
 
