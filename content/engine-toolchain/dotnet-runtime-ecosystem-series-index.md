@@ -2,7 +2,7 @@
 title: ".NET Runtime 生态全景系列｜从 ECMA-335 到 5 个 CLR 实现"
 slug: "dotnet-runtime-ecosystem-series-index"
 date: "2026-04-15"
-description: "90 篇文章，8 条阅读线，覆盖 ECMA-335 + CoreCLR + Mono + IL2CPP + HybridCLR + LeanCLR + 9 篇横切对比。"
+description: "94 篇正文 + 8 个索引页（共 102 个文件），8 条阅读线，覆盖 ECMA-335 + CoreCLR + Mono + IL2CPP + HybridCLR + LeanCLR + 9 篇横切对比。"
 weight: 1
 featured: true
 tags:
@@ -48,7 +48,7 @@ series_id: "index"
 
 | 模块 | 篇数 | 定位 |
 |------|------|------|
-| [**ECMA-335 基础层**]({{< relref "engine-toolchain/ecma335-series-index.md" >}}) | 8 | 所有阅读线的公共地基。术语约定、metadata、CIL、类型系统、执行模型、程序集、内存模型、泛型共享 |
+| [**ECMA-335 基础层**]({{< relref "engine-toolchain/ecma335-series-index.md" >}}) | 14 | 所有阅读线的公共地基。术语、metadata、CIL、类型系统、执行模型、程序集、内存模型、泛型共享、verification、custom attributes、P/Invoke、security、threading、PE 文件格式 |
 | [**CoreCLR**]({{< relref "engine-toolchain/coreclr-series-index.md" >}}) | 10 | .NET 主线 runtime。架构、ALC、MethodTable、RyuJIT、GC、异常、泛型、线程、Reflection、Tiered Compilation |
 | [**Mono**]({{< relref "engine-toolchain/mono-series-index.md" >}}) | 8 | Unity 第一代 runtime。架构、解释器、Mini JIT、SGen GC、类型加载、方法编译、AOT、Unity 转型 |
 | [**IL2CPP**]({{< relref "engine-toolchain/il2cpp-series-index.md" >}}) | 8 | Unity AOT runtime。管线、转换器、libil2cpp、metadata.dat、泛型、GC、ECMA 覆盖度、裁剪 |
@@ -58,4 +58,4 @@ series_id: "index"
 
 ---
 
-**90 篇 · 29 张图 · 5 个 runtime · 8 条阅读线**
+**94 篇正文 + 8 个索引页 · 29 张图 · 5 个 runtime · 8 条阅读线**
