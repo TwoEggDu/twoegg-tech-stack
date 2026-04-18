@@ -106,7 +106,7 @@ series: "构建系统工程实践"
 
 **用什么模式解决：**
 - **Template Method**（BuildConfig.CountersFilePath / HostDataDirectory 等属性）— 每个项目显式指定自己的基础设施路径
-- **Null Object**（BuildConfig 的 virtual 空实现）— 项目不关心的钩子直接跳过
+- **默认空钩子 / Hook Method**（BuildConfig 的 virtual 空实现）— 项目不关心的钩子直接跳过（第 10 节详述为什么不是 Null Object）
 
 **达到的效果：**
 - `BuildConfig.CountersFilePath` 默认为 `null`，**强制项目必须显式指定**
