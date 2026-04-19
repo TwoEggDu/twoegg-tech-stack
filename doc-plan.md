@@ -61,7 +61,7 @@
 | 数据导向运行时 | [docs/data-oriented-runtime-series-plan.md](./docs/data-oriented-runtime-series-plan.md) | 已拆出 | `DOD-00~06` 架构哲学层 |
 | DOTS / Mass / 硬件深挖 | [docs/dots-mass-hardware-deep-series-plan.md](./docs/dots-mass-hardware-deep-series-plan.md) | 已拆出 | 承接数据导向运行时 |
 | 自研 ECS 落地 | [docs/self-built-ecs-implementation-plan.md](./docs/self-built-ecs-implementation-plan.md) | 已拆出 | 偏实现与工程落地 |
-| 从 C# 到 CLR | [docs/csharp-to-clr-series-plan.md](./docs/csharp-to-clr-series-plan.md) | 已拆出 | 串联 ECMA-335 / CoreCLR / IL2CPP / HybridCLR / LeanCLR |
+| 从 C# 到 CLR | [docs/csharp-to-clr-series-plan.md](./docs/csharp-to-clr-series-plan.md) | 已拆出 | 串联 ECMA-335 / CoreCLR / Mono / IL2CPP / HybridCLR / LeanCLR |
 | .NET Runtime 生态总图 | [docs/dotnet-runtime-ecosystem-master-plan.md](./docs/dotnet-runtime-ecosystem-master-plan.md) | 已拆出 | 运行时家族总导航 |
 | HybridCLR 结构诊断与补桥 | [docs/hybridclr-structural-diagnosis-and-bridge-articles-plan.md](./docs/hybridclr-structural-diagnosis-and-bridge-articles-plan.md) | 已拆出 | 对应旧 `十九·B` |
 | IL2CPP 运行时地图 | [docs/il2cpp-runtime-map-article-plan.md](./docs/il2cpp-runtime-map-article-plan.md) | 已拆出 | 独立专题已升级为系列 plan |
@@ -179,3 +179,4 @@
 - 早期总体统计和跨系统深挖列表
 
 统一查：[docs/doc-plan-archive-v26.md](./docs/doc-plan-archive-v26.md)
+

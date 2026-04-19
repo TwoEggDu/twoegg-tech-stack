@@ -1,4 +1,4 @@
-﻿# 从 C# 到 CLR：入口主线系列规划
+# 从 C# 到 CLR：入口主线系列规划
 
 ## 一、这条计划要做什么
 
@@ -58,6 +58,9 @@
 
 #### C. Mono / IL2CPP / HybridCLR / LeanCLR / cross-runtime 层
 
+- `content/engine-toolchain/mono-architecture-overview-embedded-runtime-unity.md`
+- `content/engine-toolchain/mono-mini-jit-il-to-ssa-to-native.md`
+- `content/engine-toolchain/mono-sgen-gc-precise-generational-nursery.md`
 - `content/engine-toolchain/il2cpp-architecture-csharp-to-cpp-to-native-pipeline.md`
 - `content/engine-toolchain/runtime-cross-type-system-methodtable-il2cppclass-rtclass.md`
 - `content/engine-toolchain/runtime-cross-generic-implementation-sharing-specialization-fgs.md`
@@ -207,7 +210,7 @@
 - C# 内建类型在运行时里的真实语义
 - `class / struct / record / object / string` 的边界
 - 值类型、引用类型、对象、装箱、拆箱
-- 数组、Span、字符串、连续内存的基础模型
+- 数组、字符串、连续内存的基础模型，以及为后续理解 `Span / ref struct` 留出的入口坐标
 - `interface / virtual / override` 的调用分派
 - `delegate / event / async` 的运行时入口
 - 从 C# 表层概念映射到 ECMA-335 / CoreCLR / Mono / IL2CPP / HybridCLR / LeanCLR 的路径
@@ -217,6 +220,8 @@
 - 完整 C# 入门
 - 完整 CLR 源码逐文件索引
 - 完整 HybridCLR 深度系列替代版
+- `runtime-cross G1~G9` 的横向重写版
+- 数组 / `Span` / `只读引用` / `ref struct` 的深入语义总论（下沉到 `ECMA-335 / CoreCLR / runtime-cross` 深水文）
 - Unity 具体 API 实战
 
 ---
@@ -245,9 +250,9 @@
 `把 C# 表层概念映射到 CLI 标准。`
 
 7. CCLR-06｜从 C# 到 CLI：语言前端、CTS、CLS 到底怎么对应
-8. CCLR-07｜值类型与引用类型在 ECMA-335 里怎么定义
-9. CCLR-08｜方法、字段、属性、事件在 metadata 里各长什么样
-10. CCLR-09｜泛型、约束、签名：CLI 怎样表达“类型参数”
+8. CCLR-07｜ECMA-335 里的值类型和引用类型：先把类型分类对上号
+9. CCLR-08｜成员的元数据长什么样：方法、字段、属性和事件怎么被描述
+10. CCLR-09｜泛型约束和签名：不是更难写，而是更早把边界说清楚
 
 ### C 层：CoreCLR 参考实现桥（4 篇）
 
@@ -258,7 +263,7 @@
 11. CCLR-10｜对象在 CoreCLR 里怎么存在：对象头、MethodTable、字段布局
 12. CCLR-11｜值类型到底在哪里：栈、堆、寄存器和“值类型都在栈上”的误解
 13. CCLR-12｜virtual、interface、override：多态分派到底怎么跑
-14. CCLR-13｜delegate、event、async：行为值、continuation 和调度入口
+14. CCLR-13｜delegate、event、async：把行为交给运行时和框架去安排
 
 说明：
 
@@ -273,13 +278,14 @@
 
 15. CCLR-14｜Mono、CoreCLR 与 IL2CPP：同样的 C#，为什么会走向三种执行模型
 16. CCLR-15｜从 AOT 到热更新：为什么 HybridCLR 要补 metadata、解释器和 bridge
-17. CCLR-16｜从零造 CLR：LeanCLR 为什么选择另一条路
+17. CCLR-16｜从零到 CLR：LeanCLR 为什么选择另一条路
 18. CCLR-17｜同一组 C# 语义，在不同 runtime 里分别牺牲了什么
 
 说明：
 
 - `CCLR-14` 明确把 Mono 纳入 D 层，不再让 Unity runtime 演进线断掉
 - `CCLR-17` 只做入口总收束，不重写 `runtime-cross G1~G9`
+- `CCLR-17` 的正文颗粒控制在 4~5 段 trade-off 总结，职责是按问题类型把读者送进 `runtime-cross-series-index`
 
 ---
 
@@ -309,22 +315,22 @@
 ### Batch C-B：标准语义层（4 篇）
 
 1. CCLR-06｜从 C# 到 CLI：语言前端、CTS、CLS 到底怎么对应
-2. CCLR-07｜值类型与引用类型在 ECMA-335 里怎么定义
-3. CCLR-08｜方法、字段、属性、事件在 metadata 里各长什么样
-4. CCLR-09｜泛型、约束、签名：CLI 怎样表达“类型参数”
+2. CCLR-07｜ECMA-335 里的值类型和引用类型：先把类型分类对上号
+3. CCLR-08｜成员的元数据长什么样：方法、字段、属性和事件怎么被描述
+4. CCLR-09｜泛型约束和签名：不是更难写，而是更早把边界说清楚
 
 ### Batch C-C：参考实现层（4 篇）
 
 1. CCLR-10｜对象在 CoreCLR 里怎么存在：对象头、MethodTable、字段布局
 2. CCLR-11｜值类型到底在哪里：栈、堆、寄存器和“值类型都在栈上”的误解
 3. CCLR-12｜virtual、interface、override：多态分派到底怎么跑
-4. CCLR-13｜delegate、event、async：行为值、continuation 和调度入口
+4. CCLR-13｜delegate、event、async：把行为交给运行时和框架去安排
 
 ### Batch C-D：跨运行时分叉层（4 篇）
 
 1. CCLR-14｜Mono、CoreCLR 与 IL2CPP：同样的 C#，为什么会走向三种执行模型
 2. CCLR-15｜从 AOT 到热更新：为什么 HybridCLR 要补 metadata、解释器和 bridge
-3. CCLR-16｜从零造 CLR：LeanCLR 为什么选择另一条路
+3. CCLR-16｜从零到 CLR：LeanCLR 为什么选择另一条路
 4. CCLR-17｜同一组 C# 语义，在不同 runtime 里分别牺牲了什么
 
 这四个批次加总，和第五节的 18 篇权威清单一一对应，不再允许出现“总表一套、批次一套”的情况。
@@ -364,6 +370,12 @@
 - 上游：`pattern-prerequisites-02-interface-abstract-virtual`
 - 下游：`coreclr-type-system-methodtable-eeclass-typehandle`
 - 对照：`runtime-cross-type-system-methodtable-il2cppclass-rtclass`
+
+#### `CCLR-13 delegate / event / async`
+
+- 上游：`pattern-prerequisites-04-delegate-callback-event`
+- 下游：`coreclr-type-system-methodtable-eeclass-typehandle`
+- 对照：`et-pre-02-async-await-state-machine-and-continuation`
 
 #### `CCLR-15 HybridCLR 为什么要补这些东西`
 
@@ -493,3 +505,25 @@ LeanCLR 也不该只是“另一个产品”。
 如果只做一句最终判断，我会这样写：
 
 `你仓库里已经有一整片 runtime 山脉，现在最该补的不是更高的山，而是一条能让读者顺着 C# 概念走上去的山路。`
+---
+
+## 十三、配套执行文档
+
+这份 `series-plan` 只回答“这条系列写什么、分哪几层、挂到哪些下游”。
+
+真正开写时，还要配合下面三份文档一起使用：
+
+- `docs/csharp-to-clr-codex-prompt.md`
+  - 回答：写作时必须遵守哪些协议、哪些边界不能越、怎样交付
+- `docs/csharp-to-clr-series-workflow.md`
+  - 回答：一篇文章怎样从选题走到交付、多 agent 怎样并行协作
+- `docs/csharp-to-clr-claude-audit-prompt.md`
+  - 回答：把这套计划发给 Claude 做结构化审核时，应该按什么维度去审
+
+一句话分工：
+
+- `series-plan` 管选题地图
+- `codex-prompt` 管写作协议
+- `workflow` 管执行路线
+- `claude-audit-prompt` 管外部审核入口
+
