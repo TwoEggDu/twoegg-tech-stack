@@ -403,6 +403,129 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 
 ---
 
+## 系列七·B-前置：设计模式前置知识（5 篇）
+
+*给"游戏编程设计模式"（七·B）和"设计模式教科书"（七·B′）共用前置。先把 class / object / instance / static、接口 vs 抽象类、继承 vs 组合、委托 / 事件、const / readonly / 不可变这几组最易混概念讲清楚，后面的模式文章才不会在调用边界上打结。*
+
+| 编号 | 标题 |
+|------|------|
+| 前置-01 | class、object、instance、static：行为和状态到底挂在哪 |
+| 前置-02 | 接口 / 抽象类 / 虚方法：三种"可覆盖"之间的边界 |
+| 前置-03 | 继承 / 组合 / 依赖：三种复用方式的代价和判断 |
+| 前置-04 | 委托 / 回调 / 事件：函数值语义与订阅生命周期 |
+| 前置-05 | const / readonly / 不可变性：状态不变给代码带来什么 |
+
+---
+
+## 系列七·B′：设计模式教科书（48 篇）
+
+*GoF 23 个经典模式的完整展开，外加并发、架构分层、游戏核心循环和引擎级模式。与七·B 的差异：七·B 是游戏视角的 7 篇精选，强调压力和边界；七·B′ 是按模式系统展开、适合完整查阅的参考书。两者对 Command 和 Object Pool 各讲一次，一次游戏视角、一次教科书视角。入口：design-patterns-textbook-series-index。*
+
+### 七·B′·1 — GoF 创建型（3 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-04 | Builder：分步构造与流畅式 API |
+| patterns-09 | Factory / Factory Method：对象创建的意图抽象 |
+| patterns-20 | Prototype：通过克隆而非构造函数创建 |
+
+### 七·B′·2 — GoF 结构型（7 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-05 | Facade：给复杂子系统提供统一入口 |
+| patterns-10 | Decorator：运行时叠加职责 |
+| patterns-11 | Adapter：把旧接口接到新契约上 |
+| patterns-16 | Composite：树形结构的统一抽象 |
+| patterns-17 | Flyweight：共享不可变状态节省内存 |
+| patterns-18 | Proxy：访问控制、延迟加载、远程调用 |
+| patterns-19 | Bridge：抽象与实现的双向独立演化 |
+
+### 七·B′·3 — GoF 行为型（10 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-02 | Template Method：基类定流程，子类填细节 |
+| patterns-03 | Strategy：运行时替换算法 |
+| patterns-06 | Command：操作对象化的教科书视角 |
+| patterns-07 | Observer：主题-观察者的经典松耦合 |
+| patterns-08 | Chain of Responsibility：责任链与可中断的处理流 |
+| patterns-12 | Memento：封装状态快照支持回溯 |
+| patterns-13 | Visitor：让数据和操作各自演化 |
+| patterns-14 | Mediator：多对多交互收敛到中介者 |
+| patterns-15 | Iterator：统一集合遍历协议 |
+| patterns-48 | State：有限状态机的对象化 |
+
+### 七·B′·4 — 并发与异步（4 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-21 | async / await：.NET 的状态机异步模型 |
+| patterns-22 | Coroutine：Unity 协程与生成器风格异步 |
+| patterns-23 | Actor Model：消息传递并发，隔离式状态 |
+| patterns-24 | Pipeline：数据流管线与阶段拆分 |
+
+### 七·B′·5 — 架构与分层（4 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-25 | MVC / MVP / MVVM：三种分层的真实差异 |
+| patterns-26 | Pub-Sub vs Observer：何时需要跨进程或跨模块 |
+| patterns-27 | DI 容器 vs Service Locator：依赖访问的两种方案对比 |
+| patterns-28 | Plugin Architecture：扩展点设计与生命周期 |
+
+### 七·B′·6 — 游戏核心循环（5 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-29 | Game Loop：主循环的时序、可变步长与固定步长 |
+| patterns-30 | Update Method：每帧更新的纪律 |
+| patterns-31 | Component：组合优于继承的游戏对象模型 |
+| patterns-32 | Dirty Flag：只在需要时重算 |
+| patterns-33 | Double Buffering：读写分离避免可见性冲突 |
+
+### 七·B′·7 — 空间与事件（2 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-34 | Spatial Partition：四叉树、网格与空间索引选型 |
+| patterns-35 | Event Queue：异步事件与解耦 |
+
+### 七·B′·8 — 数据驱动扩展（3 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-36 | Type Object：把"类型"做成数据 |
+| patterns-37 | Subclass Sandbox：基类提供受控能力集 |
+| patterns-38 | Bytecode：自定义小 VM 驱动数据逻辑 |
+
+### 七·B′·9 — 引擎级模式（5 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-39 | ECS 架构：实体-组件-系统的工业级落地 |
+| patterns-40 | Scene Graph：场景层级与变换传播 |
+| patterns-41 | Render Pipeline：渲染管线的可编程结构 |
+| patterns-42 | Render Pass / Feature：URP / SRP 的扩展点 |
+| patterns-43 | Command Buffer：延迟提交的 GPU 指令流 |
+
+### 七·B′·10 — 资源与热更（4 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-44 | Resource Management：引用计数与生命周期 |
+| patterns-45 | Hot Reload：编辑器与运行时的代码 / 资源替换 |
+| patterns-46 | Shader Variant：变体生成与裁剪 |
+| patterns-47 | Object Pool：池化的教科书视角 |
+
+### 七·B′·11 — 数据导向收尾（1 篇）
+
+| 编号 | 标题 |
+|------|------|
+| patterns-49 | Data-Oriented Design：从面向对象到面向数据的系统归纳 |
+
+---
+
 ## 系列七·C：数据结构与算法（21 篇）
 
 *游戏开发中真正用得上的算法与数据结构，从复杂度分析到空间索引，从内存分配器到 GC 原理。*
@@ -902,6 +1025,8 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列七（游戏核心系统）| 8 |
 | 系列七·A（软件工程基础与 SOLID 原则）| 13 |
 | 系列七·B（游戏编程设计模式）| 7 |
+| 系列七·B-前置（设计模式前置知识）| 5 |
+| 系列七·B′（设计模式教科书）| 48 |
 | 系列七·C（数据结构与算法）| 21 |
 | 系列八（打包、加载与流式系统）| 10 |
 | 系列九（UI/UX 系统）| 6 |
@@ -921,7 +1046,7 @@ Layer 7  工程与交付              ← CI/CD、安全、本地化、分析
 | 系列二十二（Unity 6 渲染管线升级实战）| 8 |
 | 系列二十三（Unity 6 运行时与工具链变化）| 6 |
 | 系列二十四（Unity 2022→6 升级决策指南）| 4 |
-| **合计** | **约 402 篇（不含系列二十）** |
+| **合计** | **约 455 篇（不含系列二十）** |
 
 ---
 
