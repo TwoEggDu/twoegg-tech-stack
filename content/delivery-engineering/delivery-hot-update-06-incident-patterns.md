@@ -92,7 +92,7 @@ delivery_reading_lines:
 1. 收集异常用户的地理分布——如果集中在某些区域，高度怀疑 CDN 缓存问题
 2. 用异常用户的 IP 段请求 CDN，检查返回的文件版本
 3. 检查 Manifest 的 Cache-Control header 是否正确（应该是 no-cache）
-4. 检查 Bundle 文件名是否包含内容哈希（V06-06 已覆盖）
+4. 检查 Bundle 文件名是否包含内容哈希（[V06-06 CDN 分发]({{< relref "delivery-engineering/delivery-package-distribution-06-cdn.md" >}}) 已覆盖）
 
 **预防**：Manifest 使用 no-cache + 短 TTL，Bundle 文件名包含内容哈希，部署后在所有 CDN 区域验证文件可用性。
 
@@ -108,7 +108,7 @@ delivery_reading_lines:
 3. 检查断点续传逻辑——是否在文件级别记录了下载完成状态
 4. 检查原子替换逻辑——是否在所有文件下载完成后才从临时目录移到正式目录
 
-**预防**：V06-07 的原子性替换机制（先下载到临时目录，全部校验通过后再替换）。
+**预防**：[V06-07 热更新资源管线]({{< relref "delivery-engineering/delivery-package-distribution-07-hotupdate-resources.md" >}}) 的原子性替换机制（先下载到临时目录，全部校验通过后再替换）。
 
 ### 模式六：热更后首次加载卡顿
 
@@ -163,4 +163,9 @@ V08 脚本热更新到这里结束。
 
 **推荐下一步**：V09 平台发布 — 从构建和热更新进入平台发布：iOS / Android / 微信各自的审核和发布流程
 
-**扩展阅读**：[案例：一次热更新上线事故的复盘]({{< relref "projects/case-hotupdate-production-incident.md" >}}) — 完整的事故时间线、根因分析和防复发措施
+**扩展阅读**：
+
+- [案例：一次热更新上线事故的复盘]({{< relref "projects/case-hotupdate-production-incident.md" >}}) — 完整的事故时间线、根因分析和防复发措施
+- [HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了]({{< relref "engine-toolchain/hybridclr-troubleshooting-diagnose-by-layer.md" >}}) — 模式一~三（元数据/依赖/版本）的分层排障路径
+- [HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次]({{< relref "engine-toolchain/hybridclr-crash-analysis.md" >}}) — hybridclr::、AOT 泛型缺失、MethodBridge 缺失、metadata 不匹配各自的特征
+- [HybridCLR 真实案例诊断｜TypeLoadException 到 async 栈溢出]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}}) — 一次完整的 native crash 符号化分析
