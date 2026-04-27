@@ -304,7 +304,7 @@ for agent in active_agents:
 
 ### T+30 分钟
 
-某个夜间 build 因为 OOM 挂了（资源烘焙阶段内存不够，详见 305）。Agent 强杀进程。**license 没释放。**
+某个夜间 build 因为 OOM 挂了（资源烘焙阶段内存不够，[详见 305]({{< relref "delivery-engineering/delivery-jenkins-ops-305-il2cpp-build.md" >}})）。Agent 强杀进程。**license 没释放。**
 
 ### T+1 小时
 

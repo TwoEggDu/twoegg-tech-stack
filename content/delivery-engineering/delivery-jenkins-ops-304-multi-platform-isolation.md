@@ -47,7 +47,7 @@ parallel {
 }
 ```
 
-这段代码**写法是并行**，但**执行可能是串行**——如果两个 stage 调度到同一台 Agent 的同一个 workspace，第二个会等第一个的 Library reimport 完才开始。详见 001 总论"假并发"。
+这段代码**写法是并行**，但**执行可能是串行**——如果两个 stage 调度到同一台 Agent 的同一个 workspace，第二个会等第一个的 Library reimport 完才开始。[详见 001 总论"假并发"]({{< relref "delivery-engineering/delivery-jenkins-ops-001-why-different.md" >}})。
 
 ### 误解 2：iOS 和 Android 互不干扰
 
@@ -144,7 +144,7 @@ parallel {
 ### 代价
 
 - **磁盘占用 3 倍**：每个平台一份 workspace = 三份 50 GB workspace = 150 GB / Agent
-- **首次 checkout 慢**：每个平台都要拉一份代码（详见 302 用 reference repo 优化）
+- **首次 checkout 慢**：每个平台都要拉一份代码（[详见 302 用 reference repo 优化]({{< relref "delivery-engineering/delivery-jenkins-ops-302-large-repo.md" >}})）
 
 ### 适用规模
 
@@ -192,7 +192,7 @@ parallel {
 
 - **Agent 池规模翻倍**：5 平台 × 2 台冗余 = 10 台 Agent 起步
 - **平台间负载不均**：iOS 是发版瓶颈（macOS 贵）但 build 频率高，Android 便宜但需求量看产品组成
-- **License 池要按平台分配**（详见 301）
+- **License 池要按平台分配**（[详见 301]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})）
 
 ### 适用规模
 

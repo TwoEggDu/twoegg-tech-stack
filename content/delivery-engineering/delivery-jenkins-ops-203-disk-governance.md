@@ -279,7 +279,7 @@ jenkins_agent_disk_usage_bytes{agent="agent-1"}
 jenkins_workflow_dir_size_bytes
 ```
 
-详见 205 Jenkins 自身的可观测性。
+详见 [205 Jenkins 自身的可观测性]({{< relref "delivery-engineering/delivery-jenkins-ops-205-observability.md" >}})。
 
 ---
 

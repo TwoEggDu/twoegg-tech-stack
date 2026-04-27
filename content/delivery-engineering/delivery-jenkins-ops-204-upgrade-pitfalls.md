@@ -52,7 +52,7 @@ Layer 4: Configuration  → XML / Pipeline / Shared Library
 游戏团队的特殊性：
 
 - 多产品 + 多分支 + 复杂 Shared Library 让"配置面"庞大
-- 单次 Master 停机的代价高（详见 203 真实事故）
+- 单次 Master 停机的代价高（[详见 203 真实事故]({{< relref "delivery-engineering/delivery-jenkins-ops-203-disk-governance.md" >}})）
 - 升级一旦失败，业务影响至少半天
 
 不允许"试一下不行就回滚"——必须有计划、有演练、有预案。
@@ -257,7 +257,7 @@ CPS（Continuation Passing Style）的实现细节在升级时变化，老 Pipel
 
 #### Shared Library 测试
 
-如果用了 JenkinsPipelineUnit 做单元测试（详见 102），升级前在 sandbox 跑测试。
+如果用了 JenkinsPipelineUnit 做单元测试（[详见 102]({{< relref "delivery-engineering/delivery-jenkins-ops-102-shared-library.md" >}})），升级前在 sandbox 跑测试。
 
 ---
 

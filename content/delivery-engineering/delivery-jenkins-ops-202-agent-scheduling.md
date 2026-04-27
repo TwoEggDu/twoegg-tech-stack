@@ -183,7 +183,7 @@ agent-Z → macos unity-2022.3 unity-6.0 unity-builder  # 双版本机
 
 ### 策略 1：排他（exclusive）
 
-某些任务**必须独占 Agent 整机**——比如 IL2CPP 构建（详见 305），同 Agent 跑两个 IL2CPP 会 OOM。
+某些任务**必须独占 Agent 整机**——比如 IL2CPP 构建（[详见 305]({{< relref "delivery-engineering/delivery-jenkins-ops-305-il2cpp-build.md" >}})），同 Agent 跑两个 IL2CPP 会 OOM。
 
 Jenkins Pipeline 配置：
 
@@ -295,7 +295,7 @@ Agent 长时间离线时，正在跑的 build 会失败。处理策略：
 - **关键 build（release / hotfix）**：用专用稳定 Agent，不调度到不稳定 Agent
 - **其他 build**：失败后自动 retry（在 Jenkinsfile 里加 retry 逻辑，但只对 transient 故障 retry）
 
-**绝对不要做**：在 Jenkinsfile 全局 `retry(3)`——这会让 license 占用 / OOM 之类的非 transient 故障被无意义重试，浪费 Agent 时间（详见 001 总论的"失败重试盲目化"）。
+**绝对不要做**：在 Jenkinsfile 全局 `retry(3)`——这会让 license 占用 / OOM 之类的非 transient 故障被无意义重试，浪费 Agent 时间（[详见 001 总论的"失败重试盲目化"]({{< relref "delivery-engineering/delivery-jenkins-ops-001-why-different.md" >}})）。
 
 ---
 

@@ -98,7 +98,7 @@ leader_pick: true
 
 **macOS Agent 的"假并发"。** 通用 CI 经验：标签 `mac` 一打，调度器自动分配。Unity 现实：macOS 机贵（Mac Mini M2 ~ ¥10000）+ Apple 限制虚拟化 → 团队通常只有 2-5 台物理 Mac → 同台机不能并发跑 iOS build（Xcode 锁、license seat、磁盘）。标签是 `mac` 但实际可用并发是 1/机，调度器把多个 job 排到同一台 → 排队 / 卡死。
 
-具体的 License 池治理见 301 Unity License 池管理，Agent 调度策略见 202 Agent 调度与标签体系，多平台并行隔离见 304 多平台并行打包与隔离。
+具体的 License 池治理见 [301 Unity License 池管理]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})，Agent 调度策略见 [202 Agent 调度与标签体系]({{< relref "delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md" >}})，多平台并行隔离见 [304 多平台并行打包与隔离]({{< relref "delivery-engineering/delivery-jenkins-ops-304-multi-platform-isolation.md" >}})。
 
 ---
 
@@ -123,7 +123,7 @@ leader_pick: true
 
 **历史符号表清理过度。** 通用 CI 配 "超过 30 天 artifact 自动清理"。游戏团队踩坑：玩家可能 2 个月不更新 → 旧版本 crash 2 个月后才上来；自动清理已经把符号表删了。结果是发现一个老版本严重 bug，符号表已被清理，无法定位。Crashlytics 后台的 "Symbol Files" 页面经常有一片灰着——那是没传上去的符号表对应的 build。
 
-具体的符号归档链路见 303 符号表与崩溃栈：IL2CPP 产物的符号链路。
+具体的符号归档链路见 [303 符号表与崩溃栈：IL2CPP 产物的符号链路]({{< relref "delivery-engineering/delivery-jenkins-ops-303-symbols-crashstack.md" >}})。
 
 ---
 
@@ -148,7 +148,7 @@ leader_pick: true
 
 **Shader 变体爆炸是最隐蔽的版本。** 同 commit 不同环境（player settings）出来的 shader 数量可以差 10 倍。同一份代码，build 时长在不动代码的情况下从 30 分钟变 90 分钟，磁盘也跟着膨胀——直到我们写了 variant analyzer 才能解释。
 
-具体的 Shared Library 抽象见 102 Shared Library 设计，并行模式与依赖管理见 105 Jenkins 下的并行模式，资源构建隔离见 304 多平台并行打包与隔离。
+具体的 Shared Library 抽象见 [102 Shared Library 设计]({{< relref "delivery-engineering/delivery-jenkins-ops-102-shared-library.md" >}})，并行模式与依赖管理见 [105 Jenkins 下的并行模式]({{< relref "delivery-engineering/delivery-jenkins-ops-105-parallel-modes.md" >}})，资源构建隔离见 [304 多平台并行打包与隔离]({{< relref "delivery-engineering/delivery-jenkins-ops-304-multi-platform-isolation.md" >}})。
 
 ---
 

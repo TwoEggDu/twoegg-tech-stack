@@ -77,7 +77,7 @@ Agent 挂了影响吞吐，但不致命（其他 Agent 能接活）。
 - **在线状态**（每个 Agent 的 online/offline）
 - **资源使用**（CPU / 内存 / 磁盘 / 网络）
 - **Workspace 占用**
-- **License 占用**（Unity Agent 特有，详见 301）
+- **License 占用**（Unity Agent 特有，[详见 301]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})）
 
 ### 层 3：Pipeline 健康
 
@@ -231,7 +231,7 @@ post {
 }
 ```
 
-或者用更优雅的方式：Shared Library 封装 `recordBuildMetrics()` 函数（详见 102）。
+或者用更优雅的方式：Shared Library 封装 `recordBuildMetrics()` 函数（[详见 102]({{< relref "delivery-engineering/delivery-jenkins-ops-102-shared-library.md" >}})）。
 
 ### Grafana Dashboard 模板
 
@@ -309,7 +309,7 @@ groups:
 1. 看 Grafana 面板：是哪个 stage 慢了？
 2. 对比最近代码 / 资源变更
 3. 看 Agent 资源占用：是不是 Agent 性能下降（磁盘满、内存压力）
-4. 如果是 Library 缓存失效：见 001 总论"主角反转"
+4. 如果是 Library 缓存失效：[见 001 总论"主角反转"]({{< relref "delivery-engineering/delivery-jenkins-ops-001-why-different.md" >}})
 5. 如果是资源膨胀：找美术 / 程序确认是否预期
 
 ---

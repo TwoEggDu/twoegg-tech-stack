@@ -131,7 +131,7 @@ gameCleanup()                            // 释放 license + 清理中间产物
 
 ### 1. Unity License 管理
 
-License 是稀缺资源 + 泄漏风险高 + 处理细节碎（详见 301）。这是 Shared Library 最高 ROI 的下沉对象——
+License 是稀缺资源 + 泄漏风险高 + 处理细节碎（[详见 301]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})）。这是 Shared Library 最高 ROI 的下沉对象——
 
 ```groovy
 // vars/withUnityLicense.groovy
@@ -186,7 +186,7 @@ gameArchive(
 // 内部实现：archiveArtifacts + dSYM 命名规范化 + 上传 + 元数据写入版本表
 ```
 
-详见 303。
+[详见 303]({{< relref "delivery-engineering/delivery-jenkins-ops-303-symbols-crashstack.md" >}})。
 
 ### 4. 平台 Agent 检测与切换
 

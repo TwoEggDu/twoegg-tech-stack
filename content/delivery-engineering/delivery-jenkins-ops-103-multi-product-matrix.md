@@ -294,7 +294,7 @@ Build
 
 ### 这阶段的代价
 
-- **Shared Library 自己变成产品**——需要专人维护、版本管理（详见 102）
+- **Shared Library 自己变成产品**——需要专人维护、版本管理（[详见 102]({{< relref "delivery-engineering/delivery-jenkins-ops-102-shared-library.md" >}})）
 - **新人上手时间从 1 天涨到 1 周**——要看懂插件机制
 - **错误信息更难定位**——出错可能在骨架、插件、hooks 任一层
 

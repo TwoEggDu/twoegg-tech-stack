@@ -233,7 +233,7 @@ build 完成后中间产物可以删——但要保留**部分 cache** 以加速
 ### 配置陷阱
 
 - **CPU 数 / 内存比例**：保持 1:4 (8 核 / 32GB) 到 1:8 (16 核 / 128GB)。CPU 多内存少 → OOM；内存多 CPU 少 → 链接是瓶颈剩余资源浪费
-- **不要用网络存储**：JENKINS_HOME 和 workspace 都不能放 NFS / SMB（详见 201）。IL2CPP 的中间产物 IO 极密集，网络存储会成为瓶颈
+- **不要用网络存储**：JENKINS_HOME 和 workspace 都不能放 NFS / SMB（[详见 201]({{< relref "delivery-engineering/delivery-jenkins-ops-201-master-bottleneck.md" >}})）。IL2CPP 的中间产物 IO 极密集，网络存储会成为瓶颈
 - **macOS Agent 的特殊问题**：Mac Mini 的 SSD 容量小（500GB-1TB），中型以上项目要外接 NVMe
 
 ---
@@ -272,7 +272,7 @@ Out of memory: Killed process 12345 (clang)
 **修复**：
 
 - 短期：清理空间，重跑（中间产物丢了要全量重 build）
-- 长期：换更大磁盘 + 自动清理脚本（详见 203）
+- 长期：换更大磁盘 + 自动清理脚本（[详见 203]({{< relref "delivery-engineering/delivery-jenkins-ops-203-disk-governance.md" >}})）
 
 ### 故障 3：卡死（无明显错误）
 
@@ -318,7 +318,7 @@ Out of memory: Killed process 12345 (clang)
 - 看 IL2CPP cache 命中率：`Library/Bee/Stats/` 下有 cache hit 数据
 - 看磁盘 IOPS：`iostat` 看 `await` 列，>10ms 是慢
 
-**最常见根因**：Library 缓存失效（详见 001 总论"主角反转"）。
+**最常见根因**：Library 缓存失效（[详见 001 总论"主角反转"]({{< relref "delivery-engineering/delivery-jenkins-ops-001-why-different.md" >}})）。
 
 ---
 

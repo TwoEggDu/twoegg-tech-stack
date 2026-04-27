@@ -283,7 +283,7 @@ Branch Sources → Filter by name (with regular expression):
 - 每个 Multibranch 的分支数 Top 10
 - 占磁盘最大的分支 Top 10
 
-数据进监控后能提前预警，详见 205 Jenkins 自身的可观测性。
+数据进监控后能提前预警，详见 [205 Jenkins 自身的可观测性]({{< relref "delivery-engineering/delivery-jenkins-ops-205-observability.md" >}})。
 
 ---
 
