@@ -177,7 +177,9 @@
       "Bash(mkdir -p E:/workspace/wiki/static/software)",
       "Bash(cp \"E:/workspace/DP/Data/Tools/安装软件/TortoiseSVN-1.14.1.29085-x64-svn-1.14.1.msi\" E:/workspace/wiki/static/software/)",
       "Read(//c/Program Files/GitHub CLI/**)",
-      "Read(//c/Users/IGG/scoop/shims/**)"
+      "Read(//c/Users/IGG/scoop/shims/**)",
+      "Read(//e/workspace/TechStackShow/content/**)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
