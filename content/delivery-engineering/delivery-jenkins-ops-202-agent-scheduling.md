@@ -30,6 +30,7 @@ delivery_reading_lines:
 - **标签设计反例** —— 一个团队的"标签爆炸"故事
 - **调度策略** —— 排他、亲和、优先级
 - **离线监控与自动恢复** —— Agent 掉线该怎么处理
+- **平台特化运维：自动更新与强制重启** —— Windows / macOS / Linux 三类系统的"自动操作"杀手
 
 ---
 
@@ -296,6 +297,152 @@ Agent 长时间离线时，正在跑的 build 会失败。处理策略：
 - **其他 build**：失败后自动 retry（在 Jenkinsfile 里加 retry 逻辑，但只对 transient 故障 retry）
 
 **绝对不要做**：在 Jenkinsfile 全局 `retry(3)`——这会让 license 占用 / OOM 之类的非 transient 故障被无意义重试，浪费 Agent 时间（[详见 001 总论的"失败重试盲目化"]({{< relref "delivery-engineering/delivery-jenkins-ops-001-why-different.md" >}})）。
+
+---
+
+## 平台特化运维：自动更新与强制重启
+
+调度策略和离线恢复都做对了，还有一个 build farm 常见杀手藏在你不太管的地方——**操作系统自己的自动更新策略**。Windows / macOS / Linux 都有"我觉得现在该重启了"的机制，半夜触发 = 凌晨 build 全死 = 早班 QA 拿不到包。
+
+**小团队（5-10 台 Agent）受到的相对冲击更大——单机重启就是 10-20% 产能掉线。** 这一节讲三大系统各自的"自动操作"陷阱和治理方式。
+
+### Windows：自动更新 + 强制重启（最常见杀手）
+
+Windows 默认更新策略一句话总结：**它会按它想的时间重启你的机器**。半夜撞上的概率非常高——Windows 倾向于"用户不活跃时间"重启，而那正是游戏团队夜间 build 的高峰。
+
+#### 三层治理
+
+**第一层：GPO / 注册表锁定重启窗口**
+
+域机器走组策略：
+
+```
+gpedit.msc → 计算机配置 → 管理模板 → Windows 组件 → Windows 更新
+  ├─ 配置自动更新 → 已启用 + "通知下载并通知安装"
+  ├─ 没有登录用户时不自动重启 → 已启用
+  └─ 始终自动重启计划时间 → 改成你能控制的窗口（比如周六 04:00）
+```
+
+非域机器改注册表：
+
+```
+HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
+  AUOptions = 2                       # 仅通知，不自动下载
+  NoAutoRebootWithLoggedOnUsers = 1
+  ScheduledInstallDay = 7             # 周六
+  ScheduledInstallTime = 4            # 04:00
+```
+
+**第二层：Agent 装成 Windows Service**
+
+阻止不了重启的话，至少让重启后自动恢复：
+
+```powershell
+# 用 nssm 把 jenkins-agent 装成系统服务
+nssm install JenkinsAgent "C:\Program Files\Java\jdk-17\bin\java.exe"
+nssm set JenkinsAgent AppParameters "-jar C:\jenkins\agent.jar -jnlpUrl <url> -secret xxx -workDir C:\jenkins"
+nssm set JenkinsAgent Start SERVICE_AUTO_START
+nssm set JenkinsAgent AppRestartDelay 10000
+```
+
+机器重启 → 服务自启 → Agent 重连 Master。**正在跑的 build 仍会丢，只能减少损失。**
+
+**第三层：主动维护窗口 + Agent 排空**
+
+终极方案：与其被动接受重启，不如**主动把更新和重启放在你能控制的窗口**。脚本化流程：
+
+```powershell
+# 1. 通过 Jenkins API 排空 Agent（不再调度新 build）
+Invoke-RestMethod -Uri "http://master:8080/computer/agent-1/toggleOffline?offlineMessage=scheduled-update" `
+    -Method POST -Credential $jenkinsCred
+
+# 2. 等正在跑的 build 完成（轮询 /computer/agent-1/api/json）
+
+# 3. 跑 Windows Update（用 PSWindowsUpdate 模块）
+Install-WindowsUpdate -AcceptAll -AutoReboot
+
+# 4. 重启后 Agent 服务自启 → 再 toggle 回 online
+```
+
+#### 极端选项：完全禁用更新服务
+
+```powershell
+Stop-Service wuauserv -Force; Set-Service wuauserv -StartupType Disabled
+Stop-Service UsoSvc -Force; Set-Service UsoSvc -StartupType Disabled
+Stop-Service WaaSMedicSvc -Force; Set-Service WaaSMedicSvc -StartupType Disabled
+```
+
+**代价**：build 机不再收安全补丁。**只在 build 机完全在内网（不上公网）的前提下接受**。否则要配手动维护窗口定期补丁。
+
+### macOS：System Update / Xcode 升级
+
+macOS Agent（iOS 构建机）有两类自动操作问题：
+
+#### 系统级 Software Update
+
+游戏团队推荐**全部关掉自动**：
+
+```bash
+sudo softwareupdate --schedule off
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
+```
+
+#### Xcode 自动升级（**这条最坑**）
+
+Mac App Store 默认会自动升级 Xcode。问题：
+
+- 新版 Xcode 改 build settings 默认值 → build 突然失败
+- 升级期间锁住磁盘 → 进行中的 build 全 fail
+- iOS 项目对 Xcode 版本敏感（Unity 项目在 Xcode 14 / 15 行为不同）
+
+```bash
+sudo defaults write /Library/Preferences/com.apple.commerce AutoUpdate -bool false
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallAppUpdates -bool false
+```
+
+**Xcode 升级必须是有计划的工程动作**：先在一台 sandbox Mac 试，验证 Unity 项目能 build，再灰度推到生产 Agent。
+
+### Linux：unattended-upgrades 与 needrestart
+
+#### Ubuntu / Debian：unattended-upgrades
+
+默认装的 `unattended-upgrades` 自动装安全更新。问题：
+
+- 内核更新后 needrestart 提示，**有些配置下会自动重启**
+- 包升级中途锁住 dpkg → apt 操作中的 build 步骤失败
+
+```bash
+# 关掉自动重启
+sudo sed -i 's|//Unattended-Upgrade::Automatic-Reboot ".*";|Unattended-Upgrade::Automatic-Reboot "false";|' \
+    /etc/apt/apt.conf.d/50unattended-upgrades
+
+# 或完全关掉 unattended-upgrades
+sudo systemctl disable unattended-upgrades
+```
+
+#### needrestart 的自动重启提示
+
+Ubuntu 22.04+ 默认装 `needrestart`，apt 操作后会问"是否重启服务"。在 build 机上改为 silent：
+
+```bash
+sudo sed -i "s/#\$nrconf{restart} = 'i';/\$nrconf{restart} = 'l';/" /etc/needrestart/needrestart.conf
+# 'l' = list only（推荐）, 'a' = auto restart, 'i' = interactive
+```
+
+### 通用模式：维护窗口 + Agent 排空
+
+不管哪个系统，都遵循同一个治理模式：
+
+1. **关闭"系统自己决定"的自动操作**（更新、重启、升级）
+2. **明确一个维护窗口**（每周 / 每月一次，避开发版高峰）
+3. **维护窗口自动化**：脚本依次做"排空 Agent → 跑更新 → 重启 → 恢复"
+4. **加监控告警**：Agent 离线超过预期时长就告警，不要靠人记得
+
+### 小团队的简化路径
+
+如果你只有 5-10 台 Agent，**直接关掉所有自动更新机制**，每月人工挑一天集中维护——比维护"完美的自动维护窗口脚本"更省事。脚本化的维护窗口适合 30+ Agent 规模才值得投入。
 
 ---
 
