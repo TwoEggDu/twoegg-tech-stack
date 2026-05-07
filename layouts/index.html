@@ -1,92 +1,97 @@
 {{ define "main" }}
   {{ $sections := slice
     "delivery-engineering"
-    "projects"
     "rendering"
     "engine-toolchain"
     "performance"
     "system-design"
     "code-quality"
     "problem-solving"
+    "projects"
     "essays"
   }}
 
   {{ $sectionNames := dict
     "delivery-engineering" "交付工程"
-    "projects" "项目交付"
     "rendering" "渲染管线"
     "engine-toolchain" "引擎工具链"
     "performance" "性能工程"
     "system-design" "系统设计"
     "code-quality" "代码质量"
     "problem-solving" "问题拆解"
+    "projects" "项目案例"
     "essays" "工程判断"
   }}
 
-  <section class="hero">
-    <div class="hero-with-svg">
-      <div class="hero-copy">
-        <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}把交付链路上的每一层拆开讲清楚。{{ end }}</h1>
-        <div class="section-copy">{{ .Content }}</div>
+  {{ $recommended := slice
+    "delivery-engineering/delivery-overview-series-index.md"
+    "rendering/player-input-and-game-content-to-screen.md"
+    "engine-toolchain/dotnet-runtime-ecosystem-series-index.md"
+    "problem-solving/一次-assetbundle-构建后-shader-variant-丢失问题的定位与修复.md"
+  }}
+
+  <section class="reader-hero">
+    <div class="reader-intro">
+      <p class="eyebrow">TwoEgg Tech Stack</p>
+      <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}游戏工程、引擎链路与交付实践笔记{{ end }}</h1>
+      <div class="reader-lead">{{ .Content }}</div>
+      <nav class="reader-actions" aria-label="首页快捷入口">
+        <a href="#series">推荐系列</a>
+        <a href="#topics">主题入口</a>
+        <a href="{{ `portfolio/` | relURL }}">技术作品集</a>
+      </nav>
+    </div>
+
+    <aside id="latest" class="reader-latest" aria-label="最近更新">
+      <div class="reader-block-head">
+        <p class="eyebrow">Latest</p>
+        <h2>最近更新</h2>
       </div>
-      <div class="hero-svg">
-        <svg viewBox="0 0 420 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="20" width="100" height="36" rx="8" fill="#1e5d5f" opacity="0.15"/>
-          <text x="70" y="43" text-anchor="middle" fill="#1e5d5f" font-size="13" font-weight="600">渲染管线</text>
-          <line x1="120" y1="38" x2="220" y2="120" stroke="#1e5d5f" stroke-width="2" opacity="0.4"/>
-          <rect x="20" y="76" width="100" height="36" rx="8" fill="#8b6a2e" opacity="0.15"/>
-          <text x="70" y="99" text-anchor="middle" fill="#8b6a2e" font-size="13" font-weight="600">引擎工具链</text>
-          <line x1="120" y1="94" x2="220" y2="130" stroke="#8b6a2e" stroke-width="2" opacity="0.4"/>
-          <rect x="20" y="132" width="100" height="36" rx="8" fill="#1e5d5f" opacity="0.15"/>
-          <text x="70" y="155" text-anchor="middle" fill="#1e5d5f" font-size="13" font-weight="600">性能工程</text>
-          <line x1="120" y1="150" x2="220" y2="140" stroke="#1e5d5f" stroke-width="2" opacity="0.4"/>
-          <rect x="20" y="188" width="100" height="36" rx="8" fill="#8b6a2e" opacity="0.15"/>
-          <text x="70" y="211" text-anchor="middle" fill="#8b6a2e" font-size="13" font-weight="600">系统设计</text>
-          <line x1="120" y1="206" x2="220" y2="150" stroke="#8b6a2e" stroke-width="2" opacity="0.4"/>
-          <rect x="220" y="108" width="120" height="52" rx="12" fill="#a14d34" opacity="0.18"/>
-          <rect x="222" y="110" width="116" height="48" rx="10" stroke="#a14d34" stroke-width="2" fill="none"/>
-          <text x="280" y="140" text-anchor="middle" fill="#a14d34" font-size="16" font-weight="700">交付工程</text>
-          <line x1="340" y1="134" x2="400" y2="134" stroke="#a14d34" stroke-width="2.5"/>
-          <polygon points="400,127 414,134 400,141" fill="#a14d34"/>
-          <text x="280" y="195" text-anchor="middle" fill="#596563" font-size="11">构建 → 验证 → 发布 → 运营</text>
-          <circle cx="180" cy="60" r="3" fill="#a14d34" opacity="0.2"/>
-          <circle cx="190" cy="180" r="3" fill="#1e5d5f" opacity="0.2"/>
-          <circle cx="370" cy="100" r="3" fill="#8b6a2e" opacity="0.2"/>
-          <circle cx="360" cy="170" r="3" fill="#a14d34" opacity="0.2"/>
-        </svg>
+      <ol class="reader-list">
+        {{ range first 4 site.RegularPages.ByDate.Reverse }}
+          <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            <span>{{ with .CurrentSection }}{{ .Title }}{{ end }}</span>
+          </li>
+        {{ end }}
+      </ol>
+    </aside>
+  </section>
+
+  <section class="reader-main" aria-label="首页内容导航">
+    <div id="series" class="reader-block">
+      <div class="reader-block-head">
+        <p class="eyebrow">Series</p>
+        <h2>推荐系列</h2>
+      </div>
+      <div class="reader-series-list">
+        {{ range $recommended }}
+          {{ with site.GetPage . }}
+            <a href="{{ .RelPermalink }}">
+              <strong>{{ .Title }}</strong>
+              <span>{{ .Params.description }}</span>
+            </a>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+
+    <div id="topics" class="reader-block">
+      <div class="reader-block-head">
+        <p class="eyebrow">Topics</p>
+        <h2>按主题进入</h2>
+      </div>
+      <div class="reader-topic-grid">
+        {{ range $sections }}
+          {{ $sectionName := index $sectionNames . }}
+          {{ with site.GetPage (printf "/%s" .) }}
+            <a href="{{ .RelPermalink }}">
+              <strong>{{ $sectionName }}</strong>
+              <span>{{ len .RegularPages }} 篇</span>
+            </a>
+          {{ end }}
+        {{ end }}
       </div>
     </div>
   </section>
-
-  <div class="section-grid">
-    {{ range $sections }}
-      {{ $sectionSlug := . }}
-      {{ $sectionName := index $sectionNames . }}
-      {{ with site.GetPage (printf "/%s" $sectionSlug) }}
-        {{ $pages := .RegularPages }}
-        {{ $count := len $pages }}
-        {{ $featuredPage := false }}
-        {{ range first 1 (where $pages "Params.featured" true) }}
-          {{ $featuredPage = . }}
-        {{ end }}
-        {{ if not $featuredPage }}
-          {{ range first 1 $pages.ByWeight }}
-            {{ $featuredPage = . }}
-          {{ end }}
-        {{ end }}
-
-        <article class="section-card">
-          <p class="card-section">{{ $sectionName }}</p>
-          {{ with $featuredPage }}
-            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-            <p>{{ .Params.description }}</p>
-          {{ else }}
-            <h2><a href="{{ $.RelPermalink }}">{{ .Title }}</a></h2>
-            <p>{{ .Params.description }}</p>
-          {{ end }}
-          <a class="card-link" href="{{ .RelPermalink }}">查看全部 {{ $count }} 篇 →</a>
-        </article>
-      {{ end }}
-    {{ end }}
-  </div>
 {{ end }}

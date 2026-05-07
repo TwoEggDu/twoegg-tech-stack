@@ -1,0 +1,68 @@
+{{ define "main" }}
+  <section class="portfolio-hero">
+    <div class="portfolio-hero-copy">
+      <p class="eyebrow">Game Client Engineering Portfolio</p>
+      <h1>游戏客户端工程能力作品集</h1>
+      <div class="portfolio-hero-lead">{{ .Content }}</div>
+      <div class="button-row">
+        <a class="button" href="{{ `projects/` | relURL }}">项目案例</a>
+        <a class="button button-secondary" href="{{ `about/` | relURL }}">关于作者</a>
+      </div>
+    </div>
+
+    <aside class="portfolio-signal-panel" aria-label="工程能力地图">
+      <p class="panel-label">Core Tracks</p>
+      <div class="signal-row">
+        <span>01</span>
+        <strong>交付闭环</strong>
+        <small>构建、验证、发布、运营</small>
+      </div>
+      <div class="signal-row">
+        <span>02</span>
+        <strong>引擎链路</strong>
+        <small>渲染、工具链、资源与构建</small>
+      </div>
+      <div class="signal-row">
+        <span>03</span>
+        <strong>质量治理</strong>
+        <small>自动化检查、回归、线上质量</small>
+      </div>
+      <div class="signal-row">
+        <span>04</span>
+        <strong>问题复盘</strong>
+        <small>定位路径、约束判断、修复策略</small>
+      </div>
+    </aside>
+  </section>
+
+  <section class="home-section">
+    <div class="home-section-head">
+      <p class="eyebrow">Evidence Paths</p>
+      <h2>按证据路径阅读。</h2>
+      <p>这页只保留适合对外沟通的代表入口；普通内容导航仍然回到首页。</p>
+    </div>
+
+    <div class="reading-path-grid">
+      <article class="reading-path-card">
+        <p class="path-step">01</p>
+        <h3><a href="{{ `projects/` | relURL }}">项目案例</a></h3>
+        <p>看真实约束下怎么做取舍，结果怎么验证，项目能力如何落到交付闭环里。</p>
+        <a class="card-link" href="{{ `projects/` | relURL }}">进入项目交付 →</a>
+      </article>
+
+      <article class="reading-path-card">
+        <p class="path-step">02</p>
+        <h3><a href="{{ `delivery-engineering/` | relURL }}">交付工程</a></h3>
+        <p>看构建、质量门禁、热更新、多端发布和长线运营如何组成可复用的工程系统。</p>
+        <a class="card-link" href="{{ `delivery-engineering/` | relURL }}">进入交付工程 →</a>
+      </article>
+
+      <article class="reading-path-card">
+        <p class="path-step">03</p>
+        <h3><a href="{{ `problem-solving/` | relURL }}">问题拆解</a></h3>
+        <p>看具体线上或构建问题的定位路线，理解经验如何沉淀成检查项和工程约束。</p>
+        <a class="card-link" href="{{ `problem-solving/` | relURL }}">进入问题拆解 →</a>
+      </article>
+    </div>
+  </section>
+{{ end }}
