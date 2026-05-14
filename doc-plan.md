@@ -110,6 +110,8 @@
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
 | 长线运营工程专栏 | [docs/live-ops-engineering-column-plan.md](./docs/live-ops-engineering-column-plan.md) | 已拆出 | 产品生命周期视角 |
 | 质量护栏 / Quality Guardrails | [docs/quality-guardrails-series-plan.md](./docs/quality-guardrails-series-plan.md) | 已拆出 | 质量门、验证与回归 |
+| AI 赋能游戏开发 | [docs/ai-empowerment-series-plan.md](./docs/ai-empowerment-series-plan.md) | 已拆出 | 知识闭环、AI 上下文、AI Coding Harness v0 |
+| Harness Engineering | [docs/harness-engineering-series-plan.md](./docs/harness-engineering-series-plan.md) | 已拆出 | v0 之后：演化、诊断、瘦身、跨仓库、场景联动 |
 | Route B 验证路线 | [docs/route-b-verification-plan.md](./docs/route-b-verification-plan.md) | 已拆出 | 验证路径专项 |
 | SEO / AI / 个人品牌执行 | [docs/site-seo-ai-personal-brand-execution-plan.md](./docs/site-seo-ai-personal-brand-execution-plan.md) | 已拆出 | 站点增长执行层 |
 | 角色化选题规划 | [docs/role-based-topic-planning-2026-03.md](./docs/role-based-topic-planning-2026-03.md) | 已拆出 | 角色视角的专题规划 |
