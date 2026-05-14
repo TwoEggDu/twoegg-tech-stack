@@ -1,7 +1,7 @@
 ---
 date: "2026-04-16"
 title: 'AI 赋能游戏开发系列索引｜从知识闭环到开发工作流'
-description: "不讲 AI 概念，讲游戏团队怎么用 AI 解决知识管理和开发效率的实际问题。每篇都有落地案例，来自 20 人 Unity MMO 团队的真实实践。"
+description: "不讲 AI 概念，讲游戏团队怎么用 AI 解决知识管理、开发工作流和 Harness 落地的实际问题。每篇都有落地案例，来自 20 人 Unity MMO 团队的真实实践。"
 slug: "ai-empowerment-series-index"
 weight: 1
 featured: true
@@ -23,8 +23,8 @@ series_audience:
   - "负责团队知识管理的人"
 series_level: "进阶"
 series_best_for: "当你已经知道该用 AI，但不知道怎么在团队里系统地落地"
-series_summary: "一个知识管理闭环（Dify + LKB + Wiki）加一套 AI 辅助开发工作流（CLAUDE.md + Skill + 跨层联动），全部来自真实项目实践。"
-series_intro: "这组文章解决的核心问题是：游戏团队用 AI 工具到底能解决什么实际问题，以及怎么把零散的 AI 工具使用变成系统化的团队能力。不写 prompt 教程，不绑定特定产品，讲工作流设计和落地路径。"
+series_summary: "一个知识管理闭环（Dify + LKB + Wiki）加一套 AI 辅助开发工作流（CLAUDE.md + Skill + 跨层联动 + Harness），全部来自真实项目实践。"
+series_intro: "这组文章解决的核心问题是：游戏团队用 AI 工具到底能解决什么实际问题，以及怎么把零散的 AI 工具使用变成系统化的团队能力。不写 prompt 教程，不绑定特定产品，讲工作流设计、验证门禁和落地路径。"
 series_reading_hint: "先读 01 建立闭环全貌，再按你当前最关心的方向选择知识管理线或开发工作流线。"
 ---
 
@@ -67,19 +67,30 @@ series_reading_hint: "先读 01 建立闭环全貌，再按你当前最关心的
 | 05 | [CLAUDE.md：让 AI 理解你的项目]({{< relref "ai-empowerment/ai-empowerment-05-claude-md-project-context.md" >}}) | AI 对你的项目一无所知，怎么给它上下文？ |
 | 06 | [Skill 系统：给 AI 注入领域规则]({{< relref "ai-empowerment/ai-empowerment-06-skill-domain-knowledge.md" >}}) | 通用 AI 不懂你的配置表约定和代码生成规范，怎么办？ |
 
-### 开发工作流线（07）
+### 开发工作流线（07-08）
 
-AI 在游戏开发跨层联动中的实际角色。
+AI 在游戏开发跨层联动中的实际角色，以及怎样把上下文、领域规则、流程、验证和反馈沉淀接成 Harness。
 
 | 序号 | 标题 | 核心问题 |
 |------|------|---------|
 | 07 | [AI 辅助开发工作流：从协议到 UI 的跨层联动]({{< relref "ai-empowerment/ai-empowerment-07-dev-workflow-integration.md" >}}) | 游戏开发涉及 5+ 层，AI 在每一层该做什么、不该做什么？ |
+| 08 | [我如何搭建自己的 AI Coding Harness Engineering]({{< relref "ai-empowerment/ai-empowerment-08-ai-coding-harness-engineering.md" >}}) | 怎么把上下文、领域规则、流程、验证和反馈沉淀接成可复用 Harness？ |
+
+### 工程化实践三切面（09-11）
+
+任务输入怎么定、单次任务怎么学到东西、长期知识怎么组织——AI 工程化的最小可用闭环。
+
+| 序号 | 标题 | 核心问题 |
+|------|------|---------|
+| 09 | [把 SDD 套进内容生产：Hugo 站点的 spec / plan / tasks 实录]({{< relref "ai-empowerment/ai-empowerment-09-sdd-in-content-production.md" >}}) | Spec-Driven Development 范式套到内容生产场景，哪里水土不服？ |
+| 10 | [Skill 自动沉淀：不靠 RL 的"自进化"在 Claude Code 里怎么实现]({{< relref "ai-empowerment/ai-empowerment-10-skill-auto-distillation.md" >}}) | 不做 RL 训练，普通工程师怎么搭轻量版 Hermes 自进化路径？ |
+| 11 | [kb/ 与 LLM Wiki 范式：把 Karpathy 的 idea 适配到内容站]({{< relref "ai-empowerment/ai-empowerment-11-kb-and-llm-wiki-pattern.md" >}}) | LLM Wiki 三层架构原样能不能用、要改什么、为什么不上 GBrain？ |
 
 ## 推荐阅读顺序
 
 **如果你是技术负责人**，先读 01 建立闭环全貌，再读 02（Dify 落地）和 04（缺口回流）了解团队级方案。
 
-**如果你是开发者**，先读 01 了解整体，然后跳到 05（CLAUDE.md）和 06（Skill）——这是你每天都会用到的。
+**如果你是开发者**，先读 01 了解整体，然后跳到 05（CLAUDE.md）和 06（Skill）——这是你每天都会用到的；如果你已经开始让 AI 参与真实开发任务，再读 07 和 08。
 
 **如果你正在推动团队知识沉淀**，按 01 → 02 → 03 → 04 顺序读完知识管理线，这是一条完整的落地路径。
 
