@@ -2,6 +2,8 @@ public/
 resources/_gen/
 .hugo_build.lock
 .tmp/
+.tmp-recordcheck/
 .codex-bin/
 .codex-go/
 .codex-public/
+.claude/worktrees/

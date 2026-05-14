@@ -216,7 +216,14 @@
       "Bash(sed -i 's|{{< svg \"images/runtime-ecosystem/cross-method-execution-paths.svg\" >}}|![5 个 Runtime 的方法执行路径]\\(../../images/runtime-ecosystem/cross-method-execution-paths.svg\\)\\\\n\\\\n*图：同一份 CIL 方法体，5 条执行路线的核心差异在于代码转换发生在什么时候。*|' content/engine-toolchain/runtime-cross-method-execution-jit-aot-interpreter-hybrid.md)",
       "mcp__Claude_in_Chrome__navigate",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
-      "mcp__Claude_in_Chrome__computer"
+      "mcp__Claude_in_Chrome__computer",
+      "Bash(ls \"e:/workspace/wiki/\" 2>&1 | head -40)",
+      "Read(//e/workspace/wiki/**)",
+      "Bash(ls \"e:/harness/\" 2>&1)",
+      "Read(//e/harness/**)",
+      "Bash(iconv -f utf-8 -t utf-8 -c \"5 人 7 天干完 20 人数周的活：Spec-Driven Development 如何重新定义 AI 编程.html\")",
+      "Bash(sed 's/<[^>]*>//g')",
+      "Bash(git commit *)"
     ]
   }
 }
