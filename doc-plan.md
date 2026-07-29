@@ -115,6 +115,7 @@
 | Route B 验证路线 | [docs/route-b-verification-plan.md](./docs/route-b-verification-plan.md) | 已拆出 | 验证路径专项 |
 | SEO / AI / 个人品牌执行 | [docs/site-seo-ai-personal-brand-execution-plan.md](./docs/site-seo-ai-personal-brand-execution-plan.md) | 已拆出 | 站点增长执行层 |
 | 角色化选题规划 | [docs/role-based-topic-planning-2026-03.md](./docs/role-based-topic-planning-2026-03.md) | 已拆出 | 角色视角的专题规划 |
+| 工程实践与演进 | [docs/engineering-journey-column-plan.md](./docs/engineering-journey-column-plan.md) | 框架已搭建 | 按项目轨迹、职责演进与 FDE / RaaS 实践飞轮串联公开实践 |
 
 ---
 

@@ -1,0 +1,15 @@
+{{ define "main" }}
+  <section class="page-title-block">
+    <p class="eyebrow">Engineering Journey</p>
+    <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}{{ .Title }}{{ end }}</h1>
+    {{ with .Params.description }}
+      <p class="section-lead">{{ . }}</p>
+    {{ end }}
+  </section>
+
+  <article class="article">
+    <div class="article-body">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

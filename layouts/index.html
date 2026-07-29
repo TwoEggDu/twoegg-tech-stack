@@ -1,5 +1,6 @@
 {{ define "main" }}
   {{ $sections := slice
+    "engineering-journey"
     "delivery-engineering"
     "rendering"
     "engine-toolchain"
@@ -12,6 +13,7 @@
   }}
 
   {{ $sectionNames := dict
+    "engineering-journey" "实践与演进"
     "delivery-engineering" "交付工程"
     "rendering" "渲染管线"
     "engine-toolchain" "引擎工具链"
@@ -24,6 +26,7 @@
   }}
 
   {{ $recommended := slice
+    "engineering-journey/_index.md"
     "delivery-engineering/delivery-overview-series-index.md"
     "rendering/player-input-and-game-content-to-screen.md"
     "engine-toolchain/dotnet-runtime-ecosystem-series-index.md"
