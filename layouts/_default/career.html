@@ -1,0 +1,146 @@
+{{ define "main" }}
+  {{ $career := site.Data.career }}
+  <div class="career-page">
+    <section class="career-hero" aria-labelledby="career-title">
+      <div class="career-hero-copy">
+        <p class="eyebrow">{{ $career.hero.eyebrow }}</p>
+        <p class="career-name">{{ $career.hero.name }}</p>
+        <h1 id="career-title">{{ $career.hero.title }}</h1>
+        <p class="career-secondary">{{ $career.hero.secondary }}</p>
+        <p class="career-summary">{{ $career.hero.summary }}</p>
+        <div class="button-row">
+          <a class="button" href="#results">查看代表成果</a>
+          <a class="button button-secondary" href="#evidence">查看技术证据</a>
+          <a class="career-text-link" href="mailto:{{ $career.contact.email }}?subject=完整简历沟通">邮件获取完整简历 <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <aside class="career-hero-panel" aria-label="核心经历指标与生产架构">
+        <div class="career-metrics">
+          {{ range $career.hero.metrics }}
+            <div class="career-metric">
+              <strong>{{ .value }}</strong>
+              <span>{{ .label }}</span>
+            </div>
+          {{ end }}
+        </div>
+        <div class="career-architecture">
+          <p class="career-panel-label">{{ $career.hero.architecture.label }}</p>
+          <div class="career-flow">
+            {{ range $index, $node := $career.hero.architecture.nodes }}
+              {{ if $index }}<span class="career-flow-arrow" aria-hidden="true">→</span>{{ end }}
+              <span class="career-flow-node">{{ $node }}</span>
+            {{ end }}
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="career-section" aria-labelledby="solve-title">
+      <header class="career-section-head">
+        <p class="eyebrow">What I Solve</p>
+        <h2 id="solve-title">我解决的问题</h2>
+        <p>重点不是掌握多少技术名词，而是让复杂的内容生产与客户端交付，在多项目协作中保持可控。</p>
+      </header>
+      <div class="career-capability-grid">
+        {{ range $career.capabilities }}
+          <article class="career-capability-card">
+            <p class="career-card-number">{{ .number }}</p>
+            <h3>{{ .title }}</h3>
+            <p>{{ .description }}</p>
+            <ul class="career-keywords" aria-label="关键词">
+              {{ range .keywords }}<li>{{ . }}</li>{{ end }}
+            </ul>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+
+    <section id="results" class="career-section career-results" aria-labelledby="results-title">
+      <header class="career-section-head career-section-head-split">
+        <div>
+          <p class="eyebrow">Selected Results</p>
+          <h2 id="results-title">代表性成果</h2>
+        </div>
+        <p>先看结果与影响范围，再通过现有文章验证背后的工程方法。</p>
+      </header>
+      <div class="career-result-grid">
+        {{ range $career.results }}
+          <article class="career-result-card">
+            <div class="career-result-topline">
+              <span>{{ .number }}</span>
+              <span>Result</span>
+            </div>
+            <h3>{{ .outcome }}</h3>
+            <dl class="career-result-detail">
+              <div>
+                <dt>我的作用</dt>
+                <dd>{{ .role }}</dd>
+              </div>
+              <div>
+                <dt>相关证据</dt>
+                <dd>{{ .evidence }}</dd>
+              </div>
+            </dl>
+            <a class="career-card-link" href="{{ .link | relURL }}">{{ .link_label }} <span aria-hidden="true">→</span></a>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+
+    <section class="career-section career-snapshot" aria-labelledby="snapshot-title">
+      <header class="career-section-head">
+        <p class="eyebrow">Career Snapshot</p>
+        <h2 id="snapshot-title">职业路径</h2>
+        <p>能力范围从客户端模块开发，逐步扩展到复杂项目支持、跨项目基础设施和团队交付结果。</p>
+      </header>
+      <ol class="career-timeline">
+        {{ range $career.timeline }}
+          <li>
+            <p class="career-period">{{ .period }}</p>
+            <div class="career-timeline-copy">
+              <div class="career-role-line">
+                <h3>{{ .company }}</h3>
+                <span>{{ .role }}</span>
+              </div>
+              <p>{{ .contribution }}</p>
+            </div>
+          </li>
+        {{ end }}
+      </ol>
+    </section>
+
+    <section id="evidence" class="career-section career-evidence" aria-labelledby="evidence-title">
+      <header class="career-section-head career-section-head-split">
+        <div>
+          <p class="eyebrow">Beyond the Resume</p>
+          <h2 id="evidence-title">技术证据</h2>
+        </div>
+        <p>简历说明做过什么；这个网站继续展开，我怎样理解问题、做取舍并把结果沉淀成工程方法。</p>
+      </header>
+      <div class="career-evidence-grid">
+        {{ range $career.evidence }}
+          <a class="career-evidence-card" href="{{ .link | relURL }}">
+            <span>{{ .label }}</span>
+            <h3>{{ .title }}</h3>
+            <p>{{ .description }}</p>
+            <strong>查看证据路径 <span aria-hidden="true">→</span></strong>
+          </a>
+        {{ end }}
+      </div>
+    </section>
+
+    <section class="career-contact" aria-labelledby="contact-title">
+      <div>
+        <p class="eyebrow">{{ $career.contact.eyebrow }}</p>
+        <h2 id="contact-title">{{ $career.contact.title }}</h2>
+        <p>{{ $career.contact.summary }}</p>
+      </div>
+      <div class="career-contact-actions">
+        <a class="button" href="mailto:{{ $career.contact.email }}?subject=求职沟通">邮件联系我</a>
+        <a class="button button-secondary" href="{{ $career.contact.github_url }}" target="_blank" rel="noreferrer">查看 GitHub</a>
+        <p><a href="mailto:{{ $career.contact.email }}">{{ $career.contact.email }}</a><br><a href="{{ $career.contact.github_url }}" target="_blank" rel="noreferrer">{{ $career.contact.github_label }}</a></p>
+      </div>
+    </section>
+  </div>
+{{ end }}

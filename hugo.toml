@@ -77,6 +77,11 @@ disableKinds = ["taxonomy", "term"]
   weight = 50
 
 [[menu.main]]
+  name = "求职"
+  pageRef = "/career/"
+  weight = 80
+
+[[menu.main]]
   name = "关于"
   pageRef = "/about/"
   weight = 90
