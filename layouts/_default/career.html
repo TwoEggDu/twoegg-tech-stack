@@ -110,6 +110,39 @@
       </ol>
     </section>
 
+    <section class="career-section career-roadmap" aria-labelledby="roadmap-title">
+      <header class="career-section-head career-section-head-split">
+        <div>
+          <p class="eyebrow">{{ $career.roadmap.eyebrow }}</p>
+          <h2 id="roadmap-title">{{ $career.roadmap.title }}</h2>
+        </div>
+        <p>{{ $career.roadmap.summary }}</p>
+      </header>
+      <div class="career-roadmap-track">
+        {{ range $career.roadmap.stages }}
+          <article class="career-roadmap-stage" data-roadmap-state="{{ .state }}">
+            <div class="career-roadmap-stage-head">
+              <span class="career-roadmap-number">{{ .number }}</span>
+              <span class="career-roadmap-status">{{ .status }}</span>
+            </div>
+            <h3>{{ .title }}</h3>
+            <p>{{ .description }}</p>
+            <ul>
+              {{ range .items }}<li>{{ . }}</li>{{ end }}
+            </ul>
+          </article>
+        {{ end }}
+      </div>
+      <footer class="career-roadmap-footer">
+        <p>{{ $career.roadmap.note }}</p>
+        <div class="career-roadmap-links">
+          {{ range $career.roadmap.links }}
+            <a class="career-roadmap-link" href="{{ .link | relURL }}">{{ .label }} <span aria-hidden="true">→</span></a>
+          {{ end }}
+        </div>
+      </footer>
+    </section>
+
     <section id="evidence" class="career-section career-evidence" aria-labelledby="evidence-title">
       <header class="career-section-head career-section-head-split">
         <div>
