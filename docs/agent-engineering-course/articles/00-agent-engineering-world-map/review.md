@@ -1,7 +1,7 @@
 # Article 00 Review Record
 
-- Lifecycle Status：`EVIDENCE_READY`
-- Review Status：`M1_EVIDENCE_REVIEW_COMPLETE`
+- Lifecycle Status：`OUTLINE_READY`
+- Review Status：`M2_OUTLINE_REVIEW_COMPLETE`
 - Formal Draft Review Gate：`NOT_OPEN`
 - Checklist：[Agent Engineering 课程审查清单](../../templates/review-checklist.md)
 - Reviewer：`Codex self-review`
@@ -47,3 +47,31 @@
 ## Formal Review
 
 Technical / Evidence / Course 三重 Draft Review 尚未开始；正文不存在，Final Gate 未开放。
+
+## M2 Teaching Structure Review
+
+- Outcome：`PASS`
+- Findings / Disposition：提纲以“混层问题 -> Model / Application -> Copilot / Agent / Agentic -> Product / Host / Harness / Runtime -> 横向术语 -> 产品证据边界 -> Article 01”形成单一 Teaching Spine。每个主体 Section 均登记 Teaching Question、Core Thesis、Claim / Evidence、定义类型、措辞强度、示例 / 图、停止线和 Bridge；没有从术语百科式罗列开场。
+
+## M2 Evidence Mapping Review
+
+- Outcome：`PASS_WITH_NOTES`
+- Findings / Disposition：14 个 Claim 均进入 Claim Coverage Matrix，15 张 Evidence Card 均有使用位置或明确的不呈现内容。`00-C06a` 继续保持 `PARTIAL`：只能陈述已观察到的官方 Harness 用法含义不同以及当前样本不足，不得升级成全行业结论。6 个 `PROPOSAL` 均指定课程选择语态。
+
+## M2 Scope Review
+
+- Outcome：`PASS`
+- Findings / Disposition：Agent 只到导航级稳定核心；Runtime / Harness / Host 只给课程工作定义；Prompt、Context、Tool、Skill、Workflow、Memory、RAG 只给一句定位和正式路由。产品例子限定为三张小卡、预计正文占比不超过 20%；未进入 DSH 源码、Lab、Article 01、BuildPilot 或 Draft。
+
+## M2 Course Dependency Review
+
+- Outcome：`PASS`
+- Findings / Disposition：Product / Application 与 Host 已拆开：Product 可使用或暴露一个或多个 Host，Host 是具体运行 / 集成入口。两张计划图分别承担导航关系与定义确定性，不复制后续机制篇。收束唯一桥接 Article 01，未更改 canonical 结构。
+
+## Outline Gate Decision
+
+- Outcome：`PASS_WITH_NOTES`
+- Decision：`Article 00 is OUTLINE_READY`
+- Rationale：教学问题、论证顺序、Claim / Evidence 映射、图表职责、Learning Check、范围停止线与后续桥接均已明确；没有核心 `BLOCKED` Claim。
+- Non-blocking Notes：Draft 必须继续执行 `00-C06a` 的谨慎措辞，并保持 Product / Host 分层与产品例子篇幅上限。
+- Next Allowed Action：`M3｜Article 00 Draft`，等待人工 Review，不自动执行。

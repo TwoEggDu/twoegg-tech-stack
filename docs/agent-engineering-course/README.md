@@ -5,11 +5,12 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：M1 Article 00 Pilot 已完成
+- 当前里程碑：M2 Article 00 Detailed Outline 已完成
 - 当前生产对象：Article 00
-- 当前 Article 00 状态：`EVIDENCE_READY`
+- 当前 Article 00 状态：`OUTLINE_READY`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
-- 下一允许动作：`M2｜Article 00 Detailed Outline`，等待人工 Review，不自动执行
+- 当前 Article 00 Outline Gate：`PASSED_WITH_NOTES`
+- 下一允许动作：`M3｜Article 00 Draft`，等待人工 Review，不自动执行
 
 ## 从哪里开始
 
@@ -29,7 +30,7 @@
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
-| [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | 当前唯一实例化的文章工作区；已通过 M1 Evidence Gate |
+| [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | 当前唯一实例化的文章工作区；已通过 M2 Outline Gate |
 
 ## 资产边界
 

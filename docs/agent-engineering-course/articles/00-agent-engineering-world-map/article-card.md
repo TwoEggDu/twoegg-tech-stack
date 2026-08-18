@@ -15,7 +15,7 @@
 - LLM / Model 与使用它的 AI Application 有什么区别？
 - Copilot 为什么是产品术语，而不是统一架构标准或 Agent 的固定前置阶段？
 - Agent 与 Agentic 分别描述什么？
-- Agent Runtime、Harness、Host / Product 大概位于哪一层？
+- Product / Application、Host、Agent Runtime 与 Harness 大概位于哪一层？
 - Prompt、Context、Tool、Skill、Workflow、Memory、RAG 大概放在哪里？
 - 后续课程为什么仍要从 Model 开始重新学习？
 
@@ -25,7 +25,7 @@
 
 ## 5. 核心概念
 
-LLM / Model、AI Application、AI Feature、Copilot、Agent、Agentic、Agent Runtime、Harness、Host / Product、Prompt、Context、Tool、Skill、Workflow、Memory、RAG。
+LLM / Model、AI Application、Product、AI Feature、Copilot、Agent、Agentic、Host、Agent Runtime、Harness、Prompt、Context、Tool、Skill、Workflow、Memory、RAG。
 
 ## 6. 核心心智模型
 
@@ -34,7 +34,9 @@ LLM / Model、AI Application、AI Feature、Copilot、Agent、Agentic、Agent Ru
 ```text
 User Goal
    ↓
-Host / Product：CLI / Web / IDE / Unity Editor / CI
+Product / Application：面向用户的软件 / 产品边界
+   ↓ uses or exposes one or more
+Host：CLI / Web / IDE / Desktop / Unity Editor / CI
    ↓
 Harness：Runtime 周围的可复用工程控制与约束（课程工作定义）
    ↓
@@ -51,7 +53,7 @@ External World
 
 1. 从一个普通 LLM App 开始：对照普通问答功能与 Tool-using Application。
 2. Copilot、Agent 与 Agentic：建立产品定位、执行系统与描述性术语的初步边界。
-3. Runtime、Harness 与 Host：建立执行内核、横切工程能力和产品入口的初步位置关系。
+3. Product / Application、Host、Harness 与 Runtime：把软件边界、具体入口、横切工程控制与执行内核分开定位。
 4. 横向能力放在哪里：只定位 Prompt、Context、Tool、Skill、Workflow、Memory 与 RAG。
 5. 地图不是术语百科：不靠产品名称反推统一架构，并桥接到 Model API。
 
@@ -73,7 +75,7 @@ BuildPilot 在本篇只作为未来的专用工程 Agent 例子，不介绍架�
 
 ## 12. 最容易混淆的概念
 
-需持续保留的边界清单：Model / Application、Copilot / Agent、Agentic / 架构类型、Runtime / Harness、Harness / Host、RAG / Memory。
+需持续保留的边界清单：Model / Application、Product / Host、Copilot / Agent、Agentic / 架构类型、Runtime / Harness、Harness / Host、RAG / Memory。
 
 ## 13. 本篇明确不讲什么
 
@@ -92,4 +94,4 @@ BuildPilot 在本篇只作为未来的专用工程 Agent 例子，不介绍架�
 
 ## 16. 概念成熟度
 
-`Introduction`。Agent、Agentic、Copilot、Runtime、Harness、Host 以及横向能力均只建立位置感，正式机制留给后续文章。
+`Introduction`。Agent、Agentic、Copilot、Product、Host、Runtime、Harness 以及横向能力均只建立位置感，正式机制留给后续文章。
