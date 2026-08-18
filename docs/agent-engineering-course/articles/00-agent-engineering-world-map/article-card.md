@@ -1,6 +1,6 @@
 # Article Card 00｜Agent Engineering 世界地图：从 Model、Agent 到 Harness / Host
 
-> 来源基线：`Agent Engineering 课程规划 v3.1（入口与结构校正版评审稿）`。本卡保留其 16 项课程设计；其中技术性陈述仍需在 M1 取证，不能因进入 Article Card 而视为 `CONFIRMED`。
+> 来源基线：`Agent Engineering 课程规划 v3.1（入口与结构校正版评审稿）`。本卡保留其 16 项课程设计；M1 已完成取证，具体陈述强度以 [Evidence Register](evidence.md) 与 [Definition Matrix](definition-matrix.md) 为准。
 
 ## 1. 本篇定位
 
@@ -13,7 +13,7 @@
 ## 3. 学完以后应该能回答的问题
 
 - LLM / Model 与使用它的 AI Application 有什么区别？
-- Copilot 为什么是产品交互定位，而不是统一架构标准？
+- Copilot 为什么是产品术语，而不是统一架构标准或 Agent 的固定前置阶段？
 - Agent 与 Agentic 分别描述什么？
 - Agent Runtime、Harness、Host / Product 大概位于哪一层？
 - Prompt、Context、Tool、Skill、Workflow、Memory、RAG 大概放在哪里？
@@ -29,16 +29,16 @@ LLM / Model、AI Application、AI Feature、Copilot、Agent、Agentic、Agent Ru
 
 ## 6. 核心心智模型
 
-以下是待验证、待细化的课程地图，不是产品实现断言：
+以下是 M1 确立的课程导航提案，不是产品实现断言，也不是行业统一部署拓扑：
 
 ```text
 User Goal
    ↓
 Host / Product：CLI / Web / IDE / Unity Editor / CI
    ↓
-Harness：Context / Policy / Session / Budget / Trace / Recovery
+Harness：Runtime 周围的可复用工程控制与约束（课程工作定义）
    ↓
-Agent Runtime：Loop / Model Call / Tool Dispatch / State Update
+Agent Runtime：Model Call / Tool Dispatch / Loop / State / Stop（课程工作定义）
    ↓
 Model + Tool + State
    ↓
@@ -57,11 +57,11 @@ External World
 
 ## 8. Engineering Lab / 示例
 
-不设 Lab。计划选择一个普通 LLM Chat、一个 Coding Agent 和一个 CI Agent 概念方案，只标注公开可确认的层，不根据产品宣传猜内部实现。
+不设 Lab。只用普通模型调用、Claude Code、Codex 与 DeepSeek Harness 的公开事实帮助定位；不根据产品入口或名称猜内部实现。
 
 ## 9. 与 DeepSeek Harness 的关系
 
-本篇只把 DSH 放在待验证的 Runtime / Harness / Product 多层候选位置；29 将根据 pinned commit 和调用路径正式判断。
+本篇只引用 DSH 官方“open-source agent harness / developer preview”等公开定位，不把它强行映射为课程的 Runtime / Harness / Product 分层；28—37 再根据 pinned commit、源码位置与运行证据判断。
 
 ## 10. 与 BuildPilot 的关系
 
@@ -69,11 +69,11 @@ BuildPilot 在本篇只作为未来的专用工程 Agent 例子，不介绍架�
 
 ## 11. Evidence 要求
 
-地图级通用概念参考权威资料；涉及具体产品层次时必须注明公开事实或待验证，不凭名称断言。
+地图级通用概念使用一手资料；课程 working definition 明确标 `PROPOSAL`；具体产品只陈述公开事实与版本边界，不凭名称断言内部层次。
 
 ## 12. 最容易混淆的概念
 
-待核验的边界清单：Model / Application、Copilot / Agent、Agentic / 产品类型、Runtime / Harness、Harness / Host、RAG / Memory。
+需持续保留的边界清单：Model / Application、Copilot / Agent、Agentic / 架构类型、Runtime / Harness、Harness / Host、RAG / Memory。
 
 ## 13. 本篇明确不讲什么
 
