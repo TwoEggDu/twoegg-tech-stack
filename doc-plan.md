@@ -113,6 +113,7 @@
 | AI 赋能游戏开发 | [docs/ai-empowerment-series-plan.md](./docs/ai-empowerment-series-plan.md) | 已拆出 | 知识闭环、AI 上下文、AI Coding Harness v0 |
 | Harness Engineering | [docs/harness-engineering-series-plan.md](./docs/harness-engineering-series-plan.md) | 已拆出 | v0 之后：演化、诊断、瘦身、跨仓库、场景联动 |
 | Route B 验证路线 | [docs/route-b-verification-plan.md](./docs/route-b-verification-plan.md) | 已拆出 | 验证路径专项 |
+| 工程判断与组织领导力 | [docs/engineering-judgment-series-plan.md](./docs/engineering-judgment-series-plan.md) | 已拆出 | 从个人判断走向组织结果：权责、协作、反馈与能力沉淀 |
 | SEO / AI / 个人品牌执行 | [docs/site-seo-ai-personal-brand-execution-plan.md](./docs/site-seo-ai-personal-brand-execution-plan.md) | 已拆出 | 站点增长执行层 |
 | 角色化选题规划 | [docs/role-based-topic-planning-2026-03.md](./docs/role-based-topic-planning-2026-03.md) | 已拆出 | 角色视角的专题规划 |
 | 工程实践与演进 | [docs/engineering-journey-column-plan.md](./docs/engineering-journey-column-plan.md) | 框架已搭建 | 按项目轨迹、职责演进与 FDE / RaaS 实践飞轮串联公开实践 |
