@@ -16,7 +16,7 @@
 
 ### Purpose
 
-确定性编排单一 Course Factory transaction：读取 durable state、选择 next safe action、启动正确 worker、验证交付物存在、推进 Gate、暂停失败、建立 checkpoint，并在 context reset 后恢复。
+确定性编排单一 Course Factory transaction：读取 durable state、选择 next safe action、在 PRECHECK 后执行显式 `ARTICLE_KICKOFF`、启动正确 worker、验证交付物存在、推进 Gate、暂停失败、建立并验证独立 checkpoint commit，并在 context reset 后恢复。
 
 ### Inputs
 
@@ -35,7 +35,8 @@
 
 - `course-run-state.md` 的 transaction-level pointer；
 - `status.md` 中已由 Gate 证明的状态；
-- `PLANNED` Article workspace 的 deterministic skeleton（仅在 PRECHECK `PASS` 后）；
+- PRECHECK `PASS` 后的 `ARTICLE_KICKOFF` durable transaction ownership；
+- `PLANNED` Article workspace 的 deterministic skeleton（仅在 PRECHECK 与 `ARTICLE_KICKOFF` 均 `PASS` 后）；
 - Article README lifecycle、Factory-level checkpoint pointer、Part Audit global status 与 Course `COMPLETE` state；
 - 必要的 canonical publication metadata（只应用 Publisher 返回且已验证的 candidate）；
 - 当前 transaction 的 checkpoint metadata；
@@ -47,31 +48,34 @@
 - WORKSPACE_INIT 不得写 Research Answer、Evidence Conclusion、Claim Confirmation、Teaching Thesis、Outline、Draft 或 Review Finding；
 - 不代替 Reviewer 判技术正确，不代替 Researcher升级 Claim；
 - 不并行启动多篇 Article，不自动降低 Gate，不处理无关 dirty changes；
+- 不在当前 Article 的独立 checkpoint commit 成功并完成 `ARTICLE_COMMIT_VERIFY` 前切换 `current_article`、启动下一篇 PRECHECK 或写入下一篇 workspace；
+- 不使用 `git add .` broad-stage，不把下一篇、无关用户修改、theme / CI / unrelated docs 混入 Article checkpoint；
 - 不在缺少明确授权时 push、发布外部内容或改变 canonical。
 
 ### Required Outputs
 
 - reconciled current state；
+- PRECHECK result 与显式 `ARTICLE_KICKOFF` result；
 - PRECHECK 通过后的 WORKSPACE_INIT result，包含 workspace path、机械实例化字段和未决判断；
 - selected worker 与 bounded task brief；
 - artifact existence check；
 - Gate transition 或精确 stop report；
-- checkpoint / resume pointer。
+- current-transaction-only diff verification、checkpoint commit evidence、`ARTICLE_COMMIT_VERIFIED` result 与 resume pointer。
 
 ### Gate Responsibility
 
-负责 PRECHECK、WORKSPACE_INIT、global state transition 与流程完整性：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。
+负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Git Diff Verify、Article Checkpoint Commit、Commit Verify 与 Repository Reconciliation：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。只有 Reviewer Final PASS、Publisher PASS、Build PASS、Master State Reconciliation PASS、Lifecycle `PUBLISHED` 与 `ARTICLE_COMMIT_VERIFIED = PASS` 同时成立，Master 才能结束当前 Article transaction。
 
 ### Stop Conditions
 
-- durable state 冲突或 unrelated dirty tree 无法安全隔离；
+- durable state 冲突、completion commit 缺失或 unrelated dirty tree 无法安全隔离；
 - worker 返回 Gate failure、越权输出或缺少 required artifact；
 - 需要人类改变 canonical、Optional、课程架构或权限。
 - canonical / template 无法提供 WORKSPACE_INIT 的必须字段，且填写需要实质性课程判断。
 
 ### Handoff Contract
 
-给 worker：当前 Article、Gate、Required Reads、Allowed Writes、expected outputs、stop line。收回：文件清单、结果摘要、Gate decision、blocker 与建议 next action。Publisher 返回 Publication Result；Part Auditor 返回 global update candidate。只有返回值与仓库 artifact 一致时，Master 才统一更新 `status.md`、run state 与 checkpoint metadata。
+给 worker：当前 Article、Gate、Required Reads、Allowed Writes、expected outputs、stop line。收回：文件清单、结果摘要、Gate decision、blocker 与建议 next action。Publisher 返回 Publication Result；Part Auditor 返回 global update candidate。只有返回值与仓库 artifact 一致时，Master 才统一更新 `status.md`、run state 与 checkpoint metadata。每篇 Article 必须显式 stage 本 transaction 文件，以 `Publish Agent Engineering Article NN` 本地提交，并用 `git status`、`git log -1 --oneline`、`git show --stat --oneline HEAD` 验证；验证前不得 handoff 到下一 Article。
 
 ### Context Isolation Rules
 
@@ -485,7 +489,7 @@ Checkpoint Readiness
 
 ### Handoff Contract
 
-成功时向 Master 交付上述结构化 Publication Result、完整发布文件清单、build evidence 与 checkpoint readiness；失败时返回 `FAILED_PUBLICATION` 或 `RETURN_TO_REVIEW`，不得自行降级。
+成功时向 Master 交付上述结构化 Publication Result、完整发布文件清单、build evidence 与 checkpoint readiness；失败时返回 `FAILED_PUBLICATION` 或 `RETURN_TO_REVIEW`，不得自行降级。Publisher 的 `PASS` 只允许 Master 进入 State Update / Git Diff Verify，不能跳过独立 Article commit 与 Commit Verify。
 
 ### Context Isolation Rules
 
@@ -535,7 +539,7 @@ Checkpoint Readiness
 
 ### Gate Responsibility
 
-Part Auditor `PASS` 是进入下一 Part 的必要条件。`BLOCKER / MAJOR` 必须把具体受影响 Article 返回必要状态修复，再执行 targeted re-audit。
+Part Auditor `PASS` 是进入下一 Part 的必要条件。`BLOCKER / MAJOR` 必须把具体受影响 Article 返回必要状态修复，再执行 targeted re-audit。修复 Article 使用独立 targeted repair commit；Audit `PASS` 的 durable report / state update 使用独立 `Audit Agent Engineering Part X` commit 并验证，不得混入下一 Article checkpoint。
 
 ### Stop Conditions
 

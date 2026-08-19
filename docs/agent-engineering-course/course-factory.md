@@ -2,7 +2,7 @@
 
 > Contract Status：`FOUNDATION_READY`
 >
-> Scope：未来从 Article 02 PRECHECK 开始，按 canonical 顺序生产至 Article 44，并在每篇、每个 Part 和全课程边界上可停止、可审计、可恢复。
+> Scope：未来从 Article 02 PRECHECK 开始，经显式 `ARTICLE_KICKOFF` 按 canonical 顺序生产至 Article 44，并在每篇、每个 Part 和全课程边界上可停止、可审计、可恢复。
 >
 > 本文件是 multi-article orchestration contract；篇内生产规则仍以 [production-workflow.md](production-workflow.md) 为准。课程结构、依赖、Optional 与特殊模式以 [canonical series plan](../agent-engineering-series-plan.md) 为准。
 
@@ -10,7 +10,7 @@
 
 1. **Repository State > Agent Context**：Git 工作区、已提交 artifact、[status.md](status.md) 与 [course-run-state.md](course-run-state.md) 是 durable state；Chat / Agent context 只是 temporary working memory。任何 worker 都必须重新读取其 Required Reads，不得以“记得已经通过”替代仓库证据。
 2. **Articles Execute Sequentially**：同一时刻最多存在一个 active Article transaction。禁止并行生产 Article 02、08、24、40 等多个正文对象。下一篇由 canonical dependency 与 Optional policy 决定，不由 worker 自选。
-3. **Article = Transaction Boundary**：每篇均以 `BEGIN ARTICLE N` 开始，依次完成 Precheck、Workspace Init、Research、Evidence、Outline、Draft、Review、Revision、Publish、Build 与 Checkpoint，以 `END ARTICLE N` 结束。Article N 未 `PUBLISHED`，不得开始下一篇。
+3. **Article = Transaction Boundary**：每篇均在 PRECHECK `PASS` 后以 `ARTICLE_KICKOFF` 开始，依次完成 Workspace Init、Research、Evidence、Outline、Draft、Review、Revision、Publish、Build、Master State Update、Git Diff Verify、Article Checkpoint Commit、Commit Verify 与 Repository Reconciliation，以 `END ARTICLE N` 结束。Article N 未 `PUBLISHED`，或该篇独立 checkpoint commit 未验证，均不得开始下一篇。
 4. **Gate Failure Stops Factory**：不得为追求 44 篇完成率降低 Evidence、Lab、Review、Publication 或 Build Gate；真实结果可以使 Factory 进入 `PAUSED` 或 `BLOCKED`，不能产生假 `PASS`。
 5. **Evidence Controls Wording**：Researcher 先建立 Claim 与 Evidence；Author 只能在已证明边界内组织叙事。不得先写结论，再要求 Researcher 搜索支持材料。
 6. **Fresh Reviewer**：Author 与 Reviewer 逻辑隔离。Reviewer 不读取 Author 的隐藏推理、信心或自评分，只基于合同允许的 repository artifacts 独立出具 Findings 与 Gate decision。
@@ -61,6 +61,7 @@ PLANNED
 
 ```text
 PRECHECK
+  -> ARTICLE_KICKOFF
   -> WORKSPACE_INIT
   -> RESEARCH
   -> EVIDENCE_GATE
@@ -72,13 +73,18 @@ PRECHECK
   -> FINAL_GATE
   -> PUBLISH
   -> BUILD_VERIFY
-  -> CHECKPOINT
-  -> PUBLISHED
+  -> MASTER_STATE_UPDATE
+  -> GIT_DIFF_VERIFY
+  -> ARTICLE_CHECKPOINT_COMMIT
+  -> ARTICLE_COMMIT_VERIFY
+  -> REPOSITORY_RECONCILIATION
+  -> END_ARTICLE
 ```
 
 ### 4.1 Gate rules
 
 - `PRECHECK`：执行 Resume Contract，确认 canonical entry、依赖、Article mode、workspace scope 与 clean/isolate policy。此 Gate 通过前不得实例化 workspace。
+- `ARTICLE_KICKOFF`：PRECHECK `PASS` 后由 Master 显式取得当前 Article transaction ownership，把 Factory 置为 `RUNNING`，记录 current Article、当前 Gate 与唯一 active worker。Kickoff 只建立事务身份与恢复点，不写 Research、Evidence、Outline、Draft 或 Published Content；未完成 Kickoff 不得执行 WORKSPACE_INIT。
 - `WORKSPACE_INIT`：Owner 为 Master Orchestrator；这是 deterministic infrastructure action，不是 content production。Master 只根据 canonical、[workspace template](templates/article-workspace-template.md) 与 repository naming convention 机械创建当前 Article workspace。
 - `RESEARCH`：Researcher 生成 Research Questions、Claim Register、Evidence Cards、counter-evidence 与 version scope。
 - `EVIDENCE_GATE`：Normal Article 在 Research 完成后进入；Lab Article 只能在 `PRELIMINARY_EVIDENCE -> LAB_DESIGN -> LAB_EXECUTE -> LAB_OBSERVATION -> EVIDENCE_MERGE` 完成后进入。核心行为性 Claim 不得为 `BLOCKED`；`PARTIAL` 必须收窄；required Lab 必须已有真实结果，才可进入 `EVIDENCE_READY`。
@@ -89,13 +95,17 @@ PRECHECK
 - `FINAL_GATE`：Reviewer `PASS` 且不存在未关闭的 `BLOCKER / MAJOR` 才可进入 `FINAL`。
 - `PUBLISH`：Publisher 只处理发布载体、metadata、链接、publication evidence 与渲染兼容性，不改冻结知识内容；只返回 recommended state transition，不直接写 global durable state。
 - `BUILD_VERIFY`：执行仓库真实 Hugo / lint / link commands。Build `PASS` 才允许发布状态成立。
-- `CHECKPOINT`：Master 核对 Reviewer Final PASS、Publisher PASS、Build PASS、workspace、published content、canonical、`status.md` 与 run state 的一致性，统一写入 global durable state，并按仓库 convention 创建明确 checkpoint。逻辑图中的 `PUBLISHED` 表示 Master 完成状态写入与 checkpoint 后该事实生效。
+- `MASTER_STATE_UPDATE`：Master 核对 Reviewer Final PASS、Publisher PASS、Build PASS、workspace、published content、canonical、`status.md` 与 run state 的一致性，统一把 Lifecycle 写为 `PUBLISHED`。这只是 checkpoint candidate；在独立 commit 验证前，Article transaction 仍未完成。
+- `GIT_DIFF_VERIFY`：必须运行 `git status`、`git diff --stat` 与 `git diff`，确认所有变更只属于当前 Article transaction；发现下一篇、无关用户修改、theme / CI / 无关 docs 或无法安全隔离的修改时，返回 `REPOSITORY_CONFLICT`。
+- `ARTICLE_CHECKPOINT_COMMIT`：只显式 stage 当前 Article workspace、该篇 required Lab、published content / assets 与经验证的 state / canonical / navigation 更新，并以 `Publish Agent Engineering Article NN` 创建一个独立本地 commit。禁止 `git add .`、禁止混入未来 Article、禁止 push。
+- `ARTICLE_COMMIT_VERIFY`：commit 后立即运行 `git status`、`git log -1 --oneline` 与 `git show --stat --oneline HEAD`，确认 message、files scope、Lifecycle 与工作树遗留均正确。只有 `ARTICLE_COMMIT_VERIFIED = PASS` 才能进入 Repository Reconciliation。
+- `REPOSITORY_RECONCILIATION`：重新读取 durable state、Published Content 与 Git history，从 repository truth 计算下一允许动作；不得在当前 Article checkpoint commit 成功并验证前切换 `current_article` 或启动下一篇。
 
 任一 Gate 返回 `FAIL` 或缺少必需 artifact 时，Master 不得进入下一 Gate。
 
 ### 4.2 WORKSPACE_INIT contract
 
-PRECHECK `PASS` 后，Master 才能执行：
+PRECHECK 与 `ARTICLE_KICKOFF` 均 `PASS` 后，Master 才能执行：
 
 1. 从 canonical 读取 Article ID、Title、Part、Weight、Optional、Dependencies、Lab requirement 与 Mode；
 2. 按 repository naming convention 确定 workspace slug；
@@ -158,7 +168,8 @@ one cycle = Reviewer Findings -> Revision Worker changes -> Reviewer Recheck
 6. 把 `last_successful_commit` 作为 checkpoint hint 与 history 对照；
 7. 检查当前 Gate 的 required artifacts 是否真实存在；
 8. 对齐 canonical dependency、Article Lifecycle、Evidence / Lab 状态、active gate 与实际文件；
-9. 只在无冲突时确定 next safe action，并把 Factory 置为 `READY` 或 `RUNNING`。
+9. 对已标记 `PUBLISHED` 的最近 Article，核验其独立 completion commit、commit message 与 files scope；
+10. 只在无冲突时确定 next safe action，并把 Factory 置为 `READY` 或 `RUNNING`。
 
 不得默认“从 Article 02 开始”，也不得相信上一次对话的口头完成声明。不得把 `git checkout <last_successful_commit>` 当成默认恢复动作，也不得因为 pointer 比 HEAD 落后一个 state commit 就 rewind repository。若 `status.md`、run state、workspace、Published Content、required artifacts 或 Git history 不一致，写入冲突摘要并以 `PAUSED / REPOSITORY_CONFLICT` 或 `PAUSED / HUMAN_DECISION_REQUIRED` 停止。
 
@@ -172,10 +183,15 @@ one cycle = Reviewer Findings -> Revision Worker changes -> Reviewer Recheck
 
 ## 9. Commit and checkpoint policy
 
-- 每个 `PUBLISHED` Article 至少应有一个语义清晰的 checkpoint commit，除非当前仓库 convention 明确要求不同方式。
-- checkpoint 前必须完成 relevant build，并复核 diff scope。
-- Article workspace、published content、`status.md` 与 run-state 的状态更新属于同一逻辑 transaction；如果 Git commit 自引用导致 hash 无法写入自身，`last_successful_commit` 只记录最近一个已知可恢复的 durable checkpoint hint。它不是 blind checkout target、当前 HEAD 的绝对真相或 Resume 的唯一依据；state-pointer commit 可以晚一拍，Resume 必须联合 repository artifact 与 Git history reconciliation。
-- 不为满足数量制造空 commit；不 push，除非当前任务明确授权。
+- **One completed Article = one independently verifiable checkpoint commit.** 每个 Article transaction 只在 Reviewer Final Gate `PASS`、Publisher `PASS`、Build Verification `PASS`、Master State Reconciliation `PASS`、Lifecycle `PUBLISHED` 且 `ARTICLE_COMMIT_VERIFIED = PASS` 后完成。
+- commit 未成功并验证前，禁止启动下一 Article 的 PRECHECK、workspace、Research、Evidence、Draft 或 Lab。
+- Article commit 包含本次 transaction 的完整正式成果：current workspace、required Lab、published content / assets、必要 navigation / canonical publication metadata，以及经验证的 Article README、`status.md` 与 run state。不得包含 Article N+1 或 unrelated changes。
+- checkpoint 前必须运行 `git status`、`git diff --stat`、`git diff`；只显式 stage 当前 transaction 文件或 hunks，再检查 `git diff --cached --stat` 与 `git diff --cached`。
+- 正常 message 使用 `Publish Agent Engineering Article NN`；不得用 `WIP`、`update` 或一个 commit 合并多篇 Article。Lab 不单独创建正常生产 commit，而是与其 Article 同一 checkpoint。
+- commit 后必须运行 `git status`、`git log -1 --oneline` 与 `git show --stat --oneline HEAD`。message、scope、Lifecycle 或残留任一不符，`ARTICLE_COMMIT_VERIFIED = FAIL`，Factory STOP。
+- Article workspace、published content、`status.md` 与 run-state 的状态更新属于同一逻辑 transaction；如果 Git commit 自引用导致 hash 无法写入自身，`last_successful_commit` 只记录最近一个已知可恢复的 durable checkpoint hint。它不是 blind checkout target、当前 HEAD 的绝对真相或 Resume 的唯一依据。
+- 只有环境即将终止且当前 Article 无法继续时，才允许 repository contract 范围内的明确 `Checkpoint Article NN at <GATE>` recovery commit。它不得标 `PUBLISHED`，不得使用 `Publish` message，run state 必须指向真实 resume Gate，且不得开始下一篇。
+- 不为满足数量制造空 commit；只在本地 commit，不 push、不创建 PR，除非用户另行明确授权。
 
 ## 10. Dependency-aware read policy
 
@@ -195,11 +211,13 @@ Article N 的 Required Reads 至少包括：
 ### 11.1 Normal Article Mode
 
 ```text
-PRECHECK -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_GATE
+PRECHECK -> ARTICLE_KICKOFF -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_GATE
          -> OUTLINE -> AUTHOR_DRAFT -> REVIEW
          -> REVISION -> REVIEW_RECHECK          (when required)
          -> FINAL_GATE -> PUBLISH -> BUILD_VERIFY
-         -> MASTER_STATE_UPDATE -> CHECKPOINT -> PUBLISHED
+         -> MASTER_STATE_UPDATE -> GIT_DIFF_VERIFY
+         -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY
+         -> REPOSITORY_RECONCILIATION -> END_ARTICLE
 ```
 
 Master 只启动当前 Gate 需要的 worker；不为了形式 spawn 无任务角色。
@@ -210,6 +228,7 @@ Master 只启动当前 Gate 需要的 worker；不为了形式 spawn 无任务�
 
 ```text
 PRECHECK
+  -> ARTICLE_KICKOFF
   -> WORKSPACE_INIT
   -> RESEARCH
   -> PRELIMINARY_EVIDENCE
@@ -226,8 +245,11 @@ PRECHECK
   -> PUBLISH
   -> BUILD_VERIFY
   -> MASTER_STATE_UPDATE
-  -> CHECKPOINT
-  -> PUBLISHED
+  -> GIT_DIFF_VERIFY
+  -> ARTICLE_CHECKPOINT_COMMIT
+  -> ARTICLE_COMMIT_VERIFY
+  -> REPOSITORY_RECONCILIATION
+  -> END_ARTICLE
 ```
 
 Lab pipeline ownership：
@@ -266,7 +288,7 @@ Article 23 在 canonical 中是 `Advanced / Optional`。Factory 不得把 Option
 
 Part boundary：Part I `01—04`、Part II `05—11`、Part III `12—17`、Part IV required `18—22`（23 按 Optional policy）、Part V `24—27`、Part VI `28—37`、Part VII `38—44`。
 
-每个 Part 的最后一个实际生产对象 `PUBLISHED` 后，Master 必须启动 fresh Part Auditor，检查：
+每个 Part 的最后一个实际生产对象完成独立 Article commit 并通过 `ARTICLE_COMMIT_VERIFY` 后，Master 必须启动 fresh Part Auditor，检查：
 
 - Concept Drift
 - Glossary Drift
@@ -279,7 +301,7 @@ Part boundary：Part I `01—04`、Part II `05—11`、Part III `12—17`、Part
 - required Lab evidence
 - 当前 Part 特有的 DSH / BuildPilot boundary
 
-存在 `BLOCKER / MAJOR` 时，只把受影响 Article 退回必要状态修复；不得整 Part 无差别重写。Part Audit `PASS` 后才可进入下一 Part。Article 00—01 已作为 Foundation 发布；未来 Part I Audit 在 Article 04 后覆盖 01—04。
+存在 `BLOCKER / MAJOR` 时，只把受影响 Article 退回必要状态修复；不得整 Part 无差别重写。修复完成后使用 `Fix Agent Engineering Article NN after Part X audit` 独立 commit，再重新审计。Part Audit `PASS` 后，其 durable Audit Report / status update 必须使用 `Audit Agent Engineering Part X` 独立 commit 并完成 commit verification，才可进入下一 Part；不得混入下一 Article commit。Article 00—01 已作为 Foundation 发布；未来 Part I Audit 在 Article 04 后覆盖 01—04。
 
 ## 14. Course Final Audit
 
@@ -294,7 +316,7 @@ Article 44 `PUBLISHED` 后必须继续执行 Course Final Audit；此时 Factory
 - course competency coverage；
 - final Hugo build `PASS`。
 
-全部通过后才写 `factory_status = COMPLETE`。
+全部通过后才写 `factory_status = COMPLETE`，并以独立 `Complete Agent Engineering course audit` commit 保存 Final Audit；不得混入 Article 44 checkpoint。
 
 ## 15. Quality degradation signals
 
@@ -319,7 +341,7 @@ Reviewer 与 Part Auditor 应调查下列信号，但不能仅凭信号自动判
 
 ## 17. State update granularity
 
-[course-run-state.md](course-run-state.md) 在以下 transaction-level 事件更新：worker start、Gate pass、Gate fail、Article `PUBLISHED`、Part Audit start / finish、Factory `PAUSED`、Factory Resume、Course `COMPLETE`。Master Orchestrator 是唯一 global state writer；Publisher、Part Auditor 与其他 worker 只返回 recommended transition / update candidate。Master 验证 artifact 和 Gate result 后统一写 Article README lifecycle、`status.md`、run state、Factory checkpoint pointer、Part Audit global status、Course `COMPLETE` state 与必要 canonical publication metadata。不为每个小动作创建 commit；状态更新以 Gate / Transaction 为粒度。
+[course-run-state.md](course-run-state.md) 在以下 transaction-level 事件更新：`ARTICLE_KICKOFF`、worker start、Gate pass、Gate fail、Article `PUBLISHED` candidate、Article Commit Verify、Part Audit start / finish、Factory `PAUSED`、Factory Resume、Course `COMPLETE`。Master Orchestrator 是唯一 global state writer；Publisher、Part Auditor 与其他 worker 只返回 recommended transition / update candidate。Master 验证 artifact 和 Gate result 后统一写 Article README lifecycle、`status.md`、run state、Factory checkpoint pointer、Part Audit global status、Course `COMPLETE` state 与必要 canonical publication metadata。不为每个小动作创建 commit；状态更新以 Gate / Transaction 为粒度，但每篇完成 Article 与每次 Part / Final Audit 都必须遵守各自独立 commit boundary。
 
 ## 18. Static interface dry-run
 
@@ -329,12 +351,15 @@ Reviewer 与 Part Auditor 应调查下列信号，但不能仅凭信号自动判
 READY
   -> START_ARTICLE_02_PRECHECK                  [Master]
   -> PRECHECK PASS                              [Master decision from repository state]
+  -> ARTICLE_KICKOFF                            [Master records transaction ownership]
   -> WORKSPACE_INIT                             [Master creates PLANNED skeleton]
   -> RESEARCH / EVIDENCE_GATE                   [Researcher]
   -> OUTLINE / AUTHOR_DRAFT                     [Author]
   -> REVIEW / REVISION / RECHECK                [Reviewer / Revision Worker]
   -> PUBLISH / BUILD_VERIFY                     [Publisher]
-  -> MASTER_STATE_UPDATE / CHECKPOINT           [Master]
+  -> MASTER_STATE_UPDATE / GIT_DIFF_VERIFY      [Master]
+  -> ARTICLE_CHECKPOINT_COMMIT / VERIFY         [Master]
+  -> REPOSITORY_RECONCILIATION                  [Master]
 ```
 
 Static Result：`PASS`。每一步都有 owner、input、allowed writes、output 与 stop condition；本次只做合同模拟，没有创建 Article 02 workspace。
@@ -342,14 +367,16 @@ Static Result：`PASS`。每一步都有 owner、input、allowed writes、output
 ### Dry Run B｜Article 03 Lab Mode
 
 ```text
-PRECHECK / WORKSPACE_INIT                       [Master]
+PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT     [Master]
   -> PRELIMINARY_EVIDENCE / LAB_DESIGN          [Researcher]
   -> LAB_EXECUTE / LAB_OBSERVATION              [Lab Engineer]
   -> EVIDENCE_MERGE / EVIDENCE_GATE             [Researcher]
   -> OUTLINE / AUTHOR_DRAFT                     [Author]
   -> REVIEW / REVISION / RECHECK                [Reviewer / Revision Worker]
   -> PUBLISH / BUILD_VERIFY                     [Publisher]
-  -> MASTER_STATE_UPDATE / CHECKPOINT           [Master]
+  -> MASTER_STATE_UPDATE / GIT_DIFF_VERIFY      [Master]
+  -> ARTICLE_CHECKPOINT_COMMIT / VERIFY         [Master]
+  -> REPOSITORY_RECONCILIATION                  [Master]
 ```
 
 Static Result：`PASS`。Lab Design、raw observation 与 Evidence interpretation 各有唯一 owner；本次没有实例化 Lab 01 或执行实验。
@@ -358,7 +385,8 @@ Static Result：`PASS`。Lab Design、raw observation 与 Evidence interpretatio
 
 | Interface | Producer | Durable Artifact / Result | Consumer |
 |---|---|---|---|
-| PRECHECK -> WORKSPACE_INIT | Master PRECHECK | Precheck result + canonical metadata | Master WORKSPACE_INIT |
+| PRECHECK -> ARTICLE_KICKOFF | Master PRECHECK | Precheck result + clean transaction boundary | Master ARTICLE_KICKOFF |
+| ARTICLE_KICKOFF -> WORKSPACE_INIT | Master | durable transaction ownership | Master WORKSPACE_INIT |
 | WORKSPACE_INIT -> Researcher | Master | PLANNED workspace skeleton | Researcher |
 | Researcher -> Lab Engineer | Researcher | frozen Lab Design | Lab Engineer |
 | Lab Engineer -> Researcher | Lab Engineer | raw Lab Observation + failure output | Researcher EVIDENCE_MERGE |
@@ -368,7 +396,8 @@ Static Result：`PASS`。Lab Design、raw observation 与 Evidence interpretatio
 | Revision -> Reviewer | Revision Worker | Revision Disposition + changed artifacts | Reviewer Recheck |
 | Reviewer -> Publisher | Reviewer | Final Gate PASS + frozen Draft | Publisher |
 | Publisher -> Master | Publisher | structured Publication Result + recommended transition | Master |
-| Master -> CHECKPOINT | Master | reconciled global state + checkpoint-ready diff | Git checkpoint |
+| Master -> ARTICLE_CHECKPOINT_COMMIT | Master | reconciled global state + verified current-Article-only diff | Git checkpoint |
+| ARTICLE_CHECKPOINT_COMMIT -> NEXT_ARTICLE | Master | verified commit + repository reconciliation | next PRECHECK |
 
 Audit Result：`Missing Producer = NONE`、`Missing Consumer = NONE`、`Ownership Conflict = NONE`。
 
@@ -380,7 +409,8 @@ Audit Result：`Missing Producer = NONE`、`Missing Consumer = NONE`、`Ownershi
 | Independent review | 发现 Workspace Init、Lab Gate order、Lab Design owner、global state writer 与 checkpoint semantics 五个接口断点 |
 | Targeted fix | 只修改 Factory contract、八角色合同、run-state field rule、篇内 workflow 与 Lab template / convention；未新增角色或启动 Article 02 |
 | Final recheck | `CF-IR-F01 CLOSED`、`CF-IR-F02 CLOSED`、`CF-IR-F03 CLOSED`、`CF-IR-F04 CLOSED`、`CF-IR-F05 CLOSED` |
+| Article Kickoff hotfix | 增加显式 `ARTICLE_KICKOFF`、逐篇 checkpoint commit、commit verification、Part / Final Audit 独立 commit 与 next-Article stop line；未启动 Article 02 |
 
 ## 20. Foundation stop line
 
-当前只冻结合同：`factory_status = READY`、`current_article = 02`、`current_gate = PRECHECK`。`START_ARTICLE_02_PRECHECK` 是未来允许动作，不代表已执行。本次 Foundation 任务不得创建 Article 02 workspace、研究 Prompt Engineering、运行 Lab、读取 DSH 源码或实现 BuildPilot。
+当前只冻结合同：`factory_status = READY`、`current_article = 02`、`current_gate = PRECHECK`。`START_ARTICLE_02_PRECHECK` 是未来允许动作，不代表已执行；PRECHECK `PASS` 后仍必须显式执行 `ARTICLE_KICKOFF`，才能创建 workspace。本次 Foundation Hotfix 不得创建 Article 02 workspace、研究 Prompt Engineering、运行 Lab、读取 DSH 源码或实现 BuildPilot。

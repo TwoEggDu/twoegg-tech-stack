@@ -2,7 +2,7 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-19
-- 当前里程碑：Course Factory Foundation Independent Review Fix 已完成；Factory `READY`
+- 当前里程碑：Course Factory Foundation Article Kickoff Hotfix 已完成；Factory `READY`
 - 当前生产对象：`NONE`；Factory pointer 为 Article 02 `PRECHECK`，尚未启动
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
@@ -10,7 +10,7 @@
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 CLOSED`；Lifecycle 继续为 `PUBLISHED`
 - Factory Run State：[course-run-state.md](course-run-state.md)（`READY`）
-- Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`
+- Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - 下一允许动作：`START_ARTICLE_02_PRECHECK`（未执行）
 
 ## 状态图例
@@ -77,5 +77,6 @@
 3. 文章发布后先回写本表，再回写 canonical；根 `doc-plan.md` 只维护系列级路由。
 4. Article 00 已完成 M5：在原 `PLANNED -> RESEARCHING -> EVIDENCE_READY -> OUTLINE_READY -> DRAFTING -> REVIEW -> FINAL` 与 M4.1 `FINAL -> REVIEW -> FINAL` 后，通过发布 Gate 进入 `PUBLISHED`；Evidence 继续为 `PARTIAL`。
 5. Article 01 已完成 A1—A6 Full Production Run：`PLANNED -> RESEARCHING -> EVIDENCE_READY -> OUTLINE_READY -> DRAFTING -> REVIEW -> FINAL -> PUBLISHED`；随后完成 `01-IR-F01` post-publication hotfix，Evidence 继续为 `CONFIRMED`，Lab 为 `N/A`。
-6. Course Factory Foundation 为 `READY`；Article 02 仍为 `PLANNED`。未来下一动作仅为 Article 02 `PRECHECK`，不得把 execution pointer 解释为已经开始生产。
+6. Course Factory Foundation 为 `READY`；Article 02 仍为 `PLANNED`。未来下一动作仅为 Article 02 `PRECHECK`；PRECHECK `PASS` 后必须显式执行 `ARTICLE_KICKOFF`，不得把 execution pointer 解释为已经开始生产。
 7. Foundation Independent Review 已关闭 `CF-IR-F01`—`CF-IR-F05`；只修复 transaction ownership / ordering / resume semantics，没有启动 Article 02。
+8. Foundation Article Kickoff Hotfix 已补齐 `ARTICLE_KICKOFF`、Article checkpoint commit、commit verification 与 next-Article stop line；该 Hotfix 自身必须独立提交，未启动 Article 02。
