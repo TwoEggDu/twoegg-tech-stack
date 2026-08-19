@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 04 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
-- 当前生产对象：Article 04 `PUBLISHED` checkpoint candidate；Mode `NORMAL_ARTICLE`；当前 Gate 为 `GIT_DIFF_VERIFY`
+- 当前里程碑：Fresh Part I Audit 已覆盖 Article 01—04并给出 `PASS`；独立 audit checkpoint 尚待验证
+- 当前生产对象：Part I Audit `PASS` checkpoint candidate；当前 Gate 为 `PART_I_AUDIT_GIT_DIFF_VERIFY`；Article 05 尚未启动
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -27,7 +27,9 @@
 - 当前 Article 03 Checkpoint：`857fe9fdc6baa541ced28d428d0c7fbe07d45ed9`；message / 34-file scope / clean tree / log / show verification `PASS`
 - 当前 Article 04 状态：`PUBLISHED`；Evidence `PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`）；Final Review `PASS / 93`；`04-F01 CLOSED`；Publisher / Build / Master Reconciliation `PASS`；Published Content：`content/ai-empowerment/agent-engineering-04-model-adapter-llm-gateway.md`
 - 当前 Article 04 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1233 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`RUNNING / GIT_DIFF_VERIFY`；下一动作由 Master 完成 Article 04 精确 staging、checkpoint commit 与 commit verification
+- 当前 Article 04 Checkpoint：`ac10060b82d21534a014d7a4bef3b3e03f7bd475`；message / 13-file scope / clean tree / log / show verification `PASS`
+- 当前 Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 3 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 01 / navigation / checkpoint evidence `PASS`
+- Factory Status：`RUNNING / PART_I_AUDIT_GIT_DIFF_VERIFY`；下一动作由 Master 完成 audit-only checkpoint 与 commit verification，之前禁止启动 Article 05
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
@@ -49,11 +51,12 @@
 | [course-run-state.md](course-run-state.md) | 小型、可恢复的 Factory execution pointer；不是第二套课程台账 |
 | [production-workflow.md](production-workflow.md) | 生命周期、状态机、Gate 与发布规则 |
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
+| [Part I Audit](audits/part-i-audit.md) | Article 01—04 的跨篇一致性、Lab、publication 与 checkpoint 审计；Gate `PASS`，3 个 `OPEN MINOR` |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
 | [articles/01-model-api-messages-token/](articles/01-model-api-messages-token/) | Article 01 已通过 A1—A6 Full Production Run 并进入 `PUBLISHED` |
-| [articles/04-model-adapter-llm-gateway/](articles/04-model-adapter-llm-gateway/) | Article 04 已通过 Reviewer / Publisher / Build / Master Reconciliation，当前等待 checkpoint verification |
+| [articles/04-model-adapter-llm-gateway/](articles/04-model-adapter-llm-gateway/) | Article 04 已完成 `PUBLISHED` 与独立 checkpoint verification；当前进入 Part I Audit |
 
 ## 资产边界
 

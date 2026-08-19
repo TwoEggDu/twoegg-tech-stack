@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-20
-- 当前里程碑：Article 04 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
-- 当前生产对象：Article 04；Mode `NORMAL_ARTICLE`；当前 Gate 为 `GIT_DIFF_VERIFY`
+- 当前里程碑：Fresh Part I Audit 已覆盖 Article 01—04并给出 `PASS`；独立 audit checkpoint 尚待验证
+- 当前生产对象：Part I Audit `PASS` checkpoint candidate；当前 Gate 为 `PART_I_AUDIT_GIT_DIFF_VERIFY`；Article 05 尚未启动
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -12,9 +12,10 @@
 - Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1233 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / GIT_DIFF_VERIFY`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / PART_I_AUDIT_GIT_DIFF_VERIFY`）
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
-- 下一允许动作：Master 审计 Article 04 transaction diff、精确 staging、checkpoint commit 与 commit verification
+- Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 3 OPEN MINOR / 0 EDITORIAL`；`PI-F01`—`PI-F03 OPEN`
+- 下一允许动作：Master 完成 audit-only diff、`Audit Agent Engineering Part I` 独立 commit 与 commit verification；此前禁止启动 Article 05
 
 ## 状态图例
 
@@ -31,7 +32,7 @@
 | 01 | 模型调用到底发生了什么：LLM、Model API、Messages 与 Token | I | M | 否 | `PUBLISHED` | `CONFIRMED` | N/A | `NONE`；发布于 2026-08-19；`01-IR-F01 / 01-IR-F02 CLOSED`；`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md` |
 | 02 | Prompt Engineering：任务合同、角色、示例与边界 | I | M | 否 | `PUBLISHED` | `PARTIAL` | N/A | `NONE`；Review `92 / 100 PASS`；Publisher / Build / Master Reconciliation `PASS`；`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md` |
 | 03 | Structured Output：让模型输出成为机器可消费的合同 | I | L | 否 | `PUBLISHED` | `CONFIRMED`（`7 CONFIRMED / 0 PARTIAL / 0 BLOCKED`） | Lab 01 `CONFIRMED / EVIDENCE_MERGED` | `NONE`；Review `PASS / 93`，Publisher / Build / Master Reconciliation `PASS`；checkpoint `857fe9f` verified |
-| 04 | Model Adapter 与 LLM Gateway：Streaming、Error、Retry 和 Provider 差异 | I | M | 否 | `PUBLISHED` | `PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`） | N/A | `NONE`；Final Review `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；checkpoint pending |
+| 04 | Model Adapter 与 LLM Gateway：Streaming、Error、Retry 和 Provider 差异 | I | M | 否 | `PUBLISHED` | `PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`） | N/A | `NONE`；Final Review `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `ac10060b` verified |
 | 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | II | L | 否 | `PLANNED` | `BLOCKED` | Lab 02 `PLANNED / BLOCKED` | Lab fixture 与执行合同未设计 |
 | 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
@@ -84,4 +85,5 @@
 7. Foundation Independent Review 已关闭 `CF-IR-F01`—`CF-IR-F05`；只修复 transaction ownership / ordering / resume semantics，没有启动 Article 02。
 8. Foundation Article Kickoff Hotfix 已补齐 `ARTICLE_KICKOFF`、Article checkpoint commit、commit verification 与 next-Article stop line；独立提交为 `9b75fa7`。Article 02 checkpoint `b359a32` 已验证，Article 03 transaction 已按该边界启动。
 9. Article 03 按 Required Lab Article 流程完成 `PRELIMINARY_EVIDENCE -> LAB_DESIGN -> LAB_EXECUTE -> LAB_OBSERVATION -> EVIDENCE_MERGE -> EVIDENCE_GATE`，随后完成 Outline、Draft、Cycle 1 Review / Revision / Recheck、Publisher、Build、Master Reconciliation 与 checkpoint `857fe9f` verification。
-10. Article 04 已完成 `PRECHECK -> ARTICLE_KICKOFF -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_READY -> OUTLINE_READY -> AUTHOR_DRAFT -> REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL -> PUBLISH -> BUILD_VERIFY -> MASTER_STATE_UPDATE`；Evidence=`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`，Final Review=`PASS / 93`，Publisher / Build / Master Reconciliation=`PASS`；独立 checkpoint 仍待验证。
+10. Article 04 已完成 `PRECHECK -> ARTICLE_KICKOFF -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_READY -> OUTLINE_READY -> AUTHOR_DRAFT -> REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL -> PUBLISH -> BUILD_VERIFY -> MASTER_STATE_UPDATE -> GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；Evidence=`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`，Final Review=`PASS / 93`，Publisher / Build / Master Reconciliation=`PASS`；独立 checkpoint `ac10060b82d21534a014d7a4bef3b3e03f7bd475` 已验证。
+11. Fresh Part I Audit 已在 Article 04 checkpoint verification 后覆盖 Article 01—04；Gate=`PASS`，Findings=`0 BLOCKER / 0 MAJOR / 3 OPEN MINOR / 0 EDITORIAL`。Hugo、Lab 01、navigation、published fidelity 与 checkpoint evidence 均通过；durable report / status 必须以 `Audit Agent Engineering Part I` 独立 commit 验证，Article 05 在此之前保持未启动。
