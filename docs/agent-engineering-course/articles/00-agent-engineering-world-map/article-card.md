@@ -15,7 +15,7 @@
 - LLM / Model 与使用它的 AI Application 有什么区别？
 - Copilot 为什么是产品术语，而不是统一架构标准或 Agent 的固定前置阶段？
 - Agent 与 Agentic 分别描述什么？
-- Product / Application、Host、Agent Runtime 与 Harness 大概位于哪一层？
+- Product / Application、Surface / Entry Point、Host、Agent Runtime 与 Harness 大概位于哪一层？
 - Prompt、Context、Tool、Skill、Workflow、Memory、RAG 大概放在哪里？
 - 后续课程为什么仍要从 Model 开始重新学习？
 
@@ -25,7 +25,7 @@
 
 ## 5. 核心概念
 
-LLM / Model、AI Application、Product、AI Feature、Copilot、Agent、Agentic、Host、Agent Runtime、Harness、Prompt、Context、Tool、Skill、Workflow、Memory、RAG。
+LLM / Model、AI Application、Product、Surface / Entry Point、AI Feature、Copilot、Agent、Agentic、Host、Agent Runtime、Harness、Prompt、Context、Tool、Skill、Workflow、Memory、RAG。
 
 ## 6. 核心心智模型
 
@@ -35,9 +35,11 @@ LLM / Model、AI Application、Product、AI Feature、Copilot、Agent、Agentic�
 User Goal
    ↓
 Product / Application：面向用户的软件 / 产品边界
-   ↓ uses or exposes one or more
-Host：CLI / Web / IDE / Desktop / Unity Editor / CI
-   ↓
+   ↓ provides one or more
+Surface / Entry Point：CLI / Web / IDE / Desktop / Unity Editor / CI
+   ⋮ mapping requires implementation evidence
+Host：承载或集成 Agent 执行的宿主程序、进程或运行环境
+   ↓ course responsibility view
 Harness：Runtime 周围的可复用工程控制与约束（课程工作定义）
    ↓
 Agent Runtime：Model Call / Tool Dispatch / Loop / State / Stop（课程工作定义）
@@ -53,7 +55,7 @@ External World
 
 1. 从一个普通 LLM App 开始：对照普通问答功能与 Tool-using Application。
 2. Copilot、Agent 与 Agentic：建立产品定位、执行系统与描述性术语的初步边界。
-3. Product / Application、Host、Harness 与 Runtime：把软件边界、具体入口、横切工程控制与执行内核分开定位。
+3. Product / Application、Surface、Host、Harness 与 Runtime：把软件边界、可观察入口、内部承载环境、横切工程控制与执行职责分开定位。
 4. 横向能力放在哪里：只定位 Prompt、Context、Tool、Skill、Workflow、Memory 与 RAG。
 5. 地图不是术语百科：不靠产品名称反推统一架构，并桥接到 Model API。
 
@@ -75,7 +77,7 @@ BuildPilot 在本篇只作为未来的专用工程 Agent 例子，不介绍架�
 
 ## 12. 最容易混淆的概念
 
-需持续保留的边界清单：Model / Application、Product / Host、Copilot / Agent、Agentic / 架构类型、Runtime / Harness、Harness / Host、RAG / Memory。
+需持续保留的边界清单：Model / Application、Product / Surface、Surface / Host、Host / Runtime、Copilot / Agent、Agentic / 架构类型、Runtime / Harness、RAG / Memory。
 
 ## 13. 本篇明确不讲什么
 
@@ -85,7 +87,7 @@ BuildPilot 在本篇只作为未来的专用工程 Agent 例子，不介绍架�
 
 - 一个调用模型做摘要的按钮为什么未必是 Agent？
 - Agentic Workflow 是否一定包含一个独立 Agent Runtime？
-- CLI 与 Agent Runtime 是同一层吗？
+- CLI Surface 与 Host / Agent Runtime 是同一层吗？为什么映射需要实现证据？
 - 为什么看完地图后仍需从 Model API 开始？
 
 ## 15. 篇幅等级 / 课程权重
@@ -94,4 +96,4 @@ BuildPilot 在本篇只作为未来的专用工程 Agent 例子，不介绍架�
 
 ## 16. 概念成熟度
 
-`Introduction`。Agent、Agentic、Copilot、Product、Host、Runtime、Harness 以及横向能力均只建立位置感，正式机制留给后续文章。
+`Introduction`。Agent、Agentic、Copilot、Product、Surface、Host、Runtime、Harness 以及横向能力均只建立位置感，正式机制留给后续文章。

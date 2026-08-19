@@ -2,7 +2,7 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-19
-- 当前里程碑：M4 Article 00 Formal Review & Revision 已完成
+- 当前里程碑：M4.1 Article 00 Human Review Fix 已完成
 - 当前生产对象：Article 00
 
 ## 状态图例
@@ -16,7 +16,7 @@
 
 | ID | Article | Part | Weight | Optional | Lifecycle | Evidence | Lab | 当前阻塞项 |
 |---:|---|---|:---:|:---:|---|---|---|---|
-| 00 | Agent Engineering 世界地图：从 Model、Agent 到 Harness / Host | 导论 | S | 否 | `FINAL` | `PARTIAL` | N/A | `NONE`；Formal Review `PASSED_WITH_NOTES`，总分 92 / 100；下一步仅 M5 Article 00 Publish |
+| 00 | Agent Engineering 世界地图：从 Model、Agent 到 Harness / Host | 导论 | S | 否 | `FINAL` | `PARTIAL` | N/A | `NONE`；M4.1 `HR-F01 / HR-F02 RESOLVED`，`New Core Claims = 0`；下一步仅 M5 Article 00 Publish |
 | 01 | 模型调用到底发生了什么：LLM、Model API、Messages 与 Token | I | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 02 | Prompt Engineering：任务合同、角色、示例与边界 | I | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 03 | Structured Output：让模型输出成为机器可消费的合同 | I | L | 否 | `PLANNED` | `BLOCKED` | Lab 01 `PLANNED / BLOCKED` | Lab fixture 与 Provider 未固定 |
@@ -67,4 +67,4 @@
 1. 状态变化必须对应 [生产工作流](production-workflow.md)中的 Gate 证据。
 2. 一次更新同时写清 Evidence、Lab 和 Blocker，禁止只改 Lifecycle。
 3. 文章发布后先回写本表，再回写 canonical；根 `doc-plan.md` 只维护系列级路由。
-4. Article 00 已完成 M4：`PLANNED -> RESEARCHING -> EVIDENCE_READY -> OUTLINE_READY -> DRAFTING -> REVIEW -> FINAL`；Evidence 继续为 `PARTIAL`，下一允许动作仅为 M5 Article 00 Publish。
+4. Article 00 已完成 M4.1：在原 `PLANNED -> RESEARCHING -> EVIDENCE_READY -> OUTLINE_READY -> DRAFTING -> REVIEW -> FINAL` 后执行 `FINAL -> REVIEW -> FINAL` 人工评审校正；Evidence 继续为 `PARTIAL`，下一允许动作仅为 M5 Article 00 Publish。

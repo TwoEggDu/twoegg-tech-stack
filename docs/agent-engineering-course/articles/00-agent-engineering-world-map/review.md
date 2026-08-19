@@ -1,7 +1,7 @@
 # Article 00 Review Record
 
 - Lifecycle Status：`FINAL`
-- Review Status：`M4_FORMAL_REVIEW_COMPLETE`
+- Review Status：`M4_1_HUMAN_REVIEW_FIX_COMPLETE`
 - Formal Draft Review Gate：`PASSED_WITH_NOTES`
 - Checklist：[Agent Engineering 课程审查清单](../../templates/review-checklist.md)
 - Reviewer：`Codex self-review`
@@ -195,4 +195,36 @@ M4 Technical / Evidence / Course / Reader Value 正式 Review 已完成；完整
 - Rationale：四类正式 Review 均为 `PASS / PASS_WITH_NOTES`，无 unresolved blocker；总分 `92 / 100` 达到发布候选阈值。所有首轮 Findings 已关闭，`00-C06a` 的 `PARTIAL` 被保留而未包装成确定事实。
 - Remaining Notes：版本敏感产品事实只覆盖 `2026-08-19` 的官方公开资料；Harness 的行业统一定义仍未得到充分证据；当前两张图仍是 Draft 内 ASCII 版本，M4 未生成最终图片。
 - Evidence Status：`PARTIAL`（保持真实状态）
+- Next Allowed Action：`M5｜Article 00 Publish`，不自动执行。
+
+## M4.1 Human Independent Review
+
+- Lifecycle Trace：`FINAL -> REVIEW -> FINAL`
+- Review Scope：仅处理人工独立 Review 指定的两个 `MAJOR` Finding；不重跑 M4，不新增研究、Claim、章节、Lab、DSH 源码或 BuildPilot 内容。
+- Historical Note：上方 M1—M4 记录按当时 Review 结果保留；其中将 CLI / IDE / Web 等入口视为 Host、将 Model Call 视为共同技术依赖根的表述，由本节校正并取代为当前口径。
+
+### Human Review Findings
+
+| Finding ID | Severity | Status | Finding | Revision |
+|---|---|---|---|---|
+| `HR-F01` | `MAJOR` | `RESOLVED` | 旧稿把 CLI、IDE、Web、Desktop、CI、Unity Editor Integration 等公开入口直接等同 Host，混淆外部可观察 Surface 与内部承载职责。 | 新增一句 `Surface / Entry Point` 最小定义；Host 收窄为承载或集成 Agent 执行 / Agent Runtime 的宿主程序、进程或运行环境；Figure 1、产品卡、glossary、Definition Matrix 与学习检查统一明确 `Surface != Host`，且映射需要独立实现证据。 |
+| `HR-F02` | `MAJOR` | `RESOLVED` | 旧稿把 Runtime、Tool、Context、Memory、Harness 等都写成最终依赖一次 Model Call，误把课程顺序写成运行时硬依赖。 | Section 6 明确这些能力可独立设计与测试、在 Agent 任务中协作；路线图标为 `Learning Dependency / Course Progression`，并声明 Model API 只是课程选择的最简单可观察学习起点，不是唯一技术依赖根。 |
+
+### Targeted Consistency Verification
+
+| Dimension | Outcome | Verification |
+|---|---|---|
+| Technical | `PASS` | Draft、Figure 1、三个产品卡、Article Card、Outline、glossary 与 Definition Matrix 均不再把 Surface 写成 Host；Section 6 不再建立 Model Call 硬依赖。 |
+| Evidence | `PASS_WITH_NOTES` | 没有新增产品内部事实或 Core Claim；`00-C07 / 00-E10` 只做课程定义收窄；Evidence 总状态继续为 `PARTIAL`。 |
+| Course | `PASS` | 六段 Teaching Spine 与 Article 01 桥接保留；路线图明确是课程推进，不是运行时依赖图。 |
+| Reader | `PASS` | 只增加一句 Surface 定义，并在主图与产品卡应用；没有新增 Surface Architecture 章节或扩大阅读负担。 |
+
+- New Core Claims：`0`
+- Remaining Human Review Findings：`0`
+
+### M4.1 Gate Decision
+
+- Decision：`Article 00 is FINAL`
+- Rationale：`HR-F01` 与 `HR-F02` 均已解决，四项定向一致性验证通过，无新 Claim、无新 Blocker；原 `00-C06a=PARTIAL` 证据边界保持不变。
+- Evidence Status：`PARTIAL`
 - Next Allowed Action：`M5｜Article 00 Publish`，不自动执行。

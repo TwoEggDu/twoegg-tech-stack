@@ -6,13 +6,14 @@
 |---|---|---:|---:|---|
 | LLM / Model | 依据输入上下文生成输出的模型能力；本身不是完整应用或 Agent | 00 | 01 | 稳定抽象；具体 API、部署和版本留给 01 |
 | AI Application | 把模型调用与软件逻辑、数据、工具或界面组合成可用能力的应用 | 00 | 01—04 | 可以是单次调用、确定性流程，也可以包含 Agent |
-| Product | 面向用户交付的软件 / 产品边界，可以使用或暴露一个或多个 Host | 00 | 00 | 产品术语；与 AI Application 可以重叠，但不主张在所有语境下严格同义 |
+| Product | 面向用户交付的软件 / 产品边界，可以提供一个或多个 Surface / Entry Point | 00 | 00 | 产品术语；与 AI Application 可以重叠，但不主张在所有语境下严格同义 |
+| Surface / Entry Point | 产品对外可观察的使用入口，例如 CLI、IDE、Web、Desktop、CI Integration、Unity Editor Integration | 00 | 00 | 产品 / 可观察术语；Surface 不等于 Host，二者映射需要实现证据 |
 | Copilot | 厂商定义的产品 / 产品族名称，可包含同步辅助和 Agentic 能力 | 00 | 00 | 产品术语；不对应固定架构层，也不是 Agent 的前置阶段 |
 | Agent | 围绕用户目标，由模型参与决定推进方式，并通过行动 / 工具与反馈处理多步任务的软件系统 | 00 | 08 | 稳定工程核心；Loop、State、Stop 的正式定义留给 08 |
 | Agentic | 不同生态用来描述自主行为、Agent 模式或更广义 LLM 系统的词 | 00 | 00 | 生态依赖；课程只用作程度 / 特征描述，不作为严格类型 |
 | Agent Runtime | 本课程对 Agent 执行职责的称呼，包括模型调用、工具分派、循环、状态 / continuation 与停止 | 00 | 25 | 课程工作定义；命名、边界和承载者随框架变化 |
 | Harness | 本课程对 Runtime 周围可复用工程控制与约束层的称呼 | 00 | 24—27 | 课程工作定义；现有证据不足以支持统一行业定义，也不等同 DSH 产品全貌 |
-| Host | 本课程对具体运行或集成入口的称呼，例如 CLI、IDE、Web、Desktop、CI、Unity Editor | 00 | 25、29 | 课程工作定义；一个 Product 可暴露多个 Host，公开入口不能反推内部 Runtime |
+| Host | 本课程对承载或集成 Agent 执行 / Agent Runtime 的具体宿主程序、进程或运行环境的称呼 | 00 | 25、29 | 课程工作定义；多个 Surface 可共享 Host，一个 Surface 也可能涉及多个运行组件，映射需独立证据 |
 | Capability | Agent 可被授予和治理的一类能力契约 | 00 | 26 | 不等同某一个具体 Tool |
 | Provider | 某类模型、工具或基础设施契约的可替换实现 | 00 | 04、31 | Provider 差异需要 adapter/seam 吸收 |
 | Prompt | 提供给模型的任务、指令、示例与输出要求 | 00 | 02 | 只是 Context 的一部分 |

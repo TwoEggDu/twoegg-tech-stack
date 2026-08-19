@@ -101,23 +101,22 @@ Agentic 的边界更依赖具体生态。Anthropic 用 agentic systems 同时讨
 
 ## 三、从 Product 到 Runtime：先学职责，不猜文件夹
 
-现在假设我们面对的是一款 Coding Agent 产品。它可能同时提供终端、IDE、Web，甚至 CI 集成。用户看到的是不同入口，但这不代表产品内部有三个彼此独立的 Agent Runtime。
+现在假设我们面对的是一款 Coding Agent 产品。它可能同时提供终端、IDE、Web，甚至 CI 集成。用户看到的是不同的 Surface / Entry Point（产品对外可观察的使用入口），但这不代表产品内部有三个彼此独立的 Agent Runtime，也不能据此判断有几个 Host。
 
 为了让后续课程能稳定讨论这些问题，我们采用下面这张职责导航图：
 
 ```text
 ┌──────────── 用户 / 产品观察视角 ────────────┐
 │ User Goal → Product / Application          │
-│               ├─ CLI                       │
-│               ├─ IDE                       │
-│               ├─ Web / Desktop             │
-│               └─ CI / Unity Editor         │
+│               └─ Surfaces / Entry Points   │
+│                  CLI / IDE / Web / Desktop │
+│                  CI / Unity Editor         │
 └────────────────────────────────────────────┘
                       ⋮
-          课程分析映射（不是部署调用链）
+     公开 Surface 到内部 Host 的映射需要实现证据
                       ⋮
 ┌──────────── 课程工程职责视角 ──────────────┐
-│ Host          具体运行或集成入口            │
+│ Host          承载或集成 Agent 执行的环境    │
 │ Agent Runtime Agent 的执行职责              │
 │ Harness       Runtime 周围的复用控制与约束   │
 │ Model / Tool / State / External World       │
@@ -127,11 +126,13 @@ Agentic 的边界更依赖具体生态。Anthropic 用 agentic systems 同时讨
 
 > **Figure 1｜Agent Engineering 课程职责导航**
 >
-> **这是一张课程导航图，不是通用物理部署拓扑，也不表示固定调用顺序。**现实系统可以合并或继续拆分这些职责；图中尤其没有声称每个产品都存在独立的 Harness 模块。
+> **这是一张课程导航图，不是通用物理部署拓扑，也不表示固定调用顺序。**公开 Surface 到内部 Host 的映射需要独立的实现证据：多个 Surface 可以共享一个 Host，一个 Surface 也可能涉及多个运行组件。现实系统可以合并或继续拆分这些职责；图中尤其没有声称每个产品都存在独立的 Harness 模块。
 
 **Product / Application** 是面向用户的软件边界。Product 更强调交付物，Application 更强调承载模型与软件逻辑的应用；两者常有重叠，这里不强求严格同义。
 
-**Host** 是课程对具体运行或集成入口的称呼，例如 CLI、IDE、Web、Desktop、CI 或 Unity Editor。同一 Product 可以暴露多个 Host；入口只证明“用户可以从这里使用”，不能证明内部 Runtime 怎样分层。
+**Surface / Entry Point** 是产品对外可观察的使用入口，例如 CLI、IDE、Web、Desktop、CI Integration 或 Unity Editor Integration；一个 Product 可以提供多个 Surface。
+
+**Host** 是课程对承载或集成 Agent 执行 / Agent Runtime 的具体宿主程序、进程或运行环境的称呼。Surface 不等于 Host；只看到入口，既不能确定它由哪个 Host 承载，也不能证明内部 Runtime 怎样分层。
 
 **Agent Runtime** 是课程对 Agent 执行职责的称呼，用来组织模型调用、工具分派、任务推进、状态延续与停止。职责可以由应用、SDK、托管平台或其他模块承载，不要求项目里真有一个叫 `AgentRuntime` 的程序集。
 
@@ -141,7 +142,7 @@ Agentic 的边界更依赖具体生态。Anthropic 用 agentic systems 同时讨
 
 因此，本课程只声明自己的学习约定：后续用 Harness 讨论 Runtime 周围可复用的工程控制与约束。它不要求产品中存在同名文件夹或独立模块；更完整的能力边界和设计取舍留到 Harness Engineering 部分。
 
-地图要留下的是职责判断：Product 是交付边界，Host 是入口，Runtime 关注执行，Harness 组织执行周围的工程约束。目录名、产品名或 UI 入口都不能代替职责验证。
+地图要留下的是职责判断：Product 是交付边界，Surface 是外部可见入口，Host 是内部承载或集成环境，Runtime 关注执行，Harness 组织执行周围的工程约束。目录名、产品名或 UI 入口都不能代替职责验证。
 
 ## 四、七个横向术语，先知道它们在解决什么
 
@@ -171,7 +172,7 @@ Prompt / Context / Tool / RAG
 
 产品或生态自身的用法（边界随语境变化）
 ────────────────────────────────
-Product / Copilot
+Product / Surface / Copilot
 Agentic / Skill / Workflow / Memory（具体边界）
 
 课程为组织学习采用的工作定义（显式标注来源）
@@ -191,27 +192,27 @@ Host / Agent Runtime / Harness
 
 ### Claude Code
 
-**第一问｜哪一层：**从用户视角，它是 Coding Agent 产品；按课程地图，terminal、IDE、desktop、web 是不同 Host。
+**第一问｜哪一层：**从用户视角，它是 Coding Agent 产品；terminal、IDE、desktop、web 是官方公开的不同 Surface / Entry Point，不是已经确认的 Host。
 
 **第二问｜定义来源：**[官方文档](https://code.claude.com/docs/en/overview)把它描述为 agentic coding tool，并公开读取代码库、编辑文件和运行命令等能力。
 
-**第三问｜证据边界：**这些事实能确认产品定位、能力和入口，不能证明内部怎样划分 Harness、Runtime、Memory 或 Workflow。
+**第三问｜证据边界：**这些事实能确认产品定位、能力和 Surface，不能证明有几个 Host，也不能证明内部怎样划分 Harness、Runtime、Memory 或 Workflow。
 
 ### Codex CLI
 
-**第一问｜哪一层：**Codex CLI 是终端中的产品入口；按课程地图，它首先是 Host，不等于 Runtime。
+**第一问｜哪一层：**Codex CLI 是公开的 CLI Surface / Entry Point；Host 是位于这个入口之后的课程分析抽象，不能从产品名直接确认。
 
 **第二问｜定义来源：**[Codex CLI 官方文档](https://learn.chatgpt.com/docs/codex/cli)确认它能在本地仓库检查和编辑文件、运行命令，并支持交互及脚本 / CI 场景。
 
-**第三问｜证据边界：**这些事实不能证明内部采用本课程的 Host / Harness / Runtime 分层，也不能证明不同 Codex 入口的内部结构完全相同。
+**第三问｜证据边界：**这些事实不能证明该 Surface 如何映射到 Host，也不能证明内部采用本课程的 Host / Harness / Runtime 分层。
 
 ### DeepSeek Harness
 
-**第一问｜哪一层：**从公开视角，它首先是一套可运行的开源产品；名称里的 Harness 是项目自我定位，不自动等同于课程定义。
+**第一问｜哪一层：**从公开视角，它首先是一套可运行的开源产品；公开的 Web UI 是 Surface，名称里的 Harness 是项目自我定位，二者都不自动等同于课程的 Host、Runtime 或 Harness 定义。
 
 **第二问｜定义来源：**[官方仓库](https://github.com/deepseek-ai/deepseek-harness)称它为 open-source agent harness，标明 developer preview，并公开 Web UI 运行入口。
 
-**第三问｜证据边界：**这些事实不证明它内部等同于本课程的 Harness 定义；本篇也没有固定源码 commit、研究内部结构或验证运行稳定性。
+**第三问｜证据边界：**`Product Fact != Surface != Host != Runtime Architecture`；这些公开事实之间不能直接互相替代。本篇也没有固定源码 commit、研究内部结构或验证运行稳定性。
 
 这三张卡都指向同一个工程习惯：公开入口、可见能力和产品自我定位是事实；内部模块边界需要另一组证据。我们可以用产品帮助理解地图，但不能倒过来用地图填补产品没有公开的部分。
 
@@ -219,9 +220,9 @@ Host / Agent Runtime / Harness
 
 ## 六、看完 Harness，为什么下一篇反而回到 Model API
 
-到这里，我们看到了 Agent、Runtime、Harness、Context、Memory、Tool、RAG，但这张地图只是路线索引，还没有建立任何一层的可验证机制。Runtime 调模型、Tool 表达请求、Context 超限、Memory 保存信息、Harness 控制成本与失败，最终都依赖同一个最小可观察单元：应用向 Model 发起一次调用并拿到结果。
+到这里，我们看到了 Agent、Runtime、Harness、Context、Memory、Tool、RAG，但这张地图只是路线索引，还没有建立任何一层的可验证机制。Tool Runtime、Context Assembly、Memory、Permission、Trace、Checkpoint 和 Harness 都可以被独立设计与测试；当它们参与一次 Agent 任务时，才需要与 Model、Tool、Context、State 等职责协作。课程把一次 Model API 调用选作最简单、最容易观察输入输出的学习起点，而不是把它声明成所有能力唯一的技术依赖根。
 
-因此，本课程选择从底向上生长：
+因此，本课程选择按下面的 Learning Dependency / Course Progression 从底向上生长：
 
 ```text
 Model
@@ -239,11 +240,11 @@ Harness Engineering
 Evidence-first Source Reading and Design
 ```
 
-这不是所有团队构建 Agent 的唯一顺序，而是这门课程为了让每一层都可解释、可验证而采用的依赖顺序。
+这是一张学习依赖 / 课程推进图，不是运行时依赖图，也不是所有团队构建 Agent 的唯一顺序。Model API 是课程选择的可观察学习起点，不是 Tool、Memory、Trace 或 Harness 存在的唯一技术前提。
 
 以后遇到一个陌生 AI 产品，可以把本文的三问重新拿出来：它在描述哪一层？这是外部事实还是工作定义？现有证据允许推断到哪里？只要这三个问题还能回答，产品名字和生态术语再多，也不至于重新混成一团。
 
-下一篇将回到整条链路最小、也最容易被忽略的起点：**模型调用到底发生了什么——LLM、Model API、Messages 与 Token。**
+下一篇将回到这门课程最小、也最容易观察的学习起点：**模型调用到底发生了什么——LLM、Model API、Messages 与 Token。**
 
 ## Learning Check
 
@@ -251,7 +252,7 @@ Evidence-first Source Reading and Design
 
 1. 一个只调用一次 LLM 的摘要应用，为什么不自动是 Agent？
 2. 产品名字叫 Copilot，为什么不能判断它比 Agent“低一级”？
-3. 一个产品同时有 CLI、IDE 和 Web，为什么不能把这些入口当成 Runtime？
+3. 一个产品同时有 CLI、IDE 和 Web，为什么不能把这些 Surface 直接当成 Host 或 Runtime？
 4. 为什么本课程可以使用 Harness 这个词，却不能把它写成行业统一标准？
 5. 为什么 Article 00 讲完 Harness 后，Article 01 反而回到 Model API？
 
@@ -259,8 +260,8 @@ Evidence-first Source Reading and Design
 
 1. 使用 Model 只能证明它是 AI Application；Agent 还涉及围绕目标、由模型参与决定推进方式，并通过行动与反馈处理多步任务。
 2. Copilot 是产品语境中的名称，已经观察到的官方用法同时覆盖辅助和 Agentic 能力，名称本身不是架构等级。
-3. CLI、IDE、Web 是具体 Host；它们证明使用入口，不证明内部执行职责怎样划分。
+3. CLI、IDE、Web 是可观察的 Surface / Entry Point，不是已经确认的 Host；Surface 到 Host / Runtime 的映射需要独立实现证据。
 4. 已观察到的官方 harness 用法含义不同，有限样本不足以支持统一行业定义；课程只能明确声明自己的工作定义。
-5. 地图提供位置，Model 调用才是后续 Tool、Runtime、Context、Memory 与 Harness 能力共同依赖的最小可观察基础。
+5. Model API 提供最简单的可观察输入输出边界，适合作为课程起点；其他能力可以独立设计和测试，并在 Agent 任务执行时与模型及其他职责协作。
 
 如果这篇只留下一句话：**面对 Agent 世界的新名词，先拆概念层，再辨定义来源，最后把推断停在证据边界上。**

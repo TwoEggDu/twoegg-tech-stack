@@ -14,14 +14,14 @@
 
 ## Intended Reader Takeaway
 
-读者遇到一个 AI / Agent 产品时，不再只问“它是不是 Agent”，而会先区分：这是模型能力、应用 / 产品、具体 Host，还是课程用于解释工程职责的 Runtime / Harness 抽象；同时知道哪些是公开事实，哪些只是课程定义，哪些必须留待后续机制篇验证。
+读者遇到一个 AI / Agent 产品时，不再只问“它是不是 Agent”，而会先区分：这是模型能力、应用 / 产品、可观察 Surface，还是课程用于解释工程职责的 Host / Runtime / Harness 抽象；同时知道哪些是公开事实，哪些只是课程定义，哪些必须留待后续机制篇验证。
 
 ## Teaching Spine
 
 1. 用“同一讨论混入产品名、行为描述和工程层名”的识别困难建立问题，而不是从术语词典开场。
 2. 先切开最底层误解：Model 是可调用能力，AI Application 是承载软件边界。
 3. 再处理名称混用：Copilot 是产品术语，Agent 有地图级稳定核心，Agentic 只作生态相关的程度 / 特征描述。
-4. 引入本课程导航图：Product / Application 可使用或暴露一个或多个 Host；Host 之下再定位 Harness 与 Agent Runtime。
+4. 引入本课程导航图：Product / Application 可以提供一个或多个 Surface；Surface 到内部 Host 的映射需要实现证据，再在课程职责视角定位 Harness 与 Agent Runtime。
 5. 立即声明导航图的证据等级：Product 事实、课程工作定义与生态依赖术语不能使用同一种措辞强度。
 6. 把 Prompt、Context、Tool、Skill、Workflow、Memory、RAG 放到地图上，但每个词只给一句定位与后续路由。
 7. 用 Claude Code、Codex、DeepSeek Harness 三张小卡验证“公开入口可观察、内部架构不可反推”，不把产品当作架构样板。
@@ -80,23 +80,23 @@
 3. 展示 Agentic 的生态差异，并声明课程只把它当程度 / 特征描述。
 4. 以“分类帮助导航，不替厂商定义产品”收束。
 
-## Section 3｜课程导航主图：Product、Host、Harness 与 Runtime
+## Section 3｜课程导航主图：Product、Surface、Host、Harness 与 Runtime
 
 - Teaching Question：一个面向用户的 Agent 产品、它的 CLI / IDE / Web 入口、执行内核和工程控制层为什么要分开看？
-- Core Thesis：在本课程导航中，Product / Application 是面向用户的软件边界，可以使用或暴露一个或多个 Host；Host 是具体运行 / 集成入口；Harness 是 Runtime 周围可复用的工程控制与约束层；Agent Runtime 是承担模型调用、工具分派、循环、状态 / continuation 与停止等执行职责的内核抽象。
+- Core Thesis：在本课程导航中，Product / Application 是面向用户的软件边界；Surface / Entry Point 是 CLI、IDE、Web 等外部可观察入口；Host 是承载或集成 Agent 执行 / Agent Runtime 的具体宿主程序、进程或运行环境；Harness 是 Runtime 周围可复用的工程控制与约束层；Agent Runtime 是承担模型调用、工具分派、循环、状态 / continuation 与停止等执行职责的内核抽象。Surface 不等于 Host，二者映射需要独立实现证据。
 - Claim IDs：`00-C05`、`00-C06a`、`00-C06b`、`00-C07`
 - Evidence IDs：`00-E07`、`00-E08`、`00-E09`、`00-E10`
-- Definition Type：`Product = PRODUCT_TERM`；`Host / Harness / Agent Runtime = COURSE_WORKING_DEFINITION`；`harness` 的外部用法证据为 `PARTIAL`
+- Definition Type：`Product / Surface = PRODUCT_TERM`；`Host / Harness / Agent Runtime = COURSE_WORKING_DEFINITION`；`harness` 的外部用法证据为 `PARTIAL`
 - Wording Strength：始终使用“本课程用……指代”“导航图把……分开”；只说“已观察到的官方 harness 用法含义不同、当前样本不足以支持统一标准”，不得升级为全行业断言。
-- Planned Example：同一个 Product 同时暴露 terminal、IDE、Web 三个 Host 的抽象例；不绑定具体产品内部模块。
+- Planned Example：同一个 Product 同时提供 terminal、IDE、Web 三个 Surface 的抽象例；不预设它们与内部 Host 的数量或映射。
 - Planned Diagram：`Figure 1｜课程导航模型`，见下方图表规格。
 - Scope Boundary / Not Covered：不把图当部署拓扑；不声称每个产品都有独立 Harness 模块；不列 Policy、Permission、Session、Trace、Budget、Recovery 能力；不解释 Runtime 的具体循环。
 - Bridge：主图给出了纵向位置，但 Prompt、Context、Tool、Skill、Workflow、Memory、RAG 不是简单的下一层节点，需要换成横向路由视角。
 
 ### Section 3 展开节奏
 
-1. 先拆 Product 与 Host：产品是交付边界，Host 是具体入口，一个产品可有多个 Host。
-2. 再拆 Host 与 Runtime：看见 CLI / IDE / Web 只能证明入口，不能证明执行职责如何实现。
+1. 先拆 Product 与 Surface：产品是交付边界，Surface 是外部可观察入口，一个产品可有多个 Surface。
+2. 再拆 Surface、Host 与 Runtime：Host 是承载或集成 Agent 执行的内部课程抽象；看见 CLI / IDE / Web 不能确定 Host 数量，也不能证明执行职责如何实现。
 3. 用课程 Proposal 引入 Runtime 和 Harness，并紧邻放置定义等级。
 4. 用 Harness 的两个不同官方用法解释“为什么课程必须声明自己的定义”，不做行业普查结论。
 5. 展示 Figure 1，并在图注中写明“学习导航，不是通用运行架构”。
@@ -129,7 +129,7 @@
 ## Section 5｜三个产品小卡：公开事实不是内部架构
 
 - Teaching Question：从 Claude Code、Codex、DeepSeek Harness 的官方公开资料中，哪些信息可以直接使用，哪些推断必须停止？
-- Core Thesis：产品文档可以证明公开定位、能力和 Host；仅凭名称、入口或界面不能证明内部采用本课程的 Host / Harness / Runtime 分层。
+- Core Thesis：产品文档可以证明公开定位、能力和 Surface；仅凭名称、入口或界面不能证明 Surface 到 Host 的映射，也不能证明内部采用本课程的 Host / Harness / Runtime 分层。
 - Claim IDs：`00-C09a`、`00-C09b`、`00-C09c`；边界复用 `00-C07`
 - Evidence IDs：`00-E13`、`00-E14`、`00-E15`、`00-E10`
 - Definition Type：`PRODUCT_FACT`；不把产品自称转换为课程架构事实
@@ -143,18 +143,18 @@
 
 | Product | Public Facts（最多两点） | Does Not Prove（固定一条） | Evidence |
 |---|---|---|---|
-| Claude Code | 官方定位为 agentic coding tool；公开 terminal / IDE / desktop / web 等入口及读写代码、运行命令能力 | 不证明内部 Harness / Runtime / Memory / Workflow 如何划分 | `00-E13` |
-| Codex CLI | 官方公开本地仓库检查、编辑和运行命令；支持交互及脚本 / CI 场景 | 不证明 CLI 等同 Runtime，也不证明不同 surface 内部相同 | `00-E14` |
-| DeepSeek Harness | 官方自称开源 agent harness；当前为 developer preview，并公开 Web UI 入口 | 不证明其内部等同课程 Harness 定义，也不证明已稳定运行 | `00-E15` |
+| Claude Code | 官方定位为 agentic coding tool；公开 terminal / IDE / desktop / web 等 Surface 及读写代码、运行命令能力 | 不证明这些 Surface 对应几个 Host，也不证明内部 Harness / Runtime / Memory / Workflow 如何划分 | `00-E13` |
+| Codex CLI | 官方公开本地仓库检查、编辑和运行命令；支持交互及脚本 / CI 场景 | 只证明 CLI Surface，不证明它如何映射到 Host / Runtime | `00-E14` |
+| DeepSeek Harness | 官方自称开源 agent harness；当前为 developer preview，并公开 Web UI Surface | Product Fact、Surface 都不证明其内部等同课程 Host / Harness / Runtime 定义，也不证明已稳定运行 | `00-E15` |
 
 ## Section 6｜地图之后，为什么课程仍从 Model 开始
 
 - Teaching Question：既然最终关心 Agent、Harness 与工程治理，为什么 Article 01 不直接进入 Harness？
-- Core Thesis：地图只给出依赖关系与阅读位置；Runtime、Harness、Context、Memory、RAG 等能力最终都建立在可理解、可观测的模型调用之上，因此课程必须从 Model API、Messages 与 Token 逐层生长。
+- Core Thesis：Tool Runtime、Context Assembly、Memory、Permission、Trace、Checkpoint、Harness 等能力可以独立设计与测试，并在 Agent 任务执行时协作；课程选择最容易观察输入输出的 Model API 调用作为学习起点，不把它声明为这些能力唯一的技术依赖根。
 - Claim IDs：`00-C01`、`00-C08`
 - Evidence IDs：`00-E01`、`00-E12`；课程顺序以 canonical series plan 为边界
 - Definition Type：`COURSE_NAVIGATION_PROPOSAL`
-- Wording Strength：使用“课程将”“本课程按依赖顺序”；不得写成所有团队构建 Agent 的唯一顺序。
+- Wording Strength：使用“课程将”“学习依赖 / 课程推进”；明确不是运行时依赖图，也不得写成所有团队构建 Agent 的唯一顺序。
 - Planned Example：压缩成六站路线，不复制 45 篇目录：`Model -> Output Contract / Adapter -> Tool / Loop / Workflow -> Context / Memory / RAG / Skill -> Governance -> Harness -> Evidence-first Case / Design`。
 - Planned Diagram：不新增主图；可复用 Figure 1 的“向下理解、向上组合”阅读提示。
 - Scope Boundary / Not Covered：不介绍 Article 01 的 API 细节，不展开后续七个 Part 的文章摘要，不把 BuildPilot 写成已实现系统。
@@ -168,17 +168,19 @@
 
 ## Planned Figures
 
-### Figure 1｜课程导航模型：从 Product 的多个 Host 到执行职责
+### Figure 1｜课程导航模型：从 Product 的多个 Surface 到内部职责
 
 ```text
 User Goal
    ↓
 Product / Application
-   ↓ uses or exposes one or more
-┌─────────┬─────────┬─────────┬─────────┬─────────┐
-│ CLI Host│ IDE Host│ Web Host│ CI Host │Unity Host│
-└─────────┴─────────┴─────────┴─────────┴─────────┘
-                     ↓
+   ↓ provides one or more
+┌──────────┬──────────┬──────────┬──────────┬───────────┐
+│CLI Surface│IDE Surface│Web Surface│CI Surface│Unity Surface│
+└──────────┴──────────┴──────────┴──────────┴───────────┘
+                     ⋮ mapping requires implementation evidence
+Host（课程工作定义：承载或集成 Agent 执行的环境）
+                     ↓ course responsibility view
 Harness（课程工作定义：Runtime 周围的工程控制与约束）
                      ↓
 Agent Runtime（课程工作定义：执行内核职责）
@@ -188,10 +190,10 @@ Model + Tool + State
 External World
 ```
 
-- Teaching Purpose：把 Product 与 Host 拆开，并让读者看到 Host、Harness、Runtime 属于不同阅读问题。
+- Teaching Purpose：把 Product、可观察 Surface 与内部 Host 拆开，并让读者看到 Host、Harness、Runtime 属于不同阅读问题。
 - Claim Coverage：`00-C05`、`00-C06b`、`00-C07`
-- Caption Boundary：这是课程导航模型，不是通用部署拓扑；现实产品可以合并、拆分或用不同名称承载这些职责。
-- Must Not Imply：一个 Product 必须具备全部 Host；每个系统都有独立 Harness 模块；Claude Code、Codex 或 DSH 已被证实采用此结构。
+- Caption Boundary：这是课程导航模型，不是通用部署拓扑；公开 Surface 到内部 Host 的映射需要独立实现证据，现实产品可以合并、拆分或用不同名称承载这些职责。
+- Must Not Imply：Surface 与 Host 一一对应；每个系统都有独立 Harness 模块；Claude Code、Codex 或 DSH 已被证实采用此结构。
 
 ### Figure 2｜术语确定性与定义类型地图
 
@@ -200,7 +202,7 @@ External World
 | Definition Type | Terms | 图中措辞规则 |
 |---|---|---|
 | `STABLE_ABSTRACTION` | LLM / Model、AI Application、Agent（地图级）、Prompt、Context、Tool、RAG | 可陈述最低稳定核心，正式机制仍后置 |
-| `PRODUCT_TERM` | Product、Copilot | 只按厂商 / 产品语境解释，不映射固定架构层 |
+| `PRODUCT_TERM` | Product、Surface / Entry Point、Copilot | 只按厂商 / 产品与可观察入口语境解释，不映射固定架构层 |
 | `ECOSYSTEM_DEPENDENT` | Agentic、Skill、Workflow、Memory | 明示生态差异，不宣称唯一边界 |
 | `COURSE_WORKING_DEFINITION` | Host、Agent Runtime、Harness | 必须使用“本课程采用 / 用来指代” |
 
@@ -223,7 +225,7 @@ External World
 
 ### Q3｜一个 Product 同时提供 CLI、IDE 和 Web，地图上应该怎样画？
 
-- Expected Reasoning：把 Product / Application 画成软件交付边界，并让它使用或暴露多个 Host；不能把三个入口等同为三个 Runtime，也不能由入口反推内部结构。
+- Expected Reasoning：把 Product / Application 画成软件交付边界，把 CLI、IDE、Web 画成多个 Surface；不能把这些 Surface 直接画成 Host 或 Runtime，公开入口到内部职责的映射需要实现证据。
 - Claims：`00-C07`
 
 ### Q4｜为什么课程可以使用 Harness，却不能说它已有统一行业定义？
@@ -233,7 +235,7 @@ External World
 
 ### Q5｜读完世界地图后，为什么下一篇是 Model API，而不是 DSH 源码？
 
-- Expected Reasoning：地图只给位置与依赖；Tool、Runtime、Context、Memory、Harness 等都要建立在可观察的模型调用基础上。DSH 还需要固定版本、源码位置与运行证据，不能跳过基础和证据门禁。
+- Expected Reasoning：地图只给位置与课程学习顺序；Model API 是最简单的可观察输入输出边界，不是 Tool、Runtime、Context、Memory、Harness 等能力唯一的技术依赖根。DSH 还需要固定版本、源码位置与运行证据，不能跳过基础和证据门禁。
 - Claims：`00-C01`、`00-C08`、`00-C09c`
 
 ## Claim Coverage Matrix
@@ -249,9 +251,9 @@ External World
 | `00-C05` | 3、Figure 1 / 2 | `00-E07` | 定位 Agent Runtime 的执行职责 | `PROPOSAL`；“本课程用……指代”，承载者依框架而异 |
 | `00-C06a` | Opening、3、Q4 | `00-E08` | 解释多个真实 Harness 用法与有限样本边界 | `PARTIAL`；不得写成全行业无统一定义的确定事实 |
 | `00-C06b` | 3、Figure 1 / 2、Q4 | `00-E09` | 引入课程 Harness 导航抽象 | `PROPOSAL`；不声称存在独立模块 |
-| `00-C07` | 3、5、Figure 1 / 2、Q3 | `00-E10` | M2 细化为 Product / Application 与 Host 两层；保留入口不能反推 Runtime 的原证明边界 | `PROPOSAL`；“本课程把 Host 定义为具体入口” |
+| `00-C07` | 3、5、Figure 1 / 2、Q3 | `00-E10` | 区分 Product、可观察 Surface 与内部 Host；保留入口不能反推 Runtime 的原证明边界 | `PROPOSAL`；“Surface 不等于 Host，映射需实现证据” |
 | `00-C08` | 4、6、Figure 2、Q5 | `00-E11`、`00-E12` | 七个横向词各一句定位与后续路由 | 最低定义 `CONFIRMED`；篇幅 / 路由为 `PROPOSAL` |
-| `00-C09a` | 5 | `00-E13` | Claude Code 小卡：公开能力 / Host 与不可推断边界 | `CONFIRMED`；只陈述公开事实 |
+| `00-C09a` | 5 | `00-E13` | Claude Code 小卡：公开能力 / Surface 与不可推断边界 | `CONFIRMED`；只陈述公开事实 |
 | `00-C09b` | 5 | `00-E14` | Codex CLI 小卡：公开能力 / 集成方式与不可推断边界 | `CONFIRMED`；只陈述公开事实 |
 | `00-C09c` | 5、Q5 | `00-E15` | DSH 小卡：官方定位、preview、Web 入口与停止线 | `CONFIRMED`；紧邻版本限制，不推断内部实现 |
 
@@ -272,13 +274,13 @@ External World
 ## M3 Draft Guardrails
 
 - 开头必须保持问题导向，不写术语百科式引言。
-- Section 3 的四层必须按 `Product / Application -> one or more Hosts -> Harness -> Runtime` 表达；不得再合并 Host / Product。
+- Section 3 必须区分 `Product / Application -> one or more Surfaces` 与内部 `Host / Harness / Runtime` 职责；不得把 Surface 直接写成 Host，也不得预设映射关系。
 - `Runtime / Harness / Host` 每次首次定义都要带课程工作定义提示。
 - `00-C06a` 所在段落必须同时出现“已观察到的含义不同”和“样本不足以证明统一行业结论”。
 - Agent 不得展开 Run / Turn / Step / State / Stop 的内部机制。
 - 七个横向词每个最多一句最低定义、一句路由 / 停止线。
 - 三张产品卡合计不得超过预计正文的 `20%`；卡片必须同时写 Public Facts 与 Does Not Prove。
-- Figure 1 图注必须明确“课程导航模型，不是通用部署拓扑”；Figure 2 不得画成成熟度阶梯。
+- Figure 1 图注必须明确“课程导航模型，不是通用部署拓扑，Surface 到 Host 的映射需要实现证据”；Figure 2 不得画成成熟度阶梯。
 - 不新增未登记 Claim；若 Draft 出现新的行为性主张，必须返回 Research / Evidence Gate。
 - 结尾只桥接 Article 01，不提前进入 DSH、BuildPilot 或 Harness 机制篇。
 

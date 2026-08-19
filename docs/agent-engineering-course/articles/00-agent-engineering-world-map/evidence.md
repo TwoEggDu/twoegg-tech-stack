@@ -20,7 +20,7 @@
 | 00-C05 | 本课程用 Agent Runtime 指代 model invocation、tool dispatch、loop、state / continuation 与 stop 等执行职责；具体归属和“Runtime”命名依框架而异。 | RQ-05 | `PROPOSAL` | `00-E07` |
 | 00-C06a | 多个官方生态真实使用 harness / agent harness，但已观察到的含义并不相同；现有样本不足以支持统一行业定义。 | RQ-06 | `PARTIAL` | `00-E08` |
 | 00-C06b | 本课程用 Harness 指代 Runtime 周围可复用的工程控制与约束层，并明确这是课程导航抽象。 | RQ-06 | `PROPOSAL` | `00-E09` |
-| 00-C07 | 本课程把 Host / Product 作为装配能力并提供 CLI、IDE、Web、Desktop、CI 等入口的层；公开入口不得用于反推内部 Runtime。 | RQ-07 | `PROPOSAL` | `00-E10` |
+| 00-C07 | 本课程区分 Product、外部可观察 Surface 与内部 Host：Host 指承载或集成 Agent 执行的宿主程序、进程或运行环境；公开 Surface 不得用于反推 Host 映射或内部 Runtime。 | RQ-07 | `PROPOSAL` | `00-E10` |
 | 00-C08 | Article 00 对 Prompt、Context、Tool、Skill、Workflow、Memory、RAG 只给一句定位定义和后续路由，不讲正式机制。 | RQ-08 | `PROPOSAL` | `00-E11`、`00-E12` |
 | 00-C09a | Claude Code 官方公开为可读代码库、编辑文件、运行命令，并覆盖 terminal / IDE / desktop / web 的 agentic coding tool。 | RQ-09 | `CONFIRMED` | `00-E13` |
 | 00-C09b | Codex CLI 官方公开为可在本地仓库检查与编辑文件、运行命令，并可交互或用于脚本 / CI 的终端工具。 | RQ-09 | `CONFIRMED` | `00-E14` |
@@ -254,11 +254,11 @@
 - Owner：`Codex`
 - Verified At：`2026-08-18`
 
-### Evidence 00-E10｜产品入口与内部执行边界不可互相推断
+### Evidence 00-E10｜产品 Surface 与内部 Host / Runtime 不可互相推断
 
 - Article：`00｜Agent Engineering 世界地图`
 - Claim ID：`00-C07`
-- Claim：课程把 Host / Product 与 Runtime 分开；CLI、IDE、Web、Desktop、CI 只能证明公开入口和运行环境。
+- Claim：课程区分 Product、外部可观察 Surface 与内部 Host / Runtime；CLI、IDE、Web、Desktop、CI 只能证明公开入口，不能证明其内部映射。
 - Evidence Status：`PROPOSAL`
 - Evidence Class：`DESIGN_PROPOSAL`
 - Source Type：`official product docs plus official environment definition`
@@ -270,10 +270,10 @@
 - Reproduction：列出公开 surface / environment，再检查页面是否公开内部 Runtime 模块边界。
 - Observation：Claude Code 明确覆盖 terminal、IDE、desktop、web；Codex CLI 公开本地仓库与 terminal / CI 用法；Anthropic 把 environment 定义为 agent 运行的产品与可访问系统。
 - Counter-evidence Searched：未使用 UI、入口或产品名推导未公开模块；只记录来源直接声明。
-- Interpretation：用 Host / Product 表示装配和入口是课程导航选择；内部 Runtime 需要独立证据。
+- Interpretation：用 Surface 表示外部可观察入口，用 Host 表示承载或集成 Agent 执行的课程抽象；Surface 到 Host / Runtime 的映射需要独立实现证据。
 - Proves：来源能证明公开入口、可见能力和环境差异。
-- Does Not Prove：不能证明 Claude Code、Codex 或 DSH 内部按课程的 Host / Harness / Runtime 分层。
-- Limitations：Host 的代码级责任要到 25、29 再取证。
+- Does Not Prove：不能证明 Claude Code、Codex 或 DSH 的 Surface 对应几个 Host，也不能证明其内部按课程的 Host / Harness / Runtime 分层。
+- Limitations：Surface 到 Host 的实现映射及 Host 的代码级责任要到 25、29 再取证。
 - Course Usage：Section 3 与产品示例边界。
 - BuildPilot Implication：`DEFER`
 - Owner：`Codex`
