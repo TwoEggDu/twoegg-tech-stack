@@ -5,12 +5,12 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：M3 Article 00 Draft 已完成
+- 当前里程碑：M4 Article 00 Formal Review & Revision 已完成
 - 当前生产对象：Article 00
-- 当前 Article 00 状态：`REVIEW`
+- 当前 Article 00 状态：`FINAL`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
-- 当前 Article 00 Draft Readiness：`PASSED_WITH_NOTES`
-- 下一允许动作：`M4｜Article 00 Formal Review & Revision`，等待人工 Review，不自动执行
+- 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
+- 下一允许动作：`M5｜Article 00 Publish`，不自动执行
 
 ## 从哪里开始
 
@@ -30,13 +30,13 @@
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
-| [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | 当前唯一实例化的文章工作区；Draft 已准备接受 M4 Formal Review |
+| [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | 当前唯一实例化的文章工作区；Article 00 已通过 M4 Final Gate |
 
 ## 资产边界
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
-- `kb/` 保存写作后可复用的知识沉淀；当前 M3 Draft 不向 `kb/` 写入未审稿内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；M3 只创建工作区 Draft，不创建发布正文。
+- `kb/` 保存写作后可复用的知识沉淀；M4 不向 `kb/` 写入发布前内容。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；Article 00 当前只到 `FINAL`，M4 不创建发布正文。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

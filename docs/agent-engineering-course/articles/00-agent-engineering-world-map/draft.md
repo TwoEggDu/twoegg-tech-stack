@@ -34,11 +34,7 @@ Application displays summary
 
 这里最先要拆开的，是 Model 和 Application。
 
-Model 提供的是一种可调用能力：应用给它输入，它根据当前输入生成输出。[OpenAI 的文本生成文档](https://developers.openai.com/api/docs/guides/text)展示的直接模型请求，就是这个最小边界。
-
-Application 则是承载这次调用的软件。读取哪份日志、怎样构造输入、结果显示在哪里、失败以后怎么处理，这些都不是“模型自己”天然拥有的产品职责。它们属于应用。
-
-对传统工程师来说，可以先把它类比成：数据库引擎不是电商系统，Unity Runtime 也不是一款完整游戏。底层能力很关键，但“拥有某种能力”和“已经构成某类应用”不是同一个判断。
+Model 提供可调用能力：应用给出输入，模型生成输出。[OpenAI 的文本生成文档](https://developers.openai.com/api/docs/guides/text)展示的直接请求，就是这个最小边界。Application 承载调用，决定读取什么、如何构造输入、怎样显示结果和处理失败。就像数据库引擎不是电商系统，Unity Runtime 也不是一款完整游戏；拥有底层能力不等于已经构成某类应用。
 
 所以，看到一个程序使用了 LLM，我们只能先确认它是一个使用模型能力的应用。至于它是否值得被称为 Agent，还要继续看：模型有没有参与决定任务怎样向前推进，系统有没有围绕目标执行行动、接收反馈并处理多步工作。
 
@@ -62,9 +58,9 @@ Agentic
 
 Copilot 往往是厂商定义的产品或产品族名称，而不是一个可以跨产品直接套用的固定架构层。
 
-[Microsoft Copilot](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/)使用这个名字描述面向个人用户的数字伴侣；[GitHub Copilot 的功能文档](https://docs.github.com/en/copilot/get-started/features)则在同一产品族中同时列出同步辅助能力和能够自主推进工作的 Agentic 能力。
+[Microsoft Copilot](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/get-copilot)使用这个名字描述面向个人用户的 AI companion；[GitHub Copilot 的功能文档](https://docs.github.com/en/copilot/get-started/features)则在同一产品族中同时列出同步辅助能力和能够自主推进工作的 Agentic 能力。
 
-这至少说明：只看到“Copilot”这个名字，我们不能判断它内部是否存在 Agent，也不能把它自动放到 Agent 之前的某个成熟度等级。本课程因此只在产品语境中使用 Copilot，不让它承担架构分层职责。
+这说明只看到“Copilot”这个名字，既不能判断内部是否存在 Agent，也不能把它放到 Agent 之前的某个成熟度等级。本课程只在产品语境中使用 Copilot，不让它承担架构分层职责。
 
 ### Agent 有一个可迁移的工程核心
 
@@ -93,11 +89,11 @@ Result / Feedback
 Continue toward the goal
 ```
 
-这仍然不是 Agent Loop 的正式定义。它只帮助我们在地图入口处做判断：一个按钮调用一次模型，与一个围绕目标持续采取行动的系统，不应该因为都使用 LLM 就被画成同一层。
+这不是 Agent Loop 的正式定义，只帮助我们在地图入口处区分：一次模型调用，与围绕目标持续采取行动的系统，不应因为都使用 LLM 就被画成同一层。
 
 ### Agentic 描述特征，不代表更高等级
 
-Agentic 的边界更依赖使用它的生态。Anthropic 会用 agentic systems 同时讨论较预定义的 workflow 和由模型动态决定过程的 agent；GitHub 会用 Agentic 描述产品中的自主工作能力；Claude Code 的官方页面则把它称为 agentic coding tool。
+Agentic 的边界更依赖具体生态。Anthropic 用 agentic systems 同时讨论较预定义的 workflow 和由模型动态决定过程的 agent；GitHub 用 Agentic 描述自主工作能力；Claude Code 则自称 agentic coding tool。
 
 因此，这门课程把 Agentic 当作描述自主行为或自主程度的词，不把它设成一种严格架构类型。它不是 `Agentic > Agent`，也不是从 Copilot 通往 Agent 的必经阶段。
 
@@ -107,47 +103,45 @@ Agentic 的边界更依赖使用它的生态。Anthropic 会用 agentic systems 
 
 现在假设我们面对的是一款 Coding Agent 产品。它可能同时提供终端、IDE、Web，甚至 CI 集成。用户看到的是不同入口，但这不代表产品内部有三个彼此独立的 Agent Runtime。
 
-为了让后续课程能稳定讨论这些问题，我们采用下面这张课程导航图：
+为了让后续课程能稳定讨论这些问题，我们采用下面这张职责导航图：
 
 ```text
-                         User Goal
-                             ↓
-                   Product / Application
-                             ↓
-                  uses or exposes one or more
-                             ↓
-        ┌──────────┬──────────┬──────────┬──────────┬──────────────┐
-        │ CLI Host │ IDE Host │ Web Host │ CI Host  │ Unity Editor │
-        └──────────┴──────────┴──────────┴──────────┴──────────────┘
-                             ↓
-                         Harness
-                             ↓
-                      Agent Runtime
-                             ↓
-                    Model + Tool + State
-                             ↓
-                       External World
+┌──────────── 用户 / 产品观察视角 ────────────┐
+│ User Goal → Product / Application          │
+│               ├─ CLI                       │
+│               ├─ IDE                       │
+│               ├─ Web / Desktop             │
+│               └─ CI / Unity Editor         │
+└────────────────────────────────────────────┘
+                      ⋮
+          课程分析映射（不是部署调用链）
+                      ⋮
+┌──────────── 课程工程职责视角 ──────────────┐
+│ Host          具体运行或集成入口            │
+│ Agent Runtime Agent 的执行职责              │
+│ Harness       Runtime 周围的复用控制与约束   │
+│ Model / Tool / State / External World       │
+│               执行所依赖或交互的对象         │
+└────────────────────────────────────────────┘
 ```
 
-> **Figure 1｜Agent Engineering 课程导航模型**
+> **Figure 1｜Agent Engineering 课程职责导航**
 >
-> **Course Navigation Model：它用于帮助区分职责与学习位置，不代表所有 Agent 产品都采用这一部署结构。**现实系统可能合并这些职责、拆成更多模块，或者使用完全不同的名称。
+> **这是一张课程导航图，不是通用物理部署拓扑，也不表示固定调用顺序。**现实系统可以合并或继续拆分这些职责；图中尤其没有声称每个产品都存在独立的 Harness 模块。
 
-这张图从上往下分别回答不同问题。
+**Product / Application** 是面向用户的软件边界。Product 更强调交付物，Application 更强调承载模型与软件逻辑的应用；两者常有重叠，这里不强求严格同义。
 
-**Product / Application** 是面向用户的软件边界。Product 更强调最终交付给用户的产品，Application 更强调承载模型与软件逻辑的应用；两者在很多场景会重叠，但这里不要求它们在所有语境中严格同义。
+**Host** 是课程对具体运行或集成入口的称呼，例如 CLI、IDE、Web、Desktop、CI 或 Unity Editor。同一 Product 可以暴露多个 Host；入口只证明“用户可以从这里使用”，不能证明内部 Runtime 怎样分层。
 
-**Host** 是这门课程对具体运行或集成入口的称呼，例如 CLI、IDE、Web、Desktop、CI 或 Unity Editor。同一个 Product 可以暴露多个 Host。Host 负责把用户或集成环境带进系统，但一个公开入口只能证明“用户可以从这里使用它”，不能证明内部 Runtime 怎样分层。
+**Agent Runtime** 是课程对 Agent 执行职责的称呼，用来组织模型调用、工具分派、任务推进、状态延续与停止。职责可以由应用、SDK、托管平台或其他模块承载，不要求项目里真有一个叫 `AgentRuntime` 的程序集。
 
-**Agent Runtime** 是这门课程对 Agent 执行职责的称呼。我们会用它组织模型调用、工具分派、任务推进、状态延续与停止等问题。具体系统可能让应用、SDK、托管平台或其他模块承载这些职责，“Runtime”在不同框架里也可能指向不同边界。因此这里讨论的是职责，不是要求项目中一定存在一个叫 `AgentRuntime` 的程序集。
+**Harness** 是这门课程为了后续工程学习采用的抽象：它表示 Runtime 周围那些可复用的工程控制与约束。
 
-**Harness** 是这门课程为了后续工程学习采用的另一层抽象：它表示 Runtime 周围那些可复用的工程控制与约束。
+公开资料目前只支持三个谨慎结论：多个官方资料确实使用 harness 或 agent harness；已观察到的含义不同；这组证据还不够让我们给出统一的行业定义。例如，[Anthropic 关于可信 Agent 的文章](https://www.anthropic.com/research/trustworthy-agents)用 harness 指模型运行时所处的 instructions 和 guardrails；[DeepSeek Harness 官方仓库](https://github.com/deepseek-ai/deepseek-harness)则把一套完整开源系统称为 agent harness。
 
-这里必须克制一点。目前可以观察到多个官方生态在使用 harness 或 agent harness 这样的说法，但含义并不完全一致。[Anthropic 关于可信 Agent 的文章](https://www.anthropic.com/research/trustworthy-agents)用 harness 指模型运行时所处的 instructions 和 guardrails；[DeepSeek Harness 官方仓库](https://github.com/deepseek-ai/deepseek-harness)则把一套完整开源系统称为 agent harness。这样的有限样本不足以证明行业已经形成统一定义，也不足以证明所有 Harness 都彼此不同。
+因此，本课程只声明自己的学习约定：后续用 Harness 讨论 Runtime 周围可复用的工程控制与约束。它不要求产品中存在同名文件夹或独立模块；更完整的能力边界和设计取舍留到 Harness Engineering 部分。
 
-所以，本课程不会把 Harness 写成既成的行业标准，也不会断言每个 Agent 产品内部都有一个独立 Harness 模块。我们只明确自己的学习约定：后续用 Harness 讨论 Runtime 周围可复用的工程控制与约束；更完整的能力边界和设计取舍，留到 Harness Engineering 部分。
-
-这张地图真正要留下的不是模块命名，而是职责判断：Product 是交付边界，Host 是具体入口，Runtime 关注执行，Harness 帮助我们组织执行周围的工程约束。看见一个目录名、产品名或 UI 入口，都不能代替对职责的验证。
+地图要留下的是职责判断：Product 是交付边界，Host 是入口，Runtime 关注执行，Harness 组织执行周围的工程约束。目录名、产品名或 UI 入口都不能代替职责验证。
 
 ## 四、七个横向术语，先知道它们在解决什么
 
@@ -165,63 +159,67 @@ Agentic 的边界更依赖使用它的生态。Anthropic 会用 agentic systems 
 | RAG | 检索外部知识，把结果加入当前模型输入，再生成回答的技术模式 | 16 |
 | Skill | 可按需加载的领域说明、方法和配套资源；具体封装方式随生态变化 | 17 |
 
-这张表故意没有继续解释 Context Packing、Tool Policy、Memory Store、Vector Database、Skill Activation 或 Workflow State Machine。它们并不是不重要，而是各自需要单独的机制、证据和工程边界。导论如果把这些内容全部讲完，读者反而只会得到一组密集但无法使用的定义。
+这张表故意不解释 Context Packing、Tool Policy、Memory Store、Vector Database、Skill Activation 或 Workflow State Machine。它们各自需要单独的机制、证据和工程边界；导论一次讲完，只会留下密集却无法使用的定义。
 
-还需要注意：这些术语的确定性来源并不一样。
+还需要注意：这些术语的定义来源并不一样。
 
 ```text
-相对稳定的最低工程抽象
-────────────────────
+跨生态可迁移的最低抽象（只说明最低共同部分）
+────────────────────────────────────
 Model / Application / Agent
 Prompt / Context / Tool / RAG
 
-产品或生态相关用法
-────────────────────
+产品或生态自身的用法（边界随语境变化）
+────────────────────────────────
 Product / Copilot
 Agentic / Skill / Workflow / Memory（具体边界）
 
-本课程采用的工作定义
-────────────────────
+课程为组织学习采用的工作定义（显式标注来源）
+────────────────────────────────────
 Host / Agent Runtime / Harness
 ```
 
-> **Figure 2｜术语确定性与定义来源**
+> **Figure 2｜术语的定义来源**
 >
-> 这不是成熟度排行，也不是正确与错误的分类。它表达的是：在 Article 00 阶段，我们对这些词能使用多强的确定性语言。稳定抽象仍有待后文展开；生态相关不等于错误；课程工作定义也不等于行业已经采纳。
+> 这不是成熟度、正确性或价值排行。稳定抽象只保留最低共同部分，不代表机制已经完整；生态相关不等于错误；课程工作定义也不等于低价值或已被行业采纳。
 
 面对新术语时，先判断它来自哪一种语境，比急着把它塞进一张“万能 Agent 架构图”更有用。
 
 ## 五、拿三个产品练习证据边界
 
-现在用三张很短的产品卡练习这套方法。目的不是比较产品，而是区分“官方资料可以确认什么”和“我们不能因此推出什么”。以下事实均以 2026 年 8 月 18 日检索到的公开资料为边界。
+现在用三张很短的产品卡真正跑一遍开头的三问。目的不是比较产品，而是练习定位、辨认定义来源并停在证据边界。以下事实均以 2026 年 8 月 19 日检索到的官方公开资料为边界。
 
 ### Claude Code
 
-**公开可以确认：**[官方文档](https://code.claude.com/docs/en/overview)把 Claude Code 描述为 agentic coding tool，公开了读取代码库、编辑文件、运行命令以及 terminal、IDE、desktop、web 等使用入口。
+**第一问｜哪一层：**从用户视角，它是 Coding Agent 产品；按课程地图，terminal、IDE、desktop、web 是不同 Host。
 
-**不能因此推出：**这些入口不能证明 Claude Code 内部怎样划分 Harness、Runtime、Memory 或 Workflow。
+**第二问｜定义来源：**[官方文档](https://code.claude.com/docs/en/overview)把它描述为 agentic coding tool，并公开读取代码库、编辑文件和运行命令等能力。
+
+**第三问｜证据边界：**这些事实能确认产品定位、能力和入口，不能证明内部怎样划分 Harness、Runtime、Memory 或 Workflow。
 
 ### Codex CLI
 
-**公开可以确认：**[Codex CLI 官方文档](https://learn.chatgpt.com/docs/codex/cli)说明它可以在本地仓库中检查和编辑文件、运行命令，并支持交互以及脚本 / CI 场景。
+**第一问｜哪一层：**Codex CLI 是终端中的产品入口；按课程地图，它首先是 Host，不等于 Runtime。
 
-**不能因此推出：**CLI 入口不等于 Agent Runtime，也不能证明不同 Codex 使用入口内部采用完全相同的结构。
+**第二问｜定义来源：**[Codex CLI 官方文档](https://learn.chatgpt.com/docs/codex/cli)确认它能在本地仓库检查和编辑文件、运行命令，并支持交互及脚本 / CI 场景。
+
+**第三问｜证据边界：**这些事实不能证明内部采用本课程的 Host / Harness / Runtime 分层，也不能证明不同 Codex 入口的内部结构完全相同。
 
 ### DeepSeek Harness
 
-**公开可以确认：**[DeepSeek Harness 官方仓库](https://github.com/deepseek-ai/deepseek-harness)把它定位为开源 agent harness，当前处于 developer preview，并公开了 Web UI 运行入口。
+**第一问｜哪一层：**从公开视角，它首先是一套可运行的开源产品；名称里的 Harness 是项目自我定位，不自动等同于课程定义。
 
-**不能因此推出：**产品名称不能证明它内部等同于本课程的 Harness 定义；本篇也没有固定源码 commit、研究内部结构或验证实际运行稳定性。
+**第二问｜定义来源：**[官方仓库](https://github.com/deepseek-ai/deepseek-harness)称它为 open-source agent harness，标明 developer preview，并公开 Web UI 运行入口。
+
+**第三问｜证据边界：**这些事实不证明它内部等同于本课程的 Harness 定义；本篇也没有固定源码 commit、研究内部结构或验证运行稳定性。
 
 这三张卡都指向同一个工程习惯：公开入口、可见能力和产品自我定位是事实；内部模块边界需要另一组证据。我们可以用产品帮助理解地图，但不能倒过来用地图填补产品没有公开的部分。
 
+现在换成一个没见过的产品：它自称“AI Copilot with agentic workflow”，同时提供 CLI 和 Web。三问会先把 Copilot 放回产品命名语境，把 agentic workflow 放回生态行为描述，把 CLI / Web 放到可观察入口；然后再追问官方资料究竟公开了哪些行为。仅凭这句话，我们仍不能断言它是否有独立 Harness、Runtime 怎样划分。这就是三问法面对新产品时的迁移方式。
+
 ## 六、看完 Harness，为什么下一篇反而回到 Model API
 
-到这里，我们已经看到了 Agent、Runtime、Harness、Context、Memory、Tool、RAG。继续向前最诱人的路线，可能是直接打开一套复杂 Agent 框架，沿着目录开始读源码。
-
-但这张世界地图只是学习路线索引，不是学习终点。它告诉我们有哪些层次以及它们为什么不能混在一起，却还没有建立任何一层的可验证机制。
-
-Runtime 怎样调用模型，Tool 请求怎样表达，Context 为什么会超限，Memory 保存的究竟是事实还是状态，Harness 怎样控制成本和失败——这些问题最终都依赖同一个最小可观察单元：应用向 Model 发起一次调用，并拿到一个结果。
+到这里，我们看到了 Agent、Runtime、Harness、Context、Memory、Tool、RAG，但这张地图只是路线索引，还没有建立任何一层的可验证机制。Runtime 调模型、Tool 表达请求、Context 超限、Memory 保存信息、Harness 控制成本与失败，最终都依赖同一个最小可观察单元：应用向 Model 发起一次调用并拿到结果。
 
 因此，本课程选择从底向上生长：
 

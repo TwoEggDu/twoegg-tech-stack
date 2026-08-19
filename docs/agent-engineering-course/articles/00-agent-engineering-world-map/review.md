@@ -1,11 +1,11 @@
 # Article 00 Review Record
 
-- Lifecycle Status：`REVIEW`
-- Review Status：`M3_DRAFT_READINESS_COMPLETE`
-- Formal Draft Review Gate：`READY_NOT_STARTED`
+- Lifecycle Status：`FINAL`
+- Review Status：`M4_FORMAL_REVIEW_COMPLETE`
+- Formal Draft Review Gate：`PASSED_WITH_NOTES`
 - Checklist：[Agent Engineering 课程审查清单](../../templates/review-checklist.md)
 - Reviewer：`Codex self-review`
-- Date：`2026-08-18`
+- Date：`2026-08-19`
 
 ## M1 Research Completeness Review
 
@@ -46,7 +46,7 @@
 
 ## Formal Review
 
-M4 Technical / Evidence / Course 正式 Draft Review 尚未开始；第一版正文已存在并完成 M3 Readiness 自检，Final Gate 未开放。
+M4 Technical / Evidence / Course / Reader Value 正式 Review 已完成；完整 Findings、修订处置、评分与 Final Gate 见本文末尾的 `M4 Formal Review`。
 
 ## M2 Teaching Structure Review
 
@@ -108,3 +108,91 @@ M4 Technical / Evidence / Course 正式 Draft Review 尚未开始；第一版正
 - Rationale：第一版正文完整可读，定义、证据强度、Teaching Spine、篇幅、图表和学习检查均满足 M3 要求；核心 `BLOCKED` Claim 为 0。
 - Non-blocking Notes：M4 继续重点审查 Harness 的 `PARTIAL` 措辞、Figure 1 的非通用架构图注和产品卡的版本敏感事实。
 - Next Allowed Action：`M4｜Article 00 Formal Review & Revision`，等待人工 Review，不自动执行。
+
+## M4 Formal Review
+
+### First-pass Review Findings（Pre-revision）
+
+| Finding ID | Severity | Category | Location | Issue | Why it matters | Required change |
+|---|---|---|---|---|---|---|
+| `M4-F01` | `MAJOR` | `COURSE` | Section 3，Figure 1 | Product、Host、Harness、Runtime 仍画成单向向下的调用链，图注虽有限定，视觉上仍容易被当成通用物理部署架构。 | 这会把课程的职责导航误读成产品内部模块事实，并暗示每个产品都有独立 Harness。 | 将图拆成“用户 / 产品观察视角”和“课程工程职责视角”，明确虚线表示分析映射而非部署调用关系。 |
+| `M4-F02` | `MINOR` | `READER_VALUE` | Section 4，Figure 2 | 标题和图内“术语确定性”容易形成高低排序感。 | 读者可能把稳定抽象理解成更正确，把生态相关或课程工作定义理解成较差、较不可靠。 | 改为“定义来源不同”，并明确稳定抽象不等于机制完整、生态相关不等于错误、课程定义不等于低价值。 |
+| `M4-F03` | `MAJOR` | `COURSE` | Section 5，三个产品卡 | 产品卡只按“公开可以确认 / 不能因此推出”呈现，没有逐项执行开头的三问。 | 三问法没有从开头贯穿到实践，读者看完事实卡仍未必能迁移到陌生 CLI + Web Agent 产品。 | 三张卡统一改成“哪一层 / 定义来源 / 证据边界”，并增加一个陌生产品的迁移练习。 |
+| `M4-F04` | `MINOR` | `EVIDENCE` | Section 3，Harness 段落 | 证据边界正确，但“有限样本不足以证明……”连续出现，研究报告语气较重。 | 容易让正文节奏停在证据声明上，也可能被读成在暗示一个更强的行业结论。 | 保留 `00-C06a=PARTIAL` 的全部限制，改成自然说明：只确认多个官方用法、含义不同、尚不足以给出统一行业定义。 |
+| `M4-F05` | `MINOR` | `EVIDENCE` | Section 2、Section 5、Evidence `00-E10/E13/E14/E15` | Claude Code、Codex CLI、Copilot、DSH 属于版本敏感产品事实，正文和证据卡的检索日期停在 M3。 | M4 发布候选必须证明这些事实经过本轮官方来源复核；若入口迁移也应保留可追踪记录。 | 仅用官方一手资料做定向复核；事实不扩写，更新核验日期与必要的来源说明。 |
+| `M4-F06` | `EDITORIAL` | `READER_VALUE` | Section 3—6 | 若干边界提醒和课程停止线重复表达。 | 重复会削弱 12—18 分钟导论的推进感，使文章更像研究记录。 | 合并重复句，保留三问、两张图、六段 Teaching Spine 和 Article 01 桥接。 |
+
+- Finding Count：`BLOCKER 0 / MAJOR 2 / MINOR 3 / EDITORIAL 1`
+- Revision Rule：只处理以上 Findings；不新增 Claim，不重写 Teaching Spine，不扩大 Article 00 范围。
+
+### Finding Disposition
+
+| Finding ID | Disposition | Revision |
+|---|---|---|
+| `M4-F01` | `RESOLVED` | Figure 1 已拆成“用户 / 产品观察视角”和“课程工程职责视角”，中间明确为课程分析映射；图注排除通用部署拓扑、固定调用顺序与独立 Harness 假设。 |
+| `M4-F02` | `RESOLVED` | Figure 2 改为“术语的定义来源”，并补齐三项非等价说明。 |
+| `M4-F03` | `RESOLVED` | Claude Code、Codex CLI、DeepSeek Harness 三张卡均显式执行“哪一层 / 定义来源 / 证据边界”，并加入陌生 CLI + Web 产品迁移练习。 |
+| `M4-F04` | `RESOLVED` | Harness 段改为三个受证据约束的自然判断，未使用“没有行业标准”或“控制面”结论。 |
+| `M4-F05` | `RESOLVED` | 仅以官方一手资料定向复核 Claude Code、Codex CLI、DeepSeek Harness、Microsoft / GitHub Copilot；更新相关 Evidence Card 日期与 Microsoft 稳定入口。 |
+| `M4-F06` | `RESOLVED` | 合并 Model / Application、Product / Host / Runtime 与 Section 6 的重复说明；修订后正文未增长。 |
+
+### Technical Review
+
+- Reviewer：`Codex self-review`
+- Date：`2026-08-19`
+- Outcome：`PASS`
+- Findings：Model / AI Application、Copilot / Agent / Agentic、Product / Host / Agent Runtime / Harness 与七个横向术语均保持导航级边界；没有把一次 LLM 调用写成 Agent，没有把 Agentic 写成等级，也没有暗示 Agent 必须具备 Memory / RAG / Skill。Figure 1 不再呈现标准五层架构。
+- Disposition：Draft、glossary 与 Definition Matrix 已对齐。Harness 的两处历史强措辞已收窄为“现有证据不足以支持统一行业定义”；Agent Loop、Runtime 机制与 Harness 能力模型仍留给后续文章。
+
+### Evidence Review
+
+- Reviewer：`Codex self-review`
+- Date：`2026-08-19`
+- Outcome：`PASS_WITH_NOTES`
+- Findings：Draft 仍使用既有 14 个 Claim 与 15 张 Evidence Card，`New Claims = 0`，核心 `BLOCKED = 0`。`00-C06a` 继续为 `PARTIAL`：正文只确认多个官方用法、含义不同、现有证据不足以支持统一行业定义。
+- Disposition：已用官方一手来源定向复核 [Claude Code](https://code.claude.com/docs/en/overview)、[Codex CLI](https://learn.chatgpt.com/docs/codex/cli)、[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)、[Microsoft Copilot](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/get-copilot) 与 [GitHub Copilot](https://docs.github.com/en/copilot/get-started/features)。产品事实没有扩写；Evidence `00-E02/E08/E10/E13/E14/E15` 更新核验记录。
+
+### Course Review
+
+- Reviewer：`Codex self-review`
+- Date：`2026-08-19`
+- Outcome：`PASS`
+- Findings：Reader Promise、六个主体 Section、两张图、五道 Learning Check 与 Article 01 桥接均保留。三问法形成“开头提出 -> Figure 2 辨来源 -> 产品卡实践 -> 结尾回收”的闭环。
+- Disposition：没有提前展开 Agent Loop、Tool Runtime、Context / Memory / RAG 机制、Harness 能力模型、DSH 源码、Lab、BuildPilot 或 Article 01。
+
+### Reader Value Review
+
+- Reviewer：`Codex self-review`
+- Date：`2026-08-19`
+- Outcome：`PASS`
+- Findings：读者可带走 Model ≠ Application、Application 不一定是 Agent、Copilot / Agent / Agentic 不是等级链、入口 ≠ Runtime、Harness 是显式课程抽象五个认知变化。长期模型集中在 Figure 1、Figure 2 与三问法。
+- Disposition：新增未出现在产品卡中的“AI Copilot with agentic workflow + CLI / Web”迁移练习，读者可以按概念层、定义来源与证据边界分析陌生产品，而不依赖背诵正文。
+
+### Formal Review Score
+
+| Dimension | Score |
+|---|---:|
+| Technical Accuracy | `19 / 20` |
+| Evidence Discipline | `19 / 20` |
+| Teaching Quality | `18 / 20` |
+| Engineering Transfer Value | `18 / 20` |
+| Readability & Compression | `18 / 20` |
+| **Total** | **`92 / 100`** |
+
+- Threshold Check：总分 `>= 88`；Technical `>= 18`；Evidence `>= 18`；Teaching `>= 17`；Transfer `>= 17`，全部满足。
+
+### Compression Check
+
+- Draft Before：`8831 chars / 268 lines`
+- Draft After：`8790 chars / 267 lines`
+- Estimated Reading Time：`14—16 minutes`
+- Compressed：Model / Application 类比、Copilot 判断、Product / Host / Runtime 重复限定、横向术语停止线与 Section 6 重复铺垫。
+- Preserved：Teaching Spine、Reader Promise、六个主体 Section、两张图、三问法、五道 Learning Check 与 Article 01 桥接。
+
+### Final Gate Decision
+
+- Decision：`Article 00 is FINAL`
+- Rationale：四类正式 Review 均为 `PASS / PASS_WITH_NOTES`，无 unresolved blocker；总分 `92 / 100` 达到发布候选阈值。所有首轮 Findings 已关闭，`00-C06a` 的 `PARTIAL` 被保留而未包装成确定事实。
+- Remaining Notes：版本敏感产品事实只覆盖 `2026-08-19` 的官方公开资料；Harness 的行业统一定义仍未得到充分证据；当前两张图仍是 Draft 内 ASCII 版本，M4 未生成最终图片。
+- Evidence Status：`PARTIAL`（保持真实状态）
+- Next Allowed Action：`M5｜Article 00 Publish`，不自动执行。

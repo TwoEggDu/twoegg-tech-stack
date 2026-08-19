@@ -5,7 +5,7 @@
 - Claim Count：`14`
 - Claim Summary：`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 6 PROPOSAL`
 - Evidence Card Count：`15`
-- Retrieved / Verified At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Verified At：`2026-08-19（Asia/Shanghai）`
 
 ## Claim Register
 
@@ -18,7 +18,7 @@
 | 00-C04a | Agentic 在官方资料中既可指包含 workflow 与 agent 的宽泛系统，也可指产品中的自主能力 / 模式；用法存在生态差异。 | RQ-04 | `CONFIRMED` | `00-E05` |
 | 00-C04b | 本课程只用 Agentic 描述系统的自主行为或程度，不把它设为严格架构类型。 | RQ-04 | `PROPOSAL` | `00-E06` |
 | 00-C05 | 本课程用 Agent Runtime 指代 model invocation、tool dispatch、loop、state / continuation 与 stop 等执行职责；具体归属和“Runtime”命名依框架而异。 | RQ-05 | `PROPOSAL` | `00-E07` |
-| 00-C06a | 多个官方生态真实使用 harness / agent harness，但已观察到的含义并不相同；现有样本不足以证明行业统一标准。 | RQ-06 | `PARTIAL` | `00-E08` |
+| 00-C06a | 多个官方生态真实使用 harness / agent harness，但已观察到的含义并不相同；现有样本不足以支持统一行业定义。 | RQ-06 | `PARTIAL` | `00-E08` |
 | 00-C06b | 本课程用 Harness 指代 Runtime 周围可复用的工程控制与约束层，并明确这是课程导航抽象。 | RQ-06 | `PROPOSAL` | `00-E09` |
 | 00-C07 | 本课程把 Host / Product 作为装配能力并提供 CLI、IDE、Web、Desktop、CI 等入口的层；公开入口不得用于反推内部 Runtime。 | RQ-07 | `PROPOSAL` | `00-E10` |
 | 00-C08 | Article 00 对 Prompt、Context、Tool、Skill、Workflow、Memory、RAG 只给一句定位定义和后续路由，不讲正式机制。 | RQ-08 | `PROPOSAL` | `00-E11`、`00-E12` |
@@ -61,12 +61,12 @@
 - Evidence Status：`CONFIRMED`
 - Evidence Class：`OFFICIAL_DOC`
 - Source Type：`official product pages and documentation`
-- Source：[Microsoft Copilot for individuals](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/)；[GitHub Copilot features](https://docs.github.com/en/copilot/get-started/features)；[GitHub Copilot cloud agent](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent)
+- Source：[Microsoft Copilot for individuals](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/get-copilot)；[GitHub Copilot features](https://docs.github.com/en/copilot/get-started/features)；[GitHub Copilot cloud agent](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent)
 - Repository / Commit / File / Symbol / Call Path：`N/A`
 - Experiment / Fixture / Trace：`N/A`
-- Retrieved / Run At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Run At：`2026-08-19（Asia/Shanghai）`
 - Version Scope：`Current Microsoft and GitHub public product documentation`
-- Reproduction：比较 Microsoft FAQ 的产品定位、GitHub 的 Assistive / Agentic feature 分类，以及 cloud agent 与 IDE agent mode 的公开差异。
+- Reproduction：比较 Microsoft 产品页的 AI companion 定位、GitHub 的 Assistive / Agentic feature 分类，以及 cloud agent 与 IDE agent mode 的公开差异。
 - Observation：Microsoft 把 Copilot 定位为数字伴侣；GitHub 在同一 Copilot 产品族内同时列出同步建议类能力和可自主工作的 Agentic 能力，并明确 cloud agent 与 IDE agent mode 是不同公开形态。
 - Counter-evidence Searched：主动寻找官方通用 Copilot architecture definition；本轮找到的是产品和能力定义，没有找到可跨 Microsoft / GitHub 产品套用的统一架构规范。
 - Interpretation：可确认的是官方用法的多样性；不能把“未找到”升级成全球不存在任何定义的证明。
@@ -76,7 +76,7 @@
 - Course Usage：Section 2，只作为产品术语与反例。
 - BuildPilot Implication：`N/A`
 - Owner：`Codex`
-- Verified At：`2026-08-18`
+- Verified At：`2026-08-19`
 
 ### Evidence 00-E03｜课程不把 Copilot 设为固定层级
 
@@ -215,19 +215,19 @@
 - Repository：`deepseek-ai/deepseek-harness（仅公开 README 定位）`
 - Commit / File / Symbol / Call Path：`N/A / README / N/A / N/A`（M1 明确不固定源码 revision、不研究内部调用链）
 - Experiment / Fixture / Trace：`N/A`
-- Retrieved / Run At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Run At：`2026-08-19（Asia/Shanghai）`
 - Version Scope：`Anthropic article published 2026-04-09; DSH developer-preview README as retrieved`
 - Reproduction：比较 Anthropic 四组件说明中的 harness 与 DSH README 对整套产品的自我定位。
 - Observation：Anthropic 用 harness 指 instructions 与 guardrails；DeepSeek 把 DSH 整体称为 open-source agent harness，并强调 plugin architecture 与 developer preview。
 - Counter-evidence Searched：检索 Agent Runtime / Agent Harness 的其他官方用法；没有得到可证明全行业统一边界的 specification。
-- Interpretation：可确认多个真实用法和语义差异；“不是行业标准”仍是基于有限样本的谨慎结论，故为 `PARTIAL`。
+- Interpretation：可确认多个真实用法和语义差异；有限样本仍不足以支持“存在统一行业定义”或“不存在统一行业定义”，故为 `PARTIAL`。
 - Proves：课程必须明确 Harness 不是从单一官方定义直接搬来的通用层。
 - Does Not Prove：不能证明行业所有 Harness 都不同，也不能证明 DSH 内部具体承载哪些能力。
 - Limitations：未做全行业普查；DSH 未 pinned-source，符合 M1 停止线。
 - Course Usage：Section 3，只陈述多用法与不统一边界。
 - BuildPilot Implication：`DEFER`
 - Owner：`Codex`
-- Verified At：`2026-08-18`
+- Verified At：`2026-08-19`
 
 ### Evidence 00-E09｜课程 Harness 导航抽象
 
@@ -265,7 +265,7 @@
 - Source：[Claude Code overview](https://code.claude.com/docs/en/overview)；[Codex CLI](https://learn.chatgpt.com/docs/codex/cli)；[Anthropic Trustworthy agents in practice](https://www.anthropic.com/research/trustworthy-agents)
 - Repository / Commit / File / Symbol / Call Path：`N/A`
 - Experiment / Fixture / Trace：`N/A`
-- Retrieved / Run At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Run At：`2026-08-19（Asia/Shanghai）`
 - Version Scope：`Current public product docs`
 - Reproduction：列出公开 surface / environment，再检查页面是否公开内部 Runtime 模块边界。
 - Observation：Claude Code 明确覆盖 terminal、IDE、desktop、web；Codex CLI 公开本地仓库与 terminal / CI 用法；Anthropic 把 environment 定义为 agent 运行的产品与可访问系统。
@@ -277,7 +277,7 @@
 - Course Usage：Section 3 与产品示例边界。
 - BuildPilot Implication：`DEFER`
 - Owner：`Codex`
-- Verified At：`2026-08-18`
+- Verified At：`2026-08-19`
 
 ### Evidence 00-E11｜横向术语的最低一手定义
 
@@ -340,7 +340,7 @@
 - Source：[Claude Code overview](https://code.claude.com/docs/en/overview)
 - Repository / Commit / File / Symbol / Call Path：`N/A`
 - Experiment / Fixture / Trace：`N/A`
-- Retrieved / Run At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Run At：`2026-08-19（Asia/Shanghai）`
 - Version Scope：`Claude Code public product documentation retrieved on date above`
 - Reproduction：查看 overview 的产品定义、可见能力与 surfaces 列表。
 - Observation：官方页面将其描述为 agentic coding tool，公开读取代码库、编辑文件、运行命令及 terminal / IDE / desktop / web 入口。
@@ -352,7 +352,7 @@
 - Course Usage：Section 5，一行公开事实 + 一行不可推测边界。
 - BuildPilot Implication：`N/A`
 - Owner：`Codex`
-- Verified At：`2026-08-18`
+- Verified At：`2026-08-19`
 
 ### Evidence 00-E14｜Codex CLI 的公开产品事实
 
@@ -365,7 +365,7 @@
 - Source：[Codex CLI](https://learn.chatgpt.com/docs/codex/cli)
 - Repository / Commit / File / Symbol / Call Path：`N/A`
 - Experiment / Fixture / Trace：`N/A`
-- Retrieved / Run At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Run At：`2026-08-19（Asia/Shanghai）`
 - Version Scope：`Codex CLI public documentation retrieved on date above`
 - Reproduction：查看页面的 local repository、control 与 scripts / CI 段。
 - Observation：官方页面公开 Codex CLI 能检查和编辑代码、运行本机工具，并可交互使用或通过 codex exec 进入重复工作流和 pipeline。
@@ -377,7 +377,7 @@
 - Course Usage：Section 5，一行公开事实 + 证明边界。
 - BuildPilot Implication：`N/A`
 - Owner：`Codex`
-- Verified At：`2026-08-18`
+- Verified At：`2026-08-19`
 
 ### Evidence 00-E15｜DeepSeek Harness 的公开官方定位
 
@@ -393,7 +393,7 @@
 - File：`README.md（公开仓库首页呈现）`
 - Symbol / Call Path：`N/A`
 - Experiment / Fixture / Trace：`N/A`
-- Retrieved / Run At：`2026-08-18（Asia/Shanghai）`
+- Retrieved / Run At：`2026-08-19（Asia/Shanghai）`
 - Version Scope：`Developer preview README retrieved on date above; compatibility-breaking changes explicitly expected`
 - Reproduction：打开官方仓库 README，查看产品定位、preview 警告和 npm Web UI 启动说明。
 - Observation：README 将 DSH 称为 DeepSeek AI 开发的 open-source agent harness，说明 everything-is-a-plugin 方向、developer preview 状态与 `npx @deepseek-ai/dsh web` 入口。
@@ -405,7 +405,7 @@
 - Course Usage：Section 5，只用公开定位并紧邻版本 / 推断限制。
 - BuildPilot Implication：`N/A`
 - Owner：`Codex`
-- Verified At：`2026-08-18`
+- Verified At：`2026-08-19`
 
 ## Gate Notes
 

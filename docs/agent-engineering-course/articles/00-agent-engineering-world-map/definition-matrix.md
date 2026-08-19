@@ -13,7 +13,7 @@
 | Agent | 围绕用户目标，由模型参与决定推进方式，并通过行动 / 工具与反馈处理多步任务的软件系统。 | `STABLE_ABSTRACTION` | Medium-High | 08 |
 | Agentic | 不同生态用于描述自主行为、Agent 模式或更广义 LLM 系统的词；本课程只把它当程度 / 特征描述。 | `ECOSYSTEM_DEPENDENT` | High | 00 |
 | Agent Runtime | 本课程对 Agent 执行职责的称呼：模型调用、工具分派、循环推进、状态 / continuation 与停止。 | `COURSE_WORKING_DEFINITION` | Medium | 25 |
-| Harness | 本课程对 Runtime 周围可复用工程控制与约束层的称呼；不是行业统一标准定义。 | `COURSE_WORKING_DEFINITION` | Medium | 24—27 |
+| Harness | 本课程对 Runtime 周围可复用工程控制与约束层的称呼；现有证据不足以支持统一行业定义。 | `COURSE_WORKING_DEFINITION` | Medium | 24—27 |
 | Host | 本课程对具体运行或集成入口的称呼，例如 CLI、IDE、Web、Desktop、CI、Unity Editor；一个 Product 可以暴露一个或多个 Host。 | `COURSE_WORKING_DEFINITION` | Medium | 25、29 |
 | Prompt | 给模型的任务、指令、示例与输出要求；只是 Context 的一部分。 | `STABLE_ABSTRACTION` | High | 02 |
 | Context | 某一步推理时模型实际可见的 token / 信息集合。 | `STABLE_ABSTRACTION` | High | 12—13 |
