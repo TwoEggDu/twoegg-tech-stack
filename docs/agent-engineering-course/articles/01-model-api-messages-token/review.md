@@ -128,3 +128,19 @@
 - [x] Total `92 >= 88`；Technical `19 >= 18`；Evidence `19 >= 18`；Teaching `18 >= 17`；Transfer `18 >= 17`
 
 Outcome：`PASS`。Article 01 进入 `FINAL`，允许执行 A6 Publish；知识内容自此冻结。
+
+## Post-publication Independent Review Hotfix
+
+### 01-IR-F01｜OpenAI Responses input role 集合不完整
+
+- Review Type：`INDEPENDENT_REVIEW`
+- Review Date：`2026-08-19（Asia/Shanghai）`
+- Severity：`MINOR`
+- Category：`TECHNICAL / EVIDENCE`
+- Lifecycle Treatment：`PUBLISHED + POST_PUBLICATION_HOTFIX`；未伪造完整生产生命周期重跑。
+- Original Issue：Evidence、Research、Outline、Draft 与 Published Content 把 OpenAI 输入表达概括为 `developer / user / assistant`，容易被读成 Responses API 的完整 input message role 集合，遗漏当前 contract 中允许的 `system`。
+- Evidence：OpenAI 官方 Responses API Reference 当前将 input message role 列为 `user / assistant / system / developer`；同一 contract 还提供顶层 `instructions`，可插入 system 或 developer instruction，字符串形式等价于 developer-role text input。
+- Required Fix：补全 OpenAI Responses 的 input message role 集合，并只增加 `instructions` 的最低表示关系；不得扩写 Prompt hierarchy、instruction priority engineering 或 prompt design。
+- Revision：已同步修订 `research.md`、`evidence.md`、`outline.md`、`draft.md` 与 Published Content；`01-C04` 的 Provider-specific 主张不变，`01-E04` 补充直接 API Reference 证据与证明边界。
+- Recheck Result：`PASS`。上述资产均明确写为 OpenAI Responses 的当前 contract；未再把三种 role 写成完整集合，且未进入 Article 02 的 Prompt Engineering 范围。`hugo --gc --minify` 通过：Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`。
+- Finding Status：`CLOSED`

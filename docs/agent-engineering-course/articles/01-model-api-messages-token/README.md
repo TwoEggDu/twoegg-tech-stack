@@ -11,11 +11,13 @@
 - Required Lab：`NONE`
 - Lab Status：`N/A`
 - Current Gate：`A6 Publish Gate PASSED`
+- Post-publication Review：`01-IR-F01 CLOSED`（补全 OpenAI Responses input message 的 `system / developer / user / assistant` contract，并记录顶层 `instructions` 的最低关系）
 - Next Allowed Action：`Article 02｜Production Kickoff / Full Production（仅建议，未执行）`
 - Blocker：`NONE`
 - Published Content：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Published Route：`/ai-empowerment/agent-engineering-01-model-api-messages-token/`
 - Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
+- Post-hotfix Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
 
 ## 本篇职责
 
@@ -31,6 +33,7 @@
 - [Detailed Outline](outline.md)：Teaching Spine、Claim Coverage、图、示例、Learning Check 与课程边界。
 - [Final Draft](draft.md)：A5 修订后的冻结正文；与 Published Body 语义一致。
 - [Review Record](review.md)：A1—A5 Gate、首轮 Findings、修订处置与最终 `92 / 100` 评分。
+- [Review Record](review.md) 还保留 `01-IR-F01` post-publication Independent Review Hotfix；原 Formal Review 历史未删除或重写。
 
 本篇未创建 `assets/` 或 Lab，也未执行 API 实验；官方 contract 已足以支撑核心 Claim。
 

@@ -70,14 +70,14 @@
 
 - Claim ID：`01-C04`
 - Evidence Status / Class：`CONFIRMED / OFFICIAL_DOC`
-- Source：[OpenAI roles](https://developers.openai.com/api/docs/guides/text)；[Anthropic Messages](https://platform.claude.com/docs/en/api/messages/create)；[Gemini GenerateContent](https://ai.google.dev/api/generate-content?hl=en)
+- Source：[OpenAI Responses API Reference](https://platform.openai.com/docs/api-reference/responses)；[Anthropic Messages](https://platform.claude.com/docs/en/api/messages/create)；[Gemini GenerateContent](https://ai.google.dev/api/generate-content?hl=en)
 - Retrieved / Version Scope：`2026-08-19（Asia/Shanghai）`；三家当日 contract
-- Observation：OpenAI 使用 developer / user / assistant；Anthropic input messages 使用 user / assistant，system 是顶层参数；Google contents 使用 user / model，systemInstruction 独立。
+- Observation：OpenAI Responses 的 input message role 当前允许 system / developer / user / assistant；顶层 `instructions` 可插入 system 或 developer instruction，字符串形式等价于 developer-role text input。Anthropic input messages 使用 user / assistant，system 是顶层参数；Google contents 使用 user / model，systemInstruction 独立。
 - Counter-evidence：三家 role 集合与 system 位置直接不同。
 - Interpretation：不能建立跨 Provider 固定 role enum。
-- Proves：role / system 结构是 Provider-specific。
+- Proves：role / system instruction 的表示方式是 Provider-specific；OpenAI Responses 不能省略 system 后再把其余三项写成完整 role set。
 - Does Not Prove：不否认角色思想存在共同性。
-- Limitations / Course Usage：API 会演进；用于 Section 3 对照表。
+- Limitations / Course Usage：API 会演进；这里只记录字段集合和最低映射，不展开 instruction hierarchy；用于 Section 3 对照表。
 
 ### Evidence 01-E05｜Token 不是字符
 

@@ -132,7 +132,7 @@ Message role 也不是一个可以随意跨 Provider 复制的统一枚举。以
 
 | Provider contract | 当前公开的输入表达示例 |
 |---|---|
-| OpenAI | developer / user / assistant；instructions 与 input 的位置还依具体 API |
+| OpenAI Responses | input message 允许 system / developer / user / assistant；另有顶层 `instructions` instruction mechanism |
 | Anthropic | input messages 使用 user / assistant；system 是顶层参数，不是 system role |
 | Google | contents 使用 user / model；systemInstruction 独立 |
 

@@ -95,7 +95,7 @@ Long-term memory = external product / runtime capability, not proven by messages
 ```
 
 - Provider Counter-check Table：
-  - OpenAI：developer / user / assistant；instructions / input 依具体 API。
+  - OpenAI Responses：input message 允许 system / developer / user / assistant；另有顶层 `instructions` instruction mechanism。
   - Anthropic：input messages 使用 user / assistant；system 为顶层参数。
   - Google：contents 使用 user / model；systemInstruction 独立。
 - Teaching Payoff：面对新 Provider，不复制一个跨平台固定 role enum；先读它的当前 API contract。
