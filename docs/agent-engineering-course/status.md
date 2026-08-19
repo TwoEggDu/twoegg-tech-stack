@@ -2,17 +2,18 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-20
-- 当前里程碑：Article 02 已 `PUBLISHED`；当前 Gate 为 `ARTICLE_COMMIT_VERIFY`
-- 当前生产对象：Article 02；Review Cycle `1 / 3`，`02-F01 / 02-F02 CLOSED`，Publisher / Build / Master Reconciliation 均为 `PASS`
+- 当前里程碑：Article 03 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
+- 当前生产对象：Article 03；Mode `LAB_ARTICLE`；当前 Gate 为 `GIT_DIFF_VERIFY`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
-- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1231 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Article 03 Published Path：`content/ai-empowerment/agent-engineering-03-structured-output-machine-contract.md`
+- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1232 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / ARTICLE_COMMIT_VERIFY`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / GIT_DIFF_VERIFY`）
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
-- 下一允许动作：完成 Article 02 Git Diff Verify、独立 checkpoint commit 与 commit verification；验证通过后才允许 `START_ARTICLE_03_PRECHECK`
+- 下一允许动作：Master 审计 Article 03 transaction diff、精确 staging、checkpoint commit 与 commit verification
 
 ## 状态图例
 
@@ -28,7 +29,7 @@
 | 00 | Agent Engineering 世界地图：从 Model、Agent 到 Harness / Host | 导论 | S | 否 | `PUBLISHED` | `PARTIAL` | N/A | `NONE`；发布于 2026-08-19；`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md` |
 | 01 | 模型调用到底发生了什么：LLM、Model API、Messages 与 Token | I | M | 否 | `PUBLISHED` | `CONFIRMED` | N/A | `NONE`；发布于 2026-08-19；`01-IR-F01 / 01-IR-F02 CLOSED`；`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md` |
 | 02 | Prompt Engineering：任务合同、角色、示例与边界 | I | M | 否 | `PUBLISHED` | `PARTIAL` | N/A | `NONE`；Review `92 / 100 PASS`；Publisher / Build / Master Reconciliation `PASS`；`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md` |
-| 03 | Structured Output：让模型输出成为机器可消费的合同 | I | L | 否 | `PLANNED` | `BLOCKED` | Lab 01 `PLANNED / BLOCKED` | Lab fixture 与 Provider 未固定 |
+| 03 | Structured Output：让模型输出成为机器可消费的合同 | I | L | 否 | `PUBLISHED` | `CONFIRMED`（`7 CONFIRMED / 0 PARTIAL / 0 BLOCKED`） | Lab 01 `CONFIRMED / EVIDENCE_MERGED` | `NONE`；Review `PASS / 93`，Publisher / Build / Master Reconciliation `PASS`；checkpoint pending |
 | 04 | Model Adapter 与 LLM Gateway：Streaming、Error、Retry 和 Provider 差异 | I | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | II | L | 否 | `PLANNED` | `BLOCKED` | Lab 02 `PLANNED / BLOCKED` | Lab fixture 与执行合同未设计 |
@@ -80,4 +81,5 @@
 5. Article 01 已完成 A1—A6 Full Production Run：`PLANNED -> RESEARCHING -> EVIDENCE_READY -> OUTLINE_READY -> DRAFTING -> REVIEW -> FINAL -> PUBLISHED`；随后完成 `01-IR-F01 / 01-IR-F02` 两次 post-publication hotfix，Evidence 继续为 `CONFIRMED`，Lab 为 `N/A`。
 6. Article 02 已完成 `PRECHECK -> ARTICLE_KICKOFF -> RESEARCH -> EVIDENCE_READY -> OUTLINE_READY -> DRAFTING -> REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL -> PUBLISHED`；Evidence 为 `PARTIAL`，Lab 为 `N/A`，Publisher / Build / Master Reconciliation 均为 `PASS`。下一篇仍受 Article 02 独立 checkpoint commit verification 约束。
 7. Foundation Independent Review 已关闭 `CF-IR-F01`—`CF-IR-F05`；只修复 transaction ownership / ordering / resume semantics，没有启动 Article 02。
-8. Foundation Article Kickoff Hotfix 已补齐 `ARTICLE_KICKOFF`、Article checkpoint commit、commit verification 与 next-Article stop line；独立提交为 `9b75fa7`。Article 02 transaction 已按该边界推进到 `PUBLISHED / ARTICLE_COMMIT_VERIFY`。
+8. Foundation Article Kickoff Hotfix 已补齐 `ARTICLE_KICKOFF`、Article checkpoint commit、commit verification 与 next-Article stop line；独立提交为 `9b75fa7`。Article 02 checkpoint `b359a32` 已验证，Article 03 transaction 已按该边界启动。
+9. Article 03 按 Required Lab Article 流程完成 `PRELIMINARY_EVIDENCE -> LAB_DESIGN -> LAB_EXECUTE -> LAB_OBSERVATION -> EVIDENCE_MERGE -> EVIDENCE_GATE`，随后完成 Outline、Draft、Cycle 1 Review / Revision / Recheck、Publisher、Build 与 Master Reconciliation；独立 checkpoint 仍待验证。

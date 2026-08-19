@@ -5,18 +5,18 @@
 ```yaml
 schema_version: 1
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
-factory_status: READY
-current_article: "02"
-current_gate: ARTICLE_COMMIT_VERIFY
-last_published_article: "02"
-active_worker: NONE
+factory_status: RUNNING
+current_article: "03"
+current_gate: GIT_DIFF_VERIFY
+last_published_article: "03"
+active_worker: MASTER_ORCHESTRATOR
 review_cycle: 1
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 798443c1d41f03960253b1190fcbc91425d4f285
-next_action: START_ARTICLE_03_PRECHECK_AFTER_ARTICLE_02_COMMIT_VERIFIED
-last_updated: "2026-08-20T00:00:24+08:00"
+last_successful_commit: b359a329df02ce7487b0cb1a9feaad66c886d4dc
+next_action: VERIFY_AND_COMMIT_ARTICLE_03_CHECKPOINT
+last_updated: "2026-08-20T02:17:15+08:00"
 ```
 
 ## Field rules
@@ -37,4 +37,4 @@ last_updated: "2026-08-20T00:00:24+08:00"
 
 ## Current transaction boundary
 
-Article 02 已完成 `ARTICLE_KICKOFF`、Research、Evidence、Outline、Draft、一次 Revision / Recheck、Final Gate、Publisher、Build 与 Master State Reconciliation；Reviewer `92 / 100 PASS`，Publisher `PASS`，Hugo `1231 Pages / 0 ERROR / 0 WARNING`，Lifecycle 为 `PUBLISHED`。`last_successful_commit` 仍保留上一个可恢复 checkpoint，避免当前 state commit 自引用；只有 Git history 进一步证明 `Publish Agent Engineering Article 02` 已提交且 `ARTICLE_COMMIT_VERIFIED = PASS` 后，才允许启动 Article 03 PRECHECK。
+Article 02 checkpoint commit `b359a329df02ce7487b0cb1a9feaad66c886d4dc` 已完成 message、13-file scope、clean-tree、`git log` 与 `git show` verification，`END ARTICLE 02` 成立。Article 03 Reviewer Final Gate=`PASS / 93`、Publisher=`PASS`、Hugo=`1232 Pages / 0 ERROR / 0 WARNING / exit 0`，Master 已完成 canonical / Lifecycle `PUBLISHED` reconciliation。当前只允许执行 Article 03 `GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；Article 04 尚未启动。

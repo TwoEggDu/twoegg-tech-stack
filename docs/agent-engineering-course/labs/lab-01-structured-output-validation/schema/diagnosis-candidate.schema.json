@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DiagnosisCandidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "summary", "evidence_ids"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["SUPPORTED", "INSUFFICIENT_EVIDENCE"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  }
+}

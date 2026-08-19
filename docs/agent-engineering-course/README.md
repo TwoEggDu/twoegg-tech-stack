@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 02 已 `PUBLISHED`；Factory 位于 `ARTICLE_COMMIT_VERIFY`
-- 当前生产对象：Article 02；Review Cycle `1 / 3`，`02-F01 / 02-F02 CLOSED`，Publisher / Build / Master Reconciliation 均为 `PASS`
+- 当前里程碑：Article 03 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
+- 当前生产对象：Article 03 `PUBLISHED`；Mode `LAB_ARTICLE`；当前 Gate 为 `GIT_DIFF_VERIFY`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -22,7 +22,9 @@
 - 当前 Article 01 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
 - 当前 Article 02 状态：`PUBLISHED`；Evidence `PARTIAL`（`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 1 PROPOSAL`）；Final Review `PASS`（`92 / 100`）；Published Content：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
 - 当前 Article 02 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1231 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`READY / ARTICLE_COMMIT_VERIFY`；Article 02 独立 checkpoint commit verification 完成后才允许 `START_ARTICLE_03_PRECHECK`
+- 当前 Article 03 状态：`PUBLISHED`；Evidence `CONFIRMED`（`7 CONFIRMED / 0 PARTIAL / 0 BLOCKED`）；Required Lab 01 `CONFIRMED / EVIDENCE_MERGED`；Final Review `PASS / 93`；Publisher / Build `PASS`；Published Content：`content/ai-empowerment/agent-engineering-03-structured-output-machine-contract.md`
+- 当前 Article 03 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1232 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Factory Status：`RUNNING / GIT_DIFF_VERIFY`；下一动作由 Master 完成 Article 03 精确 staging、checkpoint commit 与 commit verification
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始

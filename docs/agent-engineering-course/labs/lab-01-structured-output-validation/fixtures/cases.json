@@ -1,0 +1,66 @@
+[
+  {
+    "case_id": "valid-accepted",
+    "declared_input_class": "CONTRACT_CANDIDATE",
+    "raw": "{\"status\":\"SUPPORTED\",\"summary\":\"CS0103 at BuildMenu.cs:42\",\"evidence_ids\":[\"EV-001\"]}",
+    "expected_terminal_stage": "ACCEPTED",
+    "expected_error_codes": ["NONE"],
+    "expected_action": "ACCEPT"
+  },
+  {
+    "case_id": "invalid-json",
+    "declared_input_class": "MALFORMED_JSON",
+    "raw": "{\"status\":\"SUPPORTED\",",
+    "expected_terminal_stage": "PARSE_FAILED",
+    "expected_error_codes": ["INVALID_JSON"],
+    "expected_action": "UPSTREAM_RETRY_ELIGIBLE"
+  },
+  {
+    "case_id": "missing-required",
+    "declared_input_class": "CONTRACT_CANDIDATE",
+    "raw": "{\"status\":\"SUPPORTED\",\"evidence_ids\":[\"EV-001\"]}",
+    "expected_terminal_stage": "SCHEMA_FAILED",
+    "expected_error_codes": ["REQUIRED"],
+    "expected_action": "UPSTREAM_RETRY_ELIGIBLE"
+  },
+  {
+    "case_id": "wrong-type",
+    "declared_input_class": "CONTRACT_CANDIDATE",
+    "raw": "{\"status\":\"SUPPORTED\",\"summary\":\"bad type\",\"evidence_ids\":\"EV-001\"}",
+    "expected_terminal_stage": "SCHEMA_FAILED",
+    "expected_error_codes": ["TYPE"],
+    "expected_action": "UPSTREAM_RETRY_ELIGIBLE"
+  },
+  {
+    "case_id": "extra-property",
+    "declared_input_class": "CONTRACT_CANDIDATE",
+    "raw": "{\"status\":\"SUPPORTED\",\"summary\":\"extra\",\"evidence_ids\":[\"EV-001\"],\"confidence\":0.9}",
+    "expected_terminal_stage": "SCHEMA_FAILED",
+    "expected_error_codes": ["ADDITIONAL_PROPERTY"],
+    "expected_action": "UPSTREAM_RETRY_ELIGIBLE"
+  },
+  {
+    "case_id": "nonexistent-evidence",
+    "declared_input_class": "CONTRACT_CANDIDATE",
+    "raw": "{\"status\":\"SUPPORTED\",\"summary\":\"unknown id\",\"evidence_ids\":[\"EV-999\"]}",
+    "expected_terminal_stage": "DOMAIN_FAILED",
+    "expected_error_codes": ["UNKNOWN_EVIDENCE_ID"],
+    "expected_action": "STOP_AND_RECHECK_DOMAIN_INPUT"
+  },
+  {
+    "case_id": "truncated-json",
+    "declared_input_class": "SYNTHETIC_TRUNCATED",
+    "raw": "{\"status\":\"SUPPORTED\",\"summary\":\"truncated\",\"evidence_ids\":[\"EV-001\"]",
+    "expected_terminal_stage": "PARSE_FAILED",
+    "expected_error_codes": ["INVALID_JSON"],
+    "expected_action": "UPSTREAM_CAUSE_REQUIRED"
+  },
+  {
+    "case_id": "synthetic-refusal-text",
+    "declared_input_class": "SYNTHETIC_NON_CONTRACT_INPUT",
+    "raw": "I cannot provide that result.",
+    "expected_terminal_stage": "PARSE_FAILED",
+    "expected_error_codes": ["INVALID_JSON"],
+    "expected_action": "STOP_NON_CONTRACT_INPUT"
+  }
+]

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/StructuredOutputValidation/StructuredOutputValidation.csproj" />
+  <Project Path="tests/StructuredOutputValidation.Tests/StructuredOutputValidation.Tests.csproj" />
+</Solution>

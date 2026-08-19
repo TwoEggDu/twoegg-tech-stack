@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NuGetLockFilePath>$(MSBuildThisFileDirectory)packages.lock.json</NuGetLockFilePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\StructuredOutputValidation\StructuredOutputValidation.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\fixtures\cases.json" Link="fixtures\cases.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\fixtures\evidence-allowlist.json" Link="fixtures\evidence-allowlist.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\schema\diagnosis-candidate.schema.json" Link="schema\diagnosis-candidate.schema.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

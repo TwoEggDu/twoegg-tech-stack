@@ -164,7 +164,7 @@ BuildPilot Design v1
 |---|---|---|---|
 | 01 | [模型调用到底发生了什么：LLM、Model API、Messages 与 Token](../content/ai-empowerment/agent-engineering-01-model-api-messages-token.md) | M | 否 |
 | 02 | [Prompt Engineering：任务合同、角色、示例与边界](../content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md) | M | 否 |
-| 03 | Structured Output：让模型输出成为机器可消费的合同 | L | 否 |
+| 03 | [Structured Output：让模型输出成为机器可消费的合同](../content/ai-empowerment/agent-engineering-03-structured-output-machine-contract.md) | L | 否 |
 | 04 | Model Adapter 与 LLM Gateway：Streaming、Error、Retry 和 Provider 差异 | M | 否 |
 
 ### Part II｜从模型到 Agent
