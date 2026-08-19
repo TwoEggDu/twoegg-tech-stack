@@ -247,7 +247,7 @@ CapabilityDescriptor
 9. capability 是 native、显式 fallback 还是 unsupported？scope 是否随结果返回？
 10. 当前结论来自 official contract、runtime observation，还是 design proposal？
 
-上一篇负责让候选输出经过 Parse、Schema、DTO 与 Domain；本篇负责在候选进入那条链之前，保留 Provider 的 stream、terminal、error 与 Usage evidence，并决定它是否可以形成候选。下一篇才会继续讨论模型怎样表达“我要行动”的 Function Calling / Tool Use contract；本篇到“tool argument fragment 不能越过 validation 直接执行”为止。
+上一篇负责让候选输出经过 Parse、Schema、DTO 与 Domain；本篇负责在候选进入那条链之前，保留 Provider 的 stream、terminal、error 与 Usage evidence，并决定它是否可以形成候选。[下一篇]({{< relref "ai-empowerment/agent-engineering-05-function-calling-tool-use.md" >}})才会继续讨论模型怎样表达“我要行动”的 Function Calling / Tool Use contract；本篇到“tool argument fragment 不能越过 validation 直接执行”为止。
 
 ## Learning Check
 

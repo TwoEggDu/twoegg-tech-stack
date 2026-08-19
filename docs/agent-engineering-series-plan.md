@@ -171,7 +171,7 @@ BuildPilot Design v1
 
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
-| 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | M | 否 |
+| 05 | [Function Calling 与 Tool Use：模型如何表达行动意图](../content/ai-empowerment/agent-engineering-05-function-calling-tool-use.md) | M | 否 |
 | 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | L | 否 |
 | 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | M | 否 |
 | 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | L | 否 |
