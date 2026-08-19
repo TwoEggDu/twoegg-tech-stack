@@ -5,15 +5,19 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：M5 Article 00 Publish 已完成
-- 当前生产对象：Article 00（已完成）
+- 当前里程碑：Article 01 A1 Production Kickoff 已完成
+- 当前生产对象：Article 01（`PLANNED`）
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
 - 当前 Article 00 Human Review：`HR-F01 / HR-F02 RESOLVED`（`New Core Claims = 0`）
 - 当前 Article 00 Published Content：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - 当前 Article 00 Build Verification：`hugo --gc --minify`，`1229 Pages / 0 ERROR`
-- 下一允许动作：`Article 01｜Production Kickoff`，不自动执行
+- 当前 Article 01 状态：`PLANNED`
+- 当前 Article 01 Evidence：`BLOCKED / NOT_RESEARCHED`
+- 当前 Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
+- 当前 Article 01 A1 Gate：`COMPLETE`
+- 下一允许动作：`Article 01 A2｜Evidence-first Research`，不自动执行
 
 ## 从哪里开始
 
@@ -33,7 +37,8 @@
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
-| [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | 当前唯一实例化的文章工作区；Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
+| [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
+| [articles/01-model-api-messages-token/](articles/01-model-api-messages-token/) | Article 01 A1 生产工作区；Research Questions 与 Evidence Plan 已就绪，Lifecycle 仍为 `PLANNED` |
 
 ## 资产边界
 
