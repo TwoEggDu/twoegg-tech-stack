@@ -7,16 +7,16 @@ schema_version: 1
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 factory_status: READY
 current_article: "02"
-current_gate: PRECHECK
-last_published_article: "01"
+current_gate: ARTICLE_COMMIT_VERIFY
+last_published_article: "02"
 active_worker: NONE
-review_cycle: 0
+review_cycle: 1
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 36d41ff06f989a7aa120c6ce8068f6d8afa23797
-next_action: START_ARTICLE_02_PRECHECK
-last_updated: "2026-08-19T21:59:26+08:00"
+last_successful_commit: 798443c1d41f03960253b1190fcbc91425d4f285
+next_action: START_ARTICLE_03_PRECHECK_AFTER_ARTICLE_02_COMMIT_VERIFIED
+last_updated: "2026-08-20T00:00:24+08:00"
 ```
 
 ## Field rules
@@ -35,6 +35,6 @@ last_updated: "2026-08-19T21:59:26+08:00"
 
 只在 transaction-level 事件更新：`ARTICLE_KICKOFF`、worker start、Gate pass、Gate fail、Article `PUBLISHED` candidate、Article Commit Verify、Part Audit start / finish、Factory `PAUSED`、Factory Resume、Course `COMPLETE`。不要为每个小动作更新或提交本文件；每篇 Article 与每次 Part / Final Audit 仍必须遵守各自独立 commit boundary。
 
-## Foundation boundary
+## Current transaction boundary
 
-当前 `READY + 02 + PRECHECK` 只表示未来允许执行 `START_ARTICLE_02_PRECHECK`。Article 02 在 [status.md](status.md) 中仍为 `PLANNED`，没有 workspace、Research、Evidence、Draft 或 active worker；PRECHECK 通过后仍须执行 `ARTICLE_KICKOFF`。
+Article 02 已完成 `ARTICLE_KICKOFF`、Research、Evidence、Outline、Draft、一次 Revision / Recheck、Final Gate、Publisher、Build 与 Master State Reconciliation；Reviewer `92 / 100 PASS`，Publisher `PASS`，Hugo `1231 Pages / 0 ERROR / 0 WARNING`，Lifecycle 为 `PUBLISHED`。`last_successful_commit` 仍保留上一个可恢复 checkpoint，避免当前 state commit 自引用；只有 Git history 进一步证明 `Publish Agent Engineering Article 02` 已提交且 `ARTICLE_COMMIT_VERIFIED = PASS` 后，才允许启动 Article 03 PRECHECK。

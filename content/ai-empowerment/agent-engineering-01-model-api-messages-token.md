@@ -264,7 +264,7 @@ Streaming != Hidden Reasoning
 API Success != Correct Answer
 ```
 
-这就是后续 Agent Engineering 所需的最小 Model Call 心智模型。下一篇会继续沿这条 contract chain 前进：当 Application 已经知道如何把输入交给 Model API，Prompt 应该如何从一段临时文字，变成可维护、可测试的输入契约？
+这就是后续 Agent Engineering 所需的最小 Model Call 心智模型。[下一篇：Prompt Engineering：任务合同、角色、示例与边界]({{< relref "ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md" >}}) 会继续沿这条 contract chain 前进：当 Application 已经知道如何把输入交给 Model API，Prompt 应该如何从一段临时文字，变成可维护、可测试的输入契约？
 
 ## Learning Check
 
