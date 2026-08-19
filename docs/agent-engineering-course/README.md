@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 01 Full Production Run 已完成
-- 当前生产对象：Article 01（`PUBLISHED`）
+- 当前里程碑：Course Factory Foundation `READY`；尚未启动 Factory
+- 当前生产对象：`NONE`；execution pointer 为 Article 02 `PRECHECK`，Article 02 仍为 `PLANNED`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -17,24 +17,28 @@
 - 当前 Article 01 Evidence：`CONFIRMED`（`11 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`）
 - 当前 Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - 当前 Article 01 Formal Review：`PASSED`（`92 / 100`）
+- 当前 Article 01 Independent Review：`01-IR-F01 CLOSED`（post-publication hotfix；Lifecycle 继续为 `PUBLISHED`）
 - 当前 Article 01 Published Content：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - 当前 Article 01 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
-- 下一允许动作：`Article 02｜Production Kickoff / Full Production`，本次未执行
+- Factory Status：`READY`；下一允许动作：`START_ARTICLE_02_PRECHECK`，本次未执行
 
 ## 从哪里开始
 
-1. 在 [课程状态台账](status.md)确认文章的前置依赖、证据和 Lab 状态。
-2. 按 [课程生产工作流](production-workflow.md)推进 Gate，不跳过证据与审查。
-3. 新建文章工作区时使用 [文章工作区模板](templates/article-workspace-template.md)，但只为当前要生产的文章创建目录。
-4. 技术主张使用 [Evidence Card 模板](templates/evidence-card-template.md)；实验使用 [Lab 模板](templates/lab-template.md)。
-5. 进入审查前使用 [课程审查清单](templates/review-checklist.md)。
-6. 术语含义与首次引入位置查 [课程术语表](glossary.md)。
+1. 多文章运行或恢复先读取 [Factory execution pointer](course-run-state.md)，再与 [课程状态台账](status.md)和 Git state 对齐。
+2. 按 [Course Factory contract](course-factory.md)选择当前唯一 transaction；按 [Subagent contracts](subagent-contracts.md)启动当前 Gate 必需角色。
+3. 按 [课程生产工作流](production-workflow.md)推进篇内 Gate，不跳过证据与审查。
+4. 新建文章工作区时使用 [文章工作区模板](templates/article-workspace-template.md)，但只为当前要生产的文章创建目录。
+5. 技术主张使用 [Evidence Card 模板](templates/evidence-card-template.md)；实验使用 [Lab 模板](templates/lab-template.md)。
+6. 进入审查前使用 [课程审查清单](templates/review-checklist.md)；术语含义与首次引入位置查 [课程术语表](glossary.md)。
 
 ## 生产资产
 
 | 资产 | 职责 |
 |---|---|
 | [canonical series plan](../agent-engineering-series-plan.md) | 冻结课程结构、依赖、文章标题与课程边界 |
+| [course-factory.md](course-factory.md) | Article 02—44 的顺序编排、恢复、特殊模式、Part Audit 与 Final Audit 合同 |
+| [subagent-contracts.md](subagent-contracts.md) | Master、Researcher、Author、Reviewer、Revision、Lab、Publisher 与 Part Auditor 的职责边界 |
+| [course-run-state.md](course-run-state.md) | 小型、可恢复的 Factory execution pointer；不是第二套课程台账 |
 | [production-workflow.md](production-workflow.md) | 生命周期、状态机、Gate 与发布规则 |
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |

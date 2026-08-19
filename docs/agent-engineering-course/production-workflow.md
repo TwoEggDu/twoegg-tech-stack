@@ -2,6 +2,8 @@
 
 本工作流是 [通用文章生产工作流](../article-production-workflow.md)在 Agent Engineering 课程中的扩展，不替代通用方法。它增加了课程依赖、Evidence Card、Lab、DSH 源码证据和 BuildPilot 设计案例的 Gate。
 
+多篇文章的顺序、恢复、worker 路由、Review cycle、Part Audit 与 Course Final Audit 由 [Course Factory contract](course-factory.md) 编排；角色写入边界见 [Subagent contracts](subagent-contracts.md)，执行 pointer 见 [course-run-state.md](course-run-state.md)。Course Factory 是 multi-article orchestration layer，本文件仍是 Article-level production protocol，二者不互相替代。
+
 ## 生命周期
 
 ```text
@@ -33,6 +35,10 @@ Article Card
 | `PUBLISHED` | 正文已进入 Hugo 内容树并完成构建验证 | 发布 Gate 通过 | 重新进入 `RESEARCHING` 进行修订 |
 
 `BLOCKED` 是研究阶段的中断态，不是失败终态。解除阻塞后必须回到 `RESEARCHING` 复核证据，不能直接跳到 `EVIDENCE_READY`。
+
+### Post-publication factual hotfix
+
+已 `PUBLISHED` 的文章若被独立审稿发现范围明确、证据可直接复核的事实遗漏，可保持 `PUBLISHED` 并追加 `POST_PUBLICATION_HOTFIX` 记录，不伪造完整生命周期重跑。必须保留原 Review 历史，定向复核 current primary evidence，同步修订 Research、Evidence、Draft 与 Published Content 的相关措辞，并重新通过 Hugo Build。若修复需要新核心主张、重构教学主线或推翻原 Final Gate，则按状态机重新进入 `RESEARCHING`。
 
 ## Gate 定义
 
