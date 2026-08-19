@@ -111,6 +111,7 @@
 | 长线运营工程专栏 | [docs/live-ops-engineering-column-plan.md](./docs/live-ops-engineering-column-plan.md) | 已拆出 | 产品生命周期视角 |
 | 质量护栏 / Quality Guardrails | [docs/quality-guardrails-series-plan.md](./docs/quality-guardrails-series-plan.md) | 已拆出 | 质量门、验证与回归 |
 | AI 赋能游戏开发 | [docs/ai-empowerment-series-plan.md](./docs/ai-empowerment-series-plan.md) | 已拆出 | 知识闭环、AI 上下文、AI Coding Harness v0 |
+| Agent Engineering | [docs/agent-engineering-series-plan.md](./docs/agent-engineering-series-plan.md) | 已拆出 | 从 Model API 到 Agent Runtime、Harness、DSH 源码验证与专用 Agent 设计 |
 | Harness Engineering | [docs/harness-engineering-series-plan.md](./docs/harness-engineering-series-plan.md) | 已拆出 | v0 之后：演化、诊断、瘦身、跨仓库、场景联动 |
 | Route B 验证路线 | [docs/route-b-verification-plan.md](./docs/route-b-verification-plan.md) | 已拆出 | 验证路径专项 |
 | 工程判断与组织领导力 | [docs/engineering-judgment-series-plan.md](./docs/engineering-judgment-series-plan.md) | 已拆出 | 从个人判断走向组织结果：权责、协作、反馈与能力沉淀 |

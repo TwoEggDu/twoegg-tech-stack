@@ -156,7 +156,7 @@ BuildPilot Design v1
 
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
-| 00 | Agent Engineering 世界地图：从 Model、Agent 到 Harness / Host | S | 否 |
+| 00 | [Agent Engineering 世界地图：从 Model、Agent 到 Harness / Host](../content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md) | S | 否 |
 
 ### Part I｜从 LLM 到可编程模型
 
@@ -327,6 +327,7 @@ BuildPilot 第一阶段保持只读、隔离 Fixture、显式审批后写入；�
 
 M0 不创建发布正文。未来进入 `PUBLISHED` 时默认：
 
+- 系列入口：`content/ai-empowerment/agent-engineering-series-index.md`
 - 正文：`content/ai-empowerment/agent-engineering-<id>-<slug>.md`
 - `series`：`Agent Engineering`
 - `primary_series`：`agent-engineering`
