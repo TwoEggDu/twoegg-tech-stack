@@ -1,10 +1,11 @@
 # Article 01 Review Record
 
-- Lifecycle Status：`FINAL`
-- Current Review Scope：`A5 Final Gate`
-- Formal Review Status：`PASS`
-- Evidence Review Status：`PASS`
-- Course Review Status：`PASS`
+- Lifecycle Status：`PUBLISHED`
+- Current Review Scope：`01-IR-F02 POST_PUBLICATION_HOTFIX / RECHECK_COMPLETE`
+- Formal Review Status：`PASS`（历史 A5 记录，不代表 `01-IR-F02` recheck）
+- Evidence Review Status：`PASS`（历史 A5 记录，不代表 `01-IR-F02` recheck）
+- Course Review Status：`PASS`（历史 A5 记录，不代表 `01-IR-F02` recheck）
+- Post-publication Recheck Status：`01-IR-F02 CLOSED / PASS`
 - Review Date：`2026-08-19（Asia/Shanghai）`
 
 ## Gate History
@@ -143,4 +144,33 @@ Outcome：`PASS`。Article 01 进入 `FINAL`，允许执行 A6 Publish；知识�
 - Required Fix：补全 OpenAI Responses 的 input message role 集合，并只增加 `instructions` 的最低表示关系；不得扩写 Prompt hierarchy、instruction priority engineering 或 prompt design。
 - Revision：已同步修订 `research.md`、`evidence.md`、`outline.md`、`draft.md` 与 Published Content；`01-C04` 的 Provider-specific 主张不变，`01-E04` 补充直接 API Reference 证据与证明边界。
 - Recheck Result：`PASS`。上述资产均明确写为 OpenAI Responses 的当前 contract；未再把三种 role 写成完整集合，且未进入 Article 02 的 Prompt Engineering 范围。`hugo --gc --minify` 通过：Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`。
+- Finding Status：`CLOSED`
+
+### 01-IR-F02｜Anthropic role 表述遗漏 mid-conversation system 例外
+
+- Review Type：`POST_PUBLICATION_HOTFIX REVISION_CANDIDATE`
+- Source Finding：Article 02 Independent Review `02-F01`
+- Review Date：`2026-08-19（Asia/Shanghai）`
+- Severity：`MAJOR`
+- Category：`COURSE / TECHNICAL / EVIDENCE`
+- Lifecycle Treatment：保持 `PUBLISHED`，不伪造完整生产生命周期重跑。
+- Original Issue：Research、Evidence、Outline、Draft 与 Published Content 把 Anthropic role 无条件概括为“input messages 使用 user / assistant；system 是顶层参数，不是 system role”。这只能作为 generic / conversation-start baseline，遗漏当前部分模型支持的 mid-conversation `role: system` 例外。
+- Current Primary Evidence：[Anthropic Create a Message](https://platform.claude.com/docs/en/api/messages/create) 仍给出顶层 `system` / 常规 user-assistant baseline；[Anthropic Mid-conversation system messages](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages) 当前列出 Claude Fable 5、Mythos 5、Opus 4.8、Opus 5、Sonnet 5 的 `role: system` 支持及 placement rules。
+- Required Fix：把原绝对表述限定为 generic / top-level baseline，补入核对日期、model support 与 placement boundary；同步 Research / Evidence / Outline / Draft / Published Content；不建立跨 Provider 统一 role enum / hierarchy，不扩写 Prompt priority 教程。
+- Revision Candidate：已按上述边界同步 `research.md`、`evidence.md`、`outline.md`、`draft.md` 与 Published Content；`01-E04` 增加 claim-relevant current official source、Proves / Does Not Prove 及 model / placement / version boundary。README 与本 Review 只记录 revision candidate。
+- Evidence Impact：`01-C04` 仍为 `CONFIRMED`，但证明范围从绝对的 Anthropic role 集合改为 generic baseline + current model-specific exception；未新增核心 Claim，未改变课程主线。
+- Build Verification：`NOT_RUN`（Revision Worker 本次任务明确禁止执行 Hugo）。
+- Proposed Status：`READY_FOR_RECHECK`
+- Recheck Result：`NOT_RUN`；只有 Independent Reviewer 可以把 Finding 标记为 `CLOSED` 或给出 Final decision。
+
+#### Fresh Independent Reviewer Recheck｜内容与证据
+
+- Reviewer Boundary：fresh independent review；只读取本次 Article 01 热修复 diff、Research / Evidence / Outline / Draft / Published Content 与当前 Anthropic 一手资料，不继承 Revision Worker 的隐藏推理。
+- Primary-source Recheck：Anthropic 当前 [Create a Message](https://platform.claude.com/docs/en/api/messages/create) 仍把常规输入说明为 user / assistant messages，并把从会话开始生效的 system prompt 放在顶层 `system`；这支持 generic / conversation-start baseline，但不能单独支撑“messages 永远没有 system role”的全集结论。
+- Feature Recheck：Anthropic 当前 [Mid-conversation system messages](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages) 明确列出 Claude Fable 5、Claude Mythos 5、Claude Opus 4.8、Claude Opus 5 与 Claude Sonnet 5 支持 messages 数组中的 `role: system`，且不需要 beta header。
+- Placement Recheck：该 feature page 要求 system message 不能作为首条；必须紧跟 user turn，或紧跟一个以 server tool result 结束的 assistant turn；同时必须位于 messages 数组末尾，或紧接 assistant turn 之前，其他位置返回 400。热修复正文、`01-E04` 与 Outline 对这些位置边界的表述一致，没有放宽为任意位置。
+- Asset Synchronization：`RQ-04`、`01-C04 / 01-E04`、Outline、Draft 与 Published Content 均保留 generic baseline + current model-specific exception + placement / version boundary；Draft body 与 Published body 字符级一致。旧的绝对表述只保留在 Original Issue 历史记录中，不再作为当前主张。
+- Scope Recheck：未建立跨 Provider 固定 role enum 或完整 instruction hierarchy，也未扩写 Article 02 的 Prompt priority 教程；`01-C04` 可继续保持 `CONFIRMED`，证明范围以 `01-E04` 的 Does Not Prove / Limitations 为界。
+- Build Evidence：内容复核后，Master 执行 `hugo --gc --minify`；Hugo `0.157.0`，`1230 Pages`，exit code `0`，输出无 `ERROR` / `WARNING`。
+- Recheck Result：`PASS`。当前官方 contract、Claim / Evidence / Draft / Published 同步与 fresh Hugo build 均通过复核。
 - Finding Status：`CLOSED`

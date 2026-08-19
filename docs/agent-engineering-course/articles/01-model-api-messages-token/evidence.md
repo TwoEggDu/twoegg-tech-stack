@@ -15,7 +15,7 @@
 | 01-C01 | 本课程把 Model、Provider、Model API、SDK 与 Application 按能力、服务主体 / 平台、远程软件契约、客户端封装与应用职责分开；具体产品命名和部署仍依 Provider。 | `CONFIRMED` | `01-E01` |
 | 01-C02 | Single Model Call 可按应用可观察边界拆成 request construction、SDK / HTTP serialization、Provider API request、response delivery 与 application handling；该模型不描述 Provider 未公开内部管线。 | `CONFIRMED` | `01-E02` |
 | 01-C03 | Messages / input 是当前请求的结构化输入；手工重发历史或使用 Provider state mechanism 才形成连续上下文，不能据此声称 Model 自身具有跨请求 Long-term Memory。 | `CONFIRMED` | `01-E03` |
-| 01-C04 | Message role 与 system instruction 的字段和语义属于 Provider API contract；OpenAI、Anthropic、Google 当前公开 contract 明显不同。 | `CONFIRMED` | `01-E04` |
+| 01-C04 | Message role 与 system instruction 的字段、model support 和 placement 属于 Provider API contract；Anthropic 的 generic / top-level baseline 与当前部分模型的 mid-conversation `role: system` 例外必须同时保留，不能外推为跨 Provider 固定 role enum。 | `CONFIRMED` | `01-E04` |
 | 01-C05 | Token 是模型处理输入输出的计量粒度，API 可据此报告 usage 或预先计数；字符、单词、文件大小与 Token 不存在可跨模型固定换算。 | `CONFIRMED` | `01-E05` |
 | 01-C06 | Context Window 是绑定模型 contract 的 token capacity；公开文档把输入、输出及部分其他 token 纳入边界，因此不能直接等同字符数、Message 数或文件大小。 | `CONFIRMED` | `01-E06` |
 | 01-C07 | Response 常见职责包括 generated content、usage 与 finish / stop metadata，但具体 envelope 与字段名依 Provider / API 版本变化。 | `CONFIRMED` | `01-E07` |
@@ -69,15 +69,15 @@
 ### Evidence 01-E04｜Role 是 Provider Contract
 
 - Claim ID：`01-C04`
-- Evidence Status / Class：`CONFIRMED / OFFICIAL_DOC`
-- Source：[OpenAI Responses API Reference](https://platform.openai.com/docs/api-reference/responses)；[Anthropic Messages](https://platform.claude.com/docs/en/api/messages/create)；[Gemini GenerateContent](https://ai.google.dev/api/generate-content?hl=en)
-- Retrieved / Version Scope：`2026-08-19（Asia/Shanghai）`；三家当日 contract
-- Observation：OpenAI Responses 的 input message role 当前允许 system / developer / user / assistant；顶层 `instructions` 可插入 system 或 developer instruction，字符串形式等价于 developer-role text input。Anthropic input messages 使用 user / assistant，system 是顶层参数；Google contents 使用 user / model，systemInstruction 独立。
-- Counter-evidence：三家 role 集合与 system 位置直接不同。
-- Interpretation：不能建立跨 Provider 固定 role enum。
-- Proves：role / system instruction 的表示方式是 Provider-specific；OpenAI Responses 不能省略 system 后再把其余三项写成完整 role set。
-- Does Not Prove：不否认角色思想存在共同性。
-- Limitations / Course Usage：API 会演进；这里只记录字段集合和最低映射，不展开 instruction hierarchy；用于 Section 3 对照表。
+- Evidence Status / Class：`CONFIRMED / VERSION_SENSITIVE_OFFICIAL_DOC`
+- Source：[OpenAI Responses API Reference](https://platform.openai.com/docs/api-reference/responses)；[Anthropic Create a Message](https://platform.claude.com/docs/en/api/messages/create)；[Anthropic Mid-conversation system messages](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages)；[Gemini GenerateContent](https://ai.google.dev/api/generate-content?hl=en)
+- Retrieved / Version Scope：`2026-08-19（Asia/Shanghai）`；三家当日公开 contract。Anthropic 结论联合读取 generic Messages API Reference 与 model-specific feature page，不外推到未列出的模型或未来版本。
+- Observation：OpenAI Responses 的 input message role 当前允许 system / developer / user / assistant；顶层 `instructions` 可插入 system 或 developer instruction，字符串形式等价于 developer-role text input。Anthropic generic / conversation-start baseline 仍把 system instruction 放在顶层 `system`，常规 messages 使用 user / assistant；当前 feature page 同时列出 Claude Fable 5、Claude Mythos 5、Claude Opus 4.8、Claude Opus 5 与 Claude Sonnet 5 支持 messages 数组中的 mid-conversation `role: system`。该 message 不能作为首条，必须紧跟 user turn（或以 server tool result 结束的 assistant turn），并且只能位于数组末尾或紧接 assistant turn 之前；其他 placement 返回 400。Google contents 使用 user / model，systemInstruction 独立。
+- Counter-evidence：只读 Anthropic generic API Reference 会得到“messages 没有 system role”的过强全集结论；只读 feature page 又会把 model / placement 受限例外误写成所有 Anthropic 模型与任意位置都支持。
+- Interpretation：不能建立跨 Provider 固定 role enum；同一 Provider 内也必须按 API + model + feature + placement + version 联合核对。
+- Proves：role / system instruction 的表示方式是 Provider-specific；OpenAI Responses 不能省略 system 后再把其余三项写成完整 role set；Anthropic 顶层 `system` 是通用起始基线，但截至核对日存在明确的 model-specific mid-conversation `role: system` 例外。
+- Does Not Prove：不证明所有 Anthropic 模型支持该例外，不证明 `role: system` 可放在 messages 的任意位置，也不证明存在跨 Provider 统一 role enum 或完整 instruction hierarchy。
+- Limitations / Course Usage：model support、placement 与 API 会演进；这里只记录字段集合、起始基线和例外边界，不展开 Prompt priority 教程；用于 Section 3 对照表。
 
 ### Evidence 01-E05｜Token 不是字符
 

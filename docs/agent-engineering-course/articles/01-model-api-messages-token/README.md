@@ -10,14 +10,15 @@
 - Evidence Status：`CONFIRMED`（`11 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`）
 - Required Lab：`NONE`
 - Lab Status：`N/A`
-- Current Gate：`A6 Publish Gate PASSED`
-- Post-publication Review：`01-IR-F01 CLOSED`（补全 OpenAI Responses input message 的 `system / developer / user / assistant` contract，并记录顶层 `instructions` 的最低关系）
-- Next Allowed Action：`Article 02｜Production Kickoff / Full Production（仅建议，未执行）`
+- Current Gate：`PUBLISHED + 01-IR-F02 CLOSED`
+- Post-publication Review：`01-IR-F01 CLOSED`（历史记录）；`01-IR-F02 CLOSED / PASS`（Anthropic generic / top-level baseline 与 model-specific mid-conversation `role: system` 例外）
+- Next Allowed Action：`Article 02｜Resume REVISION / REVIEW_RECHECK`
 - Blocker：`NONE`
 - Published Content：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Published Route：`/ai-empowerment/agent-engineering-01-model-api-messages-token/`
 - Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
 - Post-hotfix Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
+- `01-IR-F02` Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 
 ## 本篇职责
 
@@ -34,6 +35,7 @@
 - [Final Draft](draft.md)：A5 修订后的冻结正文；与 Published Body 语义一致。
 - [Review Record](review.md)：A1—A5 Gate、首轮 Findings、修订处置与最终 `92 / 100` 评分。
 - [Review Record](review.md) 还保留 `01-IR-F01` post-publication Independent Review Hotfix；原 Formal Review 历史未删除或重写。
+- [Review Record](review.md) 新增并闭合 `01-IR-F02` post-publication hotfix；fresh Reviewer 完成内容复核后，依据 Master 的 Hugo Build PASS 将 Finding 标记为 `CLOSED / PASS`。
 
 本篇未创建 `assets/` 或 Lab，也未执行 API 实验；官方 contract 已足以支撑核心 Claim。
 
@@ -99,4 +101,4 @@
 
 ## Stop Line
 
-Article 01 Full Production Run 已完成并进入 `PUBLISHED`。本次任务在此停止；未创建 Article 02 Workspace，未启动 Lab 01、DeepSeek Harness 源码或 BuildPilot。
+Article 01 继续保持 `PUBLISHED`，没有伪造完整生产生命周期重跑。本次 `01-IR-F02` 已完成 Research / Evidence / Outline / Draft / Published Content 同步、fresh Independent Reviewer recheck 与 Hugo Build PASS，修复范围保持为独立 post-publication hotfix checkpoint；未修改 Article 02、global durable state、canonical 或系列索引。下一动作回到 Article 02 的 `REVISION / REVIEW_RECHECK`。

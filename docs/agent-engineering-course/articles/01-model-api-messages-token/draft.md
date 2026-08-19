@@ -133,8 +133,10 @@ Message role 也不是一个可以随意跨 Provider 复制的统一枚举。以
 | Provider contract | 当前公开的输入表达示例 |
 |---|---|
 | OpenAI Responses | input message 允许 system / developer / user / assistant；另有顶层 `instructions` instruction mechanism |
-| Anthropic | input messages 使用 user / assistant；system 是顶层参数，不是 system role |
+| Anthropic | generic / conversation-start baseline：常规 input messages 使用 user / assistant，system instruction 使用顶层 `system`；当前部分模型另支持受 placement rules 约束的 mid-conversation `role: system` |
 | Google | contents 使用 user / model；systemInstruction 独立 |
+
+Anthropic 这一行必须分两层读。通用 Messages API Reference 仍把从会话开始生效的 system instruction 放在顶层 `system`，并把常规 input messages 说明为 user / assistant；但截至 2026-08-19，官方 feature page 又对 Claude Fable 5、Claude Mythos 5、Claude Opus 4.8、Claude Opus 5 与 Claude Sonnet 5 开放了 messages 数组中的 mid-conversation `role: system`。该 message 不能作为首条，必须紧跟 user turn（或以 server tool result 结束的 assistant turn），并且只能位于数组末尾或紧接 assistant turn 之前。它是 model / placement / version 受限的当前例外，不应被外推成所有 Anthropic 模型、任意位置或跨 Provider 的固定 role 集合。
 
 三家都在表达“谁提供了什么内容”，但字段、role 集合和 system instruction 的位置不同。面对新 Provider，正确动作不是先设计一个看似通用的固定 enum，而是先读取它当前的 API contract。
 
@@ -282,6 +284,7 @@ API Success != Correct Answer
 - [OpenAI：API error codes](https://developers.openai.com/api/docs/guides/error-codes)
 - [OpenAI：Official .NET library](https://github.com/openai/openai-dotnet)
 - [Anthropic：Create a Message](https://platform.claude.com/docs/en/api/messages/create)
+- [Anthropic：Mid-conversation system messages](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages)
 - [Anthropic：Context windows](https://platform.claude.com/docs/en/build-with-claude/context-windows)
 - [Anthropic：Streaming Messages](https://platform.claude.com/docs/en/build-with-claude/streaming)
 - [Anthropic：Handling stop reasons](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons)

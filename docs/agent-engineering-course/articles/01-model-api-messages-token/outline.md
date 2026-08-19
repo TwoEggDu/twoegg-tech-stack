@@ -96,10 +96,11 @@ Long-term memory = external product / runtime capability, not proven by messages
 
 - Provider Counter-check Table：
   - OpenAI Responses：input message 允许 system / developer / user / assistant；另有顶层 `instructions` instruction mechanism。
-  - Anthropic：input messages 使用 user / assistant；system 为顶层参数。
+  - Anthropic generic / conversation-start baseline：常规 input messages 使用 user / assistant；system instruction 使用顶层 `system`。
+  - Anthropic current model-specific exception（核对日 2026-08-19）：Claude Fable 5、Mythos 5、Opus 4.8、Opus 5、Sonnet 5 另支持受 placement rules 约束的 mid-conversation `role: system`；不能放在首条，也不能外推到任意模型或任意位置。
   - Google：contents 使用 user / model；systemInstruction 独立。
 - Teaching Payoff：面对新 Provider，不复制一个跨平台固定 role enum；先读它的当前 API contract。
-- Wording Strength：只说公开 contract 的当前差异，不推导模型内部如何理解 role。
+- Wording Strength：只说公开 contract 的当前差异，并保留 Provider + model + placement + version 边界；不推导模型内部如何理解 role。
 - Scope Boundary：Working Memory、Session、Long-term Memory 的正式分类留给 Article 14—15；Prompt 优先级留给 Article 02。
 - Bridge：当输入越来越长，工程边界不是字符数，而是 Token 与 Context Window。
 
