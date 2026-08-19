@@ -1,5 +1,7 @@
 # Agent Engineering Lab 模板
 
+Lab Card 同时承载 Researcher 冻结的 `LAB_DESIGN` 与 Lab Engineer 写入的 `LAB_OBSERVATION`。Expected 与 Observed 必须分开；Lab Engineer 不修改 Design，Researcher在执行后负责 `EVIDENCE_MERGE`。
+
 ## Metadata
 
 - Lab ID：`Lab NN`
@@ -15,6 +17,27 @@
 ## Goal
 
 这个实验要消除哪一个具体的不确定性？
+
+## Lab Design（Owner：Researcher）
+
+- Related Article：
+- Related Claim IDs：
+- Research Question：
+- Hypothesis：
+- What Would Falsify It：
+- Fixture Boundary：
+- Environment：
+- Inputs：
+- Variables：
+- Expected Observable：
+- Fault Injection：
+- Commands / Execution Needs：
+- Acceptance Criteria：
+- Evidence Mapping：
+- Limitations：
+- Safety / Permission Constraints：
+
+`Expected Observable` 是运行前冻结的判据，不是 `Observed Result`，不得在 Lab 执行后反向修改来适配结果。
 
 ## Prerequisites
 
@@ -38,9 +61,21 @@
 <commands or steps>
 ```
 
-## Observations
+## Observations（Owner：Lab Engineer）
 
 记录原始输入、输出、trace、错误和时间信息；不要在本节提前写解释。
+
+- Environment：
+- Commands：
+- Exit Codes：
+- Build Result：
+- Test Result：
+- Runtime Output：
+- Fault Injection Result：
+- Observed Behavior：
+- Unexpected Behavior：
+- Reproduction Notes：
+- Runtime Limitations：
 
 | Run | Input | Raw Output / Trace | Result |
 |---|---|---|---|
@@ -54,9 +89,11 @@
 - 结构化输出不满足合同：
 - 预算耗尽：
 
-## Interpretation
+## Interpretation / Evidence Merge（Owner：Researcher）
 
 从原始观测到 Claim 的推理链是什么？是否存在替代解释？
+
+解释顺序必须是：`Experiment -> Observation -> Evidence Interpretation -> Claim Status`。不得从 Article Thesis 反向改写 Observation。
 
 ## Conclusion
 

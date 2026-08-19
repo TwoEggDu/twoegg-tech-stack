@@ -4,6 +4,30 @@
 
 多篇文章的顺序、恢复、worker 路由、Review cycle、Part Audit 与 Course Final Audit 由 [Course Factory contract](course-factory.md) 编排；角色写入边界见 [Subagent contracts](subagent-contracts.md)，执行 pointer 见 [course-run-state.md](course-run-state.md)。Course Factory 是 multi-article orchestration layer，本文件仍是 Article-level production protocol，二者不互相替代。
 
+## Course Factory pipeline alignment
+
+Normal Article：
+
+```text
+PRECHECK -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_GATE
+         -> OUTLINE -> AUTHOR_DRAFT -> REVIEW / REVISION / RECHECK
+         -> FINAL_GATE -> PUBLISH -> BUILD_VERIFY
+         -> MASTER_STATE_UPDATE -> CHECKPOINT -> PUBLISHED
+```
+
+Lab Article：
+
+```text
+PRECHECK -> WORKSPACE_INIT -> RESEARCH -> PRELIMINARY_EVIDENCE
+         -> LAB_DESIGN -> LAB_EXECUTE -> LAB_OBSERVATION
+         -> EVIDENCE_MERGE -> EVIDENCE_GATE
+         -> OUTLINE -> AUTHOR_DRAFT -> REVIEW / REVISION / RECHECK
+         -> FINAL_GATE -> PUBLISH -> BUILD_VERIFY
+         -> MASTER_STATE_UPDATE -> CHECKPOINT -> PUBLISHED
+```
+
+`WORKSPACE_INIT` 是 PRECHECK `PASS` 后由 Master 执行的 deterministic infrastructure step。`LAB_DESIGN` 与 `EVIDENCE_MERGE` 属于 Researcher；`LAB_EXECUTE / LAB_OBSERVATION` 属于 Lab Engineer。Article Lifecycle 不因这些 operational Gate 改名。
+
 ## 生命周期
 
 ```text
@@ -60,7 +84,10 @@ Article Card
 - 状态只能是 `CONFIRMED`、`PARTIAL`、`BLOCKED` 或 `PROPOSAL`。
 - `PARTIAL` 必须收窄措辞；`BLOCKED` 行为性主张不得进入后续正文。
 - 来源证明了什么、没有证明什么均已写清。
-- 需要实验的主张已完成 Lab，或明确降级为不作结论。
+- Normal Article 可在研究证据完成后进入本 Gate。
+- Lab Article 必须先完成 Preliminary Evidence、Researcher-owned Lab Design、Lab Execute / Observation 与 Researcher-owned Evidence Merge。
+- 依赖 Lab 的 Claim 在 Preliminary Evidence 阶段保留正式 Evidence Status，并加 `Lab Dependency: REQUIRED`；不得因为计划做实验提前标 `CONFIRMED`。
+- 需要实验的主张已完成真实 Lab，或明确降级为不作结论；expected 与 observed 必须分开保存。
 
 ### Gate 3：Outline
 
@@ -87,7 +114,7 @@ Article Card
 - 正文写入 `content/ai-empowerment/agent-engineering-<id>-<slug>.md`。
 - 发布图片迁入 `static/images/agent-engineering/<id>-<slug>/`。
 - Hugo 构建 `ERROR` 为零。
-- 回写本课程 `status.md` 与 canonical；根 `doc-plan.md` 只按系列级路由规则更新。
+- Publisher 返回 Publication Result 与 state / canonical update candidate；Master 验证 Reviewer Final PASS、Publisher PASS、Build PASS 与 repository consistency 后，统一回写 Article README lifecycle、`status.md`、run state 与必要 canonical publication metadata。根 `doc-plan.md` 只按系列级路由规则更新。
 
 ## 特殊证据路径
 
@@ -112,8 +139,9 @@ Article Card
 
 | 文件 | 最早生成 Gate |
 |---|---|
-| `README.md`、`article-card.md`、`research.md`、`evidence.md` | `PLANNED` |
+| `README.md`、`article-card.md`、`research.md`、`evidence.md`、`review.md` | PRECHECK `PASS` 后的 `WORKSPACE_INIT`，Lifecycle 仍为 `PLANNED` |
 | `outline.md` | `RESEARCHING`，只能先放空骨架 |
 | `draft.md` | `DRAFTING` |
-| `review.md` | `PLANNED` 可创建空审查记录，`REVIEW` 时填写 |
 | `assets/` | 确有图、日志或实验产物时 |
+
+WORKSPACE_INIT 只允许 canonical metadata、template skeleton、initial status、dependency reference 与空 / `NOT_STARTED` section；不得写 Research Answer、Evidence Conclusion、Claim Confirmation、Teaching Thesis、Outline、Draft 或 Review Finding。

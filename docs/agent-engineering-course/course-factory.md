@@ -10,12 +10,13 @@
 
 1. **Repository State > Agent Context**：Git 工作区、已提交 artifact、[status.md](status.md) 与 [course-run-state.md](course-run-state.md) 是 durable state；Chat / Agent context 只是 temporary working memory。任何 worker 都必须重新读取其 Required Reads，不得以“记得已经通过”替代仓库证据。
 2. **Articles Execute Sequentially**：同一时刻最多存在一个 active Article transaction。禁止并行生产 Article 02、08、24、40 等多个正文对象。下一篇由 canonical dependency 与 Optional policy 决定，不由 worker 自选。
-3. **Article = Transaction Boundary**：每篇均以 `BEGIN ARTICLE N` 开始，依次完成 Research、Evidence、Outline、Draft、Review、Revision、Publish、Build 与 Checkpoint，以 `END ARTICLE N` 结束。Article N 未 `PUBLISHED`，不得开始下一篇。
+3. **Article = Transaction Boundary**：每篇均以 `BEGIN ARTICLE N` 开始，依次完成 Precheck、Workspace Init、Research、Evidence、Outline、Draft、Review、Revision、Publish、Build 与 Checkpoint，以 `END ARTICLE N` 结束。Article N 未 `PUBLISHED`，不得开始下一篇。
 4. **Gate Failure Stops Factory**：不得为追求 44 篇完成率降低 Evidence、Lab、Review、Publication 或 Build Gate；真实结果可以使 Factory 进入 `PAUSED` 或 `BLOCKED`，不能产生假 `PASS`。
 5. **Evidence Controls Wording**：Researcher 先建立 Claim 与 Evidence；Author 只能在已证明边界内组织叙事。不得先写结论，再要求 Researcher 搜索支持材料。
 6. **Fresh Reviewer**：Author 与 Reviewer 逻辑隔离。Reviewer 不读取 Author 的隐藏推理、信心或自评分，只基于合同允许的 repository artifacts 独立出具 Findings 与 Gate decision。
 7. **Lab Reality > Article Thesis**：observed output、失败路径和环境事实决定 Lab Evidence。不得伪造、选择性忽略或重新解释失败实验来迎合正文。
 8. **Source / Runtime Confirmation Are Different**：尤其在 DSH 篇中，`DOC_CONFIRMED`、`SOURCE_CONFIRMED`、`RUNTIME_CONFIRMED` 必须分别记录。源码 path 或 symbol 存在，不等于 runtime 已走过该 path。
+9. **Global Durable State Has One Writer**：Master Orchestrator 是 `status.md`、`course-run-state.md`、Factory-level checkpoint pointer、Part Audit global status 与 Course `COMPLETE` state 的唯一 writer。其他 worker 只能返回 state transition candidate。
 
 ## 2. Authority and conflict order
 
@@ -60,6 +61,7 @@ PLANNED
 
 ```text
 PRECHECK
+  -> WORKSPACE_INIT
   -> RESEARCH
   -> EVIDENCE_GATE
   -> OUTLINE
@@ -77,18 +79,32 @@ PRECHECK
 ### 4.1 Gate rules
 
 - `PRECHECK`：执行 Resume Contract，确认 canonical entry、依赖、Article mode、workspace scope 与 clean/isolate policy。此 Gate 通过前不得实例化 workspace。
+- `WORKSPACE_INIT`：Owner 为 Master Orchestrator；这是 deterministic infrastructure action，不是 content production。Master 只根据 canonical、[workspace template](templates/article-workspace-template.md) 与 repository naming convention 机械创建当前 Article workspace。
 - `RESEARCH`：Researcher 生成 Research Questions、Claim Register、Evidence Cards、counter-evidence 与 version scope。
-- `EVIDENCE_GATE`：核心行为性 Claim 不得为 `BLOCKED`；`PARTIAL` 必须收窄；required Lab 必须已有真实结果，才可进入 `EVIDENCE_READY`。
+- `EVIDENCE_GATE`：Normal Article 在 Research 完成后进入；Lab Article 只能在 `PRELIMINARY_EVIDENCE -> LAB_DESIGN -> LAB_EXECUTE -> LAB_OBSERVATION -> EVIDENCE_MERGE` 完成后进入。核心行为性 Claim 不得为 `BLOCKED`；`PARTIAL` 必须收窄；required Lab 必须已有真实结果，才可进入 `EVIDENCE_READY`。
 - `OUTLINE`：Author 在 Evidence Gate 通过后建立 Detailed Outline、Teaching Spine、Figures、Examples、Learning Check 与 competency mapping。
 - `AUTHOR_DRAFT`：只依据批准提纲和 Evidence 写作；新核心事实触发 `RETURN_TO_RESEARCH`。
 - `REVIEW`：Fresh Reviewer 第一轮只写 Findings 和 Gate decision，不直接修改正文。
 - `REVISION / REVIEW_RECHECK`：Revision Worker 只修 Finding scope；Reviewer 独立复核并决定关闭、保留或升级 Finding。
 - `FINAL_GATE`：Reviewer `PASS` 且不存在未关闭的 `BLOCKER / MAJOR` 才可进入 `FINAL`。
-- `PUBLISH`：Publisher 只处理发布载体、metadata、链接、状态候选与渲染兼容性，不改冻结知识内容。
+- `PUBLISH`：Publisher 只处理发布载体、metadata、链接、publication evidence 与渲染兼容性，不改冻结知识内容；只返回 recommended state transition，不直接写 global durable state。
 - `BUILD_VERIFY`：执行仓库真实 Hugo / lint / link commands。Build `PASS` 才允许发布状态成立。
-- `CHECKPOINT`：核对 workspace、published content、canonical、`status.md` 与 run state 的一致性，按仓库 convention 创建明确 checkpoint。checkpoint transaction 必须包含最终 `PUBLISHED` 状态；逻辑图中的 `PUBLISHED` 表示 commit 完成后该事实生效。
+- `CHECKPOINT`：Master 核对 Reviewer Final PASS、Publisher PASS、Build PASS、workspace、published content、canonical、`status.md` 与 run state 的一致性，统一写入 global durable state，并按仓库 convention 创建明确 checkpoint。逻辑图中的 `PUBLISHED` 表示 Master 完成状态写入与 checkpoint 后该事实生效。
 
 任一 Gate 返回 `FAIL` 或缺少必需 artifact 时，Master 不得进入下一 Gate。
+
+### 4.2 WORKSPACE_INIT contract
+
+PRECHECK `PASS` 后，Master 才能执行：
+
+1. 从 canonical 读取 Article ID、Title、Part、Weight、Optional、Dependencies、Lab requirement 与 Mode；
+2. 按 repository naming convention 确定 workspace slug；
+3. 创建 `docs/agent-engineering-course/articles/<id>-<slug>/`；
+4. 只创建 `PLANNED` 阶段允许存在的 `README.md`、`article-card.md`、`research.md`、`evidence.md`、`review.md`。
+
+`outline.md` 只能在 Article 进入 `RESEARCHING` 后按当前 workflow 创建空骨架；`draft.md` 只能在 `DRAFTING` 创建；`assets/` 只在出现真实资产时创建。
+
+Master 在 WORKSPACE_INIT 只能写 canonical metadata、template skeleton、initial lifecycle、initial evidence / Lab status、dependency reference 与 `NOT_STARTED` section。不得写 Research Answer、Evidence Conclusion、Claim Confirmation、Teaching Thesis、Outline、Draft 或 Review Finding。Article Card 只能机械实例化 canonical / template 已有字段；必须字段若需要实质性课程判断，返回 `HUMAN_DECISION_REQUIRED`，不得猜测。
 
 ## 5. Review contract and cycle limit
 
@@ -136,13 +152,15 @@ one cycle = Reviewer Findings -> Revision Worker changes -> Reviewer Recheck
 
 1. 读取 [course-run-state.md](course-run-state.md)；
 2. 读取 [status.md](status.md)；
-3. 读取当前 Article workspace；若 workspace 尚不存在，只确认不存在，不创建；
-4. 检查 `git status`；
-5. 检查 latest relevant commit 与 run-state 中的 checkpoint；
-6. 对齐 canonical dependency、Article Lifecycle、Evidence / Lab 状态、active gate 与实际文件；
-7. 只在无冲突时确定 next safe action，并把 Factory 置为 `READY` 或 `RUNNING`。
+3. 读取当前 Article workspace；若 PRECHECK 尚未通过且 workspace 不存在，只确认不存在，不创建；
+4. 检查对应 Published Content 是否存在以及是否与 Lifecycle 匹配；
+5. 检查 `git status`、Git `HEAD`、`git log` 与 latest relevant commit；
+6. 把 `last_successful_commit` 作为 checkpoint hint 与 history 对照；
+7. 检查当前 Gate 的 required artifacts 是否真实存在；
+8. 对齐 canonical dependency、Article Lifecycle、Evidence / Lab 状态、active gate 与实际文件；
+9. 只在无冲突时确定 next safe action，并把 Factory 置为 `READY` 或 `RUNNING`。
 
-不得默认“从 Article 02 开始”，也不得相信上一次对话的口头完成声明。若 `status.md`、run state、workspace 或 Git history 不一致，写入冲突摘要并以 `PAUSED / REPOSITORY_CONFLICT` 或 `PAUSED / HUMAN_DECISION_REQUIRED` 停止。
+不得默认“从 Article 02 开始”，也不得相信上一次对话的口头完成声明。不得把 `git checkout <last_successful_commit>` 当成默认恢复动作，也不得因为 pointer 比 HEAD 落后一个 state commit 就 rewind repository。若 `status.md`、run state、workspace、Published Content、required artifacts 或 Git history 不一致，写入冲突摘要并以 `PAUSED / REPOSITORY_CONFLICT` 或 `PAUSED / HUMAN_DECISION_REQUIRED` 停止。
 
 ## 8. Dirty working tree policy
 
@@ -156,7 +174,7 @@ one cycle = Reviewer Findings -> Revision Worker changes -> Reviewer Recheck
 
 - 每个 `PUBLISHED` Article 至少应有一个语义清晰的 checkpoint commit，除非当前仓库 convention 明确要求不同方式。
 - checkpoint 前必须完成 relevant build，并复核 diff scope。
-- Article workspace、published content、`status.md` 与 run-state 的状态更新属于同一逻辑 transaction；如果 Git commit 自引用导致 hash 无法写入自身，run-state 的 `last_successful_commit` 记录最近一个已落盘的完整内容 checkpoint，state-pointer commit 可以晚一拍但必须在 Resume 时核对。
+- Article workspace、published content、`status.md` 与 run-state 的状态更新属于同一逻辑 transaction；如果 Git commit 自引用导致 hash 无法写入自身，`last_successful_commit` 只记录最近一个已知可恢复的 durable checkpoint hint。它不是 blind checkout target、当前 HEAD 的绝对真相或 Resume 的唯一依据；state-pointer commit 可以晚一拍，Resume 必须联合 repository artifact 与 Git history reconciliation。
 - 不为满足数量制造空 commit；不 push，除非当前任务明确授权。
 
 ## 10. Dependency-aware read policy
@@ -177,8 +195,11 @@ Article N 的 Required Reads 至少包括：
 ### 11.1 Normal Article Mode
 
 ```text
-Researcher -> Author -> Reviewer -> Revision Worker (when needed)
-           -> Reviewer Recheck -> Publisher
+PRECHECK -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_GATE
+         -> OUTLINE -> AUTHOR_DRAFT -> REVIEW
+         -> REVISION -> REVIEW_RECHECK          (when required)
+         -> FINAL_GATE -> PUBLISH -> BUILD_VERIFY
+         -> MASTER_STATE_UPDATE -> CHECKPOINT -> PUBLISHED
 ```
 
 Master 只启动当前 Gate 需要的 worker；不为了形式 spawn 无任务角色。
@@ -188,13 +209,36 @@ Master 只启动当前 Gate 需要的 worker；不为了形式 spawn 无任务�
 当前 canonical required Lab articles：`03`、`06`、`08`、`11`、`13`、`22`。每次 PRECHECK 必须再次从 canonical 核验。
 
 ```text
-Research -> Evidence -> Lab Design -> Lab Engineer
-         -> Build / Run / Test / Fault Injection
-         -> Runtime Observation -> Lab Evidence
-         -> Author -> Reviewer -> Publisher
+PRECHECK
+  -> WORKSPACE_INIT
+  -> RESEARCH
+  -> PRELIMINARY_EVIDENCE
+  -> LAB_DESIGN
+  -> LAB_EXECUTE
+  -> LAB_OBSERVATION
+  -> EVIDENCE_MERGE
+  -> EVIDENCE_GATE
+  -> OUTLINE
+  -> AUTHOR_DRAFT
+  -> REVIEW
+  -> REVISION / REVIEW_RECHECK     (when required)
+  -> FINAL_GATE
+  -> PUBLISH
+  -> BUILD_VERIFY
+  -> MASTER_STATE_UPDATE
+  -> CHECKPOINT
+  -> PUBLISHED
 ```
 
-Lab 必须保存：command、environment、fixture、observed output、failure case、interpretation。只有 README、sample code 或 expected result 不算 Lab 完成。无法真实运行或安全复现时：`BLOCKED / FAILED_LAB`，Factory STOP。
+Lab pipeline ownership：
+
+- `PRELIMINARY_EVIDENCE`：Researcher 先完成 official doc / spec / source Evidence。依赖 Lab 的 Claim 不得提前标 `CONFIRMED`；保留正式 Evidence Status，并增加 operational annotation，例如 `Evidence Status: PARTIAL` + `Lab Dependency: REQUIRED`。
+- `LAB_DESIGN`：Owner 为 Researcher。Researcher 根据 Claim、Evidence Gap 与 Research Question，在 `labs/lab-<nn>-<slug>/` 中使用 [Lab template](templates/lab-template.md)创建 durable Lab Card。Design 至少包含 Lab ID、Related Article / Claim IDs、Research Question、Hypothesis、What Would Falsify It、Fixture Boundary、Environment、Inputs、Variables、Expected Observable、Fault Injection、Commands / Execution Needs、Acceptance Criteria、Evidence Mapping、Limitations、Safety / Permission Constraints。`Expected Observable != Observed Result`。
+- `LAB_EXECUTE / LAB_OBSERVATION`：Lab Engineer 只执行冻结 Design；不得修改 hypothesis、acceptance criteria 或问题范围。必须保存 Environment、Commands、Exit Codes、Build / Test Result、Runtime Output、Fault Injection Result、Observed / Unexpected Behavior、Reproduction Notes 与 Limitations，无论 PASS 或 FAIL。
+- `EVIDENCE_MERGE`：Owner 回到 Researcher。Researcher读取 Preliminary Evidence、Lab Design、raw observation、failure output 与 runtime notes，再更新 Evidence Cards、Claim Status、Proves、Does Not Prove、Limitations 和 Course Usage。解释链必须是 `Experiment -> Observation -> Evidence Interpretation -> Claim Status`。
+- `EVIDENCE_GATE`：只在 Evidence Merge 后运行。Researcher可以按真实结果收窄 Claim 或标 `PARTIAL / BLOCKED`，不能修改实验结果。required Lab 的 build / run / fault injection 无法真实完成时：`BLOCKED / FAILED_LAB`，Factory STOP。
+
+只有 README、sample code 或 expected result 不算 Lab 完成。当前 template 和 `labs/` convention 是唯一 Lab artifact 路径，不创建第二套目录或 schema。
 
 ### 11.3 DSH Source Mode
 
@@ -275,8 +319,68 @@ Reviewer 与 Part Auditor 应调查下列信号，但不能仅凭信号自动判
 
 ## 17. State update granularity
 
-[course-run-state.md](course-run-state.md) 在以下 transaction-level 事件更新：worker start、Gate pass、Gate fail、Article `PUBLISHED`、Part Audit start / finish、Factory `PAUSED`、Factory Resume、Course `COMPLETE`。不为每个小动作创建 commit；状态更新以 Gate / Transaction 为粒度。
+[course-run-state.md](course-run-state.md) 在以下 transaction-level 事件更新：worker start、Gate pass、Gate fail、Article `PUBLISHED`、Part Audit start / finish、Factory `PAUSED`、Factory Resume、Course `COMPLETE`。Master Orchestrator 是唯一 global state writer；Publisher、Part Auditor 与其他 worker 只返回 recommended transition / update candidate。Master 验证 artifact 和 Gate result 后统一写 Article README lifecycle、`status.md`、run state、Factory checkpoint pointer、Part Audit global status、Course `COMPLETE` state 与必要 canonical publication metadata。不为每个小动作创建 commit；状态更新以 Gate / Transaction 为粒度。
 
-## 18. Foundation stop line
+## 18. Static interface dry-run
+
+### Dry Run A｜Article 02 Normal Mode
+
+```text
+READY
+  -> START_ARTICLE_02_PRECHECK                  [Master]
+  -> PRECHECK PASS                              [Master decision from repository state]
+  -> WORKSPACE_INIT                             [Master creates PLANNED skeleton]
+  -> RESEARCH / EVIDENCE_GATE                   [Researcher]
+  -> OUTLINE / AUTHOR_DRAFT                     [Author]
+  -> REVIEW / REVISION / RECHECK                [Reviewer / Revision Worker]
+  -> PUBLISH / BUILD_VERIFY                     [Publisher]
+  -> MASTER_STATE_UPDATE / CHECKPOINT           [Master]
+```
+
+Static Result：`PASS`。每一步都有 owner、input、allowed writes、output 与 stop condition；本次只做合同模拟，没有创建 Article 02 workspace。
+
+### Dry Run B｜Article 03 Lab Mode
+
+```text
+PRECHECK / WORKSPACE_INIT                       [Master]
+  -> PRELIMINARY_EVIDENCE / LAB_DESIGN          [Researcher]
+  -> LAB_EXECUTE / LAB_OBSERVATION              [Lab Engineer]
+  -> EVIDENCE_MERGE / EVIDENCE_GATE             [Researcher]
+  -> OUTLINE / AUTHOR_DRAFT                     [Author]
+  -> REVIEW / REVISION / RECHECK                [Reviewer / Revision Worker]
+  -> PUBLISH / BUILD_VERIFY                     [Publisher]
+  -> MASTER_STATE_UPDATE / CHECKPOINT           [Master]
+```
+
+Static Result：`PASS`。Lab Design、raw observation 与 Evidence interpretation 各有唯一 owner；本次没有实例化 Lab 01 或执行实验。
+
+### Contract interface audit
+
+| Interface | Producer | Durable Artifact / Result | Consumer |
+|---|---|---|---|
+| PRECHECK -> WORKSPACE_INIT | Master PRECHECK | Precheck result + canonical metadata | Master WORKSPACE_INIT |
+| WORKSPACE_INIT -> Researcher | Master | PLANNED workspace skeleton | Researcher |
+| Researcher -> Lab Engineer | Researcher | frozen Lab Design | Lab Engineer |
+| Lab Engineer -> Researcher | Lab Engineer | raw Lab Observation + failure output | Researcher EVIDENCE_MERGE |
+| Researcher -> Author | Researcher | final Evidence + Evidence Gate result | Author |
+| Author -> Reviewer | Author | Outline + Draft + coverage | Reviewer |
+| Reviewer -> Revision | Reviewer | Findings | Revision Worker |
+| Revision -> Reviewer | Revision Worker | Revision Disposition + changed artifacts | Reviewer Recheck |
+| Reviewer -> Publisher | Reviewer | Final Gate PASS + frozen Draft | Publisher |
+| Publisher -> Master | Publisher | structured Publication Result + recommended transition | Master |
+| Master -> CHECKPOINT | Master | reconciled global state + checkpoint-ready diff | Git checkpoint |
+
+Audit Result：`Missing Producer = NONE`、`Missing Consumer = NONE`、`Ownership Conflict = NONE`。
+
+## 19. Foundation Review History
+
+| Stage | Record |
+|---|---|
+| Foundation initial commit | `eb53803 Prepare Agent Engineering Course Factory` |
+| Independent review | 发现 Workspace Init、Lab Gate order、Lab Design owner、global state writer 与 checkpoint semantics 五个接口断点 |
+| Targeted fix | 只修改 Factory contract、八角色合同、run-state field rule、篇内 workflow 与 Lab template / convention；未新增角色或启动 Article 02 |
+| Final recheck | `CF-IR-F01 CLOSED`、`CF-IR-F02 CLOSED`、`CF-IR-F03 CLOSED`、`CF-IR-F04 CLOSED`、`CF-IR-F05 CLOSED` |
+
+## 20. Foundation stop line
 
 当前只冻结合同：`factory_status = READY`、`current_article = 02`、`current_gate = PRECHECK`。`START_ARTICLE_02_PRECHECK` 是未来允许动作，不代表已执行。本次 Foundation 任务不得创建 Article 02 workspace、研究 Prompt Engineering、运行 Lab、读取 DSH 源码或实现 BuildPilot。

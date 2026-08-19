@@ -15,9 +15,9 @@ Lab 用于回答文章中无法只靠文档或源码可靠回答的行为问题�
 
 ## 实例化规则
 
-1. 只有所属文章进入 `RESEARCHING` 且确认需要行为证据后，才创建 `labs/lab-<nn>-<slug>/`。
-2. 使用 [Lab 模板](../templates/lab-template.md)建立 Lab 卡片，再决定代码和 fixture 的最小范围。
+1. 只有所属文章进入 `RESEARCHING`，完成 Preliminary Evidence 且确认需要行为证据后，Researcher 才创建 `labs/lab-<nn>-<slug>/`。
+2. Researcher 使用 [Lab 模板](../templates/lab-template.md)建立并冻结 Lab Design；Lab Engineer 只执行该 Design，不修改 hypothesis 或 acceptance criteria。
 3. 运行前固定依赖、Provider、模型、输入、环境和判据。
 4. 原始输出与解释分开保存；失败运行也是证据。
 5. 实验结论只用于其 Claim 和明确的适用边界。
-6. Lab 状态变化同时回写 [课程状态台账](../status.md)和文章 Evidence Card。
+6. Lab Engineer 把 raw Observation 交回 Researcher执行 Evidence Merge；两者只返回状态候选。Master 验证后统一回写 [课程状态台账](../status.md)与 run state，Researcher只更新文章 Evidence Card。

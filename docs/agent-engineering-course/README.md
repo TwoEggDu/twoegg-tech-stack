@@ -5,7 +5,7 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Course Factory Foundation `READY`；尚未启动 Factory
+- 当前里程碑：Course Factory Foundation Independent Review Fix 已完成；Factory 继续为 `READY`，尚未启动
 - 当前生产对象：`NONE`；execution pointer 为 Article 02 `PRECHECK`，Article 02 仍为 `PLANNED`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
@@ -21,6 +21,7 @@
 - 当前 Article 01 Published Content：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - 当前 Article 01 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1230 Pages / 0 ERROR / 0 WARNING`
 - Factory Status：`READY`；下一允许动作：`START_ARTICLE_02_PRECHECK`，本次未执行
+- Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
 
