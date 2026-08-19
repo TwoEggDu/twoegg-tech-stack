@@ -260,7 +260,7 @@ Evidence-first Source Reading and Design
 
 以后遇到一个陌生 AI 产品，可以把本文的三问重新拿出来：它在描述哪一层？这是外部事实还是工作定义？现有证据允许推断到哪里？只要这三个问题还能回答，产品名字和生态术语再多，也不至于重新混成一团。
 
-下一篇将回到这门课程最小、也最容易观察的学习起点：**模型调用到底发生了什么——LLM、Model API、Messages 与 Token。**
+下一篇将回到这门课程最小、也最容易观察的学习起点：[模型调用到底发生了什么：LLM、Model API、Messages 与 Token]({{< relref "ai-empowerment/agent-engineering-01-model-api-messages-token.md" >}})。
 
 ## Learning Check
 
