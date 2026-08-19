@@ -6,17 +6,17 @@
 schema_version: 1
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 factory_status: RUNNING
-current_article: "03"
+current_article: "04"
 current_gate: GIT_DIFF_VERIFY
-last_published_article: "03"
+last_published_article: "04"
 active_worker: MASTER_ORCHESTRATOR
 review_cycle: 1
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: b359a329df02ce7487b0cb1a9feaad66c886d4dc
-next_action: VERIFY_AND_COMMIT_ARTICLE_03_CHECKPOINT
-last_updated: "2026-08-20T02:17:15+08:00"
+last_successful_commit: 857fe9fdc6baa541ced28d428d0c7fbe07d45ed9
+next_action: VERIFY_AND_COMMIT_ARTICLE_04_CHECKPOINT
+last_updated: "2026-08-20T04:09:15+08:00"
 ```
 
 ## Field rules
@@ -37,4 +37,4 @@ last_updated: "2026-08-20T02:17:15+08:00"
 
 ## Current transaction boundary
 
-Article 02 checkpoint commit `b359a329df02ce7487b0cb1a9feaad66c886d4dc` 已完成 message、13-file scope、clean-tree、`git log` 与 `git show` verification，`END ARTICLE 02` 成立。Article 03 Reviewer Final Gate=`PASS / 93`、Publisher=`PASS`、Hugo=`1232 Pages / 0 ERROR / 0 WARNING / exit 0`，Master 已完成 canonical / Lifecycle `PUBLISHED` reconciliation。当前只允许执行 Article 03 `GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；Article 04 尚未启动。
+Article 03 checkpoint commit `857fe9fdc6baa541ced28d428d0c7fbe07d45ed9` 已完成 verification，`END ARTICLE 03` 成立。Article 04 Reviewer Final Gate=`PASS / 93`、Publisher=`PASS`、Hugo=`1233 Pages / 0 ERROR / 0 WARNING / exit 0`，Master 已完成 canonical / Lifecycle `PUBLISHED` reconciliation。当前只允许 Article 04 `GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；Article 05 尚未启动，Part I Audit 只能在 Article 04 commit verified 后开始。

@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 03 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
-- 当前生产对象：Article 03 `PUBLISHED`；Mode `LAB_ARTICLE`；当前 Gate 为 `GIT_DIFF_VERIFY`
+- 当前里程碑：Article 04 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
+- 当前生产对象：Article 04 `PUBLISHED` checkpoint candidate；Mode `NORMAL_ARTICLE`；当前 Gate 为 `GIT_DIFF_VERIFY`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -24,7 +24,10 @@
 - 当前 Article 02 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1231 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - 当前 Article 03 状态：`PUBLISHED`；Evidence `CONFIRMED`（`7 CONFIRMED / 0 PARTIAL / 0 BLOCKED`）；Required Lab 01 `CONFIRMED / EVIDENCE_MERGED`；Final Review `PASS / 93`；Publisher / Build `PASS`；Published Content：`content/ai-empowerment/agent-engineering-03-structured-output-machine-contract.md`
 - 当前 Article 03 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1232 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`RUNNING / GIT_DIFF_VERIFY`；下一动作由 Master 完成 Article 03 精确 staging、checkpoint commit 与 commit verification
+- 当前 Article 03 Checkpoint：`857fe9fdc6baa541ced28d428d0c7fbe07d45ed9`；message / 34-file scope / clean tree / log / show verification `PASS`
+- 当前 Article 04 状态：`PUBLISHED`；Evidence `PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`）；Final Review `PASS / 93`；`04-F01 CLOSED`；Publisher / Build / Master Reconciliation `PASS`；Published Content：`content/ai-empowerment/agent-engineering-04-model-adapter-llm-gateway.md`
+- 当前 Article 04 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1233 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Factory Status：`RUNNING / GIT_DIFF_VERIFY`；下一动作由 Master 完成 Article 04 精确 staging、checkpoint commit 与 commit verification
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
@@ -50,12 +53,13 @@
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
 | [articles/01-model-api-messages-token/](articles/01-model-api-messages-token/) | Article 01 已通过 A1—A6 Full Production Run 并进入 `PUBLISHED` |
+| [articles/04-model-adapter-llm-gateway/](articles/04-model-adapter-llm-gateway/) | Article 04 已通过 Reviewer / Publisher / Build / Master Reconciliation，当前等待 checkpoint verification |
 
 ## 资产边界
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；Article 00—01 已正式发布，workspace Draft 继续独立保留。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；Article 00—04 已正式发布，workspace Draft 继续独立保留。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

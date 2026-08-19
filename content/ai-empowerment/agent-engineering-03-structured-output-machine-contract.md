@@ -278,7 +278,7 @@ Structured Output 真正提供的是一个稳定的交界面：后续系统不�
 6. failure 后的 action 是一个 label、一项提议，还是实际已经执行的动作？
 7. 当前结论来自官方 contract、本地 fixture，还是 production observation？
 
-上一篇解决的是“怎样让自然语言任务与 Output Requirement 可审查”；本篇解决的是“怎样让候选结果可解析、可分层拒绝”。下一篇 Model Adapter / Gateway 会继续接住 Provider envelope，处理 streaming、error、retry 与 Provider 差异。本篇到本地机器合同为止。
+上一篇解决的是“怎样让自然语言任务与 Output Requirement 可审查”；本篇解决的是“怎样让候选结果可解析、可分层拒绝”。[下一篇 Model Adapter / Gateway]({{< relref "ai-empowerment/agent-engineering-04-model-adapter-llm-gateway.md" >}})会继续接住 Provider envelope，处理 streaming、error、retry 与 Provider 差异。本篇到本地机器合同为止。
 
 ## Learning Check
 
