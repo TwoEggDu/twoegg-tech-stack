@@ -17,7 +17,9 @@
 | 2026-08-20T19:47:44+08:00 | 08 | BUILD_VERIFY | PUBLISHER | REAL_SUBAGENT | `/root/article_08_build_verify` | YES | SEQUENTIAL | published content; Article 07 navigation; Hugo config / repository build rules | Article README Build Result | PASS — Hugo `0.157.0`; `1237 Pages / 0 ERROR / 0 WARNING`; route / navigation verified; next Gate=`MASTER_STATE_UPDATE` |
 | 2026-08-20T19:53:13+08:00 | 08 | MASTER_STATE_UPDATE | MASTER_ORCHESTRATOR | MASTER_DETERMINISTIC | `/root/master_article_08_state_update` | YES | SEQUENTIAL | Reviewer Final PASS; Publisher PASS; Build PASS; workspace / published / canonical / global state | Article README; course README; status; run state; canonical; this trace | PASS — Lifecycle=`PUBLISHED` candidate; next Gate=`GIT_DIFF_VERIFY` |
 | 2026-08-20T19:53:13+08:00 | 08 | GIT_DIFF_VERIFY | MASTER_ORCHESTRATOR | MASTER_DETERMINISTIC | `/root/master_article_08_git_diff_verify` | YES | SEQUENTIAL | full transaction diff; current branch / worktree; Article 09 absence | Article README; course README; status; run state; this trace | PASS — exact 10-path Article 08 scope; final Hugo PASS; next Gate=`ARTICLE_CHECKPOINT_COMMIT` |
-| 2026-08-20T19:56:27+08:00 | 08 | ARTICLE_CHECKPOINT_COMMIT | MASTER_ORCHESTRATOR | MASTER_DETERMINISTIC | `/root/master_article_08_checkpoint_commit` | YES | SEQUENTIAL | verified 10-path transaction scope; staged diff; commit policy | Git checkpoint commit | RUNNING — commit not yet created or verified |
+| 2026-08-20T19:56:27+08:00 | 08 | ARTICLE_CHECKPOINT_COMMIT | MASTER_ORCHESTRATOR | MASTER_DETERMINISTIC | `/root/master_article_08_checkpoint_commit` | YES | SEQUENTIAL | verified 10-path transaction scope; staged diff; commit policy | Git checkpoint commit | PASS — `d4693bd6d78ed63a669e181516e28247460fee11`; next Gate=`ARTICLE_COMMIT_VERIFY` |
+| 2026-08-20T19:59:03+08:00 | 08 | ARTICLE_COMMIT_VERIFY | MASTER_ORCHESTRATOR | MASTER_DETERMINISTIC | `/root/master_article_08_commit_verify` | YES | SEQUENTIAL | checkpoint commit; status; log; show; parent diff | commit verification evidence | PASS — exact message / 10-file scope / clean tree / diff-check; next Gate=`REPOSITORY_RECONCILIATION` |
+| 2026-08-20T19:59:03+08:00 | 08 | REPOSITORY_RECONCILIATION | MASTER_ORCHESTRATOR | MASTER_DETERMINISTIC | `/root/master_article_08_repository_reconciliation` | YES | SEQUENTIAL | verified checkpoint; Article 08 workspace / published lifecycle; Article 09 absence | Article README; course README; status; run state; this trace | PASS — `END ARTICLE 08`; Factory=`READY / PRECHECK`; Article 09 not started |
 
 ## Trace rules
 
@@ -298,6 +300,82 @@
 
 - Execution ID：`/root/master_article_08_checkpoint_commit`
 - Task Brief：显式 stage 已验证的 10 个 Article 08 transaction paths，检查 cached diff，创建本地 `Publish Agent Engineering Article 08` commit 并立即执行 commit verification；禁止 push 与 Article 09。
-- Raw Envelope：`PENDING — commit has not been created or verified`
-- Master Validation：`PENDING`
-- Validation Time：`PENDING`
+- Raw Envelope：
+
+  ```yaml
+  worker_result:
+    role: MASTER_ORCHESTRATOR
+    article: "08"
+    gate: ARTICLE_CHECKPOINT_COMMIT
+    execution_type: MASTER_DETERMINISTIC
+    status: PASS
+    artifacts_created: []
+    artifacts_modified: []
+    gate_completed: true
+    next_allowed_gate: ARTICLE_COMMIT_VERIFY
+    blocker: NONE
+    notes:
+      - "Created local commit d4693bd6d78ed63a669e181516e28247460fee11 with message Publish Agent Engineering Article 08 from the exact verified 10-file scope; no push."
+  ```
+
+- Master Validation：`PASS` — explicit cached scope matched the previously verified 10 paths; commit command succeeded; `HEAD` resolved to `d4693bd6d78ed63a669e181516e28247460fee11`.
+- Validation Time：`2026-08-20T19:59:03+08:00`
+
+<a id="wr-master-article-08-commit-verify-20260820t195903"></a>
+
+### WR-MASTER-ARTICLE-08-COMMIT-VERIFY-20260820T195903
+
+- Execution ID：`/root/master_article_08_commit_verify`
+- Task Brief：验证 Article 08 checkpoint 的 commit message、完整 files scope、working tree、parent diff 与 branch divergence；禁止 push 与 Article 09。
+- Raw Envelope：
+
+  ```yaml
+  worker_result:
+    role: MASTER_ORCHESTRATOR
+    article: "08"
+    gate: ARTICLE_COMMIT_VERIFY
+    execution_type: MASTER_DETERMINISTIC
+    status: PASS
+    artifacts_created: []
+    artifacts_modified: []
+    gate_completed: true
+    next_allowed_gate: REPOSITORY_RECONCILIATION
+    blocker: NONE
+    notes:
+      - "HEAD=d4693bd6d78ed63a669e181516e28247460fee11; message exact; git show exact 10-file Article 08 transaction scope; worktree clean; git diff HEAD^ HEAD --check PASS; origin/main...HEAD=0/1; Article 09 absent."
+  ```
+
+- Master Validation：`PASS` — Git history, status, show, parent diff check and Article 09 absence independently verified; `ARTICLE_COMMIT_VERIFY -> REPOSITORY_RECONCILIATION` mapping verified.
+- Validation Time：`2026-08-20T19:59:03+08:00`
+
+<a id="wr-master-article-08-repository-reconciliation-20260820t195903"></a>
+
+### WR-MASTER-ARTICLE-08-REPOSITORY-RECONCILIATION-20260820T195903
+
+- Execution ID：`/root/master_article_08_repository_reconciliation`
+- Task Brief：把已验证 checkpoint 与 `END ARTICLE 08` 写回 durable state，清空 active worker，并把 next-Article pointer 设为 PRECHECK；不得创建 Article 09 workspace 或启动任何生产 Gate。
+- Raw Envelope：
+
+  ```yaml
+  worker_result:
+    role: MASTER_ORCHESTRATOR
+    article: "08"
+    gate: REPOSITORY_RECONCILIATION
+    execution_type: MASTER_DETERMINISTIC
+    status: PASS
+    artifacts_created: []
+    artifacts_modified:
+      - docs/agent-engineering-course/articles/08-agent-loop/README.md
+      - docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md
+      - docs/agent-engineering-course/README.md
+      - docs/agent-engineering-course/status.md
+      - docs/agent-engineering-course/course-run-state.md
+    gate_completed: true
+    next_allowed_gate: PRECHECK
+    blocker: NONE
+    notes:
+      - "Article 08 checkpoint verified and END ARTICLE 08 established; Factory READY; pointer moved to Article 09 PRECHECK without kickoff; Article 09 workspace absent and no Research, Evidence, Lab, Draft, or Review started."
+  ```
+
+- Master Validation：`PASS` — checkpoint evidence matches Git history; five declared durable-state paths are the only reconciliation writes; Article 08 lifecycle and published path remain intact; Article 09 remains absent and not started.
+- Validation Time：`2026-08-20T19:59:03+08:00`

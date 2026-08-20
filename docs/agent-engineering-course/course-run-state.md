@@ -5,34 +5,34 @@
 ```yaml
 schema_version: 2
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
-factory_status: RUNNING
-current_article: "08"
-current_gate: ARTICLE_CHECKPOINT_COMMIT
+factory_status: READY
+current_article: "09"
+current_gate: PRECHECK
 last_published_article: "08"
-active_worker: MASTER_ORCHESTRATOR
-active_worker_execution_id: /root/master_article_08_checkpoint_commit
-active_worker_record_ref: docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md#wr-master-article-08-checkpoint-commit-20260820t195627
+active_worker: NONE
+active_worker_execution_id: NONE
+active_worker_record_ref: NONE
 last_worker_result:
   role: MASTER_ORCHESTRATOR
   article: "08"
-  gate: GIT_DIFF_VERIFY
+  gate: REPOSITORY_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
-  execution_id: /root/master_article_08_git_diff_verify
-  result_ref: docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md#wr-master-article-08-git-diff-verify-20260820t195313
+  execution_id: /root/master_article_08_repository_reconciliation
+  result_ref: docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md#wr-master-article-08-repository-reconciliation-20260820t195903
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: ARTICLE_CHECKPOINT_COMMIT
+  next_allowed_gate: PRECHECK
   blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 1
+review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: cfd763c0ba52f6d2cfacd3dc7f8323b913529eec
-next_action: CREATE_AND_VERIFY_ARTICLE_08_CHECKPOINT_COMMIT
-last_updated: "2026-08-20T19:56:27+08:00"
+last_successful_commit: d4693bd6d78ed63a669e181516e28247460fee11
+next_action: START_ARTICLE_09_PRECHECK
+last_updated: "2026-08-20T19:59:03+08:00"
 ```
 
 ## Field rules
@@ -113,3 +113,5 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-20 19:53 Publisher `/root/article_08_build_verify` 返回 schema-valid `PASS` envelope；Master 独立核验 ignored `public/` 中 Article 08 route 与 Article 07↔08 rendered navigation，Build=`hugo --gc --minify / Hugo 0.157.0 / exit 0 / 1237 Pages / 0 ERROR / 0 WARNING`。Master 随后完成 `MASTER_STATE_UPDATE`：Article README、status、course README、canonical Article 08 link 与 run state 对齐为 `PUBLISHED` candidate，并登记 `GIT_DIFF_VERIFY`。Article checkpoint 尚未创建或验证，Article 09 未启动。
 
 2026-08-20 19:56 Master 完成 `GIT_DIFF_VERIFY`：branch=`codex/article-08-production`；worktree 仅含 10 个 Article 08 transaction paths；Article 09 workspace=`ABSENT`；无 delete / rename / unrelated path；`git diff --check`=`PASS`；Master 重新执行 `hugo --gc --minify` 得 `1237 Pages / 0 ERROR / 0 WARNING / exit 0`。Factory 已进入 `ARTICLE_CHECKPOINT_COMMIT`，只允许显式 stage 这 10 个路径并创建 `Publish Agent Engineering Article 08` 本地 commit；尚未 push。
+
+2026-08-20 19:59 Article 08 独立 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` 已完成 commit message、10-file scope、clean worktree、`git log`、`git show` 与 `git diff HEAD^ HEAD --check` verification；branch=`codex/article-08-production`，相对 `origin/main` 为 `0 behind / 1 ahead`，尚未 push。`END ARTICLE 08` 成立。Factory 已回到 `READY`，durable pointer 指向 Article 09 `PRECHECK`；Article 09 workspace=`ABSENT`，transaction、Research、Evidence、Lab 与 Draft 均未启动。

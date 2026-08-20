@@ -7,8 +7,8 @@
 - Required Lab: `Lab 03 Minimal Agent Loop`
 - Lab Status: `VERIFIED / EVIDENCE_MERGED`
 - Mode: `LAB_ARTICLE`
-- Current Gate: `ARTICLE_CHECKPOINT_COMMIT`
-- Next Allowed Action: `MASTER_STAGE_EXACT_SCOPE_COMMIT_AND_VERIFY`
+- Current Gate: `END_ARTICLE`
+- Next Allowed Action: `ARTICLE_09_PRECHECK_NOT_STARTED`
 - Blocker: `NONE`
 
 ## Dependencies
@@ -55,15 +55,16 @@
 - Publish Gate：`PASS`；Master 已验证 Published Content、Article 07 next-link、front matter / relref / Lab link、semantic mapping 与 Allowed Writes；Build 仍未执行。
 - Build Verify Start：Publisher `/root/article_08_build_verify` 已登记；只运行真实 Hugo command 并把结果写入本 README Publication Result，不得修改知识内容或 global durable state。
 - Build Verify：`PASS`；`hugo --gc --minify` exit `0`，Hugo `0.157.0`，`1237 Pages / 0 ERROR / 0 WARNING`，rendered Article 07↔08 navigation=`PASS`。
-- Master State Reconciliation：`PASS`；Reviewer Final、Publisher、Build、workspace、Published Content、canonical candidate 与 global state 已对齐，Lifecycle=`PUBLISHED` candidate；checkpoint 尚未创建或验证。
+- Master State Reconciliation：`PASS`；Reviewer Final、Publisher、Build、workspace、Published Content、canonical candidate 与 global state 已对齐，Lifecycle=`PUBLISHED`。
 - Git Diff Verify：`PASS`；branch=`codex/article-08-production`；10 个 transaction paths、0 Article 09、0 delete / rename / unrelated path；`git diff --check=PASS`；Master final Hugo=`1237 Pages / 0 ERROR / 0 WARNING / exit 0`。
+- Article Checkpoint / Commit Verify：`PASS`；commit=`d4693bd6d78ed63a669e181516e28247460fee11`；message=`Publish Agent Engineering Article 08`；10-file scope、clean worktree、log / show 与 `git diff HEAD^ HEAD --check` 均已验证；local branch 尚未 push。
 - Article 08 Published Content：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
 - Lab 03 directory：`docs/agent-engineering-course/labs/lab-03-minimal-agent-loop/`；Design、implementation、tests、raw observations 与 Evidence Merge 已由 recovery checkpoint `1045264` 保存。
 - Article 09 workspace：`NONE`
 
 ## Stop Line
 
-Reviewer Final、Publish、Build、Master State Reconciliation 与 Git Diff Verify 已通过，Factory 正在 `RUNNING / ARTICLE_CHECKPOINT_COMMIT`。Lifecycle `PUBLISHED` 仍不是 transaction completion；只有 Article 08 独立 checkpoint commit 与 commit verification 通过后才能结束本篇。Article 09 不得启动。
+Reviewer Final、Publish、Build、Master State Reconciliation、Git Diff Verify、独立 checkpoint commit 与 commit verification 均已通过，`END ARTICLE 08` 成立。Factory 为 `READY / PRECHECK`，pointer 指向 Article 09 但不代表 Article 09 已启动；Article 09 workspace 不存在，Research / Evidence / Lab / Draft 均未开始。
 
 ## Publication Result Candidate
 
@@ -82,9 +83,9 @@ Reviewer Final、Publish、Build、Master State Reconciliation 与 Git Diff Veri
 - Errors：`0 / NONE IN HUGO OUTPUT`
 - Rendered Route / Navigation Result：`PASS`；`public/ai-empowerment/agent-engineering-08-agent-loop/index.html`存在（`49,691` bytes）；`public/ai-empowerment/agent-engineering-07-mcp-external-capability-boundary/index.html`存在（`45,297` bytes）；rendered Article 07“下一篇”href=`/twoegg-tech-stack/ai-empowerment/agent-engineering-08-agent-loop/`，rendered Article 08“上一篇”href=`/twoegg-tech-stack/ai-empowerment/agent-engineering-07-mcp-external-capability-boundary/`。
 - Files Written：`content/ai-empowerment/agent-engineering-08-agent-loop.md`（新建）；`content/ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md`（仅新增下一篇导航）；`docs/agent-engineering-course/articles/08-agent-loop/README.md`（仅追加本 Publication Result candidate）。
-- Recommended Next Gate：`ARTICLE_CHECKPOINT_COMMIT`
-- Recommended Article Transition：`PUBLISHED candidate / checkpoint not yet verified`；Publisher recommendation 已由 Master 验证并写入 durable state。
+- Recommended Next Gate：`PRECHECK`（Article 09 transaction 尚未启动）
+- Recommended Article Transition：`PUBLISHED / checkpoint d4693bd verified / END ARTICLE 08`。
 - Recommended Status Changes：由 Master 在 Reviewer Final PASS、Publisher PASS、独立 Build PASS 与 repository consistency 全部验证后，统一更新 Article README lifecycle、`status.md`、`course-run-state.md` 与 checkpoint metadata。
 - Canonical Update Candidate：canonical Article 08 row should link to `../content/ai-empowerment/agent-engineering-08-agent-loop.md`；Publisher 未修改 `docs/agent-engineering-series-plan.md`。
-- Checkpoint Readiness：`READY / EXACT_SCOPE_STAGE_AND_COMMIT_REQUIRED`。
+- Checkpoint Readiness：`PASS / d4693bd6d78ed63a669e181516e28247460fee11 VERIFIED`。
 - Publisher Boundary：未修改 frozen Draft、Review、Evidence、Lab、canonical、course README、`status.md`、`course-run-state.md`、theme、CI或Article 09；未stage、commit、push或创建PR。

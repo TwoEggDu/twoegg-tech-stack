@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 08 Final Review / Publisher / Hugo / Master Reconciliation=`PASS`；`1237 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `ARTICLE_CHECKPOINT_COMMIT`
+- 当前里程碑：Article 08 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` verified；`END ARTICLE 08`；Hugo=`1237 Pages / 0 ERROR / 0 WARNING`
+- 当前生产对象：Article 09；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -42,7 +42,7 @@
 - 当前 Article 08 状态：`PUBLISHED`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；Review / Final Gate=`PASS / 92`；`08-F01 CLOSED`；Publisher / Build / Master Reconciliation=`PASS`
 - 当前 Article 08 Published Content：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
 - 当前 Article 08 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1237 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`RUNNING / ARTICLE_CHECKPOINT_COMMIT`；Git Diff Verify 与 final Hugo 已通过，Article 08 checkpoint 尚未创建或验证，Article 09 未启动
+- Factory Status：`READY / PRECHECK`；Article 08 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` verified，`END ARTICLE 08`；Article 09 workspace 不存在且 transaction 未启动
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
@@ -73,7 +73,7 @@
 | [articles/05-function-calling-tool-use/](articles/05-function-calling-tool-use/) | `PUBLISHED`；checkpoint `c0cf180c281ea5dbb70c891176735f4ed9e34d3f` verified |
 | [articles/06-tool-runtime/](articles/06-tool-runtime/) | `PUBLISHED`；checkpoint `199d4e19ba6150c8c598788a2daa8488e6e855f3` verified |
 | [articles/07-mcp-external-capability-boundary/](articles/07-mcp-external-capability-boundary/) | `PUBLISHED`；checkpoint `f3de0f2` pushed / live-remote verified |
-| [articles/08-agent-loop/](articles/08-agent-loop/) | `OUTLINE_READY / AUTHOR_DRAFT NOT_STARTED`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；Outline `8 / 8 COVERED` |
+| [articles/08-agent-loop/](articles/08-agent-loop/) | `PUBLISHED`；Review / Final Gate `PASS / 92 / 0 OPEN`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；checkpoint `d4693bd` verified |
 
 ## 资产边界
 
