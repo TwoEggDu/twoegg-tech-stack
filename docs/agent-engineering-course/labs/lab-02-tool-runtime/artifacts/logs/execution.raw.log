@@ -1,0 +1,180 @@
+=== RESTORE-01 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:10:27.7932891+08:00
+  正在确定要还原的项目…
+  跳过项目“E:\workspace\TechStackShow\docs\agent-engineering-course\labs\src\ToolRuntimeLab\ToolRuntimeLab.csproj”，因为未找到该项目。
+  跳过项目“E:\workspace\TechStackShow\docs\agent-engineering-course\labs\src\ToolRuntimeLab\ToolRuntimeLab.csproj”，因为未找到该项目。
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\tests\ToolRuntimeLab.Specs\ToolRuntimeLab.Specs.csproj (用时 65 毫秒)。
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\src\ToolRuntimeLab\ToolRuntimeLab.csproj (用时 65 毫秒)。
+__LAB_COMMAND_END__ 2026-08-20T07:10:29.2602998+08:00 exit=0
+[stderr]
+
+=== RESTORE-02 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:11:08.2028187+08:00
+  正在确定要还原的项目…
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\tests\ToolRuntimeLab.Specs\ToolRuntimeLab.Specs.csproj (用时 87 毫秒)。
+  1 个项目(共 2 个)是最新的，无法还原。
+__LAB_COMMAND_END__ 2026-08-20T07:11:09.4467186+08:00 exit=0
+[stderr]
+
+=== BUILD-01 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:11:22.2422240+08:00
+  ToolRuntimeLab -> E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\src\ToolRuntimeLab\bin\Release\net10.0\ToolRuntimeLab.dll
+  ToolRuntimeLab.Specs -> E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\tests\ToolRuntimeLab.Specs\bin\Release\net10.0\ToolRuntimeLab.Specs.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:02.99
+__LAB_COMMAND_END__ 2026-08-20T07:11:25.6502945+08:00 exit=0
+[stderr]
+
+=== SETUP-FIRST-01 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:11:41.1986005+08:00
+__LAB_COMMAND_END__ 2026-08-20T07:11:41.7554705+08:00 exit=1
+[stderr]
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\scripts\setup-fixture.ps1 : Method invocation failed because [System.IO.Path] does not contain a method named 'GetRelativePath'.
+    + CategoryInfo          : InvalidOperation: (:) [setup-fixture.ps1], RuntimeException
+    + FullyQualifiedErrorId : MethodNotFound,setup-fixture.ps1
+
+=== SETUP-FIRST-02 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:12:44.2209060+08:00
+FIXTURE_OK name=small.txt bytes=11 sha256=E49C81E2D2F84E259D40E2FB8192F3BCD198B355184845D76D8F58807D0D78EE
+FIXTURE_OK name=large.txt bytes=1024 sha256=26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61
+FIXTURE_OK name=secret.txt bytes=15 sha256=A532F53598B8BB67609FD55670AA58B9A1DD5F3F77E9C4FA44321533C85BAF6B
+LINK_ATTEMPT kind=JUNCTION path=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096\allowed\link-out target=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096\outside
+SETUP_READY run_label=first run_root=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096
+LINK_DISPOSITION kind=JUNCTION final_target=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096\outside outside_allow_root=True inside_run_root=True
+STATE_PATH E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\artifacts\run-state-first.json
+__LAB_COMMAND_END__ 2026-08-20T07:12:44.8568386+08:00 exit=0
+[stderr]
+
+=== RUN-FIRST ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:12:57.5091138+08:00
+LINK_VERIFIED kind=JUNCTION resolve_link_target_true=PASS outside_allow_root=true inside_run_root=true
+CASE_RESULT case=TR-01/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-02/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-03/1 terminal=CANONICALIZE/PATH_OUTSIDE_ROOT render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-04/1 terminal=CANONICALIZE/PATH_LINK_OUTSIDE_ROOT render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-05/1 terminal=POLICY/POLICY_DENIED render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-06/1 terminal=POLICY/APPROVAL_REQUIRED render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-07/1 terminal=EXECUTE/TIMED_OUT render=NOT_RUN handlers=1 cancellation=TIMEOUT
+CASE_RESULT case=TR-08/1 terminal=EXECUTE/CALLER_CANCELLED render=NOT_RUN handlers=0 cancellation=CALLER
+CASE_RESULT case=TR-09/1 terminal=RESULT_VALIDATION/RESULT_SCHEMA_INVALID render=NOT_RUN handlers=1 cancellation=NONE
+CASE_RESULT case=TR-10/1 terminal=SUCCEEDED/OK render=SPILLED handlers=1 cancellation=NONE
+CASE_RESULT case=TR-11/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-11/2 terminal=IDEMPOTENCY/REPLAYED render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-12/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-12/2 terminal=IDEMPOTENCY/IDEMPOTENCY_CONFLICT render=NOT_RUN handlers=1 cancellation=NONE
+SPILL_EVIDENCE ref=spills/first/26ad8132e3b544caefd85b30bf36df8d012dc7245c9d2224e0f9f50a2ac55a61.txt bytes=1024 sha256=26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61
+TRACE_WRITER create_new=PASS append_prefix=PASS rows=14 sha256=50CEA4EC1B0D2F15E9789603032AB0BF4DD7F4B0ADDFFC16BBF9733A0321BD67
+RESULT_VIEWS path=artifacts/result-views-first.json absolute_path_present=false full_large_content_present=false
+DISTRIBUTION terminal=CANONICALIZE:2,EXECUTE:2,IDEMPOTENCY:2,POLICY:2,RESULT_VALIDATION:1,SUCCEEDED:5
+DISTRIBUTION render=INLINE:5,NOT_RUN:8,SPILLED:1
+DISTRIBUTION handler_count=0:5,1:9
+DISTRIBUTION cancellation=CALLER:1,NONE:12,TIMEOUT:1
+SPEC_RESULT PASS cases=12 rows=14 provider_calls=0 network_calls=0 credential_reads=0 shell_tools=0 business_writes=0
+__LAB_COMMAND_END__ 2026-08-20T07:12:58.6455520+08:00 exit=0
+[stderr]
+
+=== CLEANUP-FIRST-01 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:13:11.5033143+08:00
+__LAB_COMMAND_END__ 2026-08-20T07:13:12.0299379+08:00 exit=1
+[stderr]
+Remove-Item : Object reference not set to an instance of an object.
+At E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\scripts\cleanup-fixture.ps1:60 char:5
+    + CategoryInfo          : NotSpecified: (:) [Remove-Item], NullReferenceException
+    + FullyQualifiedErrorId : System.NullReferenceException,Microsoft.PowerShell.Commands.RemoveItemCommand
+
+=== CLEANUP-FIRST-02 ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:14:24.0603887+08:00
+CLEANUP_GUARD_PASS run_label=first run_root=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096 temp_parent=C:\Users\IGG\AppData\Local\Temp\ sentinel=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096\.lab-02-owned
+CLEANUP_COMPLETE run_label=first removed=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-9880b680-5b47-41d8-9ea9-09af520c6096
+__LAB_COMMAND_END__ 2026-08-20T07:14:24.5473272+08:00 exit=0
+[stderr]
+
+=== SETUP-SECOND ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:14:37.1199285+08:00
+FIXTURE_OK name=small.txt bytes=11 sha256=E49C81E2D2F84E259D40E2FB8192F3BCD198B355184845D76D8F58807D0D78EE
+FIXTURE_OK name=large.txt bytes=1024 sha256=26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61
+FIXTURE_OK name=secret.txt bytes=15 sha256=A532F53598B8BB67609FD55670AA58B9A1DD5F3F77E9C4FA44321533C85BAF6B
+LINK_ATTEMPT kind=JUNCTION path=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\allowed\link-out target=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\outside
+SETUP_READY run_label=second run_root=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290
+LINK_DISPOSITION kind=JUNCTION final_target=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\outside outside_allow_root=True inside_run_root=True
+STATE_PATH E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-02-tool-runtime\artifacts\run-state-second.json
+__LAB_COMMAND_END__ 2026-08-20T07:14:37.6995166+08:00 exit=0
+[stderr]
+
+=== RUN-SECOND ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:14:49.8069058+08:00
+LINK_VERIFIED kind=JUNCTION resolve_link_target_true=PASS outside_allow_root=true inside_run_root=true
+CASE_RESULT case=TR-01/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-02/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-03/1 terminal=CANONICALIZE/PATH_OUTSIDE_ROOT render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-04/1 terminal=CANONICALIZE/PATH_LINK_OUTSIDE_ROOT render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-05/1 terminal=POLICY/POLICY_DENIED render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-06/1 terminal=POLICY/APPROVAL_REQUIRED render=NOT_RUN handlers=0 cancellation=NONE
+CASE_RESULT case=TR-07/1 terminal=EXECUTE/TIMED_OUT render=NOT_RUN handlers=1 cancellation=TIMEOUT
+CASE_RESULT case=TR-08/1 terminal=EXECUTE/CALLER_CANCELLED render=NOT_RUN handlers=0 cancellation=CALLER
+CASE_RESULT case=TR-09/1 terminal=RESULT_VALIDATION/RESULT_SCHEMA_INVALID render=NOT_RUN handlers=1 cancellation=NONE
+CASE_RESULT case=TR-10/1 terminal=SUCCEEDED/OK render=SPILLED handlers=1 cancellation=NONE
+CASE_RESULT case=TR-11/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-11/2 terminal=IDEMPOTENCY/REPLAYED render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-12/1 terminal=SUCCEEDED/OK render=INLINE handlers=1 cancellation=NONE
+CASE_RESULT case=TR-12/2 terminal=IDEMPOTENCY/IDEMPOTENCY_CONFLICT render=NOT_RUN handlers=1 cancellation=NONE
+SPILL_EVIDENCE ref=spills/second/26ad8132e3b544caefd85b30bf36df8d012dc7245c9d2224e0f9f50a2ac55a61.txt bytes=1024 sha256=26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61
+TRACE_WRITER create_new=PASS append_prefix=PASS rows=14 sha256=50CEA4EC1B0D2F15E9789603032AB0BF4DD7F4B0ADDFFC16BBF9733A0321BD67
+RESULT_VIEWS path=artifacts/result-views-second.json absolute_path_present=false full_large_content_present=false
+DISTRIBUTION terminal=CANONICALIZE:2,EXECUTE:2,IDEMPOTENCY:2,POLICY:2,RESULT_VALIDATION:1,SUCCEEDED:5
+DISTRIBUTION render=INLINE:5,NOT_RUN:8,SPILLED:1
+DISTRIBUTION handler_count=0:5,1:9
+DISTRIBUTION cancellation=CALLER:1,NONE:12,TIMEOUT:1
+SPEC_RESULT PASS cases=12 rows=14 provider_calls=0 network_calls=0 credential_reads=0 shell_tools=0 business_writes=0
+__LAB_COMMAND_END__ 2026-08-20T07:14:50.9444506+08:00 exit=0
+[stderr]
+
+=== CLEANUP-SECOND ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:15:02.5513724+08:00
+CLEANUP_GUARD_PASS run_label=second run_root=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290 temp_parent=C:\Users\IGG\AppData\Local\Temp\ sentinel=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\.lab-02-owned
+CLEANUP_COMPLETE run_label=second removed=C:\Users\IGG\AppData\Local\Temp\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290
+__LAB_COMMAND_END__ 2026-08-20T07:15:03.0456038+08:00 exit=0
+[stderr]
+
+=== HASH-FIRST ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:15:20.7485629+08:00
+SHA256 50CEA4EC1B0D2F15E9789603032AB0BF4DD7F4B0ADDFFC16BBF9733A0321BD67 artifacts/observation-first.jsonl
+__LAB_COMMAND_END__ 2026-08-20T07:15:20.9571542+08:00 exit=0
+[stderr]
+
+=== HASH-SECOND ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:15:34.4831163+08:00
+SHA256 50CEA4EC1B0D2F15E9789603032AB0BF4DD7F4B0ADDFFC16BBF9733A0321BD67 artifacts/observation.jsonl
+__LAB_COMMAND_END__ 2026-08-20T07:15:34.6872919+08:00 exit=0
+[stderr]
+
+=== BYTE-COMPARE ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:16:19.9559257+08:00
+BYTE_COMPARE identical=true first_bytes=10607 second_bytes=10607 first_lines=14 second_lines=14
+__LAB_COMMAND_END__ 2026-08-20T07:16:20.1767784+08:00 exit=0
+[stderr]
+
+=== STATIC-AUDIT ===
+[stdout]
+__LAB_COMMAND_START__ 2026-08-20T07:16:57.0479800+08:00
+STATIC_AUDIT package_references=0 temp_roots_removed=true spill_first=26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61 spill_second=26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61 trace_model_absolute_paths_absent=true
+__LAB_COMMAND_END__ 2026-08-20T07:16:57.3058337+08:00 exit=0
+[stderr]

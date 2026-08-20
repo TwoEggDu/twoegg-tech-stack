@@ -1,0 +1,159 @@
+{
+  "schema_version": "lab-02-cases-v1",
+  "cases": [
+    {
+      "case_id": "TR-01",
+      "attempt": 1,
+      "invocation_id": "inv-calc-valid",
+      "tool_name": "calculate_binary",
+      "arguments": { "operation": "add", "left": 2, "right": 3 },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "SUCCEEDED", "terminal_code": "OK", "cancellation_origin": "NONE", "render": "INLINE", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-02",
+      "attempt": 1,
+      "invocation_id": "inv-read-valid",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "small.txt" },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "SUCCEEDED", "terminal_code": "OK", "cancellation_origin": "NONE", "render": "INLINE", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-03",
+      "attempt": 1,
+      "invocation_id": "inv-read-traversal",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "../outside/secret.txt" },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "CANONICALIZE", "terminal_code": "PATH_OUTSIDE_ROOT", "cancellation_origin": "NONE", "render": "NOT_RUN", "handler_count": 0 }
+    },
+    {
+      "case_id": "TR-04",
+      "attempt": 1,
+      "invocation_id": "inv-read-link",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "link-out/secret.txt" },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "REAL_LINK_OUTSIDE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "CANONICALIZE", "terminal_code": "PATH_LINK_OUTSIDE_ROOT", "cancellation_origin": "NONE", "render": "NOT_RUN", "handler_count": 0 }
+    },
+    {
+      "case_id": "TR-05",
+      "attempt": 1,
+      "invocation_id": "inv-policy-deny",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "small.txt" },
+      "policy": { "global": "ALLOW", "tool": "ASK", "resource": "DENY" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "POLICY", "terminal_code": "POLICY_DENIED", "cancellation_origin": "NONE", "render": "NOT_RUN", "handler_count": 0 }
+    },
+    {
+      "case_id": "TR-06",
+      "attempt": 1,
+      "invocation_id": "inv-policy-ask",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "small.txt" },
+      "policy": { "global": "ALLOW", "tool": "ASK", "resource": "ALLOW" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "POLICY", "terminal_code": "APPROVAL_REQUIRED", "cancellation_origin": "NONE", "render": "NOT_RUN", "handler_count": 0 }
+    },
+    {
+      "case_id": "TR-07",
+      "attempt": 1,
+      "invocation_id": "inv-timeout",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "small.txt" },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "NEVER_RELEASE_GATE",
+      "timeout_ms": 50,
+      "expected": { "terminal_stage": "EXECUTE", "terminal_code": "TIMED_OUT", "cancellation_origin": "TIMEOUT", "render": "NOT_RUN", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-08",
+      "attempt": 1,
+      "invocation_id": "inv-caller-cancel",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "small.txt" },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "CALLER_PRE_CANCELLED",
+      "timeout_ms": 5000,
+      "expected": { "terminal_stage": "EXECUTE", "terminal_code": "CALLER_CANCELLED", "cancellation_origin": "CALLER", "render": "NOT_RUN", "handler_count": 0 }
+    },
+    {
+      "case_id": "TR-09",
+      "attempt": 1,
+      "invocation_id": "inv-invalid-result",
+      "tool_name": "calculate_binary",
+      "arguments": { "operation": "add", "left": 2, "right": 3 },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "INVALID_RESULT_KIND",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "RESULT_VALIDATION", "terminal_code": "RESULT_SCHEMA_INVALID", "cancellation_origin": "NONE", "render": "NOT_RUN", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-10",
+      "attempt": 1,
+      "invocation_id": "inv-large-read",
+      "tool_name": "read_text",
+      "arguments": { "relative_path": "large.txt" },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "INLINE_THRESHOLD_64",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "SUCCEEDED", "terminal_code": "OK", "cancellation_origin": "NONE", "render": "SPILLED", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-11",
+      "attempt": 1,
+      "invocation_id": "inv-replay",
+      "tool_name": "calculate_binary",
+      "arguments": { "operation": "add", "left": 2, "right": 3 },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "SUCCEEDED", "terminal_code": "OK", "cancellation_origin": "NONE", "render": "INLINE", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-11",
+      "attempt": 2,
+      "invocation_id": "inv-replay",
+      "tool_name": "calculate_binary",
+      "arguments": { "operation": "add", "left": 2, "right": 3 },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "DUPLICATE_SAME_ARGS",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "IDEMPOTENCY", "terminal_code": "REPLAYED", "cancellation_origin": "NONE", "render": "INLINE", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-12",
+      "attempt": 1,
+      "invocation_id": "inv-conflict",
+      "tool_name": "calculate_binary",
+      "arguments": { "operation": "add", "left": 2, "right": 3 },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "NONE",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "SUCCEEDED", "terminal_code": "OK", "cancellation_origin": "NONE", "render": "INLINE", "handler_count": 1 }
+    },
+    {
+      "case_id": "TR-12",
+      "attempt": 2,
+      "invocation_id": "inv-conflict",
+      "tool_name": "calculate_binary",
+      "arguments": { "operation": "subtract", "left": 2, "right": 3 },
+      "policy": { "global": "ALLOW", "tool": "ALLOW", "resource": "ALLOW" },
+      "fault": "DUPLICATE_DIFFERENT_ARGS",
+      "timeout_ms": 1000,
+      "expected": { "terminal_stage": "IDEMPOTENCY", "terminal_code": "IDEMPOTENCY_CONFLICT", "cancellation_origin": "NONE", "render": "NOT_RUN", "handler_count": 1 }
+    }
+  ]
+}

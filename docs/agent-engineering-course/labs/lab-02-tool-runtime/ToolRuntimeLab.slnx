@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/ToolRuntimeLab/ToolRuntimeLab.csproj" />
+  <Project Path="tests/ToolRuntimeLab.Specs/ToolRuntimeLab.Specs.csproj" />
+</Solution>

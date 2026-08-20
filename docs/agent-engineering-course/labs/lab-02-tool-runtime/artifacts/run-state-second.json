@@ -1,0 +1,15 @@
+{
+    "run_label":  "second",
+    "status":  "READY",
+    "run_root":  "C:\\Users\\IGG\\AppData\\Local\\Temp\\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290",
+    "allow_root":  "C:\\Users\\IGG\\AppData\\Local\\Temp\\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\\allowed",
+    "outside_root":  "C:\\Users\\IGG\\AppData\\Local\\Temp\\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\\outside",
+    "spill_root":  "C:\\Users\\IGG\\AppData\\Local\\Temp\\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\\spills",
+    "link_path":  "C:\\Users\\IGG\\AppData\\Local\\Temp\\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\\allowed\\link-out",
+    "link_kind":  "JUNCTION",
+    "link_final_target":  "C:\\Users\\IGG\\AppData\\Local\\Temp\\agent-engineering-lab-02-10248bac-95e0-4a1d-9398-ce889f005290\\outside",
+    "final_target_outside_allow_root":  true,
+    "final_target_inside_run_root":  true,
+    "junction_error":  null,
+    "symlink_error":  null
+}

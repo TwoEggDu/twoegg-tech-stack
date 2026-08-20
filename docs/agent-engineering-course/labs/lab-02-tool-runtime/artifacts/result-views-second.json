@@ -1,0 +1,230 @@
+{
+  "schema_version": "lab-02-result-views-v1",
+  "run_id": "lab-02-fixed-run",
+  "views": [
+    {
+      "case_id": "TR-01",
+      "attempt": 1,
+      "model_view": {
+        "preview": "5",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "INLINE",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-02",
+      "attempt": 1,
+      "model_view": {
+        "preview": "alpha\nbeta\n",
+        "byte_count": 11,
+        "sha256": "E49C81E2D2F84E259D40E2FB8192F3BCD198B355184845D76D8F58807D0D78EE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "INLINE",
+        "byte_count": 11,
+        "sha256": "E49C81E2D2F84E259D40E2FB8192F3BCD198B355184845D76D8F58807D0D78EE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-03",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-04",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-05",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-06",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-07",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-08",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-09",
+      "attempt": 1,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-10",
+      "attempt": 1,
+      "model_view": {
+        "preview": "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
+        "byte_count": 1024,
+        "sha256": "26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61",
+        "spill_ref": "spills/26ad8132e3b544caefd85b30bf36df8d012dc7245c9d2224e0f9f50a2ac55a61.txt"
+      },
+      "ui_view": {
+        "display_mode": "SPILLED",
+        "byte_count": 1024,
+        "sha256": "26AD8132E3B544CAEFD85B30BF36DF8D012DC7245C9D2224E0F9F50A2AC55A61",
+        "spill_ref": "spills/26ad8132e3b544caefd85b30bf36df8d012dc7245c9d2224e0f9f50a2ac55a61.txt"
+      }
+    },
+    {
+      "case_id": "TR-11",
+      "attempt": 1,
+      "model_view": {
+        "preview": "5",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "INLINE",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-11",
+      "attempt": 2,
+      "model_view": {
+        "preview": "5",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "INLINE",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-12",
+      "attempt": 1,
+      "model_view": {
+        "preview": "5",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "INLINE",
+        "byte_count": 1,
+        "sha256": "EF2D127DE37B942BAAD06145E54B0C619A1F22327B2EBBCFBEC78F5564AFE39D",
+        "spill_ref": "NONE"
+      }
+    },
+    {
+      "case_id": "TR-12",
+      "attempt": 2,
+      "model_view": {
+        "preview": "NONE",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      },
+      "ui_view": {
+        "display_mode": "NOT_RUN",
+        "byte_count": 0,
+        "sha256": "NONE",
+        "spill_ref": "NONE"
+      }
+    }
+  ]
+}

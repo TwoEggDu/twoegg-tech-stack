@@ -199,7 +199,7 @@ request -> one call -> one result -> answer
 
 这保持 `PARTIAL / COURSE WORKING BOUNDARY`，不主张行业唯一分类。Runner 或 server-side loop 可以持续多轮，生态也可以称其为 agentic；一次 call/result 仍不能证明完整 Loop。
 
-边界到此停住：Article 06 负责 Tool Runtime 与独立 failure-injection evidence；07 负责 MCP transport / discovery / interoperability；08 正式定义 Turn、Step、Decide、Act、Observe、state 与 stop；18 建立 Evidence Contract；19 建立 Permission、Approval、Human-in-the-loop 与 Sandbox。本篇不展开 timeout、MCP、multi-step、permission implementation 或 error recovery。
+边界到此停住：[Article 06]({{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}})负责 Tool Runtime 与独立 failure-injection evidence；07 负责 MCP transport / discovery / interoperability；08 正式定义 Turn、Step、Decide、Act、Observe、state 与 stop；18 建立 Evidence Contract；19 建立 Permission、Approval、Human-in-the-loop 与 Sandbox。本篇不展开 timeout、MCP、multi-step、permission implementation 或 error recovery。
 
 ## 怎样审查一条 Tool Use 链？
 

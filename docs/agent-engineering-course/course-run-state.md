@@ -6,17 +6,17 @@
 schema_version: 1
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 factory_status: RUNNING
-current_article: "05"
+current_article: "06"
 current_gate: GIT_DIFF_VERIFY
-last_published_article: "05"
+last_published_article: "06"
 active_worker: MASTER_ORCHESTRATOR
-review_cycle: 0
+review_cycle: 2
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c
-next_action: VERIFY_AND_COMMIT_ARTICLE_05_CHECKPOINT
-last_updated: "2026-08-20T06:16:38+08:00"
+last_successful_commit: c0cf180c281ea5dbb70c891176735f4ed9e34d3f
+next_action: RUN_ARTICLE_06_GIT_DIFF_VERIFY_AND_CHECKPOINT
+last_updated: "2026-08-20T09:34:51+08:00"
 ```
 
 ## Field rules
@@ -37,4 +37,4 @@ last_updated: "2026-08-20T06:16:38+08:00"
 
 ## Current transaction boundary
 
-Part I Audit checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` 已验证；Article 05 Reviewer Final Gate=`PASS / 95`、Publisher=`PASS`、Hugo=`1234 Pages / 0 ERROR / 0 WARNING / exit 0`，Master 已完成 canonical / Lifecycle `PUBLISHED` reconciliation。当前只允许 Article 05 `GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；Provider calls / Tool execution=`NONE`，runtime=`UNVERIFIED`；Article 06 尚未启动。
+Article 05 checkpoint `c0cf180c281ea5dbb70c891176735f4ed9e34d3f` 已验证。Article 06 Reviewer=`PASS / 93 / 0 Findings`，Publisher / Hugo / Master Reconciliation=`PASS`，Lifecycle=`PUBLISHED`；fresh Hugo=`1235 Pages / 0 WARNING / 0 ERROR / exit 0`。当前只允许Master执行完整Git Diff Verify、显式stage、独立`Publish Agent Engineering Article 06`commit与commit verification；在checkpoint验证前不得启动Article 07。

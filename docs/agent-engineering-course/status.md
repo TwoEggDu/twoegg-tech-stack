@@ -2,21 +2,22 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-20
-- 当前里程碑：Article 05 Reviewer / Publisher / Build / Master Reconciliation 已通过；独立 checkpoint commit 尚待验证
-- 当前生产对象：Article 05；Mode `NORMAL_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `GIT_DIFF_VERIFY`
+- 当前里程碑：Article 06 Publisher / Build / Master Reconciliation=`PASS`；`1235 Pages / 0 ERROR / 0 WARNING`
+- 当前生产对象：Article 06；Mode `LAB_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `GIT_DIFF_VERIFY`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
 - Article 03 Published Path：`content/ai-empowerment/agent-engineering-03-structured-output-machine-contract.md`
 - Article 04 Published Path：`content/ai-empowerment/agent-engineering-04-model-adapter-llm-gateway.md`
 - Article 05 Published Path：`content/ai-empowerment/agent-engineering-05-function-calling-tool-use.md`
-- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1234 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Article 06 Published Path：`content/ai-empowerment/agent-engineering-06-tool-runtime.md`
+- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1235 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
 - Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / GIT_DIFF_VERIFY`）
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 OPEN MINOR`
-- 下一允许动作：Master 审计 Article 05 transaction diff、精确 staging、checkpoint commit 与 commit verification；Article 06 保持未启动
+- 下一允许动作：Master执行Article 06完整Git Diff Verify、显式stage、独立checkpoint commit与commit verification
 
 ## 状态图例
 
@@ -34,8 +35,8 @@
 | 02 | Prompt Engineering：任务合同、角色、示例与边界 | I | M | 否 | `PUBLISHED` | `PARTIAL` | N/A | `NONE`；Review `92 / 100 PASS`；Publisher / Build / Master Reconciliation `PASS`；`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md` |
 | 03 | Structured Output：让模型输出成为机器可消费的合同 | I | L | 否 | `PUBLISHED` | `CONFIRMED`（`7 CONFIRMED / 0 PARTIAL / 0 BLOCKED`） | Lab 01 `CONFIRMED / EVIDENCE_MERGED` | `NONE`；Review `PASS / 93`，Publisher / Build / Master Reconciliation `PASS`；checkpoint `857fe9f` verified |
 | 04 | Model Adapter 与 LLM Gateway：Streaming、Error、Retry 和 Provider 差异 | I | M | 否 | `PUBLISHED` | `PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`） | N/A | `NONE`；Final Review `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `ac10060b` verified |
-| 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | II | M | 否 | `PUBLISHED` | `PASS`（`6 CONFIRMED / 2 PARTIAL / 0 BLOCKED / 0 PROPOSAL`） | N/A | `NONE`；Final Review `PASS / 95`；Publisher / Build / Master Reconciliation `PASS`；checkpoint pending |
-| 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | II | L | 否 | `PLANNED` | `BLOCKED` | Lab 02 `PLANNED / BLOCKED` | Lab fixture 与执行合同未设计 |
+| 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | II | M | 否 | `PUBLISHED` | `PASS`（`6 CONFIRMED / 2 PARTIAL / 0 BLOCKED / 0 PROPOSAL`） | N/A | `NONE`；Final Review `PASS / 95`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `c0cf180` verified |
+| 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | II | L | 否 | `PUBLISHED` | `PASS`（`8 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`） | Lab 02 `CONFIRMED / EVIDENCE_MERGED` | `NONE`；`06-F01 / 06-F02 CLOSED`；Review / Final Gate `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；`content/ai-empowerment/agent-engineering-06-tool-runtime.md`；next `GIT_DIFF_VERIFY` |
 | 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | II | L | 否 | `PLANNED` | `BLOCKED` | Lab 03 `PLANNED / BLOCKED` | Lab loop 与停止判据未设计 |
 | 09 | Planning：Agent 为什么需要计划，又为什么不能迷信计划 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
@@ -89,3 +90,5 @@
 10. Article 04 已完成 `PRECHECK -> ARTICLE_KICKOFF -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_READY -> OUTLINE_READY -> AUTHOR_DRAFT -> REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL -> PUBLISH -> BUILD_VERIFY -> MASTER_STATE_UPDATE -> GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；Evidence=`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`，Final Review=`PASS / 93`，Publisher / Build / Master Reconciliation=`PASS`；独立 checkpoint `ac10060b82d21534a014d7a4bef3b3e03f7bd475` 已验证。
 11. Fresh Part I Audit 已在 Article 04 checkpoint verification 后覆盖 Article 01—04；Gate=`PASS`，Findings=`0 BLOCKER / 0 MAJOR / 3 OPEN MINOR / 0 EDITORIAL`。Hugo、Lab 01、navigation、published fidelity 与 checkpoint evidence 均通过；durable report / status 必须以 `Audit Agent Engineering Part I` 独立 commit 验证，Article 05 在此之前保持未启动。
 12. Part I Audit 已由独立 checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` 保存并完成 verification。Article 05 PRECHECK、ARTICLE_KICKOFF、WORKSPACE_INIT、Research / Evidence、Outline、Draft、Final Review、Publisher、Build 与 Master Reconciliation 已通过；当前为 `PUBLISHED / GIT_DIFF_VERIFY`，Review=`PASS / 95 / 0 Findings`，Evidence=`6 CONFIRMED / 2 PARTIAL / 0 BLOCKED / 0 PROPOSAL`。
+13. Article 05 独立 checkpoint `c0cf180c281ea5dbb70c891176735f4ed9e34d3f` 已完成 message / 13-file scope / clean tree / log / show verification，`END ARTICLE 05` 成立。Article 06 PRECHECK、ARTICLE_KICKOFF 与 WORKSPACE_INIT=`PASS`；Required Lab 02 在 Preliminary Evidence / frozen Design 前保持 `PLANNED / BLOCKED`。
+14. Article 06 按Required Lab流程完成Preliminary Evidence、Lab 02 frozen Design、两次14-row execution、Evidence Merge、Outline、Draft、两轮Revision / Recheck、Final Gate、Publisher、Hugo与Master Reconciliation；当前为`PUBLISHED / GIT_DIFF_VERIFY`，Review=`PASS / 93 / 0 Findings`，Evidence=`8 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`。
