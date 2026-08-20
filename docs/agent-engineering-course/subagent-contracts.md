@@ -11,6 +11,93 @@
 - worker 必须保存真实失败；不得为了完成 Gate 伪造 Evidence、Lab、Review 或 Build 结果。
 - 角色之间通过已落盘 artifact、finding、gate result 和 run-state pointer 交接，不传递“相信我已经检查过”的隐式状态。
 - Master Orchestrator 是 global durable execution state 的唯一 writer；其他 worker 只能返回 update candidate 或 recommended transition。
+- Master Orchestrator、Researcher、Author、Reviewer、Revision Worker、Lab Engineer、Publisher 与 Part Auditor 的每次 execution 都必须返回且只返回一个符合下述 `Worker Result Contract` 的 envelope；`done`、裸 `PASS` 或自然语言文件说明均不是有效 handoff。
+
+## Worker Result Contract
+
+所有八种 worker role 使用同一个结构化协议。role-specific artifact、Finding、Publication Result、Revision Disposition、Lab Observation 或 Audit Report 仍按各自合同落盘，但不能替代 `worker_result` envelope。
+
+```yaml
+worker_result:
+  role: AUTHOR
+  article: "08"
+  gate: OUTLINE
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created:
+    - docs/agent-engineering-course/articles/08-agent-loop/outline.md
+  artifacts_modified: []
+  gate_completed: true
+  next_allowed_gate: AUTHOR_DRAFT
+  blocker: NONE
+  notes:
+    - "8 / 8 claim coverage; no new core fact required"
+```
+
+### Field contract
+
+| Field | Contract |
+|---|---|
+| `role` | 必填；只使用 `MASTER_ORCHESTRATOR / RESEARCHER / AUTHOR / REVIEWER / REVISION_WORKER / LAB_ENGINEER / PUBLISHER / PART_AUDITOR`。 |
+| `article` | 必填字符串；Article transaction 使用两位 Article ID，例如 `"08"`；Part / Course Audit 使用 canonical scope ID，例如 `"PART_II"` 或 `"COURSE_FINAL"`。 |
+| `gate` | 必填；必须是本次 task brief 指定的当前 Factory Gate，不得用 `DONE`、`COMPLETE` 等模糊别名。 |
+| `execution_type` | 必填；只使用 `REAL_SUBAGENT / MASTER_DETERMINISTIC`，并与 durable execution trace 一致。 |
+| `status` | 必填；只使用 `PASS / FAIL / BLOCKED`，表示本次 worker execution 是否按角色合同返回了可消费结果，不等同于 Article Lifecycle。`PASS_WITH_NOTES` 等 role-specific decision 在 artifact 中保留，envelope 归一为 `PASS` 并在 `notes` 指向细节。 |
+| `artifacts_created` | 必填列表；只列本次新建的 repository-relative path；没有则使用 `[]`。 |
+| `artifacts_modified` | 必填列表；只列本次修改的 repository-relative path；没有则使用 `[]`。 |
+| `gate_completed` | 必填布尔值；表示 assigned Gate execution 的 required outputs 是否完整产生，不等于 Gate decision `PASS`，也不是 Master 批准。Reviewer 完整产出 Findings 后可以为 `true`，即使下一 route 是 `REVISION`。 |
+| `next_allowed_gate` | 必填；worker recommendation，只能是 Factory state machine 中的 exact Gate 或 `NONE`，不能自行推进 durable state。 |
+| `blocker` | 必填；没有 blocker / return route 时使用 `NONE`；否则使用下表冻结的 stop reason 或 role-specific return code。`status: PASS` 且 `gate_completed: false` 的 fail-closed return 可以携带 `RETURN_TO_RESEARCH / RETURN_TO_REVIEW`。 |
+| `notes` | 必填字符串列表；只放摘要、限制与 artifact 内细节指针。Master 不得依赖 `notes` 代替 required fields 或 repository evidence。 |
+
+所有字段都必须存在；空列表必须显式写为 `[]`，不得省略。当前 schema 是 closed schema：`worker_result` 根节点之外的包装、未知字段、错误类型或字段别名均使 envelope 无效。当前 schema 不支持删除或重命名：worker 不得删除 artifact；需要 rename 时必须返回 `BLOCKED / HUMAN_DECISION_REQUIRED`，不得把 rename 伪装为 create + modify。
+
+### Common result mapping
+
+| Result / route | `status` | `gate_completed` | `next_allowed_gate` | `blocker` |
+|---|---|:---:|---|---|
+| assigned Gate execution 完成并允许正常前进 | `PASS` | `true` | exact forward Gate | `NONE` |
+| Reviewer Findings 需要修订 | `PASS` | `true` | `REVISION` | `NONE`；Findings 在 `review.md` |
+| Revision Disposition 完成 | `PASS` | `true` | `REVIEW_RECHECK` | `NONE` |
+| `RETURN_TO_RESEARCH` | `PASS` | `false` | `RESEARCH` | `RETURN_TO_RESEARCH` |
+| `RETURN_TO_REVIEW` | `PASS` | `false` | `REVIEW` | `RETURN_TO_REVIEW` |
+| `BLOCKED_EVIDENCE` | `BLOCKED` | `false` | `RESEARCH` | `BLOCKED_EVIDENCE` |
+| `FAILED_LAB` | `FAIL` | `false` | `LAB_EXECUTE` | `FAILED_LAB` |
+| `FAILED_REVIEW` | `FAIL` | `true` | `NONE` | `FAILED_REVIEW` |
+| `FAILED_PUBLICATION` | `FAIL` | `true` | `PUBLISH` | `FAILED_PUBLICATION` |
+| Part Audit `PASS` | `PASS` | `true` | exact next Article / Part Gate | `NONE`；`QUALITY_DEGRADATION_REVIEW` 只保留在 Audit Finding |
+| Part Audit `FAIL` | `FAIL` | `true` | `NONE` | `PART_AUDIT_FINDINGS`；affected Article 与 repair scope 读取 Audit Report；durable stop 固定映射为 `factory_status: PAUSED / active_blocker: PART_AUDIT_FINDINGS / stop_reason: HUMAN_DECISION_REQUIRED`，由人类批准 targeted repair scope 后 Resume |
+| repository / human stop | `BLOCKED` | `false` | `NONE` | `REPOSITORY_CONFLICT` 或 `HUMAN_DECISION_REQUIRED` |
+
+`next_allowed_gate: NONE` 只允许用于 `FAIL / BLOCKED` 的无安全自动 route，或已到 `END_ARTICLE / COMPLETE` 的 terminal Master result。非 terminal 的 `status: PASS` result 必须给出 exact non-`NONE` Gate。`FAIL / BLOCKED` result 中的 non-`NONE` Gate 只是 recovery candidate：Master 保持 `current_gate` 不变且不得自动 dispatch，直到 Resume / recovery validation 明确批准该 rollback、retry 或 return route。这样 Researcher 在 `EVIDENCE_GATE` 返回 `FAILED_LAB -> LAB_EXECUTE` 时不会直接改写 current Gate。worker runtime 若中断且没有产生完整 envelope，Master 必须把它视为 `MISSING_OR_INVALID_WORKER_RESULT` validation failure；不得替 worker 补写 `PASS`。
+
+### Worker Result lifecycle
+
+`worker_result` 只是一个 Gate execution event。它不是 Article completion、Transaction completion 或 Factory completion，也不直接修改 global durable state。
+
+```text
+Worker Result
+  -> Master Artifact Verification
+  -> Master Gate Validation
+  -> Master State Transition
+  -> Next Worker Dispatch
+```
+
+### Master validation contract
+
+Master 收到每一个 `worker_result` 后 MUST：
+
+1. 验证根节点、11 个 exact fields、字段类型与 closed-schema 约束，并确认 `role / article / gate` 与 task brief 完全一致、`execution_type` 与真实 executor / durable trace 一致；
+2. 验证 `artifacts_created` 中的每个 path 真实存在、与 actual diff 一致、属于该 role 的 `Allowed Writes`，并核对实际新增文件没有漏报；
+3. 验证 `artifacts_modified` 与实际 diff 一致，且全部属于该 role 的 `Allowed Writes`；同时确认没有未声明的 delete / rename；
+4. 验证 `gate_completed`、`status` 与 required outputs 满足当前 Gate Contract；不得因 worker 自报 `PASS` 或文件存在就批准 Gate；
+5. 验证 `next_allowed_gate` 与 common result mapping 一致，且是当前 State Machine 的合法 transition；worker recommendation 不具有推进权；
+6. 把验证后的投影写入 `course-run-state.md:last_worker_result`，并由 Master 统一更新其他 transaction-level durable state；
+7. validation `PASS` 且 `status: PASS` 时，按已验证的 `next_allowed_gate` 继续并派发下一 required worker；`gate_completed: false` 只允许走上表冻结的 retry / return route。`status: FAIL / BLOCKED` 时 `next_allowed_gate` 只作为 durable recovery candidate，Master 保持当前 Gate且不自动 dispatch；无安全 route 或 validation failure 同样进入精确的 `PAUSED`、`BLOCKED` 或 `PAUSED / HUMAN_DECISION_REQUIRED` route。
+
+Master 是 raw `worker_result` 的唯一 validator，也是 state transition 的唯一 owner。任何 worker 都不得写 `last_worker_result`、把 `next_allowed_gate` 当成已批准状态，或用自然语言 handoff 绕过本协议。Master 必须把完整 raw envelope 记录到 canonical durable location：Article transaction 写入当前 Article `subagent-trace.md` 的 `Worker Result Records` section；Part / Course Audit 写入对应 durable Audit Report。每条 record 必须有 stable record ID，并同时保存 execution / task ID、bounded task brief snapshot、raw envelope、Master validation result 与验证时间。没有收到 envelope 时 record 明确写 `raw_envelope: MISSING`；收到不可解析 payload 时写 `raw_envelope: INVALID` 并原样保存 invalid payload，二者都不能被解释或补全为 envelope。`course-run-state.md:last_worker_result.result_ref` 必须指向 schema-valid record；invalid / missing record 只由 `last_worker_result_error.result_ref` 引用。projection 不替代 raw record。
+
+Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 envelope，再以 repository truth、实际 diff、Gate Contract 与 State Machine 做 deterministic validation，最后才能写 durable state；Master 自报字段不是验证证据。context reset 后的 fresh Master 必须按 Resume Contract 重新核对该投影。
 
 ## 1. Master Orchestrator
 
@@ -58,7 +145,7 @@
 - PRECHECK result 与显式 `ARTICLE_KICKOFF` result；
 - PRECHECK 通过后的 WORKSPACE_INIT result，包含 workspace path、机械实例化字段和未决判断；
 - selected worker 与 bounded task brief；
-- artifact existence check；
+- validated `worker_result`、artifact / Allowed Writes check 与 `last_worker_result` durable projection；
 - Gate transition 或精确 stop report；
 - current-transaction-only diff verification、checkpoint commit evidence、`ARTICLE_COMMIT_VERIFIED` result 与 resume pointer。
 
@@ -75,7 +162,7 @@
 
 ### Handoff Contract
 
-给 worker：当前 Article、Gate、Required Reads、Allowed Writes、expected outputs、stop line。收回：文件清单、结果摘要、Gate decision、blocker 与建议 next action。Publisher 返回 Publication Result；Part Auditor 返回 global update candidate。只有返回值与仓库 artifact 一致时，Master 才统一更新 `status.md`、run state 与 checkpoint metadata。每篇 Article 必须显式 stage 本 transaction 文件，以 `Publish Agent Engineering Article NN` 本地提交，并用 `git status`、`git log -1 --oneline`、`git show --stat --oneline HEAD` 验证；验证前不得 handoff 到下一 Article。
+给 worker：当前 Article、Gate、Required Reads、Allowed Writes、expected outputs、stop line 与 `Worker Result Contract`。收回：一个完整 `worker_result` envelope，以及 role-specific durable artifacts；`done`、裸 `PASS`、文件清单或自然语言 next action 均不能替代 envelope。Publisher 的 Publication Result 与 Part Auditor 的 global update candidate 继续作为 role-specific artifact / result 落盘。Master 只有在 envelope、repository artifact、实际 diff、Allowed Writes、Gate Contract 与 State Machine 全部一致时，才写 `last_worker_result` 并统一更新 `status.md`、run state 与 checkpoint metadata。每篇 Article 必须显式 stage 本 transaction 文件，以 `Publish Agent Engineering Article NN` 本地提交，并用 `git status`、`git log -1 --oneline`、`git show --stat --oneline HEAD` 验证；验证前不得 handoff 到下一 Article。
 
 ### Context Isolation Rules
 
