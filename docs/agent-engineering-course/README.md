@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 08 recovery checkpoint `1045264057f1eced21f8e7438b43bb7448a67091` 已由 fresh fetch / live `ls-remote` 验证；PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / Lab 03 / Evidence Gate=`PASS`
-- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `EVIDENCE_READY`；当前 Gate 为 `OUTLINE / PAUSED_WORKER_EXECUTION`
+- 当前里程碑：Article 08 recovery base `cfd763c0ba52f6d2cfacd3dc7f8323b913529eec` 已完成 repository reconciliation；PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / Lab 03 / Evidence / Outline=`PASS`
+- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `OUTLINE_READY`；当前 Gate 为 `AUTHOR_DRAFT / NOT_STARTED`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -39,8 +39,8 @@
 - 当前 Article 07 状态：`PUBLISHED`；Cycle 2=`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`
 - 当前 Article 07 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1236 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - 当前 Article 07 Checkpoint：`f3de0f2a7b1e06c530900627183bd364ca0b4314`；message / 14-file scope / clean tree / push / live remote verification `PASS`
-- 当前 Article 08 状态：`EVIDENCE_READY`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`
-- Factory Status：`PAUSED / OUTLINE`；三次历史 Author 加本次两次 fresh Author 重派均无 durable output，当前硬停止为`SUBAGENT_RUNTIME_UNAVAILABLE`
+- 当前 Article 08 状态：`OUTLINE_READY`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；fresh real Author Outline=`PASS_RECOMMENDED / 8 of 8 COVERED`
+- Factory Status：`READY / AUTHOR_DRAFT`；Draft、Review、Published Content 与 Article 09 均未启动
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
@@ -71,7 +71,7 @@
 | [articles/05-function-calling-tool-use/](articles/05-function-calling-tool-use/) | `PUBLISHED`；checkpoint `c0cf180c281ea5dbb70c891176735f4ed9e34d3f` verified |
 | [articles/06-tool-runtime/](articles/06-tool-runtime/) | `PUBLISHED`；checkpoint `199d4e19ba6150c8c598788a2daa8488e6e855f3` verified |
 | [articles/07-mcp-external-capability-boundary/](articles/07-mcp-external-capability-boundary/) | `PUBLISHED`；checkpoint `f3de0f2` pushed / live-remote verified |
-| [articles/08-agent-loop/](articles/08-agent-loop/) | `EVIDENCE_READY / OUTLINE / PAUSED_WORKER_EXECUTION`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED` |
+| [articles/08-agent-loop/](articles/08-agent-loop/) | `OUTLINE_READY / AUTHOR_DRAFT NOT_STARTED`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；Outline `8 / 8 COVERED` |
 
 ## 资产边界
 

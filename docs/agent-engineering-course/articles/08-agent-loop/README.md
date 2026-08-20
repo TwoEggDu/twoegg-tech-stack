@@ -2,14 +2,14 @@
 
 - Canonical ID: `08`
 - Workspace: `08-agent-loop`
-- Lifecycle Status: `EVIDENCE_READY`
+- Lifecycle Status: `OUTLINE_READY`
 - Evidence Status: `PASS / 6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`
 - Required Lab: `Lab 03 Minimal Agent Loop`
 - Lab Status: `VERIFIED / EVIDENCE_MERGED`
 - Mode: `LAB_ARTICLE`
-- Current Gate: `OUTLINE / PAUSED_WORKER_EXECUTION`
-- Next Allowed Action: `RETRY_REAL_AUTHOR_OUTLINE_WHEN_SUBAGENT_RUNTIME_AVAILABLE`
-- Blocker: `SUBAGENT_RUNTIME_UNAVAILABLE / NO_DURABLE_OUTLINE`
+- Current Gate: `AUTHOR_DRAFT / NOT_STARTED`
+- Next Allowed Action: `AWAIT_EXPLICIT_REAL_AUTHOR_DRAFT`
+- Blocker: `NONE`
 
 ## Dependencies
 
@@ -40,10 +40,11 @@
 - Outline Worker Failure：`/root/article_08_outliner`、`/root/article_08_outliner_resume`、`/root/article_08_outliner_minimal` 三个真实 Author task 均在只读阶段长时间无响应；Master在确认`outline.md`始终不存在后依次中断。没有越界写入、Draft、Review或Article 09资产。
 - Fresh Resume Reconciliation：2026-08-20 重新核验 local `HEAD`、fresh-fetched `origin/main` 与 live `ls-remote refs/heads/main` 均为 `1045264057f1eced21f8e7438b43bb7448a67091`；worktree clean；Published Content、`outline.md`、`draft.md` 均不存在。Factory 已恢复为 `RUNNING / OUTLINE`，等待 fresh real Author durable output。
 - Fresh Author Retry Failure：`/root/article_08_author_outline` 与最小上下文 `/root/article_08_author_outline_minimal` 均在重复等待和明确收敛消息后无 durable output，已安全中断；结合三次历史失败，当前判定为`SUBAGENT_RUNTIME_UNAVAILABLE`。没有越界写入、Draft、Review、Published Content 或Article 09资产。
+- Fresh Author Recovery：repository reconciliation 确认 `HEAD == origin/main == cfd763c0ba52f6d2cfacd3dc7f8323b913529eec` 与 clean worktree 后，唯一 fresh real Author `/root/article_08_author_outline_fresh` 以最小 dependency / final Evidence / Lab Observation 上下文创建 `outline.md`；Author self-check=`8 / 8 COVERED / NO NEW CORE FACT REQUIRED / PASS_RECOMMENDED`，Master artifact / write-boundary check=`PASS`。
 - Article 08 Published Content：`NONE`
 - Lab 03 directory：`docs/agent-engineering-course/labs/lab-03-minimal-agent-loop/`；Design、implementation、tests、raw observations 与 Evidence Merge 已由 recovery checkpoint `1045264` 保存。
 - Article 09 workspace：`NONE`
 
 ## Stop Line
 
-Evidence Gate已关闭，Factory因`SUBAGENT_RUNTIME_UNAVAILABLE`安全暂停在`OUTLINE`。恢复时只允许 fresh real Author 创建Detailed Outline；Master不得代写。不得创建Draft、修改Evidence/Lab或启动Article 09；若Outline需要新核心事实，必须`RETURN_TO_RESEARCH`。
+Evidence Gate 与 Outline Gate 已关闭，Factory 停在 `READY / AUTHOR_DRAFT`，但 Draft 尚未启动。继续时只允许 real Author 依据批准 Outline 与 Evidence 创建 `draft.md`；Master 不得代写。不得修改 Evidence / Lab、创建 Published Content 或启动 Article 09；若 Draft 需要新核心事实，必须 `RETURN_TO_RESEARCH`。
