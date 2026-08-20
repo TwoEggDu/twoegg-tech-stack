@@ -12,6 +12,7 @@
 - 角色之间通过已落盘 artifact、finding、gate result 和 run-state pointer 交接，不传递“相信我已经检查过”的隐式状态。
 - Master Orchestrator 是 global durable execution state 的唯一 writer；其他 worker 只能返回 update candidate 或 recommended transition。
 - Master Orchestrator、Researcher、Author、Reviewer、Revision Worker、Lab Engineer、Publisher 与 Part Auditor 的每次 execution 都必须返回且只返回一个符合下述 `Worker Result Contract` 的 envelope；`done`、裸 `PASS` 或自然语言文件说明均不是有效 handoff。
+- **Branch authority = NONE for all eight roles.** Master Orchestrator、Researcher、Author、Reviewer、Revision Worker、Lab Engineer、Publisher 与 Part Auditor 均禁止执行 `git checkout -b`、`git switch -c`、`git branch <new-branch>`，禁止创建或 push `codex/*`、`article-*`、`feature/*`、`factory/*`、`temp/*` 或任何其他 Course Factory production branch。所有正式 Factory transaction 只在 `main` 上进行；wrong branch 必须交给 Master 按 clean-worktree safe recovery 规则处理，worker 不得自行绕过。
 
 ## Worker Result Contract
 
@@ -92,18 +93,20 @@ Master 收到每一个 `worker_result` 后 MUST：
 3. 验证 `artifacts_modified` 与实际 diff 一致，且全部属于该 role 的 `Allowed Writes`；同时确认没有未声明的 delete / rename；
 4. 验证 `gate_completed`、`status` 与 required outputs 满足当前 Gate Contract；不得因 worker 自报 `PASS` 或文件存在就批准 Gate；
 5. 验证 `next_allowed_gate` 与 common result mapping 一致，且是当前 State Machine 的合法 transition；worker recommendation 不具有推进权；
-6. 把验证后的投影写入 `course-run-state.md:last_worker_result`，并由 Master 统一更新其他 transaction-level durable state；
+6. `PRE_COMMIT_RECONCILIATION` 结束前，把验证后的投影写入 `course-run-state.md:last_worker_result`，并由 Master 统一更新其他 transaction-level durable state；该 Gate 后按 read-only exception 只验证 runtime envelope，不写 repository；
 7. validation `PASS` 且 `status: PASS` 时，按已验证的 `next_allowed_gate` 继续并派发下一 required worker；`gate_completed: false` 只允许走上表冻结的 retry / return route。`status: FAIL / BLOCKED` 时 `next_allowed_gate` 只作为 durable recovery candidate，Master 保持当前 Gate且不自动 dispatch；无安全 route 或 validation failure 同样进入精确的 `PAUSED`、`BLOCKED` 或 `PAUSED / HUMAN_DECISION_REQUIRED` route。
 
-Master 是 raw `worker_result` 的唯一 validator，也是 state transition 的唯一 owner。任何 worker 都不得写 `last_worker_result`、把 `next_allowed_gate` 当成已批准状态，或用自然语言 handoff 绕过本协议。Master 必须把完整 raw envelope 记录到 canonical durable location：Article transaction 写入当前 Article `subagent-trace.md` 的 `Worker Result Records` section；Part / Course Audit 写入对应 durable Audit Report。每条 record 必须有 stable record ID，并同时保存 execution / task ID、bounded task brief snapshot、raw envelope、Master validation result 与验证时间。没有收到 envelope 时 record 明确写 `raw_envelope: MISSING`；收到不可解析 payload 时写 `raw_envelope: INVALID` 并原样保存 invalid payload，二者都不能被解释或补全为 envelope。`course-run-state.md:last_worker_result.result_ref` 必须指向 schema-valid record；invalid / missing record 只由 `last_worker_result_error.result_ref` 引用。projection 不替代 raw record。
+Master 是 raw `worker_result` 的唯一 validator，也是 state transition 的唯一 owner。任何 worker 都不得写 `last_worker_result`、把 `next_allowed_gate` 当成已批准状态，或用自然语言 handoff 绕过本协议。checkpoint 前，Master 必须把完整 raw envelope 记录到 canonical durable location：Article transaction 写入当前 Article `subagent-trace.md` 的 `Worker Result Records` section；Part / Course Audit 写入对应 durable Audit Report。每条 record 必须有 stable record ID，并同时保存 execution / task ID、bounded task brief snapshot、raw envelope、Master validation result 与验证时间。没有收到 envelope 时 record 明确写 `raw_envelope: MISSING`；收到不可解析 payload 时写 `raw_envelope: INVALID` 并原样保存 invalid payload，二者都不能被解释或补全为 envelope。`course-run-state.md:last_worker_result.result_ref` 必须指向 schema-valid pre-commit record；invalid / missing record 只由 `last_worker_result_error.result_ref` 引用。projection 不替代 raw record。
 
-Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 envelope，再以 repository truth、实际 diff、Gate Contract 与 State Machine 做 deterministic validation，最后才能写 durable state；Master 自报字段不是验证证据。context reset 后的 fresh Master 必须按 Resume Contract 重新核对该投影。
+`PRE_COMMIT_RECONCILIATION` 是 repository-result persistence cut：后续 `GIT_DIFF_VERIFY`、`ARTICLE_CHECKPOINT_COMMIT`、`ARTICLE_COMMIT_VERIFY`、`PUSH_MAIN`、`REMOTE_VERIFY` 与 `POST_COMMIT_RECONCILIATION_READ_ONLY` 仍必须产生相同 closed-schema runtime envelope 并由 Master 验证，但不得把 envelope、validation 或 `END_ARTICLE` 写回 repository。checkpoint 内的 final trace 只记录截至 Pre-Commit Reconciliation 的已验证结果与后续 Gate intent，不伪造尚未发生的 diff / commit / push result。此阶段的 durable evidence 是 final commit diff、Git commit graph、commit content、`origin/main` 与 remote `refs/heads/main`；context reset 后必须重新执行只读检查。该 exception 只改变 result persistence，不改变 `Worker Result -> Master Validation -> State Transition -> Next Gate` 控制流。
+
+Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 envelope，再以 repository truth、实际 diff、Gate Contract 与 State Machine 做 deterministic validation；只到 `PRE_COMMIT_RECONCILIATION` 为止可以写 durable state，之后必须遵守 read-only exception。Master 自报字段不是验证证据。context reset 后的 fresh Master 必须按 Resume Contract 重新核对 pre-commit projection，并重放 Git / post-commit read-only verification。
 
 ## 1. Master Orchestrator
 
 ### Purpose
 
-确定性编排单一 Course Factory transaction：读取 durable state、选择 next safe action、在 PRECHECK 后执行显式 `ARTICLE_KICKOFF`、启动正确 worker、验证交付物存在、推进 Gate、暂停失败、建立并验证独立 checkpoint commit，并在 context reset 后恢复。
+确定性编排单一 Course Factory transaction：在 `main` 上读取 durable state、选择 next safe action、在 PRECHECK 后执行显式 `ARTICLE_KICKOFF`、启动正确 worker、验证交付物存在、推进 Gate、在 commit 前完成全部 state reconciliation、创建唯一 Article completion commit、push / remote verify，并以只读 reconciliation 结束 transaction。
 
 ### Inputs
 
@@ -129,15 +132,19 @@ Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 e
 - 当前 transaction 的 checkpoint metadata；
 - worker task brief 与 audit handoff artifact（若仓库已有对应位置）。
 
+上述写权限只存在于 `PRE_COMMIT_RECONCILIATION` 完成前。`ARTICLE_CHECKPOINT_COMMIT` 之后 Master 对 repository files 的 Allowed Writes 为 `NONE`。
+
 ### Forbidden Actions
 
 - 不负责 Research、Draft writing、technical self-review、Evidence interpretation 或 Lab implementation；
 - WORKSPACE_INIT 不得写 Research Answer、Evidence Conclusion、Claim Confirmation、Teaching Thesis、Outline、Draft 或 Review Finding；
 - 不代替 Reviewer 判技术正确，不代替 Researcher升级 Claim；
 - 不并行启动多篇 Article，不自动降低 Gate，不处理无关 dirty changes；
-- 不在当前 Article 的独立 checkpoint commit 成功并完成 `ARTICLE_COMMIT_VERIFY` 前切换 `current_article`、启动下一篇 PRECHECK 或写入下一篇 workspace；
+- 不在当前 Article 的独立 checkpoint commit、`PUSH_MAIN`、`REMOTE_VERIFY` 与 `POST_COMMIT_RECONCILIATION_READ_ONLY` 全部通过前启动下一篇 PRECHECK 或写入下一篇 workspace；Pre-Commit Reconciliation 可以写 next-Article pointer candidate，但 pointer 不等于 Kickoff；
 - 不使用 `git add .` broad-stage，不把下一篇、无关用户修改、theme / CI / unrelated docs 混入 Article checkpoint；
-- 不在缺少明确授权时 push、发布外部内容或改变 canonical。
+- 不创建任何 branch，不执行 `git checkout -b`、`git switch -c` 或 `git branch <new-branch>`；wrong branch 只能在 clean worktree 下安全切换到既有 `main`，否则停止；
+- 不在 checkpoint 后修改任何 repository file或创建 reconciliation commit；
+- 不在缺少明确授权时 push、发布外部内容或改变 canonical；获得授权后只允许 `git push origin main`。
 
 ### Required Outputs
 
@@ -147,22 +154,23 @@ Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 e
 - selected worker 与 bounded task brief；
 - validated `worker_result`、artifact / Allowed Writes check 与 `last_worker_result` durable projection；
 - Gate transition 或精确 stop report；
-- current-transaction-only diff verification、checkpoint commit evidence、`ARTICLE_COMMIT_VERIFIED` result 与 resume pointer。
+- current-transaction-only diff verification、唯一 checkpoint commit evidence、`ARTICLE_COMMIT_VERIFIED`、`PUSH_MAIN`、`REMOTE_VERIFY`、read-only reconciliation result 与 resume pointer。
 
 ### Gate Responsibility
 
-负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Git Diff Verify、Article Checkpoint Commit、Commit Verify 与 Repository Reconciliation：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。只有 Reviewer Final PASS、Publisher PASS、Build PASS、Master State Reconciliation PASS、Lifecycle `PUBLISHED` 与 `ARTICLE_COMMIT_VERIFIED = PASS` 同时成立，Master 才能结束当前 Article transaction。
+负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Pre-Commit Reconciliation、Git Diff Verify、Article Checkpoint Commit、Commit Verify、Push Main、Remote Verify 与 Post-Commit Reconciliation Read-Only：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。只有 Reviewer Final PASS、Publisher PASS、Build PASS、Pre-Commit Reconciliation PASS、Lifecycle `PUBLISHED`、`ARTICLE_COMMIT_VERIFIED = PASS`、main push / remote equality 与 read-only reconciliation 同时成立，Master 才能逻辑结束当前 Article transaction。
 
 ### Stop Conditions
 
 - durable state 冲突、completion commit 缺失或 unrelated dirty tree 无法安全隔离；
+- current branch 不是 `main` 且无法在 clean worktree 下安全恢复，或 local / origin / remote main divergence；
 - worker 返回 Gate failure、越权输出或缺少 required artifact；
 - 需要人类改变 canonical、Optional、课程架构或权限。
 - canonical / template 无法提供 WORKSPACE_INIT 的必须字段，且填写需要实质性课程判断。
 
 ### Handoff Contract
 
-给 worker：当前 Article、Gate、Required Reads、Allowed Writes、expected outputs、stop line 与 `Worker Result Contract`。收回：一个完整 `worker_result` envelope，以及 role-specific durable artifacts；`done`、裸 `PASS`、文件清单或自然语言 next action 均不能替代 envelope。Publisher 的 Publication Result 与 Part Auditor 的 global update candidate 继续作为 role-specific artifact / result 落盘。Master 只有在 envelope、repository artifact、实际 diff、Allowed Writes、Gate Contract 与 State Machine 全部一致时，才写 `last_worker_result` 并统一更新 `status.md`、run state 与 checkpoint metadata。每篇 Article 必须显式 stage 本 transaction 文件，以 `Publish Agent Engineering Article NN` 本地提交，并用 `git status`、`git log -1 --oneline`、`git show --stat --oneline HEAD` 验证；验证前不得 handoff 到下一 Article。
+给 worker：当前 Article、Gate、Required Reads、Allowed Writes、expected outputs、stop line 与 `Worker Result Contract`。收回：一个完整 `worker_result` envelope，以及 role-specific durable artifacts；`done`、裸 `PASS`、文件清单或自然语言 next action 均不能替代 envelope。Publisher 的 Publication Result 与 Part Auditor 的 global update candidate 继续作为 role-specific artifact / result 落盘。Master 只有在 envelope、repository artifact、实际 diff、Allowed Writes、Gate Contract 与 State Machine 全部一致时，才写 `last_worker_result` 并统一更新 `status.md`、run state 与 checkpoint metadata；这些 repository writes 必须在 Pre-Commit Reconciliation 冻结。每篇 Article 必须直接在 `main` 显式 stage 本 transaction 文件，以 `Publish Agent Engineering Article NN` 创建唯一 completion commit，read-only verify 后只 push `origin main` 并核验 local / origin / remote equality；checkpoint 后不得写 trace、state 或 README，也不得 handoff 到下一 Article。
 
 ### Context Isolation Rules
 

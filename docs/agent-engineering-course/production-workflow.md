@@ -12,9 +12,10 @@ Normal Article：
 PRECHECK -> ARTICLE_KICKOFF -> WORKSPACE_INIT -> RESEARCH -> EVIDENCE_GATE
          -> OUTLINE -> AUTHOR_DRAFT -> REVIEW / REVISION / RECHECK
          -> FINAL_GATE -> PUBLISH -> BUILD_VERIFY
-         -> MASTER_STATE_UPDATE -> GIT_DIFF_VERIFY
+         -> MASTER_STATE_UPDATE -> PRE_COMMIT_RECONCILIATION -> GIT_DIFF_VERIFY
          -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY
-         -> REPOSITORY_RECONCILIATION -> END_ARTICLE
+         -> PUSH_MAIN -> REMOTE_VERIFY
+         -> POST_COMMIT_RECONCILIATION_READ_ONLY -> END_ARTICLE
 ```
 
 Lab Article：
@@ -25,12 +26,20 @@ PRECHECK -> ARTICLE_KICKOFF -> WORKSPACE_INIT -> RESEARCH -> PRELIMINARY_EVIDENC
          -> EVIDENCE_MERGE -> EVIDENCE_GATE
          -> OUTLINE -> AUTHOR_DRAFT -> REVIEW / REVISION / RECHECK
          -> FINAL_GATE -> PUBLISH -> BUILD_VERIFY
-         -> MASTER_STATE_UPDATE -> GIT_DIFF_VERIFY
+         -> MASTER_STATE_UPDATE -> PRE_COMMIT_RECONCILIATION -> GIT_DIFF_VERIFY
          -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY
-         -> REPOSITORY_RECONCILIATION -> END_ARTICLE
+         -> PUSH_MAIN -> REMOTE_VERIFY
+         -> POST_COMMIT_RECONCILIATION_READ_ONLY -> END_ARTICLE
 ```
 
-`ARTICLE_KICKOFF` 是 PRECHECK `PASS` 后由 Master 执行的显式 transaction ownership step；`WORKSPACE_INIT` 只能在 Kickoff 后执行。`LAB_DESIGN` 与 `EVIDENCE_MERGE` 属于 Researcher；`LAB_EXECUTE / LAB_OBSERVATION` 属于 Lab Engineer。Article Lifecycle 不因这些 operational Gate 改名。Lifecycle 写为 `PUBLISHED` 后仍必须完成该 Article 的独立 checkpoint commit 与 `ARTICLE_COMMIT_VERIFY`，才能结束 transaction 或开始下一篇。
+`ARTICLE_KICKOFF` 是 PRECHECK `PASS` 后由 Master 执行的显式 transaction ownership step；`WORKSPACE_INIT` 只能在 Kickoff 后执行。`LAB_DESIGN` 与 `EVIDENCE_MERGE` 属于 Researcher；`LAB_EXECUTE / LAB_OBSERVATION` 属于 Lab Engineer。Article Lifecycle 不因这些 operational Gate 改名。整个 production transaction 必须直接运行在 `main`，任何 role 都不得创建 branch。Lifecycle 写为 `PUBLISHED` 后仍必须完成 Pre-Commit Reconciliation、唯一 Article completion commit、一次 main push、remote equality 与只读 post-commit reconciliation，才能结束 transaction 或开始下一篇。
+
+Git completion boundary：
+
+- `PRE_COMMIT_RECONCILIATION` 是最后一个可写 Gate，必须把 Article lifecycle、下一 Article PRECHECK pointer candidate、status、run state、course / Article README、final trace 与必要 canonical / navigation 全部纳入同一 checkpoint diff；
+- `ARTICLE_CHECKPOINT_COMMIT` 使用唯一 message `Publish Agent Engineering Article NN`，commit 内容不自引用自身 SHA；
+- commit 后只允许 read-only Commit Verify、`git push origin main`、Remote Verify 与 Post-Commit Reconciliation；repository writes=`ZERO`；
+- completion SHA 以 Git history 为权威。不得为了回写 SHA、`END_ARTICLE` 或 reconciliation result 创建第二个 commit。
 
 ## 生命周期
 
@@ -118,7 +127,7 @@ Article Card
 - 正文写入 `content/ai-empowerment/agent-engineering-<id>-<slug>.md`。
 - 发布图片迁入 `static/images/agent-engineering/<id>-<slug>/`。
 - Hugo 构建 `ERROR` 为零。
-- Publisher 返回 Publication Result 与 state / canonical update candidate；Master 验证 Reviewer Final PASS、Publisher PASS、Build PASS 与 repository consistency 后，统一回写 Article README lifecycle、`status.md`、run state 与必要 canonical publication metadata。根 `doc-plan.md` 只按系列级路由规则更新。
+- Publisher 返回 Publication Result 与 state / canonical update candidate；Master 验证 Reviewer Final PASS、Publisher PASS、Build PASS 与 repository consistency 后，在 `PRE_COMMIT_RECONCILIATION` 统一回写 Article README lifecycle、`status.md`、run state、下一篇 PRECHECK pointer candidate 与必要 canonical publication metadata。根 `doc-plan.md` 只按系列级路由规则更新；checkpoint commit 后禁止继续写 repository。
 
 ## 特殊证据路径
 

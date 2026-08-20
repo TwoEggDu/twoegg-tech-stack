@@ -43,6 +43,7 @@
 - 当前 Article 08 Published Content：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
 - 当前 Article 08 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1237 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Factory Status：`READY / PRECHECK`；Article 08 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` verified，`END ARTICLE 08`；Article 09 workspace 不存在且 transaction 未启动
+- Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
@@ -79,7 +80,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；Article 00—07 已正式发布，workspace Draft 继续独立保留。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；Article 00—08 已正式发布，workspace Draft 继续独立保留。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 
