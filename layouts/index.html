@@ -45,6 +45,26 @@
       </nav>
     </div>
 
+    {{ with site.GetPage "ai-empowerment/agent-engineering-series-index.md" }}
+      <section class="home-course-feature" aria-labelledby="home-agent-course-title">
+        <div class="home-course-copy">
+          <p class="eyebrow">Featured Course</p>
+          <h2 id="home-agent-course-title">Agent Engineering <span>系统课程</span></h2>
+          <p>从 Model、Prompt、Tool 与 Agent Loop，逐层进入 Context、Skill、Reliable Agent、Harness、DeepSeek Harness 与 BuildPilot。</p>
+          <div class="home-course-actions">
+            <a class="button" href="{{ .RelPermalink }}">进入课程首页</a>
+            <span>00—44 · 7 Parts · 6 Labs</span>
+          </div>
+        </div>
+        <div class="home-course-path" aria-label="课程主线">
+          <span>Model</span>
+          <span>Agent</span>
+          <span>Harness</span>
+          <span>BuildPilot</span>
+        </div>
+      </section>
+    {{ end }}
+
     <aside id="latest" class="reader-latest" aria-label="最近更新">
       <div class="reader-block-head">
         <p class="eyebrow">Latest</p>

@@ -1,0 +1,64 @@
+{{ define "main" }}
+  {{ $startPage := site.GetPage "ai-empowerment/agent-engineering-00-agent-engineering-world-map.md" }}
+  {{ $publishedLessons := where site.RegularPages "Params.primary_series" "agent-engineering" }}
+
+  <article class="course-page">
+    <a class="article-back" href="{{ with .CurrentSection }}{{ .RelPermalink }}{{ else }}{{ site.Home.RelPermalink }}{{ end }}">
+      {{ with .CurrentSection }}返回 {{ .Title }}{{ else }}返回首页{{ end }}
+    </a>
+
+    <header class="course-hero">
+      <div class="course-hero-copy">
+        <p class="eyebrow">Agent Engineering Course</p>
+        <h1>{{ .Title }}</h1>
+        <p class="course-hero-subtitle">从可编程模型与 Prompt 合同出发，逐层走到 Agent Runtime、可靠性工程、Harness 与 BuildPilot 设计。</p>
+
+        <div class="course-hero-actions">
+          {{ with $startPage }}
+            <a class="button" href="{{ .RelPermalink }}">开始学习 · Article 00</a>
+          {{ end }}
+          <a class="button button-secondary" href="#course-map">查看完整课程</a>
+        </div>
+
+        <p class="course-hero-lead">这不是几篇零散的 AI 博客，而是一条面向 C#、Unity 与传统软件工程师的系统学习路径：先理解 Agent 为什么这样运行，再学会怎样把它做成可审计、可恢复、可演进的工程系统。</p>
+
+        <dl class="course-hero-answers">
+          <div>
+            <dt>适合谁</dt>
+            <dd>熟悉 C# / Unity 或传统软件工程，正在从“会用 AI”走向“会设计 Agent”的开发者。</dd>
+          </div>
+          <div>
+            <dt>能学到什么</dt>
+            <dd>Agent 执行主链、Context / Memory / Skill 边界、可靠性闭环，以及 Harness 的设计取舍。</dd>
+          </div>
+          <div>
+            <dt>从哪里开始</dt>
+            <dd>先用 Article 00 建立领域地图，再按课程依赖逐步进入 01—44。</dd>
+          </div>
+        </dl>
+      </div>
+
+      <aside class="course-overview" aria-label="课程规模">
+        <p class="course-overview-label">One Complete Path</p>
+        <div class="course-overview-line" aria-label="Model 到 BuildPilot 的课程主线">
+          <span>Model</span>
+          <span>Agent</span>
+          <span>Reliable</span>
+          <span>Harness</span>
+          <span>BuildPilot</span>
+        </div>
+        <dl class="course-stats">
+          <div><dt>45</dt><dd>Lessons</dd></div>
+          <div><dt>7</dt><dd>Parts</dd></div>
+          <div><dt>6</dt><dd>Labs</dd></div>
+          <div><dt>{{ len $publishedLessons }}</dt><dd>Published</dd></div>
+        </dl>
+        <p class="course-overview-note">课程编号固定为 00—44；Course Index 只负责导航，不占用 Article 编号。</p>
+      </aside>
+    </header>
+
+    <div class="course-content">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}
