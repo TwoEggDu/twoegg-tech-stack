@@ -17,6 +17,15 @@
 7. **Lab Reality > Article Thesis**：observed output、失败路径和环境事实决定 Lab Evidence。不得伪造、选择性忽略或重新解释失败实验来迎合正文。
 8. **Source / Runtime Confirmation Are Different**：尤其在 DSH 篇中，`DOC_CONFIRMED`、`SOURCE_CONFIRMED`、`RUNTIME_CONFIRMED` 必须分别记录。源码 path 或 symbol 存在，不等于 runtime 已走过该 path。
 9. **Global Durable State Has One Writer**：Master Orchestrator 是 `status.md`、`course-run-state.md`、Factory-level checkpoint pointer、Part Audit global status 与 Course `COMPLETE` state 的唯一 writer。其他 worker 只能返回 state transition candidate。
+10. **Worker Completion Does Not End Transaction**：worker 完成或失败并返回 assigned Gate，只是一个 Gate result event；控制流必须回到 Master。它不等于 Article completion、Transaction completion、Session completion 或 Factory completion。每次收到 worker result 后，Master MUST：
+    1. 核验 worker 声明的文件清单与 repository 中实际产生的 artifacts；
+    2. 按当前 Gate contract 验证 required outputs、写入边界与 Gate decision；
+    3. 更新由 Master 独占写入的 durable state；
+    4. 根据已验证结果确定 next allowed Gate；
+    5. Gate `PASS` 时派发下一 Gate 所需 worker；Gate `FAIL`、artifact 缺失或越权时，进入合同定义的 pause、block、retry 或 human-decision route；
+    6. 继续当前 Article transaction，直到 `END_ARTICLE`，或直到一个显式、已落盘的合同 stop condition 阻止继续。
+
+    `active_worker = NONE`、worker task 显示 completed / failed，或 worker 已返回 handoff，均不是自动 stop condition。A completed worker task is never an automatic stop condition.
 
 ## 2. Authority and conflict order
 
