@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 07 Review / Publisher / Hugo / Master Reconciliation=`PASS`；`1236 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 07；Mode `NORMAL_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `GIT_DIFF_VERIFY`
+- 当前里程碑：Article 07 checkpoint `f3de0f2` 已 push 并通过 live remote verification；Article 08 PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT=`PASS`
+- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `EVIDENCE_READY`；当前 Gate 为 `OUTLINE / PAUSED_WORKER_EXECUTION`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -36,9 +36,11 @@
 - 当前 Article 06 Published Content：`content/ai-empowerment/agent-engineering-06-tool-runtime.md`
 - 当前 Article 06 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1235 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - 当前 Article 06 Checkpoint：`199d4e19ba6150c8c598788a2daa8488e6e855f3`；message / 36-file scope / clean tree / log / show verification `PASS`
-- 当前 Article 07 状态：`PUBLISHED / GIT_DIFF_VERIFY`；Cycle 2=`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`
+- 当前 Article 07 状态：`PUBLISHED`；Cycle 2=`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`
 - 当前 Article 07 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1236 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`RUNNING / GIT_DIFF_VERIFY`；Master执行独立checkpoint、push与remote verify
+- 当前 Article 07 Checkpoint：`f3de0f2a7b1e06c530900627183bd364ca0b4314`；message / 14-file scope / clean tree / push / live remote verification `PASS`
+- 当前 Article 08 状态：`EVIDENCE_READY`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`
+- Factory Status：`PAUSED / OUTLINE`；三个真实 Author 无durable输出后已中断，等待下一次安全重派
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始
@@ -68,7 +70,8 @@
 | [articles/04-model-adapter-llm-gateway/](articles/04-model-adapter-llm-gateway/) | Article 04 已完成 `PUBLISHED`、独立 checkpoint verification 与 Part I Audit |
 | [articles/05-function-calling-tool-use/](articles/05-function-calling-tool-use/) | `PUBLISHED`；checkpoint `c0cf180c281ea5dbb70c891176735f4ed9e34d3f` verified |
 | [articles/06-tool-runtime/](articles/06-tool-runtime/) | `PUBLISHED`；checkpoint `199d4e19ba6150c8c598788a2daa8488e6e855f3` verified |
-| [articles/07-mcp-external-capability-boundary/](articles/07-mcp-external-capability-boundary/) | `PUBLISHED / GIT_DIFF_VERIFY`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS` |
+| [articles/07-mcp-external-capability-boundary/](articles/07-mcp-external-capability-boundary/) | `PUBLISHED`；checkpoint `f3de0f2` pushed / live-remote verified |
+| [articles/08-agent-loop/](articles/08-agent-loop/) | `EVIDENCE_READY / OUTLINE / PAUSED_WORKER_EXECUTION`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED` |
 
 ## 资产边界
 

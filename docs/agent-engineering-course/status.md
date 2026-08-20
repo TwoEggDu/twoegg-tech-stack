@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-20
-- 当前里程碑：Article 07 Review / Publisher / Hugo / Master Reconciliation=`PASS`；`1236 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 07；Mode `NORMAL_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `GIT_DIFF_VERIFY`
+- 当前里程碑：Article 07 checkpoint `f3de0f2` 已 push 并通过 live remote verification；Article 08 PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT=`PASS`
+- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `EVIDENCE_READY`；当前 Gate 为 `OUTLINE / PAUSED_WORKER_EXECUTION`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -15,10 +15,10 @@
 - Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1236 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / GIT_DIFF_VERIFY`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`PAUSED / OUTLINE`）
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 OPEN MINOR`
-- 下一允许动作：Master执行Article 07完整Git Diff Verify、显式stage、独立checkpoint commit、push与remote verify
+- 下一允许动作：恢复后以最小上下文重派真实 Author 创建 Article 08 Outline；不得由 Master代写
 
 ## 状态图例
 
@@ -38,8 +38,8 @@
 | 04 | Model Adapter 与 LLM Gateway：Streaming、Error、Retry 和 Provider 差异 | I | M | 否 | `PUBLISHED` | `PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`） | N/A | `NONE`；Final Review `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `ac10060b` verified |
 | 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | II | M | 否 | `PUBLISHED` | `PASS`（`6 CONFIRMED / 2 PARTIAL / 0 BLOCKED / 0 PROPOSAL`） | N/A | `NONE`；Final Review `PASS / 95`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `c0cf180` verified |
 | 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | II | L | 否 | `PUBLISHED` | `PASS`（`8 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`） | Lab 02 `CONFIRMED / EVIDENCE_MERGED` | `NONE`；`06-F01 / 06-F02 CLOSED`；Review / Final Gate `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `199d4e1` verified |
-| 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | II | M | 否 | `PUBLISHED` | `PASS`（`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 1 PROPOSAL`） | N/A | `NONE`；`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`；`content/ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md`；next `GIT_DIFF_VERIFY` |
-| 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | II | L | 否 | `PLANNED` | `BLOCKED` | Lab 03 `PLANNED / BLOCKED` | Lab loop 与停止判据未设计 |
+| 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | II | M | 否 | `PUBLISHED` | `PASS`（`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 1 PROPOSAL`） | N/A | `NONE`；`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`；checkpoint `f3de0f2` pushed / live-remote verified |
+| 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | II | L | 否 | `EVIDENCE_READY` | `PASS / 6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL` | Lab 03 `VERIFIED / EVIDENCE_MERGED` | `PAUSED_WORKER_EXECUTION`；三个真实Author均无durable输出后中断；`outline.md`不存在；Draft/Review未启动 |
 | 09 | Planning：Agent 为什么需要计划，又为什么不能迷信计划 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 10 | State Machine 与 Workflow：确定性骨架和 Agent Decision Point | II | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | II | M | 否 | `PLANNED` | `BLOCKED` | Lab 04 `PLANNED / BLOCKED` | 恢复 fixture 与故障注入未设计 |

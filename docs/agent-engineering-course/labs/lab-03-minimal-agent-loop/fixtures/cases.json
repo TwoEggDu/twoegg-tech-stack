@@ -1,0 +1,166 @@
+{
+  "schema_version": "lab03-cases-v1",
+  "cases": [
+    {
+      "case_id": "AL-01",
+      "goal_contract_id": "goal-contract-v1",
+      "max_steps": 3,
+      "named_fault_id": "NOT_RUN",
+      "fault_target_invocation": "NOT_RUN",
+      "fixture_relative_paths": ["BuildMenu.cs", "build.log"],
+      "decisions": [
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al01-decision-01",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al01-call-01",
+          "tool_name": "parse_mock_log",
+          "arguments": {"path": "build.log"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al01-decision-02",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al01-call-02",
+          "tool_name": "read_mock_file",
+          "arguments": {"path": "BuildMenu.cs"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al01-decision-03",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "REQUEST_STOP",
+          "invocation_id": "NOT_RUN",
+          "tool_name": "NOT_RUN",
+          "arguments": "NOT_RUN",
+          "requested_outcome": "SUCCEEDED",
+          "output": {"status": "SUPPORTED", "summary": "CS0103 is caused by missingIdentifier in BuildMenu.cs line 3.", "evidence_ids": ["EV-FILE-001", "EV-LOG-001"]}
+        }
+      ]
+    },
+    {
+      "case_id": "AL-02",
+      "goal_contract_id": "goal-contract-v1",
+      "max_steps": 3,
+      "named_fault_id": "FI_PARSE_TYPED_FAILURE",
+      "fault_target_invocation": "al02-call-01",
+      "fixture_relative_paths": ["build.log"],
+      "decisions": [
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al02-decision-01",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al02-call-01",
+          "tool_name": "parse_mock_log",
+          "arguments": {"path": "build.log"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al02-decision-02",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "REQUEST_STOP",
+          "invocation_id": "NOT_RUN",
+          "tool_name": "NOT_RUN",
+          "arguments": "NOT_RUN",
+          "requested_outcome": "SUCCEEDED",
+          "output": {"status": "SUPPORTED", "summary": "The diagnostic was handled.", "evidence_ids": []}
+        }
+      ]
+    },
+    {
+      "case_id": "AL-03",
+      "goal_contract_id": "goal-contract-v1",
+      "max_steps": 2,
+      "named_fault_id": "NOT_RUN",
+      "fault_target_invocation": "NOT_RUN",
+      "fixture_relative_paths": ["Unrelated.cs", "build.log"],
+      "decisions": [
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al03-decision-01",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al03-call-01",
+          "tool_name": "parse_mock_log",
+          "arguments": {"path": "build.log"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al03-decision-02",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al03-call-02",
+          "tool_name": "read_mock_file",
+          "arguments": {"path": "Unrelated.cs"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al03-decision-03",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "REQUEST_STOP",
+          "invocation_id": "NOT_RUN",
+          "tool_name": "NOT_RUN",
+          "arguments": "NOT_RUN",
+          "requested_outcome": "SUCCEEDED",
+          "output": {"status": "SUPPORTED", "summary": "Queued candidate must remain unconsumed.", "evidence_ids": ["EV-LOG-001"]}
+        }
+      ]
+    },
+    {
+      "case_id": "AL-04",
+      "goal_contract_id": "goal-contract-v1",
+      "max_steps": 4,
+      "named_fault_id": "NOT_RUN",
+      "fault_target_invocation": "NOT_RUN",
+      "fixture_relative_paths": ["Unrelated.cs"],
+      "decisions": [
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al04-decision-01",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al04-call-01",
+          "tool_name": "read_mock_file",
+          "arguments": {"path": "Unrelated.cs"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al04-decision-02",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "ACT",
+          "invocation_id": "al04-call-02",
+          "tool_name": "read_mock_file",
+          "arguments": {"path": "Unrelated.cs"},
+          "requested_outcome": "NOT_RUN",
+          "output": {"status": "NOT_RUN", "summary": "NOT_RUN", "evidence_ids": []}
+        },
+        {
+          "schema_version": "lab03-decision-v1",
+          "decision_id": "al04-decision-03",
+          "decision_source": "SCRIPTED_V1",
+          "kind": "REQUEST_STOP",
+          "invocation_id": "NOT_RUN",
+          "tool_name": "NOT_RUN",
+          "arguments": "NOT_RUN",
+          "requested_outcome": "SUCCEEDED",
+          "output": {"status": "SUPPORTED", "summary": "The requested evidence is claimed without provenance.", "evidence_ids": ["EV-FAKE"]}
+        }
+      ]
+    }
+  ]
+}

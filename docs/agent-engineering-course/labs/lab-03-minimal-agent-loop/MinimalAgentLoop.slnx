@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/MinimalAgentLoop/MinimalAgentLoop.csproj" />
+  <Project Path="tests/MinimalAgentLoop.Tests/MinimalAgentLoop.Tests.csproj" />
+</Solution>

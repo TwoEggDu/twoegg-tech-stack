@@ -5,18 +5,18 @@
 ```yaml
 schema_version: 1
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
-factory_status: RUNNING
-current_article: "07"
-current_gate: GIT_DIFF_VERIFY
+factory_status: PAUSED
+current_article: "08"
+current_gate: OUTLINE
 last_published_article: "07"
-active_worker: MASTER_ORCHESTRATOR
-review_cycle: 2
+active_worker: NONE
+review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 199d4e19ba6150c8c598788a2daa8488e6e855f3
-next_action: RUN_ARTICLE_07_GIT_DIFF_VERIFY_CHECKPOINT_PUSH_REMOTE_VERIFY
-last_updated: "2026-08-20T12:24:03+08:00"
+last_successful_commit: f3de0f2a7b1e06c530900627183bd364ca0b4314
+next_action: RETRY_REAL_AUTHOR_ARTICLE_08_OUTLINE_FROM_EVIDENCE_READY_WITH_MINIMAL_CONTEXT
+last_updated: "2026-08-20T14:07:35+08:00"
 ```
 
 ## Field rules
@@ -37,4 +37,4 @@ last_updated: "2026-08-20T12:24:03+08:00"
 
 ## Current transaction boundary
 
-Article 07 Review / Publisher / Semantic Diff / Hugo / Master Reconciliation=`PASS`，Lifecycle=`PUBLISHED`，Hugo=`1236 Pages / 0 WARNING / 0 ERROR / exit 0`。当前只允许Master执行完整Git Diff Verify、显式stage、独立`Publish Agent Engineering Article 07`commit、commit verification、push与remote verification；在远程checkpoint验证前不得启动Article 08。
+Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完成 commit / push / live remote verification。Article 08 Lab 03=`VERIFIED / EVIDENCE_MERGED`，Evidence Gate=`PASS`，Claim=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`。三个真实 Author task（`/root/article_08_outliner`、`/root/article_08_outliner_resume`、`/root/article_08_outliner_minimal`）均在只读阶段长时间无响应且未创建`outline.md`，已依次中断；Factory安全暂停在`OUTLINE`，Draft、Review与Article 09均未启动。恢复时只允许重派真实 Author 从已闭合Evidence/Lab创建Outline。
