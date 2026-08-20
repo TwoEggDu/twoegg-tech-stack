@@ -18,6 +18,7 @@ weight: 3070
 
 > **上一篇**：[Function Calling 与 Tool Use：模型如何表达行动意图]({{< relref "ai-empowerment/agent-engineering-05-function-calling-tool-use.md" >}})
 
+> **下一篇**：[MCP 与外部能力边界：协议解决什么，宿主仍需解决什么]({{< relref "ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md" >}})
 
 > 本文资料与 API contract 核对时间：2026-08-20。官方合同来自 OpenAI Function Calling 与 .NET 10 文档；运行结果只来自固定的本地 Lab 02。Provider、network、credential 调用均为 `0`。本文采用的 Pipeline、Policy v1、Result Contract v1、Idempotency v1 与 JSONL Trace Schema v1 都是 **COURSE PROPOSAL / NOT INDUSTRY STANDARD**。
 

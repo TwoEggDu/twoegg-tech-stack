@@ -173,7 +173,7 @@ BuildPilot Design v1
 |---|---|---|---|
 | 05 | [Function Calling 与 Tool Use：模型如何表达行动意图](../content/ai-empowerment/agent-engineering-05-function-calling-tool-use.md) | M | 否 |
 | 06 | [Tool Runtime：Validate、Policy、Execute、Result 与 Trace](../content/ai-empowerment/agent-engineering-06-tool-runtime.md) | L | 否 |
-| 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | M | 否 |
+| 07 | [MCP 与外部能力边界：协议解决什么，宿主仍需解决什么](../content/ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md) | M | 否 |
 | 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | L | 否 |
 | 09 | Planning：Agent 为什么需要计划，又为什么不能迷信计划 | M | 否 |
 | 10 | State Machine 与 Workflow：确定性骨架和 Agent Decision Point | L | 否 |
