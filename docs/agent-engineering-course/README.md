@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 08 recovery base `cfd763c0ba52f6d2cfacd3dc7f8323b913529eec` 已完成 repository reconciliation；PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / Lab 03 / Evidence / Outline=`PASS`
-- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `OUTLINE_READY`；当前 Gate 为 `AUTHOR_DRAFT / NOT_STARTED`
+- 当前里程碑：Article 08 Final Review / Publisher / Hugo / Master Reconciliation=`PASS`；`1237 Pages / 0 ERROR / 0 WARNING`
+- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `ARTICLE_CHECKPOINT_COMMIT`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -39,8 +39,10 @@
 - 当前 Article 07 状态：`PUBLISHED`；Cycle 2=`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`
 - 当前 Article 07 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1236 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - 当前 Article 07 Checkpoint：`f3de0f2a7b1e06c530900627183bd364ca0b4314`；message / 14-file scope / clean tree / push / live remote verification `PASS`
-- 当前 Article 08 状态：`OUTLINE_READY`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；fresh real Author Outline=`PASS_RECOMMENDED / 8 of 8 COVERED`
-- Factory Status：`READY / AUTHOR_DRAFT`；Draft、Review、Published Content 与 Article 09 均未启动
+- 当前 Article 08 状态：`PUBLISHED`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；Review / Final Gate=`PASS / 92`；`08-F01 CLOSED`；Publisher / Build / Master Reconciliation=`PASS`
+- 当前 Article 08 Published Content：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
+- 当前 Article 08 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1237 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Factory Status：`RUNNING / ARTICLE_CHECKPOINT_COMMIT`；Git Diff Verify 与 final Hugo 已通过，Article 08 checkpoint 尚未创建或验证，Article 09 未启动
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始

@@ -18,6 +18,8 @@ weight: 3080
 
 > **上一篇**：[Tool Runtime：Validate、Policy、Execute、Result 与 Trace]({{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}})
 
+> **下一篇**：[Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop]({{< relref "ai-empowerment/agent-engineering-08-agent-loop.md" >}})
+
 团队把一个 MCP Server 接进应用后，界面很快就能列出 Tool。模型也确实能生成调用参数，甚至第一次调用就收到了结果。于是项目里很容易出现一句过早的完成声明：
 
 > “MCP 已经接好了，Agent 现在拥有这个能力。”

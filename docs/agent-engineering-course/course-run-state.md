@@ -5,22 +5,34 @@
 ```yaml
 schema_version: 2
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
-factory_status: READY
+factory_status: RUNNING
 current_article: "08"
-current_gate: AUTHOR_DRAFT
-last_published_article: "07"
-active_worker: NONE
-active_worker_execution_id: NONE
-active_worker_record_ref: NONE
-last_worker_result: NONE
+current_gate: ARTICLE_CHECKPOINT_COMMIT
+last_published_article: "08"
+active_worker: MASTER_ORCHESTRATOR
+active_worker_execution_id: /root/master_article_08_checkpoint_commit
+active_worker_record_ref: docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md#wr-master-article-08-checkpoint-commit-20260820t195627
+last_worker_result:
+  role: MASTER_ORCHESTRATOR
+  article: "08"
+  gate: GIT_DIFF_VERIFY
+  execution_type: MASTER_DETERMINISTIC
+  execution_id: /root/master_article_08_git_diff_verify
+  result_ref: docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md#wr-master-article-08-git-diff-verify-20260820t195313
+  status: PASS
+  gate_completed: true
+  artifact_verified: true
+  validation_status: PASS
+  next_allowed_gate: ARTICLE_CHECKPOINT_COMMIT
+  blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 0
+review_cycle: 1
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 last_successful_commit: cfd763c0ba52f6d2cfacd3dc7f8323b913529eec
-next_action: AWAIT_EXPLICIT_AUTHOR_DRAFT_ARTICLE_08
-last_updated: "2026-08-20T18:07:59+08:00"
+next_action: CREATE_AND_VERIFY_ARTICLE_08_CHECKPOINT_COMMIT
+last_updated: "2026-08-20T19:56:27+08:00"
 ```
 
 ## Field rules
@@ -83,3 +95,21 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-20 17:05 repository reconciliation 确认 local `HEAD == origin/main == cfd763c0ba52f6d2cfacd3dc7f8323b913529eec`、worktree clean、Article 08 Evidence / Lab Gate 与缺失资产仍一致。唯一 fresh real Author `/root/article_08_author_outline_fresh` 随后只创建 `articles/08-agent-loop/outline.md`，返回 `8 / 8 COVERED`、`NO NEW CORE FACT REQUIRED` 与 `PASS_RECOMMENDED`；Master artifact / write-boundary check=`PASS`。Factory 现为 `READY / AUTHOR_DRAFT`，但 Draft、Review、Published Content 与 Article 09 均未启动；继续生产需新的显式任务。
 
 2026-08-20 18:07 仅执行 Worker Result Contract schema migration：`schema_version = 2`。17:05 Author OUTLINE execution 发生在 closed-schema contract 生效前，只有 legacy natural-language result，没有 canonical raw envelope，因此不得回填或伪造 `last_worker_result`；当前值保持 `NONE`，直到未来收到并验证首个合规 envelope。本次没有执行新的 Article Gate，没有启动 Draft / Review / Article 09，也没有修改 Article 或 Lab artifact。
+
+2026-08-20 19:06 fresh resume reconciliation 确认 `main == origin/main == d01234cc0cf9480e72d689b2e86166ae52ccdf66`、worktree clean，Article 08 durable state 一致为 `OUTLINE_READY / AUTHOR_DRAFT`。Master 已在隔离分支 `codex/article-08-production` 登记 fresh Author `/root/article_08_author_draft`；Allowed Writes 仅为当前 Article `draft.md`，等待 closed-schema `worker_result`。Review、Published Content 与 Article 09 尚未启动。
+
+2026-08-20 19:16 Author `/root/article_08_author_draft` 返回 schema-valid `PASS` envelope；Master 验证 `draft.md` 为唯一 worker-created artifact、Allowed Writes 与 actual diff 一致、无 delete / rename，Draft 包含 `8 / 8` Claim traceability、Learning Check、最短结论、Proposal / fixed-fixture scope 与完整 non-scope。Draft Gate=`PASS`，State Machine 合法推进到 `REVIEW`，并自动登记 fresh Reviewer `/root/article_08_reviewer_cycle0`。Published Content 与 Article 09 仍未启动。
+
+2026-08-20 19:23 fresh Reviewer `/root/article_08_reviewer_cycle0` 返回 schema-valid `PASS` envelope，唯一修改为 `review.md`。Master 验证 Review=`92 / 100`，五维阈值全部通过，但 `08-F01 OPEN MINOR` 要求补齐 pre-decision guard terminal record / trace，故合法 route 为 `REVISION` 而非 `FINAL_GATE`。已登记 Revision Worker `/root/article_08_revision_cycle1`，只允许处理 `08-F01`。
+
+2026-08-20 19:27 Revision Worker `/root/article_08_revision_cycle1` 返回 schema-valid `PASS` envelope；Master 验证只在 `draft.md` 补充 guard terminal commit / terminal-only trace 与 no-consumed-Step 说明，并在 `review.md` 写 `READY_FOR_RECHECK` disposition，未自行关闭 Finding、未扩展 Evidence 或 Article 11。已合法推进 `REVIEW_RECHECK` 并登记 fresh Reviewer `/root/article_08_reviewer_recheck_cycle1`；`review_cycle` 在 recheck 完成前仍为 `0`。
+
+2026-08-20 19:32 fresh Reviewer recheck 返回 schema-valid `PASS` envelope；Master 验证 `review.md` 为唯一 worker-modified path、cycle=`1 / 3`、`08-F01 CLOSED`、unclosed Findings=`0`、score=`92 / 100` 且四项冻结最低线均满足。空 notes item 不参与任何验证结论；required fields 与 repository evidence 完整。已推进独立 `FINAL_GATE` 并登记 Reviewer `/root/article_08_final_gate`；尚未进入 Publish。
+
+2026-08-20 19:37 Reviewer `/root/article_08_final_gate` 返回 schema-valid `PASS` envelope；Master 验证 Final Gate durable decision=`PASS`、Review=`92 / 100`、unclosed Findings=`0`、8 / 8 Claim 与 Evidence / Lab / non-scope 边界保持成立。Article Lifecycle 合法进入 `FINAL`，并自动登记 Publisher `/root/article_08_publisher` 执行机械发布映射；Build Verify 尚未开始。
+
+2026-08-20 19:47 Publisher `/root/article_08_publisher` 返回 schema-valid `PASS` envelope；Master 验证新 Article 08 content、Article 07 单一 next-link 与 Article README Publication Result 均真实存在且属于 Allowed Writes。Front matter / series order / weight、5 个 ASCII-quote relref、7 个 Lab GitHub links、0 repository-relative links、paired fences、0 trailing whitespace 与 frozen Draft semantic mapping均通过；Build 仍明确为 `NOT_YET_EXECUTED`。已登记 Publisher `/root/article_08_build_verify` 执行独立 `BUILD_VERIFY`。
+
+2026-08-20 19:53 Publisher `/root/article_08_build_verify` 返回 schema-valid `PASS` envelope；Master 独立核验 ignored `public/` 中 Article 08 route 与 Article 07↔08 rendered navigation，Build=`hugo --gc --minify / Hugo 0.157.0 / exit 0 / 1237 Pages / 0 ERROR / 0 WARNING`。Master 随后完成 `MASTER_STATE_UPDATE`：Article README、status、course README、canonical Article 08 link 与 run state 对齐为 `PUBLISHED` candidate，并登记 `GIT_DIFF_VERIFY`。Article checkpoint 尚未创建或验证，Article 09 未启动。
+
+2026-08-20 19:56 Master 完成 `GIT_DIFF_VERIFY`：branch=`codex/article-08-production`；worktree 仅含 10 个 Article 08 transaction paths；Article 09 workspace=`ABSENT`；无 delete / rename / unrelated path；`git diff --check`=`PASS`；Master 重新执行 `hugo --gc --minify` 得 `1237 Pages / 0 ERROR / 0 WARNING / exit 0`。Factory 已进入 `ARTICLE_CHECKPOINT_COMMIT`，只允许显式 stage 这 10 个路径并创建 `Publish Agent Engineering Article 08` 本地 commit；尚未 push。

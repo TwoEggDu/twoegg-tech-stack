@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-20
-- 当前里程碑：Article 08 PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / Evidence / Lab 03 / Outline=`PASS`；Outline 由 fresh real Author `/root/article_08_author_outline_fresh` 创建
-- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `OUTLINE_READY`；当前 Gate 为 `AUTHOR_DRAFT / NOT_STARTED`
+- 当前里程碑：Article 08 Review / Publisher / Hugo / Master Reconciliation=`PASS`；`1237 Pages / 0 ERROR / 0 WARNING`
+- 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `PUBLISHED`；当前 Gate 为 `ARTICLE_CHECKPOINT_COMMIT`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -12,13 +12,14 @@
 - Article 05 Published Path：`content/ai-empowerment/agent-engineering-05-function-calling-tool-use.md`
 - Article 06 Published Path：`content/ai-empowerment/agent-engineering-06-tool-runtime.md`
 - Article 07 Published Path：`content/ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md`
-- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1236 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Article 08 Published Path：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
+- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1237 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / AUTHOR_DRAFT`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / ARTICLE_CHECKPOINT_COMMIT / MASTER_ORCHESTRATOR`）
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 OPEN MINOR`
-- 下一允许动作：等待显式任务后，由 real Author 依据批准 Outline 与 Evidence 创建 Article 08 Draft；不得由 Master 代写
+- 下一允许动作：Master 仅显式 stage 已验证的 10 个 Article 08 transaction paths，创建 `Publish Agent Engineering Article 08` 本地 checkpoint 并立即验证；在此之前不得启动 Article 09
 
 ## 状态图例
 
@@ -39,7 +40,7 @@
 | 05 | Function Calling 与 Tool Use：模型如何表达行动意图 | II | M | 否 | `PUBLISHED` | `PASS`（`6 CONFIRMED / 2 PARTIAL / 0 BLOCKED / 0 PROPOSAL`） | N/A | `NONE`；Final Review `PASS / 95`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `c0cf180` verified |
 | 06 | Tool Runtime：Validate、Policy、Execute、Result 与 Trace | II | L | 否 | `PUBLISHED` | `PASS`（`8 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`） | Lab 02 `CONFIRMED / EVIDENCE_MERGED` | `NONE`；`06-F01 / 06-F02 CLOSED`；Review / Final Gate `PASS / 93`；Publisher / Build / Master Reconciliation `PASS`；checkpoint `199d4e1` verified |
 | 07 | MCP 与外部能力边界：协议解决什么，宿主仍需解决什么 | II | M | 否 | `PUBLISHED` | `PASS`（`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 1 PROPOSAL`） | N/A | `NONE`；`07-F01 / 07-F02 CLOSED`；Review / Final Gate=`PASS / 92`；Publisher / Build / Master Reconciliation=`PASS`；checkpoint `f3de0f2` pushed / live-remote verified |
-| 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | II | L | 否 | `OUTLINE_READY` | `PASS / 6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL` | Lab 03 `VERIFIED / EVIDENCE_MERGED` | `NONE`；fresh real Author Outline=`PASS_RECOMMENDED / 8 of 8 COVERED / NO NEW CORE FACT REQUIRED`；Draft/Review/Published Content/Article 09未启动 |
+| 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | II | L | 否 | `PUBLISHED` | `PASS / 6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL` | Lab 03 `VERIFIED / EVIDENCE_MERGED` | `NONE`；Review / Final Gate=`PASS / 92 / 0 OPEN`；`08-F01 CLOSED`；Publisher / Build / Master Reconciliation=`PASS`；checkpoint pending |
 | 09 | Planning：Agent 为什么需要计划，又为什么不能迷信计划 | II | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 10 | State Machine 与 Workflow：确定性骨架和 Agent Decision Point | II | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | II | M | 否 | `PLANNED` | `BLOCKED` | Lab 04 `PLANNED / BLOCKED` | 恢复 fixture 与故障注入未设计 |
