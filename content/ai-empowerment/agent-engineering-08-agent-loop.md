@@ -18,6 +18,8 @@ weight: 3090
 
 > **上一篇**：[MCP 与外部能力边界：协议解决什么，宿主仍需解决什么]({{< relref "ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md" >}})
 
+> **下一篇**：[Planning：Agent 为什么需要计划，又为什么不能迷信计划]({{< relref "ai-empowerment/agent-engineering-09-planning.md" >}})
+
 团队把模型、一个日志解析 Tool 和一段 `while` 串起来后，很容易得到一条看起来已经闭合的链路：模型要求解析构建日志，Tool 返回 `CS0103`，模型随后说“问题已经定位”。
 
 但这条链路至少还缺三项判断：这个结果怎样进入下一次 Decide？谁把它提交进任务 State？模型说“完成”时，目标、输出和 Evidence 是否真的满足？

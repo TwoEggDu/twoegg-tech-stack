@@ -8,24 +8,24 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 factory_status: READY
-current_article: "09"
+current_article: "10"
 current_gate: PRECHECK
-last_published_article: "08"
+last_published_article: "09"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "08"
-  gate: GIT_DIFF_VERIFY
+  article: "09"
+  gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
-  execution_id: /root/master_article_08_git_diff_verify
-  result_ref: docs/agent-engineering-course/articles/08-agent-loop/subagent-trace.md#wr-master-article-08-git-diff-verify-20260820t195313
+  execution_id: /root/master_article_09_pre_commit_reconciliation_retry1
+  result_ref: docs/agent-engineering-course/articles/09-planning/subagent-trace.md#wr-master-article-09-pre-commit-reconciliation-retry1-20260820t235019
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: ARTICLE_CHECKPOINT_COMMIT
+  next_allowed_gate: GIT_DIFF_VERIFY
   blocker: NONE
 last_worker_result_error: NONE
 review_cycle: 0
@@ -33,8 +33,8 @@ active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 last_successful_commit: d4693bd6d78ed63a669e181516e28247460fee11
-next_action: START_ARTICLE_09_PRECHECK
-last_updated: "2026-08-20T20:37:14+08:00"
+next_action: START_ARTICLE_10_PRECHECK
+last_updated: "2026-08-20T23:50:19+08:00"
 ```
 
 ## Field rules
@@ -126,3 +126,13 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-20 19:59 Article 08 独立 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` 已完成 commit message、10-file scope、clean worktree、`git log`、`git show` 与 `git diff HEAD^ HEAD --check` verification；branch=`codex/article-08-production`，相对 `origin/main` 为 `0 behind / 1 ahead`，尚未 push。`END ARTICLE 08` 成立。Factory 已回到 `READY`，durable pointer 指向 Article 09 `PRECHECK`；Article 09 workspace=`ABSENT`，transaction、Research、Evidence、Lab 与 Draft 均未启动。
 
 2026-08-20 20:37 Contract-only reconciliation from repository reality confirmed `main == origin/main == remote main == 1f4d26f51bc93437517cc7ad3e32319563222bf1`, worktree clean, Article 08 Lifecycle=`PUBLISHED`, Article checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` and post-checkpoint reconciliation commit `1f4d26f51bc93437517cc7ad3e32319563222bf1` both exist, and Article 09 workspace=`ABSENT`。Schema v3 freezes `production_branch=main`、Git-history-authoritative checkpoint SHA、pre-commit final state reconciliation and zero post-commit repository writes；the Article 08 two-commit history remains regression evidence and is not rewritten。Article 09 PRECHECK remains `NOT_STARTED`。
+
+2026-08-20 23:23 Article 09 fresh Reviewer recheck returned a schema-valid `PASS` envelope. Master verified `review.md` as the sole worker-modified path, `09-F01 / 09-F02 CLOSED`, unclosed Findings=`0`, cycle=`1 / 3`, score=`91 / 100`, and every frozen quality threshold met. `REVIEW_RECHECK -> FINAL_GATE` is valid; independent Reviewer `/root/article_09_final_gate` is registered. Published Content and Article 10 remain absent.
+
+2026-08-20 23:31 Article 09 independent FINAL_GATE returned a schema-valid `PASS` envelope. Master verified the appended durable decision, `9 / 9` Claim traceability, score=`91 / 100`, zero unclosed Findings, preserved C03 PARTIAL / C01-C05-C08 PROPOSAL strength, AL-02 and authority boundaries, later-Article non-scope, and current-docs / 0.22.0-anchor limitation. Lifecycle is `FINAL`; Publisher `/root/article_09_publisher` is registered for mechanical PUBLISH only. Build Verify and Article 10 have not started.
+
+2026-08-20 23:41 Article 09 Publisher returned a schema-valid `PASS` envelope. Master verified the three-path write boundary, standard front matter, exact frozen-Draft semantic reconstruction, Article 08↔09 source navigation, four AL-02 GitHub blob links, paired fences, no future relref, and zero trailing whitespace. Lifecycle remains `FINAL`; independent Publisher execution `/root/article_09_build_verify` is registered for `hugo --gc --minify` and rendered-route/navigation checks only. Article 10 remains absent.
+
+2026-08-20 23:46 Article 09 BUILD_VERIFY returned a schema-valid `PASS` envelope and Master independently reran the build: `hugo --gc --minify / Hugo 0.157.0 / exit 0 / 1238 Pages / 0 ERROR / 0 WARNING`; rendered Article 09 route and Article 08↔09 navigation exist, tracked build-output changes=`0`. PRE_COMMIT_RECONCILIATION then verified Final / Publisher / Build / workspace / canonical / global state and wrote the completion-commit candidate: Article 09 Lifecycle=`PUBLISHED`, last published=`09`, next pointer=`Article 10 / PRECHECK`, Factory=`READY`, active worker=`NONE`. Article 10 workspace remains absent and PRECHECK is not started. Repository writes after this point are `ZERO`; Git / push / remote / post-commit results must remain runtime-only.
+
+2026-08-20 23:50 first GIT_DIFF_VERIFY attempt correctly failed before commit because staged `git diff --cached --check` reported one extra blank line at EOF in `article-card.md`. No commit or push occurred. Master returned to PRE_COMMIT_RECONCILIATION retry 1, removed only that terminal blank line, recorded this recovery, and preserved every publication, state, canonical and Article 10 absence invariant. This retry supersedes the earlier persistence cut; after it, repository writes are again `ZERO` and GIT_DIFF_VERIFY must restart from the full 14-path scope.

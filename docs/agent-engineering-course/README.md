@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 08 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` verified；`END ARTICLE 08`；Hugo=`1237 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 09；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
+- 当前里程碑：Article 09 PRE_COMMIT_RECONCILIATION=`PASS`；Lifecycle=`PUBLISHED` completion-commit candidate；Hugo=`1238 Pages / 0 ERROR / 0 WARNING`
+- 当前生产对象：Article 10 pointer candidate；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -42,7 +42,10 @@
 - 当前 Article 08 状态：`PUBLISHED`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；Review / Final Gate=`PASS / 92`；`08-F01 CLOSED`；Publisher / Build / Master Reconciliation=`PASS`
 - 当前 Article 08 Published Content：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
 - 当前 Article 08 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1237 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`READY / PRECHECK`；Article 08 checkpoint `d4693bd6d78ed63a669e181516e28247460fee11` verified，`END ARTICLE 08`；Article 09 workspace 不存在且 transaction 未启动
+- 当前 Article 09 状态：`PUBLISHED` completion-commit candidate；Evidence=`5 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`；Review / Final Gate=`PASS / 91 / 0 OPEN`；`09-F01 / 09-F02 CLOSED`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`
+- 当前 Article 09 Published Content：`content/ai-empowerment/agent-engineering-09-planning.md`
+- 当前 Article 09 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1238 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Factory Status：`READY / PRECHECK`；Article 09 completion commit须由当前checkpoint diff创建并以Git history为准；Article 10 workspace不存在、PRECHECK未启动
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
