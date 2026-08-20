@@ -8,8 +8,8 @@
 - Lab Status: `VERIFIED / EVIDENCE_MERGED`
 - Mode: `LAB_ARTICLE`
 - Current Gate: `OUTLINE / PAUSED_WORKER_EXECUTION`
-- Next Allowed Action: `RETRY_REAL_AUTHOR_OUTLINE_WITH_MINIMAL_CONTEXT`
-- Blocker: `REAL_AUTHOR_TASKS_UNRESPONSIVE / NO_DURABLE_OUTLINE`
+- Next Allowed Action: `RETRY_REAL_AUTHOR_OUTLINE_WHEN_SUBAGENT_RUNTIME_AVAILABLE`
+- Blocker: `SUBAGENT_RUNTIME_UNAVAILABLE / NO_DURABLE_OUTLINE`
 
 ## Dependencies
 
@@ -38,10 +38,12 @@
 - Evidence Merge / Gate：Researcher=`PASS recommendation`，Master artifact check=`PASS`；final Claim=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；C03/C05保持课程`PROPOSAL`，C07/C08仅在fixed Host / deterministic fixture scope内`CONFIRMED`。
 - Outline Worker Start：真实 Author `/root/article_08_outliner` 已启动；Allowed Writes仅为`outline.md`。
 - Outline Worker Failure：`/root/article_08_outliner`、`/root/article_08_outliner_resume`、`/root/article_08_outliner_minimal` 三个真实 Author task 均在只读阶段长时间无响应；Master在确认`outline.md`始终不存在后依次中断。没有越界写入、Draft、Review或Article 09资产。
+- Fresh Resume Reconciliation：2026-08-20 重新核验 local `HEAD`、fresh-fetched `origin/main` 与 live `ls-remote refs/heads/main` 均为 `1045264057f1eced21f8e7438b43bb7448a67091`；worktree clean；Published Content、`outline.md`、`draft.md` 均不存在。Factory 已恢复为 `RUNNING / OUTLINE`，等待 fresh real Author durable output。
+- Fresh Author Retry Failure：`/root/article_08_author_outline` 与最小上下文 `/root/article_08_author_outline_minimal` 均在重复等待和明确收敛消息后无 durable output，已安全中断；结合三次历史失败，当前判定为`SUBAGENT_RUNTIME_UNAVAILABLE`。没有越界写入、Draft、Review、Published Content 或Article 09资产。
 - Article 08 Published Content：`NONE`
-- Lab 03 directory：`NONE`；必须由 Researcher 在 Preliminary Evidence 后按 frozen Design 实例化。
+- Lab 03 directory：`docs/agent-engineering-course/labs/lab-03-minimal-agent-loop/`；Design、implementation、tests、raw observations 与 Evidence Merge 已由 recovery checkpoint `1045264` 保存。
 - Article 09 workspace：`NONE`
 
 ## Stop Line
 
-Evidence Gate已关闭，Factory安全暂停在`OUTLINE`。恢复时只允许以最小上下文重派真实 Author创建Detailed Outline；Master不得代写。不得创建Draft、修改Evidence/Lab或启动Article 09；若Outline需要新核心事实，必须`RETURN_TO_RESEARCH`。
+Evidence Gate已关闭，Factory因`SUBAGENT_RUNTIME_UNAVAILABLE`安全暂停在`OUTLINE`。恢复时只允许 fresh real Author 创建Detailed Outline；Master不得代写。不得创建Draft、修改Evidence/Lab或启动Article 09；若Outline需要新核心事实，必须`RETURN_TO_RESEARCH`。

@@ -5,7 +5,7 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 07 checkpoint `f3de0f2` 已 push 并通过 live remote verification；Article 08 PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT=`PASS`
+- 当前里程碑：Article 08 recovery checkpoint `1045264057f1eced21f8e7438b43bb7448a67091` 已由 fresh fetch / live `ls-remote` 验证；PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / Lab 03 / Evidence Gate=`PASS`
 - 当前生产对象：Article 08；Mode `LAB_ARTICLE`；Lifecycle `EVIDENCE_READY`；当前 Gate 为 `OUTLINE / PAUSED_WORKER_EXECUTION`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
@@ -40,7 +40,7 @@
 - 当前 Article 07 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1236 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - 当前 Article 07 Checkpoint：`f3de0f2a7b1e06c530900627183bd364ca0b4314`；message / 14-file scope / clean tree / push / live remote verification `PASS`
 - 当前 Article 08 状态：`EVIDENCE_READY`；Evidence=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`
-- Factory Status：`PAUSED / OUTLINE`；三个真实 Author 无durable输出后已中断，等待下一次安全重派
+- Factory Status：`PAUSED / OUTLINE`；三次历史 Author 加本次两次 fresh Author 重派均无 durable output，当前硬停止为`SUBAGENT_RUNTIME_UNAVAILABLE`
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
 ## 从哪里开始

@@ -11,12 +11,12 @@ current_gate: OUTLINE
 last_published_article: "07"
 active_worker: NONE
 review_cycle: 0
-active_blocker: NONE
+active_blocker: SUBAGENT_RUNTIME_UNAVAILABLE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: f3de0f2a7b1e06c530900627183bd364ca0b4314
-next_action: RETRY_REAL_AUTHOR_ARTICLE_08_OUTLINE_FROM_EVIDENCE_READY_WITH_MINIMAL_CONTEXT
-last_updated: "2026-08-20T14:07:35+08:00"
+last_successful_commit: 1045264057f1eced21f8e7438b43bb7448a67091
+next_action: RETRY_REAL_AUTHOR_ARTICLE_08_OUTLINE_WHEN_SUBAGENT_RUNTIME_AVAILABLE
+last_updated: "2026-08-20T15:07:26+08:00"
 ```
 
 ## Field rules
@@ -37,4 +37,4 @@ last_updated: "2026-08-20T14:07:35+08:00"
 
 ## Current transaction boundary
 
-Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完成 commit / push / live remote verification。Article 08 Lab 03=`VERIFIED / EVIDENCE_MERGED`，Evidence Gate=`PASS`，Claim=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`。三个真实 Author task（`/root/article_08_outliner`、`/root/article_08_outliner_resume`、`/root/article_08_outliner_minimal`）均在只读阶段长时间无响应且未创建`outline.md`，已依次中断；Factory安全暂停在`OUTLINE`，Draft、Review与Article 09均未启动。恢复时只允许重派真实 Author 从已闭合Evidence/Lab创建Outline。
+Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完成 commit / push / live remote verification。2026-08-20 fresh resume reconciliation 进一步确认 local `HEAD`、fresh-fetched `origin/main` 与 live `ls-remote refs/heads/main` 均为 `1045264057f1eced21f8e7438b43bb7448a67091`（`Checkpoint Article 08 at OUTLINE`），worktree clean，Article 08 published content / `outline.md` / `draft.md` 均不存在。Article 08 Lab 03=`VERIFIED / EVIDENCE_MERGED`，Evidence Gate=`PASS`，Claim=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`。本次恢复先后派发 fresh real Author `/root/article_08_author_outline` 与最小上下文 `/root/article_08_author_outline_minimal`；两者均在重复等待和明确收敛消息后保持运行态、没有创建 `outline.md`，已安全中断。连同仓库记录的三次历史 Author 无输出执行，当前 worker runtime 判定为 `SUBAGENT_RUNTIME_UNAVAILABLE`。Factory 安全暂停在 `OUTLINE`；Draft、Review 与 Article 09 均未启动。
