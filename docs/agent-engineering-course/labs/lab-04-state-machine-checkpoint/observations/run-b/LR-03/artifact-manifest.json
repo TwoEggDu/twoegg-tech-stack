@@ -1,0 +1,55 @@
+{
+  "schema_version": "artifact-manifest-v1",
+  "artifacts": [
+    {
+      "relative_path": "case-result.json",
+      "byte_count": 450,
+      "sha256": "d0c1fbb232d3b198e5373234c70f4aea9841ef43cbf5c1f9f1c5443add004380"
+    },
+    {
+      "relative_path": "checkpoint-start.json",
+      "byte_count": 1916,
+      "sha256": "eeab75f2988b330da9c983cf22ba3671049f91b447de35bda6b696ad745b0182"
+    },
+    {
+      "relative_path": "checkpoint.json",
+      "byte_count": 1916,
+      "sha256": "eeab75f2988b330da9c983cf22ba3671049f91b447de35bda6b696ad745b0182"
+    },
+    {
+      "relative_path": "fake-store-view-start.json",
+      "byte_count": 374,
+      "sha256": "9400c7f74c2c106f71c8e6a1f4b437e77c818ba9c6e79fc02bc3ba6464cae34b"
+    },
+    {
+      "relative_path": "fake-store-view.json",
+      "byte_count": 374,
+      "sha256": "9400c7f74c2c106f71c8e6a1f4b437e77c818ba9c6e79fc02bc3ba6464cae34b"
+    },
+    {
+      "relative_path": "fake-store.json",
+      "byte_count": 374,
+      "sha256": "9400c7f74c2c106f71c8e6a1f4b437e77c818ba9c6e79fc02bc3ba6464cae34b"
+    },
+    {
+      "relative_path": "partial-result-start.json",
+      "byte_count": 568,
+      "sha256": "45e05a154483f4b8feaff9c4dfb239bb390d75866ec91c6e01c4047c73d7181a"
+    },
+    {
+      "relative_path": "partial-result.json",
+      "byte_count": 568,
+      "sha256": "45e05a154483f4b8feaff9c4dfb239bb390d75866ec91c6e01c4047c73d7181a"
+    },
+    {
+      "relative_path": "phase-start-result.json",
+      "byte_count": 450,
+      "sha256": "d0c1fbb232d3b198e5373234c70f4aea9841ef43cbf5c1f9f1c5443add004380"
+    },
+    {
+      "relative_path": "trace.jsonl",
+      "byte_count": 2113,
+      "sha256": "31d5207ec6a7703c6f915f205e998c2ad62ff9191062f5dbc579c8c60e3ef626"
+    }
+  ]
+}

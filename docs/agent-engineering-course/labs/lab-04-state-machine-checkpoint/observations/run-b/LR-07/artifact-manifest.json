@@ -1,0 +1,55 @@
+{
+  "schema_version": "artifact-manifest-v1",
+  "artifacts": [
+    {
+      "relative_path": "case-result.json",
+      "byte_count": 459,
+      "sha256": "055677f5b5d3c49f01107c2887bb98b65956228d9c63ba279061f9d60ae804b3"
+    },
+    {
+      "relative_path": "checkpoint-start.json",
+      "byte_count": 1876,
+      "sha256": "b945bdbf2a38e20c6d0a2315cf00edd881bb427f3be729b5deda0b0a415ee4f9"
+    },
+    {
+      "relative_path": "checkpoint.json",
+      "byte_count": 1876,
+      "sha256": "b945bdbf2a38e20c6d0a2315cf00edd881bb427f3be729b5deda0b0a415ee4f9"
+    },
+    {
+      "relative_path": "fake-store-view-start.json",
+      "byte_count": 78,
+      "sha256": "3f2e837dd56288eea9ab8ecb4a72eadab95a5496b2017cd774b0d5a1a7ef3af3"
+    },
+    {
+      "relative_path": "fake-store-view.json",
+      "byte_count": 78,
+      "sha256": "3f2e837dd56288eea9ab8ecb4a72eadab95a5496b2017cd774b0d5a1a7ef3af3"
+    },
+    {
+      "relative_path": "fake-store.json",
+      "byte_count": 78,
+      "sha256": "3f2e837dd56288eea9ab8ecb4a72eadab95a5496b2017cd774b0d5a1a7ef3af3"
+    },
+    {
+      "relative_path": "partial-result-start.json",
+      "byte_count": 599,
+      "sha256": "7f80f469a6cea856c87a1a94ec955f8d9800d7212e41c840fbe97bff68219c9f"
+    },
+    {
+      "relative_path": "partial-result.json",
+      "byte_count": 599,
+      "sha256": "7f80f469a6cea856c87a1a94ec955f8d9800d7212e41c840fbe97bff68219c9f"
+    },
+    {
+      "relative_path": "phase-start-result.json",
+      "byte_count": 459,
+      "sha256": "055677f5b5d3c49f01107c2887bb98b65956228d9c63ba279061f9d60ae804b3"
+    },
+    {
+      "relative_path": "trace.jsonl",
+      "byte_count": 1916,
+      "sha256": "50a4739f4d715af2edb3abd6e69c7d1158656c2fc45986c9b53f55586dd76e7b"
+    }
+  ]
+}

@@ -17,6 +17,7 @@ weight: 3110
 ---
 
 > **上一篇**：[Planning：Agent 为什么需要计划，又为什么不能迷信计划]({{< relref "ai-empowerment/agent-engineering-09-planning.md" >}})
+> **下一篇**：[Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery]({{< relref "ai-empowerment/agent-engineering-11-long-running-agent.md" >}})
 
 先看一个工程里很常见的场景：团队让 Agent 调查一次构建失败。前一篇已经让 Plan 写得很清楚：解析日志、读取匹配源码、验证诊断、给出结论。Agent Loop 也能逐步执行：模型提出动作，Tool 返回结果，Host 把 Observation 提交到 State。
 

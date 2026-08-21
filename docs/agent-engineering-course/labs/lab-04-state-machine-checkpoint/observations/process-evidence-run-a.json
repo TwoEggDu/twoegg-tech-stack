@@ -1,0 +1,101 @@
+{
+  "suite": "run-a",
+  "processes": [
+    {
+      "case_id": "LR-01",
+      "process_phase": "START",
+      "pid": 2296,
+      "exit_code": 0,
+      "stdout": "PHASE_RESULT case=LR-01 phase=START terminal=SUCCEEDED/GOAL_SATISFIED effects=1 attempts=1",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-02",
+      "process_phase": "START",
+      "pid": 33800,
+      "exit_code": 10,
+      "stdout": "PHASE_RESULT case=LR-02 phase=START terminal=CANCELLED/INCOMPLETE effects=0 attempts=0",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-02",
+      "process_phase": "RESUME",
+      "pid": 39584,
+      "exit_code": 0,
+      "stdout": "PHASE_RESULT case=LR-02 phase=RESUME terminal=SUCCEEDED/GOAL_SATISFIED effects=1 attempts=1",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-03",
+      "process_phase": "START",
+      "pid": 57584,
+      "exit_code": 0,
+      "stdout": "PHASE_RESULT case=LR-03 phase=START terminal=SUCCEEDED/GOAL_SATISFIED effects=1 attempts=2",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-04",
+      "process_phase": "START",
+      "pid": 57020,
+      "exit_code": 11,
+      "stdout": "PHASE_RESULT case=LR-04 phase=START terminal=INTERRUPTED/UNKNOWN_SIDE_EFFECT effects=1 attempts=1",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-04",
+      "process_phase": "RESUME",
+      "pid": 53748,
+      "exit_code": 0,
+      "stdout": "PHASE_RESULT case=LR-04 phase=RESUME terminal=SUCCEEDED/GOAL_SATISFIED effects=1 attempts=2",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-05",
+      "process_phase": "START",
+      "pid": 34132,
+      "exit_code": 11,
+      "stdout": "PHASE_RESULT case=LR-05 phase=START terminal=INTERRUPTED/UNKNOWN_SIDE_EFFECT effects=1 attempts=1",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-05",
+      "process_phase": "RESUME",
+      "pid": 54784,
+      "exit_code": 14,
+      "stdout": "PHASE_RESULT case=LR-05 phase=RESUME terminal=DUPLICATE_SIDE_EFFECT_DETECTED/FAILED effects=2 attempts=2",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-06",
+      "process_phase": "START",
+      "pid": 11860,
+      "exit_code": 11,
+      "stdout": "PHASE_RESULT case=LR-06 phase=START terminal=INTERRUPTED/INVALID_CHECKPOINT_CANDIDATE effects=1 attempts=1",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-06",
+      "process_phase": "RESUME",
+      "pid": 53120,
+      "exit_code": 12,
+      "stdout": "PHASE_RESULT case=LR-06 phase=RESUME terminal=RECOVERY_REFUSED/IN_FLIGHT_ACTION_MISSING effects=1 attempts=1",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-07",
+      "process_phase": "START",
+      "pid": 35160,
+      "exit_code": 13,
+      "stdout": "PHASE_RESULT case=LR-07 phase=START terminal=RETRY_BUDGET_EXHAUSTED/INCOMPLETE effects=0 attempts=2",
+      "stderr": ""
+    },
+    {
+      "case_id": "LR-08",
+      "process_phase": "START",
+      "pid": 50304,
+      "exit_code": 0,
+      "stdout": "PHASE_RESULT case=LR-08 phase=START terminal=TIMED_OUT/INCOMPLETE effects=0 attempts=0",
+      "stderr": ""
+    }
+  ]
+}

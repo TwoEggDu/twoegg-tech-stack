@@ -1,0 +1,75 @@
+{
+  "schema_version": "artifact-manifest-v1",
+  "artifacts": [
+    {
+      "relative_path": "case-result.json",
+      "byte_count": 451,
+      "sha256": "0ad19dfe28100b83b738fba379b0d214627cec6e67e2354c9f49552f1375df86"
+    },
+    {
+      "relative_path": "checkpoint-resume.json",
+      "byte_count": 1916,
+      "sha256": "946f8c72db3f333e5f7df1fcbdd095d626c841187171482a1298273534bba9ee"
+    },
+    {
+      "relative_path": "checkpoint-start.json",
+      "byte_count": 2195,
+      "sha256": "844d35b5c66b193821e9fbdf46eccc59b3ae7fec74d89a5ad88dc72eddc32fe9"
+    },
+    {
+      "relative_path": "checkpoint.json",
+      "byte_count": 1916,
+      "sha256": "946f8c72db3f333e5f7df1fcbdd095d626c841187171482a1298273534bba9ee"
+    },
+    {
+      "relative_path": "fake-store-view-resume.json",
+      "byte_count": 374,
+      "sha256": "7fbe5ff0d8b7b825a0582ae60579a7de2764085aa89fd5cf29f2b196cccb73bf"
+    },
+    {
+      "relative_path": "fake-store-view-start.json",
+      "byte_count": 374,
+      "sha256": "70c0e85e0c2331919e6c1c728ae36930d311b243ddabee68d2b52439906d2570"
+    },
+    {
+      "relative_path": "fake-store-view.json",
+      "byte_count": 374,
+      "sha256": "7fbe5ff0d8b7b825a0582ae60579a7de2764085aa89fd5cf29f2b196cccb73bf"
+    },
+    {
+      "relative_path": "fake-store.json",
+      "byte_count": 374,
+      "sha256": "7fbe5ff0d8b7b825a0582ae60579a7de2764085aa89fd5cf29f2b196cccb73bf"
+    },
+    {
+      "relative_path": "partial-result-resume.json",
+      "byte_count": 568,
+      "sha256": "45e05a154483f4b8feaff9c4dfb239bb390d75866ec91c6e01c4047c73d7181a"
+    },
+    {
+      "relative_path": "partial-result-start.json",
+      "byte_count": 714,
+      "sha256": "7b9e6758893a9df253948f28efb80b39d655704fd7b9bd3b7646b20711109aa7"
+    },
+    {
+      "relative_path": "partial-result.json",
+      "byte_count": 568,
+      "sha256": "45e05a154483f4b8feaff9c4dfb239bb390d75866ec91c6e01c4047c73d7181a"
+    },
+    {
+      "relative_path": "phase-resume-result.json",
+      "byte_count": 451,
+      "sha256": "0ad19dfe28100b83b738fba379b0d214627cec6e67e2354c9f49552f1375df86"
+    },
+    {
+      "relative_path": "phase-start-result.json",
+      "byte_count": 457,
+      "sha256": "dd94ca35105bee4dc5a995d53fdf11d2d7bec93ba21f38071844cc6a679e9d1d"
+    },
+    {
+      "relative_path": "trace.jsonl",
+      "byte_count": 2104,
+      "sha256": "dd9e4b9444739b4c14fde74456d08431a66c2aada83be7bafef090a77827af13"
+    }
+  ]
+}

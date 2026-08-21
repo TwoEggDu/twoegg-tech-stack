@@ -1,0 +1,68 @@
+{
+  "schema_version": "checkpoint-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "run_id": "run-lr-02",
+  "case_id": "LR-02",
+  "goal_contract_id": "goal-read-register-verify-v1",
+  "state": "EVIDENCE_COLLECTED",
+  "state_revision": 1,
+  "last_committed_sequence": 2,
+  "completed_actions": [
+    {
+      "action_id": "read-fixture-diagnostic",
+      "intent_digest": "34e63539180e99666fd313578c7081b6a33ad3aad0a44f8ad93c3fdf522f77b5",
+      "result_ref": "fixture-diagnostic",
+      "evidence_refs": [
+        "trace:EVIDENCE_ACTION_COMPLETED"
+      ]
+    }
+  ],
+  "remaining_actions": [
+    "register-finding",
+    "verify-finding",
+    "goal-satisfaction"
+  ],
+  "in_flight_action": null,
+  "retry_budget": {
+    "max_attempts": 1,
+    "attempts_used": 0,
+    "remaining": 1
+  },
+  "last_failure": null,
+  "cancellation": {
+    "requested": true,
+    "observed": true,
+    "origin": "CALLER"
+  },
+  "continuation": {
+    "resume_state": "EVIDENCE_COLLECTED",
+    "next_safe_action": "REGISTER_FINDING"
+  },
+  "partial_result": {
+    "known_refs": [
+      {
+        "value": "fixture-diagnostic",
+        "provenance": "checkpoint:completed_actions/read-fixture-diagnostic"
+      }
+    ],
+    "unknown_actions": [],
+    "unverified_requirements": [
+      {
+        "value": "register-finding",
+        "provenance": "checkpoint:remaining_actions/register-finding"
+      },
+      {
+        "value": "verify-finding",
+        "provenance": "checkpoint:remaining_actions/verify-finding"
+      },
+      {
+        "value": "goal-satisfaction",
+        "provenance": "checkpoint:remaining_actions/goal-satisfaction"
+      }
+    ],
+    "next_safe_action": "REGISTER_FINDING"
+  },
+  "integrity": {
+    "canonical_payload_sha256": "59cafed782c33e8d07a4b6d89531c91ec5d55e391bb0590fc1b2e943168a2900"
+  }
+}

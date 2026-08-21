@@ -1,0 +1,18 @@
+{
+  "schema_version": "case-result-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "case_id": "LR-02",
+  "run_id": "run-lr-02",
+  "process_phase": "RESUME",
+  "terminal_status": "SUCCEEDED",
+  "terminal_reason": "GOAL_SATISFIED",
+  "cancellation_origin": "NONE",
+  "effect_count": 1,
+  "store_access_count": 1,
+  "attempts_used": 1,
+  "retry_count": 0,
+  "resume_count": 1,
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "credential_reads": 0
+}

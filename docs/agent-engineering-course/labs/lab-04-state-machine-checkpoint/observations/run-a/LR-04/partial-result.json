@@ -1,0 +1,23 @@
+{
+  "known_refs": [
+    {
+      "value": "fixture-diagnostic",
+      "provenance": "checkpoint:completed_actions/read-fixture-diagnostic"
+    },
+    {
+      "value": "finding-effect-001",
+      "provenance": "checkpoint:completed_actions/register-finding"
+    },
+    {
+      "value": "finding-identity-verified",
+      "provenance": "trace:FINDING_IDENTITY_VERIFIED"
+    },
+    {
+      "value": "goal-satisfaction",
+      "provenance": "trace:GOAL_CONTRACT_SATISFIED"
+    }
+  ],
+  "unknown_actions": [],
+  "unverified_requirements": [],
+  "next_safe_action": "NONE"
+}

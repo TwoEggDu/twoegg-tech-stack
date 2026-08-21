@@ -1,0 +1,18 @@
+{
+  "schema_version": "case-result-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "case_id": "LR-08",
+  "run_id": "run-lr-08",
+  "process_phase": "START",
+  "terminal_status": "TIMED_OUT",
+  "terminal_reason": "INCOMPLETE",
+  "cancellation_origin": "TIMEOUT",
+  "effect_count": 0,
+  "store_access_count": 0,
+  "attempts_used": 0,
+  "retry_count": 0,
+  "resume_count": 0,
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "credential_reads": 0
+}

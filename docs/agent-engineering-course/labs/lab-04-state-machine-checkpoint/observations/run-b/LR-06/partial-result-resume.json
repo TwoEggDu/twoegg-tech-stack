@@ -1,0 +1,29 @@
+{
+  "known_refs": [
+    {
+      "value": "fixture-diagnostic",
+      "provenance": "checkpoint:completed_actions/read-fixture-diagnostic"
+    }
+  ],
+  "unknown_actions": [
+    {
+      "value": "register-finding-lr-06",
+      "provenance": "trace:REGISTER_ACTION_STARTED"
+    }
+  ],
+  "unverified_requirements": [
+    {
+      "value": "register-finding",
+      "provenance": "checkpoint:state/REGISTERING_FINDING"
+    },
+    {
+      "value": "verify-finding",
+      "provenance": "checkpoint:remaining_actions/verify-finding"
+    },
+    {
+      "value": "goal-satisfaction",
+      "provenance": "checkpoint:remaining_actions/goal-satisfaction"
+    }
+  ],
+  "next_safe_action": "NONE"
+}

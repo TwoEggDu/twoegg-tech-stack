@@ -1,0 +1,55 @@
+{
+  "schema_version": "artifact-manifest-v1",
+  "artifacts": [
+    {
+      "relative_path": "case-result.json",
+      "byte_count": 450,
+      "sha256": "004ec81b9a6089218e4874bc63061848f170d1cce8f11abde9309bf8f557b888"
+    },
+    {
+      "relative_path": "checkpoint-start.json",
+      "byte_count": 1916,
+      "sha256": "5e04d9e5d1d11f298a74af96587d09ac0129c6bb7cffe38477b80f8bc54d8652"
+    },
+    {
+      "relative_path": "checkpoint.json",
+      "byte_count": 1916,
+      "sha256": "5e04d9e5d1d11f298a74af96587d09ac0129c6bb7cffe38477b80f8bc54d8652"
+    },
+    {
+      "relative_path": "fake-store-view-start.json",
+      "byte_count": 374,
+      "sha256": "a5fa26fa29afd67c9c7025761509130bc4e9c441bf307a86bc51ff5d6c8204de"
+    },
+    {
+      "relative_path": "fake-store-view.json",
+      "byte_count": 374,
+      "sha256": "a5fa26fa29afd67c9c7025761509130bc4e9c441bf307a86bc51ff5d6c8204de"
+    },
+    {
+      "relative_path": "fake-store.json",
+      "byte_count": 374,
+      "sha256": "a5fa26fa29afd67c9c7025761509130bc4e9c441bf307a86bc51ff5d6c8204de"
+    },
+    {
+      "relative_path": "partial-result-start.json",
+      "byte_count": 568,
+      "sha256": "45e05a154483f4b8feaff9c4dfb239bb390d75866ec91c6e01c4047c73d7181a"
+    },
+    {
+      "relative_path": "partial-result.json",
+      "byte_count": 568,
+      "sha256": "45e05a154483f4b8feaff9c4dfb239bb390d75866ec91c6e01c4047c73d7181a"
+    },
+    {
+      "relative_path": "phase-start-result.json",
+      "byte_count": 450,
+      "sha256": "004ec81b9a6089218e4874bc63061848f170d1cce8f11abde9309bf8f557b888"
+    },
+    {
+      "relative_path": "trace.jsonl",
+      "byte_count": 1384,
+      "sha256": "4b5a962d2f11bed4aeac674c89bd9476ab4fa51cfaaa0035c185dbe37cba653e"
+    }
+  ]
+}

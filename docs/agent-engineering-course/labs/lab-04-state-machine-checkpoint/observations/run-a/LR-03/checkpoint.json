@@ -1,0 +1,71 @@
+{
+  "schema_version": "checkpoint-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "run_id": "run-lr-03",
+  "case_id": "LR-03",
+  "goal_contract_id": "goal-read-register-verify-v1",
+  "state": "SUCCEEDED",
+  "state_revision": 4,
+  "last_committed_sequence": 2,
+  "completed_actions": [
+    {
+      "action_id": "read-fixture-diagnostic",
+      "intent_digest": "513ce27476527f52da59f087dd26ce184a36dccd4a1c5ba4ed222f8b213cc57b",
+      "result_ref": "fixture-diagnostic",
+      "evidence_refs": [
+        "trace:EVIDENCE_ACTION_COMPLETED"
+      ]
+    },
+    {
+      "action_id": "register-finding-lr-03",
+      "intent_digest": "3debcef786178ebe2a40d3348412ea791c3dcaeb460b1545f13532e9404a204c",
+      "result_ref": "fake-store:effect-001",
+      "evidence_refs": [
+        "fake-store-view.json"
+      ]
+    }
+  ],
+  "remaining_actions": [],
+  "in_flight_action": null,
+  "retry_budget": {
+    "max_attempts": 2,
+    "attempts_used": 2,
+    "remaining": 0
+  },
+  "last_failure": null,
+  "cancellation": {
+    "requested": false,
+    "observed": false,
+    "origin": "NONE"
+  },
+  "continuation": {
+    "resume_state": "NONE",
+    "next_safe_action": "NONE"
+  },
+  "partial_result": {
+    "known_refs": [
+      {
+        "value": "fixture-diagnostic",
+        "provenance": "checkpoint:completed_actions/read-fixture-diagnostic"
+      },
+      {
+        "value": "finding-effect-001",
+        "provenance": "checkpoint:completed_actions/register-finding"
+      },
+      {
+        "value": "finding-identity-verified",
+        "provenance": "trace:FINDING_IDENTITY_VERIFIED"
+      },
+      {
+        "value": "goal-satisfaction",
+        "provenance": "trace:GOAL_CONTRACT_SATISFIED"
+      }
+    ],
+    "unknown_actions": [],
+    "unverified_requirements": [],
+    "next_safe_action": "NONE"
+  },
+  "integrity": {
+    "canonical_payload_sha256": "1abe8abc3c4444cc3a26ceb4929a4aa4a6f42c68a80d94f932f16b9cca8fcc64"
+  }
+}

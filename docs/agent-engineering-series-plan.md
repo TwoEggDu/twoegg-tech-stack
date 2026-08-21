@@ -177,7 +177,7 @@ BuildPilot Design v1
 | 08 | [Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop](../content/ai-empowerment/agent-engineering-08-agent-loop.md) | L | 否 |
 | 09 | [Planning：Agent 为什么需要计划，又为什么不能迷信计划](../content/ai-empowerment/agent-engineering-09-planning.md) | M | 否 |
 | 10 | [State Machine 与 Workflow：确定性骨架和 Agent Decision Point](../content/ai-empowerment/agent-engineering-10-state-machine-workflow.md) | L | 否 |
-| 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | M | 否 |
+| 11 | [Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery](../content/ai-empowerment/agent-engineering-11-long-running-agent.md) | M | 否 |
 
 ### Part III｜Agent 的信息、状态与知识
 

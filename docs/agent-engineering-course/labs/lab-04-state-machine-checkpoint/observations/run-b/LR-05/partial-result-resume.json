@@ -1,0 +1,32 @@
+{
+  "known_refs": [
+    {
+      "value": "fixture-diagnostic",
+      "provenance": "checkpoint:completed_actions/read-fixture-diagnostic"
+    },
+    {
+      "value": "duplicate-effect-1",
+      "provenance": "fake-store:records/0"
+    },
+    {
+      "value": "duplicate-effect-2",
+      "provenance": "fake-store:records/1"
+    }
+  ],
+  "unknown_actions": [],
+  "unverified_requirements": [
+    {
+      "value": "single-finding-registration",
+      "provenance": "fake-store:records/count-2"
+    },
+    {
+      "value": "verify-finding",
+      "provenance": "checkpoint:remaining_actions/verify-finding"
+    },
+    {
+      "value": "goal-satisfaction",
+      "provenance": "checkpoint:remaining_actions/goal-satisfaction"
+    }
+  ],
+  "next_safe_action": "NONE"
+}

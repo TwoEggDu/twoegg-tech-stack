@@ -1,0 +1,76 @@
+{
+  "schema_version": "checkpoint-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "run_id": "run-lr-05",
+  "case_id": "LR-05",
+  "goal_contract_id": "goal-read-register-verify-v1",
+  "state": "DUPLICATE_SIDE_EFFECT_DETECTED",
+  "state_revision": 3,
+  "last_committed_sequence": 2,
+  "completed_actions": [
+    {
+      "action_id": "read-fixture-diagnostic",
+      "intent_digest": "4e016ea18b3fd5d2cf61dd6ef546d861960ff50bb9663e4728be6776506fa0e7",
+      "result_ref": "fixture-diagnostic",
+      "evidence_refs": [
+        "trace:EVIDENCE_ACTION_COMPLETED"
+      ]
+    }
+  ],
+  "remaining_actions": [
+    "register-finding",
+    "verify-finding",
+    "goal-satisfaction"
+  ],
+  "in_flight_action": null,
+  "retry_budget": {
+    "max_attempts": 2,
+    "attempts_used": 2,
+    "remaining": 0
+  },
+  "last_failure": null,
+  "cancellation": {
+    "requested": false,
+    "observed": false,
+    "origin": "NONE"
+  },
+  "continuation": {
+    "resume_state": "NONE",
+    "next_safe_action": "NONE"
+  },
+  "partial_result": {
+    "known_refs": [
+      {
+        "value": "fixture-diagnostic",
+        "provenance": "checkpoint:completed_actions/read-fixture-diagnostic"
+      },
+      {
+        "value": "duplicate-effect-1",
+        "provenance": "fake-store:records/0"
+      },
+      {
+        "value": "duplicate-effect-2",
+        "provenance": "fake-store:records/1"
+      }
+    ],
+    "unknown_actions": [],
+    "unverified_requirements": [
+      {
+        "value": "single-finding-registration",
+        "provenance": "fake-store:records/count-2"
+      },
+      {
+        "value": "verify-finding",
+        "provenance": "checkpoint:remaining_actions/verify-finding"
+      },
+      {
+        "value": "goal-satisfaction",
+        "provenance": "checkpoint:remaining_actions/goal-satisfaction"
+      }
+    ],
+    "next_safe_action": "NONE"
+  },
+  "integrity": {
+    "canonical_payload_sha256": "e2c29709e2301b69f7a3542c2e0b9a808cb140a433beb8b52eb8e5e53676b63f"
+  }
+}

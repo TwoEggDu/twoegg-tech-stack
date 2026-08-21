@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-21
-- 当前里程碑：Article 10 PRE_COMMIT_RECONCILIATION=`PASS`；Lifecycle=`PUBLISHED` completion-commit candidate；Hugo=`1239 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 11 pointer candidate；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
+- 当前里程碑：Article 11 PRE_COMMIT_RECONCILIATION=`PASS`；Lifecycle=`PUBLISHED` completion-commit candidate；Hugo=`1240 Pages / 0 ERROR / 0 WARNING`
+- 当前生产对象：Article 12 pointer candidate；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -15,14 +15,15 @@
 - Article 08 Published Path：`content/ai-empowerment/agent-engineering-08-agent-loop.md`
 - Article 09 Published Path：`content/ai-empowerment/agent-engineering-09-planning.md`
 - Article 10 Published Path：`content/ai-empowerment/agent-engineering-10-state-machine-workflow.md`
-- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1239 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Article 11 Published Path：`content/ai-empowerment/agent-engineering-11-long-running-agent.md`
+- Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1240 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / PRECHECK / NONE`；Article 11 pointer only）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / PRECHECK / NONE`；Article 12 pointer only）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 OPEN MINOR`
-- 下一允许动作：`GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY -> PUSH_MAIN -> REMOTE_VERIFY -> POST_COMMIT_RECONCILIATION_READ_ONLY`；Article 11必须等待`END ARTICLE 10`
+- 下一允许动作：`GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY -> PUSH_MAIN -> REMOTE_VERIFY -> POST_COMMIT_RECONCILIATION_READ_ONLY`；Article 12必须等待`END ARTICLE 11`
 
 ## 状态图例
 
@@ -46,7 +47,7 @@
 | 08 | Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop | II | L | 否 | `PUBLISHED` | `PASS / 6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL` | Lab 03 `VERIFIED / EVIDENCE_MERGED` | `NONE`；Review / Final Gate=`PASS / 92 / 0 OPEN`；`08-F01 CLOSED`；Publisher / Build / Master Reconciliation=`PASS`；checkpoint `d4693bd` verified |
 | 09 | Planning：Agent 为什么需要计划，又为什么不能迷信计划 | II | M | 否 | `PUBLISHED` | `PASS`（`5 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`） | N/A | `NONE`；Final=`PASS / 91 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-09-planning.md` |
 | 10 | State Machine 与 Workflow：确定性骨架和 Agent Decision Point | II | L | 否 | `PUBLISHED` | `PASS`（`6 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`） | N/A | `10-F01 / 10-F02 / 10-F03 CLOSED`；Final Gate Cycle 2=`PASS / 96 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-10-state-machine-workflow.md` |
-| 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | II | M | 否 | `PLANNED` | `BLOCKED` | Lab 04 `PLANNED / BLOCKED` | 恢复 fixture 与故障注入未设计 |
+| 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | II | M | 否 | `PUBLISHED` | `PASS`（`9 / 9 TRACEABLE / 0 CORE BLOCKED`；C08 split-scoped） | Lab 04 `CONFIRMED / EVIDENCE_MERGED / 8 of 8` | `11-R0-F01 / F02 CLOSED`；Final Gate=`PASS / 94 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-11-long-running-agent.md` |
 | 12 | Context Engineering：每一个 Step 到底应该看到什么 | III | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | III | L | 否 | `PLANNED` | `BLOCKED` | Lab 05 `PLANNED / BLOCKED` | Context fixture 与判据未设计 |
 | 14 | Working Memory 与 Investigation State：当前任务正在想什么 | III | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |

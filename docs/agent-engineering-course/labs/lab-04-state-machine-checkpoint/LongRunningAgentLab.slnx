@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/LongRunningAgentLab/LongRunningAgentLab.csproj" />
+  <Project Path="tests/LongRunningAgentLab.Specs/LongRunningAgentLab.Specs.csproj" />
+</Solution>

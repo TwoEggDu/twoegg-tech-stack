@@ -1,0 +1,3 @@
+{"sequence":1,"process_phase":"START","event":"INTAKE_ACCEPTED","state":"INTAKE","action_id":"register-finding-lr-08","origin":"NONE","attempt":0,"decision":"ACCEPTED","provenance":"fixture:scripted_action_inputs.diagnostic"}
+{"sequence":2,"process_phase":"START","event":"EVIDENCE_ACTION_COMPLETED","state":"EVIDENCE_COLLECTED","action_id":"read-fixture-diagnostic","origin":"NONE","attempt":0,"decision":"COMMITTED","provenance":"trace:INTAKE_ACCEPTED"}
+{"sequence":3,"process_phase":"START","event":"TIMEOUT_SIGNAL_OBSERVED","state":"TIMED_OUT","action_id":"register-finding-lr-08","origin":"TIMEOUT","attempt":0,"decision":"STOP_BEFORE_SIDE_EFFECT","provenance":"fixture:named_fault_id/FI_TIMEOUT_BEFORE_APPLY"}

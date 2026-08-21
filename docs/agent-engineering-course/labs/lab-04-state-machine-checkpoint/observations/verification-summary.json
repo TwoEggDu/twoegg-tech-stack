@@ -1,0 +1,32 @@
+{
+  "schema_version": "lab-observation-summary-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "executed_at": "2026-08-21T13:25:44+08:00",
+  "environment": {
+    "sdk": "10.0.301",
+    "host": "10.0.9",
+    "os": "Microsoft Windows 10.0.19045",
+    "architecture": "X64",
+    "timezone": "China Standard Time"
+  },
+  "commands": {
+    "offline_restore_exit": 0,
+    "accepted_release_build_exit": 0,
+    "accepted_release_build_warnings": 0,
+    "accepted_release_build_errors": 0,
+    "static_contract_exit": 0,
+    "formal_run_a_exit": 0,
+    "formal_run_b_exit": 0,
+    "compare_exit": 0
+  },
+  "cases_executed": 8,
+  "cases_accepted": 8,
+  "fresh_runtime_processes_per_suite": 12,
+  "normalized_files_compared": 105,
+  "normalized_aggregate_sha256": "27890bd8eedafe3cca8397d585b1a1431292d72d093464914ab9976048d89b9a",
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "credential_reads": 0,
+  "lab_observation": "PASS",
+  "claim_status_decision": "NOT_OWNED_BY_LAB_ENGINEER"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "case-result-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "case_id": "LR-05",
+  "run_id": "run-lr-05",
+  "process_phase": "START",
+  "terminal_status": "INTERRUPTED",
+  "terminal_reason": "UNKNOWN_SIDE_EFFECT",
+  "cancellation_origin": "NONE",
+  "effect_count": 1,
+  "store_access_count": 1,
+  "attempts_used": 1,
+  "retry_count": 0,
+  "resume_count": 0,
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "credential_reads": 0
+}

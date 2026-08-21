@@ -1,0 +1,18 @@
+{
+  "schema_version": "case-result-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "case_id": "LR-06",
+  "run_id": "run-lr-06",
+  "process_phase": "RESUME",
+  "terminal_status": "RECOVERY_REFUSED",
+  "terminal_reason": "IN_FLIGHT_ACTION_MISSING",
+  "cancellation_origin": "NONE",
+  "effect_count": 1,
+  "store_access_count": 1,
+  "attempts_used": 1,
+  "retry_count": 0,
+  "resume_count": 1,
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "credential_reads": 0
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "fake-store-v1",
+  "records": [
+    {
+      "effect_id": "effect-001",
+      "action_id": "register-finding-lr-05",
+      "intent_digest": "c48976aac3ae2c9d0647bf89d718b301699365737d4c4ce66b6b0cd3355895e5",
+      "idempotency_key": "idem-lr-05",
+      "delivery_id": "delivery-start-1",
+      "payload": "finding-payload-v1"
+    },
+    {
+      "effect_id": "effect-002",
+      "action_id": "register-finding-lr-05",
+      "intent_digest": "c48976aac3ae2c9d0647bf89d718b301699365737d4c4ce66b6b0cd3355895e5",
+      "idempotency_key": "idem-lr-05",
+      "delivery_id": "delivery-resume-2",
+      "payload": "finding-payload-v1"
+    }
+  ],
+  "access_count": 2
+}

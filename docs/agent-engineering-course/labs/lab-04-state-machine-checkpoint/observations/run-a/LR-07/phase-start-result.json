@@ -1,0 +1,18 @@
+{
+  "schema_version": "case-result-v1",
+  "fixture_version": "lab04-fixture-v1",
+  "case_id": "LR-07",
+  "run_id": "run-lr-07",
+  "process_phase": "START",
+  "terminal_status": "RETRY_BUDGET_EXHAUSTED",
+  "terminal_reason": "INCOMPLETE",
+  "cancellation_origin": "NONE",
+  "effect_count": 0,
+  "store_access_count": 2,
+  "attempts_used": 2,
+  "retry_count": 1,
+  "resume_count": 0,
+  "network_attempts": 0,
+  "provider_attempts": 0,
+  "credential_reads": 0
+}

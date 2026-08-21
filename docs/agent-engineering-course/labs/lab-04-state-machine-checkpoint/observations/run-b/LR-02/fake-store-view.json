@@ -1,0 +1,14 @@
+{
+  "schema_version": "fake-store-v1",
+  "records": [
+    {
+      "effect_id": "effect-001",
+      "action_id": "register-finding-lr-02",
+      "intent_digest": "63683706113eef136dbf0396bc9b44afebf9e2506602848d6f0a21f4af4f6e34",
+      "idempotency_key": "idem-lr-02",
+      "delivery_id": "idem-lr-02",
+      "payload": "finding-payload-v1"
+    }
+  ],
+  "access_count": 1
+}
