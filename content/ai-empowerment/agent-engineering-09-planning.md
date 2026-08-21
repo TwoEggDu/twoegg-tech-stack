@@ -17,6 +17,7 @@ weight: 3100
 ---
 
 > **上一篇**：[Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop]({{< relref "ai-empowerment/agent-engineering-08-agent-loop.md" >}})
+> **下一篇**：[State Machine 与 Workflow：确定性骨架和 Agent Decision Point]({{< relref "ai-empowerment/agent-engineering-10-state-machine-workflow.md" >}})
 
 先看一个构造的教学评审场景：假设团队让 Agent 调查一次构建失败，系统给出一份看起来颇有条理的计划：解析日志、定位报错源码、检查配置、验证修复，界面甚至把其中一些计划项标成了 `done`。
 
