@@ -7,20 +7,20 @@ schema_version: 3
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
-factory_status: RUNNING
-current_article: "12"
-current_gate: PART_II_AUDIT_GIT_DIFF_VERIFY
-last_published_article: "11"
+factory_status: READY
+current_article: "13"
+current_gate: PRECHECK
+last_published_article: "12"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "PART_II"
-  gate: PART_II_AUDIT
+  article: "12"
+  gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/audits/part-ii-audit.md#master-reconciliation-record
+  result_ref: docs/agent-engineering-course/articles/12-context-engineering/subagent-trace.md#wr-master-article-12-pre-commit-reconciliation-retry-1-20260821t204153
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -32,9 +32,9 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 31aef0aad617466f075725551a20bfa20715733f
-next_action: VERIFY_AND_COMMIT_PART_II_AUDIT_CHECKPOINT
-last_updated: "2026-08-21T18:20:27+08:00"
+last_successful_commit: e7f88c03151707d00b7d307645e99cf4710f3363
+next_action: START_ARTICLE_13_PRECHECK
+last_updated: "2026-08-21T20:41:53+08:00"
 ```
 
 ## Field rules
@@ -136,3 +136,5 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-20 23:46 Article 09 BUILD_VERIFY returned a schema-valid `PASS` envelope and Master independently reran the build: `hugo --gc --minify / Hugo 0.157.0 / exit 0 / 1238 Pages / 0 ERROR / 0 WARNING`; rendered Article 09 route and Article 08↔09 navigation exist, tracked build-output changes=`0`. PRE_COMMIT_RECONCILIATION then verified Final / Publisher / Build / workspace / canonical / global state and wrote the completion-commit candidate: Article 09 Lifecycle=`PUBLISHED`, last published=`09`, next pointer=`Article 10 / PRECHECK`, Factory=`READY`, active worker=`NONE`. Article 10 workspace remains absent and PRECHECK is not started. Repository writes after this point are `ZERO`; Git / push / remote / post-commit results must remain runtime-only.
 
 2026-08-20 23:50 first GIT_DIFF_VERIFY attempt correctly failed before commit because staged `git diff --cached --check` reported one extra blank line at EOF in `article-card.md`. No commit or push occurred. Master returned to PRE_COMMIT_RECONCILIATION retry 1, removed only that terminal blank line, recorded this recovery, and preserved every publication, state, canonical and Article 10 absence invariant. This retry supersedes the earlier persistence cut; after it, repository writes are again `ZERO` and GIT_DIFF_VERIFY must restart from the full 14-path scope.
+
+2026-08-21 20:41 Article 12 first GIT_DIFF_VERIFY attempt correctly failed before commit because staged `git diff --cached --check` reported one extra blank line at EOF in `article-card.md`. No commit or push occurred. Master returned to PRE_COMMIT_RECONCILIATION retry 1, removed only that terminal blank line, recorded this recovery, and preserved every publication, state, canonical and Article 13 absence invariant. This retry supersedes the earlier persistence cut; after it, repository writes are again `ZERO` and GIT_DIFF_VERIFY must restart from the full 14-path scope.

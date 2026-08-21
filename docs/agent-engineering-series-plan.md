@@ -183,7 +183,7 @@ BuildPilot Design v1
 
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
-| 12 | Context Engineering：每一个 Step 到底应该看到什么 | L | 否 |
+| 12 | [Context Engineering：每一个 Step 到底应该看到什么](../content/ai-empowerment/agent-engineering-12-context-engineering.md) | L | 否 |
 | 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | L | 否 |
 | 14 | Working Memory 与 Investigation State：当前任务正在想什么 | L | 否 |
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | M | 否 |

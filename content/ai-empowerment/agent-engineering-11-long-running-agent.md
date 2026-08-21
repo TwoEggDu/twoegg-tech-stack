@@ -18,6 +18,8 @@ weight: 3120
 
 > **上一篇**：[State Machine 与 Workflow：确定性骨架和 Agent Decision Point]({{< relref "ai-empowerment/agent-engineering-10-state-machine-workflow.md" >}})
 
+> **下一篇**：[Context Engineering：每一个 Step 到底应该看到什么]({{< relref "ai-empowerment/agent-engineering-12-context-engineering.md" >}})
+
 先看一个长任务里最危险的时间窗口：Agent 调用外部 Tool 注册一条 finding，外部 store 已经写入，但 Runtime 在收到响应前中断。新进程启动后，只看见“上一次调用失败”。
 
 如果它直接再发一次，会出现两种完全不同的结果：外部系统也许识别出同一 action，返回已有记录；也可能把它当成新请求，再创建一条副作用。两条路径表面上都叫“重试”，工程含义却完全不同。
