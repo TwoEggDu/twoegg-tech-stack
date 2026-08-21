@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 11 PRE_COMMIT_RECONCILIATION=`PASS`；Lifecycle=`PUBLISHED` completion-commit candidate；Hugo=`1240 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 12 pointer candidate；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
+- 当前里程碑：Fresh Part II Audit 已覆盖 Article 05—11并给出 `PASS`；独立 audit checkpoint 尚待验证
+- 当前生产对象：Part II Audit `PASS` checkpoint candidate；当前 Gate 为 `PART_II_AUDIT_GIT_DIFF_VERIFY`；Article 12 仍为 `PRECHECK / NOT_STARTED`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -48,10 +48,11 @@
 - 当前 Article 10 状态：`PUBLISHED`；Evidence=`6 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`；Review / Final Gate Cycle 2=`PASS / 96 / 0 OPEN`；`10-F01 / 10-F02 / 10-F03 CLOSED`；checkpoint `b35b1f32` pushed / live-remote verified
 - 当前 Article 10 Published Content：`content/ai-empowerment/agent-engineering-10-state-machine-workflow.md`
 - 当前 Article 10 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1239 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- 当前 Article 11 状态：`PUBLISHED` completion-commit candidate；Evidence=`PASS / 9 of 9 TRACEABLE / 0 CORE BLOCKED / C08 SPLIT-SCOPED`；Required Lab 04 `CONFIRMED / EVIDENCE_MERGED / 8 of 8`；Review / Final Gate=`PASS / 94 / 0 OPEN`；`11-R0-F01 / 11-R0-F02 CLOSED`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`
+- 当前 Article 11 状态：`PUBLISHED`；Evidence=`PASS / 9 of 9 TRACEABLE / 0 CORE BLOCKED / C08 SPLIT-SCOPED`；Required Lab 04 `CONFIRMED / EVIDENCE_MERGED / 8 of 8`；Review / Final Gate=`PASS / 94 / 0 OPEN`；`11-R0-F01 / 11-R0-F02 CLOSED`；checkpoint `31aef0aa` pushed / live-remote verified
 - 当前 Article 11 Published Content：`content/ai-empowerment/agent-engineering-11-long-running-agent.md`
 - 当前 Article 11 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1240 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- Factory Status：`READY / PRECHECK`；Article 11 completion commit须由当前checkpoint diff创建并以Git history为准；Article 12 workspace / Published Content不存在，PRECHECK未启动
+- 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 4 OPEN MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
+- Factory Status：`RUNNING / PART_II_AUDIT_GIT_DIFF_VERIFY`；下一动作由 Master 完成 audit-only checkpoint、push 与 remote verification，之前禁止 Article 12 PRECHECK / kickoff
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -75,6 +76,7 @@
 | [production-workflow.md](production-workflow.md) | 生命周期、状态机、Gate 与发布规则 |
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
 | [Part I Audit](audits/part-i-audit.md) | Article 01—04 的跨篇一致性、Lab、publication 与 checkpoint 审计；Gate `PASS`，3 个 `OPEN MINOR` |
+| [Part II Audit](audits/part-ii-audit.md) | Article 05—11 的跨篇一致性、Labs 02—04、publication 与 checkpoint 审计；Gate `PASS`，4 个 `OPEN MINOR` |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
@@ -86,13 +88,13 @@
 | [articles/08-agent-loop/](articles/08-agent-loop/) | `PUBLISHED`；Review / Final Gate `PASS / 92 / 0 OPEN`；Required Lab 03 `VERIFIED / EVIDENCE_MERGED`；checkpoint `d4693bd` verified |
 | [articles/09-planning/](articles/09-planning/) | `PUBLISHED`；Review / Final Gate `PASS / 91 / 0 OPEN`；checkpoint `7b9d733f` pushed / live-remote verified |
 | [articles/10-state-machine-workflow/](articles/10-state-machine-workflow/) | `PUBLISHED`；Final Gate Cycle 2 `PASS / 96 / 0 OPEN`；checkpoint `b35b1f32` pushed / live-remote verified |
-| [articles/11-long-running-agent/](articles/11-long-running-agent/) | `PUBLISHED` completion-commit candidate；Final Gate `PASS / 94 / 0 OPEN`；Required Lab 04 `CONFIRMED / EVIDENCE_MERGED`；Publisher / Build / PRE_COMMIT_RECONCILIATION `PASS` |
+| [articles/11-long-running-agent/](articles/11-long-running-agent/) | `PUBLISHED`；Final Gate `PASS / 94 / 0 OPEN`；Required Lab 04 `CONFIRMED / EVIDENCE_MERGED`；checkpoint `31aef0aa` pushed / live-remote verified |
 
 ## 资产边界
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo 正文；Article 00—10 已有remote-verified completion，Article 11为completion-commit candidate；workspace Draft 继续独立保留。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—11 已发布，Part II Audit 为独立 checkpoint candidate；workspace Draft 继续独立保留。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

@@ -7,20 +7,20 @@ schema_version: 3
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
-factory_status: READY
+factory_status: RUNNING
 current_article: "12"
-current_gate: PRECHECK
+current_gate: PART_II_AUDIT_GIT_DIFF_VERIFY
 last_published_article: "11"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "11"
-  gate: PRE_COMMIT_RECONCILIATION
+  article: "PART_II"
+  gate: PART_II_AUDIT
   execution_type: MASTER_DETERMINISTIC
-  execution_id: /root/master_article_11_pre_commit_reconciliation_retry1
-  result_ref: docs/agent-engineering-course/articles/11-long-running-agent/subagent-trace.md#wr-master-article-11-pre-commit-reconciliation-retry1-20260821t154441
+  execution_id: /root
+  result_ref: docs/agent-engineering-course/audits/part-ii-audit.md#master-reconciliation-record
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -32,9 +32,9 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: b35b1f3225f9715f123496d39457f529362b997d
-next_action: START_ARTICLE_12_PRECHECK
-last_updated: "2026-08-21T15:44:41+08:00"
+last_successful_commit: 31aef0aad617466f075725551a20bfa20715733f
+next_action: VERIFY_AND_COMMIT_PART_II_AUDIT_CHECKPOINT
+last_updated: "2026-08-21T18:20:27+08:00"
 ```
 
 ## Field rules

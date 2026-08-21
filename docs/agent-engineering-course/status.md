@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-21
-- 当前里程碑：Article 11 PRE_COMMIT_RECONCILIATION=`PASS`；Lifecycle=`PUBLISHED` completion-commit candidate；Hugo=`1240 Pages / 0 ERROR / 0 WARNING`
-- 当前生产对象：Article 12 pointer candidate；Lifecycle `PLANNED`；当前 Gate pointer 为 `PRECHECK / NOT_STARTED`
+- 当前里程碑：Fresh Part II Audit 已覆盖 Article 05—11并给出 `PASS`；独立 audit checkpoint 尚待验证
+- 当前生产对象：Part II Audit `PASS` checkpoint candidate；当前 Gate 为 `PART_II_AUDIT_GIT_DIFF_VERIFY`；Article 12 仍为 `PRECHECK / NOT_STARTED`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -19,11 +19,12 @@
 - Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1240 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / PRECHECK / NONE`；Article 12 pointer only）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / PART_II_AUDIT_GIT_DIFF_VERIFY / NONE`；Article 12 pointer only）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 OPEN MINOR`
-- 下一允许动作：`GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY -> PUSH_MAIN -> REMOTE_VERIFY -> POST_COMMIT_RECONCILIATION_READ_ONLY`；Article 12必须等待`END ARTICLE 11`
+- Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 4 OPEN MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
+- 下一允许动作：Master 完成 audit-only diff、`Audit Agent Engineering Part II` 独立 commit、push 与 remote verification；此前禁止 Article 12 PRECHECK / kickoff
 
 ## 状态图例
 
@@ -99,3 +100,4 @@
 13. Article 05 独立 checkpoint `c0cf180c281ea5dbb70c891176735f4ed9e34d3f` 已完成 message / 13-file scope / clean tree / log / show verification，`END ARTICLE 05` 成立。Article 06 PRECHECK、ARTICLE_KICKOFF 与 WORKSPACE_INIT=`PASS`；Required Lab 02 在 Preliminary Evidence / frozen Design 前保持 `PLANNED / BLOCKED`。
 14. Article 06 按Required Lab流程完成Preliminary Evidence、Lab 02 frozen Design、两次14-row execution、Evidence Merge、Outline、Draft、两轮Revision / Recheck、Final Gate、Publisher、Hugo与Master Reconciliation；当时为`PUBLISHED / GIT_DIFF_VERIFY`，Review=`PASS / 93 / 0 Findings`，Evidence=`8 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`。
 15. Article 07 完成Research / Evidence、Outline、Draft、两转Review Recheck并关闭`07-F01 / 07-F02`，Final Gate=`PASS / 92 / 0 Findings`；Publisher、Semantic Diff、Hugo与Master Reconciliation均`PASS`，Evidence=`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 1 PROPOSAL`；当时为`PUBLISHED / GIT_DIFF_VERIFY`。
+16. Fresh Part II Audit 已在 Article 11 checkpoint push / live-remote verification 后覆盖 Article 05—11；Gate=`PASS`，Findings=`0 BLOCKER / 0 MAJOR / 4 OPEN MINOR / 0 EDITORIAL`。Master 已复核 Labs 02—04、navigation、published fidelity、唯一 Article checkpoint、live remote 与 Hugo `1240 Pages / 0 ERROR / 0 WARNING`；独立 audit checkpoint verification 前 Article 12 保持未启动。
