@@ -32,10 +32,12 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: e7f88c03151707d00b7d307645e99cf4710f3363
+last_successful_commit: a87f058ae2642870ade75fa7f23ac4396f17b94c
 next_action: START_ARTICLE_13_PRECHECK
-last_updated: "2026-08-21T20:41:53+08:00"
+last_updated: "2026-08-22T10:29:06+08:00"
 ```
+
+> Reconciliation proof（2026-08-22）：Article 12 completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c` 已满足local `HEAD`、`origin/main`与live remote `main`一致，`END_ARTICLE 12`成立。`last_worker_result`保留Article 12 pre-commit envelope作为历史审计记录，其`next_allowed_gate`不是当前Gate；当前有效pointer为`READY / Article 13 / PRECHECK / NOT_STARTED / active worker NONE`，Article 13尚未执行`ARTICLE_KICKOFF`。
 
 ## Field rules
 

@@ -1,5 +1,7 @@
 # Agent Engineering Course Part I Audit
 
+> Current reconciliation status：`PI-F01—PI-F03 CLOSED`。2026-08-22 的独立 Course Reconciliation 已逐项核对并修复仍然存在的 metadata / glossary drift；原审计过程与 audit-time `OPEN` 叙述保留为历史证据，以下 Finding 状态字段给出当前 closure。
+
 ## Audit identity / scope / baseline
 
 - Audit ID：`AGENT_ENGINEERING_PART_I_AUDIT_2026-08-20`
@@ -77,9 +79,9 @@ Repository root 不存在 `.codegraph/`，因此按 repository instruction 跳�
 |---|---|---|
 | `BLOCKER` | `0` | 未发现会使 Part I 核心结论、required Lab 或 publication checkpoint 不成立的问题 |
 | `MAJOR` | `0` | 未发现必须退回某篇 Article 状态才能进入 Article 05 的问题 |
-| `MINOR` | `3 OPEN` | Article README durable pointer、canonical Lab 状态、glossary / Article 04 local evidence 存在窄范围漂移 |
+| `MINOR` | `0 OPEN / 3 CLOSED` | 原审计识别的 Article README pointer、canonical Lab 状态与 glossary drift 已由 2026-08-22 Course Reconciliation 最小关闭 |
 | `EDITORIAL` | `0` | 未单列纯排版 Finding |
-| Part I Gate | `PASS` | 合同允许在只有普通 `MINOR` 时继续；新 Findings 保持 `OPEN`，不得伪装关闭 |
+| Part I Gate | `PASS` | 原审计 Gate 不变；三项普通 `MINOR` 已在独立 reconciliation 中以 repository evidence 关闭 |
 | Article 05 eligibility | `CONDITIONAL YES` | 只有 Master 完成本报告 / global result reconciliation，以 `Audit Agent Engineering Part I` 独立 commit 保存并验证后，才允许 Article 05 PRECHECK / kickoff |
 
 ## Cross-article dependency and learning map
@@ -138,7 +140,7 @@ Model API contract
 - Affected Articles：`01 / 02 / 03 / 04`
 - Severity：`MINOR`
 - Category：`DURABLE_STATE / RESUME_METADATA / CONTRADICTION`
-- Status：`OPEN`
+- Status：`CLOSED / 2026-08-22 COURSE_RECONCILIATION`
 - Evidence：
   - Article 01 README 仍把 Next Allowed Action 指向 Article 02 `REVISION / REVIEW_RECHECK`。
   - Article 02 README 的 Current Gate 仍为 `ARTICLE_COMMIT_VERIFY`，Stop Line 仍说 Article 02 checkpoint 尚待完成。
@@ -153,7 +155,7 @@ Model API contract
 - Affected Articles：`03`，以及 canonical Part I Lab table
 - Severity：`MINOR`
 - Category：`CANONICAL_METADATA / REQUIRED_LAB`
-- Status：`OPEN`
+- Status：`CLOSED / 2026-08-22 COURSE_RECONCILIATION`
 - Evidence：
   - canonical `docs/agent-engineering-series-plan.md` 的 Engineering Labs 表仍把 `Lab 01 Structured Output` 的“实现状态”写为 `未实现`。
   - Article 03 checkpoint `857fe9f...` 已包含完整 Lab source、tests、fixtures、schema、logs、observations 与 lockfiles。
@@ -167,7 +169,7 @@ Model API contract
 - Affected Articles：`01 / 04`，以及 course glossary
 - Severity：`MINOR`
 - Category：`GLOSSARY_DRIFT / LOCAL_EVIDENCE`
-- Status：`OPEN`
+- Status：`CLOSED / 2026-08-22 COURSE_RECONCILIATION`
 - Evidence：
   - Article 04 `evidence.md` 在 `04-C02` Observation 中写“glossary 也把 Adapter、Gateway、Runtime 分开”，在 `04-C06` Observation 中写“glossary 把 Retry 与 Recovery 分开”。
   - 当前 glossary 只有 `Agent Runtime`、`Provider` 等相关行，没有 `Model Adapter`、`LLM Gateway`、`Retry` 或 `Recovery` 条目，不能直接支持上述两句。
@@ -175,6 +177,13 @@ Model API contract
   - Article 04 对 `04-C02 / C06 / C07` 均保持 `PARTIAL`，正文内又独立给出课程 working boundary，因此该漂移没有把课程定义伪装成行业标准，也没有推翻正文。
 - Required action：在不扩大 claim 的前提下二选一或组合处理：补齐 glossary 的课程术语及首次引入，明确 Provider 的主体 / implementation 两个语境；或从 Article 04 Evidence 中移除不能成立的 glossary support wording，保留 Article 03 / official product evidence 与 `PARTIAL` 限定。
 - Gate effect：不阻止 Part I PASS；在后续继续复用这些术语前应闭合。
+
+## Reconciliation closure evidence（2026-08-22）
+
+- `PI-F01 CLOSED`：Article 01—04 README 的 Current Gate / Next Allowed Action / Stop Line 已改为 retrospective `END_ARTICLE / CHECKPOINT_VERIFIED`；当前 course transaction 只由 global run state 路由。
+- `PI-F02 CLOSED`：canonical Engineering Labs 表已按真实 Lab artifact / status 同步 Lab 01，并同时保持 fixture scope ceiling。
+- `PI-F03 CLOSED`：Glossary 已补 Model Adapter、LLM Gateway、Retry、Recovery，Provider 首次引入改为 Article 01并区分主体与 implementation target；Article 04 的 `PARTIAL / PROPOSAL / Runtime UNVERIFIED` Evidence 强度未改变。
+- Boundary：未修改 Article 01—04 Published Content、Article Evidence claim status、Lab raw observations、fixture、source 或 tests。
 
 ## QUALITY_DEGRADATION_REVIEW
 

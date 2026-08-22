@@ -10,9 +10,9 @@
 - Evidence Status：`CONFIRMED`（`11 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 1 PROPOSAL`）
 - Required Lab：`NONE`
 - Lab Status：`N/A`
-- Current Gate：`PUBLISHED + 01-IR-F02 CLOSED`
+- Current Gate：`END_ARTICLE / CHECKPOINT_VERIFIED`
 - Post-publication Review：`01-IR-F01 CLOSED`（历史记录）；`01-IR-F02 CLOSED / PASS`（Anthropic generic / top-level baseline 与 model-specific mid-conversation `role: system` 例外）
-- Next Allowed Action：`Article 02｜Resume REVISION / REVIEW_RECHECK`
+- Next Allowed Action：`NONE / GLOBAL_POINTER_OWNS_CURRENT_COURSE_TRANSACTION`
 - Blocker：`NONE`
 - Published Content：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Published Route：`/ai-empowerment/agent-engineering-01-model-api-messages-token/`
@@ -101,4 +101,4 @@
 
 ## Stop Line
 
-Article 01 继续保持 `PUBLISHED`，没有伪造完整生产生命周期重跑。本次 `01-IR-F02` 已完成 Research / Evidence / Outline / Draft / Published Content 同步、fresh Independent Reviewer recheck 与 Hugo Build PASS，修复范围保持为独立 post-publication hotfix checkpoint；未修改 Article 02、global durable state、canonical 或系列索引。下一动作回到 Article 02 的 `REVISION / REVIEW_RECHECK`。
+Article 01 保持 `PUBLISHED`；Foundation publication 与两次 post-publication hotfix 均已由 Git history 保存，最新 hotfix checkpoint=`798443c1d41f03960253b1190fcbc91425d4f285`。本 workspace 不再路由后续课程 transaction；当前课程对象与下一动作只由 global run state 决定。

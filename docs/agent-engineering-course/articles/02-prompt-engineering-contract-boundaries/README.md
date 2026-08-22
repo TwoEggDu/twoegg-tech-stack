@@ -10,8 +10,8 @@
 - Evidence Status：`PARTIAL`（`7 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 1 PROPOSAL`）
 - Required Lab：`NONE`
 - Lab Status：`N/A`
-- Current Gate：`ARTICLE_COMMIT_VERIFY`
-- Next Allowed Action：`START_ARTICLE_03_PRECHECK_AFTER_ARTICLE_02_COMMIT_VERIFIED`
+- Current Gate：`END_ARTICLE / CHECKPOINT_VERIFIED`
+- Next Allowed Action：`NONE / GLOBAL_POINTER_OWNS_CURRENT_COURSE_TRANSACTION`
 - Review Findings：`02-F01 CLOSED`、`02-F02 CLOSED`；Unclosed Findings = `NONE`
 - Evidence Constraints：`02-C04` 只能使用收窄措辞，`02-C09` 必须保持 `NOT_EXECUTED / PROPOSAL`
 - Published Content：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -61,4 +61,4 @@
 
 ## Stop Line
 
-`PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / RESEARCH / EVIDENCE / OUTLINE / DRAFT / FIRST_PASS_INDEPENDENT_REVIEW / REVISION / REVIEW_RECHECK / FINAL_GATE / PUBLISHER / BUILD_VERIFY / MASTER_STATE_RECONCILIATION` 已完成；当前为 `PUBLISHED`。Article 02 transaction 仍须完成 Git Diff Verify、独立 `Publish Agent Engineering Article 02` checkpoint commit 与 commit verification；只有 Git history 证明 `ARTICLE_COMMIT_VERIFIED = PASS` 后，才允许启动 Article 03 PRECHECK。
+Article 02 已完成全部 production Gate、独立 completion commit 与 commit verification；checkpoint=`b359a329df02ce7487b0cb1a9feaad66c886d4dc`，Lifecycle=`PUBLISHED`。本 workspace 不再路由 Article 03 或任何后续 transaction；当前课程对象与下一动作只由 global run state 决定。

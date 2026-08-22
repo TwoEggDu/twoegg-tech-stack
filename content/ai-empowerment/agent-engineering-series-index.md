@@ -45,7 +45,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
     <li><strong>Tool Runtime</strong><span>Validate、Policy、Execute、Result</span></li>
     <li><strong>Agent Loop</strong><span>Decide、Act、Observe、Stop</span></li>
     <li><strong>Planning / Workflow</strong><span>计划、状态机、Checkpoint</span></li>
-    <li><strong>Context</strong><span>Packing、Debugging、可重建性</span></li>
+    <li><strong>Context</strong><span>装配、Snapshot、Receipt；Article 13 再讲 Debugging 与可重建性</span></li>
     <li><strong>Memory / RAG</strong><span>Working、Session、Long-term、Knowledge</span></li>
     <li><strong>Skill</strong><span>按需加载领域方法</span></li>
     <li><strong>Reliable Agent</strong><span>Evidence、Permission、Budget、Trace、Eval</span></li>
@@ -88,15 +88,15 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
         <li class="is-published"><span class="lesson-id">06</span><a href="{{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}}">Tool Runtime：Validate、Policy、Execute、Result 与 Trace</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">07</span><a href="{{< relref "ai-empowerment/agent-engineering-07-mcp-external-capability-boundary.md" >}}">MCP 与外部能力边界：协议解决什么，宿主仍需解决什么</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">08</span><a href="{{< relref "ai-empowerment/agent-engineering-08-agent-loop.md" >}}">Agent Loop：Turn、Step、Decide、Act、Observe 与 Stop</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">09</span><span>Planning：Agent 为什么需要计划，又为什么不能迷信计划</span><span class="lesson-status">计划中</span></li>
-        <li class="is-planned"><span class="lesson-id">10</span><span>State Machine 与 Workflow：确定性骨架和 Agent Decision Point</span><span class="lesson-status">计划中</span></li>
-        <li class="is-planned"><span class="lesson-id">11</span><span>Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">09</span><a href="{{< relref "ai-empowerment/agent-engineering-09-planning.md" >}}">Planning：Agent 为什么需要计划，又为什么不能迷信计划</a><span class="lesson-status">已发布</span></li>
+        <li class="is-published"><span class="lesson-id">10</span><a href="{{< relref "ai-empowerment/agent-engineering-10-state-machine-workflow.md" >}}">State Machine 与 Workflow：确定性骨架和 Agent Decision Point</a><span class="lesson-status">已发布</span></li>
+        <li class="is-published"><span class="lesson-id">11</span><a href="{{< relref "ai-empowerment/agent-engineering-11-long-running-agent.md" >}}">Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery</a><span class="lesson-status">已发布</span></li>
       </ol>
     </section>
     <section class="course-part">
       <header><p class="course-part-label">Part III · 12—17</p><h3>Agent 的信息、状态与知识</h3></header>
       <ol class="course-lessons">
-        <li class="is-planned"><span class="lesson-id">12</span><span>Context Engineering：每一个 Step 到底应该看到什么</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">12</span><a href="{{< relref "ai-empowerment/agent-engineering-12-context-engineering.md" >}}">Context Engineering：每一个 Step 到底应该看到什么</a><span class="lesson-status">已发布</span></li>
         <li class="is-planned"><span class="lesson-id">13</span><span>Context Debugging：Packing、Compression、Pollution 与可重建性</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">14</span><span>Working Memory 与 Investigation State：当前任务正在想什么</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">15</span><span>Session、Long-term Memory 与 Project Memory：事实、经验和作用域</span><span class="lesson-status">计划中</span></li>
@@ -192,7 +192,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
     <article class="is-verified"><span>Lab 01 · Article 03 后</span><h3>Structured Output</h3><p>Parse、Schema、DTO 与 Domain Validation。</p><a href="{{< relref "ai-empowerment/agent-engineering-03-structured-output-machine-contract.md" >}}">查看对应课程 · 已验证</a></article>
     <article class="is-verified"><span>Lab 02 · Article 06 后</span><h3>Tool Runtime</h3><p>Validate、Policy、Timeout、Result 与 Trace。</p><a href="{{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}}">查看对应课程 · 已验证</a></article>
     <article class="is-verified"><span>Lab 03 · Article 08 后</span><h3>Minimal Agent Loop</h3><p>Turn、Step、Observation、Stop 与预算终止。</p><a href="{{< relref "ai-empowerment/agent-engineering-08-agent-loop.md" >}}">查看对应课程 · 已验证</a></article>
-    <article><span>Lab 04 · Article 11 后</span><h3>State Machine + Checkpoint</h3><p>State、Checkpoint、Resume 与 Cancellation。</p><strong>计划中 · 无公开链接</strong></article>
+    <article class="is-verified"><span>Lab 04 · Article 11 后</span><h3>State Machine + Checkpoint</h3><p>State、Checkpoint、Resume 与 Cancellation。</p><a href="{{< relref "ai-empowerment/agent-engineering-11-long-running-agent.md" >}}">查看对应课程 · 已验证</a></article>
     <article><span>Lab 05 · Article 13 后</span><h3>Context Debugging</h3><p>Context Snapshot、Pollution、Truncation 与重建。</p><strong>计划中 · 无公开链接</strong></article>
     <article><span>Lab 06 · Article 22 后</span><h3>Trace + Eval</h3><p>Trace、Failure Layer、Golden Dataset 与 Regression。</p><strong>计划中 · 无公开链接</strong></article>
   </div>

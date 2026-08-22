@@ -10,8 +10,8 @@
 - Evidence Status：`PASS`（`3 CONFIRMED / 4 PARTIAL / 1 PROPOSAL / 0 BLOCKED`）
 - Required Lab：`NONE`
 - Lab Status：`N/A`
-- Current Gate：`GIT_DIFF_VERIFY`
-- Next Allowed Action：`VERIFY_AND_COMMIT_ARTICLE_04_CHECKPOINT`
+- Current Gate：`END_ARTICLE / CHECKPOINT_VERIFIED`
+- Next Allowed Action：`NONE / GLOBAL_POINTER_OWNS_CURRENT_COURSE_TRANSACTION`
 - Blocker：`NONE`
 - Review Findings：`04-F01 CLOSED`；Unclosed Findings=`NONE`
 - Published Content：`content/ai-empowerment/agent-engineering-04-model-adapter-llm-gateway.md`
@@ -65,4 +65,4 @@ ARTICLE_KICKOFF、WORKSPACE_INIT、RESEARCH、EVIDENCE_GATE、OUTLINE、AUTHOR_D
 
 ## Stop Line
 
-Reviewer、Publisher、Build 与 Master State Reconciliation 均为 `PASS`，Lifecycle=`PUBLISHED`。当前只允许 Master 执行 GIT_DIFF_VERIFY、Article 04 checkpoint commit 与 commit verification；不得启动 Article 05，也不得跳过 Part I Audit 独立 checkpoint。
+Article 04 已完成 Reviewer、Publisher、Build、Master Reconciliation、独立 completion commit 与 commit verification；checkpoint=`ac10060b82d21534a014d7a4bef3b3e03f7bd475`，Lifecycle=`PUBLISHED`，后续 Part I Audit checkpoint也已验证。本 workspace 不再路由 Article 05 或任何后续 transaction；当前课程对象与下一动作只由 global run state 决定。

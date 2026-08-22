@@ -11,8 +11,8 @@
 - Evidence Status：`CONFIRMED`（`7 CONFIRMED / 0 PARTIAL / 0 BLOCKED`）
 - Required Lab：`Lab 01｜Structured Output`
 - Lab Status：`CONFIRMED / EVIDENCE_MERGED`
-- Current Gate：`GIT_DIFF_VERIFY`
-- Next Allowed Action：`ARTICLE_CHECKPOINT_COMMIT_AFTER_DIFF_VERIFY`
+- Current Gate：`END_ARTICLE / CHECKPOINT_VERIFIED`
+- Next Allowed Action：`NONE / GLOBAL_POINTER_OWNS_CURRENT_COURSE_TRANSACTION`
 - Blocker：`NONE`
 - Published Content：`content/ai-empowerment/agent-engineering-03-structured-output-machine-contract.md`
 - Publisher Result：`PASS`
@@ -77,4 +77,4 @@
 
 ## Stop Line
 
-`PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT / RESEARCH / PRELIMINARY_EVIDENCE / LAB_DESIGN / LAB_EXECUTE / LAB_OBSERVATION / EVIDENCE_MERGE / EVIDENCE_GATE / OUTLINE / AUTHOR_DRAFT / REVIEW / REVISION / REVIEW_RECHECK / FINAL_GATE / PUBLISHER / BUILD_VERIFY / MASTER_STATE_RECONCILIATION` 已完成，Lifecycle 为 `PUBLISHED`。下一动作只能由 Master 执行 Article 03 `GIT_DIFF_VERIFY -> ARTICLE_CHECKPOINT_COMMIT -> ARTICLE_COMMIT_VERIFY`；独立 checkpoint 未验证前不得启动 Article 04。
+Article 03 已完成 Required Lab、全部 production Gate、独立 completion commit 与 commit verification；checkpoint=`857fe9fdc6baa541ced28d428d0c7fbe07d45ed9`，Lifecycle=`PUBLISHED`。本 workspace 不再路由 Article 04 或任何后续 transaction；当前课程对象与下一动作只由 global run state 决定。

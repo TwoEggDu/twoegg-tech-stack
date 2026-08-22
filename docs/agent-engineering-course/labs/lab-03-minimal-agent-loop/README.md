@@ -6,15 +6,15 @@
 - Execution Owner：`Lab Engineer`
 - Observation Owner：`Lab Engineer`
 - Evidence Merge Owner：`Researcher`
-- Status：`DESIGN_FROZEN / NOT_IMPLEMENTED / NOT_EXECUTED`
+- Status：`DESIGN_FROZEN / IMPLEMENTED / VERIFIED / EVIDENCE_MERGED`
 - Design Freeze Date：`2026-08-20`（Asia/Shanghai）
-- Evidence Gate：`NOT_READY`
+- Evidence Gate：`PASS / 6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`
 - Provider：`NONE`
 - Decision Source：`ScriptedDecisionSource v1`（deterministic substitute）
 - Network / Credentials：`NONE / NONE`
 - Safety：`READ-ONLY FIXTURES / NO EXTERNAL SIDE EFFECTS`
 
-> 这是 frozen Lab Card / Design，不是实验报告。本目录当前只允许存在本 README；`source/`、`tests/`、`fixtures/`、`observations/` 均由后续 Lab Engineer 按本 Design 创建。以下所有结果都是 `Expected`，`Observed = NONE`。
+> 本文件同时保留运行前冻结的 Lab Card / Design 与后续追加的执行、Observation 和 Evidence Merge 记录。目录中的 `src/`、`tests/`、`fixtures/` 与 `observations/` 已存在；Design / Expected 继续作为运行前判据，不得用 Observed 反向改写，raw artifacts 也不得在本次 reconciliation 中重生成或覆盖。
 
 ## 1. Lab Goal
 

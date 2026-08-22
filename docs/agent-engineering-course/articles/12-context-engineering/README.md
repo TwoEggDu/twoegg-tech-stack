@@ -5,13 +5,13 @@
 - Part: `III｜Context Engineering 与 Memory`
 - Course Weight: `L`
 - Optional: `NO`
-- Lifecycle Status: `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`
+- Lifecycle Status: `PUBLISHED / COMPLETED / END_ARTICLE`
 - Evidence Status: `PASS / 9 of 9 TRACEABLE / 0 CORE BLOCKED`
 - Required Lab: `NONE`（为未来 Lab 05 产出 3 个 Context Snapshot）
 - Mode: `STANDARD_ARTICLE`
-- Current Gate: `PRE_COMMIT_RECONCILIATION / PASS`
+- Current Gate: `END_ARTICLE / CHECKPOINT_VERIFIED`
 - Active Worker: `NONE`
-- Next Allowed Action: `GIT_DIFF_VERIFY`
+- Next Allowed Action: `NONE / GLOBAL_POINTER_OWNS_CURRENT_COURSE_TRANSACTION`
 - Blocker: `NONE`
 
 ## Dependencies
@@ -50,10 +50,11 @@
 - Build Verify：Publisher `/root/article_12_build_verify` 已登记；只允许运行Hugo、核验rendered route / navigation并更新本README Build Result，不得改Published Content或global state。
 - Build Verify Result：`PASS / MASTER VERIFIED`；Worker definitive run与Master独立重跑均为Hugo `0.157.0 / exit 0 / 1241 Pages / 0 warnings / 0 errors`；Article 12 route / title / shortest-thesis marker与Article 11↔12 rendered navigation全部PASS。首次sandbox launcher denial未启动Hugo，保留为execution note。
 - PRE_COMMIT_RECONCILIATION：`PASS / RETRY 1 / LAST REPOSITORY WRITE`；首次GIT_DIFF_VERIFY在commit前因`article-card.md`末尾多一空行而正确失败，未产生commit或push。Master回到本Gate，只删除该终止空行并同步recovery记录；Lifecycle、Published path、Evidence / Review / Build、canonical Article 12 link、status、course README与Factory pointer仍对齐。Article 13 workspace / Published Content仍absent；pointer candidate=`READY / Article 13 PRECHECK`，不等于Article 13 Kickoff。此retry记录后repository writes=`ZERO`，GIT_DIFF_VERIFY必须从完整14-path scope重启。
+- Completion Verification（runtime fact / later metadata reconciliation）：唯一commit=`a87f058ae2642870ade75fa7f23ac4396f17b94c / Publish Agent Engineering Article 12 / 14 paths`；commit check、clean tree、single push与local `HEAD == origin/main == live remote main`均`PASS`。这条记录由2026-08-22独立Course Reconciliation写入，不改变原Article transaction的post-commit zero-write事实。
 
 ## Stop Line
 
-Article 12已形成`PUBLISHED` completion-commit candidate；尚未完成Git checkpoint、push或remote verification。Article 13 workspace、Lab 05实现与Published Content均未创建；完成Article 12 remote verification后本任务必须停止，不执行Article 13 PRECHECK / Kickoff。
+Article 12已完成唯一completion commit、push与remote verification，`END_ARTICLE 12`成立。Article 13 workspace、Lab 05实现与Published Content均未创建；后续课程对象只由global pointer保持为`Article 13 / PRECHECK / NOT_STARTED`，本 reconciliation 不执行Article 13 PRECHECK或Kickoff。
 
 ## Publication Result
 

@@ -243,12 +243,12 @@ S 是 Bridge / Overview，M 是 Standard Core Lesson，L 是 Major Core Lesson�
 
 | Lab | 插入位置 | 默认技术栈 | 核心观察 | 实现状态 |
 |---|---|---|---|---|
-| Lab 01 Structured Output | 03 后 | C# / .NET | Parse、Schema、Domain Validation | 未实现 |
-| Lab 02 Tool Runtime | 06 后 | C# / .NET | Validate、Policy、Timeout、Result | 未实现 |
-| Lab 03 Minimal Agent Loop | 08 后 | C# / .NET | Turn、Step、Observation、Stop | 未实现 |
-| Lab 04 State Machine + Checkpoint | 11 后 | C# / .NET | State、Checkpoint、Resume、Cancellation | 未实现 |
-| Lab 05 Context Debugging | 13 后 | C# / .NET | Context Snapshot、Pollution、Truncation | 未实现 |
-| Lab 06 Trace + Eval | 22 后 | C# / .NET | Trace、Failure Layer、Regression | 未实现 |
+| Lab 01 Structured Output | 03 后 | C# / .NET | Parse、Schema、Domain Validation | `EXECUTED / EVIDENCE_MERGED / FIXTURE-SCOPED` |
+| Lab 02 Tool Runtime | 06 后 | C# / .NET | Validate、Policy、Timeout、Result | `EVIDENCE_MERGED / 5 CLAIMS CONFIRMED / FIXTURE-SCOPED` |
+| Lab 03 Minimal Agent Loop | 08 后 | C# / .NET | Turn、Step、Observation、Stop | `VERIFIED / EVIDENCE_MERGED / FIXTURE-SCOPED` |
+| Lab 04 State Machine + Checkpoint | 11 后 | C# / .NET | State、Checkpoint、Resume、Cancellation | `CONFIRMED / EVIDENCE_MERGED / 8 of 8 / FIXTURE-SCOPED` |
+| Lab 05 Context Debugging | 13 后 | C# / .NET | Context Snapshot、Pollution、Truncation | `PLANNED / BLOCKED / NOT_IMPLEMENTED` |
+| Lab 06 Trace + Eval | 22 后 | C# / .NET | Trace、Failure Layer、Regression | `PLANNED / BLOCKED / NOT_IMPLEMENTED` |
 
 Lab 结论只证明当前 Fixture 和实验，不自动升级为通用事实。Lab 生产入口见 `docs/agent-engineering-course/labs/README.md`。
 

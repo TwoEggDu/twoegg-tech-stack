@@ -1,5 +1,7 @@
 # Agent Engineering Course Part II Audit
 
+> Current reconciliation status: `PII-F01—PII-F04 CLOSED`. The independent 2026-08-22 Course Reconciliation rechecked and minimally repaired every still-reproducible metadata finding; audit-time `OPEN` narrative remains historical evidence, while the finding status fields below are current.
+
 ## Baseline
 
 - Scope: `PART_II`, Article `05—11`; gate: `PART_II_AUDIT`; execution type: `REAL_SUBAGENT`.
@@ -66,7 +68,7 @@ The canonical `05 → 06 → 07 → 08 → 09 → 10 → 11` progression is inta
 ### PII-F01 — Part II formal working terms are missing from the canonical glossary
 
 - Affected Articles: `05—11` (most directly 10).
-- Severity / status: `MINOR / OPEN`.
+- Severity / status: `MINOR / CLOSED (2026-08-22 COURSE_RECONCILIATION)`.
 - Evidence: glossary includes `Tool` (formal 05—07), `Agent` (08), and `Workflow` (10), but lacks Part II working terms: Function Calling, Tool Runtime, MCP, Plan, Observation, State / State Machine, Guard, Invariant, Agent Decision Point, Checkpoint, Retry, Cancellation, and Recovery. Article 10's claim trace labels Stage / Step / Invariant vocabulary as a “术语表” while no entries exist.
 - Required action: glossary-only follow-up adding concise course definitions, first introduction, formal expansion and boundaries; Article 10 wording must point only to real entries. Do not make product names universal definitions.
 - Gate effect: non-blocking; each published article still declares local scope.
@@ -74,7 +76,7 @@ The canonical `05 → 06 → 07 → 08 → 09 → 10 → 11` progression is inta
 ### PII-F02 — Canonical Lab implementation status is stale for Part II Labs
 
 - Affected Articles: `06`, `08`, `11`; Labs `02—04`.
-- Severity / status: `MINOR / OPEN`.
+- Severity / status: `MINOR / CLOSED (2026-08-22 COURSE_RECONCILIATION)`.
 - Evidence: canonical series-plan Lab rows still say `未实现`, while Lab 02 README declares `EVIDENCE_MERGED / DESIGN_FROZEN`, Lab 03 preserves implementation plus two observed runs, and Lab 04 declares `IMPLEMENTED / LAB_OBSERVATION_COMPLETE / EVIDENCE_MERGED` with 8/8 accepted. `status.md` and Article evidence agree with observed artifacts.
 - Required action: update only canonical Lab status / implementation wording and retain scope ceilings; do not alter raw history or promote fixture evidence.
 - Gate effect: non-blocking metadata contradiction; actual Lab evidence remains valid.
@@ -82,7 +84,7 @@ The canonical `05 → 06 → 07 → 08 → 09 → 10 → 11` progression is inta
 ### PII-F03 — Lab 03 README still describes a pre-execution skeleton
 
 - Affected Articles: `08` (and 10's AL-04 reuse boundary).
-- Severity / status: `MINOR / OPEN`.
+- Severity / status: `MINOR / CLOSED (2026-08-22 COURSE_RECONCILIATION)`.
 - Evidence: Lab 03 README says `NOT_IMPLEMENTED / NOT_EXECUTED`, “only this README”, and `Observed = NONE`; the directory contains source, tests, fixtures, execution log, and byte-identical `run-a` / `run-b`. The log records locked restore, Release build/test, two runs, and `--verify-only`, all exit `0`.
 - Required action: reconcile README status / introductory wording with execution record while retaining Expected-versus-Observed separation and fixture limits.
 - Gate effect: non-blocking; raw artifacts and Article 08 wording are sufficient.
@@ -90,10 +92,18 @@ The canonical `05 → 06 → 07 → 08 → 09 → 10 → 11` progression is inta
 ### PII-F04 — Article 10 Card retains pre-research lifecycle / evidence values
 
 - Affected Article: `10`.
-- Severity / status: `MINOR / OPEN`.
+- Severity / status: `MINOR / CLOSED (2026-08-22 COURSE_RECONCILIATION)`.
 - Evidence: Article 10 Card says `Lifecycle: RESEARCHING` / `Evidence: BLOCKED`; README, Evidence, Review, Published Content, status and completion commit establish `PUBLISHED`, `6 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`.
 - Required action: Article 10 Card metadata reconciliation only; keep research requirements as history where useful but not current lifecycle facts.
 - Gate effect: non-blocking; publication and evidence artifacts agree.
+
+## Reconciliation closure evidence (2026-08-22)
+
+- `PII-F01 CLOSED`: glossary now contains the concise Part II working terms with first-introduction, formal-expansion and boundary columns; course proposals remain explicitly scoped.
+- `PII-F02 CLOSED`: canonical Lab 02—04 statuses now match tracked source / tests / observations and `status.md`, without promoting fixture evidence to production or Provider proof.
+- `PII-F03 CLOSED`: Lab 03 README now identifies the implemented / verified / evidence-merged state while preserving frozen Expected, appended Observed and immutable raw-artifact boundaries.
+- `PII-F04 CLOSED`: Article 10 Card now records `PUBLISHED` and the final `6 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL` evidence distribution.
+- Boundary: no Article 05—11 Published Content, Lab source / tests / fixtures / raw observations, Draft or Evidence claim status was changed.
 
 ## QUALITY_DEGRADATION_REVIEW
 

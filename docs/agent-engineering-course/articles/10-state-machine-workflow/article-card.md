@@ -9,8 +9,8 @@
 - Optional：`NO`
 - Mode：`NORMAL_ARTICLE`
 - Required Lab：`NONE`（Lab 04 在 Article 11 同时验证 State Machine、Checkpoint 与 Resume）
-- Lifecycle：`RESEARCHING`
-- Evidence：`BLOCKED`
+- Lifecycle：`PUBLISHED`
+- Evidence：`PASS / 6 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`
 
 ## Positioning
 
