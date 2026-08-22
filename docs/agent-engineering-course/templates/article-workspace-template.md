@@ -29,7 +29,14 @@ articles/<id>-<slug>/
 - Current Gate: `Article Card`
 - Next Allowed Action: `<action>`
 - Blocker: `<blocker>`
+- Completion Evidence Source: `GIT_HISTORY`
+- Pre-Commit Candidate: `PUBLISHED`
+- Completion Commit: `resolved from Git history by Resume / PRECHECK`
+- Expected Completion Message: `Publish Agent Engineering Article NN`
+- Next Transaction Pointer: `Article N+1 PRECHECK candidate / NOT_STARTED`
 ```
+
+Completion metadata is future-safe: the pre-commit candidate is not a completion claim, and the completion SHA is never self-written into the checkpoint. Resume / PRECHECK resolves it from Git history after the one commit, push, remote equality, and read-only reconciliation have passed.
 
 ## 文件职责
 

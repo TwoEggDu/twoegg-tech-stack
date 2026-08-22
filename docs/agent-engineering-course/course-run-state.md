@@ -3,10 +3,11 @@
 > This file is the Factory execution pointer, not a second course database. Article facts remain in [status.md](status.md); execution rules remain in [course-factory.md](course-factory.md).
 
 ```yaml
-schema_version: 3
+schema_version: 4
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
+completion_evidence_source: GIT_HISTORY
 factory_status: READY
 current_article: "14"
 current_gate: PRECHECK
@@ -14,6 +15,7 @@ last_published_article: "13"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
+last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
   article: "13"
@@ -32,18 +34,39 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: a87f058ae2642870ade75fa7f23ac4396f17b94c
+last_successful_commit: 8b18b85b5a0f6a95f042832e36a8f7cb09f8609a
 next_action: START_ARTICLE_14_PRECHECK
-last_updated: "2026-08-22T16:52:03+08:00"
+continuous_run:
+  enabled: true
+  start_article: "14"
+  stop_after_article: "15"
+  auto_continue_after_end_article: true
+  stop_at_part_boundary: false
+  stop_on:
+    blocker: true
+    major_finding_unresolved: true
+    evidence_blocked: true
+    required_lab_failure: true
+    review_cycle_exhausted: true
+    build_failure: true
+    git_conflict: true
+    push_failure: true
+    remote_verify_failure: true
+    state_conflict: true
+    human_decision_required: true
+  forbidden_articles:
+    - "16"
+last_updated: "2026-08-22T21:08:15+08:00"
 ```
 
-> Reconciliation proof（2026-08-22）：Article 13 Final Gate Cycle 2、Publisher、Lab 05与Hugo Build均已验证，PRE_COMMIT_RECONCILIATION已把completion-commit candidate冻结为`PUBLISHED`并将pointer写为`READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`。`last_successful_commit`仍只指向已验证的Article 12 checkpoint；Article 13 completion SHA必须由后续Git history产生，不能在本文件自引用。Article 14 workspace/content不存在，pointer不等于Kickoff。
+> Reconciliation proof（2026-08-22）：Article 13 completion 已由 Git history 解析为 `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`（`Publish Agent Engineering Article 13`）；local / origin / live remote equality=`PASS`，并已完成只读 reconciliation。当前 pointer 仍是 `READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`；Article 14 workspace/content不存在，pointer不等于 Kickoff。`last_worker_result` 只是 `LAST_PERSISTED_PRE_COMMIT_RESULT` 的历史投影，不是 post-commit worker result，也不代表当前 gate。
 
 ## Field rules
 
 - `factory_status` 只使用 `READY / RUNNING / PAUSED / BLOCKED / COMPLETE`。
 - `production_branch` 固定为 `main`。每次 PRECHECK 与 Resume 必须用 `git branch --show-current` 实时验证；任何 role 都没有 branch creation authority。wrong branch 只允许 Master 在 clean worktree、不会覆盖用户修改时安全 `git switch main` 并 `git pull --ff-only origin main`，否则 `PAUSED / REPOSITORY_CONFLICT`。
 - `checkpoint_sha_source` 固定为 `GIT_HISTORY`：当前 Article completion SHA 由 `Publish Agent Engineering Article NN` commit、files scope 与 main history共同确定，不从聊天或 checkpoint 后的 Markdown 回写确定。
+- `completion_evidence_source: GIT_HISTORY` 表示 completion 由 Resume / PRECHECK 从 Git history 解析；future-safe record 使用 `Pre-Commit Candidate: PUBLISHED`、`Completion Commit: resolved from Git history by Resume / PRECHECK`、`Expected Completion Message: Publish Agent Engineering Article NN` 与 `Next Transaction Pointer: Article N+1 PRECHECK candidate / NOT_STARTED`。不得把 pending commit、`GIT_DIFF_VERIFY NEXT`、待 push 或待 remote verification伪装成 current state。
 - `current_article` 是下一或当前 transaction pointer，不表示该 Article 已经启动；是否启动必须结合 `factory_status`、`current_gate` 与 [status.md](status.md) 判断。
 - PRECHECK `PASS` 后必须执行显式 `ARTICLE_KICKOFF`，Factory 才能进入 `RUNNING` 并创建当前 workspace；pointer 指向 Article 不等于 Kickoff 已发生。
 - `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段在 working tree 中只是 commit candidate；只有对应 completion commit 已进入 main history 后才成为下一 transaction 的 durable pointer，且仍不等于 `ARTICLE_KICKOFF`。
@@ -92,6 +115,13 @@ last_updated: "2026-08-22T16:52:03+08:00"
 - `last_successful_commit` 是最近一个已知可恢复的 durable checkpoint hint，可以保存 previous verified checkpoint 或 `PENDING_SELF`。它不是 blind checkout target、当前 `HEAD` 的绝对真相或 Resume 的唯一依据；checkpoint commit 不得自引用，也不得为了同步新 SHA 制造第二个 reconciliation commit。
 - Resume 必须联合检查本文件、`status.md`、current Article workspace、Published Content、`git status`、Git `HEAD` / history、checkpoint hint 与 required artifacts。不得默认执行 `git checkout <last_successful_commit>`，也不得因 pointer 落后 state commit 自动 rewind。
 - Lifecycle `PUBLISHED` 仍不等于 transaction completed；必须在 `main` history 中找到该 Article 唯一 `Publish Agent Engineering Article NN` completion commit，并完成 commit message、files scope、working tree、`origin/main`、remote main 与 read-only reconciliation verification，才可开始下一篇。
+- `last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT` 固定说明该字段是 checkpoint 内截至 `PRE_COMMIT_RECONCILIATION` 的历史投影；它不能伪装为 post-commit worker result，也不能把其 `next_allowed_gate` 解释为当前 pointer。
+
+## Bounded continuous-run policy
+
+`continuous_run` 仅授权 `start_article` 到 `stop_after_article` 的连续 Article transaction；`stop_after_article` inclusive，`forbidden_articles` 在 PRECHECK 前绝对阻断。每个 `stop_on` 条目为 `true` 时，命中即停止，不自动恢复或跳过。
+
+Article 14 `END_ARTICLE` 后，只有 `POST_COMMIT_RECONCILIATION_READ_ONLY = PASS`、`active_worker = NONE`、全部 Article 14 worker contexts 已丢弃，并重新完成 full-repository reconciliation，才能开始 Article 15 PRECHECK。Article 15 `END_ARTICLE` 后 policy停止；Article 16 只能是 `PRECHECK / NOT_STARTED` pointer，绝不开始。
 
 ## Update events
 
@@ -99,7 +129,7 @@ last_updated: "2026-08-22T16:52:03+08:00"
 
 ## Historical transaction log and current boundary
 
-> 下列记录按时间保留 Article 08 runtime regression evidence；旧记录中的 branch production、checkpoint 后 write 或当时的“当前”状态只描述历史执行，不是 schema v3 的允许流程。现行 pointer 与规则以上方 YAML 和 Field rules 为准。
+> 下列记录按时间保留 Article 08 runtime regression evidence；旧记录中的 branch production、checkpoint 后 write 或当时的“当前”状态只描述历史执行，不是现行 schema 的允许流程。现行 pointer 与规则以上方 YAML 和 Field rules 为准。
 
 Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完成 commit / push / live remote verification。2026-08-20 fresh resume reconciliation 进一步确认 local `HEAD`、fresh-fetched `origin/main` 与 live `ls-remote refs/heads/main` 均为 `1045264057f1eced21f8e7438b43bb7448a67091`（`Checkpoint Article 08 at OUTLINE`），worktree clean，Article 08 published content / `outline.md` / `draft.md` 均不存在。Article 08 Lab 03=`VERIFIED / EVIDENCE_MERGED`，Evidence Gate=`PASS`，Claim=`6 CONFIRMED / 0 PARTIAL / 0 BLOCKED / 2 PROPOSAL`。本次恢复先后派发 fresh real Author `/root/article_08_author_outline` 与最小上下文 `/root/article_08_author_outline_minimal`；两者均在重复等待和明确收敛消息后保持运行态、没有创建 `outline.md`，已安全中断。连同仓库记录的三次历史 Author 无输出执行，当前 worker runtime 判定为 `SUBAGENT_RUNTIME_UNAVAILABLE`。Factory 安全暂停在 `OUTLINE`；Draft、Review 与 Article 09 均未启动。
 

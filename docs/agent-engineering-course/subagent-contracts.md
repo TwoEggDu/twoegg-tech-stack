@@ -571,6 +571,8 @@ Canonical Update Candidate
 Checkpoint Readiness
 ```
 
+`Checkpoint Readiness` must be future-safe and must state: `Completion Evidence Source: GIT_HISTORY`; `Pre-Commit Candidate: PUBLISHED`; `Completion Commit: resolved from Git history by Resume / PRECHECK`; `Expected Completion Message: Publish Agent Engineering Article NN`; and `Next Transaction Pointer: Article N+1 PRECHECK candidate / NOT_STARTED`. It must not report a pending completion commit, `GIT_DIFF_VERIFY NEXT`, a pending push, or a remote result as a permanent current state. Publisher provides readiness only: it does not create a self-referential SHA, a post-commit write, or a second reconciliation commit.
+
 ### Gate Responsibility
 
 负责 Publish 与 Build Verify 的执行结果。Reviewer `PASS` 但 Hugo build 失败时，必须返回 `FAILED_PUBLICATION`；只有 Master 在验证 Final PASS、Publisher PASS、Build PASS 与 repository consistency 后才能写 `PUBLISHED`。

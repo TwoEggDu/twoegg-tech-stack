@@ -5,7 +5,7 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 13 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`；唯一completion commit / push / remote verification仍待后续runtime Gate
+- 当前里程碑：Article 13 `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`
 - 当前生产对象：Article 14 `PRECHECK / NOT_STARTED`；当前只是下一生产候选指针，尚未执行`ARTICLE_KICKOFF`，workspace/content均不存在
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
@@ -54,11 +54,11 @@
 - 当前 Article 12 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；Evidence=`PASS / 9 of 9 TRACEABLE / 0 CORE BLOCKED`；Review / Final Gate=`PASS / 93 / 0 OPEN`；`12-R0-F01`—`F04 CLOSED`；completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c` pushed / live-remote verified
 - 当前 Article 12 Published Content：`content/ai-empowerment/agent-engineering-12-context-engineering.md`
 - 当前 Article 12 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1241 Pages / 0 ERROR / 0 WARNING`，exit code `0`
-- 当前 Article 13 状态：`PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`；Evidence=`PASS / 9 of 9 TRACEABLE / 3 CONFIRMED / 6 PROPOSAL / 0 BLOCKED`；Required Lab 05=`EVIDENCE_MERGED / EVIDENCE_GATE_PASS / FIXTURE-SCOPED`；Final Gate Cycle 2=`PASS / 91 / 0 OPEN`；`13-F01`—`F05 CLOSED`
+- 当前 Article 13 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；Evidence=`PASS / 9 of 9 TRACEABLE / 3 CONFIRMED / 6 PROPOSAL / 0 BLOCKED`；Required Lab 05=`EVIDENCE_MERGED / EVIDENCE_GATE_PASS / FIXTURE-SCOPED`；Final Gate Cycle 2=`PASS / 91 / 0 OPEN`；`13-F01`—`F05 CLOSED`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`
 - 当前 Article 13 Published Content：`content/ai-empowerment/agent-engineering-13-context-debugging.md`
 - 当前 Article 13 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1242 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- Factory Status：`READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`；Article 13 completion commit candidate已冻结，Article 14未启动
+- Factory Status：`READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`；Article 13已完成，下一动作是Article 14 PRECHECK
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -96,13 +96,13 @@
 | [articles/10-state-machine-workflow/](articles/10-state-machine-workflow/) | `PUBLISHED`；Final Gate Cycle 2 `PASS / 96 / 0 OPEN`；checkpoint `b35b1f32` pushed / live-remote verified |
 | [articles/11-long-running-agent/](articles/11-long-running-agent/) | `PUBLISHED`；Final Gate `PASS / 94 / 0 OPEN`；Required Lab 04 `CONFIRMED / EVIDENCE_MERGED`；checkpoint `31aef0aa` pushed / live-remote verified |
 | [articles/12-context-engineering/](articles/12-context-engineering/) | `PUBLISHED / END_ARTICLE`；Final Gate `PASS / 93 / 0 OPEN`；checkpoint `a87f058ae2642870ade75fa7f23ac4396f17b94c` pushed / live-remote verified；Hugo `1241 Pages / 0 ERROR / 0 WARNING` |
-| [articles/13-context-debugging/](articles/13-context-debugging/) | `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`；Final Gate Cycle 2 `PASS / 91 / 0 OPEN`；Required Lab 05 `EVIDENCE_GATE_PASS / FIXTURE-SCOPED`；Hugo `1242 Pages / 0 ERROR / 0 WARNING` |
+| [articles/13-context-debugging/](articles/13-context-debugging/) | `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`；Final Gate Cycle 2 `PASS / 91 / 0 OPEN`；Required Lab 05 `EVIDENCE_GATE_PASS / FIXTURE-SCOPED`；Hugo `1242 Pages / 0 ERROR / 0 WARNING` |
 
 ## 资产边界
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—13 已进入Published Content。Article 13 completion commit / push / remote verification仍由本transaction后续runtime Gate证明；Article 14未启动。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—13 已进入Published Content。Article 13已由 completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a` 与 local / origin / live remote equality=`PASS` 证明完成；Article 14未启动。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 
