@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-22
-- 当前里程碑：Article 12 `COMPLETED / END_ARTICLE`；completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c` pushed / live-remote verified
-- 当前生产对象：Article 13 `PRECHECK / NOT_STARTED`；尚未执行`ARTICLE_KICKOFF`
+- 当前里程碑：Article 13 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`；completion commit / push / remote verification待后续runtime Gate
+- 当前生产对象：Article 14 `PRECHECK / NOT_STARTED`；尚未执行`ARTICLE_KICKOFF`，workspace/content不存在
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -18,14 +18,16 @@
 - Article 11 Published Path：`content/ai-empowerment/agent-engineering-11-long-running-agent.md`
 - Article 12 Published Path：`content/ai-empowerment/agent-engineering-12-context-engineering.md`
 - Article 12 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1241 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Article 13 Published Path：`content/ai-empowerment/agent-engineering-13-context-debugging.md`
+- Article 13 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1242 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 13 / PRECHECK / NOT_STARTED / active worker NONE`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- 下一允许动作：等待未来显式 Article 13生产任务执行`PRECHECK`；本 reconciliation transaction 不执行Article 13 `ARTICLE_KICKOFF`
+- 下一允许动作：完成Article 13显式Git diff /唯一completion commit /单次push /remote verification；这些只读/历史Gate完成前以及本任务结束后均不得执行Article 14 `ARTICLE_KICKOFF`
 
 ## 状态图例
 
@@ -51,7 +53,7 @@
 | 10 | State Machine 与 Workflow：确定性骨架和 Agent Decision Point | II | L | 否 | `PUBLISHED` | `PASS`（`6 CONFIRMED / 1 PARTIAL / 0 BLOCKED / 3 PROPOSAL`） | N/A | `10-F01 / 10-F02 / 10-F03 CLOSED`；Final Gate Cycle 2=`PASS / 96 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-10-state-machine-workflow.md` |
 | 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | II | M | 否 | `PUBLISHED` | `PASS`（`9 / 9 TRACEABLE / 0 CORE BLOCKED`；C08 split-scoped） | Lab 04 `CONFIRMED / EVIDENCE_MERGED / 8 of 8` | `11-R0-F01 / F02 CLOSED`；Final Gate=`PASS / 94 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-11-long-running-agent.md` |
 | 12 | Context Engineering：每一个 Step 到底应该看到什么 | III | L | 否 | `PUBLISHED` | `PASS`（`9 / 9 TRACEABLE / 0 CORE BLOCKED`） | N/A | `NONE`；`12-R0-F01`—`F04 CLOSED`；Final Gate=`PASS / 93 / 0 OPEN`；completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c` pushed / live-remote verified；`content/ai-empowerment/agent-engineering-12-context-engineering.md` |
-| 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | III | L | 否 | `PLANNED` | `BLOCKED` | Lab 05 `PLANNED / BLOCKED` | Context fixture 与判据未设计 |
+| 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | III | L | 否 | `PUBLISHED` | `PASS`（`9 / 9 TRACEABLE / 3 CONFIRMED / 6 PROPOSAL / 0 BLOCKED`） | Lab 05 `EVIDENCE_MERGED / EVIDENCE_GATE_PASS / FIXTURE-SCOPED` | `NONE`；`13-F01`—`F05 CLOSED`；Final Gate Cycle 2=`PASS / 91 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-13-context-debugging.md` |
 | 14 | Working Memory 与 Investigation State：当前任务正在想什么 | III | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | III | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | III | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
@@ -104,3 +106,4 @@
 16. Fresh Part II Audit 已在 Article 11 checkpoint push / live-remote verification 后覆盖 Article 05—11；Gate=`PASS`，Findings=`0 BLOCKER / 0 MAJOR / 4 OPEN MINOR / 0 EDITORIAL`。Master 已复核 Labs 02—04、navigation、published fidelity、唯一 Article checkpoint、live remote 与 Hugo `1240 Pages / 0 ERROR / 0 WARNING`；独立 audit checkpoint verification 前 Article 12 保持未启动。
 17. Part II Audit checkpoint `e7f88c03151707d00b7d307645e99cf4710f3363` 已push / live-remote verified。Article 12随后完成Research / Evidence、Outline、Draft、Cycle 0 Review、Cycle 1 Revision / Recheck、Final Gate、Publisher、Hugo、PRE_COMMIT_RECONCILIATION与唯一completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c`；local / origin / live remote equality=`PASS`，`END_ARTICLE 12`成立。Article 13保持`PRECHECK / NOT_STARTED`。
 18. 2026-08-22 Course Reconciliation 只修复 Course Index、canonical Lab metadata、Glossary、已知 Part I / II Audit Minor 与global pointer；`PI-F01`—`PI-F03`、`PII-F01`—`PII-F04`均已关闭。未修改Article 00—12技术正文或Lab raw observations，未创建Article 13资产。
+19. Article 13按Required Lab流程完成Research、Preliminary Evidence、Lab 05 frozen Design、真实TDD RED/GREEN、Cases A—G、fresh-process run A/B、Evidence Merge、两轮Revision / Recheck、Final Gate Cycle 2、Publisher、Hugo与PRE_COMMIT_RECONCILIATION；Evidence=`3 CONFIRMED / 6 PROPOSAL / 0 BLOCKED`，Review=`PASS / 91 / 0 OPEN`，Lab aggregate=`621cde0ec3c1ed7b7f6334dac4d0187b522625f37e220957e48b6dcac3bd3f50`。completion commit / push / remote verification尚未在本文件中预写；Article 14保持`PRECHECK / NOT_STARTED`。

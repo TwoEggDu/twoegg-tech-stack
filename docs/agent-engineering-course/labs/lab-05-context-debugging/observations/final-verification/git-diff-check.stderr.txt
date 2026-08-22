@@ -1,0 +1,1 @@
+warning: in the working copy of 'docs/agent-engineering-course/course-run-state.md', LF will be replaced by CRLF the next time Git touches it

@@ -1,0 +1,3 @@
+  正在确定要还原的项目…
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\tests\ContextDebuggingLab.Specs\ContextDebuggingLab.Specs.csproj (用时 95 毫秒)。
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj (用时 95 毫秒)。

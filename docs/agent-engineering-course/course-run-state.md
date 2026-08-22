@@ -8,19 +8,19 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 factory_status: READY
-current_article: "13"
+current_article: "14"
 current_gate: PRECHECK
-last_published_article: "12"
+last_published_article: "13"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "12"
+  article: "13"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/12-context-engineering/subagent-trace.md#wr-master-article-12-pre-commit-reconciliation-retry-1-20260821t204153
+  result_ref: docs/agent-engineering-course/articles/13-context-debugging/subagent-trace.md#wr-article-13-pre-commit-reconciliation-20260822t165203
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -33,11 +33,11 @@ active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 last_successful_commit: a87f058ae2642870ade75fa7f23ac4396f17b94c
-next_action: START_ARTICLE_13_PRECHECK
-last_updated: "2026-08-22T10:29:06+08:00"
+next_action: START_ARTICLE_14_PRECHECK
+last_updated: "2026-08-22T16:52:03+08:00"
 ```
 
-> Reconciliation proof（2026-08-22）：Article 12 completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c` 已满足local `HEAD`、`origin/main`与live remote `main`一致，`END_ARTICLE 12`成立。`last_worker_result`保留Article 12 pre-commit envelope作为历史审计记录，其`next_allowed_gate`不是当前Gate；当前有效pointer为`READY / Article 13 / PRECHECK / NOT_STARTED / active worker NONE`，Article 13尚未执行`ARTICLE_KICKOFF`。
+> Reconciliation proof（2026-08-22）：Article 13 Final Gate Cycle 2、Publisher、Lab 05与Hugo Build均已验证，PRE_COMMIT_RECONCILIATION已把completion-commit candidate冻结为`PUBLISHED`并将pointer写为`READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`。`last_successful_commit`仍只指向已验证的Article 12 checkpoint；Article 13 completion SHA必须由后续Git history产生，不能在本文件自引用。Article 14 workspace/content不存在，pointer不等于Kickoff。
 
 ## Field rules
 
@@ -140,3 +140,5 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-20 23:50 first GIT_DIFF_VERIFY attempt correctly failed before commit because staged `git diff --cached --check` reported one extra blank line at EOF in `article-card.md`. No commit or push occurred. Master returned to PRE_COMMIT_RECONCILIATION retry 1, removed only that terminal blank line, recorded this recovery, and preserved every publication, state, canonical and Article 10 absence invariant. This retry supersedes the earlier persistence cut; after it, repository writes are again `ZERO` and GIT_DIFF_VERIFY must restart from the full 14-path scope.
 
 2026-08-21 20:41 Article 12 first GIT_DIFF_VERIFY attempt correctly failed before commit because staged `git diff --cached --check` reported one extra blank line at EOF in `article-card.md`. No commit or push occurred. Master returned to PRE_COMMIT_RECONCILIATION retry 1, removed only that terminal blank line, recorded this recovery, and preserved every publication, state, canonical and Article 13 absence invariant. This retry supersedes the earlier persistence cut; after it, repository writes are again `ZERO` and GIT_DIFF_VERIFY must restart from the full 14-path scope.
+
+2026-08-22 16:52 Article 13 BUILD_VERIFY与Master独立重跑均为Hugo `0.157.0 / 1242 Pages / 0 WARNING / 0 ERROR / exit 0`；Final Gate=`PASS / 91 / F01-F05 CLOSED`，Lab 05=`EVIDENCE_GATE_PASS / FIXTURE-SCOPED`，Published Content / Article12↔13 / Course Index / canonical / status / Lab index均对齐。PRE_COMMIT_RECONCILIATION已完成Article13 `PUBLISHED` completion-commit candidate并把pointer冻结为`READY / Article14 / PRECHECK / NOT_STARTED / active worker NONE`；Article14 workspace/content=`ABSENT`。此记录后repository writes=`ZERO`；Git diff、唯一completion commit、single push与remote verify结果保持runtime-only。

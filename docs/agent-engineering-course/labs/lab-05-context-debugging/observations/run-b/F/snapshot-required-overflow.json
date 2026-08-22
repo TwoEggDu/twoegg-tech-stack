@@ -1,0 +1,1 @@
+{"schema_version":"lab05-snapshot-absence-v1","fixture_version":"lab05-fixture-v1","case_id":"F","artifact_kind":"snapshot_absence","payload":{"scenario_id":"required-overflow","snapshot":"ABSENT","reason":"REQUIRED_EVIDENCE_BUDGET_EXCEEDED"},"status":"EXPECTED_FAIL_CLOSED","unexpected_failures":[]}

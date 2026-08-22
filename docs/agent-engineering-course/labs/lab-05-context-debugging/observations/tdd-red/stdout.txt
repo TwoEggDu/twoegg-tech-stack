@@ -1,0 +1,7 @@
+FAIL [A] A-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case A are absent.
+FAIL [B] B-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case B are absent.
+FAIL [C] C-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case C are absent.
+FAIL [D] D-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case D are absent.
+FAIL [E] E-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case E are absent.
+FAIL [F] F-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case F are absent.
+FAIL [G] G-PUBLIC-ARTIFACTS: Runtime exit 3; mandatory public artifacts for Case G are absent.

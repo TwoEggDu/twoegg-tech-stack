@@ -1,0 +1,14 @@
+  ContextDebuggingLab.Specs -> E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\tests\ContextDebuggingLab.Specs\bin\Release\net10.0\ContextDebuggingLab.Specs.dll
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\LabRuntime.cs(101,14): error CS0411: 无法从用法中推断出方法“Enumerable.Select<TSource, TResult>(IEnumerable<TSource>, Func<TSource, int, TResult>)”的类型参数。请尝试显式指定类型参数。 [E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj]
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\LabRuntime.cs(107,14): error CS0411: 无法从用法中推断出方法“Enumerable.Select<TSource, TResult>(IEnumerable<TSource>, Func<TSource, int, TResult>)”的类型参数。请尝试显式指定类型参数。 [E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj]
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\LabRuntime.cs(116,56): error CS0411: 无法从用法中推断出方法“Enumerable.Select<TSource, TResult>(IEnumerable<TSource>, Func<TSource, int, TResult>)”的类型参数。请尝试显式指定类型参数。 [E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj]
+
+生成失败。
+
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\LabRuntime.cs(101,14): error CS0411: 无法从用法中推断出方法“Enumerable.Select<TSource, TResult>(IEnumerable<TSource>, Func<TSource, int, TResult>)”的类型参数。请尝试显式指定类型参数。 [E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj]
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\LabRuntime.cs(107,14): error CS0411: 无法从用法中推断出方法“Enumerable.Select<TSource, TResult>(IEnumerable<TSource>, Func<TSource, int, TResult>)”的类型参数。请尝试显式指定类型参数。 [E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj]
+E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\LabRuntime.cs(116,56): error CS0411: 无法从用法中推断出方法“Enumerable.Select<TSource, TResult>(IEnumerable<TSource>, Func<TSource, int, TResult>)”的类型参数。请尝试显式指定类型参数。 [E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-05-context-debugging\src\ContextDebuggingLab\ContextDebuggingLab.csproj]
+    0 个警告
+    3 个错误
+
+已用时间 00:00:01.20

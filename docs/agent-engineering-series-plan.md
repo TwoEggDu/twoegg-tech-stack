@@ -184,7 +184,7 @@ BuildPilot Design v1
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
 | 12 | [Context Engineering：每一个 Step 到底应该看到什么](../content/ai-empowerment/agent-engineering-12-context-engineering.md) | L | 否 |
-| 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | L | 否 |
+| 13 | [Context Debugging：Packing、Compression、Pollution 与可重建性](../content/ai-empowerment/agent-engineering-13-context-debugging.md) | L | 否 |
 | 14 | Working Memory 与 Investigation State：当前任务正在想什么 | L | 否 |
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | M | 否 |
 | 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | M | 否 |
@@ -247,7 +247,7 @@ S 是 Bridge / Overview，M 是 Standard Core Lesson，L 是 Major Core Lesson�
 | Lab 02 Tool Runtime | 06 后 | C# / .NET | Validate、Policy、Timeout、Result | `EVIDENCE_MERGED / 5 CLAIMS CONFIRMED / FIXTURE-SCOPED` |
 | Lab 03 Minimal Agent Loop | 08 后 | C# / .NET | Turn、Step、Observation、Stop | `VERIFIED / EVIDENCE_MERGED / FIXTURE-SCOPED` |
 | Lab 04 State Machine + Checkpoint | 11 后 | C# / .NET | State、Checkpoint、Resume、Cancellation | `CONFIRMED / EVIDENCE_MERGED / 8 of 8 / FIXTURE-SCOPED` |
-| Lab 05 Context Debugging | 13 后 | C# / .NET | Context Snapshot、Pollution、Truncation | `PLANNED / BLOCKED / NOT_IMPLEMENTED` |
+| Lab 05 Context Debugging | 13 后 | C# / .NET | Context Snapshot、Pollution、Truncation | `EVIDENCE_MERGED / EVIDENCE_GATE_PASS / 15 of 15 / A-G / FIXTURE-SCOPED` |
 | Lab 06 Trace + Eval | 22 后 | C# / .NET | Trace、Failure Layer、Regression | `PLANNED / BLOCKED / NOT_IMPLEMENTED` |
 
 Lab 结论只证明当前 Fixture 和实验，不自动升级为通用事实。Lab 生产入口见 `docs/agent-engineering-course/labs/README.md`。

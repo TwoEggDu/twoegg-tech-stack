@@ -10,7 +10,7 @@ Lab 用于回答文章中无法只靠文档或源码可靠回答的行为问题�
 | Lab 02 | 06 | Tool Runtime 如何完成 validate、policy、execute、result 与 trace | `PLANNED / BLOCKED` |
 | Lab 03 | 08 | 最小 Agent Loop 如何推进 step，并在成功、失败和预算条件下停止 | `PLANNED / BLOCKED` |
 | Lab 04 | 11 | 长运行任务如何 checkpoint、取消、重试和恢复 | `PLANNED / BLOCKED` |
-| Lab 05 | 13 | Context packing、污染、压缩和重建如何影响结果 | `PLANNED / BLOCKED` |
+| [Lab 05](lab-05-context-debugging/README.md) | 13 | Context packing、污染、压缩和重建如何影响结果 | `EVIDENCE_MERGED / EVIDENCE_GATE_PASS / FIXTURE-SCOPED` |
 | Lab 06 | 22 | Golden Dataset 与回归评估能否捕获一次已知退化 | `PLANNED / BLOCKED` |
 
 ## 实例化规则

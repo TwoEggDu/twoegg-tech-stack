@@ -17,6 +17,7 @@ weight: 3130
 ---
 
 > **上一篇**：[Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery]({{< relref "ai-empowerment/agent-engineering-11-long-running-agent.md" >}})
+> **下一篇**：[Context Debugging：Packing、Compression、Pollution 与可重建性]({{< relref "ai-empowerment/agent-engineering-13-context-debugging.md" >}})
 
 > 如果这篇只记一句话：`先审查这个 Step 的effective Context可能由什么构成，再讨论它为什么答错；应用只描述、审计和比较自己的Context Snapshot。`
 

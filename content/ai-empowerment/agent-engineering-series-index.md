@@ -97,7 +97,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
       <header><p class="course-part-label">Part III · 12—17</p><h3>Agent 的信息、状态与知识</h3></header>
       <ol class="course-lessons">
         <li class="is-published"><span class="lesson-id">12</span><a href="{{< relref "ai-empowerment/agent-engineering-12-context-engineering.md" >}}">Context Engineering：每一个 Step 到底应该看到什么</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">13</span><span>Context Debugging：Packing、Compression、Pollution 与可重建性</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">13</span><a href="{{< relref "ai-empowerment/agent-engineering-13-context-debugging.md" >}}">Context Debugging：Packing、Compression、Pollution 与可重建性</a><span class="lesson-status">已发布</span></li>
         <li class="is-planned"><span class="lesson-id">14</span><span>Working Memory 与 Investigation State：当前任务正在想什么</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">15</span><span>Session、Long-term Memory 与 Project Memory：事实、经验和作用域</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">16</span><span>Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite</span><span class="lesson-status">计划中</span></li>
@@ -193,7 +193,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
     <article class="is-verified"><span>Lab 02 · Article 06 后</span><h3>Tool Runtime</h3><p>Validate、Policy、Timeout、Result 与 Trace。</p><a href="{{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}}">查看对应课程 · 已验证</a></article>
     <article class="is-verified"><span>Lab 03 · Article 08 后</span><h3>Minimal Agent Loop</h3><p>Turn、Step、Observation、Stop 与预算终止。</p><a href="{{< relref "ai-empowerment/agent-engineering-08-agent-loop.md" >}}">查看对应课程 · 已验证</a></article>
     <article class="is-verified"><span>Lab 04 · Article 11 后</span><h3>State Machine + Checkpoint</h3><p>State、Checkpoint、Resume 与 Cancellation。</p><a href="{{< relref "ai-empowerment/agent-engineering-11-long-running-agent.md" >}}">查看对应课程 · 已验证</a></article>
-    <article><span>Lab 05 · Article 13 后</span><h3>Context Debugging</h3><p>Context Snapshot、Pollution、Truncation 与重建。</p><strong>计划中 · 无公开链接</strong></article>
+    <article class="is-verified"><span>Lab 05 · Article 13 后</span><h3>Context Debugging</h3><p>Context Snapshot、Pollution、Truncation 与重建。</p><a href="{{< relref "ai-empowerment/agent-engineering-13-context-debugging.md" >}}">查看对应课程 · 已验证</a></article>
     <article><span>Lab 06 · Article 22 后</span><h3>Trace + Eval</h3><p>Trace、Failure Layer、Golden Dataset 与 Regression。</p><strong>计划中 · 无公开链接</strong></article>
   </div>
 </section>

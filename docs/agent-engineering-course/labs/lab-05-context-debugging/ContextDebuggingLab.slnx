@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/ContextDebuggingLab/ContextDebuggingLab.csproj" />
+  <Project Path="tests/ContextDebuggingLab.Specs/ContextDebuggingLab.Specs.csproj" />
+</Solution>
