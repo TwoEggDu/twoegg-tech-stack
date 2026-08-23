@@ -7,7 +7,7 @@ schema_version: 4
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
-completion_evidence_source: GIT_HISTORY
+completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
 current_article: "16"
 current_gate: PRECHECK
@@ -34,7 +34,7 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 95372e8917a2e4350d356c7ea0a3c91d14e46da3
+last_successful_commit: 0c9465ca55e095bb1d78e71016b9c6ba357c7ac6
 next_action: STOP_CONTINUOUS_RUN_AFTER_ARTICLE_15_AND_WAIT_NEW_HUMAN_INSTRUCTION
 continuous_run:
   enabled: false
@@ -59,17 +59,17 @@ continuous_run:
 last_updated: "2026-08-23T13:05:33+08:00"
 ```
 
-> Article 15 Final=`PASS / 93 / 0 OPEN`、Publish=`PASS / SEMANTIC EXACT`、Hugo=`0.157.0 / 1244 Pages / 0 WARNING / 0 ERROR`，PRE_COMMIT_RECONCILIATION=`PASS / LAST REPOSITORY WRITE`。当前working tree是唯一completion commit candidate；Factory=`READY / Article 16 / PRECHECK pointer candidate / NOT_STARTED / FORBIDDEN CURRENT RUN / active worker NONE`，continuous run已在inclusive stop_after 15处关闭。Article 16资产不存在，禁止执行PRECHECK或Kickoff；commit/push/remote结果保持runtime-only。
+> Article 15 Final=`PASS / 93 / 0 OPEN`、Publish=`PASS / SEMANTIC EXACT`、Hugo=`0.157.0 / 1244 Pages / 0 WARNING / 0 ERROR`，PRE_COMMIT_RECONCILIATION=`PASS / LAST REPOSITORY WRITE`。`current_article/current_gate` 是 `Article 16 / PRECHECK` pointer candidate，且该 Article 在当前 run 中 `FORBIDDEN / NOT_STARTED`；continuous run已在inclusive stop_after 15处关闭。Article 16资产不存在，禁止执行PRECHECK或Kickoff。`last_worker_result` 是最后一个 persisted pre-commit result，`last_successful_commit`（`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`）只是 checkpoint hint；Article 15 的 retrospective resolver observation=`END_ARTICLE` 与 completion commit observation仅作一次性迁移说明，绝非 future authority。commit / push / remote / `END_ARTICLE` 均由 runtime resolver 重新判定。
 
 ## Field rules
 
 - `factory_status` 只使用 `READY / RUNNING / PAUSED / BLOCKED / COMPLETE`。
 - `production_branch` 固定为 `main`。每次 PRECHECK 与 Resume 必须用 `git branch --show-current` 实时验证；任何 role 都没有 branch creation authority。wrong branch 只允许 Master 在 clean worktree、不会覆盖用户修改时安全 `git switch main` 并 `git pull --ff-only origin main`，否则 `PAUSED / REPOSITORY_CONFLICT`。
 - `checkpoint_sha_source` 固定为 `GIT_HISTORY`：当前 Article completion SHA 由 `Publish Agent Engineering Article NN` commit、files scope 与 main history共同确定，不从聊天或 checkpoint 后的 Markdown 回写确定。
-- `completion_evidence_source: GIT_HISTORY` 表示 completion 由 Resume / PRECHECK 从 Git history 解析；future-safe record 使用 `Pre-Commit Candidate: PUBLISHED`、`Completion Commit: resolved from Git history by Resume / PRECHECK`、`Expected Completion Message: Publish Agent Engineering Article NN` 与 `Next Transaction Pointer: Article N+1 PRECHECK candidate / NOT_STARTED`。不得把 pending commit、`GIT_DIFF_VERIFY NEXT`、待 push 或待 remote verification伪装成 current state。
-- `current_article` 是下一或当前 transaction pointer，不表示该 Article 已经启动；是否启动必须结合 `factory_status`、`current_gate` 与 [status.md](status.md) 判断。
+- `completion_evidence_source: GIT_HISTORY + REMOTE_REFS` 表示 completion 由 `ResolveArticleCompletion(N)` 在 Resume / PRECHECK 时从 Git history 和 remote refs 解析；persisted checkpoint 仅保留 Lifecycle Candidate=`PUBLISHED`、Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`、Completion Resolution=`DERIVED_FROM_GIT_HISTORY`、Completion Evidence Source=`GIT_HISTORY + REMOTE_REFS`、Expected Completion Message 与 Next Transaction Candidate。不得把 pending commit、`GIT_DIFF_VERIFY NEXT`、待 push、待 remote verification 或 `END_ARTICLE` 伪装成 current persisted state。
+- `current_article/current_gate` 是 candidate pointer，不表示该 Article 已经启动或拥有启动权威；是否启动必须结合 resolver `END_ARTICLE`、`factory_status`、[status.md](status.md) 与 policy 判断。
 - PRECHECK `PASS` 后必须执行显式 `ARTICLE_KICKOFF`，Factory 才能进入 `RUNNING` 并创建当前 workspace；pointer 指向 Article 不等于 Kickoff 已发生。
-- `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段在 working tree 中只是 commit candidate；只有对应 completion commit 已进入 main history 后才成为下一 transaction 的 durable pointer，且仍不等于 `ARTICLE_KICKOFF`。
+- `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle Candidate=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段始终只是 candidate pointer；同一 persisted checkpoint 在 commit 前可解析为 `INCOMPLETE`，在 valid commit / push / remote reconciliation 后可解析为 `END_ARTICLE`，中间不写 bridge。启动权威 = candidate pointer + resolver `END_ARTICLE` + policy，且仍不等于 `ARTICLE_KICKOFF`。
 - `active_worker` 只使用 [subagent-contracts.md](subagent-contracts.md) 中的八种 role 或 `NONE`。
 - `active_worker_execution_id` 与 `active_worker_record_ref` 在 worker start 时由 Master 写入。record ref 必须指向当前 Article `subagent-trace.md` 的 stable Worker Result Record，或 Part / Course Audit Report 中的等价 record；record 同时保存 bounded task brief、execution ID、raw envelope 与 validation result。worker 仍运行时保留 active fields；确认结束后才把 `active_worker` 和两个 active fields 统一清为 `NONE`。
 - `last_worker_result` 初始或 legacy-migration 值可以为 `NONE`。只有 Master 收到 schema-valid envelope、写入 canonical raw record 并完成 validation 后，才能写入以下 durable projection：
@@ -108,13 +108,13 @@ last_updated: "2026-08-23T13:05:33+08:00"
   ```
 
   随后设置 `factory_status: PAUSED`、`active_blocker: MISSING_OR_INVALID_WORKER_RESULT`、`stop_reason: HUMAN_DECISION_REQUIRED`。若 runtime 已确认结束，active worker fields 清为 `NONE`；若仍在运行，则保留 active fields，禁止重复 dispatch。
-- `last_worker_result.next_allowed_gate` 只保存通过 Master common mapping 与 State Machine validation 的 forward transition 或 recovery candidate。非 terminal `status: PASS` 时不得为 `NONE`；`gate_completed: false` 只允许指向合同冻结的 retry / return Gate。该 pointer 仍不是 Article / Transaction completion，也不能替代 `current_gate`、`factory_status`、canonical raw record、required artifacts 或 Git evidence。未来 Article 以 `PRE_COMMIT_RECONCILIATION` 作为 completion commit 中最后一个可持久化的 result projection；Git Diff Verify、Checkpoint Commit、Commit Verify、Push、Remote Verify 与 Post-Commit Reconciliation results 不写入本文件，它们由 runtime envelope 验证并由 final commit / Git / remote refs 持久化，Resume 时重新执行只读检查。Article 08 的 `GIT_DIFF_VERIFY` projection 是 schema migration 保留的 legacy boundary。
+- `last_worker_result.next_allowed_gate` 只保存通过 Master common mapping 与 State Machine validation 的 forward transition 或 recovery candidate。非 terminal `status: PASS` 时不得为 `NONE`；`gate_completed: false` 只允许指向合同冻结的 retry / return Gate。`last_worker_result` 是 `LAST_PERSISTED_PRE_COMMIT_RESULT`，不是 Article / Transaction completion，也不能替代 `current_gate`、`factory_status`、canonical raw record、required artifacts 或 Git evidence。未来 Article 以 `PRE_COMMIT_RECONCILIATION` 作为 completion commit 中最后一个可持久化的 result projection；Git Diff Verify、Checkpoint Commit、Commit Verify、Push、Remote Verify、Post-Commit Reconciliation 与 `END_ARTICLE` 都是 runtime resolver facts，不写入本文件，Resume 时由 `ResolveArticleCompletion(N)` 重新执行只读检查。Article 08 的 `GIT_DIFF_VERIFY` projection 是 schema migration 保留的 legacy boundary。
 - `review_cycle` 只在一次 `Findings -> Revision -> Recheck` 完成后递增，最大值为 `3`。
 - `stop_reason` 只使用 `NONE / BLOCKED_EVIDENCE / FAILED_LAB / FAILED_REVIEW / FAILED_PUBLICATION / HUMAN_DECISION_REQUIRED / REPOSITORY_CONFLICT`。
 - Part Auditor 返回 `PART_AUDIT_FINDINGS` 时不得把 role-specific code 直接写入 `stop_reason`；Master 必须唯一映射为 `factory_status: PAUSED`、`active_blocker: PART_AUDIT_FINDINGS`、`stop_reason: HUMAN_DECISION_REQUIRED`、`human_decision_required: true`。只有人类批准 Audit Report 中的 affected Article 与 targeted repair scope 后，Resume 才能选择具体 Article / Gate。
-- `last_successful_commit` 是最近一个已知可恢复的 durable checkpoint hint，可以保存 previous verified checkpoint 或 `PENDING_SELF`。它不是 blind checkout target、当前 `HEAD` 的绝对真相或 Resume 的唯一依据；checkpoint commit 不得自引用，也不得为了同步新 SHA 制造第二个 reconciliation commit。
+- `last_successful_commit` 是最近一个已知可恢复的 durable checkpoint hint（当前 Article 15 hint=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`），可以保存 previous verified checkpoint 或 `PENDING_SELF`。它不是 blind checkout target、当前 `HEAD` 的绝对真相、completion authority 或 Resume 的唯一依据；checkpoint commit 不得自引用，也不得为了同步新 SHA 制造第二个 reconciliation commit。
 - Resume 必须联合检查本文件、`status.md`、current Article workspace、Published Content、`git status`、Git `HEAD` / history、checkpoint hint 与 required artifacts。不得默认执行 `git checkout <last_successful_commit>`，也不得因 pointer 落后 state commit 自动 rewind。
-- Lifecycle `PUBLISHED` 仍不等于 transaction completed；必须在 `main` history 中找到该 Article 唯一 `Publish Agent Engineering Article NN` completion commit，并完成 commit message、files scope、working tree、`origin/main`、remote main 与 read-only reconciliation verification，才可开始下一篇。
+- Lifecycle `PUBLISHED` 仍不等于 transaction completed；`ResolveArticleCompletion(N)` 必须在 `main` history 中找到该 Article 唯一 `Publish Agent Engineering Article NN` completion commit，验证其在 local / `origin/main` / live `main` current refs 中的 ancestor containment，并确认 current `HEAD == origin/main == live main`。仅当 resolver 输出 `END_ARTICLE` 且 policy允许时，才可开始下一篇；否则输出 `INCOMPLETE / exact reason`。
 - `last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT` 固定说明该字段是 checkpoint 内截至 `PRE_COMMIT_RECONCILIATION` 的历史投影；它不能伪装为 post-commit worker result，也不能把其 `next_allowed_gate` 解释为当前 pointer。
 
 ## Bounded continuous-run policy

@@ -143,7 +143,7 @@ Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 e
 - 不在当前 Article 的独立 checkpoint commit、`PUSH_MAIN`、`REMOTE_VERIFY` 与 `POST_COMMIT_RECONCILIATION_READ_ONLY` 全部通过前启动下一篇 PRECHECK 或写入下一篇 workspace；Pre-Commit Reconciliation 可以写 next-Article pointer candidate，但 pointer 不等于 Kickoff；
 - 不使用 `git add .` broad-stage，不把下一篇、无关用户修改、theme / CI / unrelated docs 混入 Article checkpoint；
 - 不创建任何 branch，不执行 `git checkout -b`、`git switch -c` 或 `git branch <new-branch>`；wrong branch 只能在 clean worktree 下安全切换到既有 `main`，否则停止；
-- 不在 checkpoint 后修改任何 repository file或创建 reconciliation commit；
+- 不在 checkpoint 后修改任何 repository file或创建 reconciliation commit；Master 只持久化 `PRE_COMMIT_RECONCILIATION` checkpoint，随后运行只读 `ResolveArticleCompletion(N)`、按其 `INCOMPLETE / exact reason` 路由，绝不把 `END_ARTICLE` 写回 repository；
 - 不在缺少明确授权时 push、发布外部内容或改变 canonical；获得授权后只允许 `git push origin main`。
 
 ### Required Outputs
@@ -158,7 +158,7 @@ Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 e
 
 ### Gate Responsibility
 
-负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Pre-Commit Reconciliation、Git Diff Verify、Article Checkpoint Commit、Commit Verify、Push Main、Remote Verify 与 Post-Commit Reconciliation Read-Only：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。只有 Reviewer Final PASS、Publisher PASS、Build PASS、Pre-Commit Reconciliation PASS、Lifecycle `PUBLISHED`、`ARTICLE_COMMIT_VERIFIED = PASS`、main push / remote equality 与 read-only reconciliation 同时成立，Master 才能逻辑结束当前 Article transaction。
+负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Pre-Commit Reconciliation、Git Diff Verify、Article Checkpoint Commit、Commit Verify、Push Main、Remote Verify 与 Post-Commit Reconciliation Read-Only：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。Master 在 checkpoint 后只读运行 `ResolveArticleCompletion(N)`；只有 resolver 返回 `END_ARTICLE`（包括 completion commit 的 local / `origin/main` / live `main` ancestor containment 与 `HEAD == origin/main == live main`）才逻辑结束当前 Article transaction，否则保留并路由 resolver 给出的精确 `INCOMPLETE` 原因。
 
 ### Stop Conditions
 
@@ -571,7 +571,18 @@ Canonical Update Candidate
 Checkpoint Readiness
 ```
 
-`Checkpoint Readiness` must be future-safe and must state: `Completion Evidence Source: GIT_HISTORY`; `Pre-Commit Candidate: PUBLISHED`; `Completion Commit: resolved from Git history by Resume / PRECHECK`; `Expected Completion Message: Publish Agent Engineering Article NN`; and `Next Transaction Pointer: Article N+1 PRECHECK candidate / NOT_STARTED`. It must not report a pending completion commit, `GIT_DIFF_VERIFY NEXT`, a pending push, or a remote result as a permanent current state. Publisher provides readiness only: it does not create a self-referential SHA, a post-commit write, or a second reconciliation commit.
+`Checkpoint Readiness` must be future-safe and must state:
+
+```text
+Lifecycle Candidate: PUBLISHED
+Persisted Checkpoint: PRE_COMMIT_RECONCILIATION PASS
+Completion Resolution: DERIVED_FROM_GIT_HISTORY
+Completion Evidence Source: GIT_HISTORY + REMOTE_REFS
+Expected Completion Message: Publish Agent Engineering Article NN
+Next Transaction Candidate: Article N+1 PRECHECK / NOT_STARTED
+```
+
+Publisher provides readiness only: it cannot claim current commit / push status or `END_ARTICLE`, and it does not create a self-referential SHA, a post-commit write, or a second reconciliation commit. `ResolveArticleCompletion(N)` derives the runtime result after the checkpoint.
 
 ### Gate Responsibility
 

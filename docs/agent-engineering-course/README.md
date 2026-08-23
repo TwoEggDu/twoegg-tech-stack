@@ -5,7 +5,7 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 15 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；Completion Evidence Source=`GIT_HISTORY`；Expected Completion Message=`Publish Agent Engineering Article 15`
+- 当前里程碑：Article 15 Lifecycle checkpoint=`PUBLISHED`；Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Completion Evidence Source=`GIT_HISTORY + REMOTE_REFS`；Expected Completion Message=`Publish Agent Engineering Article 15`；retrospective resolver observation=`END_ARTICLE` / completion commit observation=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`（仅说明，非 future authority）
 - 当前生产对象：Article 16 `PRECHECK POINTER CANDIDATE / NOT_STARTED / FORBIDDEN CURRENT RUN`；workspace与Published Content均不存在
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
@@ -63,7 +63,7 @@
 - 当前 Article 15 Published Content：`content/ai-empowerment/agent-engineering-15-session-long-term-project-memory.md`
 - 当前 Article 15 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1244 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- Factory Status：`READY / Article 16 / PRECHECK pointer candidate / NOT_STARTED / active worker NONE`；Continuous Run已在inclusive stop_after Article 15处关闭，下一动作是完成Article 15 Git/remote只读链后STOP，禁止执行Article 16 PRECHECK
+- Factory Status：`READY / Article 16 / PRECHECK pointer candidate / NOT_STARTED / FORBIDDEN CURRENT RUN / active worker NONE`；Continuous Run已在inclusive stop_after Article 15处关闭；下一条持久化策略是等待明确的人类指令，禁止执行Article 16 PRECHECK或`ARTICLE_KICKOFF`
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -107,7 +107,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—14 已进入Published Content。Article 13已由 completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a` 证明完成；Article 14已由 completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d` 与 local / origin / live remote equality=`PASS` 证明为 `PUBLISHED / COMPLETED / END_ARTICLE`。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—15 已进入Published Content。Article 13已由 completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a` 证明完成；Article 14已由 completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d` 与 local / origin / live remote equality=`PASS` 证明为 `PUBLISHED / COMPLETED / END_ARTICLE`；Article 15 的 `PUBLISHED` completion 由 Git history 与 remote refs 派生，retrospective resolver / commit observations 仅用于解释迁移，不构成未来 authority。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

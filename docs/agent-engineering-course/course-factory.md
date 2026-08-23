@@ -51,6 +51,23 @@
 
 `status.md` 与 `course-run-state.md` 的事实冲突不能靠上述排序静默修复；必须进入 `PAUSED / HUMAN_DECISION_REQUIRED`，记录差异后等待人类决定。
 
+### Persisted checkpoint and resolved runtime state
+
+Markdown persists checkpoint facts, expected completion identity, resolution rule, and next candidate; it does not persist live commit/push/remote progress.
+
+```text
+Persisted State != Resolved Runtime State.
+Completion is derived from Git reality.
+
+Canonical
+-> Git Reality
+-> Persisted Checkpoint
+-> Derived Runtime State
+-> Allowed Next Action
+```
+
+Markdown 只持久化 checkpoint 事实、expected completion identity、completion resolution rule 与 next transaction candidate；它不持久化 live commit / push / remote progress。Article completion 必须由 canonical、Git history 与当前 remote refs 在 runtime 只读推导，不新增 completion store，也不得把历史 trace 或 stale current prose 当作 execution authority。
+
 ## 3. Factory state machine
 
 Factory 全局状态只使用：
@@ -105,7 +122,9 @@ PRECHECK
 
 ### 4.1 Gate rules
 
-- `PRECHECK`：执行 Resume Contract，确认 `current branch == main`、canonical entry、依赖、Article mode、workspace scope、clean tree 与 remote alignment。此 Gate 通过前不得实例化 workspace；不得以创建 branch 作为隔离策略。
+Article N+1 may pass only if `ResolveArticleCompletion(N) == END_ARTICLE`.
+
+- `PRECHECK`：执行 Resume Contract，确认 `current branch == main`、canonical entry、依赖、Article mode、workspace scope、clean tree 与 remote alignment。Article N+1 只有在 `ResolveArticleCompletion(N) == END_ARTICLE` 时才可通过 PRECHECK；pointer candidate 本身不授予 PRECHECK 或 Kickoff authority。此 Gate 通过前不得实例化 workspace；不得以创建 branch 作为隔离策略。
 - `ARTICLE_KICKOFF`：PRECHECK `PASS` 后由 Master 显式取得当前 Article transaction ownership，把 Factory 置为 `RUNNING`，记录 current Article、当前 Gate 与唯一 active worker。Kickoff 只建立事务身份与恢复点，不写 Research、Evidence、Outline、Draft 或 Published Content；未完成 Kickoff 不得执行 WORKSPACE_INIT。
 - `WORKSPACE_INIT`：Owner 为 Master Orchestrator；这是 deterministic infrastructure action，不是 content production。Master 只根据 canonical、[workspace template](templates/article-workspace-template.md) 与 repository naming convention 机械创建当前 Article workspace。
 - `RESEARCH`：Researcher 生成 Research Questions、Claim Register、Evidence Cards、counter-evidence 与 version scope。
@@ -119,7 +138,18 @@ PRECHECK
 - `BUILD_VERIFY`：执行仓库真实 Hugo / lint / link commands。Build `PASS` 才允许发布状态成立。
 - `MASTER_STATE_UPDATE`：Master 核对 Reviewer Final PASS、Publisher PASS、Build PASS、workspace、published content、canonical、`status.md` 与 run state 的一致性，准备 Lifecycle `PUBLISHED` candidate；在 Pre-Commit Reconciliation、独立 commit、push 与 remote verification 通过前，Article transaction 仍未完成。
 - `PRE_COMMIT_RECONCILIATION`：这是 checkpoint 前最后一个可写 Gate。Master 必须在这里完成 Article Lifecycle=`PUBLISHED`、`last_published_article` candidate、下一 Article `PRECHECK` pointer candidate、Article completion metadata、Article README、course README、`status.md`、`course-run-state.md`、截至本 Gate 的 final subagent trace，以及必要 canonical / navigation 更新。最终 state 可以表达 `Article N = PUBLISHED` 与 `next transaction = Article N+1 PRECHECK`，但 pointer 仍不等于 Kickoff；在 completion commit 真实存在前，未提交 candidate 不具有启动下一篇的 authority。不得预写尚未发生的 Git Diff Verify、commit SHA、push 或 remote verification result。
-- 未来安全的 completion wording 固定为：`Completion Evidence Source: GIT_HISTORY`；`Pre-Commit Candidate: PUBLISHED`；`Completion Commit: resolved from Git history by Resume / PRECHECK`；`Expected Completion Message: Publish Agent Engineering Article NN`；`Next Transaction Pointer: Article N+1 PRECHECK candidate / NOT_STARTED`。不得把 `completion commit pending`、`GIT_DIFF_VERIFY NEXT`、待 push 或待 remote verification 写成永久 Current State；checkpoint 不得自引用 SHA，也不得以 post-commit write 或第二个 reconciliation commit 回写 completion。
+- 未来安全的 completion wording 固定为以下 stable six-field interface：
+
+    ```text
+    Lifecycle Candidate: PUBLISHED
+    Persisted Checkpoint: PRE_COMMIT_RECONCILIATION PASS
+    Completion Resolution: DERIVED_FROM_GIT_HISTORY
+    Completion Evidence Source: GIT_HISTORY + REMOTE_REFS
+    Expected Completion Message: Publish Agent Engineering Article NN
+    Next Transaction Candidate: Article N+1 PRECHECK / NOT_STARTED
+    ```
+
+    不得把 `completion commit pending`、`GIT_DIFF_VERIFY NEXT`、待 push 或待 remote verification 写成永久 Current State；checkpoint 不得自引用 SHA，也不得以 post-commit write 或第二个 reconciliation commit 回写 completion。
 - `GIT_DIFF_VERIFY`：必须运行 `git status`、`git diff --stat` 与 `git diff`，确认所有变更只属于当前 Article transaction；发现下一篇、无关用户修改、theme / CI / 无关 docs 或无法安全隔离的修改时，返回 `REPOSITORY_CONFLICT`。
 - `ARTICLE_CHECKPOINT_COMMIT`：只显式 stage 当前 Article workspace、该篇 required Lab、published content / assets 与已经完成 Pre-Commit Reconciliation 的 state / canonical / navigation 更新，并以 `Publish Agent Engineering Article NN` 创建本 Article 唯一正式 completion commit。禁止 `git add .`、禁止混入未来 Article；commit 内容不得要求自引用自身 SHA。
 - `ARTICLE_COMMIT_VERIFY`：commit 后只读运行 `git status`、`git log -1 --oneline`、`git show --stat --oneline HEAD` 与 `git diff HEAD^ HEAD --check`，确认 message、files scope、Lifecycle 与工作树遗留均正确。禁止修改任何 repository file。
@@ -127,6 +157,29 @@ PRECHECK
 - `REMOTE_VERIFY`：push 后只读执行 `git fetch origin main`、`git rev-parse HEAD`、`git rev-parse origin/main` 与 `git ls-remote origin refs/heads/main`，要求 `local HEAD == origin/main == remote refs/heads/main`。
 - `POST_COMMIT_RECONCILIATION_READ_ONLY`：只读取 Git history、local / origin / remote main、state files、workspace、Published Content 与 current pointer并返回 `PASS / FAIL`。禁止修改 `course-run-state.md`、`status.md`、任何 README / trace、canonical、Published Content 或其他 repository file；也不得为了记录 `END_ARTICLE`、真实 SHA 或 reconciliation result 再 commit。
 - `END_ARTICLE`：只有 Commit Verify、Push Main、Remote Verify 与只读 Post-Commit Reconciliation 全部 `PASS` 才在 runtime 逻辑上成立。下一次 Resume 依靠 Git history 与 checkpoint 内已提交 pointer 决定 `START_ARTICLE_N+1_PRECHECK`，不需要 post-commit write。
+
+### Deterministic completion resolver
+
+`ResolveArticleCompletion(N)` 是只读 runtime resolver，只返回 `END_ARTICLE` 或 `INCOMPLETE / <reason>`，不修改 tracked / worktree repository files；只允许下述 Git remote refs、objects 与 `FETCH_HEAD` evidence refresh。解析顺序固定为：
+
+1. 从 canonical identity 读取 Article N 的 published path、依赖、required Lab 与当前 transaction 允许的 artifact 类别。
+2. 在任何 union history traversal 前执行 `fresh remote materialization`：
+    - 先以 `git ls-remote origin refs/heads/main` 取得且只取得一个 advertised `live_main_sha`；空结果、多结果或 query failure 都是 `remote query/fetch failure`。
+    - 再执行 `git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main`，把该 branch tip 刷新到 Git objects、`refs/remotes/origin/main` 与 `FETCH_HEAD`；要求 refreshed `FETCH_HEAD == live_main_sha`，并以 `git cat-file -e <live_main_sha>^{commit}` 与 `git rev-list <live_main_sha>` 确认该 SHA 可在本地遍历。fetch 只是 `evidence refresh, not a completion state store`；不得创建 custom completion store。
+    - `remote query/fetch failure` 或 advertised live SHA 无法在本地 materialize / traverse 时，立即返回 `INCOMPLETE / NEEDS_REMOTE_VERIFY`；fresh query 与 `FETCH_HEAD` / refreshed `origin/main` tip 不相等时返回 `INCOMPLETE / REPOSITORY_CONFLICT / REMOTE_MISMATCH`。两类失败都必须 fail closed，`do not return NEEDS_COMMIT`，也不得猜测 completion identity。
+    - 只有 materialization 成功后，identity search universe 才固定为 `union of all existing local/origin/live main tips`：local `refs/heads/main`、refreshed `refs/remotes/origin/main` 与 materialized live `FETCH_HEAD`。missing local ref 记录为 absent；对 present tips 先按 SHA 去重，再遍历其 reachable histories 的并集，按 exact subject 查找 commit，并在计数前 `deduplicate by commit SHA`。
+3. 该 union 中零个 exact-subject commit 返回 `INCOMPLETE / NEEDS_COMMIT`。
+4. 该 union 中多个不同 SHA 的 exact-subject commit 返回 `INCOMPLETE / REPOSITORY_CONFLICT / AMBIGUOUS_COMPLETION_IDENTITY`；pause and report，`never auto-select, rewrite, or delete` 任一候选。
+5. 验证该 commit scope 只包含当前 Article workspace、Published Content / assets、required Lab、允许的前篇 navigation、series index、canonical series plan、Article / Course / status / run-state checkpoint 与 final trace。
+6. scope 含 Article N+1 workspace / content、future Lab、unrelated docs、theme、CI 或其他 transaction asset 时，返回 `INCOMPLETE / REPOSITORY_CONFLICT / INVALID_COMPLETION_SCOPE`。
+7. 得到唯一 completion commit 后，若 `missing local main`，或 local `refs/heads/main`（branch=`main` 时即 current `HEAD`）不包含该 commit，返回 `INCOMPLETE / NEEDS_LOCAL_COMPLETION`。
+8. local main 已包含，但 `missing origin/main`，或 `refs/remotes/origin/main` 不包含该 commit，返回 `INCOMPLETE / NEEDS_PUSH`。
+9. local 与 origin 已包含，但 `missing live main`，或 live `refs/heads/main` tip 不包含该 commit，返回 `INCOMPLETE / NEEDS_REMOTE_VERIFY`。
+10. containment 全部通过后，当前 local `refs/heads/main` / `HEAD`、`origin/main` 与 live `refs/heads/main` tips 必须彼此相等；不相等返回 `INCOMPLETE / REPOSITORY_CONFLICT / REMOTE_MISMATCH`。
+11. 验证 branch=`main`、worktree 无冲突、artifact 与 checkpoint 一致，并完成 `POST_COMMIT_RECONCILIATION_READ_ONLY = PASS`；任一冲突都返回对应的 `INCOMPLETE` reason 并停止。
+12. 全部通过时返回 `END_ARTICLE`，并固定 `repository write required = false`。
+
+“包含 completion commit”与“当前 refs 相等”是两个独立条件：三个当前 main ref 必须包含该 exact completion commit，且当前 `HEAD == origin/main == live refs/heads/main`；后续合法 commit 可以位于旧 completion SHA 之后，因此当前 refs 不必永远等于旧 completion SHA。
 
 任一 Gate 返回 `FAIL` 或缺少必需 artifact 时，Master 不得进入下一 Gate。
 
@@ -204,9 +257,21 @@ one cycle = Reviewer Findings -> Revision Worker changes -> Reviewer Recheck
 
 ## 7. Resume contract
 
+Resume: `Repository Reconciliation -> resolver -> derived Factory state -> compare candidate pointer -> commit/push/verify/pause/next consideration.`
+
 由 `stop_on` 命中形成的 hard lock 只能由**新的外部 human instruction**解除，例如“继续”“按 recovery candidate 修复”“恢复 Article 14”或“可以修复这个 build failure”。worker 返回 `next_allowed_gate`、Master 认为修复明显、Reviewer 建议 recovery、candidate 已存在、问题为 MINOR 或单行修复、retry 看似安全、以及 Master 先前计划继续，都不是 Human Resume。普通 context reset / interrupted-session reconciliation 仍可自动执行只读核对，但不得借此解除 hard lock。
 
 收到有效 Human Resume 后也不得直接执行旧 candidate。Master 必须先完成以下 Repository Reconciliation，再根据当前事实选择 Resume current Gate、Return to previous Gate 或再次 `PAUSED`：
+
+```text
+Repository Reconciliation
+-> resolver
+-> derived Factory state
+-> compare candidate pointer
+-> commit / push / verify / pause / next consideration
+```
+
+Resume resolver target 固定为 `N = last_published_article`，且 N 必须同时是 `latest Article carrying the persisted PUBLISHED completion checkpoint`。在决定 next action 前必须交叉核对 `last_published_article = N`、`current_article = N+1` 仅为 next pointer candidate，以及 `Expected Completion Message = Publish Agent Engineering Article NN`（NN 由 N 格式化）；任一不一致都进入 `PAUSED / REPOSITORY_CONFLICT`。交叉核对通过后才执行 `ResolveArticleCompletion(N)` 并比较 derived Factory state 与 pointer candidate。`Do not resolve Article N+1 first.` Markdown 中的历史或 stale prose 不具有 execution authority。
 
 每次启动、context reset 或 interrupted session 后，Master 必须按顺序：
 
@@ -358,7 +423,11 @@ Article 23 在 canonical 中是 `Advanced / Optional`。Factory 不得把 Option
 
 ## 13. Part Audit
 
+Every required Article in the Part must resolve `END_ARTICLE`.
+
 Part boundary：Part I `01—04`、Part II `05—11`、Part III `12—17`、Part IV required `18—22`（23 按 Optional policy）、Part V `24—27`、Part VI `28—37`、Part VII `38—44`。
+
+Part Audit authority 要求该 Part 的每篇 required Article 都满足 `ResolveArticleCompletion(N) == END_ARTICLE`。只检查 Lifecycle=`PUBLISHED`、Markdown `END_ARTICLE` wording 或最后一篇 Article 都不足以启动 Audit。
 
 每个 Part 的最后一个实际生产对象完成唯一 Article completion commit、`PUSH_MAIN`、`REMOTE_VERIFY` 与 `POST_COMMIT_RECONCILIATION_READ_ONLY` 后，Master 必须启动 fresh Part Auditor，检查：
 
@@ -417,7 +486,11 @@ Reviewer 与 Part Auditor 应调查下列信号，但不能仅凭信号自动判
 
 ## 18. Bounded continuous-run contract
 
+Evaluate policy only after resolver `END_ARTICLE`; Markdown `END` wording has no authority.
+
 跨 Article 自动继续不是默认行为。只有 [course-run-state.md](course-run-state.md) 中显式、durable 的 `continuous_run` policy 授权时，Master 才可在一个已经完整结束的 Article 后继续；每一篇都必须丢弃前一篇 worker context、重新读取 durable repository state 并使用 fresh workers。`stop_after_article` 为 inclusive：到达该 Article 的 `END_ARTICLE` 后停止。`forbidden_articles` 必须在该 Article 的 PRECHECK 前阻断，不能以 pointer、worker handoff 或已预建资产绕过。
+
+Continuous Run 只能在 resolver 得出 `ResolveArticleCompletion(N) == END_ARTICLE` 后评估 policy；Markdown 中出现 `END_ARTICLE` wording 没有自动继续 authority。`stop_after_article` 继续保持 inclusive，`forbidden_articles` 继续在目标 Article PRECHECK 前阻断，且任何 active stop policy 仍然优先：**STOP POLICY WINS**。
 
 连续运行按 `continuous_run` 算法执行：eligible Article N 完成 `END_ARTICLE` 后，只有 `POST_COMMIT_RECONCILIATION_READ_ONLY = PASS`、`active_worker = NONE`、全部 Article N worker contexts 已丢弃，并重新完成 fresh full-repository reconciliation，才可进入 Article N+1 PRECHECK；且 N+1 必须落在 `start_article..stop_after_article`（inclusive）范围内、未出现在 `forbidden_articles` 中。`stop_after_article` 完成 `END_ARTICLE` 后 policy 停止。
 
@@ -518,6 +591,42 @@ factory_status does not become PAUSED only because Findings exist
 
 Static Result：`PASS`。Reviewer Findings -> Revision -> Review Recheck 是已冻结的正常状态机路径；只要没有命中 continuous `stop_on`，hotfix 不阻断该自动修订流程。
 
+### Completion resolver static regressions
+
+以下 A—E 是规范性静态模拟，不是新的 executable resolver 或 completion store；它们不改写上面的历史 Dry Run。
+
+#### Regression Scenario A｜checkpoint exists, publish commit absent
+
+Input：Article 16 已持久化 checkpoint，`fresh remote materialization = PASS` 且 advertised live SHA 可在本地遍历，但 deduplicated local / refreshed origin / materialized `FETCH_HEAD` identity-search union 中不存在 exact `Publish Agent Engineering Article 16` commit。Scenario A 与 Regression Scenario B 使用 `same persisted checkpoint`（同一份 checkpoint，bytes identical）。
+
+Expected：`INCOMPLETE / NEEDS_COMMIT`；Article 17 PRECHECK forbidden。
+
+#### Regression Scenario B｜same checkpoint, fully completed Git reality
+
+A and B use the same persisted checkpoint: `byte-identical checkpoint`.
+
+Input：与 Regression Scenario A 使用 `same persisted checkpoint`；`fresh remote materialization = PASS`，identity-search union 中只有一个 deduplicated exact completion commit，current-transaction-only scope、local / origin / live containment、current refs equality 与 read-only reconciliation 全部通过。
+
+Expected：`END_ARTICLE`；`repository writes = ZERO`。checkpoint bytes 不变，runtime completion 只由 Git reality 的变化推导。
+
+#### Regression Scenario C｜valid local-only completion commit
+
+Input：`fresh remote materialization = PASS`，identity-search union 中唯一 exact publish commit 与 scope 合法，local `refs/heads/main` 已包含它，但 refreshed `origin/main` 尚未包含。
+
+Expected：`INCOMPLETE / NEEDS_PUSH`；Article N+1 forbidden。
+
+#### Regression Scenario D｜future-Article scope contamination
+
+Input：exact message 存在且当前 refs aligned，但 completion commit scope 含 Article N+1 assets。
+
+Expected：`INCOMPLETE / REPOSITORY_CONFLICT / INVALID_COMPLETION_SCOPE`；不得自动修复或启动下一 Article。
+
+#### Regression Scenario E｜historical PRE_COMMIT wording
+
+Input：明确标注的 Historical Transaction Record 保留 `PRE_COMMIT_RECONCILIATION` wording，同时 completed Git reality 满足 resolver 全部条件。
+
+Expected：historical prose ignored；`END_ARTICLE`。若 stale PRE_COMMIT / pending commit / pending push wording 未标注历史、仍位于 current interface，则 reconciliation 失败，不得以该 prose 推进 Gate。
+
 ### Contract interface audit
 
 | Interface | Producer | Durable Artifact / Result | Consumer |
@@ -552,4 +661,4 @@ Audit Result：`Missing Producer = NONE`、`Missing Consumer = NONE`、`Ownershi
 
 ## 21. Current pointer rule
 
-不得在本合同硬编码某一篇 Article 为永久 current pointer。每次 Resume / PRECHECK 都从 `course-run-state.md`、`status.md`、current workspace、Published Content、Git history、`origin/main` 与 live remote 重新得出当前 pointer；只有完整 reconciliation 一致时才确定下一动作。跨 Article 仅可在 run-state 的显式 `continuous_run` policy 授权下继续，且仍需 fresh workers 与重新读取 durable repository state。`stop_after_article` 是 inclusive；`forbidden_articles` 必须在 PRECHECK 前阻断。pointer 从不等于 `ARTICLE_KICKOFF`，也不能授权创建未来 Article workspace 或 content。
+不得在本合同硬编码某一篇 Article 为永久 current pointer。每次 Resume / PRECHECK 都从 `course-run-state.md`、`status.md`、current workspace、Published Content、Git history、`origin/main` 与 live remote 重新得出当前 pointer，并按 Resume target rule 固定 `N = last_published_article`，确认 N 是携带 persisted PUBLISHED completion checkpoint 的 latest Article，交叉核对 `last_published_article = N`、`current_article = N+1` pointer candidate 与 expected completion message 后，才执行 `ResolveArticleCompletion(N)`；`Do not resolve Article N+1 first.` 只有 resolver 与完整 reconciliation 一致时才确定下一动作。跨 Article 仅可在 run-state 的显式 `continuous_run` policy 授权下继续，且仍需 fresh workers 与重新读取 durable repository state。`stop_after_article` 是 inclusive；`forbidden_articles` 必须在 PRECHECK 前阻断。pointer 从不等于 `ARTICLE_KICKOFF`，也不能授权创建未来 Article workspace 或 content。

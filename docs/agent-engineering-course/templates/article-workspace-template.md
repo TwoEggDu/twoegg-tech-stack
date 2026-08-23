@@ -29,14 +29,17 @@ articles/<id>-<slug>/
 - Current Gate: `Article Card`
 - Next Allowed Action: `<action>`
 - Blocker: `<blocker>`
-- Completion Evidence Source: `GIT_HISTORY`
-- Pre-Commit Candidate: `PUBLISHED`
-- Completion Commit: `resolved from Git history by Resume / PRECHECK`
+- Lifecycle Candidate: `NOT_REACHED`
+- Persisted Checkpoint: `ABSENT`
+- Completion Resolution: `DERIVED_FROM_GIT_HISTORY`
+- Completion Evidence Source: `GIT_HISTORY + REMOTE_REFS`
 - Expected Completion Message: `Publish Agent Engineering Article NN`
-- Next Transaction Pointer: `Article N+1 PRECHECK candidate / NOT_STARTED`
+- Next Transaction Candidate: `ABSENT`
 ```
 
-Completion metadata is future-safe: the pre-commit candidate is not a completion claim, and the completion SHA is never self-written into the checkpoint. Resume / PRECHECK resolves it from Git history after the one commit, push, remote equality, and read-only reconciliation have passed.
+`WORKSPACE_INIT` 时，上述 completion fields 是 truthfully pre-completion placeholders：`NOT_REACHED / ABSENT` 不是完成声明。只有实际通过 `PRE_COMMIT_RECONCILIATION` persistence cut 后，Master 才能写入稳定的 six-field completion interface；completion SHA 不得自写入 checkpoint。相同 checkpoint 在有效 commit / push / remote reconciliation 前后可分别由 `ResolveArticleCompletion(N)` 解析为 `INCOMPLETE` 或 `END_ARTICLE`，无 write bridge。
+
+当 persistence cut 写入稳定 completion interface 时，瞬时 `Current Gate` 与 `Next Allowed Action` 必须从 live metadata 移除；若需要保留，只能移入明确标记的 `## Historical Transaction Record`。resolver 不得把该历史段落当成 current pointer；Git history 与 remote refs 仍是派生 completion authority。
 
 ## 文件职责
 

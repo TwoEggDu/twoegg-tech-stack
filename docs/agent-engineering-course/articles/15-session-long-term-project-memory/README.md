@@ -5,21 +5,23 @@
 - Part: `III｜Agent 的信息、状态与知识`
 - Course Weight: `M`
 - Optional: `NO`
-- Lifecycle Status: `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`
+- Lifecycle Checkpoint: `PUBLISHED`
+- Persisted Checkpoint: `PRE_COMMIT_RECONCILIATION PASS`
+- Completion Resolution: `DERIVED_FROM_GIT_HISTORY`
+- Completion Evidence Source: `GIT_HISTORY + REMOTE_REFS`
+- Expected Completion Message: `Publish Agent Engineering Article 15`
+- Next Transaction Candidate: `Article 16 PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN`
+- Retrospective Resolver Observation (2026-08-23): `END_ARTICLE`
+- Completion Commit Observation: `0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`
 - Evidence Status: `PASS / 7 CONFIRMED / 1 PARTIAL / 6 PROPOSAL / 0 BLOCKED`
 - Required Lab: `NONE`
 - Mode: `NORMAL_ARTICLE`
-- Current Gate: `PRE_COMMIT_RECONCILIATION / COMPLETION CANDIDATE`
 - Active Worker: `NONE`
-- Next Allowed Action: `GIT_DIFF_VERIFY -> COMMIT -> PUSH -> REMOTE_VERIFY -> READ_ONLY RECONCILIATION`
 - Blocker: `NONE`
-- Completion Evidence Source: `GIT_HISTORY`
-- Pre-Commit Candidate: `PUBLISHED`
-- Completion Commit: `resolved from Git history by Resume / PRECHECK`
-- Expected Completion Message: `Publish Agent Engineering Article 15`
-- Next Transaction Pointer: `Article 16 PRECHECK candidate / NOT_STARTED / FORBIDDEN IN CURRENT RUN`
 
-## Transaction Baseline
+> Retrospective observations explain this one-time migration only. They are not future completion authority, required post-commit writes, or permission to start Article 16; `ResolveArticleCompletion(15)` and policy remain authoritative at runtime.
+
+## Historical Transaction Baseline
 
 - PRECHECK：`PASS`；`main` clean，`HEAD == origin/main == live remote main == 95372e8917a2e4350d356c7ea0a3c91d14e46da3`。
 - Article 14：唯一 completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d` 已在当前 main ancestry，Published Content、Final Gate、Build 与 `END_ARTICLE` 均已核验。
@@ -37,11 +39,11 @@
 - [Review](review.md)：`FINAL GATE PASS / 93 / 0 OPEN / 14 OF 14 TRACEABLE`
 - [Subagent Trace](subagent-trace.md)：Article 15全部content Gate与Pre-Commit Reconciliation已记录
 
-## Stop Line
+## Current Durable Policy
 
-`PRE_COMMIT_RECONCILIATION` 已通过并激活 persistence cut。此后 repository writes=`ZERO`；只允许Git diff/stage/唯一completion commit/单次push/remote与post-commit只读验证。`END_ARTICLE 15` 后立即停止Continuous Run；Article 16仅为PRECHECK pointer candidate，禁止执行PRECHECK或ARTICLE_KICKOFF。
+Article 15 的持久化 checkpoint 为 `PRE_COMMIT_RECONCILIATION PASS`；当前 completion 只由 `ResolveArticleCompletion(15)` 从 Git history 和 remote refs 推导。上述 retrospective observations 仅作说明，不是未来 completion authority 或 post-commit write 要求。下一条持久化策略是等待明确的人类指令；Article 16 仅为 `PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer candidate，禁止执行 PRECHECK 或 `ARTICLE_KICKOFF`。
 
-## Publication Evidence Candidate
+## Historical Publication Evidence Candidate
 
 - Result：`PASS / PUBLISH CANDIDATE`；Gate=`PUBLISH`；execution=`REAL_SUBAGENT`；next allowed gate=`BUILD_VERIFY`。
 - Frozen Input：`draft.md` SHA-256=`0fe407d1a04839a8af8729cb5aa2931682bef21aeb654852c1968f246cff111c` / `25565 bytes` / `342 lines`，与独立 Final Gate 授权身份精确一致；Publisher 未修改 Draft。
@@ -60,7 +62,7 @@
 - Checkpoint Readiness：Completion Evidence Source=`GIT_HISTORY`；Pre-Commit Candidate=`PUBLISHED`；Completion Commit=`resolved from Git history by Resume / PRECHECK`；Expected Completion Message=`Publish Agent Engineering Article 15`；Next Transaction Pointer=`Article 16 PRECHECK candidate / NOT_STARTED / FORBIDDEN CURRENT RUN`。
 - Publisher Boundary：未修改 frozen Draft / Review / Research / Evidence、canonical、global status / run-state、Article 16、theme 或 CI；未运行 Hugo，未执行 Git branch / stage / commit / push，也未创建 PR。
 
-## Build Verification Result
+## Historical Build Verification Result
 
 - Result：`PASS`；fresh Publisher execution=`/root/article15_build_verify`；Gate=`BUILD_VERIFY`；next=`PRE_COMMIT_RECONCILIATION`。
 - Worker / Master Build：`hugo --gc --minify`；Hugo=`0.157.0`；`1244 Pages / 0 WARNING / 0 ERROR / 0 REF_NOT_FOUND`；exit code=`0`。
@@ -69,7 +71,7 @@
 - Forbidden Boundary：Article 16 route、rendered link、workspace与Published Content均不存在。
 - Source Integrity：pre/post tracked status相同，9项source hash不变；Draft hash与semantic exact持续成立；`git diff --check`通过。
 
-## Pre-Commit Reconciliation
+## Historical Pre-Commit Reconciliation
 
 - Result：`PASS / LAST REPOSITORY WRITE`；Article 15 Lifecycle=`PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate。
 - Final / Evidence：`93 / 100 / 0 OPEN`；14/14 Claim traceable；`7 CONFIRMED / 1 PARTIAL / 6 PROPOSAL / 0 BLOCKED`。
