@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY
 factory_status: READY
-current_article: "15"
+current_article: "16"
 current_gate: PRECHECK
-last_published_article: "14"
+last_published_article: "15"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "14"
+  article: "15"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/14-working-memory-investigation-state/subagent-trace.md#wr-article-14-pre-commit-reconciliation-20260823t081757
+  result_ref: docs/agent-engineering-course/articles/15-session-long-term-project-memory/subagent-trace.md#wr-article-15-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -34,13 +34,13 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 98926b5c0a02611213faaa0f916ce3393d3a5d4a
-next_action: START_ARTICLE_15_PRECHECK
+last_successful_commit: 95372e8917a2e4350d356c7ea0a3c91d14e46da3
+next_action: STOP_CONTINUOUS_RUN_AFTER_ARTICLE_15_AND_WAIT_NEW_HUMAN_INSTRUCTION
 continuous_run:
-  enabled: true
+  enabled: false
   start_article: "14"
   stop_after_article: "15"
-  auto_continue_after_end_article: true
+  auto_continue_after_end_article: false
   stop_at_part_boundary: false
   stop_on:
     blocker: true
@@ -56,10 +56,10 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "16"
-last_updated: "2026-08-23T08:17:57+08:00"
+last_updated: "2026-08-23T13:05:33+08:00"
 ```
 
-> Pre-Commit Candidate（2026-08-23）：Article 14 Final / Publisher / recovery / Hugo / rendered route / semantic identity / canonical与global reconciliation均=`PASS`；expected completion message=`Publish Agent Engineering Article 14`。当前持久化pointer为`READY / Article 15 / PRECHECK / NOT_STARTED / active worker NONE`，不等于Article 15 Kickoff；Article 16由bounded policy禁止启动。此记录后repository writes=`ZERO`，completion commit / push / remote verification由后续只读runtime Gate证明。
+> Article 15 Final=`PASS / 93 / 0 OPEN`、Publish=`PASS / SEMANTIC EXACT`、Hugo=`0.157.0 / 1244 Pages / 0 WARNING / 0 ERROR`，PRE_COMMIT_RECONCILIATION=`PASS / LAST REPOSITORY WRITE`。当前working tree是唯一completion commit candidate；Factory=`READY / Article 16 / PRECHECK pointer candidate / NOT_STARTED / FORBIDDEN CURRENT RUN / active worker NONE`，continuous run已在inclusive stop_after 15处关闭。Article 16资产不存在，禁止执行PRECHECK或Kickoff；commit/push/remote结果保持runtime-only。
 
 ## Field rules
 

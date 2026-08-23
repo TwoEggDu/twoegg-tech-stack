@@ -99,7 +99,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
         <li class="is-published"><span class="lesson-id">12</span><a href="{{< relref "ai-empowerment/agent-engineering-12-context-engineering.md" >}}">Context Engineering：每一个 Step 到底应该看到什么</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">13</span><a href="{{< relref "ai-empowerment/agent-engineering-13-context-debugging.md" >}}">Context Debugging：Packing、Compression、Pollution 与可重建性</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">14</span><a href="{{< relref "ai-empowerment/agent-engineering-14-working-memory-investigation-state.md" >}}">Working Memory 与 Investigation State：当前任务正在想什么</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">15</span><span>Session、Long-term Memory 与 Project Memory：事实、经验和作用域</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">15</span><a href="{{< relref "ai-empowerment/agent-engineering-15-session-long-term-project-memory.md" >}}">Session、Long-term Memory 与 Project Memory：事实、经验和作用域</a><span class="lesson-status">已发布</span></li>
         <li class="is-planned"><span class="lesson-id">16</span><span>Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">17</span><span>Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt</span><span class="lesson-status">计划中</span></li>
       </ol>

@@ -18,6 +18,8 @@ weight: 3150
 
 > **上一篇**：[Context Debugging：Packing、Compression、Pollution 与可重建性]({{< relref "ai-empowerment/agent-engineering-13-context-debugging.md" >}})
 
+> **下一篇**：[Session、Long-term Memory 与 Project Memory：事实、经验和作用域]({{< relref "ai-empowerment/agent-engineering-15-session-long-term-project-memory.md" >}})
+
 假设上一篇要求的检查都已经通过：当前 Unity Console 的 **CS0103** 片段确实进入了 application-visible Context Snapshot；Goal 与 State revision 相容；History 里也保留着前几步提出的两个候选解释，以及一条反证。没有已知的 Assembly、Packing、Compression 或 Truncation 故障。
 
 新的 Step 仍可能答不出四个问题：

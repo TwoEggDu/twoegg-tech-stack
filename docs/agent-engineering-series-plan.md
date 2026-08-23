@@ -186,7 +186,7 @@ BuildPilot Design v1
 | 12 | [Context Engineering：每一个 Step 到底应该看到什么](../content/ai-empowerment/agent-engineering-12-context-engineering.md) | L | 否 |
 | 13 | [Context Debugging：Packing、Compression、Pollution 与可重建性](../content/ai-empowerment/agent-engineering-13-context-debugging.md) | L | 否 |
 | 14 | [Working Memory 与 Investigation State：当前任务正在想什么](../content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md) | L | 否 |
-| 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | M | 否 |
+| 15 | [Session、Long-term Memory 与 Project Memory：事实、经验和作用域](../content/ai-empowerment/agent-engineering-15-session-long-term-project-memory.md) | M | 否 |
 | 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | M | 否 |
 | 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | M | 否 |
 

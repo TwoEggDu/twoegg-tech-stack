@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 14 `PUBLISHED / COMPLETED / END_ARTICLE`；Completion Evidence Source=`GIT_HISTORY`；completion commit=`a53d151ba051403ff5ef369e5c3860a9fbded03d`；local / origin / live remote equality=`PASS`
-- 当前生产对象：Article 15 `PRECHECK / NOT_STARTED` pointer；尚未ARTICLE_KICKOFF
+- 当前里程碑：Article 15 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；Completion Evidence Source=`GIT_HISTORY`；Expected Completion Message=`Publish Agent Engineering Article 15`
+- 当前生产对象：Article 16 `PRECHECK POINTER CANDIDATE / NOT_STARTED / FORBIDDEN CURRENT RUN`；workspace与Published Content均不存在
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -60,8 +60,10 @@
 - 当前 Article 14 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；Evidence=`PASS / 5 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED`；Final=`PASS / 93 / 0 OPEN`；completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d`；local / origin / live remote equality=`PASS`
 - 当前 Article 14 Published Content：`content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md`
 - 当前 Article 14 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1243 Pages / 0 ERROR / 0 WARNING`，exit code `0`；fixed-clock future hits=`0`
+- 当前 Article 15 Published Content：`content/ai-empowerment/agent-engineering-15-session-long-term-project-memory.md`
+- 当前 Article 15 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1244 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- Factory Status：`READY / Article 15 / PRECHECK / NOT_STARTED / active worker NONE`；Article 15尚未Kickoff，Article 16禁止启动
+- Factory Status：`READY / Article 16 / PRECHECK pointer candidate / NOT_STARTED / active worker NONE`；Continuous Run已在inclusive stop_after Article 15处关闭，下一动作是完成Article 15 Git/remote只读链后STOP，禁止执行Article 16 PRECHECK
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
