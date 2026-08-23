@@ -18,6 +18,8 @@ weight: 3140
 
 > **上一篇**：[Context Engineering：每一个 Step 到底应该看到什么]({{< relref "ai-empowerment/agent-engineering-12-context-engineering.md" >}})
 
+> **下一篇**：[Working Memory 与 Investigation State：当前任务正在想什么]({{< relref "ai-empowerment/agent-engineering-14-working-memory-investigation-state.md" >}})
+
 昨天，构建诊断 Step 收到一份 Unity 编译日志。第一条可行动错误很清楚：`BuildMenu.cs` 中某个变量未定义，编译器报 `CS0103`。它按任务要求给出错误位置、证据引用，并把尚未确认的根因保留为 `UNKNOWN`。
 
 今天，团队用同一句 Prompt 又跑了一次：

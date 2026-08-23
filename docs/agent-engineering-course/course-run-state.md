@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY
 factory_status: READY
-current_article: "14"
+current_article: "15"
 current_gate: PRECHECK
-last_published_article: "13"
+last_published_article: "14"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "13"
+  article: "14"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/13-context-debugging/subagent-trace.md#wr-article-13-pre-commit-reconciliation-20260822t165203
+  result_ref: docs/agent-engineering-course/articles/14-working-memory-investigation-state/subagent-trace.md#wr-article-14-pre-commit-reconciliation-20260823t081757
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -34,8 +34,8 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
-last_successful_commit: 8b18b85b5a0f6a95f042832e36a8f7cb09f8609a
-next_action: START_ARTICLE_14_PRECHECK
+last_successful_commit: 98926b5c0a02611213faaa0f916ce3393d3a5d4a
+next_action: START_ARTICLE_15_PRECHECK
 continuous_run:
   enabled: true
   start_article: "14"
@@ -56,10 +56,10 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "16"
-last_updated: "2026-08-22T21:08:15+08:00"
+last_updated: "2026-08-23T08:17:57+08:00"
 ```
 
-> Reconciliation proof（2026-08-22）：Article 13 completion 已由 Git history 解析为 `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`（`Publish Agent Engineering Article 13`）；local / origin / live remote equality=`PASS`，并已完成只读 reconciliation。当前 pointer 仍是 `READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`；Article 14 workspace/content不存在，pointer不等于 Kickoff。`last_worker_result` 只是 `LAST_PERSISTED_PRE_COMMIT_RESULT` 的历史投影，不是 post-commit worker result，也不代表当前 gate。
+> Pre-Commit Candidate（2026-08-23）：Article 14 Final / Publisher / recovery / Hugo / rendered route / semantic identity / canonical与global reconciliation均=`PASS`；expected completion message=`Publish Agent Engineering Article 14`。当前持久化pointer为`READY / Article 15 / PRECHECK / NOT_STARTED / active worker NONE`，不等于Article 15 Kickoff；Article 16由bounded policy禁止启动。此记录后repository writes=`ZERO`，completion commit / push / remote verification由后续只读runtime Gate证明。
 
 ## Field rules
 

@@ -1,9 +1,9 @@
 # Agent Engineering 课程状态台账
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
-- 更新时间：2026-08-22
-- 当前里程碑：Article 13 `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`
-- 当前生产对象：Article 14 `PRECHECK / NOT_STARTED`；尚未执行`ARTICLE_KICKOFF`，workspace/content不存在
+- 更新时间：2026-08-23
+- 当前里程碑：Article 14 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`；expected completion message=`Publish Agent Engineering Article 14`；completion commit尚待Git history产生
+- 当前生产对象：Article 15 `PRECHECK / NOT_STARTED` pointer；尚未ARTICLE_KICKOFF
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -20,14 +20,16 @@
 - Article 12 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1241 Pages / 0 ERROR / 0 WARNING`，exit code `0`
 - Article 13 Published Path：`content/ai-empowerment/agent-engineering-13-context-debugging.md`
 - Article 13 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1242 Pages / 0 ERROR / 0 WARNING`，exit code `0`
+- Article 14 Published Path：`content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md`
+- Article 14 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1243 Pages / 0 ERROR / 0 WARNING`，exit code `0`；fixed-clock future hits=`0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 14 / PRECHECK / NOT_STARTED / active worker NONE`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 15 / PRECHECK / NOT_STARTED / active worker NONE`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- 下一允许动作：Article 14 `PRECHECK`；尚未执行 `ARTICLE_KICKOFF`，workspace/content不存在
+- 下一允许动作：Article 14 `GIT_DIFF_VERIFY`，随后精确提交、推送与远端验证；Article 15仅为`PRECHECK / NOT_STARTED` pointer，Article 16禁止启动
 
 ## 状态图例
 
@@ -54,7 +56,7 @@
 | 11 | Long-running Agent：Checkpoint、Retry、Cancellation 与 Recovery | II | M | 否 | `PUBLISHED` | `PASS`（`9 / 9 TRACEABLE / 0 CORE BLOCKED`；C08 split-scoped） | Lab 04 `CONFIRMED / EVIDENCE_MERGED / 8 of 8` | `11-R0-F01 / F02 CLOSED`；Final Gate=`PASS / 94 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；`content/ai-empowerment/agent-engineering-11-long-running-agent.md` |
 | 12 | Context Engineering：每一个 Step 到底应该看到什么 | III | L | 否 | `PUBLISHED` | `PASS`（`9 / 9 TRACEABLE / 0 CORE BLOCKED`） | N/A | `NONE`；`12-R0-F01`—`F04 CLOSED`；Final Gate=`PASS / 93 / 0 OPEN`；completion commit `a87f058ae2642870ade75fa7f23ac4396f17b94c` pushed / live-remote verified；`content/ai-empowerment/agent-engineering-12-context-engineering.md` |
 | 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | III | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS`（`9 / 9 TRACEABLE / 3 CONFIRMED / 6 PROPOSAL / 0 BLOCKED`） | Lab 05 `EVIDENCE_MERGED / EVIDENCE_GATE_PASS / FIXTURE-SCOPED` | `NONE`；`13-F01`—`F05 CLOSED`；Final Gate Cycle 2=`PASS / 91 / 0 OPEN`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`；`content/ai-empowerment/agent-engineering-13-context-debugging.md` |
-| 14 | Working Memory 与 Investigation State：当前任务正在想什么 | III | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
+| 14 | Working Memory 与 Investigation State：当前任务正在想什么 | III | L | 否 | `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` | `PASS`（`5 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED`） | N/A | `14-F01`—`F05 CLOSED`；Final=`PASS / 93 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；completion commit pending；`content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md` |
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | III | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | III | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | III | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
