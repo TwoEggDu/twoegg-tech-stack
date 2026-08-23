@@ -93,7 +93,7 @@ last_updated: "2026-08-23T08:17:57+08:00"
   ```
 
 - `role / article / gate / execution_type / status / gate_completed / blocker` 来自 envelope；`execution_id / result_ref / artifact_verified / validation_status` 只能由 Master 从实际 dispatch、canonical raw record 与验证结果写入。`artifact_verified: true` 表示 created 与 modified paths 均真实存在于 actual diff、全部属于该 role 的 `Allowed Writes`，并且没有未声明 delete / rename。
-- 结构有效但 artifact、Gate 或 State Machine validation 失败时，Master 可以写 `artifact_verified: false` 或 `validation_status: FAIL`；`next_allowed_gate` 仅在 mapping / transition validation 通过时保留。`status: FAIL / BLOCKED` 的 non-`NONE` Gate 只是 recovery candidate，不改变 `current_gate` 且不触发自动 dispatch。
+- 结构有效但 artifact、Gate 或 State Machine validation 失败时，Master 可以写 `artifact_verified: false` 或 `validation_status: FAIL`；`next_allowed_gate` 仅在 mapping / transition validation 通过时保留。**Recovery Candidate != Recovery Authority**：`status: FAIL / BLOCKED` 的 non-`NONE` Gate 只保留为未来获得授权后的 recovery candidate，不改变 `current_gate` 且不触发自动 dispatch。
 - worker 没有返回 envelope，或 envelope 的 root / fields / types / assignment 无效时，Master 不得制造 projection，也不得覆盖最近一次 schema-valid `last_worker_result`。Master 必须把 dispatch identity 与 failure 写入 canonical record，并设置 `last_worker_result_error`：
 
   ```yaml
@@ -120,6 +120,12 @@ last_updated: "2026-08-23T08:17:57+08:00"
 ## Bounded continuous-run policy
 
 `continuous_run` 仅授权 `start_article` 到 `stop_after_article` 的连续 Article transaction；`stop_after_article` inclusive，`forbidden_articles` 在 PRECHECK 前绝对阻断。每个 `stop_on` 条目为 `true` 时，命中即停止，不自动恢复或跳过。
+
+active `continuous_run.stop_on.<condition> = true` 且 condition 命中时必须建立 **HARD EXECUTION LOCK**：Master 设置 `factory_status: PAUSED`、`active_blocker: <normalized blocker>`、`stop_reason: HUMAN_DECISION_REQUIRED`、`human_decision_required: true`，并关闭当前 execution 的 recovery 与 continuous auto-continue authority。`schema_version: 4` 的现有字段足以表达该锁；不要只为 hard stop 新增 `execution_lock` 字段或升 schema。若 execution 已结束，active worker fields 清为 `NONE`；若已越过 `PRE_COMMIT_RECONCILIATION` persistence cut，则只保留 runtime decision，repository writes=`ZERO`。
+
+Hard lock 只能由新的外部 human instruction 解除；worker recommendation、Master 自行判断、Reviewer 建议或 recovery candidate 均不是 Resume authority。收到 Human Resume 后必须先核对 branch、worktree、HEAD、`origin/main`、live remote、`status.md`、本文件、current Article / Gate、failure artifact、recovery candidate 与 active worker，再决定恢复路径；不得直接执行旧临时上下文。
+
+`auto_continue_after_end_article` 只控制 `END_ARTICLE N -> Article N+1 PRECHECK`，不能授权 `FAIL -> Recovery`。Gate failure 与 stop policy 同时存在时，STOP POLICY WINS；candidate retained，execution authority denied。Reviewer Findings -> `REVISION -> REVIEW_RECHECK` 在没有命中 `stop_on` 时仍按正常状态机自动继续。
 
 Article 14 `END_ARTICLE` 后，只有 `POST_COMMIT_RECONCILIATION_READ_ONLY = PASS`、`active_worker = NONE`、全部 Article 14 worker contexts 已丢弃，并重新完成 full-repository reconciliation，才能开始 Article 15 PRECHECK。Article 15 `END_ARTICLE` 后 policy停止；Article 16 只能是 `PRECHECK / NOT_STARTED` pointer，绝不开始。
 

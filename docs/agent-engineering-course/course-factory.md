@@ -130,7 +130,26 @@ PRECHECK
 
 任一 Gate 返回 `FAIL` 或缺少必需 artifact 时，Master 不得进入下一 Gate。
 
-### 4.2 WORKSPACE_INIT contract
+### 4.2 Gate failure authority and hard execution lock
+
+**Recovery Candidate != Recovery Authority**。Gate 或 worker 可以用 `next_allowed_gate` 返回 `PUBLISH`、`LAB_EXECUTE`、`RESEARCH` 或其他 recovery candidate；它只回答“未来获得恢复授权后，可以从哪里重新评估”，不授权 Master 在当前 execution 中派发 worker、应用修复或重跑 Gate。Failure can propose recovery. Only authority can execute recovery.
+
+Master 收到 `FAIL / BLOCKED` 后必须先归一化 blocker，再判断 active `continuous_run.stop_on.<condition>`，最后才允许考虑普通 recovery route。稳定映射优先复用现有 taxonomy：Build / publication verify failure -> `FAILED_PUBLICATION`，Git / state conflict -> `REPOSITORY_CONFLICT`，core Evidence blocked -> `BLOCKED_EVIDENCE`，required Lab failure -> `FAILED_LAB`，Review cycle exhausted -> `FAILED_REVIEW`；worker 不得发明 global blocker。
+
+当对应 `stop_on` 为 `true` 时，**STOP POLICY WINS**，立即形成 hard execution lock：
+
+```yaml
+factory_status: PAUSED
+active_blocker: <normalized blocker>
+stop_reason: HUMAN_DECISION_REQUIRED
+human_decision_required: true
+```
+
+若 failed execution 已结束，Master 同时把 active worker fields 清为 `NONE`；若仍在运行，则只等待或终止同一 execution，禁止重复 dispatch。该 hard lock 在逻辑上关闭本次 continuous auto-continue authority；不要求新增 schema 字段，也不要求改写 `continuous_run.auto_continue_after_end_article`，但效果必须等价于当前 execution 不再自动进入任何 recovery 或后续 Gate。
+
+Hard lock 后、获得新的 Human Resume 前，禁止 dispatch recovery worker、执行 recovery candidate、重跑 failed Gate、应用 proposed fix、修改 Article content、继续当前 Article、进入下一 Gate、commit recovered Article、启动下一 Article 或运行下一 PRECHECK。Master 只允许核验 failure evidence、归一化并记录 blocker、保留 recovery candidate、在 persistence cut 前持久化 `PAUSED`、清理已结束的 active worker、报告 human action required，然后停止。若 failure 发生在 `PRE_COMMIT_RECONCILIATION` persistence cut 之后，只能以 runtime result、Git 与已有 trace 报告 `PAUSED / HUMAN RESUME REQUIRED`；不得为记录 pause 产生 repository write，继续遵守 `POST_COMMIT_WRITES_ZERO`。
+
+### 4.3 WORKSPACE_INIT contract
 
 PRECHECK 与 `ARTICLE_KICKOFF` 均 `PASS` 后，Master 才能执行：
 
@@ -184,6 +203,10 @@ one cycle = Reviewer Findings -> Revision Worker changes -> Reviewer Recheck
 `QUALITY_DEGRADATION_REVIEW` 是 Reviewer / Part Auditor 的调查 Finding，不是新的 Stop Reason。调查后若形成真实 Gate failure，再映射到上表。
 
 ## 7. Resume contract
+
+由 `stop_on` 命中形成的 hard lock 只能由**新的外部 human instruction**解除，例如“继续”“按 recovery candidate 修复”“恢复 Article 14”或“可以修复这个 build failure”。worker 返回 `next_allowed_gate`、Master 认为修复明显、Reviewer 建议 recovery、candidate 已存在、问题为 MINOR 或单行修复、retry 看似安全、以及 Master 先前计划继续，都不是 Human Resume。普通 context reset / interrupted-session reconciliation 仍可自动执行只读核对，但不得借此解除 hard lock。
+
+收到有效 Human Resume 后也不得直接执行旧 candidate。Master 必须先完成以下 Repository Reconciliation，再根据当前事实选择 Resume current Gate、Return to previous Gate 或再次 `PAUSED`：
 
 每次启动、context reset 或 interrupted session 后，Master 必须按顺序：
 
@@ -398,6 +421,19 @@ Reviewer 与 Part Auditor 应调查下列信号，但不能仅凭信号自动判
 
 连续运行按 `continuous_run` 算法执行：eligible Article N 完成 `END_ARTICLE` 后，只有 `POST_COMMIT_RECONCILIATION_READ_ONLY = PASS`、`active_worker = NONE`、全部 Article N worker contexts 已丢弃，并重新完成 fresh full-repository reconciliation，才可进入 Article N+1 PRECHECK；且 N+1 必须落在 `start_article..stop_after_article`（inclusive）范围内、未出现在 `forbidden_articles` 中。`stop_after_article` 完成 `END_ARTICLE` 后 policy 停止。
 
+`auto_continue_after_end_article` 只授权 `END_ARTICLE N -> Article N+1 PRECHECK`，且仍受上述 reconciliation 与 bounded range 约束；它不能授权 `FAIL -> Recovery`。Gate `FAIL` 永远不是 auto-continue point。若 Gate 自己返回 recovery candidate 而 active `stop_on` 同时命中，保留 candidate 但拒绝 execution authority：STOP POLICY WINS。
+
+```text
+Gate Result
+   |
+   +-- PASS -> continue normal Article flow
+   |
+   +-- FAIL -> classify failure -> stop_on matched?
+                                      | YES -> HARD STOP / PAUSED / HUMAN REQUIRED
+                                      | NO  -> contract-approved normal recovery route
+```
+
+
 ## 19. Static interface dry-run
 
 ### Dry Run A｜Article 09 Normal Mode / Main-Only Git Boundary
@@ -442,6 +478,45 @@ PRECHECK / ARTICLE_KICKOFF / WORKSPACE_INIT     [Master]
 ```
 
 Static Result：`PASS`。Lab Design、raw observation 与 Evidence interpretation 各有唯一 owner；本次没有实例化 Lab 01 或执行实验。
+
+### Dry Run C｜Article 14 Build Failure Hard Stop Regression
+
+Regression assertion：Article 14 `BUILD_VERIFY = FAIL` 且 `continuous_run.stop_on.build_failure = true` 时，`recovery worker dispatched = NO`，`Article 15 PRECHECK executed = NO`。
+
+Article 14 durable trace 保留真实历史：`BUILD_VERIFY FAIL -> stop policy HIT -> automatic publication recovery -> BUILD_VERIFY RECOVERY PASS`。这不是 Human Resume，而是 `CANARY CONTROL-FLOW REGRESSION`；不得删除、改写或伪装该记录。
+
+```text
+Continuous Run: Article 14 -> Article 15
+Article 14 BUILD_VERIFY = FAIL
+continuous_run.stop_on.build_failure = true
+recovery candidate = PUBLISH
+
+Expected:
+factory_status = PAUSED
+human_decision_required = true
+active_blocker = FAILED_PUBLICATION
+stop_reason = HUMAN_DECISION_REQUIRED
+recovery candidate retained = YES
+recovery worker dispatched = NO
+Article 15 PRECHECK executed = NO
+```
+
+Static Result：`PASS` only if all expected conditions hold。`PUBLISH` candidate 只保留为未来 Resume 输入；没有新的 Human Resume 时，Master 必须停止。
+
+### Dry Run D｜Review Revision Non-Stop Control
+
+```text
+REVIEW -> Findings -> REVISION -> REVIEW_RECHECK
+continuous stop_on matched = NO
+
+Expected:
+REVISION worker dispatched = YES
+REVIEW_RECHECK executed = YES
+factory_status does not become PAUSED only because Findings exist
+```
+
+
+Static Result：`PASS`。Reviewer Findings -> Revision -> Review Recheck 是已冻结的正常状态机路径；只要没有命中 continuous `stop_on`，hotfix 不阻断该自动修订流程。
 
 ### Contract interface audit
 
