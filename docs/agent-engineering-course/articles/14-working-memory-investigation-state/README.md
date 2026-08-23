@@ -5,21 +5,22 @@
 - Part: `III｜Agent 的信息、状态与知识`
 - Course Weight: `L`
 - Optional: `NO`
-- Lifecycle Status: `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS`
+- Lifecycle Status: `PUBLISHED / COMPLETED / END_ARTICLE`
 - Evidence Status: `PASS / 5 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED`
 - Required Lab: `NONE`
 - Mode: `NORMAL_ARTICLE`
-- Current Gate: `PRE_COMMIT_RECONCILIATION PASS / GIT_DIFF_VERIFY NEXT`
+- Current Gate: `END_ARTICLE / VERIFIED BY GIT HISTORY`
 - Active Worker: `NONE`
-- Next Allowed Action: `GIT_DIFF_VERIFY`
+- Next Allowed Action: `NONE for Article 14 / explicit Human Resume required for Article 15 PRECHECK`
 - Blocker: `NONE`
 
-## Completion Contract（not current state）
+## Completion Reconciliation（current state）
 
 - Completion Evidence Source: `GIT_HISTORY`
-- Pre-Commit Candidate: `PUBLISHED`
-- Completion Commit: `resolved from Git history by Resume / PRECHECK`
-- Expected Completion Message: `Publish Agent Engineering Article 14`
+- Completion Status: `PUBLISHED / COMPLETED / END_ARTICLE`
+- Completion Commit: `a53d151ba051403ff5ef369e5c3860a9fbded03d`
+- Completion Message: `Publish Agent Engineering Article 14`
+- Local / origin / live remote equality: `PASS`
 - Next Transaction Pointer: `Article 15 PRECHECK candidate / NOT_STARTED`
 
 ## Dependencies
@@ -47,7 +48,7 @@
 
 ## Stop Line
 
-Article 14 publication candidate已通过全部Gate与Master reconciliation；completion commit、push与remote verification仍由后续runtime Gate证明，不在本README预写。Article 15只保留`PRECHECK / NOT_STARTED` pointer且未Kickoff；Article 16被continuous-run policy禁止启动。
+Article 14已由Git history中的唯一completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d`及local / origin / live remote equality=`PASS`证明为`PUBLISHED / COMPLETED / END_ARTICLE`；该runtime completion在本次reconciliation中只做retrospective metadata对齐，不改写历史Transaction Record。Article 15只保留`PRECHECK / NOT_STARTED` pointer且未Kickoff；Article 16被continuous-run policy禁止启动。
 
 ## Publication Evidence Candidate
 
