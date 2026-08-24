@@ -34,8 +34,9 @@
     5. Gate `PASS` 时派发下一 Gate 所需 worker；Gate `FAIL`、artifact 缺失或越权时，进入合同定义的 pause、block、retry 或 human-decision route。
 
     Gate `PASS` 后，Master 自动继续当前 Article transaction。The Master continues the Article transaction automatically. Master 不得仅因 worker task 已结束就等待新的人类提示。`active_worker = NONE`、worker task 显示 completed / failed，或 worker 已返回 handoff，均不是 stop condition。A completed worker task is NOT a stop condition. 只有显式、已落盘的合同 stop condition 或 `END_ARTICLE` 才能结束这条控制流。
-11. **Main-Only Production**：Course Factory 的 Article、Part Audit 与 Course Audit 正式 transaction 只允许直接在 `main` 上执行。八种 role 均无 branch creation authority；禁止 `git checkout -b`、`git switch -c`、`git branch <new-branch>`，也禁止创建 `codex/*`、`article-*`、`feature/*`、`factory/*`、`temp/*` 或任何其他 production branch。不得用 branch 隔离绕过 dirty tree、divergence 或 state conflict。
-12. **One Article = One Commit = One Push**：Article N 的全部 workspace、publication、navigation、canonical 与最终 durable state 必须在唯一 `Publish Agent Engineering Article NN` completion commit 前冻结并一并提交。该 commit 验证后只允许一次 `main -> origin/main` push；Pre-Commit Reconciliation 之后 tracked / worktree repository-file writes 必须为 `ZERO`。Required `git push` / `git fetch` 只允许更新 Git remote / tracking refs，不允许改变 checkpoint content。Git history 与 remote main 是 completion SHA 的权威来源，不得为回写 SHA、`END_ARTICLE` 或 reconciliation 结果创建第二个 Article completion commit。
+11. **Article Transaction Authorization**：明确的人类 `START_ARTICLE_N`、`CONTINUE_ARTICLE_N`、“启动 Article N”、“继续 Article N”或等价指令，默认授权 Master 执行 Article N 当前及全部剩余 Gate，直到 `END_ARTICLE_N` 或真实 blocker。初次启动由`ARTICLE_KICKOFF`固化transaction-scoped continuation authority；mid-Article继续由fresh Resume Reconciliation后的幂等`ARTICLE_AUTHORIZATION_RESUME`重新激活，不回放PRECHECK、Kickoff或已完成Gate。“启动”不得自行收窄为只执行 PRECHECK / Kickoff，“继续”不得自行收窄为只执行下一个 Gate。Article N 授权永远不授权 Article N+1。
+12. **Main-Only Production**：Course Factory 的 Article、Part Audit 与 Course Audit 正式 transaction 只允许直接在 `main` 上执行。八种 role 均无 branch creation authority；禁止 `git checkout -b`、`git switch -c`、`git branch <new-branch>`，也禁止创建 `codex/*`、`article-*`、`feature/*`、`factory/*`、`temp/*` 或任何其他 production branch。不得用 branch 隔离绕过 dirty tree、divergence 或 state conflict。
+13. **One Article = One Commit = One Push**：Article N 的全部 workspace、publication、navigation、canonical 与最终 durable state 必须在唯一 `Publish Agent Engineering Article NN` completion commit 前冻结并一并提交。该 commit 验证后只允许一次 `main -> origin/main` push；Pre-Commit Reconciliation 之后 tracked / worktree repository-file writes 必须为 `ZERO`。Required `git push` / `git fetch` 只允许更新 Git remote / tracking refs，不允许改变 checkpoint content。Git history 与 remote main 是 completion SHA 的权威来源，不得为回写 SHA、`END_ARTICLE` 或 reconciliation 结果创建第二个 Article completion commit。
 
 ## 2. Authority and conflict order
 
@@ -125,7 +126,7 @@ PRECHECK
 Article N+1 may pass only if `ResolveArticleCompletion(N) == END_ARTICLE`.
 
 - `PRECHECK`：执行 Resume Contract，确认 `current branch == main`、canonical entry、依赖、Article mode、workspace scope、clean tree 与 remote alignment。Article N+1 只有在 `ResolveArticleCompletion(N) == END_ARTICLE` 时才可通过 PRECHECK；pointer candidate 本身不授予 PRECHECK 或 Kickoff authority。此 Gate 通过前不得实例化 workspace；不得以创建 branch 作为隔离策略。
-- `ARTICLE_KICKOFF`：PRECHECK `PASS` 后由 Master 显式取得当前 Article transaction ownership，把 Factory 置为 `RUNNING`，记录 current Article、当前 Gate 与唯一 active worker。Kickoff 只建立事务身份与恢复点，不写 Research、Evidence、Outline、Draft 或 Published Content；未完成 Kickoff 不得执行 WORKSPACE_INIT。
+- `ARTICLE_KICKOFF`：PRECHECK `PASS` 后由 Master 显式取得当前 Article transaction ownership，把 Factory 置为 `RUNNING`，记录 current Article、当前 Gate、唯一 active worker，并把有效人类 START / CONTINUE 指令固化为 `article_authorization.status = ACTIVE / scope = ARTICLE_TRANSACTION / continue_until = END_ARTICLE`。Kickoff 只建立事务身份、continuation authority与恢复点，不写 Research、Evidence、Outline、Draft 或 Published Content；未完成 Kickoff 不得执行 WORKSPACE_INIT。
 - `WORKSPACE_INIT`：Owner 为 Master Orchestrator；这是 deterministic infrastructure action，不是 content production。Master 只根据 canonical、[workspace template](templates/article-workspace-template.md) 与 repository naming convention 机械创建当前 Article workspace。
 - `RESEARCH`：Researcher 生成 Research Questions、Claim Register、Evidence Cards、counter-evidence 与 version scope。
 - `EVIDENCE_GATE`：Normal Article 在 Research 完成后进入；Lab Article 只能在 `PRELIMINARY_EVIDENCE -> LAB_DESIGN -> LAB_EXECUTE -> LAB_OBSERVATION -> EVIDENCE_MERGE` 完成后进入。核心行为性 Claim 不得为 `BLOCKED`；`PARTIAL` 必须收窄；required Lab 必须已有真实结果，才可进入 `EVIDENCE_READY`。
@@ -157,6 +158,40 @@ Article N+1 may pass only if `ResolveArticleCompletion(N) == END_ARTICLE`.
 - `REMOTE_VERIFY`：push 后只读执行 `git fetch origin main`、`git rev-parse HEAD`、`git rev-parse origin/main` 与 `git ls-remote origin refs/heads/main`，要求 `local HEAD == origin/main == remote refs/heads/main`。
 - `POST_COMMIT_RECONCILIATION_READ_ONLY`：只读取 Git history、local / origin / remote main、state files、workspace、Published Content 与 current pointer并返回 `PASS / FAIL`。禁止修改 `course-run-state.md`、`status.md`、任何 README / trace、canonical、Published Content 或其他 repository file；也不得为了记录 `END_ARTICLE`、真实 SHA 或 reconciliation result 再 commit。
 - `END_ARTICLE`：只有 Commit Verify、Push Main、Remote Verify 与只读 Post-Commit Reconciliation 全部 `PASS` 才在 runtime 逻辑上成立。下一次 Resume 依靠 Git history 与 checkpoint 内已提交 pointer 决定 `START_ARTICLE_N+1_PRECHECK`，不需要 post-commit write。
+
+### 4.1A Article transaction authorization and stop lines
+
+```text
+START_ARTICLE_N at NOT_STARTED
+  -> PRECHECK -> ARTICLE_KICKOFF activates Article authorization
+CONTINUE_ARTICLE_N at a persisted mid-Article checkpoint
+  -> fresh Resume Reconciliation -> ARTICLE_AUTHORIZATION_RESUME activates at current Gate
+Both paths
+  -> execute every current and remaining Gate of Article N
+  -> END_ARTICLE_N or a contract-defined blocker
+  -> STOP before Article N+1
+```
+
+`ARTICLE_AUTHORIZATION_RESUME`是Master的deterministic authorization action，不是可重复执行的生产Gate。它必须先验证durable current Article / current Gate、required artifacts、active worker、branch/worktree与local/origin/live remote alignment，再在真实current Gate设置`article_authorization=ACTIVE`；不得重跑PRECHECK、ARTICLE_KICKOFF、已完成worker或已通过Gate。
+
+默认授权单位是完整Article transaction，不是单个Gate。缺少explicit stop line时，不得推断one-Gate authorization。只有人类明确给出“本次只执行EVIDENCE_GATE”“只创建outline.md”“停在Review之前”“不要Publish”“完成Draft后停止”或等价限制时，才以`explicit_stop_line`覆盖默认范围；到达该边界后返回`EXPLICIT_HUMAN_STOP_LINE`，保留可恢复checkpoint并等待新的明确指令。唯一durable投影是`factory_status=PAUSED / active_blocker=NONE / stop_reason=EXPLICIT_HUMAN_STOP_LINE / human_decision_required=false`，`current_gate`指向next allowed/resume Gate，`next_action=CONTINUE_ARTICLE_N_AT_<GATE>`；authorization重置为`INACTIVE / scope=NONE / article=N / continue_until=NONE / auto_continue_after_gate_pass=false / explicit_stop_line=<matched line> / next_article_authorized=false`。
+
+有效授权下，intermediate Gate `PASS`、worker finished、Research finished、Evidence Gate passed或next step已知，都不是human stop line。标准控制流固定为：
+
+```text
+Worker Result
+  -> Envelope Validation
+  -> Artifact Validation
+  -> Gate Validation
+  -> State Transition
+  -> Next Worker Dispatch
+```
+
+不得使用`ONE_GATE_COMPLETED`、`WAITING_FOR_CONFIRMATION`、`NEXT_STEP_REQUIRES_APPROVAL`、`ORIGINAL_TASK_ONLY_AUTHORIZED_START`、`WORKER_FINISHED`、`RESEARCH_FINISHED`或`EVIDENCE_GATE_PASSED`停止当前Article，除非原始人类指令存在匹配的explicit stop line。
+
+Review中的可修复Finding在最大Review Cycle内自动执行`REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL_GATE`。`review_cycle < MAX_REVIEW_CYCLES`时，普通`BLOCKER / MAJOR` Finding不得命中continuous-run hard stop；只有cycle exhausted后仍未关闭的Finding才能映射`FAILED_REVIEW_AFTER_MAX_CYCLES`。只有扩大Article范围、冲突于canonical / Evidence Contract /课程结构、超过最大轮次、要求修改其他已发布Article核心内容或命中真实blocker时，才需要人类决策。
+
+当前Article authorization有效时，合法停止结果仅为：`END_ARTICLE`、`EXPLICIT_HUMAN_STOP_LINE`、`BLOCKED_EVIDENCE`、`FAILED_REQUIRED_LAB`、`FAILED_REVIEW_AFTER_MAX_CYCLES`、`FAILED_PUBLICATION`、`FAILED_BUILD`、`REPOSITORY_CONFLICT`、`PUSH_FAILURE`、`REMOTE_VERIFY_FAILURE`、`STATE_CONFLICT`、`HUMAN_DECISION_REQUIRED_BY_CONTRACT`。其中`EXPLICIT_HUMAN_STOP_LINE`使用上文冻结的同名durable `stop_reason`且`human_decision_required=false`；其他runtime结果按现有normalized mapping落盘。不得把普通Gate PASS映射为`HUMAN_DECISION_REQUIRED`。
 
 ### Deterministic completion resolver
 
@@ -487,6 +522,10 @@ Reviewer 与 Part Auditor 应调查下列信号，但不能仅凭信号自动判
 ## 18. Bounded continuous-run contract
 
 Evaluate policy only after resolver `END_ARTICLE`; Markdown `END` wording has no authority.
+
+**Article Transaction Authorization != Multi-Article Continuous Run.** `article_authorization`控制已获授权的当前Article内部续跑；`continuous_run`只控制一篇完成后是否自动启动下一篇。`continuous_run.enabled: false`和`auto_continue_after_end_article: false`都不能阻止当前Article完成，Article内部Gate续跑也不依赖multi-Article policy。
+
+`forbidden_articles`只在目标Article尚未获得明确人类授权时阻断PRECHECK。人类明确START / CONTINUE Article N并通过fresh reconciliation后，Master必须移除或忽略旧run对同一Article N的forbidden标记，再由`ARTICLE_KICKOFF`激活当前Article；该授权仍不得泄漏到N+1。
 
 跨 Article 自动继续不是默认行为。只有 [course-run-state.md](course-run-state.md) 中显式、durable 的 `continuous_run` policy 授权时，Master 才可在一个已经完整结束的 Article 后继续；每一篇都必须丢弃前一篇 worker context、重新读取 durable repository state 并使用 fresh workers。`stop_after_article` 为 inclusive：到达该 Article 的 `END_ARTICLE` 后停止。`forbidden_articles` 必须在该 Article 的 PRECHECK 前阻断，不能以 pointer、worker handoff 或已预建资产绕过。
 

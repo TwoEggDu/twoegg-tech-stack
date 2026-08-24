@@ -78,6 +78,12 @@
 5. 技术主张使用 [Evidence Card 模板](templates/evidence-card-template.md)；实验使用 [Lab 模板](templates/lab-template.md)。
 6. 进入审查前使用 [课程审查清单](templates/review-checklist.md)；术语含义与首次引入位置查 [课程术语表](glossary.md)。
 
+### 单篇 Article 授权
+
+最短标准指令是“启动 Article N”或“继续 Article N”。它默认授权当前Article从真实checkpoint连续执行全部剩余Gate，直到`END_ARTICLE_N`或合同定义的真实blocker；无需在每个Gate PASS后再次确认。若只希望执行一个Gate或停在某个边界，必须在原始指令中明确写出，例如“本次只执行EVIDENCE_GATE”“停在Review前”或“不要Publish”。
+
+单篇授权不等于multi-Article continuous run，也永远不授权Article N+1。详细规则见[Article transaction authorization](course-factory.md#41a-article-transaction-authorization-and-stop-lines)，17个合同场景见[regression audit](audits/article-transaction-authorization-regression.md)。
+
 ## 生产资产
 
 | 资产 | 职责 |

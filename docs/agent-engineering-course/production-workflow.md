@@ -44,6 +44,16 @@ Git completion boundary：
 - completion SHA 以 Git history 为权威。不得为了回写 SHA、`END_ARTICLE` 或 reconciliation result 创建第二个 commit。
 - `ResolveArticleCompletion(N)` 在运行时只读检查 completion commit、其在 local / `origin/main` / live `main` current refs 中的 ancestor containment，以及 `HEAD == origin/main == live main`；输出 `END_ARTICLE` 或 `INCOMPLETE / exact reason`。
 
+## Article Transaction Authorization
+
+明确的人类“启动 Article N”“继续 Article N”、`START_ARTICLE_N` 或 `CONTINUE_ARTICLE_N`，默认授权 Master 执行当前 Article 的全部剩余 Gate，直到 `END_ARTICLE_N` 或真实 blocker；默认单位是完整 Article transaction，不是单个 Gate。只有原始指令明确写出“仅执行某 Gate”“停在 Review 前”“不要 Publish”等边界时，才记录 `explicit_stop_line` 并在该边界停止。
+
+初次START由PRECHECK后的`ARTICLE_KICKOFF`激活；mid-Article CONTINUE在fresh Resume Reconciliation后，以幂等`ARTICLE_AUTHORIZATION_RESUME`从durable current Gate激活，不回放PRECHECK、Kickoff、已完成worker或已通过Gate。命中explicit stop line时唯一投影为`PAUSED / active_blocker=NONE / stop_reason=EXPLICIT_HUMAN_STOP_LINE / human_decision_required=false`，next action指向当前Article的resume Gate。
+
+授权有效时，每个 Gate `PASS` 后必须完成 result validation、state transition并自动派发下一 required worker。Review 中可修复 Finding在最大轮次内自动走 `REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL_GATE`；普通 worker结束、Research完成或 Evidence Gate通过都不要求再次取得人类确认。
+
+Article transaction authorization只覆盖当前 Article N，不能泄漏到Article N+1。它与multi-Article `continuous_run`分账：`continuous_run.enabled: false`或`auto_continue_after_end_article: false`只阻止`END_ARTICLE N -> Article N+1 PRECHECK`，不能截断已获授权的Article N内部流程。合同回归场景见[Article transaction authorization regression](audits/article-transaction-authorization-regression.md)。
+
 ## 生命周期
 
 ```text

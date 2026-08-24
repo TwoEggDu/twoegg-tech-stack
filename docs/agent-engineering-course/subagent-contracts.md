@@ -96,6 +96,18 @@ Master 收到每一个 `worker_result` 后 MUST：
 6. `PRE_COMMIT_RECONCILIATION` 结束前，把验证后的投影写入 `course-run-state.md:last_worker_result`，并由 Master 统一更新其他 transaction-level durable state；该 Gate 后按 read-only exception 只验证 runtime envelope，不写 repository；
 7. validation `PASS` 且 `status: PASS` 时，按已验证的 `next_allowed_gate` 继续并派发下一 required worker；Reviewer Findings -> `REVISION -> REVIEW_RECHECK` 等没有命中 stop policy 的正常状态机路径不受影响。`gate_completed: false` 只允许走上表冻结的 retry / return route。`status: FAIL / BLOCKED` 时，Master 必须在任何 recovery validation 或 dispatch 前先判断 active `continuous_run.stop_on`；命中时设置 `PAUSED / <normalized active_blocker> / HUMAN_DECISION_REQUIRED / human_decision_required=true` 并停止，未命中时才可按合同评估 recovery route。无安全 route 或 validation failure 同样进入精确的 `PAUSED`、`BLOCKED` 或 `PAUSED / HUMAN_DECISION_REQUIRED` route。
 
+### Article transaction continuation authority
+
+明确的人类 `START_ARTICLE_N`、`CONTINUE_ARTICLE_N`、“启动 Article N”、“继续 Article N”或等价指令，默认授权当前 Article 的完整 transaction，直到 `END_ARTICLE_N` 或合同定义的真实 blocker。只有人类明确给出“本次只执行 EVIDENCE_GATE”“停在 Review 前”“不要 Publish”或等价边界时，Master 才设置 `explicit_stop_line` 并在该边界停止；不得把“启动”解释为只做 PRECHECK / Kickoff，也不得把“继续”解释为只做下一个 Gate。
+
+初次START在PRECHECK PASS后由`ARTICLE_KICKOFF`激活；暂停checkpoint上的mid-Article CONTINUE由Master先执行fresh Resume Reconciliation，再以幂等`ARTICLE_AUTHORIZATION_RESUME`在真实current Gate激活。后者不重跑PRECHECK、Kickoff、已完成worker或已通过Gate，只验证durable checkpoint与repository/remote alignment并恢复continuation authority。
+
+`article_authorization.status = ACTIVE` 时，每个中间结果必须经过 `Worker Result -> Envelope Validation -> Artifact Validation -> Gate Validation -> State Transition -> Next Worker Dispatch`。普通 Gate `PASS`、worker task finished、Research finished 或 Evidence Gate passed 都不是 stop condition；Master 必须自动派发下一允许角色。Review 中可修复 Finding 在最大轮次内自动执行 `REVIEW -> REVISION -> REVIEW_RECHECK -> FINAL_GATE`。
+
+`ONE_GATE_COMPLETED`、`WAITING_FOR_CONFIRMATION`、`NEXT_STEP_REQUIRES_APPROVAL`、`ORIGINAL_TASK_ONLY_AUTHORIZED_START`、`WORKER_FINISHED`、`RESEARCH_FINISHED` 与 `EVIDENCE_GATE_PASSED` 都不是合法停止码，除非原始人类指令存在匹配的 `explicit_stop_line`。Article N 的 continuation authority 不授权 Article N+1，也不等同于 multi-Article `continuous_run`。
+
+命中显式stop line时，Master唯一写入`PAUSED / active_blocker=NONE / stop_reason=EXPLICIT_HUMAN_STOP_LINE / human_decision_required=false`，把`current_gate`与`next_action`指向next allowed/resume Gate，并将authorization置为`INACTIVE`、保留matched stop line；新的CONTINUE才可通过上述Resume action重新激活。
+
 Master 是 raw `worker_result` 的唯一 validator，也是 state transition 的唯一 owner。任何 worker 都不得写 `last_worker_result`、把 `next_allowed_gate` 当成已批准状态，或用自然语言 handoff 绕过本协议。checkpoint 前，Master 必须把完整 raw envelope 记录到 canonical durable location：Article transaction 写入当前 Article `subagent-trace.md` 的 `Worker Result Records` section；Part / Course Audit 写入对应 durable Audit Report。每条 record 必须有 stable record ID，并同时保存 execution / task ID、bounded task brief snapshot、raw envelope、Master validation result 与验证时间。没有收到 envelope 时 record 明确写 `raw_envelope: MISSING`；收到不可解析 payload 时写 `raw_envelope: INVALID` 并原样保存 invalid payload，二者都不能被解释或补全为 envelope。`course-run-state.md:last_worker_result.result_ref` 必须指向 schema-valid pre-commit record；invalid / missing record 只由 `last_worker_result_error.result_ref` 引用。projection 不替代 raw record。
 
 `PRE_COMMIT_RECONCILIATION` 是 repository-result persistence cut：后续 `GIT_DIFF_VERIFY`、`ARTICLE_CHECKPOINT_COMMIT`、`ARTICLE_COMMIT_VERIFY`、`PUSH_MAIN`、`REMOTE_VERIFY` 与 `POST_COMMIT_RECONCILIATION_READ_ONLY` 仍必须产生相同 closed-schema runtime envelope 并由 Master 验证，但不得把 envelope、validation 或 `END_ARTICLE` 写回 repository。checkpoint 内的 final trace 只记录截至 Pre-Commit Reconciliation 的已验证结果与后续 Gate intent，不伪造尚未发生的 diff / commit / push result。此阶段的 durable evidence 是 final commit diff、Git commit graph、commit content、`origin/main` 与 remote `refs/heads/main`；context reset 后必须重新执行只读检查。该 exception 只改变 result persistence，不改变 `Worker Result -> Master Validation -> State Transition -> Next Gate` 控制流。
@@ -158,14 +170,17 @@ Master 自己执行 `MASTER_DETERMINISTIC` Gate 时也必须先序列化相同 e
 
 ### Gate Responsibility
 
-负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Pre-Commit Reconciliation、Git Diff Verify、Article Checkpoint Commit、Commit Verify、Push Main、Remote Verify 与 Post-Commit Reconciliation Read-Only：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate。Master 不重新判 Evidence、Review 或 Lab 内容。Master 在 checkpoint 后只读运行 `ResolveArticleCompletion(N)`；只有 resolver 返回 `END_ARTICLE`（包括 completion commit 的 local / `origin/main` / live `main` ancestor containment 与 `HEAD == origin/main == live main`）才逻辑结束当前 Article transaction，否则保留并路由 resolver 给出的精确 `INCOMPLETE` 原因。
+负责 PRECHECK、`ARTICLE_KICKOFF`、WORKSPACE_INIT、global state transition、Pre-Commit Reconciliation、Git Diff Verify、Article Checkpoint Commit、Commit Verify、Push Main、Remote Verify 与 Post-Commit Reconciliation Read-Only：确认上一个 Gate 的 required outputs 与 decision 已存在，再推进下一 Gate；有效 Article authorization 下，Gate `PASS` 后自动派发下一 required worker，不等待新的确认。Master 不重新判 Evidence、Review 或 Lab 内容。Master 在 checkpoint 后只读运行 `ResolveArticleCompletion(N)`；只有 resolver 返回 `END_ARTICLE`（包括 completion commit 的 local / `origin/main` / live `main` ancestor containment 与 `HEAD == origin/main == live main`）才逻辑结束当前 Article transaction，否则保留并路由 resolver 给出的精确 `INCOMPLETE` 原因。
 
 ### Stop Conditions
 
-- durable state 冲突、completion commit 缺失或 unrelated dirty tree 无法安全隔离；
-- current branch 不是 `main` 且无法在 clean worktree 下安全恢复，或 local / origin / remote main divergence；
-- worker 返回 Gate failure、越权输出或缺少 required artifact；
-- 需要人类改变 canonical、Optional、课程架构或权限。
+- 到达 `END_ARTICLE`，或到达人类原始指令中明确记录的 `explicit_stop_line`；
+- Evidence blocker、required Lab 失败、Review 超过最大轮次、Publish / Build 失败；
+- durable state / repository conflict、unrelated dirty tree 无法安全隔离、push 失败或 remote verification 失败；
+- 需要扩大当前 Article 范围，或需要人类改变 canonical、Optional、课程架构、权限或其他合同决策。
+
+普通 Gate `PASS`、worker task 结束、Research 完成、Evidence Gate 通过或下一 Gate 已知，均不是 Master stop condition。
+`review_cycle < MAX_REVIEW_CYCLES`时的可修复Review Finding同样不是stop condition；它必须进入Revision/Recheck，只有达到最大轮次后仍未关闭才是`FAILED_REVIEW`。
 - canonical / template 无法提供 WORKSPACE_INIT 的必须字段，且填写需要实质性课程判断。
 
 ### Handoff Contract

@@ -3,7 +3,7 @@
 > This file is the Factory execution pointer, not a second course database. Article facts remain in [status.md](status.md); execution rules remain in [course-factory.md](course-factory.md).
 
 ```yaml
-schema_version: 4
+schema_version: 5
 factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
@@ -34,6 +34,14 @@ review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
+article_authorization:
+  status: INACTIVE
+  scope: NONE
+  article: NONE
+  continue_until: NONE
+  auto_continue_after_gate_pass: false
+  explicit_stop_line: NONE
+  next_article_authorized: false
 last_successful_commit: 0c9465ca55e095bb1d78e71016b9c6ba357c7ac6
 next_action: START_ARTICLE_17_PRECHECK
 continuous_run:
@@ -44,7 +52,7 @@ continuous_run:
   stop_at_part_boundary: false
   stop_on:
     blocker: true
-    major_finding_unresolved: true
+    major_finding_unresolved: false
     evidence_blocked: true
     required_lab_failure: true
     review_cycle_exhausted: true
@@ -56,7 +64,7 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "17"
-last_updated: "2026-08-24T18:33:20+08:00"
+last_updated: "2026-08-24T20:30:20+08:00"
 ```
 
 > 2026-08-24 Article 16已完成OUTLINE、AUTHOR_DRAFT、REVIEW、Revision Cycle 1、RECHECK、FINAL_GATE、PUBLISH与BUILD_VERIFY；Final=`PASS / 92 / 0 OPEN`，Hugo=`1245 Pages / 0 WARNING / 0 ERROR / 0 REF_NOT_FOUND`。本文件现保存`PRE_COMMIT_RECONCILIATION PASS` completion candidate：Article 16 completion仍只能由Git history与remote refs解析；Article 17只是`PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer，不具有启动权威。`last_successful_commit`继续保留上一已验证Article 15 checkpoint hint，避免预写Article 16未来commit SHA。
@@ -69,6 +77,9 @@ last_updated: "2026-08-24T18:33:20+08:00"
 - `completion_evidence_source: GIT_HISTORY + REMOTE_REFS` 表示 completion 由 `ResolveArticleCompletion(N)` 在 Resume / PRECHECK 时从 Git history 和 remote refs 解析；persisted checkpoint 仅保留 Lifecycle Candidate=`PUBLISHED`、Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`、Completion Resolution=`DERIVED_FROM_GIT_HISTORY`、Completion Evidence Source=`GIT_HISTORY + REMOTE_REFS`、Expected Completion Message 与 Next Transaction Candidate。不得把 pending commit、`GIT_DIFF_VERIFY NEXT`、待 push、待 remote verification 或 `END_ARTICLE` 伪装成 current persisted state。
 - `current_article/current_gate` 是 candidate pointer，不表示该 Article 已经启动或拥有启动权威；是否启动必须结合 resolver `END_ARTICLE`、`factory_status`、[status.md](status.md) 与 policy 判断。
 - PRECHECK `PASS` 后必须执行显式 `ARTICLE_KICKOFF`，Factory 才能进入 `RUNNING` 并创建当前 workspace；pointer 指向 Article 不等于 Kickoff 已发生。
+- `article_authorization`记录当前单篇transaction的continuation authority。初次START在PRECHECK PASS后由Kickoff设置`status: ACTIVE`、`scope: ARTICLE_TRANSACTION`、`article: "N"`、`continue_until: END_ARTICLE`、`auto_continue_after_gate_pass: true`；mid-Article CONTINUE必须先fresh Resume Reconciliation，再由幂等`ARTICLE_AUTHORIZATION_RESUME`在durable current Gate设置同一ACTIVE形态，不回放PRECHECK、Kickoff、已完成worker或已通过Gate。如果人类明确收窄范围，再设置非`NONE`的`explicit_stop_line`。`next_article_authorized`始终为`false`，除非另有独立的人类Article N+1授权。
+- 当前Article 17仅为PRECHECK candidate，尚未获得启动授权，因此`article_authorization.status: INACTIVE`且其余字段为`NONE / false`。candidate pointer、旧worker handoff或`forbidden_articles`本身都不能伪造ACTIVE授权。
+- `article_authorization`与`continuous_run`独立：前者控制当前Article内部Gate续跑，后者只控制完成一篇后是否自动进入下一篇。到达`explicit_stop_line`时唯一durable投影为`factory_status: PAUSED`、`active_blocker: NONE`、`stop_reason: EXPLICIT_HUMAN_STOP_LINE`、`human_decision_required: false`、`current_gate: <next allowed/resume gate>`、`next_action: CONTINUE_ARTICLE_N_AT_<GATE>`；authorization写为`status: INACTIVE / scope: NONE / article: "N" / continue_until: NONE / auto_continue_after_gate_pass: false / explicit_stop_line: <matched line> / next_article_authorized: false`。真实blocker按其normalized mapping暂停；`PRE_COMMIT_RECONCILIATION`写入下一Article pointer时必须把authorization重置为INACTIVE，persistence cut后只读tail不得回写。
 - `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle Candidate=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段始终只是 candidate pointer；同一 persisted checkpoint 在 commit 前可解析为 `INCOMPLETE`，在 valid commit / push / remote reconciliation 后可解析为 `END_ARTICLE`，中间不写 bridge。启动权威 = candidate pointer + resolver `END_ARTICLE` + policy，且仍不等于 `ARTICLE_KICKOFF`。
 - `active_worker` 只使用 [subagent-contracts.md](subagent-contracts.md) 中的八种 role 或 `NONE`。
 - `active_worker_execution_id` 与 `active_worker_record_ref` 在 worker start 时由 Master 写入。record ref 必须指向当前 Article `subagent-trace.md` 的 stable Worker Result Record，或 Part / Course Audit Report 中的等价 record；record 同时保存 bounded task brief、execution ID、raw envelope 与 validation result。worker 仍运行时保留 active fields；确认结束后才把 `active_worker` 和两个 active fields 统一清为 `NONE`。
@@ -110,7 +121,7 @@ last_updated: "2026-08-24T18:33:20+08:00"
   随后设置 `factory_status: PAUSED`、`active_blocker: MISSING_OR_INVALID_WORKER_RESULT`、`stop_reason: HUMAN_DECISION_REQUIRED`。若 runtime 已确认结束，active worker fields 清为 `NONE`；若仍在运行，则保留 active fields，禁止重复 dispatch。
 - `last_worker_result.next_allowed_gate` 只保存通过 Master common mapping 与 State Machine validation 的 forward transition 或 recovery candidate。非 terminal `status: PASS` 时不得为 `NONE`；`gate_completed: false` 只允许指向合同冻结的 retry / return Gate。`last_worker_result` 是 `LAST_PERSISTED_PRE_COMMIT_RESULT`，不是 Article / Transaction completion，也不能替代 `current_gate`、`factory_status`、canonical raw record、required artifacts 或 Git evidence。未来 Article 以 `PRE_COMMIT_RECONCILIATION` 作为 completion commit 中最后一个可持久化的 result projection；Git Diff Verify、Checkpoint Commit、Commit Verify、Push、Remote Verify、Post-Commit Reconciliation 与 `END_ARTICLE` 都是 runtime resolver facts，不写入本文件，Resume 时由 `ResolveArticleCompletion(N)` 重新执行只读检查。Article 08 的 `GIT_DIFF_VERIFY` projection 是 schema migration 保留的 legacy boundary。
 - `review_cycle` 只在一次 `Findings -> Revision -> Recheck` 完成后递增，最大值为 `3`。
-- `stop_reason` 只使用 `NONE / BLOCKED_EVIDENCE / FAILED_LAB / FAILED_REVIEW / FAILED_PUBLICATION / HUMAN_DECISION_REQUIRED / REPOSITORY_CONFLICT`。
+- `stop_reason` 只使用 `NONE / EXPLICIT_HUMAN_STOP_LINE / BLOCKED_EVIDENCE / FAILED_LAB / FAILED_REVIEW / FAILED_PUBLICATION / HUMAN_DECISION_REQUIRED / REPOSITORY_CONFLICT`。`EXPLICIT_HUMAN_STOP_LINE`是成功到达人类边界，不是failure或blocker，必须同时保持`active_blocker: NONE / human_decision_required: false`。
 - Part Auditor 返回 `PART_AUDIT_FINDINGS` 时不得把 role-specific code 直接写入 `stop_reason`；Master 必须唯一映射为 `factory_status: PAUSED`、`active_blocker: PART_AUDIT_FINDINGS`、`stop_reason: HUMAN_DECISION_REQUIRED`、`human_decision_required: true`。只有人类批准 Audit Report 中的 affected Article 与 targeted repair scope 后，Resume 才能选择具体 Article / Gate。
 - `last_successful_commit` 是最近一个已知可恢复的 durable checkpoint hint（当前 Article 15 hint=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`），可以保存 previous verified checkpoint 或 `PENDING_SELF`。它不是 blind checkout target、当前 `HEAD` 的绝对真相、completion authority 或 Resume 的唯一依据；checkpoint commit 不得自引用，也不得为了同步新 SHA 制造第二个 reconciliation commit。
 - Resume 必须联合检查本文件、`status.md`、current Article workspace、Published Content、`git status`、Git `HEAD` / history、checkpoint hint 与 required artifacts。不得默认执行 `git checkout <last_successful_commit>`，也不得因 pointer 落后 state commit 自动 rewind。
@@ -121,11 +132,15 @@ last_updated: "2026-08-24T18:33:20+08:00"
 
 `continuous_run` 仅授权 `start_article` 到 `stop_after_article` 的连续 Article transaction；`stop_after_article` inclusive，`forbidden_articles` 在 PRECHECK 前绝对阻断。每个 `stop_on` 条目为 `true` 时，命中即停止，不自动恢复或跳过。
 
-active `continuous_run.stop_on.<condition> = true` 且 condition 命中时必须建立 **HARD EXECUTION LOCK**：Master 设置 `factory_status: PAUSED`、`active_blocker: <normalized blocker>`、`stop_reason: HUMAN_DECISION_REQUIRED`、`human_decision_required: true`，并关闭当前 execution 的 recovery 与 continuous auto-continue authority。`schema_version: 4` 的现有字段足以表达该锁；不要只为 hard stop 新增 `execution_lock` 字段或升 schema。若 execution 已结束，active worker fields 清为 `NONE`；若已越过 `PRE_COMMIT_RECONCILIATION` persistence cut，则只保留 runtime decision，repository writes=`ZERO`。
+`major_finding_unresolved`是legacy兼容字段，现行schema必须保持`false`，不得在首轮或可修复Review Finding上建立hard lock。终态只由`review_cycle_exhausted: true`控制：仅当`review_cycle >= MAX_REVIEW_CYCLES`且仍有未关闭`BLOCKER / MAJOR`时命中；此前必须自动执行Revision/Recheck。
+
+active `continuous_run.stop_on.<condition> = true` 且 condition 命中时必须建立 **HARD EXECUTION LOCK**：Master 设置 `factory_status: PAUSED`、`active_blocker: <normalized blocker>`、`stop_reason: HUMAN_DECISION_REQUIRED`、`human_decision_required: true`，并关闭当前 execution 的 recovery 与 continuous auto-continue authority。`schema_version: 5`以`article_authorization`补充单篇continuation authority，现有stop字段仍足以表达该锁；不要只为hard stop新增`execution_lock`字段或再次升schema。若 execution 已结束，active worker fields 清为 `NONE`；若已越过 `PRE_COMMIT_RECONCILIATION` persistence cut，则只保留 runtime decision，repository writes=`ZERO`。
 
 Hard lock 只能由新的外部 human instruction 解除；worker recommendation、Master 自行判断、Reviewer 建议或 recovery candidate 均不是 Resume authority。收到 Human Resume 后必须先核对 branch、worktree、HEAD、`origin/main`、live remote、`status.md`、本文件、current Article / Gate、failure artifact、recovery candidate 与 active worker，再决定恢复路径；不得直接执行旧临时上下文。
 
 `auto_continue_after_end_article` 只控制 `END_ARTICLE N -> Article N+1 PRECHECK`，不能授权 `FAIL -> Recovery`。Gate failure 与 stop policy 同时存在时，STOP POLICY WINS；candidate retained，execution authority denied。Reviewer Findings -> `REVISION -> REVIEW_RECHECK` 在没有命中 `stop_on` 时仍按正常状态机自动继续。
+
+`continuous_run.enabled: false`不阻止`article_authorization.status: ACTIVE`的当前Article继续到END或真实blocker；`auto_continue_after_end_article: false`只确保END后停止。`forbidden_articles`在目标Article未获明确人类授权时阻断PRECHECK；收到同一Article的明确START / CONTINUE并完成fresh reconciliation后，Master必须先清除或覆盖旧run的禁止项，再激活该Article，且不得由此授权下一Article。
 
 Article 15 `END_ARTICLE` 后，新的外部Human Resume与fresh reconciliation已解除旧的Article 16禁止项。本次bounded run只覆盖Article 16；Article 16 `END_ARTICLE` 后policy停止，Article 17只能是`PRECHECK / NOT_STARTED` pointer，绝不开始。
 
