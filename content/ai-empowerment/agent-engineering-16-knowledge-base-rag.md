@@ -18,6 +18,8 @@ weight: 3170
 
 > **上一篇**：[Session、Long-term Memory 与 Project Memory：事实、经验和作用域]({{< relref "ai-empowerment/agent-engineering-15-session-long-term-project-memory.md" >}})
 
+> **下一篇**：[Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt]({{< relref "ai-empowerment/agent-engineering-17-skill-engineering.md" >}})
+
 # Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite
 
 > 如果这篇只记一句话，我建议记这个：**检索结果只是候选；搜到、选中、注入、引用和验证，是五个不同判断。**

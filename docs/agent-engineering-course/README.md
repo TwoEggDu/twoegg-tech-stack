@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 16 Lifecycle Candidate=`PUBLISHED`；Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Completion Evidence Source=`GIT_HISTORY + REMOTE_REFS`；Expected Completion Message=`Publish Agent Engineering Article 16`
-- 当前生产对象：Article 17 `PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer candidate；active worker=`NONE`；尚未执行PRECHECK或ARTICLE_KICKOFF
+- 当前里程碑：Article 17 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；completion待由`GIT_HISTORY + REMOTE_REFS`解析，不预写未来SHA
+- 当前生产对象：Article 18 `PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer；authorization=`INACTIVE / NONE`；active worker=`NONE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -64,8 +64,11 @@
 - 当前 Article 15 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1244 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
 - 当前 Article 16 Published Content：`content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md`
 - 当前 Article 16 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1245 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
+- 当前 Article 17 状态：`PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；Evidence=`8 CONFIRMED / 4 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final Gate Cycle 3=`PASS / 96 / 0 OPEN`
+- 当前 Article 17 Published Content：`content/ai-empowerment/agent-engineering-17-skill-engineering.md`
+- 当前 Article 17 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1246 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / 8 relrefs / series index / navigation=`PASS`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- Factory Status：`READY / Article 17 / PRECHECK pointer / NOT_STARTED / active worker NONE`；本次bounded run已在Article 16 persistence cut停止，Article 17禁止启动
+- Factory Status：`READY / Article 18 / PRECHECK pointer / NOT_STARTED / active worker NONE / forbidden current run`；Article 17 completion待Git/remote解析
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

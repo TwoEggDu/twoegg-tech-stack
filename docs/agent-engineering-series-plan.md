@@ -188,7 +188,7 @@ BuildPilot Design v1
 | 14 | [Working Memory 与 Investigation State：当前任务正在想什么](../content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md) | L | 否 |
 | 15 | [Session、Long-term Memory 与 Project Memory：事实、经验和作用域](../content/ai-empowerment/agent-engineering-15-session-long-term-project-memory.md) | M | 否 |
 | 16 | [Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite](../content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md) | M | 否 |
-| 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | M | 否 |
+| 17 | [Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt](../content/ai-empowerment/agent-engineering-17-skill-engineering.md) | M | 否 |
 
 ### Part IV｜Reliable Agent Engineering
 

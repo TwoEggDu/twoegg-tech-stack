@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "17"
+current_article: "18"
 current_gate: PRECHECK
-last_published_article: "16"
+last_published_article: "17"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "16"
+  article: "17"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/16-knowledge-base-rag/subagent-trace.md#wr-article-16-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/17-skill-engineering/subagent-trace.md#wr-article17-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -42,12 +42,12 @@ article_authorization:
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 0c9465ca55e095bb1d78e71016b9c6ba357c7ac6
-next_action: START_ARTICLE_17_PRECHECK
+last_successful_commit: bf00d4e63f2f634d4b62afb5fe2ee44ae2051571
+next_action: START_ARTICLE_18_PRECHECK
 continuous_run:
   enabled: false
-  start_article: "16"
-  stop_after_article: "16"
+  start_article: "17"
+  stop_after_article: "17"
   auto_continue_after_end_article: false
   stop_at_part_boundary: false
   stop_on:
@@ -63,11 +63,11 @@ continuous_run:
     state_conflict: true
     human_decision_required: true
   forbidden_articles:
-    - "17"
-last_updated: "2026-08-24T20:30:20+08:00"
+    - "18"
+last_updated: "2026-08-25T02:13:51+08:00"
 ```
 
-> 2026-08-24 Article 16已完成OUTLINE、AUTHOR_DRAFT、REVIEW、Revision Cycle 1、RECHECK、FINAL_GATE、PUBLISH与BUILD_VERIFY；Final=`PASS / 92 / 0 OPEN`，Hugo=`1245 Pages / 0 WARNING / 0 ERROR / 0 REF_NOT_FOUND`。本文件现保存`PRE_COMMIT_RECONCILIATION PASS` completion candidate：Article 16 completion仍只能由Git history与remote refs解析；Article 17只是`PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer，不具有启动权威。`last_successful_commit`继续保留上一已验证Article 15 checkpoint hint，避免预写Article 16未来commit SHA。
+> 2026-08-25 Article 17已完成Research、Evidence、Outline、Draft、三轮Revision/Recheck、Final Gate Cycle 3、PUBLISH、BUILD_VERIFY与PRE_COMMIT_RECONCILIATION；Final=`PASS / 96 / 0 OPEN`，Hugo=`1246 Pages / 0 WARNING / 0 ERROR`。本文件现保存Article 17 PUBLISHED completion candidate；completion仍只能由Git history与remote refs解析。Article 18只是`PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer，不具有启动权威。
 
 ## Field rules
 
@@ -78,7 +78,7 @@ last_updated: "2026-08-24T20:30:20+08:00"
 - `current_article/current_gate` 是 candidate pointer，不表示该 Article 已经启动或拥有启动权威；是否启动必须结合 resolver `END_ARTICLE`、`factory_status`、[status.md](status.md) 与 policy 判断。
 - PRECHECK `PASS` 后必须执行显式 `ARTICLE_KICKOFF`，Factory 才能进入 `RUNNING` 并创建当前 workspace；pointer 指向 Article 不等于 Kickoff 已发生。
 - `article_authorization`记录当前单篇transaction的continuation authority。初次START在PRECHECK PASS后由Kickoff设置`status: ACTIVE`、`scope: ARTICLE_TRANSACTION`、`article: "N"`、`continue_until: END_ARTICLE`、`auto_continue_after_gate_pass: true`；mid-Article CONTINUE必须先fresh Resume Reconciliation，再由幂等`ARTICLE_AUTHORIZATION_RESUME`在durable current Gate设置同一ACTIVE形态，不回放PRECHECK、Kickoff、已完成worker或已通过Gate。如果人类明确收窄范围，再设置非`NONE`的`explicit_stop_line`。`next_article_authorized`始终为`false`，除非另有独立的人类Article N+1授权。
-- 当前Article 17仅为PRECHECK candidate，尚未获得启动授权，因此`article_authorization.status: INACTIVE`且其余字段为`NONE / false`。candidate pointer、旧worker handoff或`forbidden_articles`本身都不能伪造ACTIVE授权。
+- 当前Article 17已由明确人类指令授权完整transaction，并经fresh reconciliation完成`ARTICLE_KICKOFF`；因此`article_authorization.status: ACTIVE`只授权Article 17续跑至`END_ARTICLE`或真实blocker。该授权不延伸到Article 18或Part III Audit。
 - `article_authorization`与`continuous_run`独立：前者控制当前Article内部Gate续跑，后者只控制完成一篇后是否自动进入下一篇。到达`explicit_stop_line`时唯一durable投影为`factory_status: PAUSED`、`active_blocker: NONE`、`stop_reason: EXPLICIT_HUMAN_STOP_LINE`、`human_decision_required: false`、`current_gate: <next allowed/resume gate>`、`next_action: CONTINUE_ARTICLE_N_AT_<GATE>`；authorization写为`status: INACTIVE / scope: NONE / article: "N" / continue_until: NONE / auto_continue_after_gate_pass: false / explicit_stop_line: <matched line> / next_article_authorized: false`。真实blocker按其normalized mapping暂停；`PRE_COMMIT_RECONCILIATION`写入下一Article pointer时必须把authorization重置为INACTIVE，persistence cut后只读tail不得回写。
 - `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle Candidate=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段始终只是 candidate pointer；同一 persisted checkpoint 在 commit 前可解析为 `INCOMPLETE`，在 valid commit / push / remote reconciliation 后可解析为 `END_ARTICLE`，中间不写 bridge。启动权威 = candidate pointer + resolver `END_ARTICLE` + policy，且仍不等于 `ARTICLE_KICKOFF`。
 - `active_worker` 只使用 [subagent-contracts.md](subagent-contracts.md) 中的八种 role 或 `NONE`。
@@ -142,7 +142,7 @@ Hard lock 只能由新的外部 human instruction 解除；worker recommendation
 
 `continuous_run.enabled: false`不阻止`article_authorization.status: ACTIVE`的当前Article继续到END或真实blocker；`auto_continue_after_end_article: false`只确保END后停止。`forbidden_articles`在目标Article未获明确人类授权时阻断PRECHECK；收到同一Article的明确START / CONTINUE并完成fresh reconciliation后，Master必须先清除或覆盖旧run的禁止项，再激活该Article，且不得由此授权下一Article。
 
-Article 15 `END_ARTICLE` 后，新的外部Human Resume与fresh reconciliation已解除旧的Article 16禁止项。本次bounded run只覆盖Article 16；Article 16 `END_ARTICLE` 后policy停止，Article 17只能是`PRECHECK / NOT_STARTED` pointer，绝不开始。
+Article 16 `END_ARTICLE` 后，新的外部Human Resume与fresh reconciliation已解除旧的Article 17禁止项。本次bounded run只覆盖Article 17；Article 17 `END_ARTICLE` 后policy停止，Article 18保持未授权并绝不开始。
 
 ## Update events
 
