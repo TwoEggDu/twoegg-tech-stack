@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "16"
+current_article: "17"
 current_gate: PRECHECK
-last_published_article: "15"
+last_published_article: "16"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "15"
+  article: "16"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/15-session-long-term-project-memory/subagent-trace.md#wr-article-15-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/16-knowledge-base-rag/subagent-trace.md#wr-article-16-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -35,11 +35,11 @@ active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 last_successful_commit: 0c9465ca55e095bb1d78e71016b9c6ba357c7ac6
-next_action: STOP_CONTINUOUS_RUN_AFTER_ARTICLE_15_AND_WAIT_NEW_HUMAN_INSTRUCTION
+next_action: START_ARTICLE_17_PRECHECK
 continuous_run:
   enabled: false
-  start_article: "14"
-  stop_after_article: "15"
+  start_article: "16"
+  stop_after_article: "16"
   auto_continue_after_end_article: false
   stop_at_part_boundary: false
   stop_on:
@@ -55,11 +55,11 @@ continuous_run:
     state_conflict: true
     human_decision_required: true
   forbidden_articles:
-    - "16"
-last_updated: "2026-08-23T13:05:33+08:00"
+    - "17"
+last_updated: "2026-08-24T18:33:20+08:00"
 ```
 
-> Article 15 Final=`PASS / 93 / 0 OPEN`、Publish=`PASS / SEMANTIC EXACT`、Hugo=`0.157.0 / 1244 Pages / 0 WARNING / 0 ERROR`，PRE_COMMIT_RECONCILIATION=`PASS / LAST REPOSITORY WRITE`。`current_article/current_gate` 是 `Article 16 / PRECHECK` pointer candidate，且该 Article 在当前 run 中 `FORBIDDEN / NOT_STARTED`；continuous run已在inclusive stop_after 15处关闭。Article 16资产不存在，禁止执行PRECHECK或Kickoff。`last_worker_result` 是最后一个 persisted pre-commit result，`last_successful_commit`（`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`）只是 checkpoint hint；Article 15 的 retrospective resolver observation=`END_ARTICLE` 与 completion commit observation仅作一次性迁移说明，绝非 future authority。commit / push / remote / `END_ARTICLE` 均由 runtime resolver 重新判定。
+> 2026-08-24 Article 16已完成OUTLINE、AUTHOR_DRAFT、REVIEW、Revision Cycle 1、RECHECK、FINAL_GATE、PUBLISH与BUILD_VERIFY；Final=`PASS / 92 / 0 OPEN`，Hugo=`1245 Pages / 0 WARNING / 0 ERROR / 0 REF_NOT_FOUND`。本文件现保存`PRE_COMMIT_RECONCILIATION PASS` completion candidate：Article 16 completion仍只能由Git history与remote refs解析；Article 17只是`PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer，不具有启动权威。`last_successful_commit`继续保留上一已验证Article 15 checkpoint hint，避免预写Article 16未来commit SHA。
 
 ## Field rules
 
@@ -127,7 +127,7 @@ Hard lock 只能由新的外部 human instruction 解除；worker recommendation
 
 `auto_continue_after_end_article` 只控制 `END_ARTICLE N -> Article N+1 PRECHECK`，不能授权 `FAIL -> Recovery`。Gate failure 与 stop policy 同时存在时，STOP POLICY WINS；candidate retained，execution authority denied。Reviewer Findings -> `REVISION -> REVIEW_RECHECK` 在没有命中 `stop_on` 时仍按正常状态机自动继续。
 
-Article 14 `END_ARTICLE` 后，只有 `POST_COMMIT_RECONCILIATION_READ_ONLY = PASS`、`active_worker = NONE`、全部 Article 14 worker contexts 已丢弃，并重新完成 full-repository reconciliation，才能开始 Article 15 PRECHECK。Article 15 `END_ARTICLE` 后 policy停止；Article 16 只能是 `PRECHECK / NOT_STARTED` pointer，绝不开始。
+Article 15 `END_ARTICLE` 后，新的外部Human Resume与fresh reconciliation已解除旧的Article 16禁止项。本次bounded run只覆盖Article 16；Article 16 `END_ARTICLE` 后policy停止，Article 17只能是`PRECHECK / NOT_STARTED` pointer，绝不开始。
 
 ## Update events
 

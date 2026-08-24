@@ -1,10 +1,9 @@
 # Agent Engineering 课程状态台账
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
-- 更新时间：2026-08-23
-- 当前里程碑：Article 15 Lifecycle checkpoint=`PUBLISHED`；Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Completion Evidence Source=`GIT_HISTORY + REMOTE_REFS`；Expected Completion Message=`Publish Agent Engineering Article 15`
-- Article 15 retrospective observation（2026-08-23）：resolver=`END_ARTICLE`；completion commit=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`；两者仅为说明，不是未来 completion authority 或 post-commit write 要求
-- 当前生产对象：Article 16 `PRECHECK POINTER CANDIDATE / NOT_STARTED / FORBIDDEN CURRENT RUN`；workspace与Published Content均不存在
+- 更新时间：2026-08-24
+- 当前里程碑：Article 16 Lifecycle Candidate=`PUBLISHED`；Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Completion Evidence Source=`GIT_HISTORY + REMOTE_REFS`；Expected Completion Message=`Publish Agent Engineering Article 16`
+- 当前生产对象：Article 17 `PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer candidate；active worker=`NONE`；尚未执行PRECHECK或ARTICLE_KICKOFF
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -25,14 +24,16 @@
 - Article 14 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1243 Pages / 0 ERROR / 0 WARNING`，exit code `0`；fixed-clock future hits=`0`
 - Article 15 Published Path：`content/ai-empowerment/agent-engineering-15-session-long-term-project-memory.md`
 - Article 15 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1244 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
+- Article 16 Published Path：`content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md`
+- Article 16 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1245 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 16 / PRECHECK pointer candidate / NOT_STARTED / active worker NONE / continuous run disabled at stop_after 15`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 17 / PRECHECK pointer / NOT_STARTED / active worker NONE / stop_after 16 / Article 17 forbidden`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- 下一条持久化策略：等待明确的人类指令；Article 16仅为 `PRECHECK POINTER CANDIDATE / NOT_STARTED / FORBIDDEN CURRENT RUN`，不得执行 PRECHECK 或 `ARTICLE_KICKOFF`
+- 下一条允许动作：Article 16 `BUILD_VERIFY`；fresh Publisher只读运行Hugo与route/navigation checks；Article 17禁止启动
 
 ## 状态图例
 
@@ -61,7 +62,7 @@
 | 13 | Context Debugging：Packing、Compression、Pollution 与可重建性 | III | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS`（`9 / 9 TRACEABLE / 3 CONFIRMED / 6 PROPOSAL / 0 BLOCKED`） | Lab 05 `EVIDENCE_MERGED / EVIDENCE_GATE_PASS / FIXTURE-SCOPED` | `NONE`；`13-F01`—`F05 CLOSED`；Final Gate Cycle 2=`PASS / 91 / 0 OPEN`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`；`content/ai-empowerment/agent-engineering-13-context-debugging.md` |
 | 14 | Working Memory 与 Investigation State：当前任务正在想什么 | III | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS`（`5 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED`） | N/A | `14-F01`—`F05 CLOSED`；Final=`PASS / 93 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d`；local / origin / live remote equality=`PASS`；`content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md` |
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | III | M | 否 | `PUBLISHED` | `PASS / 7 CONFIRMED / 1 PARTIAL / 6 PROPOSAL / 0 BLOCKED` | N/A | Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Evidence=`GIT_HISTORY + REMOTE_REFS`；Expected Message=`Publish Agent Engineering Article 15`；retrospective resolver=`END_ARTICLE` / commit=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`（仅说明，非 future authority） |
-| 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | III | M | 否 | `PLANNED / PRECHECK POINTER ONLY / NOT_STARTED` | `BLOCKED` | N/A | `FORBIDDEN CURRENT RUN`；workspace、Published Content与ARTICLE_KICKOFF均不存在 |
+| 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | III | M | 否 | `PUBLISHED` | `PASS / 2 CONFIRMED / 0 PARTIAL / 4 PROPOSAL / 0 BLOCKED` | N/A | Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Final=`PASS / 92 / 0 OPEN`；Publish / Build=`PASS`；16-EXP01=`PROPOSAL / NOT_RUN / Observed Result ABSENT`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Evidence=`GIT_HISTORY + REMOTE_REFS`；Expected Message=`Publish Agent Engineering Article 16`；Published Content=`content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md` |
 | 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | III | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 18 | Evidence Contract：把自然语言推断变成可审计工程数据 | IV | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 19 | Permission、Approval、Human-in-the-loop 与 Sandbox | IV | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
