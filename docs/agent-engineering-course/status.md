@@ -33,7 +33,7 @@
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- 下一条允许动作：Article 16 `BUILD_VERIFY`；fresh Publisher只读运行Hugo与route/navigation checks；Article 17禁止启动
+- 下一条允许动作：等待新的明确人类指令；Article 17仅为`PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer candidate，不得执行PRECHECK或`ARTICLE_KICKOFF`；Article 16 completion继续由Git history与remote refs推导
 
 ## 状态图例
 

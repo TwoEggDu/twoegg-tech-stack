@@ -18,6 +18,8 @@ weight: 3160
 
 > **上一篇**：[Working Memory 与 Investigation State：当前任务正在想什么]({{< relref "ai-empowerment/agent-engineering-14-working-memory-investigation-state.md" >}})
 
+> **下一篇**：[Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite]({{< relref "ai-empowerment/agent-engineering-16-knowledge-base-rag.md" >}})
+
 上一轮 Unity 构建调查结束时，Working Memory 留下一条谨慎记录：`X 可能与启动变慢有关`。它仍是 `HYPOTHESIS / ACTIVE`，还缺当前构建产物和测量结果。
 
 系统随后先保存会话摘要，再在下一轮调查里召回旧记录。问题是，摘要把“可能”改成“已确认”，召回路径又没有核对 project、build、profile、观察时间和当前源码。新一轮 Agent 于是把旧假设当成当前事实，跳过测量，直接沿错误方向行动。
