@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "20"
+current_article: "21"
 current_gate: PRECHECK
-last_published_article: "19"
+last_published_article: "20"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: REVIEWER
-  article: "19"
+  role: MASTER_ORCHESTRATOR
+  article: "20"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/19-permission-approval-hitl-sandbox/subagent-trace.md#wr-article19-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/20-budget-engineering-token-step-cost-latency/subagent-trace.md#wr-article20-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "19"
+  article: "20"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: a0d8d1b2fa5380f9a4150f72b962ac15fe11a96b
-next_action: START_ARTICLE_20_PRECHECK_AFTER_END_ARTICLE_19
+last_successful_commit: 73a0f628e5580226f4c65890f81372d7ededd43d
+next_action: START_ARTICLE_21_PRECHECK_AFTER_END_ARTICLE_20
 continuous_run:
   enabled: true
   start_article: "18"
@@ -65,10 +65,10 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-26T00:45:01+08:00"
+last_updated: "2026-08-26T02:20:44+08:00"
 ```
 
-> 2026-08-26 Article 19已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`93 / 0 OPEN`，Draft/Published byte identity与Hugo=`1248 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 20 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(19)=END_ARTICLE`；completion SHA未预写。
+> 2026-08-26 Article 20已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`91 / 0 OPEN`，Draft/Published byte identity与Hugo=`1249 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 21 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(20)=END_ARTICLE`；completion SHA未预写。
 
 ## Field rules
 

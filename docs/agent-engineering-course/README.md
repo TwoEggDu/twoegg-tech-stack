@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 19 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`93 / 0 OPEN`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
-- 当前生产对象：Article 20 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(19)=END_ARTICLE`
+- 当前里程碑：Article 20 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`91 / 0 OPEN`；Hugo=`1249 Pages / 0 WARNING / 0 ERROR`
+- 当前生产对象：Article 21 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(20)=END_ARTICLE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -70,8 +70,9 @@
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
 - 当前 Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
 - 当前 Article 18 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`a0d8d1b2fa5380f9a4150f72b962ac15fe11a96b`；Evidence=`10 of 10 / 2 CONFIRMED / 2 PARTIAL / 6 PROPOSAL / 0 BLOCKED`；Final=`95 / 0 OPEN`；Hugo=`1247 Pages / 0 WARNING / 0 ERROR`
-- 当前 Article 19 状态：`PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Evidence=`10 / 10 / 3 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
-- Factory Status：`READY / Article 20 / PRECHECK / NOT_STARTED / active NONE`；必须先解析Article 19 `END_ARTICLE`才可启动Article 20
+- 当前 Article 19 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`73a0f628e5580226f4c65890f81372d7ededd43d`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
+- 当前 Article 20 状态：`PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`PASS / 91 / F01—F03 CLOSED / 0 OPEN`；Evidence=`9 / 9 / 1 CONFIRMED / 4 PARTIAL / 4 PROPOSAL / 0 BLOCKED / 11 Cards`；Hugo=`1249 Pages / 0 WARNING / 0 ERROR`
+- Factory Status：`READY / Article 21 / PRECHECK / NOT_STARTED / active NONE`；必须先解析Article 20 `END_ARTICLE`才可启动Article 21
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -117,13 +118,14 @@
 | [articles/11-long-running-agent/](articles/11-long-running-agent/) | `PUBLISHED`；Final Gate `PASS / 94 / 0 OPEN`；Required Lab 04 `CONFIRMED / EVIDENCE_MERGED`；checkpoint `31aef0aa` pushed / live-remote verified |
 | [articles/12-context-engineering/](articles/12-context-engineering/) | `PUBLISHED / END_ARTICLE`；Final Gate `PASS / 93 / 0 OPEN`；checkpoint `a87f058ae2642870ade75fa7f23ac4396f17b94c` pushed / live-remote verified；Hugo `1241 Pages / 0 ERROR / 0 WARNING` |
 | [articles/13-context-debugging/](articles/13-context-debugging/) | `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a`；local / origin / live remote equality=`PASS`；Final Gate Cycle 2 `PASS / 91 / 0 OPEN`；Required Lab 05 `EVIDENCE_GATE_PASS / FIXTURE-SCOPED`；Hugo `1242 Pages / 0 ERROR / 0 WARNING` |
-| [articles/19-permission-approval-hitl-sandbox/](articles/19-permission-approval-hitl-sandbox/) | `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final `PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Draft/Published byte identity `PASS`；Hugo `1248 Pages / 0 WARNING / 0 ERROR` |
+| [articles/19-permission-approval-hitl-sandbox/](articles/19-permission-approval-hitl-sandbox/) | `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit `73a0f628e5580226f4c65890f81372d7ededd43d`；Final `PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Hugo `1248 Pages / 0 WARNING / 0 ERROR` |
+| [articles/20-budget-engineering-token-step-cost-latency/](articles/20-budget-engineering-token-step-cost-latency/) | `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final `PASS / 91 / F01—F03 CLOSED / 0 OPEN`；Draft/Published byte identity `PASS`；Hugo `1249 Pages / 0 WARNING / 0 ERROR` |
 
 ## 资产边界
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—19 已进入Published Content，Article 12—18的唯一completion commits均已由Git history与remote refs解析为`END_ARTICLE`；Article 19当前是待唯一completion commit的persisted candidate。Article 20 / 23 / 24资产保持0。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—20 已进入Published Content，Article 12—19的唯一completion commits均已由Git history与remote refs解析为`END_ARTICLE`；Article 20当前是待唯一completion commit的persisted candidate。Article 21 / 23 / 24资产保持0。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

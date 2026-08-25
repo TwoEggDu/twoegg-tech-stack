@@ -18,6 +18,8 @@ weight: 3200
 
 > **上一篇**：[Evidence Contract：把自然语言推断变成可审计工程数据]({{< relref "ai-empowerment/agent-engineering-18-evidence-contract.md" >}})
 
+> **下一篇**：[Budget Engineering：Token、Step、Cost 与 Latency]({{< relref "ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md" >}})
+
 # Permission、Approval、Human-in-the-loop 与 Sandbox
 
 > 如果这篇只记一句话：`被接受的判断仍不是执行许可证；一次动作只有在主体、动作、资源、约束、策略、审批与执行点都对得上时，才有资格进入执行边界。`
