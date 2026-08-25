@@ -283,3 +283,101 @@ worker_result:
     - "Score 96 / 100; 0 OPEN Findings; all required score thresholds met."
     - "15 claims, 12 cards, 10 questions, exact four DESIGN / NOT IMPLEMENTED / NOT RUN candidates, experiment 0, Observed absent, 7 relrefs, UTF-8, and diff check pass."
 ~~~
+
+## Part III Audit Targeted Repair｜Revision Disposition
+
+- Repair execution: `/root/article17_part3_repair`
+- Repair date: `2026-08-25 / Asia/Shanghai`
+- Scope: `PIII-F01` and the Article 17 portion of `PIII-F02` only.
+- Decision authority: NONE；this append-only record proposes `READY_FOR_RECHECK` and does not close either Part III Finding or revise the historical Final Gate decisions above.
+
+### PIII-F01
+
+- Finding ID: PIII-F01
+- Files Changed: `research.md`、`evidence.md`、`draft.md`、`content/ai-empowerment/agent-engineering-17-skill-engineering.md`、`review.md`
+- What Changed: Replaced the active Anthropic C09 / EC05 chain with an endpoint-specific current-source account. The Messages / container Guide uses custom Skill ID `skill_...` and invocation `version` selector `skver_...` or `latest`; only that Guide's update flow supports the complete-snapshot statement, and its high-level prerequisites list API key plus Code Execution without showing a Skills beta header. The Get / List / Create Skill Version management references instead define path / response `version` as a Unix epoch timestamp, return a separate `skillver_...` response object `id`, and show `anthropic-beta: skills-2025-10-02` in cURL. The repair therefore does not treat Guide omission as proof that a raw management endpoint needs no beta header, does not collapse selector / management version / object ID, and marks their current cross-page mapping as an unresolved moving-source limitation requiring endpoint-specific verification. Managed Agents remains a separate beta surface with its own header.
+- Evidence Impact: C09 remains one of exactly 15 Claims and EC05 remains one of exactly 12 Evidence Cards；no Claim status was upgraded, no new Claim or Evidence Card was added, and the complete-snapshot claim is retained only within Guide scope. Draft and Published Content use the same repaired statements. The Part III audit's original summary that attributed epoch/header semantics to the Guide itself is not used as evidence；current official Guide and management reference pages were independently refreshed.
+- Proposed Status: READY_FOR_RECHECK
+
+### PIII-F02（Article 17 portion）
+
+- Finding ID: PIII-F02
+- Files Changed: `subagent-trace.md`、`review.md`
+- What Changed: Preserved the historical Final Gate Cycle 2 ten-field raw envelope verbatim and appended a correction record. Because mandatory `notes` is absent, its original `Master Validation: PASS` is explicitly invalid and the raw envelope has no transition authority. No missing note was inferred or fabricated. A separate fresh Revision Worker execution now records its own exact eleven-field envelope.
+- Evidence Impact: The correction does not replay Final Gate Cycle 2, retroactively authorize its `REVISION` route, or rewrite later history. Later repository artifacts may be reviewed independently, but cannot make the historical ten-field envelope schema-valid. Article 15 remains outside this worker's authorized scope.
+- Proposed Status: READY_FOR_RECHECK
+
+## Part III Repair Invariants
+
+- Claims: exactly 15；Evidence Cards: exactly 12.
+- BuildPilot candidate Skills: exactly four — `jenkins-build-triage`、`unity-compile-diagnosis`、`yooasset-artifact-chain-audit`、`release-evidence-pack`.
+- Experiments / Labs / provider runs: `0 / 0 / 0`；Observed Result: `ABSENT`.
+- All four candidates remain `DESIGN / NOT IMPLEMENTED / NOT RUN`.
+- Recheck required: a fresh Reviewer / Part Auditor must decide closure；this Revision Worker status is `READY_FOR_RECHECK` only.
+
+## Part III Targeted REVIEW_RECHECK｜PIII-F01 + Article 17 PIII-F02
+
+- Reviewer execution: `/root/article17_part3_reviewer`
+- Review date: `2026-08-25 / Asia/Shanghai`
+- Context: fresh Article Reviewer；durable repository artifacts and current official primary pages only；no Revision Worker hidden reasoning, confidence or self-score.
+- Scope: repaired active Article 17 C09 / EC05 chain, Draft / Published semantic identity, and the Article 17 historical-envelope correction required by `PIII-F02`.
+- Gate Decision: `PASS`.
+- Article-specific disposition: `READY_FOR_PART_REAUDIT`.
+- Part authority boundary: this record does not close `PIII-F01` or `PIII-F02` at Part scope；only a fresh Part Auditor may do that after all affected-Article evidence is ready.
+
+### PIII-F01 Recheck
+
+- Reviewer Status: `PASS / READY_FOR_PART_REAUDIT` for the Article 17 repair scope.
+- Official source refresh: the current Anthropic Messages / container Guide uses custom `skill_...` IDs and an invocation `version` selector of `skver_...` or `latest`. The same Guide's custom-Skill update flow states that each new version is a complete snapshot and omitted files are not carried forward. Its high-level prerequisites list API key plus Code Execution and its examples do not display a Skills beta header.
+- Management endpoint accounting: the current official Get / List / Create Skill Version references use `/v1/skills/{skill_id}/versions/{version}` or `/v1/skills/{skill_id}/versions`; define path / response `version` as a Unix epoch timestamp; return a separate response object `id` shaped `skillver_...`; and show `anthropic-beta: skills-2025-10-02` in management cURL examples.
+- Evidence boundary: Guide omission is not evidence that raw management endpoints need no header, and management cURL examples do not establish the complete Messages / container prerequisite set. The current official pages do not explain a stable mapping among Guide invocation selector, management `version` and response object `id`; the repaired chain correctly leaves that cross-page relationship unresolved and requires endpoint-specific refresh.
+- Audit-attribution correction: the Part III audit correctly detected a blocking active-chain contradiction, but its supporting sentence inaccurately attributed epoch/latest plus the Skills beta prerequisite to the Guide itself. This recheck independently uses the current Guide and the three management references and does not adopt that reversed attribution.
+- Managed Agents boundary: Managed Agents remains a separate surface with its own beta contract；the repaired Article does not merge its header or lifecycle into Messages / container Skills or Skill Version management.
+
+### PIII-F02 Recheck｜Article 17 Portion
+
+- Reviewer Status: `PASS / READY_FOR_PART_REAUDIT` for the Article 17 repair scope.
+- Historical raw preservation: the `FINAL_GATE CYCLE 2` raw YAML remains byte-for-byte equal to the corresponding body in Article 17 completion commit `a59245507f83a8bc567f943fd2912271cc2efb82`. It still has exactly ten root fields and no `notes` field.
+- Validation correction: the appended correction explicitly marks the original `Master Validation: PASS` as `INVALID`, withdraws its validation authority and assigns the invalid envelope `Transition Authority: NONE`. The original raw payload and historical annotation remain visible；nothing was rewritten into compliance.
+- No fabrication / replay: no `notes` value was inserted, inferred or fabricated；later artifacts cannot retroactively validate the envelope or authorize its historical `FINAL_GATE -> REVISION` transition；the failed Gate was not replayed by this targeted repair.
+- Fresh Revision envelope: the new Revision Worker envelope has exactly eleven root fields in contract order — `role`, `article`, `gate`, `execution_type`, `status`, `artifacts_created`, `artifacts_modified`, `gate_completed`, `next_allowed_gate`, `blocker`, `notes` — with `notes` present as its own repair-time evidence summary.
+
+### Frozen Package Verification
+
+- Draft / Published semantic identity: `PASS` after removing Published Content front matter and previous-navigation wrapper；both normalized bodies have SHA-256 `11F78BE54B38B921A23504FF3F48E5928A92D6E0C32FCE4D22D255F7ED830D12`.
+- Claims / Cards: exactly `15 / 12`；C09 and EC05 were revised in place without a status upgrade or a new Claim / Card.
+- BuildPilot: exactly four candidate table rows — `jenkins-build-triage`, `unity-compile-diagnosis`, `yooasset-artifact-chain-audit`, `release-evidence-pack`；all remain `DESIGN / NOT IMPLEMENTED / NOT RUN`.
+- Runtime ceiling: `EXPERIMENT COUNT = 0`；`OBSERVED RESULT = ABSENT`；no Lab, provider run, BuildPilot Runtime, benchmark, production result or effect claim was introduced.
+- Links: all seven Draft `relref` targets exist；the repaired Anthropic Research / Evidence chain links the Guide and all three Get / List / Create management references.
+- Scope: no Article 15, Part III audit report, global state, Article 18, Git index, commit, branch, refs or remote was modified by this Reviewer.
+- Post-append `git diff --check`: `PASS`（exit 0；no whitespace error）.
+
+## Part III Targeted Final Gate
+
+- Gate Decision: `PASS`.
+- Open Findings in this Article-specific targeted scope: `0`（BLOCKER 0 / MAJOR 0 / MINOR 0 / EDITORIAL 0）.
+- Score: `96 / 100` — Technical Accuracy 20；Evidence Discipline 20；Teaching Quality 19；Engineering Transfer 19；Readability & Compression 18.
+- Finding disposition: `PIII-F01 Article 17 repair = READY_FOR_PART_REAUDIT`；`PIII-F02 Article 17 repair = READY_FOR_PART_REAUDIT`.
+- next_allowed_gate: `PART_III_AUDIT`.
+- blocker: `NONE`.
+- Closure boundary: this is not `PART_III_AUDIT PASS` and does not authorize Article 18；fresh Part Auditor closure remains required.
+
+~~~yaml
+worker_result:
+  role: REVIEWER
+  article: "17"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/17-skill-engineering/review.md
+    - docs/agent-engineering-course/articles/17-skill-engineering/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: PART_III_AUDIT
+  blocker: NONE
+  notes:
+    - "Targeted score 96 / 100; 0 OPEN findings; PIII-F01 and the Article 17 portion of PIII-F02 are READY_FOR_PART_REAUDIT."
+    - "Current official Guide and Get/List/Create management references support the repaired endpoint-specific version, object-ID, beta-header and complete-snapshot accounting; cross-page mapping remains unresolved."
+    - "Historical Cycle 2 ten-field payload remains verbatim, its PASS validation and transition authority are invalid, no notes were fabricated, and the fresh Revision envelope has exactly eleven fields."
+~~~

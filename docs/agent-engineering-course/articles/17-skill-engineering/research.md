@@ -6,7 +6,7 @@
 - Status: COMPLETED
 - Evidence Gate Recommendation: PASS
 - Required Lab: NONE
-- Source access date: 2026-08-24
+- Source access date: 2026-08-24；Anthropic C09 targeted refresh: 2026-08-25
 - Experiment count: 0
 - Runtime observation: ABSENT
 
@@ -74,7 +74,7 @@ Source -> Review -> Static Validate -> Trigger Eval
 -> Promote / Roll Back -> Deprecate -> Disable -> Retire
 ```
 
-Static validator 不证明行为；Trigger eval 覆盖 realistic positives / near-miss negatives；Behavior eval 保存 outputs、assertions、tokens / timing、execution trace、human review；安全审查覆盖所有资源、依赖、network、credential、side effect、provenance。生产 pin exact version；失败后保留 input / trace，再 pin last-known-good、disable 或回滚 Git。Anthropic Agent Skills API 使用 custom `skill_...` ID、`skver_...` exact version / `latest`，新版本是完整 snapshot；当前 guide 未展示或要求 Skills beta header。Codex 可 disable，本地可 Git rollback，plugins 用于分发；ChatGPT workspace 有 owner / access / invocations / timestamps / delete。均为产品范围事实。
+Static validator 不证明行为；Trigger eval 覆盖 realistic positives / near-miss negatives；Behavior eval 保存 outputs、assertions、tokens / timing、execution trace、human review；安全审查覆盖所有资源、依赖、network、credential、side effect、provenance。生产 pin exact version；失败后保留 input / trace，再 pin last-known-good、disable 或回滚 Git。Anthropic 当前官方文档存在需要按 endpoint 分账的跨页不一致：Messages / container 的 Skills Guide 使用 custom `skill_...` ID，把 invocation `version` selector 写成 `skver_...` 或 `latest`，并只在该 Guide 范围内说明新版本是完整 snapshot；Skill Version 管理 API 的 Get / List / Create reference 则把 path / response `version` 定义为 Unix epoch timestamp，另返回 `skillver_...` 形态的对象 `id`，其 cURL 示例携带 `anthropic-beta: skills-2025-10-02`。Guide 的高层 prerequisites 只列 API key 与 Code Execution、示例不展示该 header，不能据此证明 raw management API 不需要 header。当前 invocation selector、management `version` 与 response object `id` 的跨页映射保持 moving-source limitation，调用前按具体 endpoint 复核。Managed Agents 仍是独立 surface。Codex 可 disable，本地可 Git rollback，plugins 用于分发；ChatGPT workspace 有 owner / access / invocations / timestamps / delete。均为产品范围事实。
 
 ### 17-RQ10｜BuildPilot 连续案例 — DESIGN / NOT IMPLEMENTED / NOT RUN
 
@@ -105,7 +105,7 @@ Decision log proposal：`run_id / step_id / catalog_digest / candidate IDs+versi
 | Roots | format 不规定 | Codex CWD->repo + user/admin/system | Managed repo root `.claude/skills`; API upload | 多 repo / personal roots |
 | Invocation | model-driven + explicit 建议 | ChatGPT `@`; Codex `$` / `/skills` + implicit | Managed relevant auto；API attach | CLI slash + auto |
 | Collision | guide 建议 deterministic precedence | Codex 同名不 merge、均可出现 | 同名 repo/attached/mount 均可用并带 path | 本轮未确认统一规则 |
-| Version | 无统一 registry | Git/disable/plugins；ChatGPT admin | API `skver_...` pin / `latest`；new version complete snapshot；current guide no Skills beta header shown | `gh skill` install/update/publish；pin 未确认 |
+| Version | 无统一 registry | Git/disable/plugins；ChatGPT admin | Messages/container Guide：`skver_...` selector / `latest`、complete snapshot；management API path/response `version`：epoch timestamp；response `id`：`skillver_...`；management cURL 含 Skills beta header；跨页映射未解决 | `gh skill` install/update/publish；pin 未确认 |
 | Context | 三层披露 | catalog 有预算 | API render system prompt | CLI 按需；SDK eager preload |
 | Multi-agent | optional | 本轮未确认 | per-agent config | 不继承 parent Skill |
 
@@ -138,7 +138,7 @@ Decision log proposal：`run_id / step_id / catalog_digest / candidate IDs+versi
 7. https://help.openai.com/en/articles/20001066
 8. https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md (`main`, unpinned)
 9. https://platform.claude.com/docs/en/managed-agents/skills (`managed-agents-2026-04-01` beta)
-10. Anthropic, “Using Agent Skills with the API”, https://platform.claude.com/docs/en/build-with-claude/skills-guide (official guide live-refreshed 2026-08-25；custom Skill ID `skill_...`；custom version selector `skver_...` or `latest`；new versions are complete snapshots；prerequisites/examples require API key + Code Execution and do not show/require `skills-2025-10-02`；Managed Agents remains a separate beta surface)
+10. Anthropic, “Using Agent Skills with the API”, https://platform.claude.com/docs/en/build-with-claude/skills-guide；Get / List / Create Skill Version API references, https://platform.claude.com/docs/en/api/beta/skills/versions/retrieve , https://platform.claude.com/docs/en/api/beta/skills/versions/list , https://platform.claude.com/docs/en/api/beta/skills/versions/create (official pages live-refreshed 2026-08-25；Guide uses custom Skill ID `skill_...` and invocation selector `skver_...` or `latest`, scopes complete-snapshot semantics to its update flow, and lists API key + Code Execution without a Skills beta header；management references define path / response `version` as Unix epoch timestamp, return separate `skillver_...` object `id`, and show `anthropic-beta: skills-2025-10-02` in cURL；the cross-page mapping is unresolved and requires endpoint-specific verification；Managed Agents remains a separate beta surface)
 11. https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration (beta)
 12. https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills
 13. https://docs.github.com/en/copilot/concepts/agents/copilot-cli/comparing-cli-features

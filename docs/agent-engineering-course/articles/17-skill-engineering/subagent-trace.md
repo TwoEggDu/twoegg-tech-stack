@@ -744,3 +744,114 @@ worker_result:
 - Projection Verification Recovery: initial batch write applied only each file’s final replacement；read-only verification caught stale run-state/top-level projections before staging. Master repaired the exact current-transaction projections and revalidated them before activating the cut.
 - Persistence Cut: ACTIVE；repository writes after this point=`ZERO`.
 - Master Validation Time: `2026-08-25T02:13:51+08:00`.
+
+<a id="wr-article17-final-gate-cycle2-correction"></a>
+
+## Historical Validation Correction｜FINAL_GATE CYCLE 2｜PIII-F02
+
+- Correction Date: `2026-08-25 / Asia/Shanghai`.
+- Corrected Record: `wr-article17-final-gate-cycle2`.
+- Raw Payload Preservation: the ten-field raw envelope in the historical record above remains verbatim；no `notes` field has been inserted, inferred or fabricated.
+- Schema Result: INVALID. The closed schema requires exactly eleven fields and makes `notes` mandatory, including for `FAIL` results.
+- Original Master Validation: INVALID. The historical `Master Validation: PASS` annotation is withdrawn as validation authority because it accepted a missing-field envelope.
+- Transition Authority: NONE. The invalid raw envelope did not and does not authorize `FINAL_GATE -> REVISION`.
+- Compensation Boundary: later Article 17 artifacts and reviews may establish their own repository facts, but they cannot retroactively validate this envelope, supply its missing field or replay the historical transition.
+
+<a id="wr-article17-part3-repair-start"></a>
+
+## Active Worker Dispatch｜PART III TARGETED REPAIR
+
+- Execution ID: `/root/article17_part3_repair`
+- Role: REVISION_WORKER
+- Gate: REVISION
+- Status: COMPLETED
+- Allowed Writes: Article 17 `research.md`、`evidence.md`、`draft.md`、`review.md`、`subagent-trace.md` and Published Content only.
+- Frozen Scope: PIII-F01 plus the Article 17 portion of PIII-F02；no audit report, global state, Article 15, Article 18, Git index, commit, branch, refs or remote mutation.
+
+<a id="wr-article17-part3-repair"></a>
+
+## REVISION_WORKER｜PART III TARGETED REPAIR
+
+- Execution ID: `/root/article17_part3_repair`
+- Result: PASS / READY_FOR_RECHECK.
+
+~~~yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "17"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/17-skill-engineering/research.md
+    - docs/agent-engineering-course/articles/17-skill-engineering/evidence.md
+    - docs/agent-engineering-course/articles/17-skill-engineering/draft.md
+    - docs/agent-engineering-course/articles/17-skill-engineering/review.md
+    - docs/agent-engineering-course/articles/17-skill-engineering/subagent-trace.md
+    - content/ai-empowerment/agent-engineering-17-skill-engineering.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "PIII-F01 READY_FOR_RECHECK: Guide invocation selector, management version, response object ID, beta-header evidence and complete-snapshot scope are separated; current cross-page mapping remains an endpoint-specific moving-source limitation."
+    - "PIII-F02 Article 17 READY_FOR_RECHECK: historical ten-field raw envelope preserved; original PASS invalidated; transition authority NONE; no missing notes fabricated."
+    - "Exactly 15 Claims, 12 Evidence Cards and four DESIGN / NOT IMPLEMENTED / NOT RUN BuildPilot candidates remain; experiment count 0 and Observed Result ABSENT."
+~~~
+
+- Master Validation: `PASS`；exact 11-field Revision Worker envelope、six-file repair scope、frozen invariants and `REVISION -> REVIEW_RECHECK` transition independently verified.
+
+<a id="wr-article17-part3-review-recheck-start"></a>
+
+## Active Worker Dispatch｜PART III TARGETED REVIEW_RECHECK
+
+- Execution ID: `/root/article17_part3_reviewer`
+- Role: REVIEWER
+- Gate: REVIEW_RECHECK
+- Status: COMPLETED
+- Allowed Writes: Article 17 `review.md` and `subagent-trace.md` only.
+- Frozen Scope: PIII-F01 plus the Article 17 portion of PIII-F02；current official Anthropic Guide and Get / List / Create management references；no audit report, Article 15, global state, Article 18, Git index, commit, branch, refs, remote or build output write.
+- Context Boundary: fresh Reviewer reads durable artifacts and current primary sources only；no Revision Worker hidden reasoning, confidence or self-score.
+
+<a id="wr-article17-part3-review-recheck"></a>
+
+## REVIEWER｜REVIEW_RECHECK / PART III TARGETED REPAIR
+
+- Execution ID: `/root/article17_part3_reviewer`
+- Result: `PASS / READY_FOR_PART_REAUDIT`.
+- PIII-F01: the repaired active chain correctly separates Guide invocation selector `skver_...` / `latest` and Guide-scoped complete-snapshot semantics from management epoch `version`, separate `skillver_...` response object `id`, and management cURL beta-header evidence. Guide header omission is not treated as proof；cross-page mapping remains unresolved；Managed Agents remains separate.
+- PIII-F01 audit note: the original Part III audit detected the contradiction but inaccurately attributed epoch/latest and the Skills beta prerequisite to the Guide. This recheck used the current Guide and all three management references independently.
+- PIII-F02: the historical Final Gate Cycle 2 ten-field payload is byte-for-byte equal to Article 17 completion commit `a59245507f83a8bc567f943fd2912271cc2efb82`, remains without `notes`, and is explicitly corrected to `INVALID / Transition Authority NONE`. No missing field was inserted, inferred or fabricated and no historical transition was replayed.
+- Fresh Revision envelope: exactly eleven root fields with mandatory `notes` present；role / article / gate / execution type, declared paths and `REVISION -> REVIEW_RECHECK` recommendation are valid.
+- Frozen invariants: Draft / Published normalized body identity PASS with SHA-256 `11F78BE54B38B921A23504FF3F48E5928A92D6E0C32FCE4D22D255F7ED830D12`；15 Claims；12 Cards；exact four DESIGN / NOT IMPLEMENTED / NOT RUN candidate table rows；experiment 0；Observed Result ABSENT；seven Draft relrefs resolve.
+- Findings: `0 OPEN` in this Article-specific targeted scope；score `96 / 100`.
+- Article-specific disposition: `READY_FOR_PART_REAUDIT`. Part-level closure remains reserved to a fresh Part Auditor and Article 18 remains unauthorized.
+
+## REVIEWER｜TARGETED FINAL GATE / PART III REPAIR
+
+- Gate Decision: `PASS`.
+- next_allowed_gate: `PART_III_AUDIT`.
+- blocker: `NONE`.
+- Post-append `git diff --check`: `PASS`（exit 0；no whitespace error）.
+
+~~~yaml
+worker_result:
+  role: REVIEWER
+  article: "17"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/17-skill-engineering/review.md
+    - docs/agent-engineering-course/articles/17-skill-engineering/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: PART_III_AUDIT
+  blocker: NONE
+  notes:
+    - "Targeted score 96 / 100; 0 OPEN findings; PIII-F01 and the Article 17 portion of PIII-F02 are READY_FOR_PART_REAUDIT."
+    - "Current official Guide and Get/List/Create management references support the repaired endpoint-specific version, object-ID, beta-header and complete-snapshot accounting; cross-page mapping remains unresolved."
+    - "Historical Cycle 2 ten-field payload remains verbatim, its PASS validation and transition authority are invalid, no notes were fabricated, and the fresh Revision envelope has exactly eleven fields."
+~~~
+
+- Master Validation: `PASS`；fresh Reviewer envelope、96 / 100 targeted score、0 OPEN Article findings and `READY_FOR_PART_REAUDIT` disposition independently verified.

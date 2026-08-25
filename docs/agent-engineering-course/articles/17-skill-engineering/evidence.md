@@ -8,7 +8,7 @@
 - Required Lab: NONE
 - Experiment count: 0
 - Observed result: ABSENT
-- Access date for web sources: 2026-08-24；F02 targeted refresh: 2026-08-25（EC05 / EC06）
+- Access date for web sources: 2026-08-24；F02 / PIII-F01 targeted refresh: 2026-08-25（EC05 / EC06）
 - Version boundary: current official web documentation plus unpinned `main` source where stated；发布前需刷新。
 
 ## Claim register
@@ -25,7 +25,7 @@
 | 17-C06 | NO | UNKNOWN | 没有本轮证据支持统一 instruction precedence、collision、unload / context-end 语义。 | PARTIAL | EC02—EC07 | 必须写“产品特定 / UNKNOWN”，不得补成统一规则。 |
 | 17-C07 | YES | DESIGN | 生产 Skill 应显式写 scope、I/O、dependency、permission、failure、verification、owner 与 version。 | PROPOSAL | EC01、EC08、EC09 | 课程合同，不冒充规范字段。 |
 | 17-C08 | YES | FACT | Skill 需要分别测试 trigger 与 output；output eval 应有 baseline、realistic cases、assertions、trace 与 human review。 | CONFIRMED | EC08 | 官方方法指南，不宣称已执行 Article 17 eval。 |
-| 17-C09 | YES | FACT | Version / release / rollback 是产品机制；当前 Anthropic Agent Skills API 使用 custom `skill_...` ID、`skver_...` exact version 或 `latest`，新版本是完整 snapshot；Codex / ChatGPT 有不同管理面。 | CONFIRMED | EC03—EC05 | 当前 Skills guide 未展示或要求 `skills-2025-10-02` beta header；Managed Agents 的 beta 状态与 header 只属于其独立 surface；不宣称开放格式提供统一 registry / rollback。 |
+| 17-C09 | YES | FACT | Version / release / rollback 是产品机制；Anthropic 当前 Guide 与 Skill Version 管理 API reference 对 custom version 的调用 selector、管理 `version` 与对象 `id` 使用不同表示，且 header 展示也不一致；Codex / ChatGPT 有不同管理面。 | CONFIRMED | EC03—EC05 | Guide 的 Messages/container selector 是 `skver_...` 或 `latest`；管理 API path / response `version` 是 Unix epoch timestamp，response `id` 另为 `skillver_...`；不猜测跨页映射或 raw endpoint header，调用前按 endpoint 复核；Managed Agents 仍单独分账。 |
 | 17-C10 | YES | FACT | Skill / scripts 构成 trust boundary；扫描、预批准或上传检查都不能替代来源审查、least privilege 与 sandbox。 | CONFIRMED | EC04、EC06、EC07 | 安全事实保持 product-scoped。 |
 | 17-C11 | YES | FACT | Multi-agent 中 Skill ownership / sharing / isolation 依实现；Anthropic、GitHub 都要求 per-agent 配置语义。 | CONFIRMED | EC06、EC07 | 不外推其他产品，不假定继承。 |
 | 17-C12 | YES | DESIGN | Skill lifecycle receipt 应记录 candidate、selection、version、resources、permission、artifact、terminal 与 context disposition。 | PROPOSAL | EC02、EC05、EC08、EC11 | BuildPilot / course design，不是开放 schema。 |
@@ -87,18 +87,18 @@
 - Limitations: eligibility / admin behavior 受 plan 与 workspace policy 影响。
 - Applicability: ChatGPT product-scoped security / lifecycle evidence。
 
-### 17-EC05｜Anthropic API versions, execution environment and observability
+### 17-EC05｜Anthropic API version surfaces, execution environment and observability
 
-- Source: Using Agent Skills with the API
-- URL: https://platform.claude.com/docs/en/build-with-claude/skills-guide
+- Source: Using Agent Skills with the API；Get / List / Create Skill Version API references
+- URL: https://platform.claude.com/docs/en/build-with-claude/skills-guide ; https://platform.claude.com/docs/en/api/beta/skills/versions/retrieve ; https://platform.claude.com/docs/en/api/beta/skills/versions/list ; https://platform.claude.com/docs/en/api/beta/skills/versions/create
 - Source type / authority: official Anthropic API documentation
-- Version / date: current guide live-refreshed 2026-08-25；custom Skill IDs use `skill_...`；custom version selectors use `skver_...` or `latest`；the guide exposes no release tag / pinned revision
+- Version / date: current pages live-refreshed 2026-08-25；no release tag / pinned revision exposed
 - Claim supported: 17-C03、17-C05、17-C09、17-C12、17-C13
-- What it proves: API attaches Skill by type / ID / optional version；custom Skill IDs are `skill_...`；custom version selection uses `skver_...` or `latest`；each new version is a complete snapshot whose omitted files are not carried forward；current prerequisites/examples require API key and Code Execution tool and do not show or require `skills-2025-10-02`；Skills run via code execution container；Compliance Activity Feed can record create / delete when enabled。
-- What it does NOT prove: 不证明 local Claude Code / Managed Agents 采用相同 lifecycle；audit feed 不补录未启用期间操作；sandbox 不等于主体授权；exact pin 不证明 skill quality。
+- What it proves: Messages / container Guide 用 custom `skill_...` ID，并把 invocation `version` selector 写成 `skver_...` 或 `latest`；该 Guide 的 update flow 说明每个新版本是完整 snapshot、遗漏文件不继承，且其高层 prerequisites 只列 API key 与 Code Execution、示例不展示 Skills beta header。Get / List / Create Skill Version management references 把 path / response `version` 定义为 Unix epoch timestamp，返回另一个 `skillver_...` 形态的 response object `id`，并在 cURL 示例携带 `anthropic-beta: skills-2025-10-02`。Skills 通过 code execution container 运行；Compliance Activity Feed 可在启用时记录 create / delete。
+- What it does NOT prove: 当前页面集合没有解释 Guide invocation selector、management path / response `version` 与 response object `id` 的稳定映射；Guide 未列 header 不证明 raw management endpoint 不需要 header，management cURL 示例含 header也不自动定义 Messages/container 的完整 prerequisite；不证明 local Claude Code / Managed Agents 采用相同 lifecycle；audit feed 不补录未启用期间操作；sandbox 不等于主体授权；任何一种 pin 都不证明 Skill quality。
 - Counter-evidence / alternative: Codex local skills use file / Git lifecycle；GitHub CLI uses its own distribution commands。
-- Limitations: current official guide is a moving target；本卡的 ID、version format、snapshot 与 prerequisite 结论只限所列 API surface 和 2026-08-25 live refresh；页面未展示 beta header 不证明未来永不需要；limits、retention 和 model examples 可变。
-- Applicability: Anthropic API product fact and production pin example only。
+- Limitations: current official pages are moving targets and presently expose a cross-page inconsistency；complete-snapshot claim only retains the Guide's custom-Skill update scope；version / header must be verified against the exact invocation or management endpoint before use；limits、retention and model examples may change。
+- Applicability: Anthropic Messages/container Guide and Skill Version management endpoints only；Managed Agents remains separately scoped in EC06。
 
 ### 17-EC06｜Anthropic Managed Agents trust and multi-agent isolation
 
