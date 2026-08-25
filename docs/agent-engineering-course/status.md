@@ -1,9 +1,9 @@
 # Agent Engineering 课程状态台账
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
-- 更新时间：2026-08-25
-- 当前里程碑：Article 18 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`95 / 0 OPEN`；Hugo=`1247 Pages / 0 WARNING / 0 ERROR`
-- 当前生产对象：Article 19 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(18)=END_ARTICLE`
+- 更新时间：2026-08-26
+- 当前里程碑：Article 19 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`93 / 0 OPEN`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
+- 当前生产对象：Article 20 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(19)=END_ARTICLE`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -30,15 +30,17 @@
 - Article 17 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1246 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / 8 relrefs / series index / navigation=`PASS`
 - Article 18 Published Path：`content/ai-empowerment/agent-engineering-18-evidence-contract.md`
 - Article 18 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1247 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / navigation / series index=`PASS`
+- Article 19 Published Path：`content/ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md`
+- Article 19 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1248 Pages / 0 ERROR / 0 WARNING`，exit code `0`；byte identity / navigation / series index=`PASS`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 19 / PRECHECK / NOT_STARTED / active worker NONE`；18→22 bounded policy active；Article 19 requires Article 18 END）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 20 / PRECHECK / NOT_STARTED / active worker NONE`；18→22 bounded policy active；Article 20 requires Article 19 END；Article 23 / 24 forbidden）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
 - Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
-- 下一条允许动作：Article 18 `GIT_DIFF_VERIFY -> unique completion commit -> push -> remote verify -> END_ARTICLE`；Persistence Cut后禁止repository write
+- 下一条允许动作：Article 19 `GIT_DIFF_VERIFY -> unique completion commit -> push -> remote verify -> END_ARTICLE`；Persistence Cut后禁止repository write
 
 ## 状态图例
 
@@ -69,8 +71,8 @@
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | III | M | 否 | `PUBLISHED` | `PASS / 7 CONFIRMED / 1 PARTIAL / 6 PROPOSAL / 0 BLOCKED` | N/A | Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Evidence=`GIT_HISTORY + REMOTE_REFS`；Expected Message=`Publish Agent Engineering Article 15`；retrospective resolver=`END_ARTICLE` / commit=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`（仅说明，非 future authority） |
 | 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | III | M | 否 | `PUBLISHED` | `PASS / 2 CONFIRMED / 0 PARTIAL / 4 PROPOSAL / 0 BLOCKED` | N/A | Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Final=`PASS / 92 / 0 OPEN`；Publish / Build=`PASS`；16-EXP01=`PROPOSAL / NOT_RUN / Observed Result ABSENT`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Evidence=`GIT_HISTORY + REMOTE_REFS`；Expected Message=`Publish Agent Engineering Article 16`；Published Content=`content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md` |
 | 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | III | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 8 CONFIRMED / 4 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | Final Gate Cycle 3=`PASS / 96 / 0 OPEN`；completion commit=`a59245507f83a8bc567f943fd2912271cc2efb82`；Part III repairs=`f2da1cba / 619ecd2e`；PIII-F01 / Article17 PIII-F02=`READY_FOR_PART_REAUDIT -> CLOSED`；Build=`1246 Pages / 0 ERROR / 0 WARNING`；Published Content=`content/ai-empowerment/agent-engineering-17-skill-engineering.md` |
-| 18 | Evidence Contract：把自然语言推断变成可审计工程数据 | IV | L | 否 | `PUBLISHED` | `PASS / 10 of 10 TRACEABLE / 2 CONFIRMED / 2 PARTIAL / 6 PROPOSAL / 0 BLOCKED` | N/A | `NONE`；Final=`PASS / 95 / 0 OPEN`；Publish / Build / PRE_COMMIT_RECONCILIATION=`PASS`；Completion=`DERIVED_FROM_GIT_HISTORY`；Published Content=`content/ai-empowerment/agent-engineering-18-evidence-contract.md` |
-| 19 | Permission、Approval、Human-in-the-loop 与 Sandbox | IV | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
+| 18 | Evidence Contract：把自然语言推断变成可审计工程数据 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 10 of 10 TRACEABLE / 2 CONFIRMED / 2 PARTIAL / 6 PROPOSAL / 0 BLOCKED` | N/A | `NONE`；Final=`PASS / 95 / 0 OPEN`；Publish / Build / PRE_COMMIT_RECONCILIATION=`PASS`；completion commit=`a0d8d1b2fa5380f9a4150f72b962ac15fe11a96b`；local / origin / live remote equality=`PASS`；Published Content=`content/ai-empowerment/agent-engineering-18-evidence-contract.md` |
+| 19 | Permission、Approval、Human-in-the-loop 与 Sandbox | IV | L | 否 | `PUBLISHED` | `PASS / 10 of 10 / 3 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED / 12 Cards` | N/A | `NONE`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Publish / Build / PRE_COMMIT_RECONCILIATION=`PASS`；Completion=`DERIVED_FROM_GIT_HISTORY`；Published Content=`content/ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md` |
 | 20 | Budget Engineering：Token、Step、Cost 与 Latency | IV | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 21 | Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层 | IV | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | IV | L | 否 | `PLANNED` | `BLOCKED` | Lab 06 `PLANNED / BLOCKED` | Golden Dataset 与退化 fixture 未设计 |

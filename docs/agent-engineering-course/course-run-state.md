@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "19"
+current_article: "20"
 current_gate: PRECHECK
-last_published_article: "18"
+last_published_article: "19"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: MASTER_ORCHESTRATOR
-  article: "18"
+  role: REVIEWER
+  article: "19"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/18-evidence-contract/subagent-trace.md#wr-article18-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/19-permission-approval-hitl-sandbox/subagent-trace.md#wr-article19-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "18"
+  article: "19"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 272ff0e24450ead78ff959dd019da202593a518d
-next_action: START_ARTICLE_19_PRECHECK_AFTER_END_ARTICLE_18
+last_successful_commit: a0d8d1b2fa5380f9a4150f72b962ac15fe11a96b
+next_action: START_ARTICLE_20_PRECHECK_AFTER_END_ARTICLE_19
 continuous_run:
   enabled: true
   start_article: "18"
@@ -65,10 +65,10 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-25T22:55:23+08:00"
+last_updated: "2026-08-26T00:45:01+08:00"
 ```
 
-> 2026-08-25 Article 18已完成`PRE_COMMIT_RECONCILIATION PASS`并形成`PUBLISHED` candidate；Final=`95 / 0 OPEN`，Hugo=`1247 Pages / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 19 / PRECHECK / NOT_STARTED / active worker NONE`，但只有Article 18唯一completion commit、push与`ResolveArticleCompletion(18)=END_ARTICLE`后才具有Article 19启动权威。Persistence Cut后repository writes=`ZERO`。
+> 2026-08-26 Article 19已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`93 / 0 OPEN`，Draft/Published byte identity与Hugo=`1248 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 20 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(19)=END_ARTICLE`；completion SHA未预写。
 
 ## Field rules
 

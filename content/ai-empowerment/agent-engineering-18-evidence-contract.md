@@ -18,6 +18,8 @@ weight: 3190
 
 > **上一篇**：[Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt]({{< relref "ai-empowerment/agent-engineering-17-skill-engineering.md" >}})
 
+> **下一篇**：[Permission、Approval、Human-in-the-loop 与 Sandbox]({{< relref "ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md" >}})
+
 # Evidence Contract：把自然语言推断变成可审计工程数据
 
 > 如果这篇只记一句话：`工程判断不是一句更确定的话，而是一条能回答“主张是谁、证据在哪、适用到哪、谁按什么规则接受”的可审计链。`
