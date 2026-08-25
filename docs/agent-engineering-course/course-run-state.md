@@ -8,26 +8,26 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: RUNNING
-current_article: "18"
-current_gate: PART_III_AUDIT_GIT_DIFF_VERIFY
-last_published_article: "17"
+factory_status: READY
+current_article: "19"
+current_gate: PRECHECK
+last_published_article: "18"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: PART_AUDITOR
-  article: "PART_III"
-  gate: PART_III_AUDIT
-  execution_type: REAL_SUBAGENT
-  execution_id: /root/part_iii_auditor_cycle1
-  result_ref: docs/agent-engineering-course/audits/part-iii-audit.md#wr-part-iii-audit-cycle1-20260825
+  role: MASTER_ORCHESTRATOR
+  article: "18"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  execution_id: /root
+  result_ref: docs/agent-engineering-course/articles/18-evidence-contract/subagent-trace.md#wr-article18-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: PRECHECK
+  next_allowed_gate: GIT_DIFF_VERIFY
   blocker: NONE
 last_worker_result_error: NONE
 review_cycle: 0
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: NONE
+  article: "18"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 619ecd2ee0f63d9f523c3561e80dbfb640bfbe03
-next_action: VERIFY_AND_COMMIT_PART_III_AUDIT_CHECKPOINT
+last_successful_commit: 272ff0e24450ead78ff959dd019da202593a518d
+next_action: START_ARTICLE_19_PRECHECK_AFTER_END_ARTICLE_18
 continuous_run:
   enabled: true
   start_article: "18"
@@ -65,10 +65,10 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-25T21:19:46+08:00"
+last_updated: "2026-08-25T22:55:23+08:00"
 ```
 
-> 2026-08-25 fresh Part III Audit Cycle 1已覆盖Article 12—17并给出`PASS / 0 OPEN BLOCKER / 0 OPEN MAJOR / 2 OPEN MINOR`；PIII-F01 / PIII-F02在独立Article 15与17修复提交后关闭，PIII-F04由Master audit reconciliation关闭，Hugo=`1246 Pages / 0 WARNING / 0 ERROR`。当前只保存`PART_III_AUDIT_GIT_DIFF_VERIFY` checkpoint candidate；Article 18仍为`PRECHECK / NOT_STARTED`，只有独立Audit commit完成push / remote verification后才可按18→22 bounded policy进入PRECHECK。
+> 2026-08-25 Article 18已完成`PRE_COMMIT_RECONCILIATION PASS`并形成`PUBLISHED` candidate；Final=`95 / 0 OPEN`，Hugo=`1247 Pages / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 19 / PRECHECK / NOT_STARTED / active worker NONE`，但只有Article 18唯一completion commit、push与`ResolveArticleCompletion(18)=END_ARTICLE`后才具有Article 19启动权威。Persistence Cut后repository writes=`ZERO`。
 
 ## Field rules
 
@@ -196,3 +196,5 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-22 16:52 Article 13 BUILD_VERIFY与Master独立重跑均为Hugo `0.157.0 / 1242 Pages / 0 WARNING / 0 ERROR / exit 0`；Final Gate=`PASS / 91 / F01-F05 CLOSED`，Lab 05=`EVIDENCE_GATE_PASS / FIXTURE-SCOPED`，Published Content / Article12↔13 / Course Index / canonical / status / Lab index均对齐。PRE_COMMIT_RECONCILIATION已完成Article13 `PUBLISHED` completion-commit candidate并把pointer冻结为`READY / Article14 / PRECHECK / NOT_STARTED / active worker NONE`；Article14 workspace/content=`ABSENT`。此记录后repository writes=`ZERO`；Git diff、唯一completion commit、single push与remote verify结果保持runtime-only。
 
 2026-08-25 21:19 fresh Part III Audit Cycle 1在修复提交`f2da1cba`与`619ecd2e`完成push / live-remote verification后给出`PASS`：PIII-F01 / PIII-F02 `CLOSED`，保留3个non-blocking MINOR，Lab 05、BuildPilot DESIGN边界、Article 12—17 completion containment与Hugo `1246 Pages / 0 WARNING / 0 ERROR`均通过。Master已验证exact 11-field Auditor envelope并写入audit-only checkpoint candidate；Article 18资产仍为0，PRECHECK未启动。下一步只允许显式diff/stage、`Audit Agent Engineering Part III`独立commit、push与remote verification。
+
+2026-08-25 21:28 Part III Audit checkpoint `272ff0e24450ead78ff959dd019da202593a518d`已完成single push与local / origin / live remote equality验证。Fresh Article 18 PRECHECK随后确认main、clean tree/index、Article 12—17 completion containment、Article 18/23/24 zero assets与bounded policy；ARTICLE_KICKOFF激活Article 18单篇authorization，WORKSPACE_INIT仅创建六个metadata/skeleton/trace文件。当前Gate=`RESEARCH`，Outline、Draft、Published Content与Article 19/23/24资产均不存在。

@@ -194,7 +194,7 @@ BuildPilot Design v1
 
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
-| 18 | Evidence Contract：把自然语言推断变成可审计工程数据 | L | 否 |
+| 18 | [Evidence Contract：把自然语言推断变成可审计工程数据](../content/ai-empowerment/agent-engineering-18-evidence-contract.md) | L | 否 |
 | 19 | Permission、Approval、Human-in-the-loop 与 Sandbox | L | 否 |
 | 20 | Budget Engineering：Token、Step、Cost 与 Latency | M | 否 |
 | 21 | Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层 | L | 否 |

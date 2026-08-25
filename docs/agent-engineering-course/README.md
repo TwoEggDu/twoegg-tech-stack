@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Fresh Part III Audit Cycle 1已覆盖Article 12—17并给出`PASS`；独立Audit checkpoint尚待commit / push / remote verification
-- 当前生产对象：Part III Audit `PASS` checkpoint candidate；当前Gate=`PART_III_AUDIT_GIT_DIFF_VERIFY`；Article 18保持`PRECHECK / NOT_STARTED`，active worker=`NONE`
+- 当前里程碑：Article 18 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`95 / 0 OPEN`；Hugo=`1247 Pages / 0 WARNING / 0 ERROR`
+- 当前生产对象：Article 19 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(18)=END_ARTICLE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -69,7 +69,8 @@
 - 当前 Article 17 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1246 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / 8 relrefs / series index / navigation=`PASS`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
 - 当前 Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
-- Factory Status：`RUNNING / PART_III_AUDIT_GIT_DIFF_VERIFY / active worker NONE`；18→22 bounded policy已持久化，Audit checkpoint验证前不得启动Article 18 PRECHECK
+- 当前 Article 18 状态：`PUBLISHED candidate / PRE_COMMIT_RECONCILIATION PASS`；Evidence=`10 of 10 / 2 CONFIRMED / 2 PARTIAL / 6 PROPOSAL / 0 BLOCKED`；Final=`95 / 0 OPEN`；Hugo=`1247 Pages / 0 WARNING / 0 ERROR`
+- Factory Status：`READY / Article 19 / PRECHECK / NOT_STARTED / active worker NONE`；Article 19必须等待Article 18唯一completion commit、push与`END_ARTICLE` resolver通过
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -120,7 +121,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—17 已进入Published Content。Article 12—17的唯一completion commits均已由Git history与remote refs解析为`END_ARTICLE`；Part III Audit Cycle 1=`PASS`，Article 18仍为`PRECHECK / NOT_STARTED`且没有生产资产。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—18 已进入Published Content。Article 12—17的唯一completion commits均已由Git history与remote refs解析为`END_ARTICLE`；Article 18处于`PUBLISHED` candidate / Pre-Commit checkpoint，completion仍由Git history与remote refs决定。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

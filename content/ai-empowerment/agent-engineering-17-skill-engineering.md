@@ -18,6 +18,8 @@ weight: 3180
 
 > **上一篇**：[Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite]({{< relref "ai-empowerment/agent-engineering-16-knowledge-base-rag.md" >}})
 
+> **下一篇**：[Evidence Contract：把自然语言推断变成可审计工程数据]({{< relref "ai-empowerment/agent-engineering-18-evidence-contract.md" >}})
+
 # Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt
 
 > 如果这篇只记一句话：`Skill Engineering 不是给 Prompt 换目录，而是让领域方法可发现、按需装载、独立验证、受控执行，并在不适用时退出。`
