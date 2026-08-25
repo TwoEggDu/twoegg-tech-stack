@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-25
-- 当前里程碑：Article 17 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；completion待由`GIT_HISTORY + REMOTE_REFS`解析，不预写未来SHA
-- 当前生产对象：Article 18 `PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer；authorization=`INACTIVE / NONE`；active worker=`NONE`
+- 当前里程碑：Fresh Part III Audit Cycle 1已覆盖Article 12—17并给出`PASS`；独立Audit checkpoint尚待commit / push / remote verification
+- 当前生产对象：Part III Audit `PASS` checkpoint candidate；当前Gate=`PART_III_AUDIT_GIT_DIFF_VERIFY`；Article 18保持`PRECHECK / NOT_STARTED`，active worker=`NONE`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -30,12 +30,13 @@
 - Article 17 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1246 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / 8 relrefs / series index / navigation=`PASS`
 - Article 01 Workspace：`docs/agent-engineering-course/articles/01-model-api-messages-token/`
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 18 / PRECHECK pointer / NOT_STARTED / active worker NONE / Article 18 forbidden current run`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / PART_III_AUDIT_GIT_DIFF_VERIFY / active worker NONE`；18→22 bounded policy已持久化，等待Audit checkpoint验证）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- 下一条允许动作：完成Article 17唯一checkpoint commit / push / remote只读解析后在`END_ARTICLE_17`停止；不得启动Article 18或Part III Audit
+- Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
+- 下一条允许动作：Master完成audit-only diff、`Audit Agent Engineering Part III`独立commit、push与remote verification；验证前不得启动Article 18 PRECHECK
 
 ## 状态图例
 
@@ -65,7 +66,7 @@
 | 14 | Working Memory 与 Investigation State：当前任务正在想什么 | III | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS`（`5 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED`） | N/A | `14-F01`—`F05 CLOSED`；Final=`PASS / 93 / 0 OPEN`；Publisher / Build / PRE_COMMIT_RECONCILIATION=`PASS`；completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d`；local / origin / live remote equality=`PASS`；`content/ai-empowerment/agent-engineering-14-working-memory-investigation-state.md` |
 | 15 | Session、Long-term Memory 与 Project Memory：事实、经验和作用域 | III | M | 否 | `PUBLISHED` | `PASS / 7 CONFIRMED / 1 PARTIAL / 6 PROPOSAL / 0 BLOCKED` | N/A | Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Evidence=`GIT_HISTORY + REMOTE_REFS`；Expected Message=`Publish Agent Engineering Article 15`；retrospective resolver=`END_ARTICLE` / commit=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`（仅说明，非 future authority） |
 | 16 | Knowledge Base 与 RAG：Retrieve、Filter、Rerank、Inject、Cite | III | M | 否 | `PUBLISHED` | `PASS / 2 CONFIRMED / 0 PARTIAL / 4 PROPOSAL / 0 BLOCKED` | N/A | Persisted Checkpoint=`PRE_COMMIT_RECONCILIATION PASS`；Final=`PASS / 92 / 0 OPEN`；Publish / Build=`PASS`；16-EXP01=`PROPOSAL / NOT_RUN / Observed Result ABSENT`；Completion Resolution=`DERIVED_FROM_GIT_HISTORY`；Evidence=`GIT_HISTORY + REMOTE_REFS`；Expected Message=`Publish Agent Engineering Article 16`；Published Content=`content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md` |
-| 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | III | M | 否 | `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` | `PASS / 8 CONFIRMED / 4 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | Final Gate Cycle 3=`PASS / 96 / 0 OPEN`；Build=`1246 Pages / 0 ERROR / 0 WARNING`；Published Content=`content/ai-empowerment/agent-engineering-17-skill-engineering.md`；completion待Git history解析 |
+| 17 | Skill Engineering：按需加载领域方法，而不是再堆一层 Prompt | III | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 8 CONFIRMED / 4 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | Final Gate Cycle 3=`PASS / 96 / 0 OPEN`；completion commit=`a59245507f83a8bc567f943fd2912271cc2efb82`；Part III repairs=`f2da1cba / 619ecd2e`；PIII-F01 / Article17 PIII-F02=`READY_FOR_PART_REAUDIT -> CLOSED`；Build=`1246 Pages / 0 ERROR / 0 WARNING`；Published Content=`content/ai-empowerment/agent-engineering-17-skill-engineering.md` |
 | 18 | Evidence Contract：把自然语言推断变成可审计工程数据 | IV | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 19 | Permission、Approval、Human-in-the-loop 与 Sandbox | IV | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 20 | Budget Engineering：Token、Step、Cost 与 Latency | IV | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |

@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 17 `PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；completion待由`GIT_HISTORY + REMOTE_REFS`解析，不预写未来SHA
-- 当前生产对象：Article 18 `PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer；authorization=`INACTIVE / NONE`；active worker=`NONE`
+- 当前里程碑：Fresh Part III Audit Cycle 1已覆盖Article 12—17并给出`PASS`；独立Audit checkpoint尚待commit / push / remote verification
+- 当前生产对象：Part III Audit `PASS` checkpoint candidate；当前Gate=`PART_III_AUDIT_GIT_DIFF_VERIFY`；Article 18保持`PRECHECK / NOT_STARTED`，active worker=`NONE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -64,11 +64,12 @@
 - 当前 Article 15 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1244 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
 - 当前 Article 16 Published Content：`content/ai-empowerment/agent-engineering-16-knowledge-base-rag.md`
 - 当前 Article 16 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1245 Pages / 0 ERROR / 0 WARNING / 0 REF_NOT_FOUND`，exit code `0`；future hits=`0`
-- 当前 Article 17 状态：`PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate；Evidence=`8 CONFIRMED / 4 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final Gate Cycle 3=`PASS / 96 / 0 OPEN`
+- 当前 Article 17 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`a59245507f83a8bc567f943fd2912271cc2efb82`；Part III repairs=`f2da1cba / 619ecd2e`；PIII-F01与Article 17 PIII-F02已由fresh Part Auditor关闭；Evidence=`8 CONFIRMED / 4 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；targeted Final=`PASS / 96 / 0 OPEN`
 - 当前 Article 17 Published Content：`content/ai-empowerment/agent-engineering-17-skill-engineering.md`
 - 当前 Article 17 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1246 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / 8 relrefs / series index / navigation=`PASS`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
-- Factory Status：`READY / Article 18 / PRECHECK pointer / NOT_STARTED / active worker NONE / forbidden current run`；Article 17 completion待Git/remote解析
+- 当前 Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
+- Factory Status：`RUNNING / PART_III_AUDIT_GIT_DIFF_VERIFY / active worker NONE`；18→22 bounded policy已持久化，Audit checkpoint验证前不得启动Article 18 PRECHECK
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -99,6 +100,7 @@
 | [status.md](status.md) | 45 篇文章的当前状态、证据、Lab 与阻塞项 |
 | [Part I Audit](audits/part-i-audit.md) | Article 01—04 的跨篇一致性、Lab、publication 与 checkpoint 审计；Gate `PASS`，`PI-F01`—`PI-F03 CLOSED` |
 | [Part II Audit](audits/part-ii-audit.md) | Article 05—11 的跨篇一致性、Labs 02—04、publication 与 checkpoint 审计；Gate `PASS`，`PII-F01`—`PII-F04 CLOSED` |
+| [Part III Audit](audits/part-iii-audit.md) | Article 12—17 的Context / Memory / KB / RAG / Skill边界、Lab 05、BuildPilot与checkpoint审计；Cycle 1 Gate `PASS`，`PIII-F01 / PIII-F02 CLOSED` |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
@@ -118,7 +120,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—16 已进入Published Content。Article 13已由 completion commit `8b18b85b5a0f6a95f042832e36a8f7cb09f8609a` 证明完成；Article 14已由 completion commit `a53d151ba051403ff5ef369e5c3860a9fbded03d` 与 local / origin / live remote equality=`PASS` 证明为 `PUBLISHED / COMPLETED / END_ARTICLE`；Article 15 completion由Git history与remote refs派生；Article 16当前只是`PUBLISHED / PRE_COMMIT_RECONCILIATION PASS` completion candidate，最终completion继续由Git history与remote refs派生。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—17 已进入Published Content。Article 12—17的唯一completion commits均已由Git history与remote refs解析为`END_ARTICLE`；Part III Audit Cycle 1=`PASS`，Article 18仍为`PRECHECK / NOT_STARTED`且没有生产资产。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

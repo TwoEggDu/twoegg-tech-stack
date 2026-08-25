@@ -8,26 +8,26 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: READY
+factory_status: RUNNING
 current_article: "18"
-current_gate: PRECHECK
+current_gate: PART_III_AUDIT_GIT_DIFF_VERIFY
 last_published_article: "17"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: MASTER_ORCHESTRATOR
-  article: "17"
-  gate: PRE_COMMIT_RECONCILIATION
-  execution_type: MASTER_DETERMINISTIC
-  execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/17-skill-engineering/subagent-trace.md#wr-article17-pre-commit-reconciliation
+  role: PART_AUDITOR
+  article: "PART_III"
+  gate: PART_III_AUDIT
+  execution_type: REAL_SUBAGENT
+  execution_id: /root/part_iii_auditor_cycle1
+  result_ref: docs/agent-engineering-course/audits/part-iii-audit.md#wr-part-iii-audit-cycle1-20260825
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: GIT_DIFF_VERIFY
+  next_allowed_gate: PRECHECK
   blocker: NONE
 last_worker_result_error: NONE
 review_cycle: 0
@@ -42,14 +42,14 @@ article_authorization:
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: bf00d4e63f2f634d4b62afb5fe2ee44ae2051571
-next_action: START_ARTICLE_18_PRECHECK
+last_successful_commit: 619ecd2ee0f63d9f523c3561e80dbfb640bfbe03
+next_action: VERIFY_AND_COMMIT_PART_III_AUDIT_CHECKPOINT
 continuous_run:
-  enabled: false
-  start_article: "17"
-  stop_after_article: "17"
-  auto_continue_after_end_article: false
-  stop_at_part_boundary: false
+  enabled: true
+  start_article: "18"
+  stop_after_article: "22"
+  auto_continue_after_end_article: true
+  stop_at_part_boundary: true
   stop_on:
     blocker: true
     major_finding_unresolved: false
@@ -63,11 +63,12 @@ continuous_run:
     state_conflict: true
     human_decision_required: true
   forbidden_articles:
-    - "18"
-last_updated: "2026-08-25T02:13:51+08:00"
+    - "23"
+    - "24"
+last_updated: "2026-08-25T21:19:46+08:00"
 ```
 
-> 2026-08-25 Article 17已完成Research、Evidence、Outline、Draft、三轮Revision/Recheck、Final Gate Cycle 3、PUBLISH、BUILD_VERIFY与PRE_COMMIT_RECONCILIATION；Final=`PASS / 96 / 0 OPEN`，Hugo=`1246 Pages / 0 WARNING / 0 ERROR`。本文件现保存Article 17 PUBLISHED completion candidate；completion仍只能由Git history与remote refs解析。Article 18只是`PRECHECK / NOT_STARTED / FORBIDDEN CURRENT RUN` pointer，不具有启动权威。
+> 2026-08-25 fresh Part III Audit Cycle 1已覆盖Article 12—17并给出`PASS / 0 OPEN BLOCKER / 0 OPEN MAJOR / 2 OPEN MINOR`；PIII-F01 / PIII-F02在独立Article 15与17修复提交后关闭，PIII-F04由Master audit reconciliation关闭，Hugo=`1246 Pages / 0 WARNING / 0 ERROR`。当前只保存`PART_III_AUDIT_GIT_DIFF_VERIFY` checkpoint candidate；Article 18仍为`PRECHECK / NOT_STARTED`，只有独立Audit commit完成push / remote verification后才可按18→22 bounded policy进入PRECHECK。
 
 ## Field rules
 
@@ -78,7 +79,7 @@ last_updated: "2026-08-25T02:13:51+08:00"
 - `current_article/current_gate` 是 candidate pointer，不表示该 Article 已经启动或拥有启动权威；是否启动必须结合 resolver `END_ARTICLE`、`factory_status`、[status.md](status.md) 与 policy 判断。
 - PRECHECK `PASS` 后必须执行显式 `ARTICLE_KICKOFF`，Factory 才能进入 `RUNNING` 并创建当前 workspace；pointer 指向 Article 不等于 Kickoff 已发生。
 - `article_authorization`记录当前单篇transaction的continuation authority。初次START在PRECHECK PASS后由Kickoff设置`status: ACTIVE`、`scope: ARTICLE_TRANSACTION`、`article: "N"`、`continue_until: END_ARTICLE`、`auto_continue_after_gate_pass: true`；mid-Article CONTINUE必须先fresh Resume Reconciliation，再由幂等`ARTICLE_AUTHORIZATION_RESUME`在durable current Gate设置同一ACTIVE形态，不回放PRECHECK、Kickoff、已完成worker或已通过Gate。如果人类明确收窄范围，再设置非`NONE`的`explicit_stop_line`。`next_article_authorized`始终为`false`，除非另有独立的人类Article N+1授权。
-- 当前Article 17已由明确人类指令授权完整transaction，并经fresh reconciliation完成`ARTICLE_KICKOFF`；因此`article_authorization.status: ACTIVE`只授权Article 17续跑至`END_ARTICLE`或真实blocker。该授权不延伸到Article 18或Part III Audit。
+- Article 17已由Git history与remote refs解析为`END_ARTICLE`。本次明确人类授权在Part III Audit独立checkpoint验证后启用Article 18—22 bounded continuous run；`article_authorization`在具体Article完成PRECHECK / ARTICLE_KICKOFF前仍保持INACTIVE，且不会授权Article 23或24。
 - `article_authorization`与`continuous_run`独立：前者控制当前Article内部Gate续跑，后者只控制完成一篇后是否自动进入下一篇。到达`explicit_stop_line`时唯一durable投影为`factory_status: PAUSED`、`active_blocker: NONE`、`stop_reason: EXPLICIT_HUMAN_STOP_LINE`、`human_decision_required: false`、`current_gate: <next allowed/resume gate>`、`next_action: CONTINUE_ARTICLE_N_AT_<GATE>`；authorization写为`status: INACTIVE / scope: NONE / article: "N" / continue_until: NONE / auto_continue_after_gate_pass: false / explicit_stop_line: <matched line> / next_article_authorized: false`。真实blocker按其normalized mapping暂停；`PRE_COMMIT_RECONCILIATION`写入下一Article pointer时必须把authorization重置为INACTIVE，persistence cut后只读tail不得回写。
 - `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle Candidate=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段始终只是 candidate pointer；同一 persisted checkpoint 在 commit 前可解析为 `INCOMPLETE`，在 valid commit / push / remote reconciliation 后可解析为 `END_ARTICLE`，中间不写 bridge。启动权威 = candidate pointer + resolver `END_ARTICLE` + policy，且仍不等于 `ARTICLE_KICKOFF`。
 - `active_worker` 只使用 [subagent-contracts.md](subagent-contracts.md) 中的八种 role 或 `NONE`。
@@ -142,7 +143,7 @@ Hard lock 只能由新的外部 human instruction 解除；worker recommendation
 
 `continuous_run.enabled: false`不阻止`article_authorization.status: ACTIVE`的当前Article继续到END或真实blocker；`auto_continue_after_end_article: false`只确保END后停止。`forbidden_articles`在目标Article未获明确人类授权时阻断PRECHECK；收到同一Article的明确START / CONTINUE并完成fresh reconciliation后，Master必须先清除或覆盖旧run的禁止项，再激活该Article，且不得由此授权下一Article。
 
-Article 16 `END_ARTICLE` 后，新的外部Human Resume与fresh reconciliation已解除旧的Article 17禁止项。本次bounded run只覆盖Article 17；Article 17 `END_ARTICLE` 后policy停止，Article 18保持未授权并绝不开始。
+Article 17 `END_ARTICLE` 与Part III Audit `PASS`后，本次外部Human授权建立Article 18—22的bounded continuous run；`stop_after_article: "22"`为inclusive，Article 23保持Optional / `PLANNED / NOT_STARTED`，Article 23与24均在PRECHECK前由`forbidden_articles`阻断。Part IV Audit完成独立commit / push / remote verification后立即停止。
 
 ## Update events
 
@@ -193,3 +194,5 @@ Article 07 独立 checkpoint `f3de0f2a7b1e06c530900627183bd364ca0b4314` 已完�
 2026-08-21 20:41 Article 12 first GIT_DIFF_VERIFY attempt correctly failed before commit because staged `git diff --cached --check` reported one extra blank line at EOF in `article-card.md`. No commit or push occurred. Master returned to PRE_COMMIT_RECONCILIATION retry 1, removed only that terminal blank line, recorded this recovery, and preserved every publication, state, canonical and Article 13 absence invariant. This retry supersedes the earlier persistence cut; after it, repository writes are again `ZERO` and GIT_DIFF_VERIFY must restart from the full 14-path scope.
 
 2026-08-22 16:52 Article 13 BUILD_VERIFY与Master独立重跑均为Hugo `0.157.0 / 1242 Pages / 0 WARNING / 0 ERROR / exit 0`；Final Gate=`PASS / 91 / F01-F05 CLOSED`，Lab 05=`EVIDENCE_GATE_PASS / FIXTURE-SCOPED`，Published Content / Article12↔13 / Course Index / canonical / status / Lab index均对齐。PRE_COMMIT_RECONCILIATION已完成Article13 `PUBLISHED` completion-commit candidate并把pointer冻结为`READY / Article14 / PRECHECK / NOT_STARTED / active worker NONE`；Article14 workspace/content=`ABSENT`。此记录后repository writes=`ZERO`；Git diff、唯一completion commit、single push与remote verify结果保持runtime-only。
+
+2026-08-25 21:19 fresh Part III Audit Cycle 1在修复提交`f2da1cba`与`619ecd2e`完成push / live-remote verification后给出`PASS`：PIII-F01 / PIII-F02 `CLOSED`，保留3个non-blocking MINOR，Lab 05、BuildPilot DESIGN边界、Article 12—17 completion containment与Hugo `1246 Pages / 0 WARNING / 0 ERROR`均通过。Master已验证exact 11-field Auditor envelope并写入audit-only checkpoint candidate；Article 18资产仍为0，PRECHECK未启动。下一步只允许显式diff/stage、`Audit Agent Engineering Part III`独立commit、push与remote verification。
