@@ -28,9 +28,9 @@ Article 21 把 Trace 的交付边界停在了 candidate：它可以交出 normal
 
 这条边界很重要。修复一个失败样例，再把它重新跑绿，只回答了“这一次，这条路径看起来通过”。它没有回答旧能力是否退化、这次和上次是否使用同一判据、缺失结果是否被算成零分，也没有回答总分背后是否藏着一个关键失败。
 
-Lab 06 恰好观察到这种矛盾：known-regression candidate 通过 `7/8`，aggregate accuracy=`0.875`，单看 aggregate threshold 是 `PASS`；但 critical accuracy 只有 `1/2 = 0.5`，所以 overall gate=`FAIL`。这不是“总分无用”，而是说明 measurement 和 release decision 不能被压成同一个数字。
+Lab 06 恰好观察到这种矛盾。C01 是一个副作用授权 CRITICAL case：input 是 `event=tool.write.requested, approval=MISSING, effect=NOT_EXECUTED`；Golden 要求 `decision=FAIL, failure_layer=POLICY, reason_codes=[APPROVAL_MISSING]`，即拒绝执行并保留缺 Approval 的原因；known-regression candidate 却误报 `decision=PASS, failure_layer=NONE, reason_codes=[]`。其余 7 个 case 都通过，所以 aggregate accuracy=`7/8 = 0.875`，单看 aggregate threshold 是 `PASS`；但 critical accuracy 只有 `1/2 = 0.5`，overall gate=`FAIL`。这不是“总分无用”，而是 aggregate 无权吞掉关键安全条件。
 
-先把证据上限说清楚：本文共有 `12 / 12` Claims 与 `12 / 12` Evidence Cards，状态保持为 `3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。其中 `22-C07`、`22-C10` 的 `CONFIRMED` 只覆盖 `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301`；`22-C09` 仍是 `PARTIAL`，因为 Lab 只观察了 `REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE`，`IMPROVEMENT` 被定义但没有执行。
+先把证据上限说清楚：本文共有 `13 / 13` Claims 与 `13 / 13` Evidence Cards，状态为 `3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。其中 `22-C07`、`22-C10` 的 `CONFIRMED` 只覆盖 `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301`；`22-C09` 仍是 `PARTIAL`，因为 Lab 只观察了 `REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE`，`IMPROVEMENT` 没有执行；新增的 `22-C13` 也是 source-backed `PARTIAL / COURSE PROPOSAL`，没有 stochastic runtime observation。
 
 ## 1. 先把五种活动的决定权分开
 
@@ -240,6 +240,8 @@ Lab06 不把文章变成命令流水账。它只回答一个窄问题：在同�
 - exact/rule scorer 对 decision、failure layer、reason-code set 逐 case 判定；
 - aggregate、critical、missing/unknown 与 comparability 各自保留。
 
+C01 的具体合同是：input event=`tool.write.requested`, approval=`MISSING`, effect=`NOT_EXECUTED`；Golden decision=`FAIL`, failure_layer=`POLICY`, reason_codes=`[APPROVAL_MISSING]`；candidate decision=`PASS`, failure_layer=`NONE`, reason_codes=`[]`。它检查的是“缺少副作用授权时必须拒绝写入并保留原因”，退化版本却误报 PASS。后面的 `7/8` 正是由这一项失败与其余 7 项通过组成。
+
 ### Observation
 
 | Run | Comparable | Aggregate | Critical | Verdict / Overall | 观察重点 |
@@ -249,26 +251,73 @@ Lab06 不把文章变成命令流水账。它只回答一个窄问题：在同�
 | missing N06 | false | `0.75`，仅为 retained output | `0.5` | `UNKNOWN / FAIL` | 缺 observation 后 fail closed |
 | scorer v2 mismatch | false | ordinary aggregate absent | absent | `INCOMPARABLE / FAIL` | measurement manifest 漂移，拒绝普通 delta |
 
-执行证据还保留了 locked restore/build exit `0`、有效 RED=`0/5`、不改断言后的 GREEN=`5/5`、独立 formal verifier=`2/2`。Run A/B 的 baseline 与 known-regression normalized artifacts 分别 byte-identical，SHA-256 也一致。
+执行链保留了有效 RED=`0/5`、GREEN=`5/5`、formal verifier=`2/2` 与 Run A/B byte-identical 结果；正文只保留一个关键 raw anchor：`docs/agent-engineering-course/labs/lab-06-trace-eval/observations/run-a/known-regression/result.json`。完整 fault-injection、hash 与命令记录由 Lab06 README 继续索引。
 
-四份正文所需的 raw anchor 是：
+### v1 的实现边界：JSON 不是通用 policy interpreter
 
-- `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/run-a/baseline/result.json`
-- `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/run-a/known-regression/result.json`
-- `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/fault-injection/missing-n06/result.json`
-- `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/fault-injection/scorer-v2/result.json`
+`scorer-policy.json` 在 v1 同时承担 fixture contract manifest 和部分配置输入。Runtime 会读取 policy schema/id/version 与 `overall_gate`，但真正解析的决策参数只有 `aggregate_accuracy` threshold。case 三字段评分、critical gate、missing/unknown、comparability fields 和 verdict ordering 的部分语义固定在代码中。因此，这个 v1 是 fixture-specific evaluator，不是能解释整份 JSON 的通用 policy runtime；scorer version 与 release gate policy 也尚未成为完全独立的版本合同。
 
-原始记录没有隐藏工具层噪声：外层 shell 对非零进程曾显示 generic exit `1`，显式 `$LASTEXITCODE` 才确认 Runtime native exits 为 `2 / 3`；第一次 ad-hoc PowerShell byte helper 还错误地把 `SequenceEqual` 当实例方法调用。两项都没有改变 result artifact，也没有被用来重写判据，而是作为 tooling limitation 保留。
+未来可考虑把三个 manifest 分开，但下面只是 `BuildPilot / Harness design candidate`：
+
+```yaml
+scorer_manifest:
+  scorer_id: <id>
+  scorer_version: <version>
+gate_policy_manifest:
+  gate_policy_id: <id>
+  gate_policy_version: <version>
+  thresholds: <declared thresholds>
+  hard_groups: <declared hard groups>
+  unknown_policy: <policy>
+  incomparable_policy: <policy>
+system_under_test_manifest:
+  model: <model>
+  provider: <provider>
+  prompt: <prompt revision>
+  tools: <tool manifest>
+  policy: <runtime policy revision>
+  harness: <harness revision>
+```
+
+这份拆分是 `PROPOSAL / NOT IMPLEMENTED / NOT RUN`；Lab06 没有验证通用配置驱动 Gate Runtime。
 
 ### Interpretation
 
 Lab 真实确认的是两条 fixture-scoped Claim：在 `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301` 中，hard critical gate 确实阻止了 aggregate threshold 掩盖 C01 退化；同一冻结 evaluator 也可重复让 baseline PASS 并捕获这次预置 regression。因此 `22-C07`、`22-C10` 是这个范围内的 `CONFIRMED`。
 
-它没有确认真实 Trace 标签正确，没有运行 Agent/model，没有生产流量或统计采样，也没有校准生产风险。`IMPROVEMENT` 没有执行。Build、TDD、hash 与 verifier 成功，只证明本 fixture 的实现和 retained artifact 满足冻结合同，不证明 oracle、阈值或生产发布 policy 天然正确。
+它没有确认真实 Trace 标签正确，没有运行 Agent/model，没有生产流量或统计采样，也没有校准生产风险。`IMPROVEMENT` 没有执行。Build 与 verifier 只证明本 fixture 满足冻结合同，不证明 oracle、阈值或生产发布 policy 天然正确。
 
 **Lab 的价值不是多一组绿色命令，而是把固定合同、失败路径与 Claim 上限连成可追溯证据链。**
 
-## 10. Eval 怎样进入发布门禁，又不冒充生产质量
+## 10. Deterministic Regression 与 stochastic Agent Eval 必须分账
+
+Lab06 的 candidate 是固定输入，因此它回答“同一合同有没有被破坏”。真实 Agent 则可能在同一输入下走出不同工具路径、输出与终态；一次成功只证明这次成功发生过，不能证明稳定，也不能把 baseline 和 candidate 的两个单次 aggregate 直接解释成 regression 或 improvement。
+
+| 维度 | Deterministic Regression | Stochastic Agent Eval |
+|---|---|---|
+| 主要风险 | 固定合同被破坏 | 行为分布发生变化 |
+| 运行方式 | 同输入、同合同、可重复 | 多次采样、保存分布 |
+| 主要输出 | per-case delta / verdict | rate / distribution / uncertainty |
+| 不可省略 | comparability | sampling manifest + repeated trials |
+| 不能证明 | 生产泛化 | 永久稳定或绝对质量 |
+
+对于 stochastic campaign，最低记录面是：
+
+- system/model/provider/version，以及 runtime、environment、time window 与 external-state boundary；
+- prompt/tool/policy/harness manifest，dataset/case、scorer/gate、budget/retry/attempt policy；
+- sampling config，包括 Provider 实际暴露的 temperature、top-p、seed、reasoning、token/step/time limits；未暴露项写 `UNKNOWN`；
+- 每个 trial 的 run/case/manifest refs、success/failure、failure taxonomy、tool/effect outcome、latency、tokens/cost，以及 scorer、judge 或 human disposition；
+- campaign 的 success/failure counts 与 rate、按 case/tag/failure layer 的分布、latency/cost distribution，并单列 missing、`UNKNOWN`、`INCOMPARABLE`。
+
+比较顺序也要保守：先冻结 objective、samples/splits、rubric/scorer、baseline/candidate manifests、sampling/budget 和判断规则，再执行 repeated trials；关键 manifest 无法隔离时是 `INCOMPARABLE`。可比之后，也要同时查看 per-case 变化、success/failure distribution、failure taxonomy 与 latency/cost distribution。若方向不稳定、样本不足、judge 未校准、分布难以区分或 `UNKNOWN` 太多，就保持 `UNKNOWN / REVIEW_REQUIRED`，不能补写“统计显著”。运行次数应由风险、case 异质性、成本和预先声明的 uncertainty method 决定，本文不规定固定 trial 数。
+
+三类判断者的职责也不同：deterministic scorer 适合 exact/schema/invariant、tool arguments 和明确 policy breach；model judge 适合 rubric-bound 的语义变体，但必须绑定 versioned rubric，以及 judge model/provider/version、prompt/template、sampling、order/canonicalization 与适用范围的 judge manifest；human review 负责 rubric 与 Golden label 校准、抽查 disagreement、高风险和歧义 case。model judge 不能凭自身分数获得无版本的 release authority，human review 也不能用少量直觉样本替代 campaign。
+
+`22-C13` 只有 current official sources 与课程 Proposal 支撑。结论只在已声明的 samples/splits、runs/trials、tested manifests、environment/time window、scorer/judge/human procedure 与 uncertainty boundary 内成立；Lab06 没有验证 stochastic Agent Eval，也不支持永久稳定、绝对质量、生产泛化或统计显著性结论。
+
+**固定合同看 per-case delta；随机行为看 manifest-bound repeated trials 与分布，证据不足就保留 UNKNOWN。**
+
+## 11. Eval 怎样进入发布门禁，又不冒充生产质量
 
 Eval 可以成为 release input，但不能独自拥有全部发布决定。一个有边界的 release record 至少应能关联：
 
@@ -288,7 +337,7 @@ contract_ref + dataset/scorer/system manifests
 1. manifest mismatch 先 fail closed，不计算普通 improvement/regression；
 2. critical、security、policy 或其他声明 hard gate 与 aggregate 分账；
 3. unknown / incomparable 保持一等状态，不强折成 0/1；
-4. threshold 与 release policy 独立版本化，变更要单独 review，不为当前 candidate 临时降线；
+4. 目标设计应让 threshold 与 release policy 独立版本化，变更要单独 review；Lab06 v1 尚未完成 scorer/gate policy 独立版本合同；
 5. Eval PASS 只对 contract scope 有效，生产监控、canary、human review 与持续 eval 仍有自己的责任。
 
 Lab06 能证明的上限是：它的 frozen mechanism 可重复抓住预先注入的 critical regression。它不能证明真实 Agent/model 已改善、生产风险受控、跨 Provider/model/环境泛化、统计显著性，也不能证明 BuildPilot 有任何运行行为。
@@ -296,25 +345,6 @@ Lab06 能证明的上限是：它的 frozen mechanism 可重复抓住预先注�
 因此 `22-C11` 保持 `PARTIAL`。固定集合全绿，可以支持当前合同内的决定；它不能把未测风险变成已经不存在。
 
 **Eval 可以给发布一个可审计输入，不能替发布、生产监控或风险 owner 作全部决定。**
-
-## 11. 一套 Eval / Regression 设计通常怎样写坏
-
-| 捷径 | 被吞掉的责任 | 最小修正 |
-|---|---|---|
-| `demo passed = eval passed` | fixed task/data/criteria | 声明活动 owner 和缺失合同 |
-| `trace exists = golden sample` | curation/oracle/acceptance | 保持 candidate + lineage，直到 review |
-| `one score = release verdict` | groups/critical gates/uncertainty | 拆开 metric、aggregation 与 gate |
-| `exact scorer = objective truth` | canonicalization/coverage | 披露等价类和 false-negative risk |
-| `LLM judge = semantic oracle` | bias/calibration/rubric drift | 版本化 rubric/judge，并用 human calibration |
-| `higher score = improvement` | baseline/manifest comparability | 先比较 manifests |
-| `missing = failed case` | observation qualification | 保存 UNKNOWN 并 fail closed |
-| `scorer changed, still compare` | measurement contract | 保存 INCOMPARABLE，或另建 bridge evidence |
-| `golden corpus is permanent` | exposure/leakage/drift | version、dedup、split、refresh |
-| `threshold moved, candidate passed` | decision-policy integrity | 独立版本化并审查 threshold |
-| `fixture pass = production quality` | representativeness/generalization | 发布 proof ceiling 与 monitoring gap |
-| `Lab06 = BuildPilot runtime` | implementation/observation ownership | 保持 DESIGN / NOT IMPLEMENTED / NOT RUN |
-
-这张表是工程 review heuristic，不是行业标准 taxonomy。它的共同原则只有一个：每种 artifact 只拥有自己的决定权。
 
 ## 12. 下一次修复，至少留下这组可审计产物
 
@@ -327,36 +357,13 @@ Lab06 能证明的上限是：它的 frozen mechanism 可重复抓住预先注�
 7. 把 Eval 作为 release input，同时披露 proof ceiling；
 8. 对 policy 或 threshold 变更做独立版本和 review。
 
-本篇也是 Part IV 的必修收束：Required Lab06 已在当前 transaction 中真实执行并完成 Evidence Merge。课程边界保持不变——Article 23 是 `Advanced / Optional / SKIP / PLANNED / ZERO ASSETS`，Article 24 是 `FORBIDDEN / ZERO ASSETS`；本文不启动、不预写也不链接它们的内容。Lab fixture 之外，BuildPilot 继续是 `DESIGN / NOT IMPLEMENTED / NOT RUN`。
+本篇是 Part IV 的必修收束；Article 23/24 均为本次 non-scope，不启动、不预写、不链接。Lab fixture 之外，BuildPilot 仍是 `DESIGN / NOT IMPLEMENTED / NOT RUN`。全文证明上限只有两层：Lab06 的 deterministic fixture-scoped observation，以及 `22-C13` 的 source-backed `PARTIAL / COURSE PROPOSAL`；二者都不证明生产质量、泛化、永久稳定或统计显著性。
 
-## 本篇能建立什么，不能证明什么
-
-本篇可以安全建立：
-
-- Demo、Test、Benchmark、Eval、Regression 应按决定权分账；完整五分法是课程 Proposal；
-- 可审计 Eval 需要 objective、dataset、scorer、metric 等显式关注面；完整合同字段保持 `PARTIAL / COURSE DESIGN`；
-- Trace candidate 到 Golden sample 之间需要 lineage、review、acceptance 与 split；具体 lifecycle 是 Proposal；
-- Case、scorer、metric、gate、baseline、manifest、verdict 应分开保存各自责任；
-- split 污染、重复样本与反复暴露会限制对未见数据的解释，映射到 Agent eval 时保持 `PARTIAL`；
-- 在 `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301` 内，critical gate 可重复抓住预置 C01 regression；
-- `REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE` 已在 Lab06 观察，`IMPROVEMENT` 未执行；
-- Eval 是发布输入，不是生产质量、泛化或统计显著性的替代证明。
-
-本篇不能证明：
-
-- 本文 taxonomy、Golden lifecycle、Case schema、verdict states 或 release record 是行业标准；
-- Golden corpus 无泄漏、永久有效、完整代表生产分布或标签绝对正确；
-- semantic/model judge 或 human judge 已被校准，或任何 scorer 是无偏真值；
-- `0.80 / 1.00`、critical hard gate 或五种 verdict 适合所有团队；
-- 真实 Agent/model 已改善，或结果能跨 Provider、model、环境泛化；
-- 生产质量、security/compliance、业务收益或统计显著性；
-- BuildPilot Runtime 已实现、运行或被 Lab06 验证。
-
-## Claim Traceability（12 / 12）
+## Claim Traceability（13 / 13）
 
 | Claim | Evidence ceiling | 正文落点 | 保留边界 |
 |---|---|---|---|
-| `22-C01 / 22-E01` | `PROPOSAL` | 五种活动分账、反模式 | 课程 ownership model，不称标准 |
+| `22-C01 / 22-E01` | `PROPOSAL` | 五种活动分账 | 课程 ownership model，不称标准 |
 | `22-C02 / 22-E02` | `PARTIAL` | Eval Contract | 来源支持 concern，不证明完整 schema |
 | `22-C03 / 22-E03` | `PROPOSAL` | candidate-to-Golden lifecycle | provenance 不等于 acceptance/truth |
 | `22-C04 / 22-E04` | `PROPOSAL` | Case identity、Lab mechanism | fixture 可运行不等于通用 schema |
@@ -367,59 +374,40 @@ Lab06 能证明的上限是：它的 frozen mechanism 可重复抓住预先注�
 | `22-C09 / 22-E09` | `PARTIAL` | comparability-first verdict、Lab faults | 四条路径 observed；IMPROVEMENT not run |
 | `22-C10 / 22-E10` | `CONFIRMED / FIXTURE-SCOPED` | Lab baseline/regression/repeatability | 无 Agent/model/production Claim |
 | `22-C11 / 22-E11` | `PARTIAL` | release proof ceiling | PASS 不等于生产质量/泛化/统计显著 |
-| `22-C12 / 22-E12` | `CONFIRMED` | Part IV 与未来资产边界 | Article23/24 零资产；BuildPilot design-only |
+| `22-C12 / 22-E12` | `CONFIRMED` | Part IV 边界 | Article23/24 non-scope；BuildPilot design-only |
+| `22-C13 / 22-E13` | `PARTIAL` | deterministic vs stochastic | source-backed Proposal；no stochastic Lab / fixed trials / significance claim |
 
-Coverage=`12 / 12`；Evidence Cards=`12 / 12`；状态保持 `3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`，没有新增 core Claim。
+Coverage=`13 / 13`；Evidence Cards=`13 / 13`；状态保持 `3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。
 
 ## Learning Check
 
 1. Demo、Test、Benchmark、Eval、Regression 为什么不能互相替代？
 2. 为什么 dataset + score 仍不是完整 Eval Contract？
 3. 为什么真实 Trace 不能自动变成 Golden sample？
-4. Exact/rule scorer 的 repeatability 为什么不等于 truth？
-5. known-regression aggregate=`0.875` 为什么 overall=`FAIL`？
-6. scorer version mismatch 为什么不能直接写 regression？
-7. missing N06 为什么是 `UNKNOWN`，不只是一个失败 case？
-8. Golden corpus 为什么会 wear out？
-9. Lab06 实际覆盖了哪四种 change state，哪一种未执行？
-10. Lab06 PASS 最多证明什么？
-11. release gate 为什么要把 threshold policy 单独版本化？
-12. Article 22 收束时，Article 23/24 与 BuildPilot 的合法状态是什么？
+4. C01 的 input、Golden 与退化 candidate 分别是什么，为什么 aggregate 过线仍 overall FAIL？
+5. `UNKNOWN` 与 `INCOMPARABLE` 为什么不能折成普通 0 分？
+6. stochastic Agent Eval 为什么不能比较两个单次 aggregate，最低要保存哪些 manifest、trial 与 distribution？
+7. deterministic scorer、model judge、human review 各负责什么，judge 为什么需要 versioned rubric/manifest 与 human calibration？
+8. `scorer-policy.json` 为什么不代表 Lab06 v1 已实现通用配置解释器？
 
 ### 参考思路
 
 1. 五类活动的 primary question、artifact 和 decision ownership 不同；基础设施共享不等于结论共享。
 2. 还缺 objective、case/oracle/scorer、threshold/baseline、manifest/comparability、verdict policy、uncertainty 与 limitations。
 3. 来源真实不等于有权使用、标签正确或适合某个 split；仍需 scope、redaction、dedup、review、acceptance 与 revision。
-4. canonicalization、equivalence class 或 coverage 可能不完整；可重复的判法仍可能稳定地错。
-5. aggregate threshold 已过线，但 critical accuracy=`0.5` 没满足 hard gate，所以 overall=`FAIL`。
-6. measurement manifest 已改变，ordinary delta 没有资格；应保存 `INCOMPARABLE` 或建立独立 bridge evidence。
-7. 缺 observation 是 qualification gap；强折成普通 0 分会伪造完整、可比的测量。
-8. repeated exposure、duplicate contamination 与反复用最终集合指导修改，会降低对未见数据的信心。
-9. observed=`REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE`；`IMPROVEMENT` 未执行，所以 `22-C09` 仍为 `PARTIAL`。
-10. 只证明冻结 8-case synthetic exact/rule fixture 在单一 Windows/.NET 10.0.301 环境中，可重复让 baseline PASS 并捕获预置 critical regression。
-11. 为了避免针对当前 candidate 临时移动决策边界；measurement 与 decision policy 应能独立审查。
-12. Article 23=`Advanced / Optional / SKIP / PLANNED / ZERO ASSETS`；Article 24=`FORBIDDEN / ZERO ASSETS`；BuildPilot 在 fixture 外=`DESIGN / NOT IMPLEMENTED / NOT RUN`。
-
-## Job Competency Mapping
-
-| 能力 | 可观察产物 | 达标表现 | 明确上限 |
-|---|---|---|---|
-| Evaluation architecture | activity ledger + Eval Contract | 能把 objective、data、measurement、decision 与 limitations 分账 | taxonomy/schema 不称行业标准 |
-| Dataset governance | candidate-to-Golden + exposure ledger | 能保留来源、review、acceptance、split 与 revision | 不证明代表性或 label truth |
-| Contract design | Case/manifest/version model | 能识别同 ID 不同 revision 的 comparability 风险 | course proposal，非生产充分 schema |
-| Measurement judgment | scorer errors + metric/gate ledger | 能说明 scorer 错误边界，不让总分吞 critical failure | semantic/human 未在 Lab 执行 |
-| Regression engineering | comparability-first verdict | 能保留 regression/unchanged/unknown/incomparable | improvement 未执行；状态集非标准 |
-| Experiment discipline | Design/Observation/Interpretation chain | 能从 raw result 追到 fixture-scoped Claim | 8-case deterministic fixture only |
-| Release governance | versioned gate + proof ceiling | 能把 Eval 当 release input 并保存 limitation | 不保证 production/generalization |
-| Reliability reasoning | critical gate + failure-path retention | 能解释 aggregate PASS / overall FAIL 与 fail closed | threshold/policy 不外推 |
-| Course boundary discipline | Part IV close + future guard | 能结束本篇而不启动未来 transaction | repository-local fact only |
+4. input=`tool.write.requested / MISSING / NOT_EXECUTED`；Golden=`FAIL / POLICY / [APPROVAL_MISSING]`；candidate=`PASS / NONE / []`。其余 7 case 通过，aggregate 无权覆盖 critical gate。
+5. 前者是 observation/qualification 缺口，后者是比较合同不成立；强折 0 分会伪造可比测量。
+6. 单 trial 无法分离真实退化与正常波动；至少保存 system、prompt/tool/policy/harness、sampling、per-trial、failure/latency/cost distributions 与 uncertainty。
+7. scorer 管稳定合同，judge 管 rubric-bound 语义，human 管校准与高风险歧义；judge identity、rubric、prompt、sampling 与 human agreement 都会影响可比性。
+8. v1 只解析 aggregate threshold；case、critical、missing/unknown、comparability 与 verdict 的部分语义固定在代码，三 manifest 拆分仍是 Proposal。
 
 ## 参考资料
 
 - [NIST AI RMF 1.0, NIST AI 100-1, January 2023](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10)（TEVV、metrics、benchmark、uncertainty 与 generalizability limitation；页面注明 1.0 正在修订；不定义本文 schema 或 gate）
 - [OpenAI Evaluation Best Practices](https://developers.openai.com/api/docs/guides/evaluation-best-practices)（objective、dataset、metrics、continuous eval、golden examples 与 vibe-based anti-pattern；动态 hosted docs）
-- [OpenAI Graders](https://platform.openai.com/docs/api-reference/graders)（grader 形态与 model-judge 边界；不证明无偏真值）
+- [OpenAI Evaluate agent workflows](https://developers.openai.com/api/docs/guides/agent-evals)（one Trace/one run 与 repeatable eval runs；不规定 trial 数）
+- [OpenAI Graders](https://developers.openai.com/api/docs/guides/graders)（grader 形态、rubric、human calibration 与 model-judge 边界；不证明无偏真值）
+- [OpenAI trustworthy third-party evaluations](https://openai.com/index/trustworthy-third-party-evaluations-foundations/)（受控比较的 task/scoring/budget 与 model/tools/harness/attempt/time/cost 披露；不定义本文 schema 或统计判据）
 - [Google ML Crash Course: Dividing datasets](https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets)（train/validation/test、wear-out、duplicates 与 representativeness；映射到 Agent eval 时保持有限）
 - [Datasheets for Datasets, arXiv 1803.09010v8](https://arxiv.org/abs/1803.09010)（dataset documentation precedent；不定义 Golden acceptance）
 - [上一篇：Trace、Replay 与 Failure Taxonomy]({{< relref "ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md" >}})（只交 candidate slices 与 lineage，不交 Golden/oracle/metric/verdict）

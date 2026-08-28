@@ -6,7 +6,7 @@
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
 - 当前里程碑：Article 22 `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`99bff931b02356358edd1357c2abd1c44621e720`，local / origin / live remote equality=`PASS`
-- 当前生产对象：Part IV Audit Cycle 1 `PASS / AUDIT CHECKPOINT CANDIDATE`；Article 23=`PRECHECK POINTER / FORBIDDEN / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS`；Article 24=`FORBIDDEN / NOT_STARTED / ZERO ASSETS`；active worker=`NONE`
+- 当前生产对象：Article 22 `POST_PUBLICATION_TARGETED_REPAIR / PRE_COMMIT_RECONCILIATION`；IR22-F01—F04=`CLOSED`；Article 23=`OPTIONAL / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS / FORBIDDEN`；Article 24=`PLANNED / NOT_STARTED / NOT_AUTHORIZED / ZERO ASSETS / FORBIDDEN`；active worker=`MASTER_ORCHESTRATOR`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -74,10 +74,10 @@
 - 当前 Article 19 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`73a0f628e5580226f4c65890f81372d7ededd43d`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 20 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`59f8c44df5d10894335bf5cd97d5b27552a830fe`；Final=`PASS / 91 / F01—F03 CLOSED / 0 OPEN`；Hugo=`1249 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 21 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`470c362567d71aa4b7e5d951406b9af92b5b1adf`；Final=`PASS / 91 / F01—F04 CLOSED / 0 OPEN`；Hugo=`1250 Pages / 0 WARNING / 0 ERROR`
-- 当前 Article 22 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`99bff931b02356358edd1357c2abd1c44621e720`；Evidence=`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`PASS / 95 / A22-R0-F01 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`
+- 当前 Article 22 状态：`PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX CANDIDATE`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720`；Evidence=`3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；fresh Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`；repair commit/push=`PENDING`
 - 当前 Article 22 Published Content：`content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md`
 - 当前 Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
-- Factory Status：`PAUSED / EXPLICIT_HUMAN_STOP_LINE / Article 23 PRECHECK pointer / FORBIDDEN / active NONE`；唯一待完成事务是Part IV Audit checkpoint的diff / commit / push / remote verification，随后STOP；Article 23 / 24 zero assets
+- Factory Status：Article 22 targeted repair=`PRE_COMMIT_RECONCILIATION / active MASTER_ORCHESTRATOR`；fix commit/push/remote verify后只允许fresh Part IV targeted re-audit；Article 23 / 24 zero assets
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

@@ -5,13 +5,14 @@
 - Article Type: `PRINCIPLE / LAB_ARTICLE`
 - Course Weight: `L / Major Core Lesson`
 - Teaching Spine: Article 21 candidate Trace handoff -> problem space（一次修复通过不等于系统改善）-> abstract model（Eval Contract、Golden lifecycle、Case/Scorer/Metric/Verdict）-> concrete implementation and experiment（Lab 06）-> engineering decisions（release gate、leakage、proof ceiling）-> Part IV boundary
-- Core Claim Scope: `22-C01`—`22-C12` only；不新增 core Claim / Evidence Card
-- Evidence Posture: `3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
+- Core Claim Scope: `22-C01`—`22-C13`；post-publication 新增 `22-C13 / 22-E13 = PARTIAL`
+- Evidence Posture: `3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
 - Fixture-confirmed Claims: `22-C07`、`22-C10` only within `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301`
 - Partially observed verdict Claim: `22-C09 PARTIAL`；只执行了 `REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE`，`IMPROVEMENT` 未执行
 - Required Lab: `Lab 06｜Trace + Eval / VERIFIED / EVIDENCE_MERGED / FIXTURE-SCOPED`
 - BuildPilot: `DESIGN / NOT IMPLEMENTED / NOT RUN` outside the Lab-owned fixture
-- Future boundary: Article 23=`Advanced / Optional / SKIP / PLANNED / ZERO ASSETS`；Article 24=`FORBIDDEN / ZERO ASSETS`；正文只声明边界，不预告或展开其内容
+- Stochastic boundary: `22-C13 = SOURCE-BACKED PARTIAL / COURSE PROPOSAL`；Lab06 不验证 stochastic Agent Eval，不规定固定 trial 数，不声称统计显著
+- Future boundary: Article 23/24 均为 non-scope；正文只用一句话声明，不预告、不链接、不创建资产
 - Draft fact boundary: Draft 只能重组 `research.md`、`evidence.md`、Published Article 21 handoff 与 Lab06 retained observations 中已落盘的事实；若需要新的核心事实、数值、产品行为或行业标准结论，必须 `RETURN_TO_RESEARCH`
 
 > 如果这篇只记一句话：`修复是否可靠，不取决于这次 Demo 看起来是否成功，而取决于一份版本化、可比较的评估合同，能否保留关键退化、未知与不可比。`
@@ -26,6 +27,7 @@
 4. 先判断 comparability，再解释 improvement、regression、unchanged、unknown 与 incomparable；不会把缺观测或版本漂移折成普通分数。
 5. 读懂 Lab06 为什么在 aggregate `0.875` 仍过线时判 overall `FAIL`，同时准确说明这只证明一个 8-case synthetic fixture 的机制。
 6. 把 Eval 结果接入 release gate，同时拒绝把固定集合 PASS 写成生产质量、跨模型泛化或统计显著性。
+7. 区分 deterministic Regression 与 stochastic Agent Eval；为后者保存 manifest、repeated trials、per-trial record、分布、judge calibration 与 uncertainty，并在证据不足时保留 `UNKNOWN / INCOMPARABLE`。
 
 ## Teaching Spine
 
@@ -42,7 +44,9 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
   -> preserve REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE;
      keep IMPROVEMENT explicitly unexecuted in Lab06
   -> protect splits from duplication, leakage and repeated exposure
-  -> use Lab06 to observe one deterministic mechanism, not to narrate raw commands
+  -> inspect C01's concrete approval violation, then use Lab06 to observe one deterministic mechanism
+  -> separate deterministic Regression from stochastic Agent Eval;
+     keep multi-trial manifests/distributions as source-backed Proposal, not Lab06 proof
   -> turn the result into a bounded release gate and an explicit proof ceiling
   -> close Part IV without starting future Article assets or claiming BuildPilot runtime
 ```
@@ -53,8 +57,8 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
 |---|---|---|---|
 | Problem space | 从“再跑一次”转向“先说清这次活动拥有哪种决定权” | 五类活动 ownership 表 + 一个 aggregate 过线但关键 case 退化的开场矛盾 | 文章退化成测试术语清单或产品 Evals 教程 |
 | Abstract model | 能把 dataset、case、scorer、metric、baseline、manifest、verdict 组织成一份合同 | Eval Contract 链路 + Golden lifecycle + Case schema + scorer/metric/verdict 分账 | 只剩一个总分，无法审计为什么 PASS/FAIL |
-| Concrete mechanism | 能从固定输入追到 raw observation 与 Claim ceiling | Lab06 baseline/regression/fault-injection 对照 | 只讲抽象，不证明窄机制能运行 |
-| Engineering judgment | 能处理 leakage、critical gate、unknown/incomparable 与 proof ceiling | release gate checklist + split/exposure ledger + limitations | 把回归门禁写成生产质量保证 |
+| Concrete mechanism | 能看懂 C01 的 input/Golden/candidate 差异，并从固定输入追到 raw observation | C01 具体案例 + Lab06 baseline/regression/fault-injection 对照 | verdict 成为不可检查的断言 |
+| Engineering judgment | 能区分 deterministic 与 stochastic，处理 repeated trials、comparability、normal variation、unknown/incomparable 与 proof ceiling | stochastic contract + release gate + limitations | 把一次成功或两个单次总分写成稳定改善 |
 | Course boundary | 能说清本篇完成什么、未来内容未启动什么 | Part IV 收束 + future-asset guard + BuildPilot label | 越界预写未来文章或虚构 Runtime |
 
 ## Opening bridge｜“这次修好了”为什么回答不了“以后还会不会再坏”
@@ -306,8 +310,9 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
 - Claims / Evidence: `22-C04 PROPOSAL / 22-E04`，`22-C06 PARTIAL / 22-E06`，`22-C07 CONFIRMED FIXTURE-SCOPED / 22-E07`，`22-C09 PARTIAL / 22-E09`，`22-C10 CONFIRMED FIXTURE-SCOPED / 22-E10`，`22-C11 PARTIAL / 22-E11`。
 - Teaching integration:
   1. **Design panel**：8 个 synthetic cases（2 critical + 6 normal）、固定 corpus r1、scorer v1、baseline/known-regression candidates；known-regression 只破坏 C01。
-  2. **Mechanism panel**：三字段 exact/rule case score；aggregate + critical + missing/unknown + comparability gate；baseline/candidate per-case change verdict。
-  3. **Observation panel**：只展示能回答本篇问题的 normalized results；命令、TDD stdout 与完整 raw ledger 通过路径引用，不逐条复述。
+  2. **C01 panel**：input=`event=tool.write.requested, approval=MISSING, effect=NOT_EXECUTED`；Golden=`FAIL / POLICY / [APPROVAL_MISSING]`；candidate=`PASS / NONE / []`。这是副作用授权 CRITICAL case，正确行为是拒绝执行并保留 `APPROVAL_MISSING`，退化却误报 PASS。
+  3. **Mechanism panel**：三字段 exact/rule case score；aggregate + critical + missing/unknown + comparability gate；baseline/candidate per-case change verdict。
+  4. **Observation panel**：其余 7 case 通过，所以 aggregate=`7/8 = 0.875` 且 threshold-pass；critical gate 拦截，overall=`FAIL`。含义不是总分无价值，而是 aggregate 无权吞掉关键安全条件。
 - Required observation table `T22-04`:
 
   | Run | Comparable | Aggregate | Critical | Verdict / Overall | Exact teaching point |
@@ -317,16 +322,11 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
   | missing N06 | false | `0.75`（仅作 retained output） | `0.5` | `UNKNOWN / FAIL` | 缺观测 fail closed，不冒充 ordinary delta |
   | scorer v2 mismatch | false | ordinary aggregate absent | absent | `INCOMPARABLE / FAIL` | scorer drift 阻止普通比较 |
 
-- Runtime integrity callout:
-  - locked restore/build exit `0`；valid RED=`0/5`，unchanged GREEN=`5/5`；formal verifier=`2/2`。
-  - Run A/B baseline 与 regression normalized artifacts 各自 byte-identical，hashes retained。
-  - native failure exits `2 / 3` 与外层 shell generic status 分开记录；首次 ad-hoc `SequenceEqual` tooling error 原样保留。
-- Raw trace anchors:
-  - `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/run-a/baseline/result.json`
-  - `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/run-a/known-regression/result.json`
-  - `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/fault-injection/missing-n06/result.json`
-  - `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/fault-injection/scorer-v2/result.json`
-  - `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/verification/`
+- Implementation-boundary callout:
+  - `scorer-policy.json` 在 v1 同时是 fixture contract manifest 与部分配置输入；Runtime 只解析 `aggregate_accuracy` threshold。
+  - case scoring、critical gate、missing/unknown、comparability 与 verdict 的部分语义固定在 `Program.cs`；它不是通用 policy interpreter，scorer version 与 release gate policy 尚未完全独立。
+  - future `scorer_manifest + gate_policy_manifest + system_under_test_manifest` 只标为 `BuildPilot / Harness design candidate / PROPOSAL / NOT IMPLEMENTED / NOT RUN`。
+- Single raw anchor: `docs/agent-engineering-course/labs/lab-06-trace-eval/observations/run-a/known-regression/result.json`；其余执行与 fault-injection 链从 Lab README 继续追踪。
 - Boundary / Non-goal:
   - 不复制 execution-log 全文，不把 TDD 本身写成 Eval correctness 证明。
   - `22-C07 / C10` 只写 fixture-scoped CONFIRMED；`22-C09` 仍 PARTIAL；`IMPROVEMENT` 不得被图示为 observed。
@@ -336,9 +336,36 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
 - Practical action: 用“Design / Observation / Interpretation”三栏审查自己的 Lab；若 expected 与 observed 混写，先拆开再引用结论。
 - Section takeaway: **Lab 的价值不是多一组绿色命令，而是把固定合同、失败路径与 Claim 上限连成可追溯证据链。**
 
+### 10. Deterministic Regression 与 stochastic Agent Eval 必须分账
+
+- Reader Question: 同一 case 可能产生不同 trajectory 时，怎样避免把一次成功或两个单次 aggregate 误写成稳定改善？
+- Core Question: `Q10`。
+- Claims / Evidence: `22-C13 PARTIAL / 22-E13`，辅助 `22-C05 / E05`、`22-C06 / E06`、`22-C09 / E09`、`22-C11 / E11`。
+- Required compact table `T22-05`:
+
+  | 维度 | Deterministic Regression | Stochastic Agent Eval |
+  |---|---|---|
+  | 主要风险 | 固定合同被破坏 | 行为分布发生变化 |
+  | 运行方式 | 同输入、同合同、可重复 | 多次采样、保存分布 |
+  | 主要输出 | per-case delta / verdict | rate / distribution / uncertainty |
+  | 不可省略 | comparability | sampling manifest + repeated trials |
+  | 不能证明 | 生产泛化 | 永久稳定或绝对质量 |
+
+- Required teaching closure:
+  - 一次成功只证明该 trial 成功发生过，不证明稳定；不得比较两个单次 aggregate 后直接宣布 regression/improvement。
+  - campaign 至少保存 system/model/provider/version，prompt/tool/policy/harness manifest，sampling config，per-trial success/failure、failure taxonomy、latency/cost，以及 campaign-level success/failure distribution 与 `UNKNOWN / INCOMPARABLE`。
+  - 先冻结 samples/runs/environment 与 practical threshold/uncertainty method，再判 comparability；无法区分 regression 与正常波动时保持 `UNKNOWN / REVIEW_REQUIRED`。
+  - 不规定固定 trial 数，不声称统计显著，不声称 Lab06 验证 stochastic Agent Eval。
+  - deterministic scorer 负责 exact/schema/invariant；model judge 处理 rubric-bound semantic variation，但必须绑定 versioned rubric + judge model/provider/version/prompt/sampling/order manifest；human review 负责 rubric/Golden 校准、高风险和 disagreement 复核，不能以少量直觉样本替代 campaign。
+  - 结论只在已声明 samples/splits、runs/trials、tested manifests、environment/time window、scorer/judge/human procedure 与 uncertainty 内成立。
+- Boundary / Non-goal: 完整 campaign schema 与 conservative comparison sequence 是课程 Proposal；`22-C13` 没有 stochastic runtime observation。
+- Transition purpose: 先补齐随机行为的测量边界，再把 deterministic/stochastic 两类结果安全送入 release decision。
+- Learning check: 为什么 baseline 单次 `0.78`、candidate 单次 `0.82` 不能直接叫 improvement？期望答案：未隔离 sampling、judge、harness、budget/environment variation，也没有 repeated-trial distribution 或 uncertainty。
+- Section takeaway: **固定合同看 per-case delta；随机行为看 manifest-bound repeated trials 与分布，证据不足就保留 UNKNOWN。**
+
 ## Part D｜工程判断：把 Eval 接入发布，但不给它超额决定权
 
-### 10. Release gate 应怎样消费结果，又为什么不能冒充生产质量
+### 11. Release gate 应怎样消费结果，又为什么不能冒充生产质量
 
 - Reader Question: Eval/Regression 结果怎样进入发布决策，同时保留未覆盖风险和人工判断？
 - Core Question: `Q9`。
@@ -356,11 +383,35 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
   + decision owner and override/review record
   ```
 
+- Future manifest split (`BuildPilot / Harness design candidate` only):
+
+  ```yaml
+  scorer_manifest:
+    scorer_id: <id>
+    scorer_version: <version>
+  gate_policy_manifest:
+    gate_policy_id: <id>
+    gate_policy_version: <version>
+    thresholds: <declared thresholds>
+    hard_groups: <declared hard groups>
+    unknown_policy: <policy>
+    incomparable_policy: <policy>
+  system_under_test_manifest:
+    model: <model>
+    provider: <provider>
+    prompt: <prompt revision>
+    tools: <tool manifest>
+    policy: <runtime policy revision>
+    harness: <harness revision>
+  ```
+
+  Label=`PROPOSAL / NOT IMPLEMENTED / NOT RUN`。Lab06 v1 没有实现这三个独立 runtime contracts，也未验证通用配置驱动 Gate Runtime。
+
 - Engineering rules:
   1. manifest mismatch 先 fail closed，不计算普通 improvement/regression；
   2. critical、security、policy 或其他声明 hard gates 与 aggregate 分账；
   3. unknown/incomparable 保持一等状态，不强折 0/1；
-  4. threshold/release policy 版本化，变更需独立 review，不为当前 candidate 临时降线；
+  4. 目标设计应让 threshold/release policy 独立版本化，变更需单独 review；Lab06 v1 尚未完成 scorer 与 gate policy 的独立版本合同；
   5. Eval PASS 只对 contract scope 有效；生产监控、canary、human review 与持续 eval 仍是不同责任面。
 - Proof ceiling callout:
   - 能证明：Lab06 frozen mechanism repeatably detected its pre-injected critical regression。
@@ -371,7 +422,7 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
 - Practical action: 为发布门禁增加 `contract_ref / manifest_comparable / limitations / decision_owner`，并让 threshold 变更留下独立审查记录。
 - Section takeaway: **Eval 可以给发布一个可审计输入，不能替发布、生产监控或风险 owner 作全部决定。**
 
-### 11. 一套 Eval / Regression 设计通常怎样写坏
+### 12. 一套 Eval / Regression 设计通常怎样写坏
 
 - Reader Question: 哪些捷径会让一套看似有数据、有分数、有 CI 的评估系统失真？
 - Core Questions: `Q1`—`Q9` 的反面检查；不新增 Claim。
@@ -397,10 +448,10 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
 - Learning check: 让读者任选最近一份 eval report，指出至少一个被吞掉的责任面，并写出最小修正。
 - Practical action: 把表作为 code-review / release-review checklist，不把它当行业标准 taxonomy。
 
-### 12. 工程行动清单与 Part IV 收束
+### 13. 工程行动清单与 Part IV 收束
 
 - Reader Question: 读完后，团队下一次修复应该留下哪组最小可审计产物？
-- Core Question: `Q10`。
+- Core Question: `Q11`。
 - Claims / Evidence: `22-C12 CONFIRMED / 22-E12`，并收束 `22-C01`—`22-C11`。
 - Minimum reader action bundle:
   1. 写清当前活动是 Demo/Test/Benchmark/Eval/Regression 中的哪种 ownership；
@@ -413,29 +464,29 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
   8. 对任何 policy/threshold 变更做独立 version/review。
 - Course boundary:
   - Article 22 是当前 Part IV 必修收束，Required Lab06 已在本 transaction 中真实执行并完成 Evidence Merge。
-  - Article 23 只记录 `Advanced / Optional / SKIP / PLANNED / ZERO ASSETS`；不预览内容、不创建资产。
-  - Article 24 `FORBIDDEN / ZERO ASSETS`；不启动、不创建、不预写。
+  - Article 23/24 均为本次 non-scope；不预览、不链接、不创建资产。
   - BuildPilot 在 Lab fixture 外保持 `DESIGN / NOT IMPLEMENTED / NOT RUN`。
 - Transition purpose: 从本篇工程动作回到最短判断，不建立 future-Article bridge 或暗示下一 transaction 已获授权。
 - Final learning check: “Lab06 PASS”最精确的完整句子是什么？期望答案必须包含 frozen 8-case synthetic fixture、corpus/scorer/version/environment、known critical regression、repeatability 与不外推 production/generalization/statistics。
 - Closing sentence: `修复不会因为这次看起来成功就变得可靠；可靠来自一份能冻结比较条件、暴露关键退化，并诚实保留 unknown 与 incomparable 的评估合同。`
 
-## Core Question coverage（10 / 10）
+## Core Question coverage（11 / 11）
 
 | Core Question | Primary sections | Claims / Evidence | Lab role | Required boundary |
 |---|---|---|---|---|
-| Q1 五种活动怎样分账 | Opening, 1, 11 | `C01 / E01` | aggregate-vs-gate 只作反例 | 五分法=COURSE PROPOSAL |
+| Q1 五种活动怎样分账 | Opening, 1, 12 | `C01 / E01` | aggregate-vs-gate 只作反例 | 五分法=COURSE PROPOSAL |
 | Q2 最小 Eval Case/Contract | 2, 4 | `C02/C04 / E02/E04` | actual fixture uses versioned identities | schema 不称唯一/充分 |
 | Q3 Trace candidate 到 Golden | 3 | `C03 / E03` | synthetic `ACCEPTED_FOR_FIXTURE` example | provenance != acceptance/truth |
 | Q4 scorer/oracle errors | 5 | `C05 / E05` | exact/rule only | semantic/human 未执行 |
-| Q5 metric/threshold/baseline/aggregation/uncertainty | 2, 6, 10 | `C06/C07 / E06/E07` | aggregate PASS + critical FAIL | C07 fixture-scoped only |
+| Q5 metric/threshold/baseline/aggregation/uncertainty | 2, 6, 10, 11 | `C06/C07/C13 / E06/E07/E13` | aggregate PASS + critical FAIL | C07 fixture-scoped; C13 source-backed PARTIAL |
 | Q6 split/leakage/overfit | 8 | `C08 / E08` | 8-case corpus 无统计代表性 | ML guidance mapping remains PARTIAL |
-| Q7 verdict state | 7, 9, 10 | `C09 / E09` | four states observed | IMPROVEMENT unexecuted; C09 PARTIAL |
+| Q7 verdict state | 7, 9, 10, 11 | `C09/C13 / E09/E13` | four deterministic states observed | stochastic comparison not run |
 | Q8 Lab06 known regression | Opening, 9 | `C07/C10 / E07/E10` | core concrete mechanism | fixed synthetic fixture only |
-| Q9 release gate/proof ceiling | 10 | `C06/C09/C11 / E06/E09/E11` | bounded gate input | not production/generalization/significance |
-| Q10 Part IV/future boundary | 12 | `C12 / E12` | Lab06 completed in Article22 | no Article23/24 assets; BuildPilot design-only |
+| Q9 release gate/proof ceiling | 11 | `C06/C09/C11/C13 / E06/E09/E11/E13` | bounded gate input | not production/generalization/significance |
+| Q10 deterministic vs stochastic | 10 | `C13 / E13` | Lab06 is deterministic only | no fixed trials/significance/stochastic Lab claim |
+| Q11 Part IV/future boundary | 13 | `C12 / E12` | Lab06 completed in Article22 | Article23/24 non-scope; BuildPilot design-only |
 
-## Claim-to-section and evidence coverage（12 / 12）
+## Claim-to-section and evidence coverage（13 / 13）
 
 | Claim | Status ceiling | Primary sections | Evidence Card | Lab anchor | Mandatory wording / boundary |
 |---|---|---|---|---|---|
@@ -444,15 +495,16 @@ Article 21 provides candidate trace slices + lineage, not Golden truth
 | `22-C03` | `PROPOSAL` | 3 | `22-E03` | `ACCEPTED_FOR_FIXTURE` example | candidate/provenance != Golden acceptance |
 | `22-C04` | `PROPOSAL` | 4, 9 | `22-E04` | corpus/candidate/result identities | working fixture does not universalize schema |
 | `22-C05` | `PARTIAL` | 5 | `22-E05` | exact/rule only | taxonomy wider than source; no unbiased judge claim |
-| `22-C06` | `PARTIAL` | 2, 6, 9, 10 | `22-E06` | aggregate/critical/comparability outputs | NIST does not prescribe gate formula |
+| `22-C06` | `PARTIAL` | 2, 6, 9, 11 | `22-E06` | aggregate/critical/comparability outputs | NIST does not prescribe gate formula |
 | `22-C07` | `CONFIRMED / FIXTURE-SCOPED` | Opening, 6, 9 | `22-E07` | known-regression result | only frozen 8-case hard-gate mechanism |
 | `22-C08` | `PARTIAL` | 8 | `22-E08` | limitations only | Agent mapping bounded; no fixed split ratio |
-| `22-C09` | `PARTIAL` | 7, 9, 10 | `22-E09` | FI-01/FI-02/FI-03 | four paths observed; IMPROVEMENT not run |
+| `22-C09` | `PARTIAL` | 7, 9, 11 | `22-E09` | FI-01/FI-02/FI-03 | four paths observed; IMPROVEMENT not run |
 | `22-C10` | `CONFIRMED / FIXTURE-SCOPED` | Opening, 9 | `22-E10` | baseline/regression A/B + verifier | no Agent/model/production claim |
-| `22-C11` | `PARTIAL` | Opening, 9, 10 | `22-E11` | environment/limitations/repeatability | PASS not quality/generalization/statistics |
-| `22-C12` | `CONFIRMED` | 12 | `22-E12` | Lab06 transaction boundary | future assets remain zero; no BuildPilot runtime |
+| `22-C11` | `PARTIAL` | Opening, 9, 10, 11 | `22-E11` | environment/limitations/repeatability | PASS not quality/generalization/statistics |
+| `22-C12` | `CONFIRMED` | 13 | `22-E12` | Lab06 transaction boundary | Article23/24 non-scope; no BuildPilot runtime |
+| `22-C13` | `PARTIAL` | 10, 11 | `22-E13` | none; source research only | repeated trials/manifests/distributions are Proposal; Lab06 not stochastic proof |
 
-Coverage=`12 / 12`；Evidence Cards=`12 / 12`；Status mix=`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；new core Claim/Card=`NONE`。
+Coverage=`13 / 13`；Evidence Cards=`13 / 13`；Status mix=`3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；post-publication Claim/Card=`22-C13 / 22-E13`。
 
 ## Figures, tables and examples plan
 
@@ -467,8 +519,9 @@ Coverage=`12 / 12`；Evidence Cards=`12 / 12`；Status mix=`3 CONFIRMED / 6 PART
 | `F22-03` | comparability-first verdict tree | 把 unknown/incomparable 与普通 delta 分开 | `E09` | IMPROVEMENT defined, not observed |
 | `F22-04` | split/exposure ledger | 展示 dedup、leakage、wear-out 与 refresh | `E08` | PARTIAL Agent mapping |
 | `T22-04` | Lab06 four-run contrast | 用少量真实结果落地抽象模型 | `E07/E09/E10/E11` + raw JSON | fixture-scoped; no raw-log narrative |
+| `T22-05` | deterministic vs stochastic compact table | 分离固定合同退化与行为分布变化 | `E13` | source-backed PARTIAL / no stochastic Lab |
 | `F22-05` | Eval-to-release decision chain | 说明 Eval 是 release input，不是 production truth | `E06/E11` | no production/generalization claim |
-| `T22-05` | anti-pattern table | 汇总被吞掉的责任与最小修正 | `E01-E11` | review heuristic, not industry taxonomy |
+| `T22-06` | anti-pattern table | 汇总被吞掉的责任与最小修正 | `E01-E13` | review heuristic, not industry taxonomy |
 
 Asset policy: Outline/Draft 优先使用 Markdown 表和 ASCII 图；本 Gate 不创建 `assets/`。若后续需要发布图片，图中所有 runtime 数值必须可追到 Lab06 raw result，所有 Proposal/Partial/fixture labels 必须可见。
 
@@ -483,7 +536,7 @@ Asset policy: Outline/Draft 优先使用 Markdown 表和 ASCII 图；本 Gate �
 4. Exact/rule scorer 的 repeatability 为什么不等于 truth？
    - Expected: canonicalization/coverage/oracle 可能错，合法变体或未覆盖质量不可见。
 5. known-regression aggregate=`0.875` 为什么 overall=`FAIL`？
-   - Expected: aggregate threshold虽过线，critical accuracy=`0.5` 未满足 hard gate；overall是多条件组合。
+   - Expected: C01 是缺 Approval 仍请求写副作用的 CRITICAL case；Golden 要求 `FAIL / POLICY / [APPROVAL_MISSING]`，candidate 错报 `PASS / NONE / []`。其余 7 case 通过，所以 aggregate threshold 过线，但 critical accuracy=`0.5` 未满足 hard gate；aggregate 无权吞掉关键安全条件。
 6. scorer version mismatch 为什么不能直接写 regression？
    - Expected: measurement manifest不一致，普通 delta无资格；Lab06保存 `INCOMPARABLE / fail closed`。
 7. missing N06 为什么是 UNKNOWN，不只是一个失败 case？
@@ -497,7 +550,11 @@ Asset policy: Outline/Draft 优先使用 Markdown 表和 ASCII 图；本 Gate �
 11. release gate 为什么要把 threshold policy 单独版本化？
     - Expected: 防止为当前candidate临时移动决策边界；measurement与policy应可独立审查。
 12. Article 22 完成时，Article 23/24 与 BuildPilot 的合法状态是什么？
-    - Expected: Article23 Optional SKIP/PLANNED/zero assets，Article24 forbidden/zero assets，BuildPilot fixture外 design/not implemented/not run。
+    - Expected: Article23/24 均为本次 non-scope；BuildPilot fixture外 design/not implemented/not run。
+13. stochastic Agent Eval 为什么不能比较两个单次 aggregate？最低要保存什么？
+    - Expected: 一次运行无法区分真实退化与正常波动；保存 system/model/provider/version、prompt/tool/policy/harness、sampling config、per-trial records、success/failure/failure-taxonomy/latency/cost distributions 与 `UNKNOWN / INCOMPARABLE`，并声明 samples/runs/environment/uncertainty。
+14. Lab06 的 `scorer-policy.json` 是否意味着 v1 是通用配置解释器？
+    - Expected: 否；Runtime 只解析 aggregate threshold，其余多项语义固定在代码，scorer 与 gate policy 尚未完全独立；三 manifest 设计只是 Proposal。
 
 ## Practical reader actions
 
@@ -560,17 +617,18 @@ weight: 3230
 
 Draft may:
 
-- paraphrase and reorganize only `22-C01`—`22-C12` and `22-E01`—`22-E12`；
+- paraphrase and reorganize only `22-C01`—`22-C13` and `22-E01`—`22-E13`；
 - quote Lab06 normalized values already present in the four retained `result.json` files and README Observation/Evidence Merge；
 - use Published Article21 only for the candidate-slice/lineage handoff and its declared non-ownership；
 - present course models as `COURSE PROPOSAL` and source-supported concerns as `PARTIAL`；
 - mark `22-C07 / C10` as `CONFIRMED` only with full fixture/version/environment qualification；
 - define the five-state verdict model while stating `IMPROVEMENT = NOT OBSERVED IN LAB06` and retaining `22-C09 PARTIAL`；
+- add the source-backed `22-C13` deterministic/stochastic split with repeated-trial manifests/distributions/judge calibration and explicit `PARTIAL / COURSE PROPOSAL / NO STOCHASTIC LAB` wording；
 - compress Lab execution into design/mechanism/observation/limitation, with raw paths for auditability。
 
 Draft must not:
 
-- introduce a new core Claim, Evidence Card, source behavior, statistic, threshold, schema field or Lab observation；
+- introduce a core Claim/Evidence Card beyond registered `22-C13 / 22-E13`，or any new source behavior、statistic、threshold、schema field or Lab observation；
 - call the five-activity taxonomy、Golden lifecycle、Case schema、verdict states or release record an industry standard；
 - upgrade any `PARTIAL / PROPOSAL` wording, or remove the fixture qualifier from `C07 / C10`；
 - write `IMPROVEMENT` as executed, infer it from baseline PASS, or imply all five verdict states have runtime coverage；
@@ -601,14 +659,14 @@ Trigger: if Draft requires any fact outside this boundary, return `RETURN_TO_RES
 
 - [x] Article Type fixed as `PRINCIPLE / LAB_ARTICLE`；结构从 Problem Space -> Abstract Model -> Concrete Implementation/Experiment -> Engineering Decisions/Boundary，不以 API 开篇。
 - [x] Teaching Spine 从 Article21 candidate handoff 和“单次修复不等于改善”开始，最后回到 release gate 与 proof ceiling。
-- [x] Core Questions coverage=`10 / 10`；Claims/Evidence Cards coverage=`12 / 12`；new core Claim/Card=`NONE`。
-- [x] Evidence posture preserved exactly: `3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。
+- [x] Core Questions coverage=`11 / 11`；Claims/Evidence Cards coverage=`13 / 13`；post-publication Claim/Card=`22-C13 / 22-E13`。
+- [x] Evidence posture preserved exactly: `3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。
 - [x] `22-C07 / C10` 仅 fixture-scoped CONFIRMED；`22-C09` 保持 PARTIAL，`IMPROVEMENT` 明确未执行。
 - [x] Demo/Test/Benchmark/Eval/Regression、candidate-to-Golden、Eval Case/Contract、scorer taxonomy/errors、metric/threshold/baseline/aggregation/uncertainty、split/leakage、verdict states、release gate/proof ceiling 均有独立教学职责。
 - [x] Lab06 集成实际 observed values 与 raw paths，但正文规划不退化成命令/日志流水账。
 - [x] 每个主要 section 均有 Reader Question、Claim/Evidence、Boundary、Transition purpose、Learning Check 与 Practical Action。
 - [x] Figures/Tables、Learning Checks、Practical Actions、Job Competency、Frontmatter plan、Claim/Evidence/Lab mapping 完整。
-- [x] Article23=`SKIP / PLANNED / ZERO ASSETS`、Article24=`FORBIDDEN / ZERO ASSETS`；无 future content preview/link。
+- [x] Article23/24 均为 non-scope；无 future content preview/link/assets。
 - [x] BuildPilot=`DESIGN / NOT IMPLEMENTED / NOT RUN`；Lab fixture 不被写成 BuildPilot evidence。
 - [x] Draft no-new-fact boundary 明确；任何新增核心事实触发 `RETURN_TO_RESEARCH`。
 - [x] 本 Gate 不创建 Draft/Review/content/assets/Lab/global/canonical/Git/future-Article artifact。

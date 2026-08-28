@@ -3,9 +3,9 @@
 > Gate：`EVIDENCE_MERGE + EVIDENCE_GATE`
 > Retrieved / Verified：`2026-08-28 (Asia/Shanghai)`
 > Decision：`PASS / LAB 06 OBSERVATION MERGED / OUTLINE ELIGIBLE`
-> Counts：`12 Claims / 12 Cards / 3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
+> Counts：`13 Claims / 13 Cards / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
 
-行为性 Claim `22-C07`、`22-C10` 已由真实 Lab06 observation 支撑，但 `CONFIRMED` 只覆盖 `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301`。`22-C09` 只对已执行的 `REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE` 路径有 runtime evidence，`IMPROVEMENT` 未执行，因此保持 `PARTIAL`。
+行为性 Claim `22-C07`、`22-C10` 已由真实 Lab06 observation 支撑，但 `CONFIRMED` 只覆盖 `lab06-fixture-v1 / corpus r1 / scorer v1 / Windows + .NET 10.0.301`。`22-C09` 只对已执行的 `REGRESSION / UNCHANGED / UNKNOWN / INCOMPARABLE` 路径有 runtime evidence，`IMPROVEMENT` 未执行，因此保持 `PARTIAL`。Post-publication `IR22-F01` 新增 `22-C13 / 22-E13 = PARTIAL`；它由 current official sources 支持并包含课程 Proposal，不声称 Lab06 验证了 stochastic Agent Eval。
 
 ## Source Manifest
 
@@ -14,10 +14,23 @@
 | `S-NIST-RMF` | NIST AI RMF Core / AI RMF 1.0 | `NIST AI 100-1`，2023-01 | 2026-08-28 | NIST 页面注明 1.0 正在修订；本文只采用当前 1.0 的 MEASURE 文本 |
 | `S-OAI-EVAL` | OpenAI Evaluation Best Practices | official hosted page | 2026-08-28 | 动态页面；legacy Evals platform 已公告 2026-10/11 退役计划，概念指导不等于 API 长期合同 |
 | `S-OAI-GRADER` | OpenAI Graders API / eval guidance | official hosted docs | 2026-08-28 | grader/model/options 可变化；只使用已披露 grader 形态与 judge limitations |
+| `S-OAI-AGENT-EVAL` | OpenAI Evaluate agent workflows | official hosted docs | 2026-08-28 | 动态产品文档；只采用 one-run Trace、Agent nondeterminism 与 dataset/eval-run repeatability 边界，不规定 trial count 或统计判据 |
+| `S-OAI-TRUST` | OpenAI, A shared playbook for trustworthy third party evaluations | official publication，2026-05-29 | 2026-08-28 | frontier third-party evaluation guidance；不是统计检验标准，也不规定本文 multi-trial schema |
 | `S-GOOGLE-SPLIT` | Google MLCC, Dividing datasets | last updated `2025-12-03 UTC` | 2026-08-28 | ML-specific educational guidance；Agent app 映射保持 `PARTIAL` |
 | `S-DATASHEETS` | Gebru et al., Datasheets for Datasets | arXiv `1803.09010v8`，2021-12-01；CACM 2021-12 | 2026-08-28 | 原始论文 Proposal；非 Golden Dataset 标准 |
 | `S-REPO` | canonical、Article 22 Card、Published Article 21 | kickoff ref `470c362567d71aa4b7e5d951406b9af92b5b1adf` | 2026-08-28 | repository-local course scope |
 | `S-LAB06` | Lab 06 frozen design、source、raw observations、process records、normalized results 与 hashes | `lab06-fixture-v1 / corpus r1 / scorer v1`；Windows 10.0.19045；.NET SDK 10.0.301 | 2026-08-28 | 8 个 synthetic cases、deterministic exact/rule scorer；无 Agent/model/Provider/production/statistical generalization |
+
+### IR22-F01 fresh source verification matrix
+
+| Source | URL | Retrieved | Version / product scope | Directly supports | Does not support |
+|---|---|---|---|---|---|
+| NIST AI RMF 1.0 / Core MEASURE | `https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10`；`https://airc.nist.gov/airmf-resources/airmf/5-sec-core/` | 2026-08-28 | `NIST AI 100-1`，published 2023-01-26；voluntary、non-sector-specific、use-case-agnostic framework | rigorous testing/performance assessment、associated uncertainty、benchmark comparison、formal reporting、repeatable/scalable TEVV、test-set/tool documentation、generalizability limits | stochastic Agent trial schema、fixed run count、specific significance test、judge manifest fields |
+| OpenAI Evaluation Best Practices | `https://developers.openai.com/api/docs/guides/evaluation-best-practices` | 2026-08-28 | dynamic hosted OpenAI API guidance；legacy Evals platform transition notice applies | same input can yield different outputs；Agent tool choice adds nondeterminism；continuous eval；clear rubric；human calibration；position/verbosity bias | one success probability、universal trial count、statistical significance、the course manifest/state schema |
+| OpenAI Evaluate agent workflows | `https://developers.openai.com/api/docs/guides/agent-evals` | 2026-08-28 | dynamic hosted OpenAI Agents/API guidance | one Trace is one run；datasets/eval runs are the repeatability surface for benchmarking changes over time | trial count、sampling distribution estimator、regression significance rule |
+| OpenAI Graders guide | `https://developers.openai.com/api/docs/guides/graders` | 2026-08-28 | dynamic hosted Graders guidance in Evals/Fine-tuning transition | deterministic string checks；score-model grader configuration；detailed grader prompts；human expert answers/grades；grader-hacking cross-check | unbiased judge、stable future model list、versioned rubric/judge-manifest standard、release authority |
+| OpenAI Graders API reference | `https://developers.openai.com/api/reference/resources/graders` | 2026-08-28 | current hosted API schema as retrieved | judge `model` and `sampling_params` including seed/temperature/top-p/reasoning effort are explicit configuration | cross-Provider equivalence、seed determinism、adequate sampling、judge validity |
+| OpenAI trustworthy third-party evaluations | `https://openai.com/index/trustworthy-third-party-evaluations-foundations/` | 2026-08-28 | official OpenAI publication，2026-05-29；frontier third-party capability/safeguard/comparison guidance | controlled comparisons keep tasks/scoring/budget fixed；report model/reasoning/tools/harness/safeguards、attempts/retries、time/cost and claim/validity boundaries | universal stochastic-eval schema、fixed attempts、a statistical test or proof that an observed delta is significant |
 
 ## Evidence 22-E01｜Activity ownership
 
@@ -393,6 +406,46 @@
 - Owner: `Article 22 Researcher`
 - Verified At: `2026-08-28`
 
+## Evidence 22-E13｜Stochastic Agent Eval requires multi-trial, manifest-bound evidence
+
+- Article: `22｜Eval、Golden Dataset 与 Regression`
+- Claim ID: `22-C13`
+- Claim: `stochastic Agent Eval 必须把单次运行升级为 manifest-bound multi-trial evidence，保存逐 trial 结果、成败/failure/latency/cost 分布与 uncertainty；回归判断先过可比性且证据不足保持 UNKNOWN，model judge 需版本化 rubric、judge manifest 与 human calibration。`
+- Evidence Status: `PARTIAL`
+- Evidence Class: `OFFICIAL_DOC + COURSE_PROPOSAL`
+- Lab Dependency: `NONE — LAB06 DOES NOT TEST STOCHASTIC AGENT EVAL`
+- Source Type: `official framework + official product documentation + official evaluation guidance`
+- Source: `S-NIST-RMF`；`S-OAI-EVAL`；`S-OAI-GRADER`；`S-OAI-AGENT-EVAL`；`S-OAI-TRUST`
+- Source URLs:
+  - `https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10`
+  - `https://airc.nist.gov/airmf-resources/airmf/5-sec-core/`
+  - `https://developers.openai.com/api/docs/guides/evaluation-best-practices`
+  - `https://developers.openai.com/api/docs/guides/agent-evals`
+  - `https://developers.openai.com/api/docs/guides/graders`
+  - `https://developers.openai.com/api/reference/resources/graders`
+  - `https://openai.com/index/trustworthy-third-party-evaluations-foundations/`
+- Repository: `N/A`
+- Commit: `N/A`
+- File: `N/A`
+- Symbol: `generative variability / one-run trace / controlled comparison / model grader configuration / MEASURE uncertainty`
+- Call Path: `frozen manifests -> repeated per-case trials -> per-trial scoring/review -> distributions + uncertainty -> bounded regression disposition`
+- Experiment: `N/A — source research only；no stochastic Agent Eval execution`
+- Fixture: `N/A — Lab06 remains deterministic fixed-candidate fixture`
+- Trace: `N/A`
+- Retrieved / Run At: `2026-08-28 Asia/Shanghai`
+- Version Scope: `NIST AI RMF 1.0 / NIST AI 100-1 (2023-01)；OpenAI trustworthy-evaluations publication 2026-05-29；OpenAI hosted Evaluation Best Practices / Agent Evals / Graders docs and Graders API as retrieved 2026-08-28`
+- Reproduction: `Fresh-open the listed official pages；verify Evaluation Best Practices lines describing same-input variability, continuous eval, clear rubric and human calibration；Agent Evals one-run Trace and repeatable datasets/eval runs；Graders model/sampling configuration and human-example calibration；OpenAI 2026 controlled-comparison reporting fields；NIST MEASURE uncertainty, repeatable/scalable TEVV, tool/test documentation and generalizability limits.`
+- Observation: `OpenAI states that generative AI can produce different outputs for the same input and that a single Agent trace is an end-to-end record of one run; it recommends datasets/eval runs for repeatability and continuous comparison. Its 2026 evaluation guidance says controlled comparisons should keep tasks/scoring/budget fixed and report the tested model, reasoning setting, tools, harness, attempts/retries, wall-clock time and inference cost. OpenAI grader docs expose judge model and sampling parameters, disclose position/verbosity bias, require clear/detailed rubrics, and recommend validating agreement against human labels. NIST AI RMF 1.0 requires rigorous performance assessment with measures of uncertainty, benchmark comparison, formal reporting, repeatable/scalable TEVV, documented test sets/tools and generalizability limitations.`
+- Counter-evidence Searched: `Searched the required official pages for a universal fixed number of trials, a universal stochastic-regression significance test, a requirement for the exact manifest/schema below, or a claim that one success proves stable success；none was found. Official guidance also shows harness/budget can change observed performance and model judges can be biased, so a single aggregate or judge score is insufficient.`
+- Interpretation: `The sources directly support the variability problem, repeated/continuous evaluation direction, controlled-comparison conditions, uncertainty/reporting concerns and human-calibrated judge boundary. The exact campaign record—system/model/provider/version；prompt/tool/policy/harness manifests；sampling configuration；per-trial result；success/failure and failure-taxonomy distribution；latency/cost distribution；UNKNOWN/INCOMPARABLE—and the conservative regression decision sequence are course design extensions.`
+- Proves: `deterministic Regression and stochastic Agent Eval require different measurement treatment；one success cannot establish stable success；two single aggregate scores cannot isolate regression from run variation or harness/judge/config drift；a defensible stochastic comparison needs repeated per-trial evidence under declared comparable manifests, explicit uncertainty and a bounded claim ceiling；model-judge results require rubric/config identity and human calibration.`
+- Does Not Prove: `a particular number of trials is sufficient；any observed difference is statistically significant；pass@k/pass^k or a particular confidence interval is required；the proposed schema is an industry standard；human review or a model judge is unbiased；Lab06 tested stochastic Agent behavior；any production, cross-model or cross-Provider reliability claim.`
+- Limitations: `No stochastic Agent/model campaign was run. Sources cover general/product/frontier-evaluation concerns at different scopes and do not jointly mandate the proposed schema. Without a predeclared inferential design and adequate sample, the course disposition must remain UNKNOWN/REVIEW_REQUIRED rather than “significant regression.” Dynamic OpenAI docs and product/API fields may drift after retrieval.`
+- Course Usage: `IR22-F01 bounded teaching closure：deterministic vs stochastic measurement；multi-trial record；regression-versus-normal-variation decision；judge/scorer/human role split；declared sample/run/environment/uncertainty ceiling.`
+- BuildPilot Implication: `ADOPT AS DESIGN CANDIDATE — future stochastic eval records may use separate system-under-test, scorer/judge, gate and campaign manifests；NOT IMPLEMENTED / NOT RUN.`
+- Owner: `Article 22 post-publication Researcher`
+- Verified At: `2026-08-28`
+
 ## Evidence Merge Trace
 
 | Claim | Experiment | Observation | Evidence Interpretation | Claim Status |
@@ -403,14 +456,16 @@
 | `22-C09` | FI-01 regression、FI-02 missing、FI-03 manifest mismatch | `REGRESSION + UNCHANGED`、`UNKNOWN`、`INCOMPARABLE` 被分别保存并 fail closed | 四条执行路径有 runtime evidence；`IMPROVEMENT` 未执行，五状态不是标准 | `PARTIAL` |
 | `22-C10` | locked restore/build、RED/GREEN、formal A/B、independent verifier | baseline `8/8 PASS`；known regression `7/8 FAIL`；verifier `2/2`；A/B byte/hash equal | frozen evaluator 可重复捕获预置 C01 regression | `CONFIRMED / LAB06 FIXTURE-SCOPED` |
 | `22-C11` | fixed 8-case synthetic inputs 与单一 Windows/.NET environment | deterministic output 可重复；没有 Agent/model/production traffic/statistical sampling | 成功只能解释为 fixture-scoped mechanism evidence | `PARTIAL` |
+| `22-C13` | `N/A — post-publication source research only；no stochastic Lab` | official sources support variability、one-run Trace boundary、controlled manifests/budget/attempt/cost reporting、uncertainty and human-calibrated judge configuration；无 multi-trial runtime observation | 新增教学 contract 可进入定向修订；完整 schema/decision sequence 仍是课程 Proposal，Lab06 不承担 stochastic proof | `PARTIAL` |
 
 Raw chain anchor：`docs/agent-engineering-course/labs/lab-06-trace-eval/observations/`。10/10 recorded hashes match current bytes；baseline 与 regression 的 Run A/B bytes 分别相等。FI-02 Runtime native exit=`2`，FI-03 native exit=`3`；outer-shell generic non-zero 显示和首次 ad-hoc `SequenceEqual` 调用错误均保留为 tooling limitation，不改变 normalized observations。
 
 ## Evidence Gate Decision
 
 - `EVIDENCE_MERGE`: `PASS` — `Experiment -> Observation -> Evidence Interpretation -> Claim Status` 已落盘，raw observations、Design/Hypothesis/Acceptance 均未被改写。
-- `EVIDENCE_GATE`: `PASS` — 12/12 Claims 与 12/12 Cards 完整；final counts=`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；每张 Card 均保留 Proves、Does Not Prove、Limitations 与 Counter-evidence。
+- `EVIDENCE_GATE`: `PASS` — 13/13 Claims 与 13/13 Cards 完整；final counts=`3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；每张 Card 均保留 Proves、Does Not Prove、Limitations 与 Counter-evidence。
 - Core behavioral Claims：`22-C07 / 22-C10 = CONFIRMED` only inside Lab06；`22-C09 = PARTIAL` because `IMPROVEMENT` was not run；不存在行为性 `BLOCKED` Claim。
-- Lab scope：8 个 synthetic cases、fixed candidates、deterministic exact/rule scorer、Windows/.NET 10.0.301；不覆盖 semantic/human judge、真实 Trace curation、Agent/model variability、production traffic、security/compliance 或统计显著性。
+- Stochastic closure：`22-C13 / 22-E13 = PARTIAL`；official sources directly support variability、controlled comparison、uncertainty、manifest/budget/attempt/cost disclosure 与 human calibration，完整 multi-trial schema/decision policy 为课程 Proposal。未规定 fixed run count，未声称 statistical significance。
+- Lab scope：8 个 synthetic cases、fixed candidates、deterministic exact/rule scorer、Windows/.NET 10.0.301；不覆盖 semantic/human judge、真实 Trace curation、Agent/model variability、production traffic、security/compliance 或统计显著性。Lab06 不验证 `22-C13`。
 - BuildPilot：`DESIGN / NOT IMPLEMENTED / NOT RUN` outside the fixture；Article23/24 asset count=`0`。
 - Next allowed worker gate: `OUTLINE`。

@@ -681,3 +681,259 @@ worker_result:
 - Intended Commit Message: `Publish Agent Engineering Article 22`.
 - Next Allowed Gate: `GIT_DIFF_VERIFY`.
 - Persistence Cut: `ACTIVE` at `2026-08-28T15:46:41+08:00`；repository writes after this record=`ZERO`.
+
+---
+
+<a id="wr-a22-postrepair-transaction"></a>
+
+## Post-publication targeted repair｜IR22-F01—IR22-F04
+
+- Human authorization: `POST_PUBLICATION_TARGETED_REPAIR`；Article 22 only；protect Lab06 v1 frozen Design / Expected Observable / raw Observations / fixtures / Runtime / tests / SHA inventory；no Article23/24 production，no Lab06 v2，no BuildPilot Runtime.
+- Start reconciliation: `main`；local `HEAD` / `origin/main` / live `refs/heads/main` all `8c36f0e90bdd801788b20ff062f680f9e1c35c89`；original Article22 completion commit `99bff931b02356358edd1357c2abd1c44621e720` remains contained and resolves `END_ARTICLE`；Article23/24 production assets=`0`.
+
+<a id="wr-a22-postrepair-registrar"></a>
+
+### REVIEWER｜FINDING_REGISTRATION
+
+- Execution ID: `/root/a22_finding_registrar`
+- Bounded brief: register the four supplied independent findings without inheriting the old score or closing any finding.
+- Master validation: `PASS`；only `review.md` changed；IR22-F01/F02/F03=`MAJOR OPEN`，IR22-F04=`MINOR OPEN`.
+
+~~~yaml
+worker_result:
+  role: REVIEWER
+  article: "22"
+  gate: REVIEW
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/review.md
+  gate_completed: true
+  next_allowed_gate: RESEARCH
+  blocker: NONE
+  notes:
+    - "IR22-F01 through IR22-F04 registered as independent OPEN findings; no score or Gate decision inherited."
+~~~
+
+<a id="wr-a22-postrepair-research"></a>
+
+### RESEARCHER｜TARGETED_RESEARCH + EVIDENCE_GATE
+
+- Execution ID: `/root/a22_stochastic_researcher`
+- Bounded brief: add first-party/official stochastic Agent Eval research and a new traceable Claim/Card without runtime or statistical overclaim.
+- Master validation: `PASS`；only `research.md` and `evidence.md` changed；`22-C13 / 22-E13 = PARTIAL`；counts=`13/13 / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`.
+
+~~~yaml
+worker_result:
+  role: RESEARCHER
+  article: "22"
+  gate: EVIDENCE_GATE
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/research.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/evidence.md
+  gate_completed: true
+  next_allowed_gate: OUTLINE
+  blocker: NONE
+  notes:
+    - "Added 22-C13 / 22-E13 as PARTIAL using official OpenAI and NIST sources; no stochastic runtime, fixed trial count, significance, pass@k or confidence claim."
+~~~
+
+<a id="wr-a22-postrepair-revision"></a>
+
+### REVISION_WORKER｜REVISION
+
+- Execution ID: `/root/a22_revision_author`
+- Master validation: `PASS`；IR22-F01—F04=`READY_FOR_RECHECK`；Draft `29637 bytes / 433 lines -> 29952 bytes / 421 lines`；Lab tree diff is README-only and frozen artifacts are unchanged.
+
+~~~yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "22"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/article-card.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/outline.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/draft.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/README.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/review.md
+    - docs/agent-engineering-course/labs/lab-06-trace-eval/README.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "Implemented only IR22-F01—F04; Lab06 v1 Runtime, tests, fixtures, observations and hash inventory were not modified."
+~~~
+
+<a id="wr-a22-postrepair-review"></a>
+
+### REVIEWER｜REVIEW_RECHECK + FINAL_GATE
+
+- Fresh Review execution: `/root/a22_fresh_reviewer`；`94/100 = 19 Technical + 19 Evidence + 19 Teaching + 19 Engineering + 18 Readability`；IR22-F01—F04=`CLOSED`；new/open/escalated findings=`0`.
+- Fresh Final Gate execution: `/root/a22_final_gate_reviewer`；`PASS / ELIGIBLE_FOR_PUBLISH`；Frozen Draft=`29952 bytes / 421 lines / SHA-256 11daec74bd69a2f283418ca9237d7a84447d472d726be83e607c6f6b91dc7c7c`.
+- Master validation: both envelopes and Reviewer-owned artifacts=`PASS`；no hidden Author reasoning or previous score was supplied as authority.
+
+~~~yaml
+worker_result:
+  role: REVIEWER
+  article: "22"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/review.md
+  gate_completed: true
+  next_allowed_gate: FINAL_GATE
+  blocker: NONE
+  notes:
+    - "Fresh five-dimensional score 94/100; IR22-F01 through IR22-F04 CLOSED; zero open findings; publication was still pending."
+~~~
+
+~~~yaml
+worker_result:
+  role: REVIEWER
+  article: "22"
+  gate: FINAL_GATE
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/review.md
+  gate_completed: true
+  next_allowed_gate: PUBLISH
+  blocker: NONE
+  notes:
+    - "Final Gate PASS at 94/100 with zero open findings; frozen revision is eligible for mechanical publication."
+~~~
+
+<a id="wr-a22-postrepair-publish"></a>
+
+### PUBLISHER + REVIEWER｜PUBLISH_SYNC
+
+- Publisher execution: `/root/a22_publisher_sync`；Published Content and Article README only；Draft/Published exact identity=`29952 bytes / 421 lines / SHA-256 11daec74bd69a2f283418ca9237d7a84447d472d726be83e607c6f6b91dc7c7c`.
+- Independent publication recheck: `/root/a22_publication_reviewer`；Review item 12=`CLOSED / PUBLISH_SYNC VERIFIED`；knowledge drift=`0`；Build remained pending.
+- Master validation: `PASS`；five ASCII relrefs，Article21/index navigation，no Article23/24 link or asset.
+
+~~~yaml
+worker_result:
+  role: PUBLISHER
+  article: "22"
+  gate: PUBLISH
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/README.md
+  gate_completed: true
+  next_allowed_gate: BUILD_VERIFY
+  blocker: NONE
+  notes:
+    - "Draft/Published exact identity 29952 bytes / 421 lines / SHA-256 11daec74bd69a2f283418ca9237d7a84447d472d726be83e607c6f6b91dc7c7c; no knowledge rewrite."
+~~~
+
+~~~yaml
+worker_result:
+  role: REVIEWER
+  article: "22"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/review.md
+  gate_completed: true
+  next_allowed_gate: BUILD_VERIFY
+  blocker: NONE
+  notes:
+    - "Publication sync independently verified with zero knowledge drift; Build not run by this execution."
+~~~
+
+<a id="wr-a22-postrepair-build-invalid"></a>
+
+### PUBLISHER｜BUILD_VERIFY invalid handoff retained
+
+- Execution ID: `/root/a22_build_verify`
+- Validation: `INVALID / MISSING_OR_INVALID_WORKER_RESULT` because the first handoff encoded `notes` as a scalar string instead of the required string list. The successful Hugo process and README artifact were retained, but this envelope was not used for state transition. A same-execution corrected envelope was requested and is recorded below.
+- Invalid payload defect: `worker_result.notes: <scalar string>`；all other reported fields matched the corrected record. The verbatim handoff remains in the orchestration transcript; it is not normalized into a valid durable result.
+
+<a id="wr-a22-postrepair-build-valid"></a>
+
+### PUBLISHER｜BUILD_VERIFY corrected handoff
+
+- Execution ID: `/root/a22_build_verify`
+- Master validation: `PASS`；corrected closed-schema envelope，README-only worker diff，real build result independently rerun by Master.
+
+~~~yaml
+worker_result:
+  role: PUBLISHER
+  article: "22"
+  gate: BUILD_VERIFY
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/README.md
+  gate_completed: true
+  next_allowed_gate: MASTER_STATE_UPDATE
+  blocker: NONE
+  notes:
+    - "Draft/Published identity verified: 29952 bytes / 421 lines / SHA-256 11daec74bd69a2f283418ca9237d7a84447d472d726be83e607c6f6b91dc7c7c."
+    - "Final Gate PASS / 94 / 100 / 0 open; publication recheck item 12 CLOSED."
+    - "hugo --gc --minify: Hugo 0.157.0 extended, exit 0, 1251 Pages, 44 Static files, 1 Alias, 0 WARNING, 0 ERROR, 0 REF_NOT_FOUND."
+    - "Rendered route/navigation/content checks passed; Article 23/24 href count is 0."
+    - "Post-build tracked status introduced no non-README entries; no stage, commit, push, remote verification, PUBLISHED, or END_ARTICLE claimed."
+~~~
+
+- Master independent Build: first sandbox process launch was denied before Hugo started；escalated rerun executed real `hugo --gc --minify` and passed with Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit `0`.
+
+<a id="wr-a22-postrepair-precommit"></a>
+
+### MASTER_ORCHESTRATOR｜PRE_COMMIT_RECONCILIATION
+
+- Execution ID: `/root`
+- Validation time: `2026-08-28T23:35:37+08:00`
+- Persistence boundary: final repository write before `GIT_DIFF_VERIFY`，the independent Article22 repair commit，single push and remote readback.
+
+~~~yaml
+worker_result:
+  role: MASTER_ORCHESTRATOR
+  article: "22"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md
+    - docs/agent-engineering-course/README.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/README.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/article-card.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/draft.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/evidence.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/outline.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/research.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/review.md
+    - docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/subagent-trace.md
+    - docs/agent-engineering-course/course-run-state.md
+    - docs/agent-engineering-course/labs/lab-06-trace-eval/README.md
+    - docs/agent-engineering-course/status.md
+  gate_completed: true
+  next_allowed_gate: GIT_DIFF_VERIFY
+  blocker: NONE
+  notes:
+    - "Fresh pre-commit remote reconciliation: main, HEAD and refreshed origin/main equal live refs/heads/main at 8c36f0e90bdd801788b20ff062f680f9e1c35c89."
+    - "Scope is 13 modified tracked files with no create, delete, rename or out-of-scope path; git diff --check exits 0."
+    - "Draft/Published exact identity is 29952 bytes / 421 lines / SHA-256 11daec74bd69a2f283418ca9237d7a84447d472d726be83e607c6f6b91dc7c7c; Final Gate is 94/100 with IR22-F01—F04 CLOSED and zero open findings."
+    - "Lab06 diff is README-only; frozen Runtime, tests, fixtures, observations and SHA inventory are unchanged; Article23/24 production asset counts remain zero."
+    - "Real Hugo build passes at 1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR; no repair SHA, push, remote verification or targeted Part IV re-audit result is prewritten."
+~~~
+
+- Master Validation: `PASS`；unique original completion `99bff931b02356358edd1357c2abd1c44621e720` remains historical evidence and an ancestor；intended independent commit subject=`Fix Agent Engineering Article 22 after independent review`.
+- Persistence Cut: `ACTIVE`；repository writes after this record=`ZERO` until the first commit is pushed and remotely verified.

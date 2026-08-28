@@ -26,7 +26,8 @@
 7. Regression verdict 应怎样同时保存新失败、既有失败、改善、退化、未知与不可比状态？
 8. Lab 06 能否在固定 C#/.NET fixture 中，用同一数据集与冻结判据捕获一次已知退化，并保留 raw observation？
 9. Eval 结果怎样进入发布门禁而不伪装成生产质量、跨模型泛化或统计显著性？
-10. Article 22怎样收束Part IV，同时不提前启动Article 23 Multi-Agent或Article 24 Harness？
+10. deterministic Regression 与 stochastic Agent Eval 怎样分账，后者需要哪些 multi-trial、manifest、distribution、judge calibration 与 uncertainty 记录才能判断退化而不是正常波动？
+11. Article 22怎样收束Part IV，同时不提前启动Article 23 Multi-Agent或Article 24 Harness？
 
 ## Frozen Boundaries
 
@@ -35,8 +36,17 @@
 - 不把 exact/rule scorer 覆盖不到的语义质量伪装成已测；也不把 LLM-as-judge 当无偏真值。
 - 不把 aggregate score 掩盖关键 case、分组退化、不可比版本或缺失观测。
 - Lab 06 只证明固定 fixture、数据、判据、fault injection 与环境；不外推 Provider、模型、生产负载或统计泛化。
+- `22-C13` 只以 source-backed `PARTIAL / COURSE PROPOSAL` 进入教学闭环；不规定固定 trial 数，不声称统计显著，也不声称 Lab06 验证 stochastic Agent Eval。
+- Lab06 v1 是 fixture-specific evaluator：`scorer-policy.json` 同时是 fixture contract manifest 与部分配置输入，Runtime 只解析 aggregate threshold；未来 scorer/gate/system manifest 分离仅为 `BuildPilot / Harness design candidate / PROPOSAL / NOT IMPLEMENTED / NOT RUN`。
 - BuildPilot 仍是课程设计案例；Lab fixture不是BuildPilot runtime实现或production evidence。
 - Article 23为Advanced/Optional且明确SKIP/PLANNED/零资产；Article 24不得启动或产生资产。
+
+## Claim / Evidence Coverage
+
+- Claims: `13 / 13`
+- Evidence Cards: `13 / 13`
+- Evidence posture: `3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
+- Post-publication addition: `22-C13 / 22-E13 = PARTIAL`；Lab Dependency=`NONE — LAB06 DOES NOT TEST STOCHASTIC AGENT EVAL`
 
 ## Expected Artifacts
 
