@@ -8,7 +8,7 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: READY
+factory_status: PAUSED
 current_article: "23"
 current_gate: PRECHECK
 last_published_article: "22"
@@ -17,22 +17,22 @@ active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: MASTER_ORCHESTRATOR
-  article: "22"
-  gate: PRE_COMMIT_RECONCILIATION
-  execution_type: MASTER_DETERMINISTIC
-  execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/subagent-trace.md#wr-article22-pre-commit-reconciliation
+  role: PART_AUDITOR
+  article: "PART_IV"
+  gate: PART_IV_AUDIT
+  execution_type: REAL_SUBAGENT
+  execution_id: /root/part_iv_auditor_cycle1
+  result_ref: docs/agent-engineering-course/audits/part-iv-audit.md#worker-result-record
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: GIT_DIFF_VERIFY
+  next_allowed_gate: PRECHECK
   blocker: NONE
 last_worker_result_error: NONE
 review_cycle: 0
 active_blocker: NONE
-stop_reason: NONE
+stop_reason: EXPLICIT_HUMAN_STOP_LINE
 human_decision_required: false
 article_authorization:
   status: INACTIVE
@@ -42,8 +42,8 @@ article_authorization:
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 470c362567d71aa4b7e5d951406b9af92b5b1adf
-next_action: START_PART_IV_AUDIT_AFTER_ARTICLE_22_END_ARTICLE
+last_successful_commit: 99bff931b02356358edd1357c2abd1c44621e720
+next_action: GIT_DIFF_VERIFY_PART_IV_AUDIT_CHECKPOINT_THEN_COMMIT_PUSH_REMOTE_VERIFY_AND_STOP
 continuous_run:
   enabled: false
   start_article: "18"
@@ -65,7 +65,7 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-28T15:46:41+08:00"
+last_updated: "2026-08-28T16:08:47+08:00"
 ```
 
 > 2026-08-26 Article 21已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`91 / 0 OPEN`，Draft/Published byte identity与Hugo=`1250 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 22 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(21)=END_ARTICLE`；completion SHA未预写。Article 23 / 24仍禁止且零资产。
@@ -97,6 +97,8 @@ last_updated: "2026-08-28T15:46:41+08:00"
 > 2026-08-28 Article 22 Publisher与Master独立验证均为PASS：Draft/Published exact-byte identity=`29637 bytes / 433 lines / SHA-256 30405404...efc2c`，Article21<->22与series/Lab06导航通过，Hugo=`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前执行`PRE_COMMIT_RECONCILIATION / active MASTER_ORCHESTRATOR`；尚未跨越persistence cut。
 
 > 2026-08-28 Article 22 `PRE_COMMIT_RECONCILIATION PASS`：最终transaction scope=`67 files / 0 out-of-scope / 0 delete-or-rename / 0 future assets`，Final=`95 / 0 OPEN`，Lab06=`AC-01..AC-10 / 10 of 10 hashes`，Published exact identity与Hugo=`1251 / 0 WARNING / 0 ERROR`通过。当前保存`READY / Article23 PRECHECK pointer / FORBIDDEN` candidate；唯一下一事务是Article22解析`END_ARTICLE`后的Part IV Audit，未启动Article23/24。
+
+> 2026-08-28 fresh Part IV Audit Cycle 1在Article 18—22全部由Git history与remote refs解析为`END_ARTICLE`后返回`PASS`：`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Lab 06 retained raw evidence / 10 of 10 hashes / A-B byte equality / 2 of 2 verifier、publication/navigation、fresh Hugo=`1251 Pages / 0 WARNING / 0 ERROR`与Article 23/24 zero-asset guard全部通过。Master已验证exact eleven-field envelope与audit-only artifact scope，`PRE_COMMIT_RECONCILIATION PASS`，当前投影为`PAUSED / EXPLICIT_HUMAN_STOP_LINE / Article23 PRECHECK pointer / FORBIDDEN`；只允许完成`Audit Agent Engineering Part IV` checkpoint的diff / stage / commit / single push / remote verification，随后STOP，不启动Article23/24。此记录后persistence cut生效，repository writes=`ZERO`。
 
 ## Field rules
 

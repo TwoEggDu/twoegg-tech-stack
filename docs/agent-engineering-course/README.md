@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 22 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION PASS`；completion仍待Git history与remote refs解析，不预写未来SHA
-- 当前生产对象：Part IV Audit `NOT_STARTED / REQUIRES ARTICLE 22 END_ARTICLE`；Article 23=`PRECHECK POINTER / FORBIDDEN / SKIP / ZERO ASSETS`；active worker=`NONE`
+- 当前里程碑：Article 22 `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`99bff931b02356358edd1357c2abd1c44621e720`，local / origin / live remote equality=`PASS`
+- 当前生产对象：Part IV Audit Cycle 1 `PASS / AUDIT CHECKPOINT CANDIDATE`；Article 23=`PRECHECK POINTER / FORBIDDEN / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS`；Article 24=`FORBIDDEN / NOT_STARTED / ZERO ASSETS`；active worker=`NONE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -69,14 +69,15 @@
 - 当前 Article 17 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1246 Pages / 0 ERROR / 0 WARNING`，exit code `0`；semantic identity / 8 relrefs / series index / navigation=`PASS`
 - 当前 Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
 - 当前 Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
+- 当前 Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
 - 当前 Article 18 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`a0d8d1b2fa5380f9a4150f72b962ac15fe11a96b`；Evidence=`10 of 10 / 2 CONFIRMED / 2 PARTIAL / 6 PROPOSAL / 0 BLOCKED`；Final=`95 / 0 OPEN`；Hugo=`1247 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 19 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`73a0f628e5580226f4c65890f81372d7ededd43d`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 20 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`59f8c44df5d10894335bf5cd97d5b27552a830fe`；Final=`PASS / 91 / F01—F03 CLOSED / 0 OPEN`；Hugo=`1249 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 21 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`470c362567d71aa4b7e5d951406b9af92b5b1adf`；Final=`PASS / 91 / F01—F04 CLOSED / 0 OPEN`；Hugo=`1250 Pages / 0 WARNING / 0 ERROR`
-- 当前 Article 22 状态：`PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION PASS`；Evidence=`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`PASS / 95 / A22-R0-F01 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`
+- 当前 Article 22 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`99bff931b02356358edd1357c2abd1c44621e720`；Evidence=`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`PASS / 95 / A22-R0-F01 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 22 Published Content：`content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md`
 - 当前 Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
-- Factory Status：`READY / Article 23 PRECHECK pointer / FORBIDDEN / active NONE`；唯一下一事务是Article22 END_ARTICLE后的Part IV Audit；Article 23 / 24 zero assets
+- Factory Status：`PAUSED / EXPLICIT_HUMAN_STOP_LINE / Article 23 PRECHECK pointer / FORBIDDEN / active NONE`；唯一待完成事务是Part IV Audit checkpoint的diff / commit / push / remote verification，随后STOP；Article 23 / 24 zero assets
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -108,6 +109,7 @@
 | [Part I Audit](audits/part-i-audit.md) | Article 01—04 的跨篇一致性、Lab、publication 与 checkpoint 审计；Gate `PASS`，`PI-F01`—`PI-F03 CLOSED` |
 | [Part II Audit](audits/part-ii-audit.md) | Article 05—11 的跨篇一致性、Labs 02—04、publication 与 checkpoint 审计；Gate `PASS`，`PII-F01`—`PII-F04 CLOSED` |
 | [Part III Audit](audits/part-iii-audit.md) | Article 12—17 的Context / Memory / KB / RAG / Skill边界、Lab 05、BuildPilot与checkpoint审计；Cycle 1 Gate `PASS`，`PIII-F01 / PIII-F02 CLOSED` |
+| [Part IV Audit](audits/part-iv-audit.md) | Article 18—22 的Evidence / authority / budget / trace / eval边界、Lab 06、BuildPilot、publication、Git/remote与future-asset审计；Cycle 1 Gate `PASS`，0 open Findings |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
@@ -130,7 +132,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22 已进入Published Content，其中Article 22仍是`PUBLISHED` checkpoint candidate，completion待Git history与remote refs解析。Article 23 / 24生产资产保持0。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22 已进入Published Content，Article 22已由Git history与remote refs解析为`END_ARTICLE`。Article 23 / 24生产资产保持0。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 
