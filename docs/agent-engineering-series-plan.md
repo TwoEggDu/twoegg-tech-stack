@@ -197,7 +197,7 @@ BuildPilot Design v1
 | 18 | [Evidence Contract：把自然语言推断变成可审计工程数据](../content/ai-empowerment/agent-engineering-18-evidence-contract.md) | L | 否 |
 | 19 | [Permission、Approval、Human-in-the-loop 与 Sandbox](../content/ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md) | L | 否 |
 | 20 | [Budget Engineering：Token、Step、Cost 与 Latency](../content/ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md) | M | 否 |
-| 21 | Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层 | L | 否 |
+| 21 | [Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层](../content/ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md) | L | 否 |
 | 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | L | 否 |
 | 23 | Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent | M | Advanced / Optional |
 

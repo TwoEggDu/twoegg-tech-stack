@@ -110,7 +110,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
         <li class="is-published"><span class="lesson-id">18</span><a href="{{< relref "ai-empowerment/agent-engineering-18-evidence-contract.md" >}}">Evidence Contract：把自然语言推断变成可审计工程数据</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">19</span><a href="{{< relref "ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md" >}}">Permission、Approval、Human-in-the-loop 与 Sandbox</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">20</span><a href="{{< relref "ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md" >}}">Budget Engineering：Token、Step、Cost 与 Latency</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">21</span><span>Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">21</span><a href="{{< relref "ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md" >}}">Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层</a><span class="lesson-status">已发布</span></li>
         <li class="is-planned"><span class="lesson-id">22</span><span>Eval、Golden Dataset 与 Regression：修复以后还会不会再坏</span><span class="lesson-status">计划中</span></li>
         <li class="is-optional"><span class="lesson-id">23</span><span>Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent</span><span class="lesson-status">高级 · 可选</span></li>
       </ol>

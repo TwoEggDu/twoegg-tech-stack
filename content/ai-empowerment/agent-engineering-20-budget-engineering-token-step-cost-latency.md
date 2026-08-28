@@ -493,3 +493,5 @@ Coverage=`9 / 9`；Evidence posture=`1 CONFIRMED / 4 PARTIAL / 4 PROPOSAL / 0 BL
 ## 最短结论
 
 `预算的工程价值，不是把所有消耗换算成一个数字，而是在每次新增工作前都能回答“还能不能做”，耗尽后仍能说明“为什么停、留下了什么未知”。`
+
+> **下一篇**：[Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层]({{< relref "ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md" >}})

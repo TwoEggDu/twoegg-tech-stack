@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "21"
+current_article: "22"
 current_gate: PRECHECK
-last_published_article: "20"
+last_published_article: "21"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "20"
+  article: "21"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/20-budget-engineering-token-step-cost-latency/subagent-trace.md#wr-article20-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/21-trace-replay-failure-taxonomy/subagent-trace.md#wr-article21-pre-commit-reconciliation-retry-2
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "20"
+  article: "21"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 73a0f628e5580226f4c65890f81372d7ededd43d
-next_action: START_ARTICLE_21_PRECHECK_AFTER_END_ARTICLE_20
+last_successful_commit: 59f8c44df5d10894335bf5cd97d5b27552a830fe
+next_action: START_ARTICLE_22_PRECHECK_AFTER_END_ARTICLE_21
 continuous_run:
   enabled: true
   start_article: "18"
@@ -65,10 +65,14 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-26T02:20:44+08:00"
+last_updated: "2026-08-28T13:31:16+08:00"
 ```
 
-> 2026-08-26 Article 20已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`91 / 0 OPEN`，Draft/Published byte identity与Hugo=`1249 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 21 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(20)=END_ARTICLE`；completion SHA未预写。
+> 2026-08-26 Article 21已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`91 / 0 OPEN`，Draft/Published byte identity与Hugo=`1250 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 22 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(21)=END_ARTICLE`；completion SHA未预写。Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Human Resume授权Article 21 `PRE_COMMIT_RECONCILIATION RETRY 1`：fresh reconciliation确认`main / HEAD / origin/main / live main`仍一致于`59f8c44df5d10894335bf5cd97d5b27552a830fe`，15-file staged transaction无外部漂移、completion subject count=`0`。Retry仅移除Published Content与article-card各一个terminal blank line，并把`last_worker_result_semantics`恢复为`LAST_PERSISTED_PRE_COMMIT_RESULT`；旧cut由新cut取代，Article 22 / 23 / 24资产仍为0。
+
+> 2026-08-28 Human Resume授权Article 21 `PRE_COMMIT_RECONCILIATION RETRY 2`：Retry 1的ambiguous patch context同时匹配了Published Content顶部与底部同名课程索引，导致顶部wrapper少一个换行、frozen body起点从offset `840`移到`839`。Retry 2只恢复顶部课程索引与Draft H1之间的单个换行，保留EOF单换行、15-file scope、Evidence/Final/Build与future-asset边界；旧cut再次由新cut取代。
 
 ## Field rules
 
