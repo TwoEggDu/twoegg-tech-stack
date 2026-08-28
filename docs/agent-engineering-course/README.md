@@ -6,7 +6,7 @@
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
 - 当前里程碑：Article 22 `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`99bff931b02356358edd1357c2abd1c44621e720`，local / origin / live remote equality=`PASS`
-- 当前生产对象：Article 22 `POST_PUBLICATION_TARGETED_REPAIR / PRE_COMMIT_RECONCILIATION`；IR22-F01—F04=`CLOSED`；Article 23=`OPTIONAL / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS / FORBIDDEN`；Article 24=`PLANNED / NOT_STARTED / NOT_AUTHORIZED / ZERO ASSETS / FORBIDDEN`；active worker=`MASTER_ORCHESTRATOR`
+- 当前生产对象：Part IV `TARGETED_REAUDIT PASS / CHECKPOINT CANDIDATE` after Article 22 fix `481ebd52d6c0522e68a0ce0897f52a7932f9af89`；Article 23=`OPTIONAL / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS / FORBIDDEN`；Article 24=`PLANNED / NOT_STARTED / NOT_AUTHORIZED / ZERO ASSETS / FORBIDDEN`；active worker=`NONE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -74,10 +74,10 @@
 - 当前 Article 19 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`73a0f628e5580226f4c65890f81372d7ededd43d`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Hugo=`1248 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 20 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`59f8c44df5d10894335bf5cd97d5b27552a830fe`；Final=`PASS / 91 / F01—F03 CLOSED / 0 OPEN`；Hugo=`1249 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 21 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`470c362567d71aa4b7e5d951406b9af92b5b1adf`；Final=`PASS / 91 / F01—F04 CLOSED / 0 OPEN`；Hugo=`1250 Pages / 0 WARNING / 0 ERROR`
-- 当前 Article 22 状态：`PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX CANDIDATE`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720`；Evidence=`3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；fresh Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`；repair commit/push=`PENDING`
+- 当前 Article 22 状态：`PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX VERIFIED`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720`；fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89` pushed/live-remote verified；Evidence=`3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；fresh Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 22 Published Content：`content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md`
 - 当前 Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
-- Factory Status：Article 22 targeted repair=`PRE_COMMIT_RECONCILIATION / active MASTER_ORCHESTRATOR`；fix commit/push/remote verify后只允许fresh Part IV targeted re-audit；Article 23 / 24 zero assets
+- Factory Status：`PAUSED / EXPLICIT_HUMAN_STOP_LINE / active NONE`；fresh Part IV targeted re-audit=`PASS / CHECKPOINT CANDIDATE`；只允许完成独立re-audit commit/push/remote verify后STOP；Article 23 / 24 zero assets
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -110,6 +110,7 @@
 | [Part II Audit](audits/part-ii-audit.md) | Article 05—11 的跨篇一致性、Labs 02—04、publication 与 checkpoint 审计；Gate `PASS`，`PII-F01`—`PII-F04 CLOSED` |
 | [Part III Audit](audits/part-iii-audit.md) | Article 12—17 的Context / Memory / KB / RAG / Skill边界、Lab 05、BuildPilot与checkpoint审计；Cycle 1 Gate `PASS`，`PIII-F01 / PIII-F02 CLOSED` |
 | [Part IV Audit](audits/part-iv-audit.md) | Article 18—22 的Evidence / authority / budget / trace / eval边界、Lab 06、BuildPilot、publication、Git/remote与future-asset审计；Cycle 1 Gate `PASS`，0 open Findings |
+| [Part IV Article 22 post-publication recheck](audits/part-iv-article22-post-publication-recheck.md) | 针对fix `481ebd52d6c0522e68a0ce0897f52a7932f9af89`的fresh targeted regression audit；Gate `PASS`，0 findings；不覆盖旧Audit历史结论 |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |

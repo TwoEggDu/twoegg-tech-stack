@@ -8,42 +8,42 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: RUNNING
-current_article: "22"
-current_gate: PRE_COMMIT_RECONCILIATION
+factory_status: PAUSED
+current_article: "23"
+current_gate: PRECHECK
 last_published_article: "22"
-active_worker: MASTER_ORCHESTRATOR
-active_worker_execution_id: /root
-active_worker_record_ref: docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/subagent-trace.md#wr-a22-postrepair-precommit
+active_worker: NONE
+active_worker_execution_id: NONE
+active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: MASTER_ORCHESTRATOR
-  article: "22"
-  gate: PRE_COMMIT_RECONCILIATION
-  execution_type: MASTER_DETERMINISTIC
-  execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/subagent-trace.md#wr-a22-postrepair-precommit
+  role: PART_AUDITOR
+  article: "PART_IV"
+  gate: PART_IV_AUDIT
+  execution_type: REAL_SUBAGENT
+  execution_id: /root/a22_part_iv_targeted_auditor
+  result_ref: docs/agent-engineering-course/audits/part-iv-article22-post-publication-recheck.md#worker-result-record
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: GIT_DIFF_VERIFY
+  next_allowed_gate: PRE_COMMIT_RECONCILIATION
   blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 1
+review_cycle: 0
 active_blocker: NONE
-stop_reason: NONE
+stop_reason: EXPLICIT_HUMAN_STOP_LINE
 human_decision_required: false
 article_authorization:
-  status: ACTIVE
-  scope: POST_PUBLICATION_TARGETED_REPAIR
-  article: "22"
-  continue_until: PART_IV_TARGETED_REAUDIT_VERIFIED
-  auto_continue_after_gate_pass: true
+  status: INACTIVE
+  scope: NONE
+  article: NONE
+  continue_until: NONE
+  auto_continue_after_gate_pass: false
   explicit_stop_line: AFTER_PART_IV_TARGETED_REAUDIT_REMOTE_VERIFY
   next_article_authorized: false
-last_successful_commit: 8c36f0e90bdd801788b20ff062f680f9e1c35c89
-next_action: GIT_DIFF_VERIFY_THEN_FIX_COMMIT_PUSH_REMOTE_VERIFY
+last_successful_commit: 481ebd52d6c0522e68a0ce0897f52a7932f9af89
+next_action: GIT_DIFF_VERIFY_TARGETED_REAUDIT_THEN_COMMIT_PUSH_REMOTE_VERIFY_AND_STOP
 continuous_run:
   enabled: false
   start_article: "18"
@@ -65,8 +65,10 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-28T23:35:37+08:00"
+last_updated: "2026-08-28T23:47:46+08:00"
 ```
+
+> 2026-08-28 Article 22 fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`已single push并通过local/origin/live equality。fresh Part IV targeted re-audit对live fix返回`PASS / 0 findings`：Article18—22递进、Article21->22职责、`22-C13/E13` Evidence边界、Lab06 v1 10/10 hashes、policy实现上限、Draft/Published identity、导航、BuildPilot边界、Article23/24 zero-assets与fresh Hugo=`1251 / 44 / 1 / 0 WARNING / 0 ERROR`均通过；旧`part-iv-audit.md`保持不变。当前只允许完成独立re-audit checkpoint的diff/stage/commit/single push/remote verify，随后STOP。
 
 > 2026-08-28 Article 22 post-publication targeted repair已完成Finding登记、fresh Research、Revision、fresh Review/Recheck、Final Gate、机械同步与Build Verify：`IR22-F01—F04 CLOSED / 94 / 0 OPEN`，`13 / 13 Claims/Cards / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`，Draft/Published=`29952 bytes / 421 lines / SHA-256 11daec74...c7c7c`，Hugo=`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前只进入第一次`PRE_COMMIT_RECONCILIATION`；未预写repair commit、push、remote verification或targeted Part IV re-audit。Article23/24仍禁止且零资产。
 

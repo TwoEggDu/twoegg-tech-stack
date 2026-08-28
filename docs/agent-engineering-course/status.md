@@ -3,7 +3,7 @@
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-28
 - 当前里程碑：Article 22 `PUBLISHED / COMPLETED / END_ARTICLE`；completion commit=`99bff931b02356358edd1357c2abd1c44621e720`，local / origin / live remote equality=`PASS`
-- 当前生产对象：Article 22 `POST_PUBLICATION_TARGETED_REPAIR / PRE_COMMIT_RECONCILIATION`；IR22-F01—F04=`CLOSED`；Article 23=`OPTIONAL / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS / FORBIDDEN`；Article 24=`PLANNED / NOT_STARTED / NOT_AUTHORIZED / ZERO ASSETS / FORBIDDEN`；active worker=`MASTER_ORCHESTRATOR`
+- 当前生产对象：Part IV `TARGETED_REAUDIT PASS / CHECKPOINT CANDIDATE` after Article 22 fix `481ebd52d6c0522e68a0ce0897f52a7932f9af89`；Article 23=`OPTIONAL / SKIP / PLANNED / NOT_STARTED / ZERO ASSETS / FORBIDDEN`；Article 24=`PLANNED / NOT_STARTED / NOT_AUTHORIZED / ZERO ASSETS / FORBIDDEN`；active worker=`NONE`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -40,14 +40,15 @@
 - Article 01 Independent Review：`01-IR-F01 / 01-IR-F02 CLOSED`；Lifecycle 继续为 `PUBLISHED`；最新热修复 commit `798443c1d41f03960253b1190fcbc91425d4f285`
 - Article 22 Published Path：`content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md`
 - Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（Article 22 targeted repair=`PRE_COMMIT_RECONCILIATION`；第一次fix commit/push/remote verify后才允许fresh Part IV targeted re-audit；Article 23 / 24 zero assets）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`PAUSED / EXPLICIT_HUMAN_STOP_LINE`；Article 22 fix remote-verified；fresh Part IV targeted re-audit=`PASS / CHECKPOINT CANDIDATE`；Article 23 / 24 zero assets）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
 - Part II Audit：[durable report](audits/part-ii-audit.md)；Gate `PASS`；`0 BLOCKER / 0 MAJOR / 0 OPEN MINOR / 4 CLOSED MINOR / 0 EDITORIAL`；Hugo / Labs 02—04 / navigation / checkpoint evidence `PASS`
 - Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
 - Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
-- 下一条允许动作：完成Article 22 targeted repair的显式diff/stage验证，创建独立fix commit并single push/remote verify；其后仅允许fresh Part IV targeted re-audit。
+- Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / CHECKPOINT CANDIDATE`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged；Hugo / Lab06 / Evidence / navigation / future-asset guards=`PASS`
+- 下一条允许动作：只读diff与显式stage验证，创建独立`Reaudit Agent Engineering Part IV after Article 22 independent review` commit并single push；remote verification后立即STOP。
 
 ## 状态图例
 
@@ -82,7 +83,7 @@
 | 19 | Permission、Approval、Human-in-the-loop 与 Sandbox | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 10 of 10 / 3 CONFIRMED / 2 PARTIAL / 5 PROPOSAL / 0 BLOCKED / 12 Cards` | N/A | `NONE`；Final=`PASS / 93 / F01/F02 CLOSED / 0 OPEN`；Publish / Build / PRE_COMMIT_RECONCILIATION=`PASS`；completion commit=`73a0f628e5580226f4c65890f81372d7ededd43d`；local / origin / live remote equality=`PASS`；Published Content=`content/ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md` |
 | 20 | Budget Engineering：Token、Step、Cost 与 Latency | IV | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 9 of 9 / 1 CONFIRMED / 4 PARTIAL / 4 PROPOSAL / 0 BLOCKED / 11 Cards` | N/A | `NONE`；Final=`PASS / 91 / F01—F03 CLOSED / 0 OPEN`；completion commit=`59f8c44df5d10894335bf5cd97d5b27552a830fe`；local / origin / live remote equality=`PASS`；Published Content=`content/ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md` |
 | 21 | Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 12 of 12 / 1 CONFIRMED / 4 PARTIAL / 7 PROPOSAL / 0 BLOCKED / 12 Cards` | N/A | Final=`PASS / 91 / F01—F04 CLOSED / 0 OPEN`；completion commit=`470c362567d71aa4b7e5d951406b9af92b5b1adf`；local/origin/live equality=`PASS`；Published Content=`content/ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md` |
-| 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX CANDIDATE` | `PASS / 13 of 13 / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED / 13 Cards` | Lab 06 `VERIFIED / EVIDENCE_MERGED / AC-01..AC-10 / FROZEN ARTIFACTS PRESERVED` | Post-publication Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 / 0 WARNING / 0 ERROR`；Published exact identity=`PASS`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720` remains historical evidence；repair commit/push=`PENDING` |
+| 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX VERIFIED` | `PASS / 13 of 13 / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED / 13 Cards` | Lab 06 `VERIFIED / EVIDENCE_MERGED / AC-01..AC-10 / FROZEN ARTIFACTS PRESERVED` | Post-publication Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 / 0 WARNING / 0 ERROR`；Published exact identity=`PASS`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720` remains historical evidence；fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89` pushed/live-remote verified；Part IV targeted re-audit=`PASS` |
 | 23 | Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent | IV | M | 是 | `PLANNED` | `BLOCKED` | N/A | Advanced / Optional；未开始研究 |
 | 24 | 为什么最终需要 Harness：横切能力由谁承载 | V | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 25 | Agent Runtime vs Harness：执行内核与工程控制面 | V | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |

@@ -10,8 +10,8 @@
 - Evidence Status: `PASS / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
 - Required Lab: `Lab 06｜Trace + Eval`
 - Mode: `LAB_ARTICLE`
-- Current Gate: `POST_PUBLICATION_FIX / PRE_COMMIT_RECONCILIATION PASS`
-- Active Worker: `MASTER_ORCHESTRATOR`
+- Current Gate: `POST_PUBLICATION_FIX VERIFIED / PART_IV_TARGETED_REAUDIT PASS`
+- Active Worker: `NONE`
 - Blocker: `NONE`
 - Lifecycle Candidate: `PUBLISHED / PUBLISHER RECOMMENDATION ONLY`
 - Persisted Checkpoint: `POST_PUBLICATION_FIX / PRE_COMMIT_RECONCILIATION PASS`
@@ -19,7 +19,7 @@
 - Completion Evidence Source: `GIT_HISTORY + REMOTE_REFS`
 - Expected Completion Message: `Publish Agent Engineering Article 22`
 - Next Transaction Candidate: `Part IV Audit / NOT_STARTED / REQUIRES ARTICLE 22 END_ARTICLE`
-- Post-publication Repair Candidate: `IR22-F01—F04 CLOSED / FINAL_GATE PASS / PUBLISH_SYNC PASS / BUILD_VERIFY PASS / COMMIT PENDING`
+- Post-publication Repair Candidate: `VERIFIED / fix 481ebd52d6c0522e68a0ce0897f52a7932f9af89 / IR22-F01—F04 CLOSED / TARGETED_REAUDIT PASS / REAUDIT COMMIT PENDING`
 
 ## Precheck and kickoff
 
