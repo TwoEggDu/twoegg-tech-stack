@@ -1,0 +1,3 @@
+PASS verify baseline formal result
+PASS verify known-regression formal result
+SUMMARY total=2 passed=2 failed=0

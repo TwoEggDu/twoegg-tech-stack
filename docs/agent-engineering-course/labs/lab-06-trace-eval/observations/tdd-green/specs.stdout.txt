@@ -1,0 +1,7 @@
+PHASE=green
+PASS baseline is 8/8 and passes both gates
+PASS known regression keeps aggregate threshold but fails critical gate and marks C01
+PASS missing N06 is UNKNOWN and fails closed
+PASS scorer manifest mismatch is INCOMPARABLE and fails closed
+PASS normalized artifacts are byte-identical across repeated runs
+SUMMARY total=5 passed=5 failed=0

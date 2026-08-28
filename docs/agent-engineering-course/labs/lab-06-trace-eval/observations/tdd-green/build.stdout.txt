@@ -1,0 +1,8 @@
+  TraceEvalLab -> E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-06-trace-eval\src\TraceEvalLab\bin\Release\net10.0\TraceEvalLab.dll
+  TraceEvalLab.Specs -> E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-06-trace-eval\tests\TraceEvalLab.Specs\bin\Release\net10.0\TraceEvalLab.Specs.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:02.45

@@ -111,7 +111,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
         <li class="is-published"><span class="lesson-id">19</span><a href="{{< relref "ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md" >}}">Permission、Approval、Human-in-the-loop 与 Sandbox</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">20</span><a href="{{< relref "ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md" >}}">Budget Engineering：Token、Step、Cost 与 Latency</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">21</span><a href="{{< relref "ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md" >}}">Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">22</span><span>Eval、Golden Dataset 与 Regression：修复以后还会不会再坏</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">22</span><a href="{{< relref "ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md" >}}">Eval、Golden Dataset 与 Regression：修复以后还会不会再坏</a><span class="lesson-status">已发布</span></li>
         <li class="is-optional"><span class="lesson-id">23</span><span>Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent</span><span class="lesson-status">高级 · 可选</span></li>
       </ol>
     </section>
@@ -194,7 +194,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
     <article class="is-verified"><span>Lab 03 · Article 08 后</span><h3>Minimal Agent Loop</h3><p>Turn、Step、Observation、Stop 与预算终止。</p><a href="{{< relref "ai-empowerment/agent-engineering-08-agent-loop.md" >}}">查看对应课程 · 已验证</a></article>
     <article class="is-verified"><span>Lab 04 · Article 11 后</span><h3>State Machine + Checkpoint</h3><p>State、Checkpoint、Resume 与 Cancellation。</p><a href="{{< relref "ai-empowerment/agent-engineering-11-long-running-agent.md" >}}">查看对应课程 · 已验证</a></article>
     <article class="is-verified"><span>Lab 05 · Article 13 后</span><h3>Context Debugging</h3><p>Context Snapshot、Pollution、Truncation 与重建。</p><a href="{{< relref "ai-empowerment/agent-engineering-13-context-debugging.md" >}}">查看对应课程 · 已验证</a></article>
-    <article><span>Lab 06 · Article 22 后</span><h3>Trace + Eval</h3><p>Trace、Failure Layer、Golden Dataset 与 Regression。</p><strong>计划中 · 无公开链接</strong></article>
+    <article class="is-verified"><span>Lab 06 · Article 22 后</span><h3>Trace + Eval</h3><p>Trace、Failure Layer、Golden Dataset 与 Regression。</p><a href="{{< relref "ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md" >}}">查看对应课程 · 已验证</a></article>
   </div>
 </section>
 

@@ -1,0 +1,46 @@
+{
+  "schema_version": "lab06-scorer-policy-v1",
+  "scorer_id": "lab06-deterministic-exact-scorer",
+  "scorer_version": "v1",
+  "canonicalization": {
+    "json": "UTF8_LF_ORDINAL_PROPERTIES",
+    "reason_codes": "SET_EQUAL_ORDINAL"
+  },
+  "case_pass": {
+    "all_required": [
+      "candidate.decision == oracle.decision",
+      "candidate.failure_layer == oracle.failure_layer",
+      "set(candidate.reason_codes) == set(oracle.reason_codes)"
+    ]
+  },
+  "metrics": {
+    "aggregate_accuracy": "passed_case_count / total_case_count",
+    "critical_accuracy": "passed_critical_count / total_critical_count"
+  },
+  "overall_gate": {
+    "all_required": [
+      "aggregate_accuracy >= 0.80",
+      "critical_accuracy == 1.00",
+      "missing_case_count == 0",
+      "unknown_case_count == 0",
+      "manifest_comparable == true"
+    ]
+  },
+  "comparability": {
+    "all_equal": [
+      "dataset_id",
+      "dataset_revision",
+      "scorer_id",
+      "scorer_version",
+      "candidate_schema_version",
+      "case_id_set"
+    ],
+    "mismatch_verdict": "INCOMPARABLE"
+  },
+  "case_change_verdict": {
+    "baseline_pass_candidate_fail": "REGRESSION",
+    "baseline_fail_candidate_pass": "IMPROVEMENT",
+    "same_pass_state": "UNCHANGED",
+    "missing_or_invalid": "UNKNOWN"
+  }
+}

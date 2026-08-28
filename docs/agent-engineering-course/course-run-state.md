@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "22"
+current_article: "23"
 current_gate: PRECHECK
-last_published_article: "21"
+last_published_article: "22"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "21"
+  article: "22"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/21-trace-replay-failure-taxonomy/subagent-trace.md#wr-article21-pre-commit-reconciliation-retry-2
+  result_ref: docs/agent-engineering-course/articles/22-eval-golden-dataset-regression/subagent-trace.md#wr-article22-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,18 +37,18 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "21"
+  article: NONE
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 59f8c44df5d10894335bf5cd97d5b27552a830fe
-next_action: START_ARTICLE_22_PRECHECK_AFTER_END_ARTICLE_21
+last_successful_commit: 470c362567d71aa4b7e5d951406b9af92b5b1adf
+next_action: START_PART_IV_AUDIT_AFTER_ARTICLE_22_END_ARTICLE
 continuous_run:
-  enabled: true
+  enabled: false
   start_article: "18"
   stop_after_article: "22"
-  auto_continue_after_end_article: true
+  auto_continue_after_end_article: false
   stop_at_part_boundary: true
   stop_on:
     blocker: true
@@ -65,7 +65,7 @@ continuous_run:
   forbidden_articles:
     - "23"
     - "24"
-last_updated: "2026-08-28T13:31:16+08:00"
+last_updated: "2026-08-28T15:46:41+08:00"
 ```
 
 > 2026-08-26 Article 21已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`；Final=`91 / 0 OPEN`，Draft/Published byte identity与Hugo=`1250 Pages / 0 WARNING / 0 ERROR`通过。当前pointer为`READY / Article 22 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须先由Git history与remote refs解析`ResolveArticleCompletion(21)=END_ARTICLE`；completion SHA未预写。Article 23 / 24仍禁止且零资产。
@@ -73,6 +73,30 @@ last_updated: "2026-08-28T13:31:16+08:00"
 > 2026-08-28 Human Resume授权Article 21 `PRE_COMMIT_RECONCILIATION RETRY 1`：fresh reconciliation确认`main / HEAD / origin/main / live main`仍一致于`59f8c44df5d10894335bf5cd97d5b27552a830fe`，15-file staged transaction无外部漂移、completion subject count=`0`。Retry仅移除Published Content与article-card各一个terminal blank line，并把`last_worker_result_semantics`恢复为`LAST_PERSISTED_PRE_COMMIT_RESULT`；旧cut由新cut取代，Article 22 / 23 / 24资产仍为0。
 
 > 2026-08-28 Human Resume授权Article 21 `PRE_COMMIT_RECONCILIATION RETRY 2`：Retry 1的ambiguous patch context同时匹配了Published Content顶部与底部同名课程索引，导致顶部wrapper少一个换行、frozen body起点从offset `840`移到`839`。Retry 2只恢复顶部课程索引与Draft H1之间的单个换行，保留EOF单换行、15-file scope、Evidence/Final/Build与future-asset边界；旧cut再次由新cut取代。
+
+> 2026-08-28 fresh reconciliation解析Article 21=`END_ARTICLE`：unique completion commit=`470c362567d71aa4b7e5d951406b9af92b5b1adf`，`HEAD == origin/main == live main`，worktree/index clean。Article 22 PRECHECK与ARTICLE_KICKOFF通过，当前为`RUNNING / Article 22 / PRELIMINARY_EVIDENCE / active RESEARCHER`；Required Lab 06必须先完成Design/Execute/Observation/Evidence Merge。Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Article 22 Preliminary Evidence与Lab 06 Design经Master独立验证通过：`12 Claims / 12 Cards / 1 CONFIRMED / 7 PARTIAL / 4 PROPOSAL / 0 BLOCKED`，每张Card含Proves / Does Not Prove / Limitations / Counter-evidence；四份frozen fixture均可解析，runtime/observation资产仍为0。当前进入`LAB_EXECUTE / active LAB_ENGINEER`；Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Lab 06 `LAB_OBSERVATION PASS`经Master fresh restore/build/Specs/formal verifier与JSON/hash/scope独立复验：RED=`0/5 exit 1`，GREEN=`5/5 exit 0`，baseline=`8/8 PASS`，known regression=`7/8 / aggregate 0.875 threshold-pass / critical 0.5 / overall FAIL / C01 REGRESSION`，FI-02=`UNKNOWN`，FI-03=`INCOMPARABLE`，A/B byte/hash equal。当前进入`EVIDENCE_MERGE / active RESEARCHER`；Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Article 22 Evidence Merge与Evidence Gate经Master独立验证通过：`12 / 12 Claims`、`12 / 12 Cards`、`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；`22-C07 / C10`仅为Lab06 fixture-scoped confirmed，`22-C09`因IMPROVEMENT未执行保持PARTIAL。当前进入`OUTLINE / active AUTHOR`；Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Article 22 OUTLINE经Master验证通过：遵循Problem Space -> Abstract Model -> Concrete Lab06 -> Engineering Decisions，覆盖`10/10 Core Questions`与`12/12 Claims/Cards`，frontmatter/figures/transitions/learning checks/practical actions/no-new-fact边界完整。当前进入`AUTHOR_DRAFT / active AUTHOR`；Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Article 22 AUTHOR_DRAFT经Master验证通过：433行publication-ready Draft遵循approved Outline，覆盖10/10 Core Questions、12/12 Claims/Cards，frontmatter与5个relref合法，四条raw Lab anchor存在，Evidence posture与fixture ceiling保持不变。当前进入`REVIEW / active REVIEWER`；Article 23 / 24仍禁止且零资产。
+
+> 2026-08-28 Article 22 REVIEW Cycle 0经Master验证：`PASS_WITH_NOTES / 95 / 0 BLOCKER / 0 MAJOR / 1 MINOR / 0 EDITORIAL`。唯一`A22-R0-F01`是Lab README Evidence Links的历史时序文字仍称Outline/Draft未创建；不影响raw Observation、Claim或Draft结论。当前进入`REVISION Cycle 1 / active REVISION_WORKER`。
+
+> 2026-08-28 Article 22 REVISION Cycle 1经Master验证：`A22-R0-F01 READY_FOR_RECHECK`；仅将Lab README旧状态改为明确的Evidence Merge历史快照并路由当前状态到Article README，Draft SHA与10/10 raw hashes不变。当前进入`REVIEW_RECHECK Cycle 1 / active REVIEWER`。
+
+> 2026-08-28 Article 22 REVIEW_RECHECK Cycle 1经Master验证：`A22-R0-F01 CLOSED`，open findings=`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`，score=`95`，Draft SHA与10/10 raw hashes保持不变。当前进入`FINAL_GATE / active REVIEWER`。
+
+> 2026-08-28 Article 22 FINAL_GATE经Master验证：`PASS / 95 / 0 OPEN / ELIGIBLE_FOR_PUBLISH`；Draft=`29637 bytes / 433 lines / SHA-256 30405404...efc2c`，12 Claims/Cards与Lab raw boundaries保持一致。当前进入`PUBLISH / active PUBLISHER`；Final Gate不等于Published或END_ARTICLE。
+
+> 2026-08-28 Article 22 Publisher与Master独立验证均为PASS：Draft/Published exact-byte identity=`29637 bytes / 433 lines / SHA-256 30405404...efc2c`，Article21<->22与series/Lab06导航通过，Hugo=`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前执行`PRE_COMMIT_RECONCILIATION / active MASTER_ORCHESTRATOR`；尚未跨越persistence cut。
+
+> 2026-08-28 Article 22 `PRE_COMMIT_RECONCILIATION PASS`：最终transaction scope=`67 files / 0 out-of-scope / 0 delete-or-rename / 0 future assets`，Final=`95 / 0 OPEN`，Lab06=`AC-01..AC-10 / 10 of 10 hashes`，Published exact identity与Hugo=`1251 / 0 WARNING / 0 ERROR`通过。当前保存`READY / Article23 PRECHECK pointer / FORBIDDEN` candidate；唯一下一事务是Article22解析`END_ARTICLE`后的Part IV Audit，未启动Article23/24。
 
 ## Field rules
 

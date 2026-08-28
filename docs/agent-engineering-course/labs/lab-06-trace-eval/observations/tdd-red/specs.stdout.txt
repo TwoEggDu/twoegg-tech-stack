@@ -1,0 +1,12 @@
+PHASE=red
+FAIL baseline is 8/8 and passes both gates
+  expected exit 0, got 64; stderr=NOT_IMPLEMENTED: deterministic trace evaluator is intentionally absent during TDD RED.
+FAIL known regression keeps aggregate threshold but fails critical gate and marks C01
+  expected fail-closed exit 2, got 64; stderr=NOT_IMPLEMENTED: deterministic trace evaluator is intentionally absent during TDD RED.
+FAIL missing N06 is UNKNOWN and fails closed
+  expected fail-closed exit 2, got 64; stderr=NOT_IMPLEMENTED: deterministic trace evaluator is intentionally absent during TDD RED.
+FAIL scorer manifest mismatch is INCOMPARABLE and fails closed
+  expected incomparable exit 3, got 64; stderr=NOT_IMPLEMENTED: deterministic trace evaluator is intentionally absent during TDD RED.
+FAIL normalized artifacts are byte-identical across repeated runs
+  both normalized artifacts must exist
+SUMMARY total=5 passed=0 failed=5

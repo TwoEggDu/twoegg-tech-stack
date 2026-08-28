@@ -198,7 +198,7 @@ BuildPilot Design v1
 | 19 | [Permission、Approval、Human-in-the-loop 与 Sandbox](../content/ai-empowerment/agent-engineering-19-permission-approval-hitl-sandbox.md) | L | 否 |
 | 20 | [Budget Engineering：Token、Step、Cost 与 Latency](../content/ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md) | M | 否 |
 | 21 | [Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层](../content/ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md) | L | 否 |
-| 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | L | 否 |
+| 22 | [Eval、Golden Dataset 与 Regression：修复以后还会不会再坏](../content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md) | L | 否 |
 | 23 | Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent | M | Advanced / Optional |
 
 ### Part V｜Harness Engineering
@@ -248,7 +248,7 @@ S 是 Bridge / Overview，M 是 Standard Core Lesson，L 是 Major Core Lesson�
 | Lab 03 Minimal Agent Loop | 08 后 | C# / .NET | Turn、Step、Observation、Stop | `VERIFIED / EVIDENCE_MERGED / FIXTURE-SCOPED` |
 | Lab 04 State Machine + Checkpoint | 11 后 | C# / .NET | State、Checkpoint、Resume、Cancellation | `CONFIRMED / EVIDENCE_MERGED / 8 of 8 / FIXTURE-SCOPED` |
 | Lab 05 Context Debugging | 13 后 | C# / .NET | Context Snapshot、Pollution、Truncation | `EVIDENCE_MERGED / EVIDENCE_GATE_PASS / 15 of 15 / A-G / FIXTURE-SCOPED` |
-| Lab 06 Trace + Eval | 22 后 | C# / .NET | Trace、Failure Layer、Regression | `PLANNED / BLOCKED / NOT_IMPLEMENTED` |
+| Lab 06 Trace + Eval | 22 后 | C# / .NET | Trace、Failure Layer、Regression | `VERIFIED / EVIDENCE_MERGED / AC-01..AC-10 / FIXTURE-SCOPED` |
 
 Lab 结论只证明当前 Fixture 和实验，不自动升级为通用事实。Lab 生产入口见 `docs/agent-engineering-course/labs/README.md`。
 

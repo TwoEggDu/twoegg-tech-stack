@@ -1,0 +1,3 @@
+  正在确定要还原的项目…
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-06-trace-eval\tests\TraceEvalLab.Specs\TraceEvalLab.Specs.csproj (用时 103 毫秒)。
+  已还原 E:\workspace\TechStackShow\docs\agent-engineering-course\labs\lab-06-trace-eval\src\TraceEvalLab\TraceEvalLab.csproj (用时 103 毫秒)。

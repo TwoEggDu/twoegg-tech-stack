@@ -1,0 +1,18 @@
+{
+  "schema_version": "lab06-eval-result-v1",
+  "candidate_id": "known-regression-scorer-v2",
+  "dataset_id": "lab06-golden-corpus",
+  "dataset_revision": "r1",
+  "scorer_id": "lab06-deterministic-exact-scorer",
+  "scorer_version": "v2",
+  "candidate_schema_version": "lab06-candidate-v1",
+  "manifest_comparable": false,
+  "manifest_mismatches": [
+    "scorer_version"
+  ],
+  "run_verdict": "INCOMPARABLE",
+  "missing_case_count": 0,
+  "unknown_case_count": 0,
+  "overall_gate": "FAIL",
+  "cases": []
+}

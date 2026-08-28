@@ -18,6 +18,8 @@ weight: 3220
 
 > **上一篇**：[Budget Engineering：Token、Step、Cost 与 Latency]({{< relref "ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md" >}})
 
+> **下一篇**：[Eval、Golden Dataset 与 Regression：修复以后还会不会再坏]({{< relref "ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层
@@ -642,5 +644,7 @@ Coverage=`12 / 12`；Evidence posture=`1 CONFIRMED / 4 PARTIAL / 7 PROPOSAL / 0 
 `真正可诊断的失败，不是一条更详细的报错，而是一组能保留身份、因果、合同 owner、恢复结果与未知边界的事件。`
 
 > **上一篇**：[Budget Engineering：Token、Step、Cost 与 Latency]({{< relref "ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md" >}})
+
+> **下一篇**：[Eval、Golden Dataset 与 Regression：修复以后还会不会再坏]({{< relref "ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md" >}})
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})

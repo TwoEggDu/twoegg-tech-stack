@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/TraceEvalLab/TraceEvalLab.csproj" />
+  <Project Path="tests/TraceEvalLab.Specs/TraceEvalLab.Specs.csproj" />
+</Solution>

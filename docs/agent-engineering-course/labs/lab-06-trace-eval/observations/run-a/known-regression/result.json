@@ -1,0 +1,81 @@
+{
+  "schema_version": "lab06-eval-result-v1",
+  "candidate_id": "known-regression",
+  "dataset_id": "lab06-golden-corpus",
+  "dataset_revision": "r1",
+  "scorer_id": "lab06-deterministic-exact-scorer",
+  "scorer_version": "v1",
+  "candidate_schema_version": "lab06-candidate-v1",
+  "manifest_comparable": true,
+  "manifest_mismatches": [],
+  "run_verdict": "REGRESSION",
+  "total_case_count": 8,
+  "passed_case_count": 7,
+  "total_critical_count": 2,
+  "passed_critical_count": 1,
+  "aggregate_accuracy": 0.875,
+  "critical_accuracy": 0.5,
+  "aggregate_threshold_pass": true,
+  "critical_gate_pass": false,
+  "missing_case_count": 0,
+  "unknown_case_count": 0,
+  "overall_gate": "FAIL",
+  "cases": [
+    {
+      "case_id": "C01",
+      "criticality": "CRITICAL",
+      "candidate_present": true,
+      "pass": false,
+      "change_verdict": "REGRESSION"
+    },
+    {
+      "case_id": "C02",
+      "criticality": "CRITICAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    },
+    {
+      "case_id": "N01",
+      "criticality": "NORMAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    },
+    {
+      "case_id": "N02",
+      "criticality": "NORMAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    },
+    {
+      "case_id": "N03",
+      "criticality": "NORMAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    },
+    {
+      "case_id": "N04",
+      "criticality": "NORMAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    },
+    {
+      "case_id": "N05",
+      "criticality": "NORMAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    },
+    {
+      "case_id": "N06",
+      "criticality": "NORMAL",
+      "candidate_present": true,
+      "pass": true,
+      "change_verdict": "UNCHANGED"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "lab06-corpus-v1",
+  "fixture_version": "lab06-fixture-v1",
+  "dataset_id": "lab06-golden-corpus",
+  "dataset_revision": "r1",
+  "purpose": "Deterministic course fixture for trace classification regression mechanics",
+  "source_scope": "SYNTHETIC_COURSE_FIXTURE_ONLY",
+  "acceptance": {
+    "policy_id": "lab06-acceptance-policy",
+    "policy_version": "v1",
+    "decision": "ACCEPTED_FOR_FIXTURE",
+    "reviewer": "ARTICLE_22_RESEARCHER_DESIGN",
+    "decided_at": "2026-08-28",
+    "redaction": "NOT_APPLICABLE_SYNTHETIC",
+    "representativeness": "NOT_CLAIMED"
+  },
+  "split": "REGRESSION",
+  "cases": [
+    {
+      "case_id": "C01",
+      "criticality": "CRITICAL",
+      "source_trace_ref": "synthetic://lab06/C01",
+      "input": {"event": "tool.write.requested", "approval": "MISSING", "effect": "NOT_EXECUTED"},
+      "oracle": {"decision": "FAIL", "failure_layer": "POLICY", "reason_codes": ["APPROVAL_MISSING"]}
+    },
+    {
+      "case_id": "C02",
+      "criticality": "CRITICAL",
+      "source_trace_ref": "synthetic://lab06/C02",
+      "input": {"event": "state.commit.requested", "receipt": "MISSING", "state_revision": "rev17"},
+      "oracle": {"decision": "FAIL", "failure_layer": "STATE", "reason_codes": ["COMMIT_RECEIPT_MISSING"]}
+    },
+    {
+      "case_id": "N01",
+      "criticality": "NORMAL",
+      "source_trace_ref": "synthetic://lab06/N01",
+      "input": {"event": "model.response.failed", "provider_status": "TIMEOUT"},
+      "oracle": {"decision": "FAIL", "failure_layer": "PROVIDER", "reason_codes": ["PROVIDER_TIMEOUT"]}
+    },
+    {
+      "case_id": "N02",
+      "criticality": "NORMAL",
+      "source_trace_ref": "synthetic://lab06/N02",
+      "input": {"event": "tool.arguments.rejected", "schema_valid": false},
+      "oracle": {"decision": "FAIL", "failure_layer": "TOOL", "reason_codes": ["ARGUMENT_SCHEMA_INVALID"]}
+    },
+    {
+      "case_id": "N03",
+      "criticality": "NORMAL",
+      "source_trace_ref": "synthetic://lab06/N03",
+      "input": {"event": "budget.admission.denied", "remaining_steps": 0},
+      "oracle": {"decision": "FAIL", "failure_layer": "BUDGET", "reason_codes": ["STEP_BUDGET_EXHAUSTED"]}
+    },
+    {
+      "case_id": "N04",
+      "criticality": "NORMAL",
+      "source_trace_ref": "synthetic://lab06/N04",
+      "input": {"event": "run.completed", "terminal": "SUCCEEDED"},
+      "oracle": {"decision": "PASS", "failure_layer": "NONE", "reason_codes": []}
+    },
+    {
+      "case_id": "N05",
+      "criticality": "NORMAL",
+      "source_trace_ref": "synthetic://lab06/N05",
+      "input": {"event": "runtime.step.failed", "terminal": "DEADLINE_EXCEEDED"},
+      "oracle": {"decision": "FAIL", "failure_layer": "RUNTIME", "reason_codes": ["STEP_DEADLINE_EXCEEDED"]}
+    },
+    {
+      "case_id": "N06",
+      "criticality": "NORMAL",
+      "source_trace_ref": "synthetic://lab06/N06",
+      "input": {"event": "evidence.acceptance.blocked", "required_source": "ABSENT"},
+      "oracle": {"decision": "FAIL", "failure_layer": "EVIDENCE", "reason_codes": ["REQUIRED_EVIDENCE_ABSENT"]}
+    }
+  ]
+}

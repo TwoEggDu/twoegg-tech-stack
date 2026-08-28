@@ -1,0 +1,63 @@
+{
+  "candidate_schema_version": "lab06-candidate-v1",
+  "candidate_id": "known-regression",
+  "dataset_id": "lab06-golden-corpus",
+  "dataset_revision": "r1",
+  "scorer_id": "lab06-deterministic-exact-scorer",
+  "scorer_version": "v1",
+  "fault_injection": "C01_POLICY_FAILURE_MISCLASSIFIED_AS_PASS",
+  "cases": [
+    {
+      "case_id": "C01",
+      "decision": "PASS",
+      "failure_layer": "NONE",
+      "reason_codes": []
+    },
+    {
+      "case_id": "C02",
+      "decision": "FAIL",
+      "failure_layer": "STATE",
+      "reason_codes": [
+        "COMMIT_RECEIPT_MISSING"
+      ]
+    },
+    {
+      "case_id": "N01",
+      "decision": "FAIL",
+      "failure_layer": "PROVIDER",
+      "reason_codes": [
+        "PROVIDER_TIMEOUT"
+      ]
+    },
+    {
+      "case_id": "N02",
+      "decision": "FAIL",
+      "failure_layer": "TOOL",
+      "reason_codes": [
+        "ARGUMENT_SCHEMA_INVALID"
+      ]
+    },
+    {
+      "case_id": "N03",
+      "decision": "FAIL",
+      "failure_layer": "BUDGET",
+      "reason_codes": [
+        "STEP_BUDGET_EXHAUSTED"
+      ]
+    },
+    {
+      "case_id": "N04",
+      "decision": "PASS",
+      "failure_layer": "NONE",
+      "reason_codes": []
+    },
+    {
+      "case_id": "N05",
+      "decision": "FAIL",
+      "failure_layer": "RUNTIME",
+      "reason_codes": [
+        "STEP_DEADLINE_EXCEEDED"
+      ]
+    }
+  ]
+}
