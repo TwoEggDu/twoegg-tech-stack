@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 25 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`93 / 0 OPEN`；Hugo=`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
-- 当前生产对象：Article 26 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(25)=END_ARTICLE`；Article 23=`OPTIONAL / SKIPPED`；Article 28 forbidden且零资产
+- 当前里程碑：Article 26 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；Hugo=`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
+- 当前生产对象：Article 27 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(26)=END_ARTICLE`；Article 23=`OPTIONAL / SKIPPED`；Article 28 forbidden且零资产
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -79,7 +79,9 @@
 - 当前 Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
 - 当前 Article 25 状态：`PUBLISHED` candidate；Evidence=`4 CONFIRMED / 6 PARTIAL / 2 PROPOSAL / 0 BLOCKED`；Final=`PASS / 93 / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md`
 - 当前 Article 25 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
-- Factory Status：`READY / Article 26 / PRECHECK / NOT_STARTED / active NONE`；continuous range=`24—27`；Article 28 forbidden；每篇独立commit/push/remote verify
+- 当前 Article 26 状态：`PUBLISHED` candidate；Evidence=`0 CONFIRMED / 8 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md`
+- 当前 Article 26 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen revised Draft identity=`PASS`
+- Factory Status：`READY / Article 27 / PRECHECK / NOT_STARTED / active NONE`；continuous range=`24—27`；Article 28 forbidden；每篇独立commit/push/remote verify
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "26"
+current_article: "27"
 current_gate: PRECHECK
-last_published_article: "25"
+last_published_article: "26"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "25"
+  article: "26"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/subagent-trace.md#wr-a25-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/26-harness-minimum-capability-model/subagent-trace.md#wr-a26-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -30,20 +30,20 @@ last_worker_result:
   next_allowed_gate: GIT_DIFF_VERIFY
   blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 0
+review_cycle: 1
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "25"
+  article: "26"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 752a87de878830da1a7724d87d5f648d45ff3abb
-next_action: START_ARTICLE_26_PRECHECK_AFTER_END_ARTICLE_25
+last_successful_commit: 07000ceb94dd244e5f312d7787a6c83795c47f58
+next_action: START_ARTICLE_27_PRECHECK_AFTER_END_ARTICLE_26
 continuous_run:
   enabled: true
   start_article: "24"
@@ -64,8 +64,28 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "28"
-last_updated: "2026-08-29T23:36:40+08:00"
+last_updated: "2026-08-30T00:56:00+08:00"
 ```
+
+> 2026-08-30 Article 26已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`，Draft exact block=`56217 bytes / 704 lines / SHA-256 B3CF1FE5...6C0D00`，fresh Hugo=`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 27 / PRECHECK / NOT_STARTED / active NONE`；启动前必须解析`ResolveArticleCompletion(26)=END_ARTICLE`，Article28仍forbidden。
+
+> 2026-08-30 Article 26 independent Final Gate通过Master复核：`PASS / 0 OPEN / ELIGIBLE_FOR_PUBLISH_GATE`；revised Draft identity、finding closure、11/11、exact evidence posture、source/contracts/BuildPilot/future boundaries全部通过。当前进入fresh Publisher `PUBLISH`。
+
+> 2026-08-30 Article 26 fresh Review Recheck Cycle 1通过Master复核：`A26-R0-F01/F02 CLOSED / 0 OPEN`，revised Draft identity=`56217 bytes / 704 lines / SHA-256 B3CF1FE5...6C0D00`，11/11与Evidence/BuildPilot/future boundaries保持不变。当前进入独立`FINAL_GATE`。
+
+> 2026-08-30 Article 26 Revision Cycle 1通过Master复核：`A26-R0-F01/F02 READY_FOR_RECHECK`；只修改Draft与Review，H合同字段/Intent Confirmation归属及既有来源边界已补齐。Revised Draft=`56217 bytes / 704 lines / SHA-256 B3CF1FE5...6C0D00`，11/11与Evidence/BuildPilot/future boundaries不变；当前进入fresh `REVIEW_RECHECK`。
+
+> 2026-08-30 Article 26 fresh Review Cycle 0完成：Draft identity、11/11与Evidence/BuildPilot/future boundaries保持通过，但登记`A26-R0-F01 MAJOR`（BuildPilot-core H合同缺Problem/Dependencies/Interfaces且Intent Confirmation分类不一致）和`A26-R0-F02 MINOR`（缺公开参考/证据边界）。两项均可用既有Evidence最小修复，无新Research/Lab，当前自动进入`REVISION`。
+
+> 2026-08-30 Article 26 Author Draft通过Master复核：`54603 bytes / 695 lines / SHA-256 831C9259...BAC272`，无frontmatter，11/11 traceability、证据上限、最小核心/条件核心/延后分类、BuildPilot与Article27边界均保留。当前进入fresh Reviewer `REVIEW`。
+
+> 2026-08-30 Article 26 Outline通过Master复核：direct identity=`78766 bytes / 988 PowerShell lines`，11/11 traceability、十类候选能力分类、A-F capability contracts、frontmatter plan、BuildPilot与future boundaries完整。worker envelope note中的`841 lines`与Master direct count不一致，已按直接证据校正，不影响Gate；当前同一Author进入`AUTHOR_DRAFT`。
+
+> 2026-08-30 Article 26 Research retry 1与Master Evidence Gate通过：`11 Claims / 11 Cards / 0 CONFIRMED / 8 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；十类候选能力未被一律Mandatory，Required Lab=`NONE`、experiment=`0`、runtime observation=`ABSENT`，BuildPilot与Article27边界保留。当前进入fresh Author `OUTLINE`。
+
+> 2026-08-29 Article 26 Researcher首次dispatch因其context window耗尽而终止，未返回envelope，且`research.md/evidence.md`保持workspace skeleton、allowed-write delta=`ZERO`。Master未制造result projection；当前由新的fresh Researcher在同一`RESEARCH` Gate执行retry 1。
+
+> 2026-08-29 Article 26 fresh PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT通过：Article25 completion commit=`07000ceb94dd244e5f312d7787a6c83795c47f58`且local/origin/live equality=`PASS`，tree/index clean，Article26 completion subject count=`0`，Article26—28 production assets在启动前均为`ZERO`。当前进入fresh Researcher `RESEARCH`；Article27未启动，Article28 forbidden。
 
 > 2026-08-29 Article 25已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`93 / 0 OPEN`，Draft exact block identity=`39916 bytes / 561 lines / SHA-256 9239D92A...BAAE4`，fresh Hugo=`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 26 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须由Git history与remote refs解析`ResolveArticleCompletion(25)=END_ARTICLE`；completion SHA、push与remote result未预写，Article28仍forbidden。
 

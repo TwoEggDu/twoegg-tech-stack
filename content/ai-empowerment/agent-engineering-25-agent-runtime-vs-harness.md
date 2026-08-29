@@ -18,6 +18,8 @@ weight: 3260
 
 > **上一篇**：[为什么最终需要 Harness：横切能力由谁承载]({{< relref "ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md" >}})
 
+> **下一篇**：[Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery]({{< relref "ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # Agent Runtime vs Harness：执行内核与工程控制面
@@ -583,5 +585,7 @@ Business Agent / Workflow 要会判断：业务目标、领域步骤、建议结
 下一篇，我们就可以在这个边界上继续收缩问题：一个最小 Harness，到底应该先做哪些能力，才能在不膨胀成平台怪兽的前提下，真正撑住 Agent Engineering 的第一条生产线。
 
 > **上一篇**：[为什么最终需要 Harness：横切能力由谁承载]({{< relref "ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md" >}})
+
+> **下一篇**：[Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery]({{< relref "ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md" >}})
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
