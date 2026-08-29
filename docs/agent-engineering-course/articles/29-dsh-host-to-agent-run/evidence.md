@@ -1,0 +1,608 @@
+# Article 29 Evidence
+
+Status: `EVIDENCE MERGED / EVIDENCE_GATE CANDIDATE PASS`
+
+## Evidence posture
+
+- Pinned object：`dsh-v0.1.2-alpha.1 @ cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Claim count：`15`
+- Evidence Card count：`15`
+- Claim Status：`12 CONFIRMED / 0 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
+- Static confirmation：selected CLI/profile -> Loader -> headless -> Agent/Session/Turn/Step -> terminal path is `SOURCE_CONFIRMED`; Web/Control side branch is source-only
+- Fixture runtime：direct product source entry `exit 0`; decoded Session log `36` rows; `turn/end(completed)`; the same stream records `tool/result UNKNOWN_TOOL / isError:true`, so tool success is expressly disconfirmed
+- Owner-test counter-evidence：correct targeted owner test `exit 1`; Windows composition disables `tool-bash`, enables `tool-pwsh`, while deterministic mock requests `bash`
+- Real-provider boundary：keyless product composition `exit 1 / MISSING_CREDENTIAL`; no real provider request, model response, token or cost claim
+- Inherited environment fact：Article 28 full suite `FAIL`; its structured/sanitized record ceiling is not copied as Article 29 dynamic evidence
+- Evidence Gate：`ELIGIBLE FOR EVIDENCE_GATE REVIEW`
+- Next allowed Gate：`EVIDENCE_GATE`
+
+### Evidence 29-E01｜Frozen source identity
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C01`
+- Claim: `Article 29 reads the official pinned revision cd5ef8148158c3a752a658978873241fdf8e2bbc from a clean external fixture.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `Git repository metadata`
+- Source: `official DSH external fixture`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc / dsh-v0.1.2-alpha.1`
+- File: `.git refs and commit object`
+- Symbol: `N/A`
+- Call Path: `N/A`
+- Experiment: `read-only identity check`
+- Fixture: `C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814`
+- Trace: `research.md §1; Article 28 baseline-manifest.md §1`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact commit only`
+- Reproduction: `git remote get-url origin; git rev-parse HEAD; git rev-list -n 1 dsh-v0.1.2-alpha.1; git status --porcelain=v1 --untracked-files=all`
+- Observation: `origin is official; HEAD and local tag target equal the pinned full SHA; status emits no rows.`
+- Counter-evidence Searched: `wrong remote, abbreviated SHA only, tag drift, tracked or untracked fixture changes`
+- Interpretation: `The source object for Article 29 is fixed and currently clean.`
+- Proves: `snapshot identity at research time`
+- Does Not Prove: `startup path, activation, Agent creation, Turn, model call, build/test/run success`
+- Limitations: `Source Investigator and Lab must recheck before their own work.`
+- Course Usage: `version banner and every Article 29 source card`
+- BuildPilot Implication: `DEFER — revision identity does not choose a runtime architecture`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `Git metadata`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `DEFER`
+- Decision Rationale: `先冻结事实对象，再讨论架构映射。`
+
+### Evidence 29-E02｜Supported application startup boundary
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C02`
+- Claim: `The pinned project routes supported Node applications through the dsh CLI with a named profile.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `OFFICIAL_DOC`
+- Source Type: `pinned official architecture + source entry seed`
+- Source: `docs/architecture.md §Application launch; apps/cli package/source`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `docs/architecture.md; apps/cli/package.json; apps/cli/src/bin.ts; apps/cli/src/args.ts; apps/cli/src/profile-boot.ts`
+- Symbol: `bin.dsh; parseDshArgs; runProfile`
+- Call Path: `bin.ts argv -> parseDshArgs -> resolveBoot -> runProfile -> composeProfile/prepareProfile -> load -> boot`
+- Experiment: `direct product headless profile observation corroborates the selected branch`
+- Fixture: `pinned source checkout`
+- Trace: `repository-map.md 29-S01; call-path.md steps 1-9; experiments/host-agent-run-trace.md Probe D`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `read named official section and entry files; Source Investigator follows the selected branch`
+- Observation: `Official architecture names dsh profile launches; bin.ts dispatches profile invocations toward runProfile.`
+- Counter-evidence Searched: `package-local bins, demos, direct ctx.plugin harnesses; official docs classify them separately from supported application launchers`
+- Interpretation: `Official contract and exact source dispatch agree for the selected headless branch.`
+- Proves: `supported startup boundary and source dispatch into named profile composition`
+- Does Not Prove: `that every package-local entry is unsupported or that downstream tools/providers succeed`
+- Limitations: `selected branch only`
+- Course Usage: `opening boundary of the repository map`
+- BuildPilot Implication: `SIMPLIFY — retain one explicit supported entry concept; implementation deferred`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `apps/cli/src/bin.ts:top-level dispatch; args.ts:parseDshArgs; profile-boot.ts:runProfile`
+- Run Entry: `dsh --profile headless "<bounded task>"`
+- Runtime Trace: `Probe D direct product entry exit 0; runtime meaning is owned by 29-E10`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `单一入口边界值得保留，但不照搬未验证的全部 profile 机制。`
+
+### Evidence 29-E03｜Repository Map edge taxonomy
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C03`
+- Claim: `Article 29 should separate package, config, injection, factory, call, event and presentation edges.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course research method`
+- Source: `research.md §2, §5; Article 28 Evidence-first ladder`
+- Repository: `TechStackShow`
+- Commit: `current Article 29 transaction base`
+- File: `research.md`
+- Symbol: `Merged Repository Map`
+- Call Path: `N/A`
+- Experiment: `Part VI audit evaluates whether the map prevents edge conflation`
+- Fixture: `Article 29 source package`
+- Trace: `repository-map.md edge taxonomy and call-path.md exact edges`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `Article 29 teaching method`
+- Reproduction: `classify every map edge before drawing it`
+- Observation: `Pinned source exposes multiple relation types that package layout alone cannot distinguish.`
+- Counter-evidence Searched: `directory tree, dependency graph and architecture prose as single-map substitutes; each omits runtime ownership or activation`
+- Interpretation: `A typed-edge map is needed before a lifecycle narrative can be trusted.`
+- Proves: `N/A — course proposal`
+- Does Not Prove: `that the future source map is correct`
+- Limitations: `must be checked against every exact caller/callee`
+- Course Usage: `abstract model and figure legend`
+- BuildPilot Implication: `ADOPT — explicit owner and edge type improve auditability`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course proposal`
+- Course Decision: `ADOPT`
+- Decision Rationale: `避免把结构图误读为运行时序图。`
+
+### Evidence 29-E04｜Headless Profile and Bundle seeds
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C04`
+- Claim: `The shipped headless profile names dsh-base and dsh-headless as ordered bundle inputs and uses startup patch reload.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `profile source + bundle manifests`
+- Source: `pinned app-boot profile and bundle packages`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/boot/app-boot/src/profile.ts; packages/bundle/base/package.json; packages/bundle/headless/package.json`
+- Symbol: `PROFILE_TEMPLATES.headless; dsh.bundle.patch`
+- Call Path: `PROFILE_TEMPLATES.headless -> composeProfile -> prepareProfile -> dsh-base + dsh-headless patches -> load -> boot -> Loader`
+- Experiment: `Probe D uses a fresh isolated product profile with the deterministic overlay`
+- Fixture: `pinned source checkout`
+- Trace: `repository-map.md 29-S02/29-S03; call-path.md steps 10-18; Probe D`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `read profile template and bundle manifests; follow profile loader in Source Map`
+- Observation: `The template lists base then headless and marks patchReload startup; manifests point at cordis.patch.yml.`
+- Counter-evidence Searched: `profile package directory; no packages/profile tree exists; profile definitions are materialized under Harness home from app-boot templates`
+- Interpretation: `Source closes fresh-template composition and Loader handoff; Probe D corroborates one isolated runtime.`
+- Proves: `fresh headless profile composition inputs and selected traversal`
+- Does Not Prove: `that an existing user-modified materialized profile matches the template or every row activates`
+- Limitations: `fresh isolated profile; mutation/drift is outside this card`
+- Course Usage: `composition plane`
+- BuildPilot Implication: `DEFER — layered config complexity is not yet justified for BuildPilot`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `packages/boot/app-boot/src/profile.ts:PROFILE_TEMPLATES`
+- Run Entry: `dsh --profile headless --dump-config; bounded run later`
+- Runtime Trace: `Probe D direct product source entry; downstream outcome owned by 29-E10/29-E11`
+- DSH Verification: `SOURCE_CONFIRMED; one fresh-profile runtime corroboration`
+- Course Decision: `DEFER`
+- Decision Rationale: `先验证组合与冲突，再决定是否吸收多层 Profile。`
+
+### Evidence 29-E05｜Shared base composition rows
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C05`
+- Claim: `The base bundle declares shared rows for Session, Agent, LLM, Tools, System Prompt, Agent Loop and persistence-related capabilities.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `bundle patch source`
+- Source: `packages/bundle/base/cordis.patch.yml`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/bundle/base/cordis.patch.yml`
+- Symbol: `rows llm, session, agent, tools, system-prompt, agent-loop, session-persistence-jsonl and providers`
+- Call Path: `base bundle patch -> composeProfile allPatches -> prepared include -> Loader mountRootInclude`
+- Experiment: `not required for the narrowed declaration-only claim`
+- Fixture: `pinned source checkout`
+- Trace: `repository-map.md 29-S03/29-S04; call-path.md steps 10-18`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `enumerate only central rows and follow their owning package exports`
+- Observation: `The named core rows are declared in the base patch.`
+- Counter-evidence Searched: `row order as lifecycle order; lazy/injected rows can settle on service conditions, so list position alone is insufficient`
+- Interpretation: `The base patch is a composition input, not a runtime sequence transcript.`
+- Proves: `declared shared-core rows and their composition input path`
+- Does Not Prove: `activation, readiness, ownership, request order or every row's necessity for one run`
+- Limitations: `representative row map only; full bundle inventory is out of scope`
+- Course Usage: `core package relationship map`
+- BuildPilot Implication: `SIMPLIFY — keep capability ownership explicit; do not copy the whole roster`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `packages/bundle/base/cordis.patch.yml`
+- Run Entry: `headless profile composition`
+- Runtime Trace: `N/A — this card deliberately makes no universal activation claim`
+- DSH Verification: `SOURCE_CONFIRMED for configured rows only`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `总图保留 owner，不复制全量 plugin tree。`
+
+### Evidence 29-E06｜Plugin Core and Loader boundary
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C06`
+- Claim: `App boot creates Cordis Context/Loader, mounts the root include, and awaits Loader settlement before the headless runner proceeds.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `vendored source + app boot source`
+- Source: `vendor/README.md; vendor/cordis; vendor/loader; app-boot`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `vendor/cordis/src/context.ts; vendor/cordis/src/fiber.ts; vendor/loader/src/index.ts; packages/boot/app-boot/src/index.ts`
+- Symbol: `Context/Fiber owners; Loader; boot; mountRootInclude; assertEntriesActivated`
+- Call Path: `boot -> new Context -> ctx.plugin(Loader) -> mountRootInclude -> loader create/start/await -> assertEntriesActivated -> headless runner awaits loader`
+- Experiment: `Probe D exercises this composed product route`
+- Fixture: `pinned vendored source; provenance must be recorded by Source Investigator`
+- Trace: `repository-map.md 29-S04/29-S05; call-path.md steps 14-24; Probe D`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `vendored Cordis/Loader at pinned DSH revision`
+- Reproduction: `read vendor manifest/provenance and follow app-boot calls into vendored owners`
+- Observation: `The caller/callee bridge from app boot through Loader settlement is closed in pinned source.`
+- Counter-evidence Searched: `docs slogan "everything is a plugin" and package names; neither substitutes for mount/effect source`
+- Interpretation: `Plugin Core is the verified assembly bridge for the selected route.`
+- Proves: `Context/Loader creation, root include mount and settlement bridge`
+- Does Not Prove: `complete disposal order, HMR behavior or every configured row's activation`
+- Limitations: `full lifecycle belongs to Article 30; Article 29 needs only the boot-to-run bridge`
+- Course Usage: `plugin/service plane`
+- BuildPilot Implication: `DEFER — plugin kernel adoption requires Article 30 lifecycle evidence`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `vendor/cordis/src/context.ts; vendor/cordis/src/fiber.ts; vendor/loader/src/index.ts; app-boot/index.ts`
+- Run Entry: `dsh --profile headless`
+- Runtime Trace: `Probe D product profile reaches downstream Session events`
+- DSH Verification: `SOURCE_CONFIRMED; bounded route corroborated`
+- Course Decision: `DEFER`
+- Decision Rationale: `没有 lifecycle trace 前不吸收 Everything-is-a-plugin。`
+
+### Evidence 29-E07｜Agent registry and default driver owners
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C07`
+- Claim: `AgentRegistry owns ctx.agents, AgentLoop registers the default AgentFactory, and agents.create dispatches to ReactLoopAgent.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `core source seed`
+- Source: `packages/core/agent; packages/core/agent-loop`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/agent/src/index.ts; packages/core/agent/src/types.ts; packages/core/agent-loop/src/index.ts; packages/core/agent-loop/src/agent.ts`
+- Symbol: `AgentRegistry; AgentFactory; AgentLoop; ReactLoopAgent; setFactory; create; createAgent; followup; whenIdle`
+- Call Path: `AgentLoop apply -> agents.setFactory -> headless agents.create -> AgentRegistry.requireFactory -> AgentLoop.createAgent -> SessionStore.prepare -> new ReactLoopAgent`
+- Experiment: `Probe D direct product run`
+- Fixture: `pinned source checkout`
+- Trace: `repository-map.md 29-S06/29-S07; call-path.md steps 25-33; Probe D session/agent events`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `follow exact constructor/registry/factory calls and tests; do not infer from package dependencies`
+- Observation: `The named types and registration/call seeds exist in pinned source.`
+- Counter-evidence Searched: `same-name Agent class, direct AgentLoop.create in tests, configured-agent startup path; these may be alternate callers and must be separated from product headless consumer`
+- Interpretation: `The selected product path closes the interface/default-driver seam.`
+- Proves: `registry ownership, default factory registration and ReactLoopAgent construction path`
+- Does Not Prove: `custom factory behavior or universal publication timing`
+- Limitations: `pinned default path only`
+- Course Usage: `runtime ownership plane`
+- BuildPilot Implication: `SIMPLIFY — explicit registry/factory interface is a candidate; concrete loop is deferred`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `core/agent:index.ts:AgentRegistry; core/agent-loop:index.ts:AgentLoop; agent.ts:ReactLoopAgent`
+- Run Entry: `headless runner's agents.create candidate`
+- Runtime Trace: `Probe D includes session and agent publication before Turn events`
+- DSH Verification: `SOURCE_CONFIRMED + TEST_FIXTURE_RUNTIME_CORROBORATED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `保留接口和实现分离，暂不照搬复杂生命周期。`
+
+### Evidence 29-E08｜Session durable observation owner and observed stream
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C08`
+- Claim: `SessionStore and Session own the run event plane; one direct product fixture persisted Turn/Step/tool events before terminal projection.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `merged pinned source + durable runtime observation`
+- Source: `packages/core/session; docs/architecture.md §Session log`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/session/src/index.ts; packages/core/session/src/types.ts; packages/bundle/headless/src/index.ts`
+- Symbol: `SessionStore; Session; SessionEventMap; append; flush; headless summarize`
+- Call Path: `SessionStore.prepare -> Session publication -> Session.append/live event -> Agent turn/step events -> sessions.flush -> summarize(session.events)`
+- Experiment: `Probe D direct product profile, isolated home/workdir, telemetry disabled, no external provider`
+- Fixture: `product headless deterministic scenario`
+- Trace: `experiments/host-agent-run-trace.md Probe D; one JSONL.zstd log, 8 frames, decoded 74578 bytes, 36 rows; decoded SHA-256 D835C590105F379DEBDE7A634CAB19F96CF05BE44A9CF9092D4243F48B0ECBDF`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `trace session preparation, event append/broadcast, flush and headless summary`
+- Observation: `The persisted stream contains session/agent publication, one turn, two steps, tool/call, tool/result UNKNOWN_TOOL, and turn/end(completed); stdout projects the same tool error.`
+- Counter-evidence Searched: `stdout-only success, UI transcript, agent/status event; none alone establishes durable Session facts`
+- Interpretation: `The durable stream is authoritative for this run; terminal text is a projection, and completed Turn does not erase the tool error.`
+- Proves: `source ownership plus one persisted fixture event sequence and projection cross-check`
+- Does Not Prove: `replay, resume, fork, every persistence backend, tool success or real-provider success`
+- Limitations: `one deterministic fixture; later Session semantics belong to Article 34`
+- Course Usage: `durable observation plane`
+- BuildPilot Implication: `ADOPT — separate authoritative events from presentation, subject to later evidence`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `core/session:index.ts:SessionStore,Session; types.ts:SessionEventMap; headless/index.ts:summarize`
+- Run Entry: `product headless deterministic fixture`
+- Runtime Trace: `Probe D: exit 0; 36 rows; turn/end reason completed; tool/result isError true, code UNKNOWN_TOOL`
+- DSH Verification: `SOURCE_CONFIRMED + TEST_FIXTURE_RUNTIME_CONFIRMED_WITH_COUNTEREVIDENCE`
+- Course Decision: `ADOPT`
+- Decision Rationale: `权威记录与输出投影分离是总图的关键边界。`
+
+### Evidence 29-E09｜Headless direct-runner boundary
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C09`
+- Claim: `The headless application declares no Host/HTTP/browser layer and inserts startup plus direct-runner rows over dsh-base.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `bundle patch and package source`
+- Source: `packages/bundle/headless`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/bundle/headless/cordis.patch.yml; src/startup.ts; src/index.ts; package.json`
+- Symbol: `headless-startup; HEADLESS_STARTUP_SERVICE; apply; headless-runner; run; summarize`
+- Call Path: `headless patch -> headless-startup provider -> injected headless-runner apply/run -> await loader -> agents.create/followup/whenIdle -> flush/summarize/appExit`
+- Experiment: `Probe D direct product headless profile`
+- Fixture: `pinned source + repo-owned deterministic scenario`
+- Trace: `repository-map.md 29-S05/29-S10; call-path.md steps 19-24 and 49-54; Probe D`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `follow patch row injection and package exports through Loader activation`
+- Observation: `Patch comments and package description say no Host/HTTP/browser; exact runner source calls core services.`
+- Counter-evidence Searched: `webserver, web-runtime, browser or api-session-controller rows in headless patch; none are inserted there; shared base still requires separate inventory`
+- Interpretation: `Headless is a closed direct-core application path and a counterexample to using Web Host as the universal root.`
+- Proves: `selected composition, Loader-to-runner source path and one bounded product traversal`
+- Does Not Prove: `successful tool execution, real provider access or universal headless semantics`
+- Limitations: `pinned profile only`
+- Course Usage: `concrete main path and terminology correction`
+- BuildPilot Implication: `ADOPT — CLI-first/direct-run shape is a candidate; concrete dependencies deferred`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `bundle/headless/cordis.patch.yml; src/startup.ts; src/index.ts`
+- Run Entry: `dsh --profile headless "<bounded task>"`
+- Runtime Trace: `Probe D exit 0, but its tool/result is UNKNOWN_TOOL; see 29-E10/29-E11`
+- DSH Verification: `SOURCE_CONFIRMED + TEST_FIXTURE_RUNTIME_CORROBORATED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `受控 CLI direct-run 比默认多 Host 更适合后续最小方案比较。`
+
+### Evidence 29-E10｜Closed Host/profile to Agent Run skeleton
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C10`
+- Claim: `The pinned source closes the supported headless profile path through Agent/Turn/Step/Session, and one direct product fixture traverses that skeleton.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `merged exact source path + direct product-profile observation`
+- Source: `CLI, app-boot, profile, headless, core/agent, core/agent-loop, core/session`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `apps/cli/src/bin.ts; args.ts; profile-boot.ts; boot/app-boot/src/index.ts; boot/app-boot/src/profile.ts; bundle/headless/*; core/agent/src/index.ts; core/agent-loop/src/index.ts; core/agent-loop/src/agent.ts; core/session/src/index.ts`
+- Symbol: `parseDshArgs; runProfile; boot; PROFILE_TEMPLATES; Loader; apply/run; AgentRegistry.create; AgentLoop.createAgent; ReactLoopAgent.followup/turn/step; SessionStore.flush; summarize`
+- Call Path: `CLI -> profile compose/prepare/load -> Cordis/Loader mount/settle -> headless startup/runner -> agents.create -> AgentRegistry -> AgentLoop -> ReactLoopAgent -> Inbox -> turn/step -> Session.append/flush -> summarize -> appExit`
+- Experiment: `Probe D direct product source entry with deterministic cli-mock overlay`
+- Fixture: `clean pinned source; isolated cwd/home/agents; telemetry disabled; secret-like env removed; no external provider`
+- Trace: `repository-map.md 29-S01..S12; call-path.md steps 1..54; Probe D compressed SHA-256 0F746D1BCF173B72352AD372DEFE31A4775DB3C5B0EBA1D487BC3D106DF38E3E, decoded SHA-256 D835C590105F379DEBDE7A634CAB19F96CF05BE44A9CF9092D4243F48B0ECBDF`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `Source Investigator reads every caller/callee and records branches, injection and event edges; no directory inference`
+- Observation: `Process exit 0 in 3146 ms; persisted log has 36 rows, one Turn and two Steps, ending turn/end(completed). Row 23 is tool/result isError:true with UNKNOWN_TOOL for bash.`
+- Counter-evidence Searched: `alternate direct AgentLoop tests, Web controllers, configured startup agents, resume paths and no-factory errors; selected product path must distinguish them`
+- Interpretation: `The central skeleton is statically closed and dynamically bounded; Turn settlement and tool success are separate facts.`
+- Proves: `selected source call path and one fixture-scoped product traversal through terminal Session observation`
+- Does Not Prove: `tool success, real provider/model response, network behavior, token usage, cost, or all runtime branches`
+- Limitations: `deterministic mock fixture; one Windows run`
+- Course Usage: `main source trace after Evidence Merge`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `cross-package list above`
+- Run Entry: `dsh --profile headless`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED_WITH_COUNTEREVIDENCE: exit 0 / 36 rows / turn-end completed / tool-result UNKNOWN_TOOL`
+- DSH Verification: `SOURCE_CONFIRMED + TEST_FIXTURE_RUNTIME_CONFIRMED_WITH_COUNTEREVIDENCE`
+- Course Decision: `DEFER`
+- Decision Rationale: `必须先让完整 source path 经独立调查闭合。`
+
+### Evidence 29-E11｜Exact owner test and Windows tool counter-evidence
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C11`
+- Claim: `The exact owner expected-success test fails on Windows because composition enables pwsh instead of bash while the deterministic mock requests bash.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `exact owner test execution + pinned source counter-evidence`
+- Source: `headless.expected.e2e.ts; base cordis.patch.yml; cli-mock deterministic response`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `apps/cli/tests/profiles/headless/tests/headless.expected.e2e.ts; packages/bundle/base/cordis.patch.yml; deterministic cli-mock fixture`
+- Symbol: `runs one task through the product headless profile command; tool-bash; tool-pwsh; mock bash tool call`
+- Call Path: `targeted Vitest -> product source bin -> Windows base patch selects pwsh/not bash -> cli-mock requests bash -> tool/result UNKNOWN_TOOL -> assertion failure`
+- Experiment: `corrected exact owner targeted test after rejecting a pnpm-wrapper command that passed literal -- to Vitest`
+- Fixture: `repo-owned deterministic mock; Windows NT 10.0.19045 x64; Node v24.18.1; pnpm 11.7.0`
+- Trace: `experiments/host-agent-run-trace.md Probes B and C; Probe C is the authoritative targeted result`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision + recorded Windows environment`
+- Reproduction: `node node_modules/vitest/vitest.mjs run --config vitest.expected.config.ts apps/cli/tests/profiles/headless/tests/headless.expected.e2e.ts -t "runs one task through the product headless profile command"`
+- Observation: `exit 1; one failed file; one failed test and eleven skipped; target 4189 ms; observed ToolNotFoundError code UNKNOWN_TOOL for bash.`
+- Counter-evidence Searched: `sandbox denial and missing host permission; rejected because the composed tool name is absent before execution. Source shows Windows tool-bash disabled and tool-pwsh enabled, while the mock requests bash.`
+- Interpretation: `The owner fixture does not prove a successful tool round trip on this Windows revision; its failure is deterministic composition/test mismatch.`
+- Proves: `exact owner-test failure and the source-confirmed Windows tool mismatch`
+- Does Not Prove: `non-Windows behavior, pwsh execution, sandbox execution, real-provider behavior, token or cost`
+- Limitations: `platform-specific counterexample; the earlier literal--- wrapper run is retained only as command-routing failure`
+- Course Usage: `bounded runtime inset or raw failure`
+- BuildPilot Implication: `ADOPT — deterministic contract fixtures are useful; DEFER provider claims`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `headless.expected.e2e.ts; base/cordis.patch.yml; cli-mock fixture`
+- Run Entry: `corrected exact targeted Vitest command above`
+- Runtime Trace: `exit 1 / UNKNOWN_TOOL; direct Probe D independently persists the same tool error`
+- DSH Verification: `RUNTIME_CONFIRMED for owner-test failure; successful tool round trip DISCONFIRMED on Windows`
+- Course Decision: `ADOPT`
+- Decision Rationale: `可控 fixture 适合验证 wiring，但不能冒充真实 provider。`
+
+### Evidence 29-E12｜Article 29 keyless real-provider runtime gap
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C12`
+- Claim: `Article 29's keyless real-provider composition stops at MISSING_CREDENTIAL and provides no real provider/model/token/cost evidence.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `RUNTIME_OBSERVATION`
+- Source Type: `Article 29 direct negative runtime observation`
+- Source: `experiments/host-agent-run-trace.md Probe E`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `product source entry plus persisted Article 29 Session log`
+- Symbol: `MISSING_CREDENTIAL; turn/end(error)`
+- Call Path: `product source bin -> headless profile without mock overlay -> turn/start -> step/start -> request context -> credential resolution -> step/end -> turn/end(error)`
+- Experiment: `Probe E keyless real-provider negative`
+- Fixture: `isolated DSH_HOME; telemetry disabled; read-only permission; secret-like env names removed`
+- Trace: `one Session log, 17 rows; process exit 1 in 3105 ms; decoded SHA-256 EE40D90EAEB7C32D759AA596FE6ED88EBD4CDFB4837E79A7EFA4434C06517B5D; sanitized stderr reports deepseek-official / DEEPSEEK_API_KEY MISSING_CREDENTIAL`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision + Article 29 recorded Windows environment`
+- Reproduction: `product source entry, isolated cwd/home, read-only, telemetry disabled, mock overlay absent, secret-like env names removed`
+- Observation: `exit 1; stdout empty; terminal Session event is turn/end(error MISSING_CREDENTIAL); no provider request or model result was observed.`
+- Counter-evidence Searched: `fixture Probe D completed with cli-mock; it is a separate evidence class and cannot satisfy real-provider confirmation`
+- Interpretation: `This is a fail-closed credential boundary, not provider runtime success.`
+- Proves: `Article 29 local keyless negative and absence of a completed provider result in that run`
+- Does Not Prove: `real provider request, model response, token usage, cost, latency, or authenticated behavior`
+- Limitations: `negative keyless run; values were sanitized and no credential was supplied`
+- Course Usage: `explicit runtime-gap box`
+- BuildPilot Implication: `ADOPT — missing credentials fail closed; exact implementation deferred`
+- Owner: `Article 29 Researcher / Article 29 Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source path in call-path.md; runtime record in experiments/host-agent-run-trace.md Probe E`
+- Run Entry: `product source bin --profile headless, no mock overlay`
+- Runtime Trace: `exit 1 / 17 rows / turn-end error MISSING_CREDENTIAL`
+- DSH Verification: `RUNTIME_CONFIRMED for credential failure only; REAL_PROVIDER_RUNTIME_NOT_CONFIRMED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `失败边界需要保留，但不得扩张成运行链成功。`
+
+### Evidence 29-E13｜Web / Control / Headless composition boundary
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C13`
+- Claim: `Web Host/Control/Client packages and the headless direct runner are different application compositions over shared core candidates.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `bundle manifests/patches + package source seeds`
+- Source: `packages/bundle/web-app; packages/bundle/headless; packages/host; packages/api/session-controller; packages/client/connection`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `bundle/web-app/cordis.patch.yml; bundle/web-app/package.json; bundle/headless/cordis.patch.yml; host/webserver; api/session-controller; client/connection; apps/web/src/main.ts`
+- Symbol: `webserver row; web-runtime row; session-controller row; connection row; AppWebEntry; headless-runner`
+- Call Path: `web profile -> base + web rows -> webserver/session-controller/connection -> AppWebEntry; headless profile -> base + headless startup/direct runner`
+- Experiment: `Article 29 only needs source side-by-side; no Web server run required`
+- Fixture: `pinned source checkout`
+- Trace: `repository-map.md Web/Control side branch; call-path.md selected headless exclusions; no Web runtime run`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `compare PROFILE_TEMPLATES and both bundle patches, then trace only ownership boundaries`
+- Observation: `Web patch declares webserver/session-controller/connection/browser rows; headless patch declares no such rows and names a direct runner.`
+- Counter-evidence Searched: `shared apps/cli dependencies and shared base rows; package availability does not make a row part of every profile`
+- Interpretation: `The total architecture needs two application branches, not one universal Host chain.`
+- Proves: `source-confirmed different application compositions and exact side-branch owners`
+- Does Not Prove: `Web runtime behavior, browser transport correctness or runtime equivalence`
+- Limitations: `Web/Control branch is source-only; Article 37 owns broader mapping`
+- Course Usage: `side branch in repository map`
+- BuildPilot Implication: `DEFER — multi-host architecture is not required by current BuildPilot scope`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `bundle web/headless patches and listed packages`
+- Run Entry: `dsh --profile web; dsh --profile headless`
+- Runtime Trace: `N/A — Web server/browser execution outside Article 29 authorization and scope`
+- DSH Verification: `SOURCE_CONFIRMED for composition boundary; Web runtime NOT_RUN`
+- Course Decision: `DEFER`
+- Decision Rationale: `先证明共享 core 与 Host 差异，再决定产品形态。`
+
+### Evidence 29-E14｜Article 30—37 topic routing
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C14`
+- Claim: `The map can route Articles 30–37 to owning evidence questions without proving them in Article 29.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `canonical course routing`
+- Source: `Part VI prompt; Article 28 routing; research.md §8`
+- Repository: `TechStackShow`
+- Commit: `current Article 29 transaction base`
+- File: `research.md`
+- Symbol: `Article 30—37 routing`
+- Call Path: `N/A`
+- Experiment: `Part VI audit`
+- Fixture: `Articles 30—37 future evidence packages`
+- Trace: `PENDING future articles`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `Part VI at frozen DSH revision`
+- Reproduction: `each later article rechecks identity and builds its own cards/traces`
+- Observation: `Exact owner seeds exist for each route, but their specialized behavior is outside Article 29.`
+- Counter-evidence Searched: `using Article 29 map as proof of lifecycle, policy, replay or recovery; rejected by course contract`
+- Interpretation: `Routing preserves scope and avoids duplicating future evidence.`
+- Proves: `N/A — course route proposal`
+- Does Not Prove: `later article gates or behavior`
+- Limitations: `must be audited for drift after Article 37`
+- Course Usage: `closing reading map`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course proposal`
+- Course Decision: `DEFER`
+- Decision Rationale: `专题证据留给 owning article。`
+
+### Evidence 29-E15｜BuildPilot decision boundary
+
+- Article: `29｜DeepSeek Harness 总图：从 Host 启动到一次 Agent Run`
+- Claim ID: `29-C15`
+- Claim: `BuildPilot may consume explicit ownership and evidence-typed mapping, while concrete DSH runtime architecture remains deferred.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course decision`
+- Source: `Article 29 research synthesis under Part VI stop boundary`
+- Repository: `TechStackShow`
+- Commit: `current transaction`
+- File: `research.md; evidence.md`
+- Symbol: `BuildPilot implications`
+- Call Path: `N/A`
+- Experiment: `N/A`
+- Fixture: `N/A`
+- Trace: `N/A`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `Part VI evidence input only`
+- Reproduction: `audit every decision against SOURCE/RUNTIME status before Part VII`
+- Observation: `Article 29's selected central source path and bounded fixture trace are confirmed; concrete BuildPilot runtime choices remain outside Part VI.`
+- Counter-evidence Searched: `class-name and package-name similarity with a future BuildPilot; similarity is not evidence of fitness`
+- Interpretation: `Method adoption can precede architecture adoption without inventing Part VII design.`
+- Proves: `N/A — course proposal`
+- Does Not Prove: `BuildPilot architecture, implementation or ADR`
+- Limitations: `final decision belongs after Part VI and explicit Part VII authorization`
+- Course Usage: `engineering transfer boundary`
+- BuildPilot Implication: `ADOPT evidence map; DEFER concrete runtime`
+- Owner: `Article 29 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course proposal`
+- Course Decision: `DEFER`
+- Decision Rationale: `Part VI 只提交证据输入，不启动 BuildPilot 设计。`
+
+## Evidence Gate recommendation
+
+`EVIDENCE_MERGE PASS / EVIDENCE_GATE ELIGIBLE`。
+
+15 个 Claim 与 15 张 Evidence Card 保持一一对应：`12 CONFIRMED / 0 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。Selected central path 已由 `repository-map.md` 与 `call-path.md` 静态闭合；Probe D 提供 product-profile fixture 的 `exit 0 / 36 rows / turn-end(completed)`，同时以同一 Session stream 明确记录 `tool/result UNKNOWN_TOOL`，不得写成 tool success。Probe C 的 exact owner test `exit 1` 与 Windows `tool-bash disabled / tool-pwsh enabled`、mock 请求 `bash` 构成独立反证。Probe E 的 keyless real-provider composition `exit 1 / MISSING_CREDENTIAL`，不支持任何真实 provider/model response/token/cost 主张。测试夹具运行与真实 provider 证据已经分层；中央静态与有界动态主张已闭合，因此不制造 `BLOCKED_EVIDENCE`。Next allowed gate：`EVIDENCE_GATE`。

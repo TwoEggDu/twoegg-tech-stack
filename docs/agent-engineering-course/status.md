@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-30
-- 当前里程碑：Article 28 `PUBLISHED` candidate / Final=`98 / A28-RV-001 CLOSED / 0 OPEN`；Hugo=`1256 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
-- 当前生产对象：Article 28 `PRE_COMMIT_RECONCILIATION`；DSH baseline=`dsh-v0.1.2-alpha.1 @ cd5ef8148158c3a752a658978873241fdf8e2bbc`；Article 29—37=`NOT_STARTED`；Article 38—44=`FORBIDDEN / ZERO ASSETS`
+- 当前里程碑：Article 29 `PUBLISHED` candidate / Final=`96 / A29-R0-F01 CLOSED / 0 OPEN`；Hugo=`1257 Pages / 44 Static / 1 Alias / 0 ERROR`
+- 当前生产对象：Article 29 `PRE_COMMIT_RECONCILIATION`；DSH baseline=`dsh-v0.1.2-alpha.1 @ cd5ef8148158c3a752a658978873241fdf8e2bbc`；Article 30—37=`NOT_STARTED`；Article 38—44=`FORBIDDEN / ZERO ASSETS`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -50,7 +50,9 @@
 - Article 27 Repair Verification：`PV-AUD-F01/F02 CLOSED`；fix=`85d41860a6763a9ff334bdd95d1ac931852b6da5 / REMOTE_VERIFIED`；historical raw envelopes=`MISSING / INVALID / NO REPLAY`；repaired Draft=`41174 bytes / 491 lines / CC5746C3...`，Published exact occurrence=`1`
 - Article 28 Published Path：`content/ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md`
 - Article 28 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1256 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；published H1-to-EOF exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / Article28 PRE_COMMIT_RECONCILIATION / bounded 28—37 / active NONE`）
+- Article 29 Published Path：`content/ai-empowerment/agent-engineering-29-dsh-host-to-agent-run.md`
+- Article 29 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1257 Pages / 44 Static / 1 Alias / 0 ERROR`，exit code `0`；published H1-to-EOF exact identity=`PASS`
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / Article29 GIT_DIFF_VERIFY / bounded 28—37 / active NONE`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
@@ -59,7 +61,7 @@
 - Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
 - Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / COMMITTED / PUSHED / REMOTE_VERIFIED`；commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged
 - Part V Audit：[durable report](audits/part-v-audit.md)；Cycle0=`FAIL / PV-AUD-F01 MAJOR / PV-AUD-F02 MINOR`；targeted repairs已独立push/remote verified；Cycle1首个artifact validation被Master拒绝，retry=`PASS / F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 / 0 WARNING / 0 ERROR`
-- 下一条允许动作：Article28 exact diff / pre-commit reconciliation / unique completion commit / single push / remote verify；Article29启动前必须fresh reconciliation。
+- 下一条允许动作：Article29 exact 18-file diff / unique completion commit / single push / remote verify；Article30启动前必须fresh reconciliation。
 
 ## 状态图例
 
@@ -100,8 +102,8 @@
 | 25 | Agent Runtime vs Harness：执行内核与工程控制面 | V | L | 否 | `PUBLISHED` | `PASS / 4 CONFIRMED / 6 PARTIAL / 2 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；Final=`93 / 0 OPEN`；课程Taxonomy非行业标准 |
 | 26 | Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery | V | L | 否 | `PUBLISHED` | `PASS / 0 CONFIRMED / 8 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；`A26-R0-F01/F02 CLOSED / 0 OPEN` |
 | 27 | Harness 的设计取舍：可替换性、复杂度、Bloat 与演化 | V | M | 否 | `PUBLISHED` | `PASS / 1 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | normalized identity rechecked；Pre-Commit retry1 PASS |
-| 28 | 怎样把 DeepSeek Harness 当作 Evidence-first 源码教材 | VI | S | 否 | `PUBLISHED` | `PASS / 6 CONFIRMED / 0 PARTIAL / 10 PROPOSAL / 0 BLOCKED / 12 Cards` | Baseline probes `STRUCTURED OBSERVATIONS COMPLETE / full suite FAIL / Agent Run NOT_CONFIRMED` | `PUBLISHED` candidate；Final=`98 / A28-RV-001 CLOSED / 0 OPEN`；build=`1256 / 0 WARNING / 0 ERROR`；completion commit pending |
-| 29 | DeepSeek Harness 总图：从 Host 启动到一次 Agent Run | VI | M | 否 | `PLANNED` | `BLOCKED` | N/A | DSH 仓库、commit、Host 入口与端到端运行路径均未固定 |
+| 28 | 怎样把 DeepSeek Harness 当作 Evidence-first 源码教材 | VI | S | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 6 CONFIRMED / 0 PARTIAL / 10 PROPOSAL / 0 BLOCKED / 12 Cards` | Baseline probes `STRUCTURED OBSERVATIONS COMPLETE / full suite FAIL / Agent Run NOT_CONFIRMED` | `NONE`；Final=`98 / A28-RV-001 CLOSED / 0 OPEN`；completion=`c428273501482288fcd986ca0ad1818863d4675a`；remote verified |
+| 29 | DeepSeek Harness 总图：从 Host 启动到一次 Agent Run | VI | M | 否 | `PUBLISHED` | `12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Evidence Work `CONFIRMED WITH COUNTER-EVIDENCE` | `NONE`；Final 96 / F01 CLOSED；Hugo 1257；completion commit pending |
 | 30 | Everything is a Plugin：插件内核如何承载 Capability 与生命周期 | VI | M | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
 | 31 | Profile、Bundle、Provider 与 Capability Seam | VI | M | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
 | 32 | System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成 | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |

@@ -18,6 +18,8 @@ weight: 3290
 
 > **上一篇**：[Harness 的设计取舍：可替换性、复杂度、Bloat 与演化]({{< relref "ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md" >}})
 
+> **下一篇**：[DeepSeek Harness 总图：从 Host 启动到一次 Agent Run]({{< relref "ai-empowerment/agent-engineering-29-dsh-host-to-agent-run.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # 怎样把 DeepSeek Harness 当作 Evidence-first 源码教材
@@ -572,3 +574,9 @@ Part VII: NOT STARTED
 当证据只到 symbol，就写 symbol；只到 source path，就写 `SOURCE_CONFIRMED`；只到 credential boundary，就停在 `MISSING_CREDENTIAL`。不让图补全缺失路径，不让成功重试删除失败，也不让课程架构替源码作答。
 
 Evidence-first 源码研究真正训练的，不是“看得更多”，而是知道每个判断什么时候成立、成立到哪里，以及什么时候必须诚实地停下。
+
+> **上一篇**：[Harness 的设计取舍：可替换性、复杂度、Bloat 与演化]({{< relref "ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md" >}})
+
+> **下一篇**：[DeepSeek Harness 总图：从 Host 启动到一次 Agent Run]({{< relref "ai-empowerment/agent-engineering-29-dsh-host-to-agent-run.md" >}})
+
+> **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})

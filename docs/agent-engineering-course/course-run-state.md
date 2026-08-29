@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: RUNNING
-current_article: "28"
+current_article: "29"
 current_gate: GIT_DIFF_VERIFY
-last_published_article: "27"
+last_published_article: "29"
 active_worker: NONE
 active_worker_execution_id: NONE
-active_worker_record_ref: docs/agent-engineering-course/articles/28-dsh-evidence-first-source-method/subagent-trace.md#wr-a28-pre-commit-reconciliation-retry1
+active_worker_record_ref: docs/agent-engineering-course/articles/29-dsh-host-to-agent-run/subagent-trace.md#wr-a29-pre-commit-reconciliation
 last_worker_result_semantics: CURRENT_TRANSACTION_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "28"
+  article: "29"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/28-dsh-evidence-first-source-method/subagent-trace.md#wr-a28-pre-commit-reconciliation-retry1
+  result_ref: docs/agent-engineering-course/articles/29-dsh-host-to-agent-run/subagent-trace.md#wr-a29-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,12 +37,12 @@ human_decision_required: false
 article_authorization:
   status: ACTIVE
   scope: FULL_ARTICLE_TRANSACTION
-  article: "28"
-  continue_until: END_ARTICLE_28
+  article: "29"
+  continue_until: END_ARTICLE_29
   auto_continue_after_gate_pass: true
   explicit_stop_line: NONE
   next_article_authorized: true
-last_successful_commit: 03c1649b7915d39dda91f67a8cc8b0257306bb4d
+last_successful_commit: c428273501482288fcd986ca0ad1818863d4675a
 next_action: VERIFY_EXACT_STAGED_18_FILE_TRANSACTION_THEN_COMMIT
 continuous_run:
   enabled: true
@@ -70,7 +70,7 @@ continuous_run:
     - "42"
     - "43"
     - "44"
-last_updated: "2026-08-30T16:15:00+08:00"
+last_updated: "2026-08-30T05:44:00+08:00"
 ```
 
 > 2026-08-30 Human Part VI授权经fresh reconciliation激活：Part V Audit独立commit=`03c1649b7915d39dda91f67a8cc8b0257306bb4d`，local/origin/live equality与Article28—38 zero-assets precheck均`PASS`。DSH official tag `dsh-v0.1.2-alpha.1`解析到固定commit=`cd5ef8148158c3a752a658978873241fdf8e2bbc`；Article28 PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT完成，当前进入fresh Researcher。Article29—37未启动，Article38—44 forbidden。
