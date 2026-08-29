@@ -18,6 +18,8 @@ weight: 3280
 
 > **上一篇**：[Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery]({{< relref "ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md" >}})
 
+> **下一篇**：[怎样把 DeepSeek Harness 当作 Evidence-first 源码教材]({{< relref "ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # Harness 的设计取舍：可替换性、复杂度、Bloat 与演化
@@ -509,5 +511,7 @@ Harness 的取舍，不是把 Agent 系统一步步升级成更大的平台，�
 真正稳的 Harness，不是阶段最高，而是能在收益、成本、风险、退出条件和不建设选项之间保持诚实。它知道什么时候建，建到哪里，什么时候停，以及什么时候不建。
 
 > **上一篇**：[Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery]({{< relref "ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md" >}})
+
+> **下一篇**：[怎样把 DeepSeek Harness 当作 Evidence-first 源码教材]({{< relref "ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md" >}})
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})

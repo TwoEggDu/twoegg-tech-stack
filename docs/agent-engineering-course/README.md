@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article27 `END_ARTICLE`；completion commit=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`；local/origin/live main equality=`PASS`；Hugo=`1255 / 0 WARNING / 0 ERROR`
-- 当前生产对象：Part V Audit checkpoint `Cycle1 RETRY PASS / GIT_DIFF_VERIFY`；Article25/26/27 targeted fixes remote verified；Article28 forbidden/zero assets
+- 当前里程碑：Article28 `PUBLISHED` candidate / Final=`PASS / 98 / A28-RV-001 CLOSED / 0 OPEN`；Hugo=`1256 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
+- 当前生产对象：Article28 `MASTER_STATE_UPDATE -> PRE_COMMIT_RECONCILIATION`；active worker=`NONE`；Article29不得在Article28 `END_ARTICLE`前启动；Article38—44 forbidden/zero assets
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -82,7 +82,9 @@
 - 当前 Article 26 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`1ed76a3075c912e33553b4508757dd1066e7a201`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；`PV-AUD-F02 CLOSED`；fix=`8b773c42... / REMOTE_VERIFIED`
 - 当前 Article 27 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`；Final=`94 / 0 OPEN`；`PV-AUD-F01/F02 CLOSED`；fix=`85d41860... / REMOTE_VERIFIED`
 - 当前 Part V Audit：[durable report](audits/part-v-audit.md)；Cycle1 retry=`PASS / PV-AUD-F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
-- Factory Status：`PAUSED / EXPLICIT_HUMAN_STOP_LINE / active NONE`；Article28 forbidden/not started/zero assets
+- 当前 Article 28 状态：`PUBLISHED` candidate；Evidence=`6 CONFIRMED / 0 PARTIAL / 10 PROPOSAL / 0 BLOCKED / 12 Cards`；Final=`98 / A28-RV-001 CLOSED / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md`
+- 当前 Article 28 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1256 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；published H1-to-EOF exact identity=`PASS`
+- Factory Status：`RUNNING / Article28 PRE_COMMIT_RECONCILIATION / active NONE`；continuous range=`28—37`；Article29 requires Article28 END_ARTICLE；Article38—44 forbidden
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

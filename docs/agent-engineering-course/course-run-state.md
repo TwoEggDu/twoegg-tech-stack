@@ -8,21 +8,21 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: PAUSED
+factory_status: RUNNING
 current_article: "28"
-current_gate: PRECHECK
+current_gate: GIT_DIFF_VERIFY
 last_published_article: "27"
 active_worker: NONE
 active_worker_execution_id: NONE
-active_worker_record_ref: NONE
-last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
+active_worker_record_ref: docs/agent-engineering-course/articles/28-dsh-evidence-first-source-method/subagent-trace.md#wr-a28-pre-commit-reconciliation-retry1
+last_worker_result_semantics: CURRENT_TRANSACTION_RESULT
 last_worker_result:
-  role: PART_AUDITOR
-  article: "PART_V"
-  gate: PART_V_AUDIT
-  execution_type: REAL_SUBAGENT
-  execution_id: /root/part_v_auditor_cycle1_after_repairs
-  result_ref: docs/agent-engineering-course/audits/part-v-audit.md#cycle-1-retry-worker-result-record
+  role: MASTER_ORCHESTRATOR
+  article: "28"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  execution_id: MASTER
+  result_ref: docs/agent-engineering-course/articles/28-dsh-evidence-first-source-method/subagent-trace.md#wr-a28-pre-commit-reconciliation-retry1
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -32,23 +32,23 @@ last_worker_result:
 last_worker_result_error: NONE
 review_cycle: 1
 active_blocker: NONE
-stop_reason: EXPLICIT_HUMAN_STOP_LINE
+stop_reason: NONE
 human_decision_required: false
 article_authorization:
-  status: INACTIVE
-  scope: NONE
-  article: NONE
-  continue_until: NONE
-  auto_continue_after_gate_pass: false
-  explicit_stop_line: STOP_AFTER_PART_V_AUDIT_CHECKPOINT
-  next_article_authorized: false
-last_successful_commit: 85d41860a6763a9ff334bdd95d1ac931852b6da5
-next_action: GIT_DIFF_VERIFY_PART_V_AUDIT_CHECKPOINT_THEN_COMMIT_PUSH_REMOTE_VERIFY_AND_STOP
+  status: ACTIVE
+  scope: FULL_ARTICLE_TRANSACTION
+  article: "28"
+  continue_until: END_ARTICLE_28
+  auto_continue_after_gate_pass: true
+  explicit_stop_line: NONE
+  next_article_authorized: true
+last_successful_commit: 03c1649b7915d39dda91f67a8cc8b0257306bb4d
+next_action: VERIFY_EXACT_STAGED_18_FILE_TRANSACTION_THEN_COMMIT
 continuous_run:
-  enabled: false
-  start_article: "24"
-  stop_after_article: "27"
-  auto_continue_after_end_article: false
+  enabled: true
+  start_article: "28"
+  stop_after_article: "37"
+  auto_continue_after_end_article: true
   stop_at_part_boundary: true
   stop_on:
     blocker: true
@@ -63,9 +63,17 @@ continuous_run:
     state_conflict: true
     human_decision_required: true
   forbidden_articles:
-    - "28"
-last_updated: "2026-08-30T04:10:00+08:00"
+    - "38"
+    - "39"
+    - "40"
+    - "41"
+    - "42"
+    - "43"
+    - "44"
+last_updated: "2026-08-30T16:15:00+08:00"
 ```
+
+> 2026-08-30 Human Part VI授权经fresh reconciliation激活：Part V Audit独立commit=`03c1649b7915d39dda91f67a8cc8b0257306bb4d`，local/origin/live equality与Article28—38 zero-assets precheck均`PASS`。DSH official tag `dsh-v0.1.2-alpha.1`解析到固定commit=`cd5ef8148158c3a752a658978873241fdf8e2bbc`；Article28 PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT完成，当前进入fresh Researcher。Article29—37未启动，Article38—44 forbidden。
 
 > 2026-08-30 fresh Part V re-audit Cycle1 retry经Master直接证据复核后通过：首个Cycle1 artifact因三条completion SHA与三条Published SHA抄录错误被拒绝，retry已用Git/Get-FileHash重算修正；`PV-AUD-F01/F02 CLOSED / 0 OPEN`，fresh Hugo=`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，local/origin/live main=`85d41860...`。当前只允许审计checkpoint的diff/commit/single push/remote verify，随后按显式stop line暂停；Article28不得启动。
 

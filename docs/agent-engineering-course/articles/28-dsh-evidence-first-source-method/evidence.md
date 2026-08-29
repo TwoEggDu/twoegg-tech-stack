@@ -1,0 +1,504 @@
+# Article 28 Evidence
+
+Status: `EVIDENCE MERGED / EVIDENCE_GATE CANDIDATE PASS`
+
+## Evidence posture
+
+- Pinned object：`dsh-v0.1.2-alpha.1 @ cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Claim count：`16`
+- Evidence Card count：`12`
+- Claim Status：`6 CONFIRMED / 0 PARTIAL / 10 PROPOSAL / 0 BLOCKED`
+- Card Status：`4 CONFIRMED / 0 PARTIAL / 8 PROPOSAL / 0 BLOCKED`
+- `DOC_CONFIRMED`：`2 card surfaces`（official safety/posture and documented command prerequisites）
+- `SOURCE_CONFIRMED`：`6 baseline source records`；`9 cards` carry exact identity, command or route anchors；Article 29—37 full paths remain owning-article `PARTIAL/DEFER`
+- `RUNTIME_CONFIRMED`：`1 baseline experiment card` with bounded install/build/test/CLI/config/credential observations；completed Agent Run=`0`
+- Evidence Gate：`CANDIDATE PASS`
+- Next allowed Gate：`EVIDENCE_GATE`
+
+Article 28 baseline 的 Source Map 与 direct structured probes 已合并。持久化记录包含 commands、environment、exit codes、terminal summaries、failure classification 与 sanitized excerpts；本次 baseline 没有保留完整 stdout/stderr stream。剩余 `PENDING` 只属于 Article 29—37 的完整调用链和动态实验，不是本篇成功占位：后续 owning article 必须用自己的 durable artifact 闭合，Article 28 不替它们升级。
+
+### Evidence 28-E01｜Frozen revision identity
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C01`
+- Claim: `官方 repo 的 tag 与外部 fixture HEAD 均为完整 SHA cd5ef8148158c3a752a658978873241fdf8e2bbc。`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `Git repository metadata`
+- Source: `official DSH repository clone`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc / dsh-v0.1.2-alpha.1`
+- File: `.git refs and commit object`
+- Symbol: `N/A`
+- Call Path: `N/A`
+- Experiment: `N/A / read-only identity check`
+- Fixture: `C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814`
+- Trace: `baseline-manifest.md §1; experiments/baseline-probes.md Probe A / Probe I`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact commit only`
+- Reproduction: `git remote get-url origin; git rev-parse HEAD; git rev-list -n 1 dsh-v0.1.2-alpha.1; git status --short`
+- Observation: `origin is official URL; HEAD and tag resolve to the full pinned SHA; status output is empty.`
+- Counter-evidence Searched: `wrong remote, abbreviated-only SHA, tag drift, dirty tracked files`
+- Interpretation: `The Research snapshot is uniquely identified.`
+- Proves: `snapshot identity and cleanliness at check time`
+- Does Not Prove: `dependency integrity, build, test, run, runtime behavior, latest-main equivalence`
+- Limitations: `later workers must recheck before taking evidence`
+- Course Usage: `version banner and every Part VI source card`
+- BuildPilot Implication: `DEFER — no Part VII design now`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `Git commit/tag metadata`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `DEFER`
+- Decision Rationale: `先冻结对象，架构吸收不属于 Article 28。`
+
+### Evidence 28-E02｜Developer-preview and safety ceiling
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C02`
+- Claim: `固定版官方文档将 DSH 标为 developer preview、未安全审计且非 production-ready，并要求最小权限和独立安全控制。`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `OFFICIAL_DOC`
+- Source Type: `pinned official repository documentation`
+- Source: `README.md; SAFETY.md`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `README.md; SAFETY.md`
+- Symbol: `Developer preview; Experimental status; Sandbox limitations; Responsible use`
+- Call Path: `N/A`
+- Experiment: `N/A`
+- Fixture: `pinned repository docs`
+- Trace: `N/A`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `pinned documentation at exact commit`
+- Reproduction: `read the named sections from the pinned commit`
+- Observation: `README warns of compatibility breaks; SAFETY says no audit, not secure/production-ready, sandbox is not a sole control, and least privilege is required.`
+- Counter-evidence Searched: `production-ready promise, security-audit claim, sandbox guarantee; none in pinned root docs`
+- Interpretation: `Part VI must use experimental and least-privilege wording.`
+- Proves: `official project stance`
+- Does Not Prove: `specific vulnerability, sandbox effectiveness, incident history`
+- Limitations: `document statement, not independent security assessment`
+- Course Usage: `opening boundary and execution safety`
+- BuildPilot Implication: `ADOPT — retain least privilege and independent controls as design constraints only`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `README.md; SAFETY.md`
+- Call Path: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `PARTIAL — DOC_CONFIRMED only; no runtime security claim`
+- Course Decision: `ADOPT`
+- Decision Rationale: `安全上限必须先于任何模块结论。`
+
+### Evidence 28-E03｜Evidence classes and confirmation separation
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C03; 28-C04`
+- Claim: `Part VI separates six Evidence Classes and independently records DOC/SOURCE/RUNTIME confirmation.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course production contract`
+- Source: `course-factory.md §11.3; production-workflow.md DSH path; evidence-card-template.md`
+- Repository: `TechStackShow`
+- Commit: `current Article 28 transaction base`
+- File: `docs/agent-engineering-course/course-factory.md; production-workflow.md; templates/evidence-card-template.md`
+- Symbol: `DSH Source Mode; DSH source evidence extension`
+- Call Path: `N/A`
+- Experiment: `N/A`
+- Fixture: `N/A`
+- Trace: `N/A`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `current Course Factory contract`
+- Reproduction: `read named contract sections`
+- Observation: `The contract lists six classes, required source/run fields, and independent SOURCE/RUNTIME confirmation.`
+- Counter-evidence Searched: `rule allowing source existence to upgrade runtime; the contract forbids it`
+- Interpretation: `These are course acceptance rules, not DSH features.`
+- Proves: `required Part VI evidence schema and wording discipline`
+- Does Not Prove: `future articles satisfy the gates`
+- Limitations: `must be applied and audited`
+- Course Usage: `central abstract model`
+- BuildPilot Implication: `ADOPT — preserve evidence-class and confirmation separation`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Call Path: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course contract`
+- Course Decision: `ADOPT`
+- Decision Rationale: `防止架构解释覆盖 source/runtime facts。`
+
+### Evidence 28-E04｜Baseline command paths and direct probes
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C05; 28-C06`
+- Claim: `The pinned fixture installs from a populated offline store, builds only with the recorded host-access caveat, fails its full unit suite on this run, and reaches only the missing-credential boundary in a keyless headless run.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `pinned source map + direct Lab observations`
+- Source: `source-map.md; baseline-manifest.md; experiments/baseline-probes.md`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `package.json; scripts/build.ts; vitest.config.ts; apps/cli/src/bin.ts; args.ts; profile-boot.ts; packages/boot/app-boot/src/index.ts; packages/bundle/headless/cordis.patch.yml`
+- Symbol: `packageManager/engines/postinstall; scripts.build/test/dsh; build.ts:main,runScript; args.ts:parseDshArgs,resolveBoot; profile-boot.ts:prepareProfile,composeProfile,runProfile; app-boot:index.ts:boot,mountRootInclude,assertEntriesActivated`
+- Call Path: `install: pnpm workspace/lockfile -> postinstall -> scripts/install-lefthook.mjs; build: package.json build -> scripts/build.ts main/runScript -> build:lib host/client -> build:web -> build record; test: package.json test -> vitest run -> vitest.config.ts; source boot: package.json dsh -> apps/cli/src/bin.ts -> parseDshArgs -> runProfile -> composeProfile/prepareProfile -> boot -> Loader mount/await/activation audit -> STOP before Article 29 runner/Agent path`
+- Experiment: `Article 28 Baseline Probes A—I`
+- Fixture: `external pinned fixture`
+- Trace: `experiments/baseline-probes.md §2; baseline-manifest.md §4—8 — direct structured observations with commands, environment, exit codes, terminal summaries, failure classification and sanitized excerpts; full stdout/stderr stream not retained`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact commit + recorded local environment`
+- Reproduction: `corepack pnpm install --frozen-lockfile --offline; corepack pnpm run build; corepack pnpm run test; node node_modules/vitest/vitest.mjs run scripts/gen-third-party-notices.spec.ts --testTimeout=30000; node apps/cli/lib/bin.js --help; isolated DSH_HOME built CLI --profile headless --dump-config; isolated keyless built headless child with telemetry disabled/read-only permission/secret-like names removed`
+- Observation: `Install exit 0 (265 projects, pnpm 11.7.0). Build sandbox attempt exit 1 on Access is denied; unchanged host-access retry exit 0 with Host/Client/Web complete, 345 modules and 218 artifacts. Full test exit 1: 32 files/129 tests failed, 965 files/15939 tests passed, 4 files/66 tests skipped. Isolated notices rerun exit 0 at 27/27 with 30 s timeout. CLI help exit 0. Headless config dump exit 0. Keyless child exit 1, no timeout/stdout/model result, sanitized MISSING_CREDENTIAL for deepseek-official/DEEPSEEK_API_KEY.`
+- Master Precheck Context: `Historical only, not produced by this Lab's direct probe set: earlier full test reported 24 failed files / 44 failed tests, and earlier install attempts had two network-timeout exits before a bounded-network success. These figures are retained as run-to-run context and never substituted for the direct 32/129 result.`
+- Counter-evidence Searched: `same-command sandbox/host build pair; isolated notices timing counterexample; full failure classes beyond symlink/timeout; config-row existence versus activation; missing credential versus provider/model execution; Master precheck statistics kept historical and separate`
+- Interpretation: `Install and host-qualified build are confirmed. The direct full suite remains FAIL; isolated 27/27 classifies one timing-sensitive case only. Config dump confirms effective resolution, not activation. Keyless run confirms fail-closed credential resolution only.`
+- Proves: `bounded current-host command outcomes, effective config output, and missing-credential terminal boundary`
+- Does Not Prove: `clean-store/network install, sandbox-only build success, full-suite PASS, cross-platform behavior, row activation, Agent Turn, model/provider/network response, token usage, cost, production readiness`
+- Limitations: `Windows 10 x64; Node 24.18.1; populated pnpm store; successful build required narrow host filesystem access; full failures have multiple established and unresolved classes; durable record is structured and sanitized, and does not retain the complete stdout/stderr stream`
+- Course Usage: `baseline checklist and failure-wording example`
+- BuildPilot Implication: `ADOPT evidence separation; DEFER architecture/runtime adoption`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §4 / exact files and symbols above`
+- Call Path: `SOURCE_CONFIRMED through settled boot; runner -> Agent -> Turn remains Article 29`
+- Run Entry: `built CLI help/config dump/keyless headless scenarios from Baseline Probes F—H`
+- Runtime Trace: `experiments/baseline-probes.md Probes B—H; structured/sanitized durable record only, not a complete stdout/stderr stream`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED for bounded baseline outcomes; completed Agent Run NOT_CONFIRMED`
+- Course Decision: `DEFER`
+- Decision Rationale: `失败与 caveat 本身构成方法证据；具体机制仍留给 owning articles。`
+
+### Evidence 28-E05｜Evidence-upgrade ladder
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C07`
+- Claim: `Part VI should upgrade claims through identity, symbol, call path, run entry, trace, interpretation and counter-evidence.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course method synthesis`
+- Source: `research.md §2 and course DSH contract`
+- Repository: `TechStackShow`
+- Commit: `current transaction`
+- File: `research.md`
+- Symbol: `28-RQ04`
+- Call Path: `N/A`
+- Experiment: `Part VI audit will evaluate application`
+- Fixture: `Articles 29—37 evidence packages`
+- Trace: `PENDING future articles`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `Part VI method`
+- Reproduction: `apply checklist to each future source claim`
+- Observation: `Contract requires all fields and forbids source/runtime substitution.`
+- Counter-evidence Searched: `docs-only, symbol-only and test-only shortcuts; each loses a confirmation layer`
+- Interpretation: `The ladder keeps missing links explicit.`
+- Proves: `N/A — design proposal`
+- Does Not Prove: `future gate success`
+- Limitations: `requires consistent execution and audit`
+- Course Usage: `main method figure and checklist`
+- BuildPilot Implication: `ADOPT`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Call Path: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course proposal`
+- Course Decision: `ADOPT`
+- Decision Rationale: `这是 Article 28 唯一直接带走的方法结论。`
+
+### Evidence 28-E06｜Article 29 route: Host to Agent Run
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C08`
+- Claim: `Article 29 must close a supported profile startup path to Agent Run and pair it with runtime trace.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned source seeds`
+- Source: `canonical requirement; pinned CLI/boot/agent-loop files`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `apps/cli/src/bin.ts; apps/cli/src/profile-boot.ts; packages/boot/app-boot/src/index.ts; packages/bundle/headless/cordis.patch.yml; packages/bundle/headless/src/startup.ts; packages/bundle/headless/src/index.ts; packages/core/agent-loop/src/index.ts; packages/core/agent-loop/src/agent.ts`
+- Symbol: `parse dispatch; runProfile; boot; headless-startup/headless-runner rows; AgentLoop; ReactLoopAgent`
+- Call Path: `SOURCE_CONFIRMED baseline: root dsh script -> bin.ts -> parseDshArgs -> runProfile -> composeProfile/prepareProfile -> boot -> Loader mount/await/activation audit; PENDING Article 29: bundle row -> runner -> ctx.agents/factory -> Agent -> Turn`
+- Experiment: `PENDING Article 29`
+- Fixture: `pinned DSH fixture`
+- Trace: `PENDING Article 29`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact pinned commit`
+- Reproduction: `read source-map.md §4.4 and re-close the remaining path in Article 29`
+- Observation: `Pinned source closes supported CLI/profile boot through Loader settlement; exact runner/Agent/Turn anchors exist, while the baseline keyless trace stops at credential resolution.`
+- Counter-evidence Searched: `unsupported package bins; root instructions allow supported apps only through dsh profiles`
+- Interpretation: `Investigation anchors, not a completed path.`
+- Proves: `exact boot baseline and candidate downstream anchors exist`
+- Does Not Prove: `Host -> Agent Run flow or traversal`
+- Limitations: `callers, branches and trace pending`
+- Course Usage: `Article 29 route`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §4.4 and §6; listed files/symbols`
+- Call Path: `baseline SOURCE_CONFIRMED; Article 29 remainder PENDING`
+- Run Entry: `supported dsh profile; scenario PENDING`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED for anchors/boot baseline; full Agent path and runtime PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Mandatory path and trace are not yet complete.`
+
+### Evidence 28-E07｜Articles 30—31 routes: lifecycle and composition
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C09; 28-C10`
+- Claim: `Plugin lifecycle and profile composition require separate source and runtime/config evidence.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned docs/source seeds`
+- Source: `DSH AGENTS; profile-boot.ts; dump-config.ts; boot/bundle/preset packages`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `AGENTS.md; packages/AGENTS.md; apps/cli/src/args.ts; apps/cli/src/profile-boot.ts; apps/cli/src/dump-config.ts; packages/boot/app-boot/src/index.ts; packages/bundle/*/cordis.patch.yml; packages/preset/agent-presets/`
+- Symbol: `ctx.effect; resolveBoot; prepareProfile; composeProfile; allPatches; runDumpConfig; composeEntries; renderConfigDump`
+- Call Path: `Article 31 anchors SOURCE_CONFIRMED: args/profile patches -> composeEntries/renderConfigDump; Article 30 representative apply -> Cordis effect/fiber -> disposer remains PENDING`
+- Experiment: `PENDING lifecycle and effective-config experiments`
+- Fixture: `pinned DSH fixture`
+- Trace: `PENDING`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact pinned commit`
+- Reproduction: `PENDING frozen designs`
+- Observation: `Exact lifecycle rules and composition/config-dump owners exist; baseline config dump emitted base+headless rows but did not activate them.`
+- Counter-evidence Searched: `README slogan as lifecycle proof; directory listing as precedence proof; both rejected`
+- Interpretation: `Lifecycle and composition are distinct evidence questions.`
+- Proves: `investigation routes only`
+- Does Not Prove: `dispose, reload, precedence, conflict or effective config behavior`
+- Limitations: `exact owners and traces pending`
+- Course Usage: `Articles 30—31 routes`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §6 Article 30—31 rows`
+- Call Path: `SOURCE_CONFIRMED anchors; owning full paths PENDING`
+- Run Entry: `PENDING`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED anchors + RUNTIME_CONFIRMED config resolution only; lifecycle/activation PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Need ownership plus dispose/config observations.`
+
+### Evidence 28-E08｜Articles 32—33 routes: request assembly and loop
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C11; 28-C12`
+- Claim: `Request assembly and loop progression need exact source paths plus distinct multi-scenario traces.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned source seeds`
+- Source: `core/system-prompt; context; core/agent-loop`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/system-prompt/src/index.ts; packages/context/*/src/; packages/core/agent-loop/src/agent.ts; packages/core/agent-loop/src/runtime-context.ts; packages/core/agent-loop/src/tool-calls.ts; packages/core/session/src/types.ts`
+- Symbol: `PromptContext; PromptAssembly; SystemPrompt; renderPrompt; preStep; buildRequest; ReactLoopAgent; turn; step; RuntimeContextProjection; executeToolCalls; turn/step events`
+- Call Path: `SOURCE_CONFIRMED anchors: context registration -> prompt assembly -> preStep/buildRequest; ReactLoopAgent turn/step -> executeToolCalls -> Session events; complete paths and traces PENDING Articles 32—33`
+- Experiment: `PENDING request diff and four loop traces`
+- Fixture: `controlled provider/tool inputs`
+- Trace: `PENDING`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact pinned commit`
+- Reproduction: `PENDING frozen experiments`
+- Observation: `Source Map identifies exact owners and symbols; baseline keyless run did not reach a request or Turn.`
+- Counter-evidence Searched: `registration-only proof, one happy trace, test-name substitution`
+- Interpretation: `Assembly and loop control remain independently falsifiable.`
+- Proves: `source seeds only`
+- Does Not Prove: `request ordering, no/single/multi-tool or cancellation behavior`
+- Limitations: `exact path and raw traces pending`
+- Course Usage: `Articles 32—33 routes`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §6 Article 32—33 rows`
+- Call Path: `SOURCE_CONFIRMED anchors; owning paths PENDING`
+- Run Entry: `PENDING controlled scenarios`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED anchors; request/Turn runtime PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Runtime scenarios decide which abstractions survive.`
+
+### Evidence 28-E09｜Article 34 route: append-only Session events
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C13`
+- Claim: `Article 34 must separate event vocabulary/write/read/projection source facts from replay, resume and fork observations.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned source/tests`
+- Source: `core/session and persistence/projection packages`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/session/src/types.ts; packages/core/session/src/index.ts; packages/session/session-persistence/src/coordinator.ts; packages/session/session-persistence-jsonl/src/index.ts; packages/session/session-projection/src/index.ts; fork/resume tests`
+- Symbol: `SessionEventMap; SessionEvent; Session; PersistenceCoordinator; JsonlSessionPersistence; SessionProjectionRegistry`
+- Call Path: `SOURCE_CONFIRMED anchors: Session append/store -> persistence coordinator/backend -> projection registry; replay/resume/fork closure PENDING Article 34`
+- Experiment: `PENDING write/read/replay-resume-fork`
+- Fixture: `bounded session log`
+- Trace: `PENDING`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact commit; no cross-version session-format promise inferred`
+- Reproduction: `PENDING frozen experiment`
+- Observation: `Exact event, session, persistence and projection owners exist; tests remain candidate evidence, not application runtime.`
+- Counter-evidence Searched: `all events replayable, arbitrary fork, cross-version compatibility; existence cannot prove them`
+- Interpretation: `Identify authoritative storage and derived views before dynamic claims.`
+- Proves: `investigation surface only`
+- Does Not Prove: `replay completeness, crash recovery, fork semantics or compatibility`
+- Limitations: `dynamic evidence pending`
+- Course Usage: `Article 34 route`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §6 Article 34 row`
+- Call Path: `SOURCE_CONFIRMED anchors; replay/resume/fork PENDING`
+- Run Entry: `PENDING`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED anchors; dynamic behavior PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Durability requires observed event sequences and failure limits.`
+
+### Evidence 28-E10｜Article 35 route: tool execution pipeline
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C14`
+- Claim: `Article 35 must close registry-to-result paths and execute bad-args, deny, timeout, cancel and large-result negatives.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned source/tests`
+- Source: `core/tools; core/agent-loop/tool-calls; guard timeout policy`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/tools/src/index.ts; packages/core/tools/src/schema.ts; packages/core/agent-loop/src/tool-calls.ts; packages/guard/timeout-policy/src/index.ts; scenario-selected interaction/permission packages`
+- Symbol: `ToolRuntime; ToolDefinition; ToolExecutionResult; defineTool; validateArgs; executeToolCalls; apply; TOOL_TIMEOUT`
+- Call Path: `SOURCE_CONFIRMED anchors: registry/schema -> loop executeToolCalls -> timeout/policy/result owners; enforcement path and negative terminals PENDING Article 35`
+- Experiment: `PENDING five negative traces`
+- Fixture: `controlled local test tools; no production access`
+- Trace: `PENDING`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact pinned commit`
+- Reproduction: `PENDING frozen experiment`
+- Observation: `Exact registry/schema/execution/timeout anchors exist; baseline never entered tool execution.`
+- Counter-evidence Searched: `registration as enforcement, schema omission as policy, happy path as cancellation proof`
+- Interpretation: `Enforcement and terminal outcomes must be observed at executor.`
+- Proves: `investigation route only`
+- Does Not Prove: `validation, denial, timeout ownership, cancellation or result bounds`
+- Limitations: `exact owner and negative traces pending`
+- Course Usage: `Article 35 route`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §6 Article 35 row`
+- Call Path: `SOURCE_CONFIRMED anchors; enforcement path PENDING`
+- Run Entry: `PENDING controlled executor fixture`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED anchors; runtime negatives PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Negative paths precede adoption.`
+
+### Evidence 28-E11｜Article 36 route: cost, compaction, cancellation and recovery
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C15`
+- Claim: `Article 36 must independently trace usage, long-session pressure, compaction, cancellation and resume/recovery.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned packages/tests`
+- Source: `compaction, timeout-policy, agent/session cancellation and checkpoint packages`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/session/session-stats/; packages/compaction/compaction/src/index.ts; packages/compaction/compaction-basic/; packages/guard/timeout-policy/; packages/core/agent-loop/; packages/session/session-checkpoint-policy/src/index.ts; persistence packages`
+- Symbol: `CompactionEngine; exact usage/cancel/checkpoint/persistence symbols remain owning-card work`
+- Call Path: `SOURCE_CONFIRMED package/CompactionEngine anchors; usage -> pressure -> compaction and cancel -> resume/recovery terminal paths PENDING Article 36`
+- Experiment: `PENDING long-session/compaction/cancel/resume`
+- Fixture: `bounded keyless or mock-provider fixture`
+- Trace: `PENDING`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact pinned commit and recorded platform`
+- Reproduction: `PENDING frozen experiment`
+- Observation: `Candidate packages and tests exist for separate concerns.`
+- Counter-evidence Searched: `compaction=recovery, timeout=user cancel, resume=crash recovery, usage=cost benefit`
+- Interpretation: `Separate owners prevent one success from proving every reliability claim.`
+- Proves: `investigation route only`
+- Does Not Prove: `cost savings, long-session stability, crash recovery or cross-platform behavior`
+- Limitations: `dynamic outcomes pending`
+- Course Usage: `Article 36 route`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §6 Article 36 row`
+- Call Path: `SOURCE_CONFIRMED anchors; owning paths PENDING`
+- Run Entry: `PENDING`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED anchors; dynamic behavior PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Only distinct terminal evidence can support reliability mapping.`
+
+### Evidence 28-E12｜Article 37 route: core and extension mapping
+
+- Article: `28｜怎样把 DeepSeek Harness 当作 Evidence-first 源码教材`
+- Claim ID: `28-C16`
+- Claim: `Article 37 must map RAG, Skill, Workflow, Subagent and Web/Headless without treating every extension as core/default.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course route informed by pinned architecture/catalog`
+- Source: `docs/architecture.md; skill/workflow/subagent/web packages; bundle/headless`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `docs/architecture.md; packages/skill/; packages/workflow/; packages/subagent/; packages/web/; packages/bundle/base/; packages/bundle/headless/; packages/bundle/web-app/; shipped cordis.patch.yml files`
+- Symbol: `architecture extension table; service/provider/consumer and activation symbols remain per-feature owning-card work`
+- Call Path: `SOURCE_CONFIRMED extension/package/profile anchors; per-feature activation/default/composition paths PENDING Article 37`
+- Experiment: `PENDING bounded composition traces or source-only downgrade`
+- Fixture: `pinned DSH fixture`
+- Trace: `PENDING`
+- Retrieved / Run At: `seed scan 2026-08-30`
+- Version Scope: `exact pinned commit`
+- Reproduction: `PENDING Article 37 plan`
+- Observation: `Pinned architecture and shipped profile rows locate exact extension/composition surfaces; config-row existence is not activation.`
+- Counter-evidence Searched: `package exists -> core; plugin exists -> enabled; one provider -> universal capability`
+- Interpretation: `Article 37 must compare ownership/composition, then decide ADOPT/SIMPLIFY/REJECT/DEFER.`
+- Proves: `route and candidate surfaces only`
+- Does Not Prove: `enablement, runtime use, completeness or BuildPilot suitability`
+- Limitations: `RAG ownership and each composition need independent location`
+- Course Usage: `Article 37 route and Part VI stop boundary`
+- BuildPilot Implication: `DEFER`
+- Owner: `Article 28 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `source-map.md §6 Article 37 row`
+- Call Path: `SOURCE_CONFIRMED anchors; activation/composition PENDING`
+- Run Entry: `PENDING`
+- Runtime Trace: `PENDING`
+- DSH Verification: `SOURCE_CONFIRMED anchors; dynamic/default status PARTIAL`
+- Course Decision: `DEFER`
+- Decision Rationale: `Preserve core/extension/product boundaries and stop before Part VII.`
+
+## Evidence Gate recommendation
+
+`PASS / CONTINUE TO EVIDENCE_GATE`。
+
+Source Map 的 exact anchors 与 Baseline Probes 的 direct structured observations 已合并；记录了 commands、environment、exit codes、terminal summaries、failure classification 与 sanitized excerpts，但未保留完整 stdout/stderr stream。Article 28 的核心 Claims 无 `BLOCKED`。Full suite 保持 `FAIL`（本轮 direct `32 files / 129 tests`），isolated `27/27` 只分类一个 timing-sensitive failure；build 仅为 `PASS_WITH_HOST_ACCESS_CAVEAT`；config dump 只证明 effective resolution；keyless run 只到 `MISSING_CREDENTIAL`，没有 Agent Turn、model/provider response、token 或 cost。Master precheck 的历史统计没有替换本轮 Lab observation。Article 29—37 的 full call paths 和 runtime traces 保持 owning-article `PENDING/DEFER`，不阻挡本篇 Evidence Gate。

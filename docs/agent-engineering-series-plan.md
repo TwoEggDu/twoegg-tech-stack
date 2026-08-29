@@ -214,7 +214,7 @@ BuildPilot Design v1
 
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
-| 28 | 怎样把 DeepSeek Harness 当作 Evidence-first 源码教材 | S | 否 |
+| 28 | [怎样把 DeepSeek Harness 当作 Evidence-first 源码教材](../content/ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md) | S | 否 |
 | 29 | DeepSeek Harness 总图：从 Host 启动到一次 Agent Run | M | 否 |
 | 30 | Everything is a Plugin：插件内核如何承载 Capability 与生命周期 | M | 否 |
 | 31 | Profile、Bundle、Provider 与 Capability Seam | M | 否 |
