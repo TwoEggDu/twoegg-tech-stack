@@ -8,47 +8,47 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: PAUSED
-current_article: "23"
+factory_status: READY
+current_article: "25"
 current_gate: PRECHECK
-last_published_article: "22"
+last_published_article: "24"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: PART_AUDITOR
-  article: "PART_IV"
-  gate: PART_IV_AUDIT
-  execution_type: REAL_SUBAGENT
-  execution_id: /root/a22_part_iv_targeted_auditor
-  result_ref: docs/agent-engineering-course/audits/part-iv-article22-post-publication-recheck.md#worker-result-record
+  role: MASTER_ORCHESTRATOR
+  article: "24"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  execution_id: /root
+  result_ref: docs/agent-engineering-course/articles/24-why-harness-cross-cutting-capabilities/subagent-trace.md#wr-a24-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: PRE_COMMIT_RECONCILIATION
+  next_allowed_gate: GIT_DIFF_VERIFY
   blocker: NONE
 last_worker_result_error: NONE
 review_cycle: 0
 active_blocker: NONE
-stop_reason: EXPLICIT_HUMAN_STOP_LINE
+stop_reason: NONE
 human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: NONE
+  article: "24"
   continue_until: NONE
   auto_continue_after_gate_pass: false
-  explicit_stop_line: AFTER_PART_IV_TARGETED_REAUDIT_REMOTE_VERIFY
+  explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 481ebd52d6c0522e68a0ce0897f52a7932f9af89
-next_action: GIT_DIFF_VERIFY_TARGETED_REAUDIT_THEN_COMMIT_PUSH_REMOTE_VERIFY_AND_STOP
+last_successful_commit: a6763629aaaeb0520b219423fd5ef9c6b442aba4
+next_action: START_ARTICLE_25_PRECHECK_AFTER_END_ARTICLE_24
 continuous_run:
-  enabled: false
-  start_article: "18"
-  stop_after_article: "22"
-  auto_continue_after_end_article: false
+  enabled: true
+  start_article: "24"
+  stop_after_article: "27"
+  auto_continue_after_end_article: true
   stop_at_part_boundary: true
   stop_on:
     blocker: true
@@ -63,10 +63,25 @@ continuous_run:
     state_conflict: true
     human_decision_required: true
   forbidden_articles:
-    - "23"
-    - "24"
-last_updated: "2026-08-28T23:47:46+08:00"
+    - "28"
+last_updated: "2026-08-29T22:47:58+08:00"
 ```
+
+> 2026-08-29 Article 24已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`94 / A24-R0-F01 CLOSED / 0 OPEN`，Draft exact block identity=`41730 bytes / 474 lines / SHA-256 F7213361...E91040`，fresh Hugo=`1252 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 25 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须由Git history与remote refs解析`ResolveArticleCompletion(24)=END_ARTICLE`；completion SHA、push与remote result未预写，Article28仍forbidden。
+
+> 2026-08-29 Article 24 fresh Final Gate=`PASS / 94 / ELIGIBLE_FOR_PUBLISH / 0 OPEN`：Draft identity、12 Claims/Cards、`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`、Finding closure、source/relref preflight、BuildPilot/Lab/runtime与future-Article边界均通过。Final Gate不等于Published/Build/commit/push/END_ARTICLE；当前进入fresh Publisher `PUBLISH`。
+
+> 2026-08-29 Article 24 Reviewer Recheck独立重算并关闭`A24-R0-F01`：Draft=`41730 bytes / 474 lines / SHA-256 F7213361...E91040`，Get-FileHash / certutil / direct .NET hash一致，Revision未改Draft bytes，open findings=`0`。Reviewer首个return envelope因closed-schema违规被Master拒绝且未投影；零文件写入retry返回合规11字段envelope。当前进入fresh `FINAL_GATE`。
+
+> 2026-08-29 Article 24 fresh Review Cycle 0完成：正文技术、教学、Evidence、BuildPilot/Lab/runtime边界、Article25—27 containment与relref均通过，但`A24-R0-F01 MAJOR`指出冻结Draft SHA记录错误；fresh PowerShell、certutil与direct-byte三路重算均为`F7213361...E91040`，bytes/lines仍为`41730 / 474`。该Finding不要求新Research且未命中stop policy，当前自动进入最小`REVISION -> REVIEW_RECHECK`。
+
+> 2026-08-29 Article 24 Author Draft通过Master复核：`41730 bytes / 474 lines / SHA-256 F7213361...E91040`，正文无frontmatter，`12 / 12` Claim traceability与`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`上限保留，唯一relref指向已存在Article22；Required Lab与BuildPilot non-runtime边界明确。当前进入fresh Reviewer `REVIEW`。原冻结SHA记录已由`A24-R0-F01`修订并经三路重算校正。
+
+> 2026-08-29 Article 24 fresh Author的`OUTLINE`通过Master复核：content-complete、`12 / 12` Claims覆盖、problem space -> abstract model -> concrete design case结构、Evidence标签、Required Lab与BuildPilot proposal边界均满足合同。当前同一Author进入`AUTHOR_DRAFT`，只允许按已验证Outline写`draft.md`，不得新增事实或Published Content。
+
+> 2026-08-29 Article 24 fresh Researcher完成`research.md`与`evidence.md`，Master对allowed writes、12 Claims / 12 Evidence Cards、来源质量、反证、范围边界与future-asset guard复核后判定`EVIDENCE_GATE PASS`：`3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。Required Lab=`NONE`、experiment count=`0`、runtime observation=`ABSENT`；BuildPilot保持`COURSE PROPOSAL / DESIGN CASE / NOT IMPLEMENTED / NOT RUN`。当前进入`OUTLINE`，尚未创建Draft或Published Content。
+
+> 2026-08-29 fresh Part V reconciliation从Git history与remote refs解析Article 22=`END_ARTICLE`，并确认Part IV targeted re-audit独立commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`已存在于local/origin/live main；Article23按canonical解析为`ADVANCED / OPTIONAL / SKIPPED / NOT_STARTED / ZERO ASSETS`。外部Human授权启用`24 -> 25 -> 26 -> 27 -> Part V Audit -> STOP` bounded run，Article28保持forbidden且零资产。Article24 PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT通过，当前进入fresh Researcher；Article25—28生产资产仍为0。
 
 > 2026-08-28 Article 22 fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`已single push并通过local/origin/live equality。fresh Part IV targeted re-audit对live fix返回`PASS / 0 findings`：Article18—22递进、Article21->22职责、`22-C13/E13` Evidence边界、Lab06 v1 10/10 hashes、policy实现上限、Draft/Published identity、导航、BuildPilot边界、Article23/24 zero-assets与fresh Hugo=`1251 / 44 / 1 / 0 WARNING / 0 ERROR`均通过；旧`part-iv-audit.md`保持不变。当前只允许完成独立re-audit checkpoint的diff/stage/commit/single push/remote verify，随后STOP。
 

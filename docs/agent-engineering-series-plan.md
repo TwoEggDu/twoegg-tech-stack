@@ -205,7 +205,7 @@ BuildPilot Design v1
 
 | ID | 标题 | 权重 | Optional |
 |---|---|---|---|
-| 24 | 为什么最终需要 Harness：横切能力由谁承载 | L | 否 |
+| 24 | [为什么最终需要 Harness：横切能力由谁承载](../content/ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md) | L | 否 |
 | 25 | Agent Runtime vs Harness：执行内核与工程控制面 | L | 否 |
 | 26 | Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery | L | 否 |
 | 27 | Harness 的设计取舍：可替换性、复杂度、Bloat 与演化 | M | 否 |

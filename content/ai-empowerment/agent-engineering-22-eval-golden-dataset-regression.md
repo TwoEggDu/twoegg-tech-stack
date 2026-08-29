@@ -18,6 +18,8 @@ weight: 3230
 
 > **上一篇**：[Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层]({{< relref "ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md" >}})
 
+> **下一篇**：[为什么最终需要 Harness：横切能力由谁承载]({{< relref "ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # Eval、Golden Dataset 与 Regression：修复以后还会不会再坏
@@ -417,5 +419,7 @@ Coverage=`13 / 13`；Evidence Cards=`13 / 13`；状态保持 `3 CONFIRMED / 7 PA
 `修复不会因为这次看起来成功就变得可靠；可靠来自一份能冻结比较条件、暴露关键退化，并诚实保留 unknown 与 incomparable 的评估合同。`
 
 > **上一篇**：[Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层]({{< relref "ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md" >}})
+
+> **下一篇**：[为什么最终需要 Harness：横切能力由谁承载]({{< relref "ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md" >}})
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
