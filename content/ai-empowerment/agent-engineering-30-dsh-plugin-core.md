@@ -559,3 +559,5 @@ Article 29 建立了 Host/Profile/Loader 到 Agent Run 的总图；本篇只深�
 最后压成一句：
 
 > 先让依赖、贡献和清理共享可验证的 owner，再决定项目是否真的需要一个更强的插件内核。
+
+> **下一篇**：[Profile、Bundle、Provider 与 Capability Seam]({{< relref "ai-empowerment/agent-engineering-31-dsh-profile-bundle-capability-seam.md" >}})

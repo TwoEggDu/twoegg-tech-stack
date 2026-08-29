@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article30 `PUBLISHED` candidate / Final=`PASS / 97 / 0 OPEN`；Hugo=`1258 Pages / 44 Static / 1 Alias / 0 ERROR`
-- 当前生产对象：Article30 `MASTER_STATE_UPDATE -> PRE_COMMIT_RECONCILIATION`；active NONE；Article31 requires Article30 END_ARTICLE；Article38—44 forbidden/zero assets
+- 当前里程碑：Article30 `END_ARTICLE`；completion commit=`edaafb279cc0c730a5be00cda3a3203d49044cbf`；local/origin/live equality=`PASS`
+- 当前生产对象：Article31 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article32—37 not started；Article38—44 forbidden/zero assets
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -90,7 +90,10 @@
 - 当前 Article 30 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 BLOCKED`；Final=`97 / 0 OPEN`
 - 当前 Article 30 Published Content：`content/ai-empowerment/agent-engineering-30-dsh-plugin-core.md`
 - 当前 Article 30 Build Verification：`1258 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
-- Factory Status：`RUNNING / Article30 GIT_DIFF_VERIFY / active NONE`；continuous range=`28—37`；Article31 requires Article30 END_ARTICLE；Article38—44 forbidden
+- 当前 Article 31 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 BLOCKED`；Final=`97 / A31-R0-F01/F02 CLOSED / 0 OPEN`
+- 当前 Article 31 Published Content：`content/ai-empowerment/agent-engineering-31-dsh-profile-bundle-capability-seam.md`
+- 当前 Article 31 Build Verification：`1259 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
+- Factory Status：`RUNNING / Article31 PRE_COMMIT_RECONCILIATION / active Master`；continuous range=`28—37`；Article32 requires Article31 END_ARTICLE；Article38—44 forbidden
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

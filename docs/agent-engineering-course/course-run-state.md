@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: RUNNING
-current_article: "30"
+current_article: "31"
 current_gate: GIT_DIFF_VERIFY
 last_published_article: "30"
 active_worker: NONE
 active_worker_execution_id: NONE
-active_worker_record_ref: docs/agent-engineering-course/articles/30-dsh-plugin-core/subagent-trace.md#wr-a30-pre-commit-reconciliation
+active_worker_record_ref: docs/agent-engineering-course/articles/31-dsh-profile-bundle-capability-seam/subagent-trace.md#wr-a31-pre-commit-reconciliation
 last_worker_result_semantics: CURRENT_TRANSACTION_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "30"
+  article: "31"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/30-dsh-plugin-core/subagent-trace.md#wr-a30-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/31-dsh-profile-bundle-capability-seam/subagent-trace.md#wr-a31-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -30,19 +30,19 @@ last_worker_result:
   next_allowed_gate: GIT_DIFF_VERIFY
   blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 0
+review_cycle: 1
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 article_authorization:
   status: ACTIVE
   scope: FULL_ARTICLE_TRANSACTION
-  article: "30"
-  continue_until: END_ARTICLE_30
+  article: "31"
+  continue_until: END_ARTICLE_31
   auto_continue_after_gate_pass: true
   explicit_stop_line: NONE
   next_article_authorized: true
-last_successful_commit: 817fd4dde802c6afffa2011d965382267b423aa6
+last_successful_commit: edaafb279cc0c730a5be00cda3a3203d49044cbf
 next_action: VERIFY_EXACT_STAGED_18_FILE_TRANSACTION_THEN_COMMIT
 continuous_run:
   enabled: true
@@ -70,7 +70,7 @@ continuous_run:
     - "42"
     - "43"
     - "44"
-last_updated: "2026-08-30T07:18:00+08:00"
+last_updated: "2026-08-30T07:27:00+08:00"
 ```
 
 > 2026-08-30 Human Part VI授权经fresh reconciliation激活：Part V Audit独立commit=`03c1649b7915d39dda91f67a8cc8b0257306bb4d`，local/origin/live equality与Article28—38 zero-assets precheck均`PASS`。DSH official tag `dsh-v0.1.2-alpha.1`解析到固定commit=`cd5ef8148158c3a752a658978873241fdf8e2bbc`；Article28 PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT完成，当前进入fresh Researcher。Article29—37未启动，Article38—44 forbidden。
