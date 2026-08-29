@@ -337,3 +337,131 @@ worker_result:
   notes:
     - "Normalized exact 15-file transaction frozen after fresh Reviewer revalidation; Article28 remains forbidden/zero-assets."
 ```
+
+### wr-a27-part-v-targeted-revision
+
+- Execution ID: `/root/part_v_a27_revision_cycle1`
+- Finding: `PV-AUD-F01 / PV-AUD-F02`
+- Bounded task brief: modify only Article 27 Draft, Published Content, Review and Subagent Trace; remove only duplicate draft-internal first-screen `上一篇` / `课程索引` navigation; append a truthful missing-envelope correction for `ARTICLE_KICKOFF` and `MASTER_STATE_UPDATE`; do not replay PRECHECK, ARTICLE_KICKOFF, WORKSPACE_INIT, MASTER_STATE_UPDATE, publication, Git or remote operations.
+- Correction status: `READY_FOR_RECHECK`; only a fresh Reviewer / Part Auditor may close the findings.
+
+#### Historical missing-envelope correction
+
+Article 27's durable trace has no raw Worker Result payload for either `ARTICLE_KICKOFF` or `MASTER_STATE_UPDATE`. The missing payloads are not durably recoverable in this repair scope, and prose, README/status/run-state state, prior Master annotations, Git history, or final repository containment cannot reconstruct the original envelope body.
+
+| Required record | Durable raw-envelope fact | Corrected validation |
+|---|---|---|
+| `ARTICLE_KICKOFF` | `raw_envelope: MISSING` | No schema-valid raw `worker_result` exists, so any inferred `PRECHECK -> ARTICLE_KICKOFF` transition authority is invalid. |
+| `MASTER_STATE_UPDATE` | `raw_envelope: MISSING` | No schema-valid raw `worker_result` exists, so any inferred `PUBLISH -> MASTER_STATE_UPDATE` transition authority is invalid. |
+
+This correction does not insert reconstructed `PASS` records, does not infer missing `notes`, and does not repair the absent root fields by reference to later files. The existing trace lines that point to `ARTICLE_KICKOFF` and `MASTER_STATE_UPDATE` remain historical evidence of intended next gates only; they are not durable proof that those gates produced valid raw envelopes.
+
+#### Independent repository / Git reconciliation
+
+Read-only local Git evidence establishes only the eventual Article 27 repository outcome and containment:
+
+- completion commit `6f7946b65ec4e45c687f939cce364a1bacbe69ac` has exact subject `Publish Agent Engineering Article 27` and parent `1ed76a3075c912e33553b4508757dd1066e7a201`;
+- its diff adds the Article 27 workspace and published content, and modifies the declared Article 26 navigation, series index, course status/run-state, course README and series plan paths;
+- at repair time, `HEAD` and local `origin/main` both resolved to `8b773c422e0dd4bca079282ef7f0263f758003e7`;
+- commit `6f7946b65ec4e45c687f939cce364a1bacbe69ac` is an ancestor of both repair-time `HEAD` and local `origin/main`.
+
+This evidence supports the existence and containment of the eventual Article 27 repository result. It does not establish the missing `ARTICLE_KICKOFF` or `MASTER_STATE_UPDATE` raw envelopes, does not retroactively authorize skipped transitions, and does not prove the exact gate-time executor, intermediate workspace state, clean-tree/live-remote state, or original creation sequence. This Revision Worker performed no fetch, push, commit, staging, publication replay or live-remote verification.
+
+#### Navigation correction
+
+For `PV-AUD-F02`, the repair removed only the duplicate draft-internal top `上一篇` and `课程索引` blocks from Article 27 `draft.md` and the matching published body. The publisher top navigation before the published H1 and the bottom navigation were preserved.
+
+#### Revision Disposition
+
+- Finding IDs: `PV-AUD-F01`, Article 27 portion of `PV-AUD-F02`
+- Files Changed:
+  - `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/draft.md`
+  - `content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md`
+  - `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md`
+  - `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/subagent-trace.md`
+- What Changed: duplicate draft-internal first-screen navigation was removed from Draft and Published Content; a missing-envelope correction, bounded Git reconciliation and no-replay boundary were appended to this trace.
+- Evidence Impact: the trace no longer treats absent `ARTICLE_KICKOFF` or `MASTER_STATE_UPDATE` raw envelopes as valid transition evidence; Git evidence remains limited to the eventual committed Article 27 outcome.
+- Proposed Status: `READY_FOR_RECHECK`
+
+#### Fresh worker result
+
+- Master Validation: `PENDING`; the Revision Worker does not validate or close its own result.
+- Raw envelope:
+
+```yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "27"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/draft.md
+    - content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "PV-AUD-F02 Article 27 duplicate draft-internal first-screen Previous/Course Index navigation was removed from Draft and Published Content while publisher top and bottom navigation were preserved."
+    - "PV-AUD-F01 correction appended: original ARTICLE_KICKOFF and MASTER_STATE_UPDATE raw_envelope values are MISSING and have no transition authority."
+    - "Bounded Git evidence supports only the eventual Article 27 repository outcome; no skipped gate, publication, Git or remote operation was replayed."
+```
+
+- Master Validation: `PASS`；exact 11-field Revision Worker envelope、four-file allowed-write scope、append-only historical correction、missing-envelope/no-replay boundary、navigation-only body diff、identity与`REVISION -> REVIEW_RECHECK` mapping independently verified.
+
+### wr-a27-part-v-audit-review-recheck-cycle1
+
+- Execution ID: `/root/part_v_a27_reviewer_cycle1`
+- Bounded brief: independently recheck `PV-AUD-F01/F02`, append-only trace correction, no fabricated PASS/no replay, Draft/Published identity, navigation preservation, Article28 guard and fresh Hugo; write only Article27 Review.
+- Master Validation: `PASS`（exact 11-field envelope、review-only write、independent trace/navigation/identity/build/Article28 evidence与`REVIEW_RECHECK -> PART_V_AUDIT` mapping通过）
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "27"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md
+  gate_completed: true
+  next_allowed_gate: PART_V_AUDIT
+  blocker: NONE
+  notes:
+    - "Article 27 PV-AUD-F01 repair recheck passed: ARTICLE_KICKOFF and MASTER_STATE_UPDATE raw envelopes remain MISSING, invalid/no-transition-authority, and no PASS records were fabricated."
+    - "Article 27 PV-AUD-F02 repair recheck passed: only duplicate draft-internal first-screen navigation was removed; publisher top and bottom navigation and teaching/evidence content were preserved."
+    - "Article-specific disposition is READY_FOR_PART_REAUDIT; only a fresh Part Auditor may close PV-AUD-F01/F02 at Part V scope."
+```
+
+### wr-a27-part-v-audit-pre-commit-reconciliation-cycle1
+
+- Execution ID: `/root`
+- Bounded brief: freeze only the five-file Article27 `PV-AUD-F01/F02` targeted repair after fresh Revision, Review Recheck, identity, Article28 guard and Hugo verification; keep the in-progress Part V Audit report/global state outside this fix commit.
+- Master Validation: `PASS`
+
+```yaml
+worker_result:
+  role: MASTER_ORCHESTRATOR
+  article: "27"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/README.md
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/draft.md
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: GIT_DIFF_VERIFY
+  blocker: NONE
+  notes:
+    - "PV-AUD-F01/F02 are READY_FOR_PART_REAUDIT after fresh Revision and independent Review Recheck; only fresh Part Auditor may close them."
+    - "Repaired Draft identity is 41174 bytes / 491 lines / SHA-256 CC5746C3988D3A2CFF1ECE41675D45114CEEA24A3DD0D05B80E327DE55C99B8F and appears in Published exactly once."
+    - "Historical missing envelopes remain explicit and unreconstructed; fresh Hugo passed with 1255 Pages / 44 Static / 1 Alias; Article28 asset count remains zero."
+```

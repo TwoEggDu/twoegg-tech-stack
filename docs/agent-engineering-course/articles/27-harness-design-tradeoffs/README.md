@@ -10,11 +10,12 @@
 - Evidence Status: `PASS / 11 CLAIMS / 11 CARDS / 1 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
 - Required Lab: `NONE`
 - Mode: `NORMAL_ARTICLE`
-- Current Gate: `PRE_COMMIT_RECONCILIATION COMPLETE`
+- Current Gate: `PART V AUDIT REPAIR / REVIEW_RECHECK COMPLETE`
 - Active Worker: `NONE`
 - Blocker: `NONE`
 - Lifecycle Candidate: `PUBLISHED / NORMALIZED IDENTITY VERIFIED`
 - Persisted Checkpoint: `PRE_COMMIT_RECONCILIATION RETRY 1 PASS`
+- Audit Repair Status: `PV-AUD-F01/F02 READY_FOR_PART_REAUDIT / FIX COMMIT PENDING`
 - Completion Resolution: `DERIVED_FROM_GIT_HISTORY`
 - Completion Evidence Source: `GIT_HISTORY + REMOTE_REFS`
 - Expected Completion Message: `Publish Agent Engineering Article 27`
@@ -30,7 +31,7 @@
 
 ## Current boundary
 
-Article 27 EOF normalization已由fresh Reviewer定点复核：normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682BD84C557BCEFF20171595F24D8097B8C3E27A5155EF8069DC7FCD3E9F`，加回单一trailing LF可重现旧SHA，Published exact occurrence=`1`，语义、11/11与所有边界不变。PRE_COMMIT_RECONCILIATION retry 1通过；下一事务仅Part V Audit，Article28 forbidden。
+原Article transaction已由Git history解析为`END_ARTICLE`。Part V Audit后，`PV-AUD-F02`仅删除Draft内部重复的顶部`上一篇 / 课程索引`；`PV-AUD-F01`以append-only方式登记历史`ARTICLE_KICKOFF / MASTER_STATE_UPDATE` raw envelope=`MISSING / INVALID / NO REPLAY`，不伪造PASS。fresh Reviewer判定Article27范围`READY_FOR_PART_REAUDIT`；修订Draft=`41174 bytes / 491 lines / SHA-256 CC5746C3988D3A2CFF1ECE41675D45114CEEA24A3DD0D05B80E327DE55C99B8F`，Published精确包含一次；Article28 forbidden且零资产。
 
 ## Publisher / Build result candidate
 
@@ -40,7 +41,7 @@ Article 27 EOF normalization已由fresh Reviewer定点复核：normalized Draft=
 - Front Matter Result: `PASS` — Hugo-compatible YAML，ASCII shortcode quotes，frozen Outline metadata preserved: `date=2026-08-30T00:00:00+08:00`，`series_order=280`，`weight=3280`.
 - Series Result: `PASS` — public course index turns Article 27 into an `is-published` relref row；Article 28 remains planned/unlinked.
 - Internal Link Result: `PASS` — Article 26 links to Article 27 at top and bottom；Article 27 links to Article 26 and the course index；no Article 28 relref was added.
-- Semantic Diff Result: `PASS / EXACT BYTE IDENTITY AFTER EOF NORMALIZATION` — Published Content contains the normalized Draft as one contiguous block at byte offset `918`，with exactly one occurrence；Draft block is `41490 bytes / 495 lines / SHA-256 259C682BD84C557BCEFF20171595F24D8097B8C3E27A5155EF8069DC7FCD3E9F`.
+- Semantic Diff Result: `PASS / EXACT BYTE IDENTITY AFTER PV-AUD-F02 REPAIR` — Published Content contains the repaired Draft as one contiguous block exactly once；Draft block is `41174 bytes / 491 lines / SHA-256 CC5746C3988D3A2CFF1ECE41675D45114CEEA24A3DD0D05B80E327DE55C99B8F`.
 - Build Command: `hugo --gc --minify`.
 - Build Result: `PASS / exit 0 / Hugo 0.157.0 / 1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`.
 - Warnings / Errors: final build emitted no `WARNING` or `ERROR` lines.

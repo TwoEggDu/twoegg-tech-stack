@@ -1,9 +1,5 @@
 # Harness 的设计取舍：可替换性、复杂度、Bloat 与演化
 
-> **上一篇**：[Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery]({{< relref "ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md" >}})
-
-> **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
-
 如果这篇只记一句话，可以先记这一句：
 
 > Harness 的问题从来不是能不能设计出来，而是它什么时候比局部 Prompt、Tool wrapper、Workflow、CI 和 Review 更值得拥有。

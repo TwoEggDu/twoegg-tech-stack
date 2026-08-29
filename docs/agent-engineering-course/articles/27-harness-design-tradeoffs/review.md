@@ -245,3 +245,79 @@ Threshold result: `PASS_FOR_FINAL_GATE`. Total score is above `88 / 100`; all ex
 - Blocker: `NONE`
 - Recommended Route: `REVIEW_RECHECK -> PRE_COMMIT_RECONCILIATION`
 - Non-claim boundary: This recheck is not a new Hugo build, not staging, not checkpoint commit, not push/remote verification, not Part V Audit, not Article 28 kickoff and not `END_ARTICLE`.
+
+## Part V Targeted Audit Repair｜/root/part_v_a27_revision_cycle1
+
+### Repair metadata
+
+- Gate: `REVISION`
+- Findings: `PV-AUD-F01`, Article 27 portion of `PV-AUD-F02`
+- Execution Type: `REAL_SUBAGENT / FRESH CONTEXT`
+- Repair Date: `2026-08-30`
+- Disposition: `READY_FOR_RECHECK`
+- Allowed Writes Used:
+  - `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/draft.md`
+  - `content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md`
+  - `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md`
+  - `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/subagent-trace.md`
+
+### Repair record
+
+- `PV-AUD-F02`: removed only the duplicate draft-internal first-screen `上一篇` and `课程索引` blocks from Article 27 Draft and Published Content. Publisher top navigation and bottom navigation were preserved.
+- `PV-AUD-F01`: appended a trace correction recording original `ARTICLE_KICKOFF` and `MASTER_STATE_UPDATE` raw envelopes as `MISSING`, invalidating inferred transition authority, and limiting Git reconciliation to the eventual Article 27 repository outcome.
+- No PRECHECK, ARTICLE_KICKOFF, WORKSPACE_INIT, MASTER_STATE_UPDATE, publication, Git, remote or Article 28 operation was replayed.
+
+## Part V Targeted Repair Recheck｜/root/part_v_a27_reviewer_cycle1
+
+### Recheck metadata
+
+- Gate: `REVIEW_RECHECK`
+- Reviewer: `/root/part_v_a27_reviewer_cycle1`
+- Findings: `PV-AUD-F01`, Article 27 portion of `PV-AUD-F02`
+- Review Date: `2026-08-30`
+- Execution Type: `REAL_SUBAGENT / FRESH CONTEXT`
+- Decision: `PASS`
+- Article-specific Disposition: `READY_FOR_PART_REAUDIT`
+- Recommended Next Gate: `PART_V_AUDIT`
+- Open Findings in Article 27 scope: `0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`
+- Allowed Write Used: `docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md`
+
+### Independent recheck evidence
+
+- `PV-AUD-F01`: Article 27 trace repair is append-only against current `HEAD`: prior trace `339` lines, current trace `411` lines, appended `72` lines, first appended record `wr-a27-part-v-targeted-revision`.
+- Historical `ARTICLE_KICKOFF` and `MASTER_STATE_UPDATE` remain absent as schema-valid raw worker envelopes: exact `gate: ARTICLE_KICKOFF` count=`0`, exact `gate: MASTER_STATE_UPDATE` count=`0`, and `raw_envelope: MISSING` count=`2`.
+- The correction truthfully treats both missing records as invalid/no-transition-authority evidence, does not reconstruct `PASS` records, does not infer missing fields from README/status/run-state/Git, and states that no skipped gate, publication, Git or remote operation was replayed.
+- Article 15 targeted correction precedent was followed: the historical payload problem remains preserved, Git evidence is bounded to the eventual repository outcome, replay is rejected, and only a fresh Part Auditor may close at Part scope.
+- Git evidence remains bounded: completion commit `6f7946b65ec4e45c687f939cce364a1bacbe69ac` has parent `1ed76a3075c912e33553b4508757dd1066e7a201`, subject `Publish Agent Engineering Article 27`, and is an ancestor of current `HEAD` and local `origin/main` at `8b773c422e0dd4bca079282ef7f0263f758003e7`; this supports eventual Article 27 containment only, not missing gate envelopes.
+- `PV-AUD-F02`: current diff removes only the duplicate draft-internal first-screen navigation from Article 27 Draft and Published Content. Draft navigation now appears only at bottom lines `489` and `491`; Published Content preserves publisher top navigation at lines `19` and `21` plus bottom navigation at lines `511` and `513`; no `下一篇` nav block exists.
+- Teaching/evidence content remains unchanged by the repair diff: Draft and Published Content each have `0` insertions and `4` deletions, all four deleted lines are the duplicate draft-internal top navigation blocks.
+- Published Content contains the repaired Draft exactly once as a contiguous body block; recomputed Draft identity is `41174 bytes / 491 physical lines / SHA-256 CC5746C3988D3A2CFF1ECE41675D45114CEEA24A3DD0D05B80E327DE55C99B8F`.
+- Article 27 evidence ceilings remain present in both Draft and Published Content: `Required Lab=NONE`, `Experiment Count=0`, `Runtime Observation=ABSENT`, `1 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`, Stage 0-4 as course proposal, and BuildPilot as `COURSE PROPOSAL / DESIGN CASE / NOT IMPLEMENTED / NOT RUN / READ-ONLY / SUGGESTION-FIRST`.
+- Article 28 remains zero in this recheck scope: Article 28 workspace count=`0`, Article 28 published content count=`0`, Article 28 named static image asset count=`0`, and exact Agent Engineering Article 28 named file hits=`0`.
+- Fresh Hugo verification by this reviewer: `hugo` ran with Hugo `0.157.0` and exit code `0`, producing `1255` pages and `44` static files.
+
+### Article-specific disposition
+
+- `PV-AUD-F01`: `READY_FOR_PART_REAUDIT` in Article 27 scope.
+- Article 27 portion of `PV-AUD-F02`: `READY_FOR_PART_REAUDIT`.
+- Findings requiring Article 27 edits: `NONE`.
+- Reserved closure: Part V scope remains reserved to a fresh `PART_AUDITOR / PART_V_AUDIT`; this recheck does not claim Part V `PASS`, does not commit/push, does not verify live remote, does not start Article 28, and does not produce `END_ARTICLE`.
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "27"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/27-harness-design-tradeoffs/review.md
+  gate_completed: true
+  next_allowed_gate: PART_V_AUDIT
+  blocker: NONE
+  notes:
+    - "Article 27 PV-AUD-F01 repair recheck passed: ARTICLE_KICKOFF and MASTER_STATE_UPDATE raw envelopes remain MISSING, invalid/no-transition-authority, and no PASS records were fabricated."
+    - "Article 27 PV-AUD-F02 repair recheck passed: only duplicate draft-internal first-screen navigation was removed; publisher top and bottom navigation and teaching/evidence content were preserved."
+    - "Article-specific disposition is READY_FOR_PART_REAUDIT; only a fresh Part Auditor may close PV-AUD-F01/F02 at Part V scope."
+```
