@@ -395,3 +395,84 @@ worker_result:
     - "Exact 15-file transaction is frozen; Git/push/remote checks remain runtime facts."
     - "Article 27 is PRECHECK/NOT_STARTED with zero assets; Article 28 remains forbidden and zero-assets."
 ```
+
+### wr-a26-part-v-audit-revision-cycle1
+
+- Execution ID: `/root/part_v_a26_revision_cycle1`
+- Bounded brief: repair only `PV-AUD-F02` by removing duplicate draft-internal first-screen `上一篇 / 课程索引` from Article26 Draft and Published Content; preserve publisher shell, bottom navigation, teaching content and evidence.
+- Master Validation: `PASS`（exact 11-field envelope、three-file allowed-write scope、two navigation-block deletions、identity与`REVISION -> REVIEW_RECHECK` mapping通过）
+
+```yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "26"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/draft.md
+    - content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/review.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "Removed only duplicate draft-internal first-screen Previous and Course Index navigation from Article 26 Draft and Published Content."
+    - "Draft identity is 55934 bytes / 700 lines / SHA-256 5971DC3A5BEBBC0C094C3E81B90FA532C9949274C498B3CB939C12773A3162D9."
+    - "Publisher top/bottom navigation remained; exact Draft occurrence and fresh Hugo passed."
+```
+
+### wr-a26-part-v-audit-review-recheck-cycle1
+
+- Execution ID: `/root/part_v_a26_reviewer_cycle1`
+- Bounded brief: independently recheck `PV-AUD-F02`, Draft/Published identity, navigation preservation and fresh Hugo; append only to Article26 Review.
+- Master Validation: `PASS`（exact 11-field envelope、review-only write、independent identity/navigation/build evidence与`REVIEW_RECHECK -> PART_V_AUDIT` mapping通过）
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "26"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/review.md
+  gate_completed: true
+  next_allowed_gate: PART_V_AUDIT
+  blocker: NONE
+  notes:
+    - "PV-AUD-F02 CLOSED_FOR_ARTICLE_26 after independent recheck."
+    - "Verified Draft occurrence in Published exactly once; publisher top and bottom navigation preserved."
+    - "Fresh Hugo passed with 1255 pages / 44 static files / 0 warnings / 0 errors."
+```
+
+### wr-a26-part-v-audit-pre-commit-reconciliation-cycle1
+
+- Execution ID: `/root`
+- Bounded brief: freeze only the five-file Article26 `PV-AUD-F02` targeted repair after fresh Revision, Review Recheck, identity and Hugo verification; keep the in-progress Part V Audit report/global state outside this fix commit.
+- Master Validation: `PASS`
+
+```yaml
+worker_result:
+  role: MASTER_ORCHESTRATOR
+  article: "26"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/README.md
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/draft.md
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/review.md
+    - docs/agent-engineering-course/articles/26-harness-minimum-capability-model/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: GIT_DIFF_VERIFY
+  blocker: NONE
+  notes:
+    - "PV-AUD-F02 is CLOSED_FOR_ARTICLE_26 after fresh Revision and independent Review Recheck."
+    - "Repaired Draft identity is 55934 bytes / 700 lines / SHA-256 5971DC3A5BEBBC0C094C3E81B90FA532C9949274C498B3CB939C12773A3162D9 and appears in Published exactly once."
+    - "Fresh Hugo passed with 1255 Pages / 44 Static / 1 Alias and no WARNING/ERROR; Article28 remains forbidden and asset-free."
+```

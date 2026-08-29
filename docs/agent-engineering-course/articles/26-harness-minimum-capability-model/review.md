@@ -306,3 +306,53 @@ Threshold result: `PASS_FOR_FINAL_GATE`. Total score is above `88 / 100`; all ex
 - Blocker: `NONE`
 - Next Allowed Gate: `PUBLISH`
 - Non-claim boundary: Final Gate `PASS` is not Published Content, not Hugo Build verification, not checkpoint commit, not push/remote verification, and not `END_ARTICLE`.
+
+## PV-AUD-F02 Targeted Repair Record｜Article 26
+
+- Revision Gate: `REVISION`
+- Revision Worker: `/root/part_v_a26_revision_cycle1`
+- Revision Date: `2026-08-30`
+- Decision authority: `NONE`
+- Scope: `PV-AUD-F02 only`
+- Allowed Write Used: `docs/agent-engineering-course/articles/26-harness-minimum-capability-model/draft.md`; `content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md`; `docs/agent-engineering-course/articles/26-harness-minimum-capability-model/review.md`
+- Files Changed: `draft.md`; `content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md`; `review.md`
+- What Changed: removed only the duplicate draft-internal first-screen `上一篇` and `课程索引` navigation blocks from the Article 26 Draft and from the Published Content immediately after the H1.
+- Publisher Shell Preserved: Published Content still keeps publisher-added top `上一篇 / 下一篇 / 课程索引` navigation and bottom `上一篇 / 下一篇 / 课程索引` navigation.
+- Exact Occurrence Check: Draft navigation counts are `上一篇=0 / 下一篇=0 / 课程索引=0`; Published Content navigation counts are `上一篇=2 / 下一篇=2 / 课程索引=2`.
+- Draft Identity After Repair: `55934 bytes / 700 physical lines / SHA-256 5971DC3A5BEBBC0C094C3E81B90FA532C9949274C498B3CB939C12773A3162D9`.
+- Published Identity After Repair: `57507 bytes / 730 physical lines / SHA-256 524C4EF3FEC1CC1F8B2AE100F8725C7C3268D6A56AA94B7A74450AB7AB2EC7AD`.
+- Hugo Verification: `hugo --gc --minify --destination <temp>` returned exit `0` with Hugo `v0.157.0`, `Pages=1255`, `Static files=44`, `Cleaned=0`.
+- Evidence Impact: no teaching content, claim status, Evidence Card, Review finding decision, Final Gate decision, global state, Article 27, Article 28, Git history, commit, push or remote verification was changed.
+- Proposed Status: `READY_FOR_RECHECK`
+
+Revision Worker note: this append-only record does not close `PV-AUD-F02`, change prior Reviewer decisions, alter Article lifecycle, or advance beyond `REVIEW_RECHECK`.
+
+## Reviewer Recheck｜PV-AUD-F02 / Cycle 1
+
+- Recheck Gate: `REVIEW_RECHECK`
+- Reviewer: `/root/part_v_a26_reviewer_cycle1`
+- Recheck Date: `2026-08-30`
+- Execution Type: `REAL_SUBAGENT / FRESH INDEPENDENT REVIEWER`
+- Finding: `PV-AUD-F02 MINOR`
+- Finding Disposition: `CLOSED_FOR_ARTICLE_26`
+- Decision: `PASS`
+- Recommended Next Gate: `PART_V_AUDIT`
+- Allowed Write Used: `docs/agent-engineering-course/articles/26-harness-minimum-capability-model/review.md`
+
+### Recheck evidence
+
+- Required scope read: Part V Audit `PV-AUD-F02`, Article 26 Revision Repair Record, current Draft, current Published content, Reviewer contract, review checklist, production workflow and repository article method.
+- Current diff for Draft and Published removes only the duplicate draft-internal top `上一篇` and `课程索引` navigation blocks after the H1; no non-navigation body line, evidence table line, reference/source section line or bottom navigation line is changed.
+- Draft identity recomputed: `55934 bytes / 700 lines / SHA-256 5971DC3A5BEBBC0C094C3E81B90FA532C9949274C498B3CB939C12773A3162D9`.
+- Published identity recomputed: `57507 bytes / 730 lines / SHA-256 524C4EF3FEC1CC1F8B2AE100F8725C7C3268D6A56AA94B7A74450AB7AB2EC7AD`.
+- Exact current Draft block appears in current Published content exactly `1` time.
+- Current Draft contains no draft-internal `上一篇`, `下一篇` or `课程索引` navigation block.
+- Current Published content keeps publisher top navigation at lines `19 / 21 / 23` and bottom navigation at lines `726 / 728 / 730`; published navigation counts are `上一篇=2 / 下一篇=2 / 课程索引=2`.
+- Remaining `relref` targets are the expected publisher navigation targets only: Article 25, Article 27 and the course index; shortcode quotes remain ASCII double quotes.
+- Semantic preservation check passed by targeted diff: `git diff --numstat` shows only `0 added / 4 removed` lines in Draft and `0 added / 4 removed` lines in Published, matching the two duplicate navigation block removals in each file.
+- `git diff --check -- docs/agent-engineering-course/articles/26-harness-minimum-capability-model/draft.md content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md docs/agent-engineering-course/articles/26-harness-minimum-capability-model/review.md` exited `0`.
+- Fresh `hugo --gc --minify --destination <temp>` exited `0`: Hugo `v0.157.0-7747abbb316b03c8f353fd3be62d5011fa883ee6+extended windows/amd64`; `Pages=1255`, `Static files=44`, `Aliases=1`, `Cleaned=0`, `Total=7204 ms`; captured output contained no `ERROR` or `WARNING` line. Temporary destination was cleaned after verification.
+
+### Recheck decision
+
+`PV-AUD-F02` is `CLOSED_FOR_ARTICLE_26`. Article 26 now preserves publisher top navigation, bottom navigation, exact Draft-to-Published identity, and all non-navigation body semantics / evidence / source links. This recheck does not close Article 25 or Article 27 instances of `PV-AUD-F02`, does not address `PV-AUD-F01`, and does not advance durable Course Factory state.

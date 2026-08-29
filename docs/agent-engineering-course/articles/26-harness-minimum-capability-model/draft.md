@@ -1,9 +1,5 @@
 # Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery
 
-> **上一篇**：[Agent Runtime vs Harness：执行内核与工程控制面]({{< relref "ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md" >}})
-
-> **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
-
 如果这篇只记一句话，可以先记这一句：
 
 > 最小 Harness 不是功能最少的菜单，而是能持续回答谁在行动、什么能力可见且获权、哪些上下文可用、什么能被当作证据、失败后从哪里恢复、何时停止或问人，以及知识和回归声明是否仍然有效的最小责任闭环。
