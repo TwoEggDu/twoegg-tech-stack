@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "27"
+current_article: "28"
 current_gate: PRECHECK
-last_published_article: "26"
+last_published_article: "27"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "26"
+  article: "27"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/26-harness-minimum-capability-model/subagent-trace.md#wr-a26-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/27-harness-design-tradeoffs/subagent-trace.md#wr-a27-pre-commit-reconciliation-retry1
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "26"
+  article: NONE
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: 07000ceb94dd244e5f312d7787a6c83795c47f58
-next_action: START_ARTICLE_27_PRECHECK_AFTER_END_ARTICLE_26
+last_successful_commit: 1ed76a3075c912e33553b4508757dd1066e7a201
+next_action: START_PART_V_AUDIT_AFTER_ARTICLE_27_END_ARTICLE
 continuous_run:
   enabled: true
   start_article: "24"
@@ -64,8 +64,26 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "28"
-last_updated: "2026-08-30T00:56:00+08:00"
+last_updated: "2026-08-30T02:13:00+08:00"
 ```
+
+> 2026-08-30 Article 27 EOF normalization fresh Recheck与PRE_COMMIT_RECONCILIATION retry 1通过：normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682B...CD3E9F`，normalized+one LF重现旧SHA，Published exact occurrence=`1`，11/11与所有边界不变。当前pointer回到READY；Article28仅forbidden PRECHECK pointer，下一事务唯一为Part V Audit。
+
+> 2026-08-30 Article 27首次persistence cut在staged `git diff --cached --check`发现Draft/Outline/Published各一个EOF blank，故原Pre-Commit记录失效且未commit。Master仅做terminal blank normalization；normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682B...CD3E9F`，Published exact occurrence=`1`，unstaged diff check=`PASS`。当前进入fresh Reviewer定点recheck，Article28仍forbidden。
+
+> 2026-08-30 Article 27已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`94 / 0 OPEN`，Draft exact block=`41491 bytes / 496 lines / SHA-256 BDB726D1...B17E290`，fresh Hugo=`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前Article28仅为forbidden PRECHECK pointer且零资产；唯一下一事务是Article27解析END_ARTICLE后的fresh Part V Audit，再STOP。
+
+> 2026-08-30 Article 27 independent Final Gate通过Master复核：`PASS / 94 / 0 OPEN / ELIGIBLE_FOR_PUBLISH_GATE`；Draft identity、11/11、trade-off/no-build/Stage/BuildPilot/source/Article28与Part V Audit handoff全部通过。当前进入fresh Publisher `PUBLISH`。
+
+> 2026-08-30 Article 27 fresh Review通过Master复核：`PASS / 94 / 0 OPEN`；Draft identity、11/11、two-sided/no-build/Stage0-4/BuildPilot/source/future boundaries全部通过。当前进入独立`FINAL_GATE`。
+
+> 2026-08-30 Article 27 Author Draft通过Master复核：`41491 bytes / 496 lines / SHA-256 BDB726D1...B17E290`，无frontmatter，11/11、two-sided/no-build/Stage0-4/BuildPilot/evidence/future boundaries均保留。当前进入fresh Reviewer `REVIEW`。
+
+> 2026-08-30 Article 27 Outline通过Master复核：`30351 bytes / 647 lines / 11 of 11 Claims`，two-sided trade-offs、no-build、Stage0-4的entry/benefit/cost/exit/not-build字段、BuildPilot克制V1与frontmatter plan完整。当前同一Author进入`AUTHOR_DRAFT`。
+
+> 2026-08-30 Article 27 fresh Research与Master Evidence Gate通过：`11 Claims / 11 Cards / 1 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；正反trade-off、no-build cases、Stage 0-4和BuildPilot克制V1均有明确证据上限，无ROI/成本/延迟/缺陷/runtime发明。当前进入fresh Author `OUTLINE`。
+
+> 2026-08-30 Article 27 fresh PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT通过：Article26 completion commit=`1ed76a3075c912e33553b4508757dd1066e7a201`且local/origin/live equality=`PASS`，tree/index clean，Article27 completion subject count=`0`，Article27—28 production assets在启动前为`ZERO`。当前进入fresh Researcher `RESEARCH`；Article28 forbidden。
 
 > 2026-08-30 Article 26已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`，Draft exact block=`56217 bytes / 704 lines / SHA-256 B3CF1FE5...6C0D00`，fresh Hugo=`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 27 / PRECHECK / NOT_STARTED / active NONE`；启动前必须解析`ResolveArticleCompletion(26)=END_ARTICLE`，Article28仍forbidden。
 

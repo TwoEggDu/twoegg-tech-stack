@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article 26 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；Hugo=`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
-- 当前生产对象：Article 27 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(26)=END_ARTICLE`；Article 23=`OPTIONAL / SKIPPED`；Article 28 forbidden且零资产
+- 当前里程碑：Article27 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION RETRY 1 PASS`；normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682B...CD3E9F`；Hugo=`1255 / 0 WARNING / 0 ERROR`
+- 当前生产对象：Part V Audit pointer，requires Article27 END_ARTICLE；Article23 skipped；Article28 forbidden/zero assets；active worker=`NONE`
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -81,7 +81,9 @@
 - 当前 Article 25 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
 - 当前 Article 26 状态：`PUBLISHED` candidate；Evidence=`0 CONFIRMED / 8 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md`
 - 当前 Article 26 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen revised Draft identity=`PASS`
-- Factory Status：`READY / Article 27 / PRECHECK / NOT_STARTED / active NONE`；continuous range=`24—27`；Article 28 forbidden；每篇独立commit/push/remote verify
+- 当前 Article 27 状态：`PUBLISHED` candidate；Evidence=`1 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`94 / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md`
+- 当前 Article 27 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft identity=`PASS`
+- Factory Status：`READY / Part V Audit after Article27 END_ARTICLE / active NONE`；Article28 forbidden；Audit后STOP
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

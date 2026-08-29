@@ -18,6 +18,8 @@ weight: 3270
 
 > **上一篇**：[Agent Runtime vs Harness：执行内核与工程控制面]({{< relref "ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md" >}})
 
+> **下一篇**：[Harness 的设计取舍：可替换性、复杂度、Bloat 与演化]({{< relref "ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery
@@ -726,5 +728,7 @@ Identity / Session / Ownership 让任务有归属；Capability Registry 让能�
 下一篇才适合继续问：既然这些能力构成了最小 Harness，什么时候值得建？什么时候会变成 bloat？怎样保证可替换性和演化成本不把团队拖住？那是 Article 27 的问题。本文只先把底座钉住：能力可以薄，边界不能糊；实现可以晚，证据不能乱。
 
 > **上一篇**：[Agent Runtime vs Harness：执行内核与工程控制面]({{< relref "ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md" >}})
+
+> **下一篇**：[Harness 的设计取舍：可替换性、复杂度、Bloat 与演化]({{< relref "ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md" >}})
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})

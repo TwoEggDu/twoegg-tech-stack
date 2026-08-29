@@ -121,7 +121,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
         <li class="is-published"><span class="lesson-id">24</span><a href="{{< relref "ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md" >}}">为什么最终需要 Harness：横切能力由谁承载</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">25</span><a href="{{< relref "ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md" >}}">Agent Runtime vs Harness：执行内核与工程控制面</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">26</span><a href="{{< relref "ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md" >}}">Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">27</span><span>Harness 的设计取舍：可替换性、复杂度、Bloat 与演化</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">27</span><a href="{{< relref "ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md" >}}">Harness 的设计取舍：可替换性、复杂度、Bloat 与演化</a><span class="lesson-status">已发布</span></li>
       </ol>
     </section>
     <section class="course-part">
