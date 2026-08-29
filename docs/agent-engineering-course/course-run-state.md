@@ -8,7 +8,7 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: READY
+factory_status: PAUSED
 current_article: "28"
 current_gate: PRECHECK
 last_published_article: "27"
@@ -17,12 +17,12 @@ active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: MASTER_ORCHESTRATOR
-  article: "27"
-  gate: PRE_COMMIT_RECONCILIATION
-  execution_type: MASTER_DETERMINISTIC
-  execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/27-harness-design-tradeoffs/subagent-trace.md#wr-a27-pre-commit-reconciliation-retry1
+  role: PART_AUDITOR
+  article: "PART_V"
+  gate: PART_V_AUDIT
+  execution_type: REAL_SUBAGENT
+  execution_id: /root/part_v_auditor_cycle1_after_repairs
+  result_ref: docs/agent-engineering-course/audits/part-v-audit.md#cycle-1-retry-worker-result-record
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -32,7 +32,7 @@ last_worker_result:
 last_worker_result_error: NONE
 review_cycle: 1
 active_blocker: NONE
-stop_reason: NONE
+stop_reason: EXPLICIT_HUMAN_STOP_LINE
 human_decision_required: false
 article_authorization:
   status: INACTIVE
@@ -40,15 +40,15 @@ article_authorization:
   article: NONE
   continue_until: NONE
   auto_continue_after_gate_pass: false
-  explicit_stop_line: NONE
+  explicit_stop_line: STOP_AFTER_PART_V_AUDIT_CHECKPOINT
   next_article_authorized: false
-last_successful_commit: 1ed76a3075c912e33553b4508757dd1066e7a201
-next_action: START_PART_V_AUDIT_AFTER_ARTICLE_27_END_ARTICLE
+last_successful_commit: 85d41860a6763a9ff334bdd95d1ac931852b6da5
+next_action: GIT_DIFF_VERIFY_PART_V_AUDIT_CHECKPOINT_THEN_COMMIT_PUSH_REMOTE_VERIFY_AND_STOP
 continuous_run:
-  enabled: true
+  enabled: false
   start_article: "24"
   stop_after_article: "27"
-  auto_continue_after_end_article: true
+  auto_continue_after_end_article: false
   stop_at_part_boundary: true
   stop_on:
     blocker: true
@@ -64,8 +64,20 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "28"
-last_updated: "2026-08-30T02:13:00+08:00"
+last_updated: "2026-08-30T04:10:00+08:00"
 ```
+
+> 2026-08-30 fresh Part V re-audit Cycle1 retry经Master直接证据复核后通过：首个Cycle1 artifact因三条completion SHA与三条Published SHA抄录错误被拒绝，retry已用Git/Get-FileHash重算修正；`PV-AUD-F01/F02 CLOSED / 0 OPEN`，fresh Hugo=`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，local/origin/live main=`85d41860...`。当前只允许审计checkpoint的diff/commit/single push/remote verify，随后按显式stop line暂停；Article28不得启动。
+
+> 2026-08-30 Article27 `PV-AUD-F01/F02`已由fresh Revision/Reviewer置为`READY_FOR_PART_REAUDIT`，targeted fix commit=`85d41860a6763a9ff334bdd95d1ac931852b6da5`，single push与local/origin/live equality=`PASS`。Article25/26/27三份targeted fixes均已remote verified；当前启动fresh Part V re-audit Cycle1，Article28继续forbidden/zero-assets。
+
+> 2026-08-30 Article26 `PV-AUD-F02`已由fresh Revision/Reviewer关闭，targeted fix commit=`8b773c422e0dd4bca079282ef7f0263f758003e7`，single push与local/origin/live equality=`PASS`。当前进入Article27 `PV-AUD-F01/F02`最小Revision：历史缺失raw envelope只登记`MISSING / INVALID / no replay`，不得事后伪造PASS；Article28继续forbidden/zero-assets。
+
+> 2026-08-30 Article25 `PV-AUD-F02`已由fresh Revision/Reviewer关闭，targeted fix commit=`446744c7a9f14ee28fe56046f7e4a00c7fcf944d`，single push与local/origin/live equality=`PASS`。当前顺序进入Article26同一Finding的最小Revision；Article28继续forbidden/zero-assets。
+
+> 2026-08-30 fresh Part V Audit Cycle 0返回`FAIL`：`PV-AUD-F01 MAJOR`（Article27 trace缺ARTICLE_KICKOFF与MASTER_STATE_UPDATE raw records）与`PV-AUD-F02 MINOR`（Article25—27首屏导航重复）。Human原始授权明确要求普通可修复Finding自动修复；当前先对Article25执行仅删除draft-internal顶部重复导航的targeted Revision，Article28继续forbidden/zero-assets。
+
+> 2026-08-30 Git history与fresh remote refs解析Article27=`END_ARTICLE`：completion commit=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`，local/origin/live main equality=`PASS`，tree/index clean。Article24—27依次完成且Article23保持optional/skipped；当前启动fresh `PART_AUDITOR / PART_V_AUDIT`，唯一允许写入为`audits/part-v-audit.md`，Article28继续forbidden且零资产。
 
 > 2026-08-30 Article 27 EOF normalization fresh Recheck与PRE_COMMIT_RECONCILIATION retry 1通过：normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682B...CD3E9F`，normalized+one LF重现旧SHA，Published exact occurrence=`1`，11/11与所有边界不变。当前pointer回到READY；Article28仅forbidden PRECHECK pointer，下一事务唯一为Part V Audit。
 

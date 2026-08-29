@@ -1,9 +1,9 @@
 # Agent Engineering 课程状态台账
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
-- 更新时间：2026-08-29
-- 当前里程碑：Article 27 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION RETRY 1 PASS`；normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682B...CD3E9F`；Hugo=`1255 / 0 WARNING / 0 ERROR`
-- 当前生产对象：Part V Audit pointer，requires Article27 END_ARTICLE；Article 28=`FORBIDDEN / ZERO ASSETS`；active worker=`NONE`
+- 更新时间：2026-08-30
+- 当前里程碑：Article 27 `END_ARTICLE`；completion commit=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`；local/origin/live main equality=`PASS`；Hugo=`1255 / 0 WARNING / 0 ERROR`
+- 当前生产对象：Part V Audit checkpoint `Cycle 1 RETRY PASS / GIT_DIFF_VERIFY`；Article25/26/27 fixes=`446744c7... / 8b773c42... / 85d41860... / REMOTE_VERIFIED`；Article 28=`FORBIDDEN / ZERO ASSETS`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -43,12 +43,12 @@
 - Article 24 Published Path：`content/ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md`
 - Article 24 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1252 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
 - Article 25 Published Path：`content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md`
-- Article 25 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
+- Article 25 Repair Verification：`PV-AUD-F02 CLOSED`；fix=`446744c7a9f14ee28fe56046f7e4a00c7fcf944d / REMOTE_VERIFIED`；repaired Draft=`39742 bytes / 559 lines / EB439771...`，Published exact occurrence=`1`
 - Article 26 Published Path：`content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md`
-- Article 26 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen revised Draft block exact identity=`PASS`
+- Article 26 Repair Verification：`PV-AUD-F02 CLOSED`；fix=`8b773c422e0dd4bca079282ef7f0263f758003e7 / REMOTE_VERIFIED`；repaired Draft=`55934 bytes / 700 lines / 5971DC3A...`，Published exact occurrence=`1`
 - Article 27 Published Path：`content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md`
-- Article 27 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Part V Audit after Article27 END_ARTICLE / active NONE`；Article 28 forbidden）
+- Article 27 Repair Verification：`PV-AUD-F01/F02 CLOSED`；fix=`85d41860a6763a9ff334bdd95d1ac931852b6da5 / REMOTE_VERIFIED`；historical raw envelopes=`MISSING / INVALID / NO REPLAY`；repaired Draft=`41174 bytes / 491 lines / CC5746C3...`，Published exact occurrence=`1`
+- Factory Run State：[course-run-state.md](course-run-state.md)（`PAUSED / Article28 PRECHECK forbidden / active NONE / explicit stop line`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
@@ -56,7 +56,8 @@
 - Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
 - Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
 - Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / COMMITTED / PUSHED / REMOTE_VERIFIED`；commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged
-- 下一条允许动作：完成Article27 commit/push/remote verify后fresh Part V Audit；不得启动Article28。
+- Part V Audit：[durable report](audits/part-v-audit.md)；Cycle0=`FAIL / PV-AUD-F01 MAJOR / PV-AUD-F02 MINOR`；targeted repairs已独立push/remote verified；Cycle1首个artifact validation被Master拒绝，retry=`PASS / F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 / 0 WARNING / 0 ERROR`
+- 下一条允许动作：仅执行Part V Audit checkpoint的exact diff、独立commit、single push与remote verify，随后STOP；不得启动Article28。
 
 ## 状态图例
 

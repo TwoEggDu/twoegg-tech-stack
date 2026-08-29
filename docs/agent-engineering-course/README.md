@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article27 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION RETRY 1 PASS`；normalized Draft=`41490 bytes / 495 lines / SHA-256 259C682B...CD3E9F`；Hugo=`1255 / 0 WARNING / 0 ERROR`
-- 当前生产对象：Part V Audit pointer，requires Article27 END_ARTICLE；Article23 skipped；Article28 forbidden/zero assets；active worker=`NONE`
+- 当前里程碑：Article27 `END_ARTICLE`；completion commit=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`；local/origin/live main equality=`PASS`；Hugo=`1255 / 0 WARNING / 0 ERROR`
+- 当前生产对象：Part V Audit checkpoint `Cycle1 RETRY PASS / GIT_DIFF_VERIFY`；Article25/26/27 targeted fixes remote verified；Article28 forbidden/zero assets
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -77,13 +77,12 @@
 - 当前 Article 22 状态：`PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX VERIFIED`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720`；fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89` pushed/live-remote verified；Evidence=`3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；fresh Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 Pages / 0 WARNING / 0 ERROR`
 - 当前 Article 22 Published Content：`content/ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md`
 - 当前 Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
-- 当前 Article 25 状态：`PUBLISHED` candidate；Evidence=`4 CONFIRMED / 6 PARTIAL / 2 PROPOSAL / 0 BLOCKED`；Final=`PASS / 93 / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md`
-- 当前 Article 25 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
-- 当前 Article 26 状态：`PUBLISHED` candidate；Evidence=`0 CONFIRMED / 8 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-26-harness-minimum-capability-model.md`
-- 当前 Article 26 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1254 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen revised Draft identity=`PASS`
-- 当前 Article 27 状态：`PUBLISHED` candidate；Evidence=`1 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED`；Final=`94 / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-27-harness-design-tradeoffs.md`
-- 当前 Article 27 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft identity=`PASS`
-- Factory Status：`READY / Part V Audit after Article27 END_ARTICLE / active NONE`；Article28 forbidden；Audit后STOP
+- 当前 Article 24 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`752a87de878830da1a7724d87d5f648d45ff3abb`；Final=`94 / 0 OPEN`
+- 当前 Article 25 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`07000ceb94dd244e5f312d7787a6c83795c47f58`；Final=`93 / 0 OPEN`；`PV-AUD-F02 CLOSED`；fix=`446744c7... / REMOTE_VERIFIED`
+- 当前 Article 26 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`1ed76a3075c912e33553b4508757dd1066e7a201`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；`PV-AUD-F02 CLOSED`；fix=`8b773c42... / REMOTE_VERIFIED`
+- 当前 Article 27 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`；Final=`94 / 0 OPEN`；`PV-AUD-F01/F02 CLOSED`；fix=`85d41860... / REMOTE_VERIFIED`
+- 当前 Part V Audit：[durable report](audits/part-v-audit.md)；Cycle1 retry=`PASS / PV-AUD-F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
+- Factory Status：`PAUSED / EXPLICIT_HUMAN_STOP_LINE / active NONE`；Article28 forbidden/not started/zero assets
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -117,6 +116,7 @@
 | [Part III Audit](audits/part-iii-audit.md) | Article 12—17 的Context / Memory / KB / RAG / Skill边界、Lab 05、BuildPilot与checkpoint审计；Cycle 1 Gate `PASS`，`PIII-F01 / PIII-F02 CLOSED` |
 | [Part IV Audit](audits/part-iv-audit.md) | Article 18—22 的Evidence / authority / budget / trace / eval边界、Lab 06、BuildPilot、publication、Git/remote与future-asset审计；Cycle 1 Gate `PASS`，0 open Findings |
 | [Part IV Article 22 post-publication recheck](audits/part-iv-article22-post-publication-recheck.md) | 针对fix `481ebd52d6c0522e68a0ce0897f52a7932f9af89`的fresh targeted regression audit；Gate `PASS`，0 findings；不覆盖旧Audit历史结论 |
+| [Part V Audit](audits/part-v-audit.md) | Articles 24—27 的Harness边界、证据、导航、Git/remote与Hugo审计；Cycle0 Findings经三份targeted fix关闭，Cycle1 retry `PASS / 0 OPEN` |
 | [templates/](templates/) | Article、Evidence、Review、Lab 的可复用模板 |
 | [labs/README.md](labs/README.md) | 6 个最小实验的职责与实例化规则 |
 | [articles/00-agent-engineering-world-map/](articles/00-agent-engineering-world-map/) | Article 00 已通过 M5 Publish Gate 并进入 `PUBLISHED` |
@@ -139,7 +139,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22与Article 24已进入Published Content，Article 24已解析为`END_ARTICLE`。Article 23保持Optional/Skipped；Article 25 Evidence Gate通过并进入Outline，Article 26—28生产资产保持0。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22与Article 24—27已进入Published Content并由Git history解析为`END_ARTICLE`。Article 23保持Optional/Skipped/zero-assets；Article 28保持forbidden/not-started/zero-assets。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 
