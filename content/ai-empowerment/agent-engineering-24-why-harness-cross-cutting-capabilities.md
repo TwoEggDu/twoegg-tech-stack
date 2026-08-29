@@ -18,6 +18,8 @@ weight: 3250
 
 > **上一篇**：[Eval、Golden Dataset 与 Regression：修复以后还会不会再坏]({{< relref "ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md" >}})
 
+> **下一篇**：[Agent Runtime vs Harness：执行内核与工程控制面]({{< relref "ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 # 为什么最终需要 Harness：横切能力由谁承载
@@ -496,5 +498,7 @@ Coverage=`12 / 12`；Evidence Cards=`12 / 12`；状态保持 `3 CONFIRMED / 6 PA
 知道 Harness 为什么出现，只是进入 Part V 的第一步；真正的工程问题，是下一篇要把执行内核和治理控制面切清楚。
 
 > **上一篇**：[Eval、Golden Dataset 与 Regression：修复以后还会不会再坏]({{< relref "ai-empowerment/agent-engineering-22-eval-golden-dataset-regression.md" >}})
+
+> **下一篇**：[Agent Runtime vs Harness：执行内核与工程控制面]({{< relref "ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md" >}})
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})

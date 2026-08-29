@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "25"
+current_article: "26"
 current_gate: PRECHECK
-last_published_article: "24"
+last_published_article: "25"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "24"
+  article: "25"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: /root
-  result_ref: docs/agent-engineering-course/articles/24-why-harness-cross-cutting-capabilities/subagent-trace.md#wr-a24-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/subagent-trace.md#wr-a25-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "24"
+  article: "25"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: false
-last_successful_commit: a6763629aaaeb0520b219423fd5ef9c6b442aba4
-next_action: START_ARTICLE_25_PRECHECK_AFTER_END_ARTICLE_24
+last_successful_commit: 752a87de878830da1a7724d87d5f648d45ff3abb
+next_action: START_ARTICLE_26_PRECHECK_AFTER_END_ARTICLE_25
 continuous_run:
   enabled: true
   start_article: "24"
@@ -64,8 +64,22 @@ continuous_run:
     human_decision_required: true
   forbidden_articles:
     - "28"
-last_updated: "2026-08-29T22:47:58+08:00"
+last_updated: "2026-08-29T23:36:40+08:00"
 ```
+
+> 2026-08-29 Article 25已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`93 / 0 OPEN`，Draft exact block identity=`39916 bytes / 561 lines / SHA-256 9239D92A...BAAE4`，fresh Hugo=`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 26 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须由Git history与remote refs解析`ResolveArticleCompletion(25)=END_ARTICLE`；completion SHA、push与remote result未预写，Article28仍forbidden。
+
+> 2026-08-29 Article 25 independent Final Gate通过Master复核：`PASS / 93 / 0 OPEN / ELIGIBLE_FOR_PUBLISH_GATE`；Draft identity、12/12 Claims/Cards、exact evidence posture、Required Lab NONE、课程Taxonomy、BuildPilot design-only与Article26/27 non-preemption全部通过。当前进入fresh Publisher `PUBLISH`。
+
+> 2026-08-29 Article 25 fresh Review通过Master复核：`PASS / 93 / 0 OPEN`；Draft identity=`39916 bytes / 561 lines / SHA-256 9239D92A...BAAE4`，12/12 traceability、Evidence上限、课程Taxonomy反证、BuildPilot design-only与Article26/27 containment均通过。当前进入独立`FINAL_GATE`。
+
+> 2026-08-29 Article 25 Author Draft通过Master复核：`39916 bytes / 561 lines / SHA-256 9239D92A...BAAE4`，无frontmatter，12/12 traceability、证据上限、课程Taxonomy反证、BuildPilot与Article26/27边界均保留。当前进入fresh Reviewer `REVIEW`。
+
+> 2026-08-29 Article 25 fresh Author `OUTLINE`通过Master复核：`762 lines / 12 of 12 Claims`，problem->responsibility model->BuildPilot allocation->engineering judgment结构、五问、四类state owner、术语反证与future boundaries齐全。当前同一Author进入`AUTHOR_DRAFT`。
+
+> 2026-08-29 Article 25 fresh Research与Master Evidence Gate通过：`12 Claims / 12 Cards / 4 CONFIRMED / 6 PARTIAL / 2 PROPOSAL / 0 BLOCKED`。官方OpenAI/Microsoft/LangChain/MCP资料同时证明执行/Host责任可分与术语重叠，故课程Runtime/Harness split仅为responsibility-based teaching taxonomy；Required Lab=`NONE`、experiment=`0`、runtime observation=`ABSENT`。当前进入fresh Author `OUTLINE`。
+
+> 2026-08-29 Article 24经唯一completion commit=`752a87de878830da1a7724d87d5f648d45ff3abb`、single push与local/origin/live equality解析为`END_ARTICLE`。fresh Article 25 PRECHECK确认clean main、Article25—28 zero-assets与无Article25 completion commit；bounded continuous authorization启动Article25，PRECHECK/KICKOFF/WORKSPACE_INIT通过，当前进入fresh Researcher。Article26—28仍未启动。
 
 > 2026-08-29 Article 24已写入`PUBLISHED` candidate与`PRE_COMMIT_RECONCILIATION PASS`：Final=`94 / A24-R0-F01 CLOSED / 0 OPEN`，Draft exact block identity=`41730 bytes / 474 lines / SHA-256 F7213361...E91040`，fresh Hugo=`1252 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`。当前pointer为`READY / Article 25 / PRECHECK / NOT_STARTED / active NONE`，但启动前必须由Git history与remote refs解析`ResolveArticleCompletion(24)=END_ARTICLE`；completion SHA、push与remote result未预写，Article28仍forbidden。
 

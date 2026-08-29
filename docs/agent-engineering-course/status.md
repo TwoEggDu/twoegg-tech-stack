@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-29
-- 当前里程碑：Article 24 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`94 / A24-R0-F01 CLOSED / 0 OPEN`；Hugo=`1252 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
-- 当前生产对象：Article 25 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(24)=END_ARTICLE`；Article 28 forbidden且零资产
+- 当前里程碑：Article 25 `PUBLISHED` candidate / `PRE_COMMIT_RECONCILIATION PASS`；Final=`93 / 0 OPEN`；Hugo=`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
+- 当前生产对象：Article 26 `PRECHECK / NOT_STARTED` pointer；active worker=`NONE`；requires `ResolveArticleCompletion(25)=END_ARTICLE`；Article 28 forbidden且零资产
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -42,7 +42,9 @@
 - Article 22 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1251 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；Draft/Published exact identity=`PASS`
 - Article 24 Published Path：`content/ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md`
 - Article 24 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1252 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 25 / PRECHECK / NOT_STARTED / active worker NONE`；continuous range=`24—27`；Article 28 forbidden）
+- Article 25 Published Path：`content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md`
+- Article 25 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1253 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；frozen Draft block exact identity=`PASS`
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article 26 / PRECHECK / NOT_STARTED / active worker NONE`；continuous range=`24—27`；Article 28 forbidden）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
@@ -50,7 +52,7 @@
 - Part III Audit：[durable report](audits/part-iii-audit.md)；Cycle 1 Gate=`PASS`；`PIII-F01 / PIII-F02 / PIII-F04 CLOSED`；`0 BLOCKER / 0 MAJOR / 2 OPEN MINOR / 0 EDITORIAL`；Hugo / Lab 05 / navigation / completion containment=`PASS`
 - Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
 - Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / COMMITTED / PUSHED / REMOTE_VERIFIED`；commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged
-- 下一条允许动作：Article 24 `GIT_DIFF_VERIFY -> unique completion commit -> single push -> remote verify -> END_ARTICLE`；Persistence Cut后禁止repository write，Article 25启动前必须fresh reconciliation。
+- 下一条允许动作：Article 25 `GIT_DIFF_VERIFY -> unique completion commit -> single push -> remote verify -> END_ARTICLE`；Persistence Cut后禁止repository write，Article 26启动前必须fresh reconciliation。
 
 ## 状态图例
 
@@ -88,7 +90,7 @@
 | 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX VERIFIED` | `PASS / 13 of 13 / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED / 13 Cards` | Lab 06 `VERIFIED / EVIDENCE_MERGED / AC-01..AC-10 / FROZEN ARTIFACTS PRESERVED` | Post-publication Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 / 0 WARNING / 0 ERROR`；Published exact identity=`PASS`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720` remains historical evidence；fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89` pushed/live-remote verified；Part IV targeted re-audit=`PASS` |
 | 23 | Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent | IV | M | 是 | `PLANNED` | `BLOCKED` | N/A | Advanced / Optional；未开始研究 |
 | 24 | 为什么最终需要 Harness：横切能力由谁承载 | V | L | 否 | `PUBLISHED` | `PASS / 3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；Final=`94 / 0 OPEN`；BuildPilot未实现、未运行 |
-| 25 | Agent Runtime vs Harness：执行内核与工程控制面 | V | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
+| 25 | Agent Runtime vs Harness：执行内核与工程控制面 | V | L | 否 | `PUBLISHED` | `PASS / 4 CONFIRMED / 6 PARTIAL / 2 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；Final=`93 / 0 OPEN`；课程Taxonomy非行业标准 |
 | 26 | Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery | V | L | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 27 | Harness 的设计取舍：可替换性、复杂度、Bloat 与演化 | V | M | 否 | `PLANNED` | `BLOCKED` | N/A | 未开始研究 |
 | 28 | 怎样把 DeepSeek Harness 当作 Evidence-first 源码教材 | VI | S | 否 | `PLANNED` | `BLOCKED` | N/A | DSH 仓库、commit 与运行入口未固定 |
