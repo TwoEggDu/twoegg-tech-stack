@@ -129,7 +129,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
       <ol class="course-lessons">
         <li class="is-published"><span class="lesson-id">28</span><a href="{{< relref "ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md" >}}">怎样把 DeepSeek Harness 当作 Evidence-first 源码教材</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">29</span><a href="{{< relref "ai-empowerment/agent-engineering-29-dsh-host-to-agent-run.md" >}}">DeepSeek Harness 总图：从 Host 启动到一次 Agent Run</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">30</span><span>Everything is a Plugin：插件内核如何承载 Capability 与生命周期</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">30</span><a href="{{< relref "ai-empowerment/agent-engineering-30-dsh-plugin-core.md" >}}">Everything is a Plugin：插件内核如何承载 Capability 与生命周期</a><span class="lesson-status">已发布</span></li>
         <li class="is-planned"><span class="lesson-id">31</span><span>Profile、Bundle、Provider 与 Capability Seam</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">32</span><span>System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">33</span><span>Inbox、Turn、Step 与 Agent Loop</span><span class="lesson-status">计划中</span></li>

@@ -1,0 +1,604 @@
+# Article 30 Evidence
+
+Status: `EVIDENCE MERGED / EVIDENCE_GATE CANDIDATE PASS`
+
+## Evidence summary
+
+- Frozen DSH revision：`dsh-v0.1.2-alpha.1 @ cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Representative plugin：`packages/context/time-context`
+- Static source closure：`46-step configured -> operate -> dispose path`
+- Runtime classification：`TEST_FIXTURE_RUNTIME_CONFIRMED + REAL_HEADLESS_MOCK_RUNTIME_CONFIRMED`
+- Claim count：`15`
+- Final status：`12 CONFIRMED / 0 PARTIAL / 3 PROPOSAL / 0 BLOCKED`
+- Excluded：`real provider / network / production deployment / token / cost`
+
+### Evidence 30-E01｜Pinned identity and final fixture integrity
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C01`
+- Claim: `Article 30 source and runtime evidence is bounded to the official frozen DSH revision, and the external fixture remained clean through the experiment.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `fresh git identity and integrity checks`
+- Source: `official DSH external fixture; repository-map.md; plugin-lifecycle-trace.md`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `.git metadata; repository worktree`
+- Symbol: `HEAD; refs/tags/dsh-v0.1.2-alpha.1`
+- Call Path: `N/A — identity boundary`
+- Experiment: `E0 baseline; final fixture integrity`
+- Fixture: `C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814`
+- Trace: `experiments/plugin-lifecycle-trace.md E0 and Final fixture integrity`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact full revision only`
+- Reproduction: `git rev-parse HEAD; git status --short; git diff --stat`
+- Observation: `HEAD matched the frozen commit before/after; status and diff were empty.`
+- Counter-evidence Searched: `wrong revision, local instrumentation or dirty fixture; none observed`
+- Interpretation: `Every merged source/test claim has one fixed version boundary.`
+- Proves: `repository identity and clean experimental input/output boundary`
+- Does Not Prove: `any plugin behavior by itself`
+- Limitations: `point-in-time local checks`
+- Course Usage: `version/evidence scope box`
+- BuildPilot Implication: `DEFER — adopt pinning discipline, not architecture`
+- Owner: `Article 30 Researcher / Source Investigator / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `repository identity`
+- Run Entry: `read-only git checks`
+- Runtime Trace: `fixture integrity only`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `DEFER`
+- Decision Rationale: `先固定 source identity，再解释 runtime。`
+
+### Evidence 30-E02｜Real plugin and Loader export boundary
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C02`
+- Claim: `time-context is a real namespace Cordis plugin whose Loader metadata survives unwrap and whose apply path becomes operative when mounted with AgentRegistry.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `pinned source + exact owner Loader test`
+- Source: `time-context package; Cordis Loader unwrap path`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/context/time-context/src/index.ts; packages/context/time-context/tests/time-context.spec.ts; vendor/loader/src/index.ts`
+- Symbol: `name; inject; Config; apply; unwrapExports; keeps namespace metadata and boots the agent listener through unwrapExports`
+- Call Path: `namespace import -> Loader.unwrapExports -> ctx.plugin -> apply -> ctx.on -> pre-step contribution`
+- Experiment: `E5 exact Loader export/apply owner test`
+- Fixture: `repo-owned time-context spec; AgentRegistry; Cordis Context`
+- Trace: `exit 0; 1 passed / 18 skipped; duration 2.07s`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision on recorded Windows/Node environment`
+- Reproduction: `node node_modules/vitest/vitest.mjs run packages/context/time-context/tests/time-context.spec.ts -t "keeps namespace metadata and boots the agent listener through unwrapExports"`
+- Observation: `No synthetic default export; name/inject/Config/apply survived unwrap; mounted plugin produced a time-context contribution.`
+- Counter-evidence Searched: `test-only fake plugin or metadata-only module; owner test mounts the unwrapped production namespace`
+- Interpretation: `The representative is a real Loader-compatible plugin, not a directory inference.`
+- Proves: `source identity, Loader normalization and fixture-scoped apply activation`
+- Does Not Prove: `all plugins share this shape or real provider behavior`
+- Limitations: `one representative plugin and owner fixture`
+- Course Usage: `representative plugin selection and import/install phase`
+- BuildPilot Implication: `DEFER — evidence target only`
+- Owner: `Article 30 Researcher / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `time-context/src/index.ts; vendor/loader/src/index.ts:unwrapExports`
+- Run Entry: `exact owner Vitest above`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `DEFER`
+- Decision Rationale: `先用真实小插件讲清机制，不推广成 universal ontology。`
+
+### Evidence 30-E03｜Plugin Context versus model Context
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C03`
+- Claim: `Cordis Plugin Context owns DI/events/effects, while the model-visible time contribution is a separate sourced UserMessage later entering request history.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `closed cross-package source path`
+- Source: `repository-map.md vocabulary/object map; call-path.md phases B-E`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `vendor/cordis/src/context.ts; vendor/cordis/src/fiber.ts; packages/context/time-context/src/index.ts; packages/core/agent-loop/src/agent.ts`
+- Symbol: `Context; Fiber.ctx; apply; createUserMessage; ReactLoopAgent.preStep/turn`
+- Call Path: `parent Context -> plugin Fiber Context -> apply listener -> PreStepDecision message -> Session.append -> model history`
+- Experiment: `E3/E4 corroborate the model-visible side`
+- Fixture: `pinned source plus AgentLoop/Loader mock fixtures`
+- Trace: `call-path.md steps 10,17,33-40; E3 two requests; E4 two persisted contributions`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `follow exact source owners; compare event/request objects in E3/E4`
+- Observation: `Plugin Context carries Fiber/registry ownership; time text appears as plugin-sourced user-role messages, not as Context mutation or request header.`
+- Counter-evidence Searched: `same word Context implying same object; source owners and data types differ`
+- Interpretation: `Container context and model context must remain separate in teaching vocabulary.`
+- Proves: `object and call-boundary distinction for the selected path`
+- Does Not Prove: `complete Prompt/System Context assembly or token-window behavior`
+- Limitations: `Article 32 owns wider assembly semantics`
+- Course Usage: `terminology firewall`
+- BuildPilot Implication: `ADOPT — use distinct names and interfaces`
+- Owner: `Article 30 Researcher / Source Investigator`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `context.ts:Context; fiber.ts:Fiber.ctx; time-context:index.ts:apply; agent.ts:turn`
+- Run Entry: `E3/E4 owner fixtures`
+- Runtime Trace: `fixture corroboration; no real provider`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `避免把 DI container 与 model input 混写。`
+
+### Evidence 30-E04｜Configured, PENDING and ACTIVE are separate states
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C04`
+- Claim: `A configured time-context row must pass Loader import, Registry/Fiber creation, dependency resolution and config/apply before ACTIVE; configured or created alone is insufficient.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `46-step source path + Loader/apply and pending probes`
+- Source: `repository-map.md; call-path.md; Lab E5/E7`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `vendor/loader/src/config/entry.ts; vendor/cordis/src/registry.ts; vendor/cordis/src/fiber.ts; packages/context/time-context/src/index.ts`
+- Symbol: `Entry._start; RegistryService.plugin; Fiber._refresh/_reload; apply`
+- Call Path: `CONFIG_ROW -> import/unwrap -> ctx.registry.plugin -> Fiber(PENDING) -> agents resolved -> Config -> apply -> listener effect -> ACTIVE`
+- Experiment: `E5 active path; E7 missing-dependency negative`
+- Fixture: `owner Loader test and bounded fresh-Context probe`
+- Trace: `E5 exit 0; E7 stdout {inject:[agents],missing:[agents],state:0}`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision on current environment`
+- Reproduction: `owner Loader test plus no-AgentRegistry bounded probe`
+- Observation: `Mounted-with-provider path operated; missing-provider path remained state 0/PENDING and did not immediately throw.`
+- Counter-evidence Searched: `YAML membership, Fiber creation or no immediate error as activation proof; all contradicted by state boundary`
+- Interpretation: `Configuration, settlement and operation need separate diagnostics.`
+- Proves: `selected source path and two distinct fixture states`
+- Does Not Prove: `real provider activation or all Loader audit outcomes`
+- Limitations: `provider replacement runtime not executed`
+- Course Usage: `configured-is-not-active section`
+- BuildPilot Implication: `ADOPT observable configured/ready states; SIMPLIFY mechanism`
+- Owner: `Article 30 Researcher / Source Investigator / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `entry.ts:_start; registry.ts:plugin; fiber.ts:_refresh/_reload`
+- Run Entry: `E5 owner test; E7 bounded probe`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED with PENDING counterexample`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `保留状态观测，不默认复制动态 Loader。`
+
+### Evidence 30-E05｜Runtime agents dependency and missing-service boundary
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C05`
+- Claim: `time-context inject=['agents'] is a runtime service requirement; without AgentRegistry the Fiber reports missing agents and remains PENDING rather than immediately throwing.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `service/dependency source + bounded negative probe`
+- Source: `AgentRegistry Service path; Cordis Fiber epoch; Lab E7`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/agent/src/index.ts; vendor/cordis/src/service.ts; reflect.ts; fiber.ts; time-context/src/index.ts`
+- Symbol: `AgentRegistry; Service.constructor; reflect.provide; inject; _checkImpl; _refresh`
+- Call Path: `AgentRegistry -> provide('agents'); timeContext.inject -> Inject.resolve -> Fiber lookup/epoch -> ACTIVE or PENDING`
+- Experiment: `E7 omit AgentRegistry`
+- Fixture: `fresh Cordis Context + production time-context namespace`
+- Trace: `exit 0; {inject:["agents"],missing:["agents"],state:0}`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `mount time-context without AgentRegistry and print inject/missing/state`
+- Observation: `The mount was legal but inactive; state 0 maps to PENDING.`
+- Counter-evidence Searched: `missing dependency immediately throws; direct observation contradicts it. Import/package order as dependency evidence was rejected.`
+- Interpretation: `Raw Cordis parks unresolved consumers; higher boot audit is a separate boundary.`
+- Proves: `selected missing-dependency runtime behavior and source provider relation`
+- Does Not Prove: `provider replacement runtime, arbitrary dependency graphs or app-boot final error wording`
+- Limitations: `bounded probe; provider-change path source-only`
+- Course Usage: `dependency/order negative example`
+- BuildPilot Implication: `ADOPT explicit missing-dependency diagnostics; choose fail-fast or pending deliberately`
+- Owner: `Article 30 Researcher / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `agent/index.ts:AgentRegistry; fiber.ts:_refresh`
+- Run Entry: `E7 bounded tsx probe`
+- Runtime Trace: `RUNTIME_CONFIRMED: missing agents / state 0 PENDING`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `依赖状态要显式，不把 list order 当契约。`
+
+### Evidence 30-E06｜ctx.on is a Fiber-owned reversible Effect
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C06`
+- Claim: `The time-context ctx.on listener is lowered through EventsService.register to a disposer owned by the plugin Fiber.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `closed event/effect path + exact disposal observation`
+- Source: `call-path.md steps 21-25 and 41-45; Lab E1/E2`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/context/time-context/src/index.ts; vendor/cordis/src/events.ts; vendor/cordis/src/fiber.ts`
+- Symbol: `apply; EventsService.on/register/unregister; Fiber.effect/_unload/dispose`
+- Call Path: `apply -> ctx.on -> register -> fiber.effect -> hook insert; fiber.dispose -> _unload -> effect disposer -> unregister`
+- Experiment: `E1 exact owner lifecycle test; E2 explicit count probe`
+- Fixture: `real time-context plugin, AgentRegistry, same Context/Agent across dispose boundary`
+- Trace: `E1 exit 0 / 1 passed; E2 beforeDispose=1, afterDispose=1`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision on Windows/Node v24.18.1`
+- Reproduction: `run exact owner test; optionally repeat bounded count probe`
+- Observation: `First eligible dispatch contributed once; awaited plugin-Fiber disposal; second eligible dispatch produced no new contribution.`
+- Counter-evidence Searched: `standalone global listener or disposer existence without effect; source and behavior bind listener to Fiber owner`
+- Interpretation: `Registration and reversal share one lifecycle owner.`
+- Proves: `selected listener's source ownership and fixture-scoped reversible effect`
+- Does Not Prove: `private hook-list contents, in-flight callback cancellation or every plugin effect`
+- Limitations: `one listener/plugin and one OS`
+- Course Usage: `register/effect center trace`
+- BuildPilot Implication: `ADOPT owner-bound disposer contract`
+- Owner: `Article 30 Researcher / Source Investigator / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `events.ts:on/register; fiber.ts:effect/_unload`
+- Run Entry: `E1 owner Vitest; E2 bounded probe`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED / effect observed by absence`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `Contribution 与清理必须同 owner。`
+
+### Evidence 30-E07｜Agent-scoped operate path without Tool registration
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C07`
+- Claim: `The global time-context listener operates on the exact Agent-scoped pre-step payload, delegates downstream, and contributes a sourced message without registering a Tool.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `source path + AgentLoop owner fixture`
+- Source: `call-path.md phase D; Lab E3/E8`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/agent/src/dispatch.ts; packages/core/scope/src/index.ts; packages/context/time-context/src/index.ts; time-context/tests/time-context.spec.ts`
+- Symbol: `agentEvents; scopeTarget; EventsService.waterfall; apply listener; createUserMessage`
+- Call Path: `ReactLoopAgent.preStep -> agentEvents.waterfall -> scopeTarget(agent,agent) -> global hook -> await next -> sourced message`
+- Experiment: `E3 real AgentLoop owner case; E8 downstream throw/cancel cases`
+- Fixture: `deterministic ScriptedAdapter and fixture Tool; no network provider`
+- Trace: `E3 exit 0 / two requests/two ordered contributions; E8 exit 0 / 2 passed / no reading/request/step`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `run exact E3 and E8 owner test filters`
+- Observation: `Accepted requests each received one attributed snapshot; downstream throw/cancel left none. Module contains no ctx.tools.register path.`
+- Counter-evidence Searched: `prepend means committed first; E8 contradicts this because listener awaits next. Plugin equals Tool; bounded source search found no Tool registration.`
+- Interpretation: `Operation is Agent-scoped through payload/carrier, while plugin instance remains global and non-Tool.`
+- Proves: `selected operation/order/negative boundary and module-scoped non-Tool fact`
+- Does Not Prove: `one Fiber per Agent, all scoped routing, model quality or Tool pipeline behavior`
+- Limitations: `deterministic owner fixture`
+- Course Usage: `operate-in-scope section`
+- BuildPilot Implication: `SIMPLIFY to explicit contributor order and subject`
+- Owner: `Article 30 Researcher / Source Investigator / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `dispatch.ts:agentEvents; time-context:index.ts:apply`
+- Run Entry: `E3/E8 targeted Vitest`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `显式 subject/contributor 足够时不引入 ambient plugin scope。`
+
+### Evidence 30-E08｜Plugin Event to durable Session Event boundary
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C08`
+- Claim: `agent/pre-step, the returned PreStepDecision message and Session user/message are consecutive but distinct process-local, proposed-input and durable boundaries.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `closed source handoff + real headless mock JSONL observation`
+- Source: `call-path.md phases D-E; Lab E3/E4`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `vendor/cordis/src/events.ts; packages/context/time-context/src/index.ts; packages/core/agent-loop/src/agent.ts; packages/core/session/src/index.ts; time-context/tests/time-context.e2e.ts`
+- Symbol: `waterfall; PreStepDecision.messages; Session.append; SessionEvent<'user/message'>`
+- Call Path: `Plugin Event -> modified decision -> step/start append -> user/message append -> Session validate/freeze/push -> request projection`
+- Experiment: `E3 owner AgentLoop; E4 corrected real Loader/headless E2E`
+- Fixture: `real Loader/app boot and JSONL persistence with repo-owned deterministic mock LLM`
+- Trace: `E4 exit 0 / 1 passed; 2 turns / 2 step-start / 2 ordered attributed contributions`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `node node_modules/vitest/vitest.mjs run --config vitest.e2e.config.ts packages/context/time-context/tests/time-context.e2e.ts`
+- Observation: `Each persisted contribution follows its matching step/start, has surfaceOp append and plugin/time-context/snapshot attribution; headers exclude the prose.`
+- Counter-evidence Searched: `Cordis hook itself durable or returned message already committed; exact source places Session.append later`
+- Interpretation: `Transient interception and durable evidence require separate types and owners.`
+- Proves: `selected handoff source path and mock-headless durable observation`
+- Does Not Prove: `external persistence durability guarantees, replay/resume semantics or real provider request`
+- Limitations: `repo-owned mock; persistence/replay belongs Article 34`
+- Course Usage: `Plugin Event versus Session Event diagram`
+- BuildPilot Implication: `ADOPT transient-hook/durable-record separation`
+- Owner: `Article 30 Researcher / Source Investigator / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `events.ts:waterfall; agent.ts:turn; session/index.ts:append`
+- Run Entry: `E4 corrected e2e command`
+- Runtime Trace: `REAL_HEADLESS_MOCK_RUNTIME_CONFIRMED`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `live event 与 durable record 不共享同一语义。`
+
+### Evidence 30-E09｜Dispose retains history and stops future contribution
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C09`
+- Claim: `After disposing the time-context plugin Fiber, the contribution count remains 1 to 1: existing Session history remains while future listener contribution stops.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `exact owner test + explicit bounded effect probe`
+- Source: `Lab E1/E2; Fiber/Events teardown source`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/context/time-context/tests/time-context.spec.ts; vendor/cordis/src/fiber.ts; vendor/cordis/src/events.ts`
+- Symbol: `removes its listener when the plugin fiber disposes; Fiber.dispose/_unload; EventsService.unregister`
+- Call Path: `first pre-step -> one Session contribution -> await fiber.dispose -> unregister -> second pre-step -> no new contribution`
+- Experiment: `E1 exact test; E2 explicit before/after probe`
+- Fixture: `same Context, Agent and Session around plugin-Fiber disposal`
+- Trace: `E1 1 passed; E2 {beforeDispose:1,afterDispose:1,firstSource:{kind:plugin,plugin:time-context,...}}`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision`
+- Reproduction: `run E1; reproduce E2 only from clean fixture without saving instrumentation`
+- Observation: `The existing first contribution remained countable; the second otherwise-eligible event did not add another.`
+- Counter-evidence Searched: `dispose erases history or cancels already-running callbacks; neither is observed or claimed`
+- Interpretation: `Disposal reverses the registration mechanism, not prior durable facts or external effects.`
+- Proves: `selected future-listener removal and existing-history retention in fixture`
+- Does Not Prove: `external rollback, cancellation, process teardown or arbitrary plugin cleanup`
+- Limitations: `absence-of-second-effect observation; private hooks not inspected`
+- Course Usage: `dispose evidence centerpiece`
+- BuildPilot Implication: `ADOPT negative-after-dispose acceptance test`
+- Owner: `Article 30 Researcher / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `fiber.ts:_unload; events.ts:unregister; time-context.spec.ts lifecycle case`
+- Run Entry: `E1/E2`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED: 1 -> 1`
+- DSH Verification: `SOURCE_CONFIRMED + RUNTIME_CONFIRMED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `可逆 lifecycle 应停止未来行为而不篡改历史。`
+
+### Evidence 30-E10｜Service contribution is optional and separate from Tool
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C10`
+- Claim: `Cordis plugins may provide services, consume services or only register effects; time-context consumes agents and registers an event effect, but provides no new Service or Tool.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `closed service path + bounded negative source search`
+- Source: `repository-map.md object/edge register; call-path.md phase B-C`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/agent/src/index.ts; vendor/cordis/src/service.ts; vendor/cordis/src/reflect.ts; packages/context/time-context/src/index.ts`
+- Symbol: `AgentRegistry; Service.constructor; ReflectService.provide; timeContext.inject/apply`
+- Call Path: `AgentRegistry -> provide('agents') owner effect -> time-context Fiber injects agents -> apply registers listener; no ToolRuntime.register`
+- Experiment: `E5/E7 corroborate consumer activation/missing state`
+- Fixture: `pinned source and owner tests`
+- Trace: `repository-map.md 30-S05/08/09; E5 active, E7 missing agents`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision and representative module`
+- Reproduction: `trace Service provider and search time-context module for provide/tools registration`
+- Observation: `AgentRegistry provides agents; time-context has inject and ctx.on only, with no Tool registration.`
+- Counter-evidence Searched: `every plugin is a Service or Tool; representative composition directly contradicts both`
+- Interpretation: `Plugin is lifecycle ownership; Service/Event/Tool are different contribution kinds.`
+- Proves: `selected provider/consumer/event split and bounded module absence`
+- Does Not Prove: `all plugins or all Tool providers follow one shape`
+- Limitations: `negative statement limited to inspected source module`
+- Course Usage: `Plugin/Service/Event/Tool comparison`
+- BuildPilot Implication: `SIMPLIFY to explicit capability interfaces`
+- Owner: `Article 30 Researcher / Source Investigator`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `agent/index.ts:AgentRegistry; service.ts:Service; time-context:index.ts:apply`
+- Run Entry: `E5/E7 supporting fixtures`
+- Runtime Trace: `bounded supporting observations`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `不要用 Plugin 一词吞掉 capability 类型边界。`
+
+### Evidence 30-E11｜Global plugin Fiber and Agent-scoped dispatch
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C11`
+- Claim: `The selected time-context listener is globally registered, while each operation is routed through an exact Agent carrier; Fiber ownership, service isolation and event scope are distinct mechanisms.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `PINNED_SOURCE`
+- Source Type: `scope/source closure with operation corroboration`
+- Source: `repository-map.md scope map; call-path.md phases D and createScope side path`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/core/agent/src/dispatch.ts; packages/core/scope/src/index.ts; vendor/cordis/src/context.ts; vendor/cordis/src/events.ts; packages/context/time-context/src/index.ts`
+- Symbol: `agentEvents; scopeTarget; createScope; Context.filter; EventsService.dispatch; apply`
+- Call Path: `global plugin hook -> agentEvents with scopeTarget(agent,agent) -> filter admits global hook -> exact Agent payload operation`
+- Experiment: `E3/E4 corroborate per-request Agent operations`
+- Fixture: `owner AgentLoop and real headless mock E2E`
+- Trace: `two requests/two contributions; two turns/two ordered contributions`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact selected path`
+- Reproduction: `trace tagged/untagged filter and inspect operation events`
+- Observation: `The shipped selected row is not wrapped in per-Agent createScope; untagged listener receives admitted exact-Agent events.`
+- Counter-evidence Searched: `Agent-scoped operation implies one plugin Fiber per Agent; source shows one global listener instead`
+- Interpretation: `Ownership scope and dispatch subject are separate axes.`
+- Proves: `selected scope/dispatch relation`
+- Does Not Prove: `all createScope runtime behavior or service-isolation equivalence`
+- Limitations: `supporting createScope tests were not required/run`
+- Course Usage: `Scope nuance section`
+- BuildPilot Implication: `SIMPLIFY to explicit owner plus subject key`
+- Owner: `Article 30 Researcher / Source Investigator`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `dispatch.ts:agentEvents; scope/index.ts:scopeTarget/createScope`
+- Run Entry: `E3/E4 supporting fixtures`
+- Runtime Trace: `selected operation corroborated; scope mechanism source-confirmed`
+- DSH Verification: `SOURCE_CONFIRMED`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `不要把 lifecycle owner、DI isolate 与 dispatch key 合成一个 Scope。`
+
+### Evidence 30-E12｜Owner tests, full spec and real headless mock runtime
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C12`
+- Claim: `Article 30's exact lifecycle, operation, Loader, invalid-config, downstream-negative and full package owner tests pass, and the corrected real headless mock E2E persists two ordered contributions.`
+- Evidence Status: `CONFIRMED`
+- Evidence Class: `EXPERIMENT`
+- Source Type: `multi-probe package owner and Loader runtime evidence`
+- Source: `experiments/plugin-lifecycle-trace.md E1-E9`
+- Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Commit: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- File: `packages/context/time-context/tests/time-context.spec.ts; time-context.e2e.ts; tests/fixtures/driver.ts; cordis.yml`
+- Symbol: `lifecycle case; AgentLoop case; Loader export case; config negatives; downstream throw/cancel; complete owner spec; headless e2e`
+- Call Path: `targeted owner tests + full spec; boot -> Loader rows -> two turns -> JSONL inspect -> root dispose`
+- Experiment: `E1, E3-E6, E8-E9; corrected E4`
+- Fixture: `repo-owned deterministic adapters/mock LLM, real app boot/Loader, temp JSONL sessions`
+- Trace: `dispose 1/1; operation 1/1; Loader 1/1; config 1/1 + 1/1; downstream 2/2; full spec 19/19; e2e 1/1`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `exact pinned revision; Windows 10 x64; Node v24.18.1; Vitest 4.1.8`
+- Reproduction: `use exact commands in plugin-lifecycle-trace.md Reproduction recipe`
+- Observation: `All valid targeted/full commands exited 0; corrected E2E produced two turns/two steps/two persisted attributed contributions.`
+- Counter-evidence Searched: `Corepack version fetch exit1; first e2e wrong collector exit1; first tsx top-level-await transform exit1. All retained and classified as harness-command errors.`
+- Interpretation: `The selected lifecycle is runtime-confirmed in owner/test and real Loader/headless mock scopes.`
+- Proves: `package owner behavior and mock-headless composition for the selected revision/environment`
+- Does Not Prove: `whole monorepo health, production runtime, real provider/model, network, token accounting or cost`
+- Limitations: `repo-owned mock, one package, one OS/environment`
+- Course Usage: `runtime evidence panel and limitations`
+- BuildPilot Implication: `ADOPT lifecycle test pattern; DEFER runtime architecture`
+- Owner: `Article 30 Researcher / Lab`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `packages/context/time-context/tests/*`
+- Run Entry: `exact Vitest commands in durable trace`
+- Runtime Trace: `TEST_FIXTURE_RUNTIME_CONFIRMED + REAL_HEADLESS_MOCK_RUNTIME_CONFIRMED`
+- DSH Verification: `RUNTIME_CONFIRMED`
+- Course Decision: `ADOPT`
+- Decision Rationale: `正向、负向、完整 package 与 composition observation 共同闭合。`
+
+### Evidence 30-E13｜Composition power and debugging cost inference
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C13`
+- Claim: `Dynamic named injection, proxy mixins, waterfall ordering, scope filtering and reverse disposal provide composition power while adding initialization and debugging dimensions.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `INFERENCE`
+- Source Type: `course interpretation over confirmed mechanism facts`
+- Source: `repository-map.md; call-path.md; merged runtime counterexamples`
+- Repository: `TechStackShow + pinned DSH evidence`
+- Commit: `current Article 30 transaction; DSH cd5ef814...e2bbc`
+- File: `research.md; repository-map.md; call-path.md`
+- Symbol: `inject; ReflectService.mixin; waterfall; scopeTarget; Fiber._unload`
+- Call Path: `confirmed indirection/state mechanisms -> more diagnostic dimensions -> conditional engineering-cost inference`
+- Experiment: `missing dependency and downstream-failure observations support examples, not cost measurement`
+- Fixture: `N/A for the inference itself`
+- Trace: `PENDING state and delegate-first negative observations`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `course interpretation of pinned revision`
+- Reproduction: `enumerate configured/active, global/scoped, prepend/next and owner/disposer diagnostic axes`
+- Observation: `Source/runtime evidence exposes multiple independent states and indirection layers.`
+- Counter-evidence Searched: `complexity is always harmful; dynamic rebinding/isolation may justify it`
+- Interpretation: `The cost claim is conditional and not an official DSH motivation.`
+- Proves: `N/A — inference/proposal`
+- Does Not Prove: `measured debug time, defect rate or that DSH chose incorrectly`
+- Limitations: `no empirical productivity measurement`
+- Course Usage: `tradeoff analysis`
+- BuildPilot Implication: `REJECT hidden complexity as default; DEFER stronger kernel`
+- Owner: `Article 30 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `https://github.com/deepseek-ai/deepseek-harness`
+- Pinned Revision: `cd5ef8148158c3a752a658978873241fdf8e2bbc`
+- Source Location: `confirmed symbols above`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A — inference only`
+- DSH Verification: `N/A — course inference`
+- Course Decision: `REJECT`
+- Decision Rationale: `组合力必须匹配真实动态需求。`
+
+### Evidence 30-E14｜When ordinary DI is enough
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C14`
+- Claim: `Constructor DI or a modular monolith with explicit start/stop is sufficient when capabilities are stable, runtime rebinding is unnecessary and ownership is explicit.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course engineering decision`
+- Source: `Article 30 merged tradeoff criteria`
+- Repository: `TechStackShow`
+- Commit: `current Article 30 transaction`
+- File: `research.md; evidence.md`
+- Symbol: `ordinary DI sufficiency criteria`
+- Call Path: `stable capabilities + explicit composition root + bounded disposers -> ordinary DI decision`
+- Experiment: `future BuildPilot ADR only; not authorized in Part VI`
+- Fixture: `N/A`
+- Trace: `N/A`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `course proposal, not DSH fact`
+- Reproduction: `evaluate stable dependency/rebinding/scope/ownership criteria against future requirements`
+- Observation: `Article 30 evidence does not establish that BuildPilot requires dynamic plugin rebinding, HMR or multiple isolation scopes.`
+- Counter-evidence Searched: `extensibility alone implies plugin kernel; explicit interfaces also provide extension seams`
+- Interpretation: `Choose the least powerful lifecycle mechanism that closes current requirements.`
+- Proves: `N/A — design proposal`
+- Does Not Prove: `DSH should use ordinary DI or BuildPilot requirements are final`
+- Limitations: `Part VII not authorized; future requirements may change`
+- Course Usage: `DI versus plugin decision rubric`
+- BuildPilot Implication: `SIMPLIFY`
+- Owner: `Article 30 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course proposal`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `稳定依赖与显式 owner 不需要动态插件内核。`
+
+### Evidence 30-E15｜BuildPilot simplify decision
+
+- Article: `30｜Everything is a Plugin：插件内核如何承载 Capability 与生命周期`
+- Claim ID: `30-C15`
+- Claim: `BuildPilot should adopt explicit dependencies, owner-bound reversible effects and lifecycle tests while simplifying away Everything-is-a-plugin machinery by default.`
+- Evidence Status: `PROPOSAL`
+- Evidence Class: `DESIGN_PROPOSAL`
+- Source Type: `course transfer decision`
+- Source: `Article 30 merged evidence and Part VI boundary`
+- Repository: `TechStackShow`
+- Commit: `current Article 30 transaction`
+- File: `research.md; evidence.md`
+- Symbol: `BuildPilot decision frame`
+- Call Path: `pinned source/runtime facts -> ownership invariant -> simplified explicit interfaces -> future ADR input`
+- Experiment: `N/A in Part VI`
+- Fixture: `future BuildPilot only`
+- Trace: `Article 30 source/runtime evidence is complete; BuildPilot implementation is not started`
+- Retrieved / Run At: `2026-08-30 Asia/Shanghai`
+- Version Scope: `Part VI course input only`
+- Reproduction: `carry forward only final CONFIRMED invariants; keep mechanism choices in design language`
+- Observation: `Owner-bound listener reversal and transient/durable boundaries are confirmed; need for Cordis proxy/registry machinery is not.`
+- Counter-evidence Searched: `class-name similarity, maximum extensibility and DSH success as adoption reasons; all rejected`
+- Interpretation: `Adopt invariants, simplify machinery, defer architecture.`
+- Proves: `N/A — explicit design proposal`
+- Does Not Prove: `BuildPilot code, architecture, ADR or Part VII decision`
+- Limitations: `must be reconsidered under explicit Part VII authorization`
+- Course Usage: `closing transfer matrix`
+- BuildPilot Implication: `SIMPLIFY`
+- Owner: `Article 30 Researcher`
+- Verified At: `2026-08-30`
+- DSH Repository: `N/A`
+- Pinned Revision: `N/A`
+- Source Location: `N/A`
+- Run Entry: `N/A`
+- Runtime Trace: `N/A`
+- DSH Verification: `N/A — course proposal`
+- Course Decision: `SIMPLIFY`
+- Decision Rationale: `吸收 ownership/disposal 约束，不复制 Everything-is-a-plugin。`
+
+## Evidence Gate recommendation
+
+`EVIDENCE_MERGE PASS / EVIDENCE_GATE ELIGIBLE`。
+
+15 个 Claim 与 15 张 Evidence Card 一一对应：`12 CONFIRMED / 0 PARTIAL / 3 PROPOSAL / 0 BLOCKED`。静态 46 步链闭合 configured/import/dependency/apply/event/effect/Agent operation/Session append/dispose；Lab 的 exact owner、AgentLoop、Loader、invalid-config、downstream-negative 与 full package spec 全部通过，real Loader/headless mock E2E 得到两 turns、两 steps、两条 ordered contributions。Dispose 的 `1 -> 1` 只解释为旧历史保留且未来 listener contribution 停止。缺 `agents` 的 observation 固定为 `state=0/PENDING`，不能写成 immediate throw。Corepack 网络失败、错误 collector 和首版 tsx transform failure 都保留为 harness-command evidence。mock 不等于 real Provider，BuildPilot 保持 `SIMPLIFY` proposal。Next allowed gate：`EVIDENCE_GATE`。

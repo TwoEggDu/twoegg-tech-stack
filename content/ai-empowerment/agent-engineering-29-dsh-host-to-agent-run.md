@@ -20,6 +20,8 @@ weight: 3300
 
 > **上一篇**：[怎样把 DeepSeek Harness 当作 Evidence-first 源码教材]({{< relref "ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md" >}})
 
+> **下一篇**：[Everything is a Plugin：插件内核如何承载 Capability 与生命周期]({{< relref "ai-empowerment/agent-engineering-30-dsh-plugin-core.md" >}})
+
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
 一张 Agent Harness 架构图，最容易让人产生一种错觉：只要模块都画上去了，运行过程也就解释完了。
@@ -466,3 +468,9 @@ DSH 的 headless 主链在固定 revision 上已经可以从 CLI/Profile 静态�
 所以，真正可靠的总图必须同时画出 owner、关系和证据上限。
 
 `终态已经收敛，不等于链上每个动作都成功。`
+
+> **上一篇**：[怎样把 DeepSeek Harness 当作 Evidence-first 源码教材]({{< relref "ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md" >}})
+
+> **下一篇**：[Everything is a Plugin：插件内核如何承载 Capability 与生命周期]({{< relref "ai-empowerment/agent-engineering-30-dsh-plugin-core.md" >}})
+
+> **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})

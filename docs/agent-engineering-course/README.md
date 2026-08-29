@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article29 `PUBLISHED` candidate / Final=`PASS / 96 / A29-R0-F01 CLOSED / 0 OPEN`；Hugo=`1257 Pages / 44 Static / 1 Alias / 0 ERROR`
-- 当前生产对象：Article29 `MASTER_STATE_UPDATE -> PRE_COMMIT_RECONCILIATION`；active worker=`NONE`；Article30不得在Article29 `END_ARTICLE`前启动；Article38—44 forbidden/zero assets
+- 当前里程碑：Article30 `PUBLISHED` candidate / Final=`PASS / 97 / 0 OPEN`；Hugo=`1258 Pages / 44 Static / 1 Alias / 0 ERROR`
+- 当前生产对象：Article30 `MASTER_STATE_UPDATE -> PRE_COMMIT_RECONCILIATION`；active NONE；Article31 requires Article30 END_ARTICLE；Article38—44 forbidden/zero assets
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -87,7 +87,10 @@
 - 当前 Article 29 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED`；Final=`PASS / 96 / A29-R0-F01 CLOSED / 0 OPEN`
 - 当前 Article 29 Published Content：`content/ai-empowerment/agent-engineering-29-dsh-host-to-agent-run.md`
 - 当前 Article 29 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1257 Pages / 44 Static / 1 Alias / 0 ERROR`，exit code `0`；published H1-to-EOF exact identity=`PASS`
-- Factory Status：`RUNNING / Article29 GIT_DIFF_VERIFY / active NONE`；continuous range=`28—37`；Article30 requires Article29 END_ARTICLE；Article38—44 forbidden
+- 当前 Article 30 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 BLOCKED`；Final=`97 / 0 OPEN`
+- 当前 Article 30 Published Content：`content/ai-empowerment/agent-engineering-30-dsh-plugin-core.md`
+- 当前 Article 30 Build Verification：`1258 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
+- Factory Status：`RUNNING / Article30 GIT_DIFF_VERIFY / active NONE`；continuous range=`28—37`；Article31 requires Article30 END_ARTICLE；Article38—44 forbidden
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
