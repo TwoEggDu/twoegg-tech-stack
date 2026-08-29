@@ -24,8 +24,6 @@ weight: 3260
 
 # Agent Runtime vs Harness：执行内核与工程控制面
 
-> **上一篇**：[为什么最终需要 Harness：横切能力由谁承载]({{< relref "ai-empowerment/agent-engineering-24-why-harness-cross-cutting-capabilities.md" >}})
-
 如果这篇只记一句话，可以先记这一句：
 
 > Runtime 负责把一次 Agent Run 推进下去；Harness 负责让跨 Run、跨 Tool、跨 Workflow 的身份、权限、证据、预算、Trace、审批、恢复和能力暴露保持同一种可审计语义。

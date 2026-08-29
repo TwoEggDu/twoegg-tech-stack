@@ -158,3 +158,45 @@ Threshold result: `PASS_FOR_FINAL_GATE`. There are no open `BLOCKER`, `MAJOR`, `
 - Blocker: `NONE`
 - Publication Eligibility: `ELIGIBLE_FOR_PUBLISH_GATE`
 - Non-claim boundary: Final Gate `PASS` is not Published Content, not Hugo Build verification, not checkpoint commit, not push/remote verification, and not `END_ARTICLE`.
+
+## Revision Repair Record｜PV-AUD-F02 / Cycle 1
+
+- Repair Gate: `REVISION`
+- Worker: `/root/part_v_a25_revision_cycle1`
+- Repair Date: `2026-08-30`
+- Finding: `PV-AUD-F02 MINOR`
+- Disposition: `FIXED_FOR_ARTICLE_25 / READY_FOR_REVIEW_RECHECK`
+- Scope: removed only the duplicate draft-internal top `上一篇` navigation block from Draft and Published body.
+- Preserved: publisher shell top navigation, Published bottom navigation, teaching content, evidence posture, Claim Traceability and all reference links.
+- Draft identity after repair: `39742 bytes / 559 lines / SHA-256 EB43977112FD2940A5E8D01B728CA6FE0DCCD60D1CCC296C1987E1E964217CD3`.
+- Published identity after repair: `41282 bytes / 589 lines / SHA-256 281C493F42E0968766BDFB6DFE57450C390AA9D84B9B94254C8444D7D6350AEE`.
+- Verification: repaired Draft exact block appears in Published exactly `1` time; Published navigation scan keeps top `上一篇 / 下一篇 / 课程索引` and bottom `上一篇 / 下一篇 / 课程索引`.
+
+## Reviewer Recheck｜PV-AUD-F02 / Cycle 1
+
+- Recheck Gate: `REVIEW_RECHECK`
+- Reviewer: `/root/part_v_a25_reviewer_cycle1`
+- Recheck Date: `2026-08-30`
+- Execution Type: `REAL_SUBAGENT / FRESH INDEPENDENT REVIEWER`
+- Finding: `PV-AUD-F02 MINOR`
+- Finding Disposition: `CLOSED_FOR_ARTICLE_25`
+- Decision: `PASS`
+- Recommended Next Gate: `PART_V_AUDIT`
+- Allowed Write Used: `docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/review.md`
+
+### Recheck evidence
+
+- Required scope read: Part V Audit `PV-AUD-F02`, Article 25 Revision Repair Record, current Draft, current Published content, Reviewer contract, review checklist and production workflow.
+- Current diff for Draft and Published removes only the duplicate draft-internal top `上一篇` navigation block after the H1; no non-navigation body line, evidence table line, reference link or bottom navigation line is changed.
+- Draft identity recomputed: `39742 bytes / 559 lines / SHA-256 EB43977112FD2940A5E8D01B728CA6FE0DCCD60D1CCC296C1987E1E964217CD3`.
+- Published identity recomputed: `41282 bytes / 589 lines / SHA-256 281C493F42E0968766BDFB6DFE57450C390AA9D84B9B94254C8444D7D6350AEE`.
+- Exact current Draft block appears in current Published content exactly `1` time.
+- Current Draft contains no draft-internal top `上一篇` navigation block.
+- Current Published content keeps publisher top navigation exactly once each for `上一篇`, `下一篇` and `课程索引`, and keeps bottom navigation exactly once each for the same three links.
+- Semantic preservation check passed: current Draft equals the pre-repair Draft with only the duplicate top navigation block removed; current Published content equals the pre-repair Published content with only the duplicate draft-internal top navigation block removed.
+- `git diff --check -- docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/draft.md content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/review.md` exited `0`.
+- Fresh `hugo --gc --minify` exited `0`: Hugo `v0.157.0-7747abbb316b03c8f353fd3be62d5011fa883ee6+extended windows/amd64`; `Pages=1255`, `Static files=44`, `Aliases=1`, `Total=6152 ms`; captured output contained no `ERROR` or `WARNING` line.
+
+### Recheck decision
+
+`PV-AUD-F02` is `CLOSED_FOR_ARTICLE_25`. Article 25 now preserves publisher top navigation, bottom navigation, exact Draft-to-Published identity, and all non-navigation body semantics / evidence / links. This recheck does not close Article 26 or Article 27 instances of `PV-AUD-F02`, does not address `PV-AUD-F01`, and does not advance durable Course Factory state.

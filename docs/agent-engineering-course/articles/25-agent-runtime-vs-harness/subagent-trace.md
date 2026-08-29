@@ -340,3 +340,84 @@ worker_result:
     - "Exact 15-file transaction is frozen; diff/stage/commit/push/remote verification remain runtime facts."
     - "Article 26 is PRECHECK / NOT_STARTED only and has zero production assets; Article 28 remains forbidden and zero-assets."
 ```
+
+### wr-a25-part-v-audit-revision-cycle1
+
+- Execution ID: `/root/part_v_a25_revision_cycle1`
+- Bounded brief: repair only `PV-AUD-F02` by removing the duplicate draft-internal first-screen navigation from Article25 Draft and Published Content; preserve publisher shell, bottom navigation, teaching content and evidence.
+- Master Validation: `PASS`（exact 11-field envelope、three-file allowed-write scope、single navigation-block deletion、Draft/Published identity与`REVISION -> REVIEW_RECHECK` mapping通过）
+
+```yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "25"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/draft.md
+    - content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/review.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "Removed only duplicate draft-internal top navigation from Article 25 Draft and Published body; preserved publisher top nav and bottom nav."
+    - "Draft identity: 39742 bytes / 559 lines / SHA-256 EB43977112FD2940A5E8D01B728CA6FE0DCCD60D1CCC296C1987E1E964217CD3."
+    - "Published contains repaired Draft exactly once; fresh Hugo passed with 1255 Pages and no WARNING/ERROR."
+```
+
+### wr-a25-part-v-audit-review-recheck-cycle1
+
+- Execution ID: `/root/part_v_a25_reviewer_cycle1`
+- Bounded brief: independently recheck `PV-AUD-F02`, Draft/Published identity, navigation preservation and fresh Hugo; append only to Article25 Review.
+- Master Validation: `PASS`（exact 11-field envelope、review-only write、independent identity/navigation/build evidence与`REVIEW_RECHECK -> PART_V_AUDIT` mapping通过）
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "25"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/review.md
+  gate_completed: true
+  next_allowed_gate: PART_V_AUDIT
+  blocker: NONE
+  notes:
+    - "PV-AUD-F02 is CLOSED_FOR_ARTICLE_25; only the draft-internal duplicate top navigation block was removed from Draft and Published."
+    - "Draft appears in Published exactly once; publisher top navigation and bottom navigation are preserved."
+    - "Fresh Hugo passed with 1255 Pages / 44 Static / 1 Alias and no ERROR or WARNING line."
+```
+
+### wr-a25-part-v-audit-pre-commit-reconciliation-cycle1
+
+- Execution ID: `/root`
+- Bounded brief: freeze only the five-file Article25 `PV-AUD-F02` targeted repair after fresh Revision, Review Recheck, identity and Hugo verification; keep the in-progress Part V Audit report/global state outside this fix commit.
+- Master Validation: `PASS`
+
+```yaml
+worker_result:
+  role: MASTER_ORCHESTRATOR
+  article: "25"
+  gate: PRE_COMMIT_RECONCILIATION
+  execution_type: MASTER_DETERMINISTIC
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - content/ai-empowerment/agent-engineering-25-agent-runtime-vs-harness.md
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/README.md
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/draft.md
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/review.md
+    - docs/agent-engineering-course/articles/25-agent-runtime-vs-harness/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: GIT_DIFF_VERIFY
+  blocker: NONE
+  notes:
+    - "PV-AUD-F02 is CLOSED_FOR_ARTICLE_25 after fresh Revision and independent Review Recheck."
+    - "Repaired Draft identity is 39742 bytes / 559 lines / SHA-256 EB43977112FD2940A5E8D01B728CA6FE0DCCD60D1CCC296C1987E1E964217CD3 and appears in Published exactly once."
+    - "Fresh Hugo passed with 1255 Pages / 44 Static / 1 Alias and no WARNING/ERROR; Article28 remains forbidden and asset-free."
+```
