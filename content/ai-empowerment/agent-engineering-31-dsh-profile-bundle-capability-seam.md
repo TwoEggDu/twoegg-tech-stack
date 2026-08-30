@@ -689,4 +689,4 @@ Headless `89` rows、Web `144` rows 和 `87` 个 shared ids，说明二者共享
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
-> **下一篇**：System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成（计划中，发布后再补链接）。
+> **下一篇**：[System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成]({{< relref "ai-empowerment/agent-engineering-32-dsh-system-prompt-assembly-prompt-context.md" >}})

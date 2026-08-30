@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: RUNNING
-current_article: "31"
+current_article: "32"
 current_gate: GIT_DIFF_VERIFY
-last_published_article: "30"
+last_published_article: "31"
 active_worker: NONE
 active_worker_execution_id: NONE
-active_worker_record_ref: docs/agent-engineering-course/articles/31-dsh-profile-bundle-capability-seam/subagent-trace.md#wr-a31-pre-commit-reconciliation
+active_worker_record_ref: docs/agent-engineering-course/articles/32-dsh-system-prompt-assembly-prompt-context/subagent-trace.md#wr-a32-pre-commit-reconciliation
 last_worker_result_semantics: CURRENT_TRANSACTION_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "31"
+  article: "32"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/31-dsh-profile-bundle-capability-seam/subagent-trace.md#wr-a31-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/32-dsh-system-prompt-assembly-prompt-context/subagent-trace.md#wr-a32-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,12 +37,12 @@ human_decision_required: false
 article_authorization:
   status: ACTIVE
   scope: FULL_ARTICLE_TRANSACTION
-  article: "31"
-  continue_until: END_ARTICLE_31
+  article: "32"
+  continue_until: END_ARTICLE_32
   auto_continue_after_gate_pass: true
   explicit_stop_line: NONE
   next_article_authorized: true
-last_successful_commit: edaafb279cc0c730a5be00cda3a3203d49044cbf
+last_successful_commit: 9a060c1ce91a620163a64cddd2aec446c4900fd0
 next_action: VERIFY_EXACT_STAGED_18_FILE_TRANSACTION_THEN_COMMIT
 continuous_run:
   enabled: true

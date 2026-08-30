@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-30
-- 当前里程碑：Article 30 `END_ARTICLE`；completion commit=`edaafb279cc0c730a5be00cda3a3203d49044cbf`；local/origin/live equality=`PASS`
-- 当前生产对象：Article 31 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article 32—37=`NOT_STARTED`；Article 38—44=`FORBIDDEN / ZERO ASSETS`
+- 当前里程碑：Article 31 `END_ARTICLE`；completion commit=`9a060c1ce91a620163a64cddd2aec446c4900fd0`；local/origin/live equality=`PASS`
+- 当前生产对象：Article 32 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article 33—37=`NOT_STARTED`；Article 38—44=`FORBIDDEN / ZERO ASSETS`
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -56,7 +56,9 @@
 - Article 30 Build Verification：`1258 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
 - Article 31 Published Path：`content/ai-empowerment/agent-engineering-31-dsh-profile-bundle-capability-seam.md`
 - Article 31 Build Verification：`1259 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / Article31 PRE_COMMIT_RECONCILIATION / bounded 28—37 / active Master`）
+- Article 32 Published Path：`content/ai-empowerment/agent-engineering-32-dsh-system-prompt-assembly-prompt-context.md`
+- Article 32 Build Verification：`1260 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
+- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / Article32 GIT_DIFF_VERIFY / bounded 28—37 / active NONE`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
@@ -65,7 +67,7 @@
 - Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
 - Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / COMMITTED / PUSHED / REMOTE_VERIFIED`；commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged
 - Part V Audit：[durable report](audits/part-v-audit.md)；Cycle0=`FAIL / PV-AUD-F01 MAJOR / PV-AUD-F02 MINOR`；targeted repairs已独立push/remote verified；Cycle1首个artifact validation被Master拒绝，retry=`PASS / F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 / 0 WARNING / 0 ERROR`
-- 下一条允许动作：Article31 exact diff verification、唯一 completion commit、single push 与 remote verification；Article32 仅在 `END_ARTICLE 31` 后允许 PRECHECK。
+- 下一条允许动作：Article32 exact 18-file commit、single push、remote verification。
 
 ## 状态图例
 
@@ -109,8 +111,8 @@
 | 28 | 怎样把 DeepSeek Harness 当作 Evidence-first 源码教材 | VI | S | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 6 CONFIRMED / 0 PARTIAL / 10 PROPOSAL / 0 BLOCKED / 12 Cards` | Baseline probes `STRUCTURED OBSERVATIONS COMPLETE / full suite FAIL / Agent Run NOT_CONFIRMED` | `NONE`；Final=`98 / A28-RV-001 CLOSED / 0 OPEN`；completion=`c428273501482288fcd986ca0ad1818863d4675a`；remote verified |
 | 29 | DeepSeek Harness 总图：从 Host 启动到一次 Agent Run | VI | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Evidence Work `CONFIRMED WITH COUNTER-EVIDENCE` | `NONE`；Final 96 / F01 CLOSED；completion `817fd4dd...` remote verified |
 | 30 | Everything is a Plugin：插件内核如何承载 Capability 与生命周期 | VI | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `12 CONFIRMED / 3 PROPOSAL / 0 BLOCKED` | Required Evidence Work `CONFIRMED / MOCK-BOUNDED` | `NONE`；Final 97；completion `edaafb27...` remote verified |
-| 31 | Profile、Bundle、Provider 与 Capability Seam | VI | M | 否 | `PUBLISHED` | `12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Evidence Work `CONFIRMED / SOURCE+RUNTIME BOUNDED` | `NONE`；Final 97 / F01/F02 CLOSED；completion candidate pending Git |
-| 32 | System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成 | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
+| 31 | Profile、Bundle、Provider 与 Capability Seam | VI | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Evidence Work `CONFIRMED / SOURCE+RUNTIME BOUNDED` | `NONE`；Final 97 / F01/F02 CLOSED；completion `9a060c1c...` remote verified |
+| 32 | System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成 | VI | L | 否 | `PUBLISHED` | `13 CONFIRMED / 2 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Lab `PASS / MOCK-BOUNDED` | `NONE`；Final 97 / F01 CLOSED；completion candidate pending Git |
 | 33 | Inbox、Turn、Step 与 Agent Loop | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
 | 34 | Append-only Session Event：Replay、Resume、Fork 与 Projection | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
 | 35 | Tool Registry 与 Tool Execution Pipeline | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
