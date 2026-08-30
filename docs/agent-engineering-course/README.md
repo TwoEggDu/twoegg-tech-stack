@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article33 `END_ARTICLE`；completion commit=`be5d36a94db54823d64160d4bcebf01e1f7da080`；local/origin/live equality=`PASS`
-- 当前生产对象：Article34 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article35—37 not started；Article38—44 forbidden/zero assets
+- 当前里程碑：Article34 `END_ARTICLE`；completion commit=`3908174accd733c6bf9ee0e9141b58b168b3f93c`；remote verified。
+- 当前生产对象：Article35=`NOT_STARTED / authorized candidate awaiting fresh eligibility/PRECHECK`；Article36—37=`NOT_STARTED`；Part VI Audit=`NOT_STARTED until Article 37`；Article38—44=`FORBIDDEN / ZERO ASSETS`；Article23=`OPTIONAL / SKIPPED / ZERO ASSETS`。
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -82,21 +82,24 @@
 - 当前 Article 26 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`1ed76a3075c912e33553b4508757dd1066e7a201`；Final=`A26-R0-F01/F02 CLOSED / 0 OPEN`；`PV-AUD-F02 CLOSED`；fix=`8b773c42... / REMOTE_VERIFIED`
 - 当前 Article 27 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`6f7946b65ec4e45c687f939cce364a1bacbe69ac`；Final=`94 / 0 OPEN`；`PV-AUD-F01/F02 CLOSED`；fix=`85d41860... / REMOTE_VERIFIED`
 - 当前 Part V Audit：[durable report](audits/part-v-audit.md)；Cycle1 retry=`PASS / PV-AUD-F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`
-- 当前 Article 28 状态：`PUBLISHED` candidate；Evidence=`6 CONFIRMED / 0 PARTIAL / 10 PROPOSAL / 0 BLOCKED / 12 Cards`；Final=`98 / A28-RV-001 CLOSED / 0 OPEN`；Published Content：`content/ai-empowerment/agent-engineering-28-dsh-evidence-first-source-method.md`
+- 当前 Article 28 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
 - 当前 Article 28 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1256 Pages / 44 Static / 1 Alias / 0 WARNING / 0 ERROR`，exit code `0`；published H1-to-EOF exact identity=`PASS`
-- 当前 Article 29 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED`；Final=`PASS / 96 / A29-R0-F01 CLOSED / 0 OPEN`
+- 当前 Article 29 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
 - 当前 Article 29 Published Content：`content/ai-empowerment/agent-engineering-29-dsh-host-to-agent-run.md`
 - 当前 Article 29 Build Verification：`hugo --gc --minify`，Hugo `0.157.0`，`1257 Pages / 44 Static / 1 Alias / 0 ERROR`，exit code `0`；published H1-to-EOF exact identity=`PASS`
-- 当前 Article 30 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 BLOCKED`；Final=`97 / 0 OPEN`
+- 当前 Article 30 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
 - 当前 Article 30 Published Content：`content/ai-empowerment/agent-engineering-30-dsh-plugin-core.md`
 - 当前 Article 30 Build Verification：`1258 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
-- 当前 Article 31 状态：`PUBLISHED` candidate；Evidence=`12 CONFIRMED / 3 PROPOSAL / 0 BLOCKED`；Final=`97 / A31-R0-F01/F02 CLOSED / 0 OPEN`
+- 当前 Article 31 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
 - 当前 Article 31 Published Content：`content/ai-empowerment/agent-engineering-31-dsh-profile-bundle-capability-seam.md`
 - 当前 Article 31 Build Verification：`1259 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
-- 当前 Article 32 状态：`PUBLISHED` candidate；Evidence=`13 CONFIRMED / 2 PROPOSAL / 0 BLOCKED`；Final=`97 / A32-R0-F01 CLOSED / 0 OPEN`；Hugo=`1260 / 0 ERROR`
-- 当前 Article 33 状态：`PUBLISHED` candidate；Evidence=`14 CONFIRMED / 1 PROPOSAL / 0 BLOCKED`；Required Trace=`4/4 PASS / 10/10 owner tests`；Final=`98 / A33-R0-F01—F03 CLOSED / 0 OPEN`；Hugo=`1261 Pages / 44 Static / 1 Alias / 0 ERROR`
-- 当前 Article 34 状态：`PUBLISHED` candidate；Evidence=`9 CONFIRMED / 5 PARTIAL / 1 PROPOSAL / 0 BLOCKED`；Required Tests=`12 PASS`；Final=`98 / A34-PUB-F01 CLOSED / 0 OPEN`；Hugo=`1262 Pages / 44 Static / 1 Alias / 0 ERROR`
-- Factory Status：`READY / Article35 PRECHECK / active NONE`；continuous range=`28—37`；Article35 requires Article34 END_ARTICLE；Article38—44 forbidden
+- 当前 Article 32 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
+- 当前 Article 33 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
+- 当前 Article 34 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`3908174accd733c6bf9ee0e9141b58b168b3f93c` / remote verified。
+- 当前 Article 35：`NOT_STARTED`；已获连续运行候选授权，但仍等待 fresh eligibility/PRECHECK。
+- 当前 Article 36—37：`NOT_STARTED / ZERO ASSETS`；Part VI Audit 在 Article 37 `END_ARTICLE` 前保持 `NOT_STARTED`。
+- 当前 Article 38—44：`FORBIDDEN / ZERO ASSETS`。
+- Factory Status：`READY / Article35 PRECHECK / active NONE`；continuous range=`35—37`；Article 35 只可在 fresh eligibility/PRECHECK 后取得 transaction authority。
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -153,7 +156,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22与Article 24—27已进入Published Content并由Git history解析为`END_ARTICLE`。Article 23保持Optional/Skipped/zero-assets；Article 28保持forbidden/not-started/zero-assets。
+- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22与Article 24—34已进入Published Content并由Git history解析为`END_ARTICLE`。Article 23保持Optional/Skipped/zero-assets；Article 35—37未启动，Article 38—44保持forbidden/zero-assets。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

@@ -2,8 +2,8 @@
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
 - 更新时间：2026-08-30
-- 当前里程碑：Article 33 `END_ARTICLE`；completion commit=`be5d36a94db54823d64160d4bcebf01e1f7da080`；local/origin/live equality=`PASS`
-- 当前生产对象：Article 34 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article 35—37=`NOT_STARTED`；Article 38—44=`FORBIDDEN / ZERO ASSETS`
+- 当前里程碑：Article 34 `END_ARTICLE`；completion commit=`3908174accd733c6bf9ee0e9141b58b168b3f93c`；remote verified。
+- 当前生产对象：Article 35=`NOT_STARTED / authorized candidate awaiting fresh eligibility/PRECHECK`；Article 36—37=`NOT_STARTED`；Part VI Audit=`NOT_STARTED until Article 37`；Article 38—44=`FORBIDDEN / ZERO ASSETS`。
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -60,7 +60,7 @@
 - Article 32 Build Verification：`1260 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
 - Article 33 Build Verification：`1261 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
 - Article 34 Build Verification：`1262 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`RUNNING / Article32 GIT_DIFF_VERIFY / bounded 28—37 / active NONE`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article35 PRECHECK / bounded 35—37 / active NONE`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
@@ -69,7 +69,8 @@
 - Part IV Audit：[durable report](audits/part-iv-audit.md)；Cycle 1 Gate=`PASS`；`0 BLOCKER / 0 MAJOR / 0 MINOR / 0 EDITORIAL`；Articles 18—22 / Lab 06 / navigation / Git+remote / Hugo / future-asset guard=`PASS`
 - Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / COMMITTED / PUSHED / REMOTE_VERIFIED`；commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged
 - Part V Audit：[durable report](audits/part-v-audit.md)；Cycle0=`FAIL / PV-AUD-F01 MAJOR / PV-AUD-F02 MINOR`；targeted repairs已独立push/remote verified；Cycle1首个artifact validation被Master拒绝，retry=`PASS / F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 / 0 WARNING / 0 ERROR`
-- 下一条允许动作：Article32 exact 18-file commit、single push、remote verification。
+- Article 23：`OPTIONAL / SKIPPED / ZERO ASSETS`。
+- 下一条允许动作：`START_ARTICLE_35_PRECHECK`；Article 35 仍须完成 fresh eligibility/PRECHECK，才可获得 transaction authority。
 
 ## 状态图例
 
@@ -105,7 +106,7 @@
 | 20 | Budget Engineering：Token、Step、Cost 与 Latency | IV | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 9 of 9 / 1 CONFIRMED / 4 PARTIAL / 4 PROPOSAL / 0 BLOCKED / 11 Cards` | N/A | `NONE`；Final=`PASS / 91 / F01—F03 CLOSED / 0 OPEN`；completion commit=`59f8c44df5d10894335bf5cd97d5b27552a830fe`；local / origin / live remote equality=`PASS`；Published Content=`content/ai-empowerment/agent-engineering-20-budget-engineering-token-step-cost-latency.md` |
 | 21 | Trace、Replay 与 Failure Taxonomy：错误究竟发生在哪一层 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `PASS / 12 of 12 / 1 CONFIRMED / 4 PARTIAL / 7 PROPOSAL / 0 BLOCKED / 12 Cards` | N/A | Final=`PASS / 91 / F01—F04 CLOSED / 0 OPEN`；completion commit=`470c362567d71aa4b7e5d951406b9af92b5b1adf`；local/origin/live equality=`PASS`；Published Content=`content/ai-empowerment/agent-engineering-21-trace-replay-failure-taxonomy.md` |
 | 22 | Eval、Golden Dataset 与 Regression：修复以后还会不会再坏 | IV | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE / POST_PUBLICATION_FIX VERIFIED` | `PASS / 13 of 13 / 3 CONFIRMED / 7 PARTIAL / 3 PROPOSAL / 0 BLOCKED / 13 Cards` | Lab 06 `VERIFIED / EVIDENCE_MERGED / AC-01..AC-10 / FROZEN ARTIFACTS PRESERVED` | Post-publication Final=`PASS / 94 / IR22-F01—F04 CLOSED / 0 OPEN`；Hugo=`1251 / 0 WARNING / 0 ERROR`；Published exact identity=`PASS`；original completion commit=`99bff931b02356358edd1357c2abd1c44621e720` remains historical evidence；fix commit=`481ebd52d6c0522e68a0ce0897f52a7932f9af89` pushed/live-remote verified；Part IV targeted re-audit=`PASS` |
-| 23 | Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent | IV | M | 是 | `PLANNED` | `BLOCKED` | N/A | Advanced / Optional；未开始研究 |
+| 23 | Single Agent、Subagent、Agent as Tool、Handoff 与 Multi-Agent | IV | M | 是 | `PLANNED` | `N/A` | N/A | `OPTIONAL / SKIPPED / ZERO ASSETS` |
 | 24 | 为什么最终需要 Harness：横切能力由谁承载 | V | L | 否 | `PUBLISHED` | `PASS / 3 CONFIRMED / 6 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；Final=`94 / 0 OPEN`；BuildPilot未实现、未运行 |
 | 25 | Agent Runtime vs Harness：执行内核与工程控制面 | V | L | 否 | `PUBLISHED` | `PASS / 4 CONFIRMED / 6 PARTIAL / 2 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；Final=`93 / 0 OPEN`；课程Taxonomy非行业标准 |
 | 26 | Harness 的最小能力模型：Capability、Policy、Session、Trace 与 Recovery | V | L | 否 | `PUBLISHED` | `PASS / 0 CONFIRMED / 8 PARTIAL / 3 PROPOSAL / 0 BLOCKED` | N/A | `PUBLISHED` candidate / Pre-Commit PASS；`A26-R0-F01/F02 CLOSED / 0 OPEN` |
@@ -116,17 +117,17 @@
 | 31 | Profile、Bundle、Provider 与 Capability Seam | VI | M | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `12 CONFIRMED / 3 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Evidence Work `CONFIRMED / SOURCE+RUNTIME BOUNDED` | `NONE`；Final 97 / F01/F02 CLOSED；completion `9a060c1c...` remote verified |
 | 32 | System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成 | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `13 CONFIRMED / 2 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Lab `PASS / MOCK-BOUNDED` | `NONE`；Final 97 / F01 CLOSED；completion `e6b6ca6d...` remote verified |
 | 33 | Inbox、Turn、Step 与 Agent Loop | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `14 CONFIRMED / 1 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Trace `PASS / 4 OF 4 / 10 OF 10 OWNER TESTS` | `NONE`；Final 98 / F01—F03 CLOSED；completion `be5d36a9...` remote verified |
-| 34 | Append-only Session Event：Replay、Resume、Fork 与 Projection | VI | L | 否 | `PUBLISHED` | `9 CONFIRMED / 5 PARTIAL / 1 PROPOSAL / 0 BLOCKED` | Required Evidence `PASS / 12 TESTS` | `NONE`；Final 98 / A34-PUB-F01 CLOSED；completion candidate pending Git |
-| 35 | Tool Registry 与 Tool Execution Pipeline | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
-| 36 | Cost、Compaction、Trace、Cancellation 与 Recovery | VI | L | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、源码路径与运行验证未固定 |
-| 37 | RAG、Skill、Workflow、Subagent 与 Web / Headless：核心事实和扩展映射 | VI | M | 否 | `PLANNED` | `BLOCKED` | N/A | DSH commit、核心/扩展边界与运行验证未固定 |
-| 38 | 游戏生产问题空间：什么时候该写 Script、Rule、Workflow，什么时候才需要 Agent | VII | M | 否 | `PLANNED` | `PROPOSAL` | N/A | 仅允许设计语态；案例事实尚未取证 |
-| 39 | 案例 A：Unity Compile Golden Fixture——设计一个可判定的诊断 Agent | VII | L | 否 | `PLANNED` | `PROPOSAL` | N/A | 仅设计；fixture 尚未实现或验证 |
-| 40 | 案例 B：启动性能调查——设计一个长链路、多假设 Agent | VII | L | 否 | `PLANNED` | `PROPOSAL` | N/A | 仅设计；调查 fixture 尚未实现或验证 |
-| 41 | 从两个案例反推 BuildPilot Architecture：先找变化轴，再定模块 | VII | L | 否 | `PLANNED` | `PROPOSAL` | N/A | 依赖 39—40 的设计输入 |
-| 42 | BuildPilot 的 Context 与 Capability 设计：让知识、技能和工具各就各位 | VII | L | 否 | `PLANNED` | `PROPOSAL` | N/A | BuildPilot 仅为 Design v1 |
-| 43 | BuildPilot 的治理闭环：Evidence、Policy、Session、Trace、Budget、Recovery 与 Eval | VII | L | 否 | `PLANNED` | `PROPOSAL` | N/A | BuildPilot 仅为 Design v1 |
-| 44 | BuildPilot Design v1：设计评审、里程碑与退出条件 | VII | S | 否 | `PLANNED` | `PROPOSAL` | N/A | 等待前述设计篇完成后评审 |
+| 34 | Append-only Session Event：Replay、Resume、Fork 与 Projection | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `9 CONFIRMED / 5 PARTIAL / 1 PROPOSAL / 0 BLOCKED` | Required Evidence `PASS / 12 TESTS` | `NONE`；Final 98 / A34-PUB-F01 CLOSED；completion=`3908174accd733c6bf9ee0e9141b58b168b3f93c` / remote verified |
+| 35 | Tool Registry 与 Tool Execution Pipeline | VI | L | 否 | `PLANNED` | `N/A` | N/A | `NOT_STARTED`；authorized candidate awaiting fresh eligibility/PRECHECK |
+| 36 | Cost、Compaction、Trace、Cancellation 与 Recovery | VI | L | 否 | `PLANNED` | `N/A` | N/A | `NOT_STARTED / ZERO ASSETS` |
+| 37 | RAG、Skill、Workflow、Subagent 与 Web / Headless：核心事实和扩展映射 | VI | M | 否 | `PLANNED` | `N/A` | N/A | `NOT_STARTED / ZERO ASSETS`；Part VI Audit remains `NOT_STARTED` until Article 37 |
+| 38 | 游戏生产问题空间：什么时候该写 Script、Rule、Workflow，什么时候才需要 Agent | VII | M | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
+| 39 | 案例 A：Unity Compile Golden Fixture——设计一个可判定的诊断 Agent | VII | L | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
+| 40 | 案例 B：启动性能调查——设计一个长链路、多假设 Agent | VII | L | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
+| 41 | 从两个案例反推 BuildPilot Architecture：先找变化轴，再定模块 | VII | L | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
+| 42 | BuildPilot 的 Context 与 Capability 设计：让知识、技能和工具各就各位 | VII | L | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
+| 43 | BuildPilot 的治理闭环：Evidence、Policy、Session、Trace、Budget、Recovery 与 Eval | VII | L | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
+| 44 | BuildPilot Design v1：设计评审、里程碑与退出条件 | VII | S | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
 
 ## 更新规则
 

@@ -388,3 +388,47 @@ worker_result:
     - "Exact 18-file transaction frozen; HEAD/origin/live equal 817fd4dde802c6afffa2011d965382267b423aa6."
     - "Hugo 1258/44/1/0; DSH fixture clean; Article31-44 assets zero."
 ```
+
+## wr-a30-course-audit-003-disposition
+
+Current bounded repair disposition for `COURSE-AUDIT-003`; this is not a historical Gate replay.
+
+```yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "30"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/30-dsh-plugin-core/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "Current disposition only: the historical MASTER_STATE_UPDATE envelope is INVALID because notes is absent; historical authority is NOT_PROVABLE."
+    - "Git completion proves only the eventual outcome; it is not a retrospective PASS for the invalid historical Gate."
+    - "No replay or backfill was performed, and no evidence, Lab, or runtime work was rerun."
+    - "No old execution ID, time, artifact list, or PASS result was manufactured."
+```
+
+## wr-a30-course-audit-003-004-review-recheck-cycle2
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "30"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified: []
+  gate_completed: true
+  next_allowed_gate: PRE_COMMIT_RECONCILIATION
+  blocker: NONE
+  notes:
+    - "B0-RV-001 CLOSED for Article 30: current Revision disposition is exact 11-field and preserves the unchanged HEAD trace prefix."
+    - "Historical MASTER_STATE_UPDATE remains INVALID because notes was absent; historical authority remains NOT_PROVABLE."
+    - "No retrospective PASS, replay, backfill, or evidence/Lab/runtime rerun was claimed."
+```

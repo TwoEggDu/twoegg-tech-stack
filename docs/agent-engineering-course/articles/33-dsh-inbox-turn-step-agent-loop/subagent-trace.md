@@ -373,3 +373,47 @@ worker_result:
     - "Exact transaction scope is 18 files; Article34 production assets remain absent."
     - "Completion SHA remains derived from Git history and remote refs after persistence cut."
 ```
+
+## wr-a33-course-audit-003-disposition
+
+Current bounded repair disposition for `COURSE-AUDIT-003`; this is not a historical Gate replay.
+
+```yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "33"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/33-dsh-inbox-turn-step-agent-loop/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "Current disposition only: the historical MASTER_STATE_UPDATE record is MISSING; subsequent pre-commit and Git records cannot replace that historical authority, which is NOT_PROVABLE."
+    - "Git completion proves only the eventual outcome; it is not a retrospective PASS for the missing historical Gate."
+    - "No replay or backfill was performed, and no evidence, Lab, or runtime work was rerun."
+    - "No old execution ID, time, artifact list, or PASS result was manufactured."
+```
+
+## wr-a33-course-audit-003-004-review-recheck-cycle2
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "33"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified: []
+  gate_completed: true
+  next_allowed_gate: PRE_COMMIT_RECONCILIATION
+  blocker: NONE
+  notes:
+    - "B0-RV-001 CLOSED for Article 33: current Revision disposition is exact 11-field and preserves the unchanged HEAD trace prefix."
+    - "Historical MASTER_STATE_UPDATE remains MISSING; later pre-commit and Git records do not replace its authority, which remains NOT_PROVABLE."
+    - "No retrospective PASS, replay, backfill, or evidence/Lab/runtime rerun was claimed."
+```

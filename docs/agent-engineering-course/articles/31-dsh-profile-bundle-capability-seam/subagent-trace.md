@@ -443,3 +443,47 @@ worker_result:
     - "Exact 18-file transaction frozen; HEAD/origin/live equal edaafb279cc0c730a5be00cda3a3203d49044cbf before commit."
     - "Hugo 1259 Pages / 44 Static / 1 Alias / 0 ERROR; published body exact; DSH fixture clean; Article32-44 assets zero."
 ```
+
+## wr-a31-course-audit-003-disposition
+
+Current bounded repair disposition for `COURSE-AUDIT-003`; this is not a historical Gate replay.
+
+```yaml
+worker_result:
+  role: REVISION_WORKER
+  article: "31"
+  gate: REVISION
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified:
+    - docs/agent-engineering-course/articles/31-dsh-profile-bundle-capability-seam/subagent-trace.md
+  gate_completed: true
+  next_allowed_gate: REVIEW_RECHECK
+  blocker: NONE
+  notes:
+    - "Current disposition only: the historical MASTER_STATE_UPDATE envelope is INVALID because notes is absent; historical authority is NOT_PROVABLE."
+    - "Git completion proves only the eventual outcome; it is not a retrospective PASS for the invalid historical Gate."
+    - "No replay or backfill was performed, and no evidence, Lab, or runtime work was rerun."
+    - "No old execution ID, time, artifact list, or PASS result was manufactured."
+```
+
+## wr-a31-course-audit-003-004-review-recheck-cycle2
+
+```yaml
+worker_result:
+  role: REVIEWER
+  article: "31"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  status: PASS
+  artifacts_created: []
+  artifacts_modified: []
+  gate_completed: true
+  next_allowed_gate: PRE_COMMIT_RECONCILIATION
+  blocker: NONE
+  notes:
+    - "B0-RV-001 CLOSED for Article 31: current Revision disposition is exact 11-field and preserves the unchanged HEAD trace prefix."
+    - "Historical MASTER_STATE_UPDATE remains INVALID because notes was absent; historical authority remains NOT_PROVABLE."
+    - "No retrospective PASS, replay, backfill, or evidence/Lab/runtime rerun was claimed."
+```
