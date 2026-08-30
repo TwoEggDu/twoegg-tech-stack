@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "34"
+current_article: "35"
 current_gate: PRECHECK
-last_published_article: "33"
+last_published_article: "34"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "33"
+  article: "34"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/33-dsh-inbox-turn-step-agent-loop/subagent-trace.md#wr-a33-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/34-dsh-append-only-session-event/subagent-trace.md#wr-a34-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -37,13 +37,13 @@ human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "34"
+  article: "35"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: true
-last_successful_commit: e6b6ca6dcab484e700e7608fcec51d22dc81993c
-next_action: START_ARTICLE_34_PRECHECK_AFTER_RESOLVE_ARTICLE_33_END_ARTICLE
+last_successful_commit: be5d36a94db54823d64160d4bcebf01e1f7da080
+next_action: START_ARTICLE_35_PRECHECK_AFTER_RESOLVE_ARTICLE_34_END_ARTICLE
 continuous_run:
   enabled: true
   start_article: "28"

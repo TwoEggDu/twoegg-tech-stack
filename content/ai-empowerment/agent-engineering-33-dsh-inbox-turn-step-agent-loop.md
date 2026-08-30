@@ -562,4 +562,4 @@ No-tool、single-tool、multi-tool 与 cancellation 四条 Trace 分别闭合了
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
-> **下一篇**：Session continuation、Replay 与 Fork（计划中，发布后再补链接）。
+> **下一篇**：[Append-only Session Event：Replay、Resume、Fork 与 Projection]({{< relref "ai-empowerment/agent-engineering-34-dsh-append-only-session-event.md" >}})
