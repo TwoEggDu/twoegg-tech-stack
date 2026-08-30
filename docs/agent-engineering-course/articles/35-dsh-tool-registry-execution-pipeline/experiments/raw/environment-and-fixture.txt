@@ -1,0 +1,30 @@
+Article 35 experiment environment and fixture receipt
+Captured: 2026-08-30 Asia/Shanghai
+
+Fixture root: C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814
+origin fetch/push: https://github.com/deepseek-ai/deepseek-harness.git
+exact tag: dsh-v0.1.2-alpha.1
+full HEAD: cd5ef8148158c3a752a658978873241fdf8e2bbc
+pre-run git status --porcelain=v1 --untracked-files=all: empty
+pre-run git diff --stat: empty
+pre-run git diff --cached --stat: empty
+post-run git status --porcelain=v1 --untracked-files=all: empty
+post-run git diff --stat: empty
+post-run git diff --cached --stat: empty
+
+OS: Microsoft Windows NT 10.0.19045.0
+architecture: X64
+Node: v24.18.1
+pnpm: 11.7.0
+Vitest: 4.1.8 win32-x64 node-v24.18.1
+Git: 2.53.0.windows.2
+Vitest config: fixture-root vitest.config.ts (default resolution; no --config override)
+
+Safety boundary: repo-owned Vitest tests only; MockAdapter, deterministic in-memory tools/storage/approval, fake timers and deferred latches. No provider credential, provider request, network call, server, real command/filesystem tool, Lab07, or production data. Test-owned temporary state only.
+
+Unexpected launcher behavior:
+1. Initial exact command form failed before Vitest with exit 1 and: 'vitest' is not recognized as an internal or external command, operable program or batch file.
+2. node_modules/.bin/vitest.CMD and node_modules/vitest/vitest.mjs both existed. corepack pnpm bin resolved the correct fixture-local .bin directory, but pnpm exec had not made it discoverable to the spawned Windows command.
+3. Environment-only correction used for every accepted receipt: prepend the already-existing fixture-local node_modules/.bin to PATH, then run the required `corepack pnpm exec vitest run ... --testTimeout=30000` command. No source, dependency, lockfile, Git metadata, or fixture file changed.
+
+Stream limitation: the command runner returned a combined terminal stream, so stdout and stderr cannot be separated after capture. Every raw case file preserves the combined stream summary and exit code.

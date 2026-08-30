@@ -1,0 +1,177 @@
+ARTICLE=35
+GATE=EXPERIMENT_EXECUTE
+BASELINE_REPOSITORY=https://github.com/deepseek-ai/deepseek-harness
+PINNED_TAG=dsh-v0.1.2-alpha.1
+PINNED_COMMIT=cd5ef8148158c3a752a658978873241fdf8e2bbc
+FIXTURE=C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814
+PRE_INSTRUMENTATION_HEAD=cd5ef8148158c3a752a658978873241fdf8e2bbc
+PRE_INSTRUMENTATION_STATUS=EMPTY
+PRE_INSTRUMENTATION_UNSTAGED_DIFF=EMPTY
+PRE_INSTRUMENTATION_STAGED_DIFF=EMPTY
+ONLY_INSTRUMENTATION_PATH=packages/core/agent-loop/tests/article-35-same-call-recovery.spec.ts
+PROVIDER_REQUESTS=ZERO
+NETWORK_REQUESTS=ZERO
+REAL_SIDE_EFFECTS=ZERO
+LAB_07_ASSETS=ZERO
+ARTICLE_36_PLUS_ASSETS=ZERO
+
+CLEANUP_TARGET=C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814\packages\core\agent-loop\tests\article-35-same-call-recovery.spec.ts
+EXPECTED_TARGET=C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814\packages\core\agent-loop\tests\article-35-same-call-recovery.spec.ts
+PRE_CLEANUP_HEAD=cd5ef8148158c3a752a658978873241fdf8e2bbc
+PRE_CLEANUP_STATUS_BEGIN
+?? packages/core/agent-loop/tests/article-35-same-call-recovery.spec.ts
+PRE_CLEANUP_STATUS_END
+PRE_CLEANUP_DIFF_BEGIN
+PRE_CLEANUP_DIFF_END
+REMOVED=True
+POST_CLEANUP_HEAD=cd5ef8148158c3a752a658978873241fdf8e2bbc
+POST_CLEANUP_TAG=dsh-v0.1.2-alpha.1
+POST_CLEANUP_STATUS_BEGIN
+POST_CLEANUP_STATUS_END
+POST_CLEANUP_DIFF_BEGIN
+POST_CLEANUP_DIFF_END
+NODE=v24.18.1
+C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:12951
+    throw new Error(
+          ^
+
+Error: Error when performing the request to https://registry.npmjs.org/pnpm/latest; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting
+    at fetch (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:12951:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async fetchAsJson (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:12965:20)
+    at async fetchLatestStableVersion (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:12889:20)
+    at async fetchLatestStableVersion2 (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:13043:14)
+    at async Engine.getDefaultVersion (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:13726:23)
+    at async Engine.findProjectSpec (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:13789:40)
+    at async Engine.executePackageManagerRequest (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:13849:24)
+    at async Object.runMain (C:\Users\IGG\AppData\Local\nvm\v24.18.1\node_modules\corepack\dist\lib\corepack.cjs:14566:7) {
+  [cause]: [TypeError: fetch failed] {
+    [cause]: AggregateError [EACCES]:
+        at internalConnectMultiple (node:net:1194:18)
+        at afterConnectMultiple (node:net:1784:7) {
+      code: 'EACCES',
+      [errors]: [
+        Error: connect EACCES 104.16.7.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.7.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.4.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.4.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.11.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.11.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.6.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.6.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.8.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.8.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.5.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.5.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.3.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.3.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.2.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.2.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.9.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.9.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.1.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.1.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.0.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.0.34',
+          port: 443
+        },
+        Error: connect EACCES 104.16.10.34:443
+            at createConnectionError (node:net:1747:14)
+            at afterConnectMultiple (node:net:1777:16) {
+          errno: -4092,
+          code: 'EACCES',
+          syscall: 'connect',
+          address: '104.16.10.34',
+          port: 443
+        }
+      ]
+    }
+  }
+}
+
+Node.js v24.18.1
+PNPM=
+VITEST=vitest/4.1.8 win32-x64 node-v24.18.1
+GIT=git version 2.53.0.windows.2
+OS=Microsoft Windows NT 10.0.19045.0
+ARCH=X64
+
+TOOLCHAIN_RECHECK_FROM_FIXTURE_CWD=PASS
+PNPM_PROJECT=11.7.0
+VITEST_PROJECT=vitest/4.1.8 win32-x64 node-v24.18.1
+NOTE=The earlier bare corepack pnpm --version probe ran from the course repository rather than the pinned fixture and attempted blocked registry discovery; the frozen experiment command itself and this corrected version probe both ran from the fixture and used project-pinned pnpm 11.7.0.

@@ -1,0 +1,12 @@
+Article 35 instrumentation diff receipt
+
+Pinned fixture source changes: NONE
+Pinned fixture test changes: NONE
+Pinned fixture dependency changes: NONE
+Pinned fixture Git metadata changes: NONE
+Separate instrumentation copy: NOT CREATED
+Instrumentation patch: NONE
+
+Only runtime adjustment: fixture-local node_modules/.bin was prepended to the current process PATH because the initial required corepack pnpm exec vitest command could not discover the already-present vitest.CMD. This environment-only correction is recorded in environment-and-fixture.txt and did not change the fixture.
+
+Reason no instrumentation was added: the task prioritized exact existing repo-owned tests. Those tests were executed unchanged. Where their observers do not satisfy the stricter frozen acceptance receipts, the case is recorded as FAILED_REQUIRED_SOURCE_EXPERIMENT / BLOCKED_EVIDENCE rather than modifying the hypothesis, weakening acceptance, or inventing a merged trace.

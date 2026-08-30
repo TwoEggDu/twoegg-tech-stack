@@ -134,7 +134,7 @@ series_summary: "从 Model API 逐层建立 Agent Runtime、Context、Memory、E
         <li class="is-published"><span class="lesson-id">32</span><a href="{{< relref "ai-empowerment/agent-engineering-32-dsh-system-prompt-assembly-prompt-context.md" >}}">System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">33</span><a href="{{< relref "ai-empowerment/agent-engineering-33-dsh-inbox-turn-step-agent-loop.md" >}}">Inbox、Turn、Step 与 Agent Loop</a><span class="lesson-status">已发布</span></li>
         <li class="is-published"><span class="lesson-id">34</span><a href="{{< relref "ai-empowerment/agent-engineering-34-dsh-append-only-session-event.md" >}}">Append-only Session Event：Replay、Resume、Fork 与 Projection</a><span class="lesson-status">已发布</span></li>
-        <li class="is-planned"><span class="lesson-id">35</span><span>Tool Registry 与 Tool Execution Pipeline</span><span class="lesson-status">计划中</span></li>
+        <li class="is-published"><span class="lesson-id">35</span><a href="{{< relref "ai-empowerment/agent-engineering-35-dsh-tool-registry-execution-pipeline.md" >}}">Tool Registry 与 Tool Execution Pipeline</a><span class="lesson-status">已发布</span></li>
         <li class="is-planned"><span class="lesson-id">36</span><span>Cost、Compaction、Trace、Cancellation 与 Recovery</span><span class="lesson-status">计划中</span></li>
         <li class="is-planned"><span class="lesson-id">37</span><span>RAG、Skill、Workflow、Subagent 与 Web / Headless：核心事实和扩展映射</span><span class="lesson-status">计划中</span></li>
       </ol>

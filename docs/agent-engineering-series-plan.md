@@ -221,7 +221,7 @@ BuildPilot Design v1
 | 32 | [System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成](../content/ai-empowerment/agent-engineering-32-dsh-system-prompt-assembly-prompt-context.md) | L | 否 |
 | 33 | [Inbox、Turn、Step 与 Agent Loop](../content/ai-empowerment/agent-engineering-33-dsh-inbox-turn-step-agent-loop.md) | L | 否 |
 | 34 | [Append-only Session Event：Replay、Resume、Fork 与 Projection](../content/ai-empowerment/agent-engineering-34-dsh-append-only-session-event.md) | L | 否 |
-| 35 | Tool Registry 与 Tool Execution Pipeline | L | 否 |
+| 35 | [Tool Registry 与 Tool Execution Pipeline](../content/ai-empowerment/agent-engineering-35-dsh-tool-registry-execution-pipeline.md) | L | 否 |
 | 36 | Cost、Compaction、Trace、Cancellation 与 Recovery | L | 否 |
 | 37 | RAG、Skill、Workflow、Subagent 与 Web / Headless：核心事实和扩展映射 | M | 否 |
 

@@ -1,0 +1,21 @@
+35-X03 cooperative timeout and drain
+
+Exact command:
+$fixtureBin = (Resolve-Path -LiteralPath '.\node_modules\.bin').Path; $env:PATH = "$fixtureBin;$env:PATH"; corepack pnpm exec vitest run packages/guard/timeout-policy/tests/timeout-policy.spec.ts --testNamePattern "a tool with a budget that returns fast keeps its own result \(no timeout\)|replaces a cooperative tool result with TOOL_TIMEOUT when its own deadline fires|preserves TOOL_TIMEOUT when the deadline wins before a later caller abort" --testTimeout=30000 --reporter=dot --silent
+
+Selected exact test names:
+- a tool with a budget that returns fast keeps its own result (no timeout)
+- replaces a cooperative tool result with TOOL_TIMEOUT when its own deadline fires
+- preserves TOOL_TIMEOUT when the deadline wins before a later caller abort
+
+Combined terminal stream:
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead. (printed three times)
+RUN v4.1.8 C:/Users/IGG/AppData/Local/Temp/codex-dsh-part-vi-cd5ef814
+Test Files 1 passed (1)
+Tests 3 passed | 9 skipped (12)
+Duration 1.89s (transform 760ms, setup 620ms, import 1.06s, tests 34ms, environment 0ms)
+EXIT_CODE=0
+
+Raw acceptance disposition: FAILED_REQUIRED_SOURCE_EXPERIMENT / BLOCKED_EVIDENCE.
+Observed by the selected tests: fast control succeeds; owned deadline aborts a cooperative body and emits TOOL_TIMEOUT; deadline-first case waits for a latch-controlled cleanup settlement before resolving and remains TOOL_TIMEOUT after later caller abort.
+Required observer gap: the existing timeout-policy unit test has no correlated Session tool/call + tool/result event or derived next-step/model-history receipt for that same timed-out call. No forced termination or rollback is claimed.

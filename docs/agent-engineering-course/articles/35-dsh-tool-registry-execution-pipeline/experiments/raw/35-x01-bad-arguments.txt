@@ -1,0 +1,23 @@
+35-X01 bad arguments / typed body suppression
+
+Exact command:
+$fixtureBin = (Resolve-Path -LiteralPath '.\node_modules\.bin').Path; $env:PATH = "$fixtureBin;$env:PATH"; corepack pnpm exec vitest run packages/core/tools/tests/tools.spec.ts --testNamePattern "returns \[\] for valid args and is total over malformed input|returns an isError result with the violations when the model sends bad args|runs execute normally when args are valid|ToolArgsError carries a stable code and the violation list|a schema-invalid call surfaces the structured error on the result" --testTimeout=30000 --reporter=dot --silent
+
+Selected exact test names:
+- returns [] for valid args and is total over malformed input
+- returns an isError result with the violations when the model sends bad args
+- runs execute normally when args are valid
+- ToolArgsError carries a stable code and the violation list
+- a schema-invalid call surfaces the structured error on the result
+
+Combined terminal stream:
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead. (printed three times)
+RUN v4.1.8 C:/Users/IGG/AppData/Local/Temp/codex-dsh-part-vi-cd5ef814
+Test Files 1 passed (1)
+Tests 5 passed | 131 skipped (136)
+Duration 1.78s (transform 745ms, setup 581ms, import 970ms, tests 46ms, environment 0ms)
+EXIT_CODE=0
+
+Raw acceptance disposition: FAILED_REQUIRED_SOURCE_EXPERIMENT / BLOCKED_EVIDENCE.
+Observed by the selected tests: malformed validator input is total; schema-invalid arguments produce INVALID_ARGS; valid control succeeds.
+Required observer gap: the existing selected tests do not record an explicit typed-body invocation counter, the raw malformed JSON string through agent-loop parse, one correlated Session tool/call + tool/result pair, or next-request/history suppression for the same invalid call. Green unit assertions are not substituted for those frozen receipts.

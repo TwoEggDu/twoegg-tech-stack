@@ -1,0 +1,33 @@
+Article 35 raw artifact manifest
+
+Artifact hashes are appended after file creation. All paths are repository-relative under docs/agent-engineering-course/articles/35-dsh-tool-registry-execution-pipeline/experiments/raw/.
+
+Files:
+- environment-and-fixture.txt
+- 35-x01-bad-arguments.txt
+- 35-x02-deny-ask.txt
+- 35-x03-timeout.txt
+- 35-x04-caller-cancellation.txt
+- 35-x05-large-result.txt
+- instrumentation-diff.txt
+
+Selected test source/config hashes are appended after capture.
+
+Raw artifact SHA-256 / bytes:
+- `environment-and-fixture.txt` / `F4D1A6EE6980DCEB7B913AFEE06E79DF508390D1F6D675874514AF65D8D63DD2` / `2034`
+- `35-x01-bad-arguments.txt` / `9104AD43E8BE29AE569A964DD327BFB7035F0178EEC5F6FFC9A7D2538EFDFBCC` / `2027`
+- `35-x02-deny-ask.txt` / `605CF0D5E585B88C4610CB9435BBBA29BE32EBC72FC694E666427B206092A6F2` / `2659`
+- `35-x03-timeout.txt` / `7DD0C39D2102D6D533D79D1896D2A037A5FDD0EC7A3ED3553C4F25901AF233F1` / `1884`
+- `35-x04-caller-cancellation.txt` / `FCAD8750B5D363B90D28DA4E543313E327C9CF86336C187DE7D75BC1297632BD` / `2033`
+- `35-x05-large-result.txt` / `604CF93C88CBEDAB92D573E5B696FE9AF094C05A3A5BE50AE15D94FA8EE716D9` / `2356`
+- `instrumentation-diff.txt` / `BF1107C1B871B9164332A1E81F769B3CF564C87EA7A2D5E808E79C97CE660984` / `959`
+
+Selected fixture source/config SHA-256 / bytes:
+- `vitest.config.ts` / `72D4D492107AD1FA57259CC53C0AA3852385657424D5A21C34D5E007EA591323` / `19961`
+- `packages/core/tools/tests/tools.spec.ts` / `373C9DAAC8DD83F8BF4289B13E3B7F3CA9299F688634CB961DC68400DC8862E7` / `108268`
+- `packages/core/agent-loop/tests/tool-calls.spec.ts` / `A3F70C5E403807D60BC99AEFDC5399F84084D452FDF181446827304578C34DE6` / `33716`
+- `packages/interaction/user-approval/tests/approval.spec.ts` / `B6C50C78CE3A6AF05C551861B4BEFFF277720A286F0F7028FC2550DDECED7BD5` / `23288`
+- `packages/guard/timeout-policy/tests/timeout-policy.spec.ts` / `572556AB06263E0B9D291E3E4CED3DE4C04C440165E7BE4417780863E02A980D` / `11672`
+- `packages/spill/spill-policy/tests/spill-policy.spec.ts` / `3117BE5D6ADB216A09963EFC1E701982CFD5F3B82D54A6B49BED3C762BDD36AA` / `27152`
+
+The manifest does not list its own hash because inserting a self-hash would change the hashed bytes. Hash algorithm: SHA-256 via PowerShell `Get-FileHash`.

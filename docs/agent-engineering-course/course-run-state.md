@@ -9,20 +9,20 @@ production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
 factory_status: READY
-current_article: "35"
+current_article: "36"
 current_gate: PRECHECK
-last_published_article: "34"
+last_published_article: "35"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "34"
+  article: "35"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/34-dsh-append-only-session-event/subagent-trace.md#wr-a30-34-course-audit-003-004-pre-commit-reconciliation-cycle2
+  result_ref: docs/agent-engineering-course/articles/35-dsh-tool-registry-execution-pipeline/subagent-trace.md#wr-a35-pre-commit-reconciliation-retry1
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -30,20 +30,20 @@ last_worker_result:
   next_allowed_gate: GIT_DIFF_VERIFY
   blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 1
+review_cycle: 0
 active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 article_authorization:
   status: INACTIVE
   scope: NONE
-  article: "35"
+  article: "36"
   continue_until: NONE
   auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: true
 last_successful_commit: 3908174accd733c6bf9ee0e9141b58b168b3f93c
-next_action: START_ARTICLE_35_PRECHECK
+next_action: START_ARTICLE_36_PRECHECK_AFTER_RESOLVE_ARTICLE_35_END_ARTICLE
 continuous_run:
   enabled: true
   start_article: "35"
@@ -70,8 +70,30 @@ continuous_run:
     - "42"
     - "43"
     - "44"
-last_updated: "2026-08-30T18:30:18+08:00"
+last_updated: "2026-08-30T21:48:14+08:00"
 ```
+
+> 2026-08-30 Article 35 fresh `PRE_COMMIT_RECONCILIATION RETRY 1 PASS`：两处new raw-text格式Finding已按before/after hash留痕并由recovery manifest `9 / 9`重验；fresh Hugo仍为`1263/44/1 / exit0`，exact transaction仍为36 files，Article36—44资产仍为zero。此记录取代旧persistence cut；下一步仅允许重新执行`GIT_DIFF_VERIFY`与唯一Article35 completion commit。
+
+> 2026-08-30 Article 35 MASTER_STATE_UPDATE与PRE_COMMIT_RECONCILIATION=`PASS`：Publisher/body/navigation、Hugo=`1263/44/1 / exit0`、Draft/Published exact identity、36-file transaction、fixture clean与future-asset guard均通过。Persisted pointer为Article36 `PRECHECK candidate`，但Article35在valid completion commit/push/remote verify前仍解析为`INCOMPLETE`；Article36尚未启动，authorization=`INACTIVE`。
+
+> 2026-08-30 Article 35 staged `git diff --cached --check`发现两个仅存在于new raw text的格式Finding：Attempt1 patch terminal empty line与EACCES行尾空格。Master最小Revision只移除这两个字符级格式问题，并在recovery manifest保存before/after bytes+SHA；实验命令、exit、Trace、acceptance与语义均未变化。当前重新进入fresh Hugo与PRE_COMMIT_RECONCILIATION retry，尚未commit。
+
+> 2026-08-30 Article 35 Publisher=`PASS`：Published Content、Article34 next navigation、series index与canonical series plan已在严格四文件allowlist内机械写入；Published H1-to-EOF与Draft exact=`38999 bytes / 737 lines / SHA256 8F2EED...E764`，Article36 relref与Article36—44 assets仍为zero。当前Gate=`BUILD_VERIFY`，尚未执行completion commit。
+
+> 2026-08-30 Article 35 fresh FINAL_GATE Recheck 2=`PASS / ELIGIBLE_FOR_PUBLISH`：`A35-R1-F01—F05`与`A35-FG-F01/F02`全部`CLOSED / 0 OPEN`；24/24 exact-key、22/24 semantic valid（2条历史invalid继续非authority）、raw/fixture/link/future guard与Hugo render-to-memory=`1262/44/1 / exit0`。当前Gate=`PUBLISH`，Published Content仍不存在，Publisher现获机械发布权限。
+
+> 2026-08-30 Article 35 fresh FINAL_GATE Recheck关闭`A35-FG-F01`，但登记`A35-FG-F02 MAJOR`：current Master Revision record缺deterministic metadata。Master已为Revision1补齐execution/task/write/validation/time字段，并建立metadata-complete的`wr-a35-final-gate-revision2`作为current authority；F02=`READY_FOR_FINAL_GATE_RECHECK`，Publisher仍未授权。
+
+> 2026-08-30 Article 35 FINAL_GATE Attempt 1内容/证据/Trace/fixture/link/future guard全部通过，但登记`A35-FG-F01 MAJOR`：course README两处仍写`REVIEW_RECHECK candidate`。Master只机械改这两处为`FINAL_GATE candidate`并置`READY_FOR_FINAL_GATE_RECHECK`；当前Gate仍为`FINAL_GATE`、active worker=`NONE`、blocker=`NONE`，Publisher尚未授权。
+
+> 2026-08-30 Article 35 fresh Review Recheck Cycle 2=`PASS`：`A35-R1-F01—F05 CLOSED / 0 OPEN`。exact-key、metadata、role enum、result mapping、Gate transition、raw manifest/Trace、fixture clean、current-state parity与Article36—44 zero-assets均通过；历史missing/invalid records继续可见且不提供authority。当前Gate=`FINAL_GATE`、active worker=`NONE`、blocker=`NONE`，Published Content仍不存在。
+
+> 2026-08-30 Article 35 Review Recheck Cycle 1关闭`A35-R1-F01/F02/F03/F05`，保留`A35-R1-F04 MAJOR`。Master Cycle 2未改写旧raw payload：历史Research缺失保持`MISSING / INTERRUPTED / NOT_PROVABLE`，非法`SOURCE_INVESTIGATOR` role与两份Reviewer `status: FAIL`映射均登记为`INVALID`且不提供authority；fresh read-only Research、canonical-role Source Map、独立OUTLINE与AUTHOR_DRAFT revalidation全部`PASS`并带execution/task/write/validation metadata。当前进入Review Cycle 2 `REVIEW_RECHECK`，active worker=`NONE`、blocker=`NONE`。
+
+> 2026-08-30 Article 35 Review Cycle 1 返回 `0 BLOCKER / 4 MAJOR / 1 MINOR`，均可修复。Revision Worker 已把 `A35-R1-F01/F02/F05` 置为 `READY_FOR_RECHECK`；Master 机械补齐 Article Card 与 durable transaction/current-state parity，把 `A35-R1-F03/F04` 置为 `READY_FOR_RECHECK`。首次中断且无有效 envelope 的 Research attempt 保持 `MISSING / INTERRUPTED / NOT_PROVABLE`，未伪造 retrospective PASS。当前 Gate=`REVIEW_RECHECK`、active worker=`NONE`、blocker=`NONE`；Article36—37仍未启动，Article38—44保持forbidden/zero-assets。
+
+> 2026-08-30 Article 35 fresh PRECHECK、ARTICLE_KICKOFF 与 WORKSPACE_INIT 已由 Master 完成：`main`、`HEAD`、`origin/main` 与 live `origin/main` 均为 `858efba13df28183ab996f693589d1223e96e0b2`，tree/index clean；官方 DSH fixture 的 tag/HEAD 为 `dsh-v0.1.2-alpha.1` / `cd5ef8148158c3a752a658978873241fdf8e2bbc` 且 clean；Article35—44 production assets 在 init 前为 zero。Article35 workspace 仅含 deterministic skeleton，Draft、Published Content、assets 与实验 observation 均未创建。Article35 transaction authorization 已在 Kickoff 激活；当前候选 Gate=`RESEARCH`、active worker=`NONE`。continuous range `35—37` 保持，Article36—37未启动，Article38—44继续 forbidden/zero-assets。
 
 > 2026-08-30 Human Part VI授权经fresh reconciliation激活：Part V Audit独立commit=`03c1649b7915d39dda91f67a8cc8b0257306bb4d`，local/origin/live equality与Article28—38 zero-assets precheck均`PASS`。DSH official tag `dsh-v0.1.2-alpha.1`解析到固定commit=`cd5ef8148158c3a752a658978873241fdf8e2bbc`；Article28 PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT完成，当前进入fresh Researcher。Article29—37未启动，Article38—44 forbidden。
 

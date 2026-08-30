@@ -1,0 +1,26 @@
+ATTEMPT 1
+STATUS=NOT_ACCEPTED
+EXIT=0
+SELECTED=0 of 5
+CORRECTION=removed only the top-level suite prefix so the frozen anchored testNamePattern selects the five unchanged exact case names
+
+ATTEMPT 2
+STATUS=PASS
+EXIT=0
+SELECTED=1 file / 5 tests
+OUTPUT=observed in executor transcript; capture replay below preserves the same frozen command and raw schema
+
+CAPTURE REPLAY
+STATUS=PASS
+EXIT=0
+SELECTED=expected 1 file / 5 tests
+
+$fixtureRoot = 'C:\Users\IGG\AppData\Local\Temp\codex-dsh-part-vi-cd5ef814'
+$articleRoot = 'E:\workspace\TechStackShow\docs\agent-engineering-course\articles\35-dsh-tool-registry-execution-pipeline'
+$tempTest = Join-Path $fixtureRoot 'packages\core\agent-loop\tests\article-35-same-call-recovery.spec.ts'
+$rawRoot = Join-Path $articleRoot 'experiments\raw\recovery-cycle-1'
+$fixtureBin = (Resolve-Path -LiteralPath (Join-Path $fixtureRoot 'node_modules\.bin')).Path
+$env:PATH = "$fixtureBin;$env:PATH"
+Push-Location $fixtureRoot
+corepack pnpm exec vitest run packages/core/agent-loop/tests/article-35-same-call-recovery.spec.ts --testNamePattern "^A35 recovery / 35-X0[1-5] / SAME-CALL$" --testTimeout=30000 --maxWorkers=1 --reporter=verbose --silent=false
+Pop-Location

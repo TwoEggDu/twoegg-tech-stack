@@ -567,3 +567,5 @@ Article 35 会继续进入完整 Tool Pipeline；本篇不提前展开它，也�
 如果只保留一句话：
 
 > 先保存可排序的事实，再生成带 provenance 的视图；Replay、Resume 与 Fork 只有在 identity、prefix、suffix 和 external-world boundary 都明确时，才是可验证的工程能力。
+
+> **下一篇**：[Tool Registry 与 Tool Execution Pipeline]({{< relref "ai-empowerment/agent-engineering-35-dsh-tool-registry-execution-pipeline.md" >}})

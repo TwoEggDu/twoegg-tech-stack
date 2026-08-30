@@ -1,0 +1,20 @@
+35-X04 caller cancellation and drain
+
+Exact command:
+$fixtureBin = (Resolve-Path -LiteralPath '.\node_modules\.bin').Path; $env:PATH = "$fixtureBin;$env:PATH"; corepack pnpm exec vitest run packages/core/tools/tests/tools.spec.ts packages/core/agent-loop/tests/tool-calls.spec.ts --testNamePattern "waits for an uncooperative started body before returning ABORTED|stops replenishing after abort, commits started results, and parks accepted additional contexts" --testTimeout=30000 --reporter=dot --silent
+
+Selected exact test names:
+- waits for an uncooperative started body before returning ABORTED
+- stops replenishing after abort, commits started results, and parks accepted additional contexts
+
+Combined terminal stream:
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead. (printed three times)
+RUN v4.1.8 C:/Users/IGG/AppData/Local/Temp/codex-dsh-part-vi-cd5ef814
+Test Files 2 passed (2)
+Tests 2 passed | 155 skipped (157)
+Duration 2.00s (transform 1.52s, setup 1.17s, import 2.02s, tests 89ms, environment 0ms)
+EXIT_CODE=0
+
+Raw acceptance disposition: FAILED_REQUIRED_SOURCE_EXPERIMENT / BLOCKED_EVIDENCE.
+Observed by the selected tests: a started uncooperative body remains pending after caller abort and only resolves as ABORTED after latch release; the agent-loop starts only calls 1 and 2, never starts calls 3 and 4, records all four correlated results, preserves accepted contexts and admits a later wake/follow-up after drain.
+Required observer gap: the drain test intentionally uses an uncooperative body and therefore does not record that same body observing the cancellation signal; the agent-loop test records scheduler counts/session/follow-up but its gated body does not expose the fused signal transition. The two separate tests cannot be reported as one same-call signal-to-session trace. No rollback or remote cancellation is claimed.

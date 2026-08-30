@@ -1,0 +1,23 @@
+35-X05 large result spill / failure / preview
+
+Exact command:
+$fixtureBin = (Resolve-Path -LiteralPath '.\node_modules\.bin').Path; $env:PATH = "$fixtureBin;$env:PATH"; corepack pnpm exec vitest run packages/spill/spill-policy/tests/spill-policy.spec.ts packages/core/agent-loop/tests/tool-calls.spec.ts --testNamePattern "spills the full text and replaces the result with a preview \+ locator within the cap|leaves a small plain-text result unchanged|keeps the original result when saveText fails|commits tool/result in model order even when a later call settles first|derived history pairs calls in model order regardless of tool/call log interleaving" --testTimeout=30000 --reporter=dot --silent
+
+Selected exact test names:
+- spills the full text and replaces the result with a preview + locator within the cap
+- leaves a small plain-text result unchanged
+- keeps the original result when saveText fails
+- commits tool/result in model order even when a later call settles first
+- derived history pairs calls in model order regardless of tool/call log interleaving
+
+Combined terminal stream:
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead. (printed three times)
+RUN v4.1.8 C:/Users/IGG/AppData/Local/Temp/codex-dsh-part-vi-cd5ef814
+Test Files 2 passed (2)
+Tests 5 passed | 42 skipped (47)
+Duration 2.03s (transform 1.47s, setup 1.15s, import 2.27s, tests 98ms, environment 0ms)
+EXIT_CODE=0
+
+Raw acceptance disposition: FAILED_REQUIRED_SOURCE_EXPERIMENT / BLOCKED_EVIDENCE.
+Observed by the selected tests: under-threshold control remains inline; a 1,600-byte deterministic payload is saved whole and projected as <=200-byte head/tail preview plus locator; saveText failure keeps the 1,000-byte original successful inline content and warns; independent scheduler tests commit result events and derived history in model order.
+Required observer gap: no existing selected test correlates full-payload hash, stored locator, bounded preview hash/length, exact Session result projection and failed-storage fallback for the same large-result call. The model-order tests use ordinary parallel tool results, not the spilled call. Semantic summary is absent; no summary generator ran.

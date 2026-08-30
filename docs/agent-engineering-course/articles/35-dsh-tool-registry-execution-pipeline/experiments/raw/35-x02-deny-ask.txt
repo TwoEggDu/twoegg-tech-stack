@@ -1,0 +1,25 @@
+35-X02 deny / ask refusal body suppression
+
+Exact command:
+$fixtureBin = (Resolve-Path -LiteralPath '.\node_modules\.bin').Path; $env:PATH = "$fixtureBin;$env:PATH"; corepack pnpm exec vitest run packages/core/tools/tests/tools.spec.ts packages/core/agent-loop/tests/tool-calls.spec.ts packages/interaction/user-approval/tests/approval.spec.ts --testNamePattern "a pre-execute deny short-circuits before tools/execute \(the seam never runs\)|an ask decision degrades to deny when no approval seam is mounted|dispatches the tool when the answerer grants allowed-once, forwarding the ask fields|denies with the user-rejection reason on rejected|orders pre-execute denials and errors without dispatching them|fails closed to unavailable when nobody listens, auditing the asked/decided pair|a never config rejects deterministically without consulting any answerer" --testTimeout=30000 --reporter=dot --silent
+
+Selected exact test names:
+- a pre-execute deny short-circuits before tools/execute (the seam never runs)
+- an ask decision degrades to deny when no approval seam is mounted
+- dispatches the tool when the answerer grants allowed-once, forwarding the ask fields
+- denies with the user-rejection reason on rejected
+- orders pre-execute denials and errors without dispatching them
+- fails closed to unavailable when nobody listens, auditing the asked/decided pair
+- a never config rejects deterministically without consulting any answerer
+
+Combined terminal stream:
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead. (printed three times)
+RUN v4.1.8 C:/Users/IGG/AppData/Local/Temp/codex-dsh-part-vi-cd5ef814
+Test Files 3 passed (3)
+Tests 7 passed | 182 skipped (189)
+Duration 1.97s (transform 1.95s, setup 1.76s, import 2.65s, tests 144ms, environment 0ms)
+EXIT_CODE=0
+
+Raw acceptance disposition: FAILED_REQUIRED_SOURCE_EXPERIMENT / BLOCKED_EVIDENCE.
+Observed by the selected tests: direct deny does not enter tools/execute; agent-loop denial dispatches only the allowed body and records ordered error results; missing approval fails closed with asked/decided audit; explicit rejection fails; allowed-once is the positive control; never does not consult answerers.
+Required observer gap: no existing selected test correlates an approval-refusal decision, explicit sentinel/body count 0, terminal tool/result Session event and next-step receipt for the same ask call. The separate approval audit and agent-loop deny receipts cannot be merged into one invented end-to-end trace.

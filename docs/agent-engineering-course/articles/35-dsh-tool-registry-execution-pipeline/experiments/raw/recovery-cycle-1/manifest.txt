@@ -1,0 +1,41 @@
+ARTICLE=35
+GATE=EXPERIMENT_EXECUTE
+RECOVERY_CYCLE=1
+SCHEMA=a35-same-call-recovery-v1
+BASELINE=deepseek-ai/deepseek-harness dsh-v0.1.2-alpha.1 cd5ef8148158c3a752a658978873241fdf8e2bbc
+ATTEMPT_1=NOT_ACCEPTED exit=0 selected=0/5 preserved=true
+ATTEMPT_1_REASON=anchored pattern did not select nested suite-prefixed names
+BOUNDED_CORRECTION=removed only top-level suite prefix; hypotheses, falsifiers, case names, inputs, assertions, safety, and acceptance unchanged
+ATTEMPT_2=PASS exit=0 selected=1-file/5-tests
+CAPTURE_REPLAY=PASS exit=0 selected=1-file/5-tests trace-lines=13
+35-X01=PASS calls=3 invalid-body-counts=0 invalid-code=INVALID_ARGS session-and-next-correlated=true
+35-X02=PASS calls=3 allow-body=1 deny-body=0 ask-body=0 approval-pair=rejected session-and-next-correlated=true
+35-X03=PASS calls=2 timeout-signal-observed-before-release=true result-before-release=0 timeout-code=TOOL_TIMEOUT control-success=true drained=true
+35-X04=PASS calls=2 started-body=1 held-body=0 result-before-release=0 started-code=ABORTED held-code=ABORTED_BEFORE_DISPATCH followup-completed=true
+35-X05=PASS calls=3 cap-bytes=200 full-bytes=1600 fallback-bytes=1000 spill-locator=/spill/big-ok.txt semantic-summary=false
+TRACE_COUNT=13
+TRACE_REQUIRED_TOP_LEVEL_FIELDS=PASS
+FIXTURE_POST_CLEANUP_HEAD=cd5ef8148158c3a752a658978873241fdf8e2bbc
+FIXTURE_POST_CLEANUP_STATUS=EMPTY
+FIXTURE_POST_CLEANUP_UNSTAGED_DIFF=EMPTY
+FIXTURE_POST_CLEANUP_STAGED_DIFF=EMPTY
+PROVIDER_REQUESTS=ZERO
+NETWORK_REQUESTS=ZERO
+REAL_SIDE_EFFECTS=ZERO
+LAB_07_ASSETS=ZERO
+ARTICLE_36_PLUS_ASSETS=ZERO
+PRE_COMMIT_TEXT_NORMALIZATION=removed one terminal empty patch line and one trailing ASCII space after an error-message colon; semantic observation unchanged
+PRE_COMMIT_TEXT_NORMALIZATION_BEFORE=attempt1-patch 29791/97a6aec99fea860a14a96ae29673d4b3c408e88f0f3859879a2ef7e6ee6037bf environment 7213/e48e1b89f96f2c87efbfafda619ff047b9b7af65953d3227af1daa94329de8ee
+PRE_COMMIT_TEXT_NORMALIZATION_AFTER=attempt1-patch 29790/97b6d99b5d480bdb6a620e4eb6c3d668fee482d9f05b653b3c887ad8112916ac environment 7212/bec0c561e67e0c7659fe8eaebc59676a4856e1d4909ffd14a83277b20f548778
+
+PATCH_AND_ARTIFACT_HASHES
+PATCH_CHECK_EXIT=0
+a35-recovery-traces.jsonl|23654|3180b26cc779add7eab3943d235185675cce91ff2813c249b5e7b4062ebc2153
+article-35-same-call-recovery.patch|29722|e0e653d08ae75d1a03f69f70589c8f6c219d1e77ec1fe1ce0bd552eab88a7eb2
+article-35-same-call-recovery.spec.ts|28829|7ea805316c4fceb50c88d579a25b6a5cd4527103d77d8d498d32e2e664b8d5ca
+attempt-1-article-35-same-call-recovery.patch|29790|97b6d99b5d480bdb6a620e4eb6c3d668fee482d9f05b653b3c887ad8112916ac
+attempt-1-article-35-same-call-recovery.spec.ts|28895|66a21bfd39ed72e1a240eedfa738ae8bff87d97cdc86ece979288b15a6a9fb8d
+attempt-1-combined-output.txt|1950|6c763a8c064d36031cf68bfd97110f7d2c1ef5a993e992012577cbe91ab64881
+combined-output.txt|25951|f86be910dc2d0df0ef7adca5a811a79cb2c7f2e48b2a16c2776cd1db118a9391
+command.txt|1194|1d8df6b39fad1ae66181e90481a35ab993f9576fdd1826926eb179c852221114
+environment-and-cleanliness.txt|7212|bec0c561e67e0c7659fe8eaebc59676a4856e1d4909ffd14a83277b20f548778
