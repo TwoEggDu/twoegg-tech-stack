@@ -8,21 +8,21 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: RUNNING
-current_article: "32"
-current_gate: GIT_DIFF_VERIFY
-last_published_article: "31"
+factory_status: READY
+current_article: "34"
+current_gate: PRECHECK
+last_published_article: "33"
 active_worker: NONE
 active_worker_execution_id: NONE
-active_worker_record_ref: docs/agent-engineering-course/articles/32-dsh-system-prompt-assembly-prompt-context/subagent-trace.md#wr-a32-pre-commit-reconciliation
-last_worker_result_semantics: CURRENT_TRANSACTION_RESULT
+active_worker_record_ref: NONE
+last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
   role: MASTER_ORCHESTRATOR
-  article: "32"
+  article: "33"
   gate: PRE_COMMIT_RECONCILIATION
   execution_type: MASTER_DETERMINISTIC
   execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/32-dsh-system-prompt-assembly-prompt-context/subagent-trace.md#wr-a32-pre-commit-reconciliation
+  result_ref: docs/agent-engineering-course/articles/33-dsh-inbox-turn-step-agent-loop/subagent-trace.md#wr-a33-pre-commit-reconciliation
   status: PASS
   gate_completed: true
   artifact_verified: true
@@ -35,15 +35,15 @@ active_blocker: NONE
 stop_reason: NONE
 human_decision_required: false
 article_authorization:
-  status: ACTIVE
-  scope: FULL_ARTICLE_TRANSACTION
-  article: "32"
-  continue_until: END_ARTICLE_32
-  auto_continue_after_gate_pass: true
+  status: INACTIVE
+  scope: NONE
+  article: "34"
+  continue_until: NONE
+  auto_continue_after_gate_pass: false
   explicit_stop_line: NONE
   next_article_authorized: true
-last_successful_commit: 9a060c1ce91a620163a64cddd2aec446c4900fd0
-next_action: VERIFY_EXACT_STAGED_18_FILE_TRANSACTION_THEN_COMMIT
+last_successful_commit: e6b6ca6dcab484e700e7608fcec51d22dc81993c
+next_action: START_ARTICLE_34_PRECHECK_AFTER_RESOLVE_ARTICLE_33_END_ARTICLE
 continuous_run:
   enabled: true
   start_article: "28"

@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article31 `END_ARTICLE`；completion commit=`9a060c1ce91a620163a64cddd2aec446c4900fd0`；local/origin/live equality=`PASS`
-- 当前生产对象：Article32 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article33—37 not started；Article38—44 forbidden/zero assets
+- 当前里程碑：Article32 `END_ARTICLE`；completion commit=`e6b6ca6dcab484e700e7608fcec51d22dc81993c`；local/origin/live equality=`PASS`
+- 当前生产对象：Article33 `PUBLISHED CANDIDATE / PRE_COMMIT_RECONCILIATION`；Article34—37 not started；Article38—44 forbidden/zero assets
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -94,7 +94,8 @@
 - 当前 Article 31 Published Content：`content/ai-empowerment/agent-engineering-31-dsh-profile-bundle-capability-seam.md`
 - 当前 Article 31 Build Verification：`1259 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
 - 当前 Article 32 状态：`PUBLISHED` candidate；Evidence=`13 CONFIRMED / 2 PROPOSAL / 0 BLOCKED`；Final=`97 / A32-R0-F01 CLOSED / 0 OPEN`；Hugo=`1260 / 0 ERROR`
-- Factory Status：`RUNNING / Article32 GIT_DIFF_VERIFY / active NONE`；continuous range=`28—37`；Article33 requires Article32 END_ARTICLE；Article38—44 forbidden
+- 当前 Article 33 状态：`PUBLISHED` candidate；Evidence=`14 CONFIRMED / 1 PROPOSAL / 0 BLOCKED`；Required Trace=`4/4 PASS / 10/10 owner tests`；Final=`98 / A33-R0-F01—F03 CLOSED / 0 OPEN`；Hugo=`1261 Pages / 44 Static / 1 Alias / 0 ERROR`
+- Factory Status：`READY / Article34 PRECHECK / active NONE`；continuous range=`28—37`；Article34 requires Article33 END_ARTICLE；Article38—44 forbidden
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 

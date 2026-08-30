@@ -860,4 +860,4 @@ Effective Assembly 解释本 Step 选择了什么；Context Snapshot 为动态�
 
 > **课程索引**：[Agent Engineering 系统课程]({{< relref "ai-empowerment/agent-engineering-series-index.md" >}})
 
-> **下一篇**：Loop、Turn 与 Step：AgentLoop 怎样推进一次运行（计划中，发布后再补链接）。
+> **下一篇**：[Inbox、Turn、Step 与 Agent Loop]({{< relref "ai-empowerment/agent-engineering-33-dsh-inbox-turn-step-agent-loop.md" >}})
