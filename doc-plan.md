@@ -72,6 +72,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 游戏引擎架构地图 | [docs/game-engine-architecture-series-plan.md](./docs/game-engine-architecture-series-plan.md) | 已拆出 | 系列定义层 |
+| UE 全栈工程师成长路线 | [docs/ue-fullstack-expert-series-plan.md](./docs/ue-fullstack-expert-series-plan.md) | 规划已建立，实践待验证 | 从 Unity/C# 经验进入 UE 客户端、权威战斗服、业务后端与交付；只管理贯通路径和新增桥梁，复用 Unreal、技能、服务端、渲染与交付专题；[盘点快照](./docs/ue-fullstack-content-audit.md) |
 | 游戏引擎架构地图执行计划 | [docs/game-engine-architecture-series-execution-plan.md](./docs/game-engine-architecture-series-execution-plan.md) | 执行层已拆出 | 6 周执行顺序与证据需求 |
 | 游戏引擎渲染栈 | [docs/game-engine-rendering-stack-series-plan.md](./docs/game-engine-rendering-stack-series-plan.md) | 已拆出 | 引擎到 GPU 的链路主线 |
 | 游戏编程模式 | [docs/game-programming-patterns-plan.md](./docs/game-programming-patterns-plan.md) | 已拆出 | 对应旧 `系列七·B` |
