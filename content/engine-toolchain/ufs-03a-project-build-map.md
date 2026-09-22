@@ -28,7 +28,7 @@ Windows 本课采用官方二进制引擎支持的工具链。5.8 的 VS 兼容�
 | 要记录的输入 | 到哪里确认 | 不能拿什么代替 |
 | --- | --- | --- |
 | UE 来源、完整版本与安装目录 | Launcher/编辑器 About；`Engine/Build/Build.version`；启动日志 | `.uproject` 的 `EngineAssociation` 往往只是关联标识，不是 patch 证明 |
-| VS、MSVC、Windows SDK | VS About/Installer 的 C++ 桌面与游戏开发组件；首次 UBT 输出的实际编译器/SDK | 第一篇的 GCC 成功不代表 UE Windows 工具链通过 |
+| VS、MSVC、Windows SDK | VS About/Installer 的 C++ 桌面与游戏开发组件；首次 UBT 输出的实际编译器/SDK | 第一篇默认 MSVC 小程序通过也不代表 UE 工具链通过；可选 GCC 历史实测更不能替代它 |
 | Windows、内存、显卡驱动和磁盘空间 | 本机系统信息；实践盘、缓存盘、产物盘的可用空间 | 不用别人机器的构建耗时当本机预算 |
 | 工程与产物绝对路径 | 自选短、可写的本地路径，确认不会覆盖已有工程 | 本文示例路径不是已创建目录 |
 | 源码/版本管理 | 自己可追溯的 revision，或有文件清单的输入快照 | Launcher 发行版不能编一个引擎 Git SHA |
@@ -257,33 +257,40 @@ Windows 的最终交付可能是目录结构，内容也可能使用 Pak/IoStore
 
 ### 设置地图与 Development 包
 
+先把四个名字分开。`source_revision` 指向真实 Git revision 或不可变输入快照，并且必须覆盖源码、资产、配置和构建规则；有未提交改动时，要连同补丁或完整快照一起记录。`tutorial_source_label` 只是日志中便于辨认教学场景的短标签，例如 `baseline`、`fault-delta-time`、`fixed-delta-time`。`build_id` 标识一次具体构建尝试，每次重新 Build/Cook/Package 都新建，只写进外部身份文件、manifest 和输出目录，不编进 C++。`run_id` 标识一次进程运行，每次启动都新建。
+
+下面的尖括号是占位符，不是已经发生的回执：
+
+| 情况 | source_revision | tutorial_source_label | build_id | run_id |
+| --- | --- | --- | --- | --- |
+| 正常输入第一次构建 | `<REV_BASELINE>` | `baseline` | `<BUILD_A>` | `<RUN_A1>` |
+| 同一正常输入再次构建 | **仍为** `<REV_BASELINE>` | **仍为** `baseline` | `<BUILD_B>` | `<RUN_B1>` |
+| 故障输入构建 | `<REV_OR_SNAPSHOT_FAULT>` | `fault-delta-time` | `<BUILD_C>` | `<RUN_C1>` |
+| 修复输入构建 | `<REV_OR_SNAPSHOT_FIXED>` | `fixed-delta-time` 或实际恢复后的标签 | `<BUILD_D>` | `<RUN_D1>` |
+
+修复版的 `source_revision` 取决于真实输入：如果确实恢复为与基线相同的不可变输入，它可以回到 `<REV_BASELINE>`；如果形成了新的修复提交或快照，就记录新的实际值。标签不能替代 revision，revision 也不能替代每次都唯一的 build_id。
+
 1. 在 TwinArena 保存 `M0_Rotation` 和蓝图，选择 **Edit → Project Settings → Maps & Modes**，把 **Game Default Map** 设成 `M0_Rotation`；Editor Startup Map 也可设同图，但它不能代替 Game Default Map。
 2. 在 **Project → Packaging** 查找 **Build Configuration**，本课选择 Development；查找 **Include Debug Files** 并启用。第一份验收包启用 **Full Rebuild**，保存设置。它不是清空所有缓存的命令，也不证明已经全量重新 Cook。
 3. 在 Packaging 的高级项查找 **List of maps to include in a packaged build**，加入 `/Game/Maps/M0_Rotation`。这里填写资产路径，不是磁盘 `Content/...umap`。本课不使用全量 Cook 项目中所有地图来掩盖缺失配置。
-4. 先在下一课 `.cpp` 中把 `TutorialBuildId` 定为此次唯一值，例如 `m0-local-001`；保存代码、地图、配置并记录输入 revision/快照。构建期间不再改这些输入。
-5. 工具栏 **Platforms → Windows**，确认 Binary Configuration 使用项目的 Development 设置，然后 **Package Project**，选择一个本次独有的输出目录，例如 `E:\UEArtifacts\m0-local-001\Package`。界面如显示 Use Project Setting，要确认括号里正是 Development。
-6. 保存完整 Output Log。失败时找第一处实质错误，处理后换新的 build_id/输出目录重试；已有旧 exe 不能作为这次成功的证据。成功提示之后，再去输出目录确认文件。
+4. 保存代码、地图、配置和构建规则，记录真实 `source_revision` 及未提交补丁/快照位置。下一课 `.cpp` 的 `TutorialSourceLabel` 要与当前教学场景一致。相同输入重建时这两项不变；构建期间不再改输入。
+5. 在外部记录中分配本次唯一 `build_id`，为它创建全新的输出目录，例如 `E:\UEArtifacts\archive\<BUILD_ID>\Package`。不要为了新 build_id 修改 C++，也不要引入含义重复的 `build_attempt_id`。
+6. 工具栏 **Platforms → Windows**，确认 Binary Configuration 使用项目的 Development 设置，然后 **Package Project** 到这个目录。界面如显示 Use Project Setting，要确认括号里正是 Development。
+7. 保存完整 Output Log。失败时找第一处实质错误；修正输入后重新记录 source_revision/快照，并为下一次尝试分配新的 build_id 和输出目录。已有旧 exe 不能作为这次成功的证据。成功提示之后，再去输出目录确认文件。
 
 如果包装后打开黑屏或默认地图不对，先核对 **Game Default Map、地图是否保存、Cook 日志、实际启动的包**，而不是立刻改旋转算法。缺网格则沿“蓝图组件实际资产→地图引用→Cook/包中资源”检查。
 
 ### 独立启动与最小身份记录
 
-关闭编辑器。保留**整个 Package 目录**，不要只复制顶层 exe。打开该包的 `TwinArena.exe`；根启动器可能再启动 `TwinArena/Binaries/Win64/` 下的实际游戏程序，调试时要识别后者的进程。
-
-在包根目录打开 PowerShell，以本次新的 run_id 启动：
-
-```powershell
-$runId = 'run-001'
-& '.\TwinArena.exe' -log -windowed -ResX=1280 -ResY=720 "-M0RunId=$runId"
-```
-
-第三篇代码会解析 M0RunId 并在 `M0Begin` 日志中记录它与编译进去的 build_id。命令行 run_id 只是一次运行的标签，不证明包的构建身份；二者不能混用。第一次在新进程看到几何体后，还要记录实际 exe 路径、进程 PID、原始日志来源与退出情况。
+关闭编辑器，先不要启动刚生成的包。保留**整个 Package 目录**，不要只复制顶层 exe；先完成身份文件、外部哈希与不可覆盖归档，再从归档复制运行副本。
 
 在**已经成功生成的包根**另存 UTF-8 `build-identity.txt`，内容填写真实值：
 
 ```text
-build_id=m0-local-001
-project_revision=填写实际提交或输入快照标识
+build_id=填写本次构建尝试的唯一值
+source_revision=填写实际Git revision或不可变输入快照标识
+source_changes=clean或填写未提交补丁/完整快照位置
+tutorial_source_label=baseline或当前实际教学场景标签
 engine_build=填写实际5.8.2发行构建或源码revision
 target=TwinArena
 platform=Win64
@@ -291,13 +298,13 @@ configuration=Development
 map=/Game/Maps/M0_Rotation
 ```
 
-这是随包保存的身份小文件，不是证明自己正确的魔法文件。必须与启动日志中的编译常量一致，再用外部校验清单绑定产物。字段仍有“填写”字样时，只是模板，不能验收。
+这是随包保存的身份小文件，不是证明自己正确的魔法文件。`tutorial_source_label` 应与启动日志一致；build_id 则由此文件、外部 manifest、目录和运行回执关联，不要求运行时代码打印它。字段仍有“填写”字样时，只是模板，不能验收。
 
 下面脚本在**产物目录**执行，哈希清单放在 Package 外，避免把自己纳入自己。改为你的实际路径，它不会清理目录：
 
 ```powershell
-$packageRoot = (Resolve-Path -LiteralPath 'E:\UEArtifacts\m0-local-001\Package').Path
-$receiptFile = 'E:\UEArtifacts\m0-local-001\package-sha256.csv'
+$packageRoot = (Resolve-Path -LiteralPath 'E:\UEArtifacts\archive\<BUILD_ID>\Package').Path
+$receiptFile = 'E:\UEArtifacts\archive\<BUILD_ID>\package-sha256.csv'
 Get-ChildItem -LiteralPath $packageRoot -Recurse -File |
     Sort-Object FullName |
     ForEach-Object {
@@ -308,9 +315,29 @@ Get-ChildItem -LiteralPath $packageRoot -Recurse -File |
     } | Export-Csv -LiteralPath $receiptFile -NoTypeInformation -Encoding UTF8
 ```
 
-更稳妥的顺序是：包成功→写身份文件→哈希归档→复制一份运行副本→运行副本产生日志。若你已经在原包运行过，分开记录后来生成的日志，不要把它们误当构建输入。PDB 若没有随包复制，另行保留同次构建的原始 PDB 及哈希；**符号是否匹配还要由调试器验证**。
+正式验证按固定顺序执行：**构建成功 → 写 `build-identity.txt` → 生成位于 Package 外的哈希清单 → 将 `<BUILD_ID>` 目录冻结为不可覆盖归档 → 复制一份运行副本 → 只从运行副本启动**。运行日志和存档、截图等运行产物放到单独的 `<RUN_ID>` 证据目录，不回写归档 Package，也不纳入下一次构建输入。PDB 若没有随包复制，另行保留同次构建的原始 PDB 及哈希；PDB 文件名或哈希清单本身仍不能证明符号匹配，必须由调试器核对实际模块。
 
-最小回执另记编译器/SDK、构建命令或界面设置、构建日志、地图/蓝图输入、包和符号清单、每次 run_id/启动命令/原始运行日志、断点模块/PDB 截图。每次改变代码或配置都重新建 build_id；相同输入的第二次构建也用新 ID，保留比较记录，不要求二进制逐字节相同。
+在运行副本的包根打开 PowerShell，以本次新的 run_id 启动：
+
+```powershell
+$runId = 'run-001'
+& '.\TwinArena.exe' -log -windowed -ResX=1280 -ResY=720 "-M0RunId=$runId"
+```
+
+根启动器可能再启动 `TwinArena/Binaries/Win64/` 下的实际游戏程序，调试时要识别后者的进程。第三篇代码会解析 `M0RunId`，并在 `M0Begin` 日志中记录它和编译进去的 `tutorial_source_label`。它们只能帮助核对当前场景与运行，不能独自证明包来自哪次构建。运行回执还要把 run_id 关联到外部 build_id、实际 exe 路径、进程 PID、原始日志来源与退出情况。
+
+每次运行另写一份最小回执，把运行和构建明确连起来：
+
+```text
+run_id=填写本次运行唯一值
+build_id=填写所用归档的build_id
+executable_path=填写运行副本中实际exe绝对路径
+log_path=填写该进程原始日志的实际位置
+```
+
+最小回执另记编译器/SDK、构建命令或界面设置、构建日志、地图/蓝图输入、包和符号清单、每次 run_id/启动命令/原始运行日志、断点模块/PDB 截图。每次构建尝试都用新 build_id；只有源码、资产、配置或构建规则等输入改变时，source_revision/快照和场景标签才按事实变化。同一输入的第二次构建保留比较记录，不要求二进制逐字节相同。
+
+日常编辑可以继续使用 IDE、Live Coding 或临时目录提高反馈速度；这些结果不进入正式验收。需要形成证据时，再冻结输入并从新的 build_id 走完上述完整顺序，避免把日常增量产物误写成可追溯归档。
 
 ## 7. 故障练习：给缺少的模块起错名字
 
@@ -335,7 +362,7 @@ Get-ChildItem -LiteralPath $packageRoot -Recurse -File |
 - [ ] 完成一次关闭编辑器后的正常 Editor 构建，保留真实工具链与首错/成功记录。
 - [ ] 故意写错模块依赖并恢复，不以 Live Coding 代替正常构建。
 - [ ] 下一课完成后回来，把同一个地图打成 Development Windows 包，在新进程运行。
-- [ ] 同时留下包、PDB、源码/配置身份、build_id/run_id 与日志；这一步仍不代表全部 M0 验收通过。
+- [ ] 同时留下包、PDB、source_revision/补丁或快照、tutorial_source_label、build_id/run_id 与日志；这一步仍不代表全部 M0 验收通过。
 
 自测问题：
 

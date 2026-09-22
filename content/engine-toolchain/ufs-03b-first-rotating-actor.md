@@ -104,8 +104,8 @@ DEFINE_LOG_CATEGORY_STATIC(LogTwinArenaM0, Log, All);
 
 namespace
 {
-    // Change for every new package, then record the same ID in its receipt.
-    constexpr TCHAR TutorialBuildId[] = TEXT("m0-local-001");
+    // Labels the teaching source scenario; build attempts are identified outside the binary.
+    constexpr TCHAR TutorialSourceLabel[] = TEXT("baseline");
 }
 
 ARotatingActor::ARotatingActor()
@@ -130,8 +130,8 @@ void ARotatingActor::BeginPlay()
     FParse::Value(FCommandLine::Get(), TEXT("M0RunId="), RunId);
 
     UE_LOG(LogTwinArenaM0, Display,
-        TEXT("M0Begin Build=%s Run=%s Engine=%s Object=%s SpeedDegPerSec=%.2f HasMesh=%d"),
-        TutorialBuildId, *RunId, *FEngineVersion::Current().ToString(),
+        TEXT("M0Begin SourceLabel=%s Run=%s Engine=%s Object=%s SpeedDegPerSec=%.2f HasMesh=%d"),
+        TutorialSourceLabel, *RunId, *FEngineVersion::Current().ToString(),
         *GetPathName(), DegreesPerSecond,
         MeshComponent->GetStaticMesh() != nullptr ? 1 : 0);
 }
@@ -148,8 +148,8 @@ void ARotatingActor::Tick(float DeltaTime)
     if (WindowSeconds >= 5.0)
     {
         UE_LOG(LogTwinArenaM0, Display,
-            TEXT("M0Window Build=%s Run=%s Object=%s Seconds=%.3f AppliedYaw=%.3f RateDegPerSec=%.3f"),
-            TutorialBuildId, *RunId, *GetPathName(), WindowSeconds,
+            TEXT("M0Window SourceLabel=%s Run=%s Object=%s Seconds=%.3f AppliedYaw=%.3f RateDegPerSec=%.3f"),
+            TutorialSourceLabel, *RunId, *GetPathName(), WindowSeconds,
             WindowAppliedYaw, WindowAppliedYaw / WindowSeconds);
         WindowSeconds = 0.0;
         WindowAppliedYaw = 0.0;
@@ -171,7 +171,7 @@ void ARotatingActor::SetRotationSpeed(float NewDegreesPerSecond)
 
 为什么多了五秒观察窗口？它让你看到输入时间、累计请求角度和换算速度，又不在每帧刷日志。五秒是累计 **DeltaTime 的游戏时间**，不是承诺严格每五秒墙钟打印；窗口也会包含最后跨过阈值的一帧。`AppliedYaw` 记录我们送出的旋转量，**不是对最终渲染画面或物理结果的独立测量**，所以还要看画面与变换。
 
-`TutorialBuildId` 是教学用编译常量，每次新包先改 ID 再构建。`RunId` 由命令行 `-M0RunId=run-001` 提供；编辑器未传参数时会明确记 `unrecorded`，正式独立运行回执应填写新 run_id。它们帮助关联证据，不能取代第二篇的产物哈希、输入快照与 PDB 匹配。[FParse API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Core/FParse)
+`TutorialSourceLabel` 是教学源场景标签：正常基线保持 `baseline`，故障练习可改为 `fault-delta-time`，修复版按实际输入决定恢复 `baseline` 还是使用 `fixed-delta-time`。相同源码/资产/配置/构建规则的重复构建不改这个常量。每次构建尝试唯一的 build_id 由第二篇的输出目录、`build-identity.txt` 和外部 manifest 记录，不编进代码。`RunId` 由命令行 `-M0RunId=run-001` 提供；编辑器未传参数时会明确记 `unrecorded`，每次正式独立运行都应使用新 run_id。运行回执把 run_id 关联到 build_id 和实际 exe；日志标签本身不能取代 source_revision、产物哈希与 PDB 匹配。[FParse API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Core/FParse)
 
 ## 4. 这些 UE C++ 写法分别补了哪一层
 
@@ -329,17 +329,17 @@ const double DeltaYaw = static_cast<double>(DegreesPerSecond);
 
 其他日志累计代码保持不变。先写预测：这时“每秒 60 度”变成“每帧 60 度”。约 30 fps 时每秒请求约 1800 度，约 60 fps 时约 3600 度；画面甚至可能出现视觉混叠，看起来异常慢或方向奇怪，因此不能仅凭肉眼估速度。
 
-将 `TutorialBuildId` 改成新的故障构建 ID，例如 `m0-fault-002`。关闭编辑器→正常构建→重新运行，先在 Editor 断点比较 `DegreesPerSecond / DeltaTime / DeltaYaw`：当 DeltaTime 约 1/60，DeltaYaw 却仍为 60，单位已经不对。调用栈把你带到自有 Tick，窗口日志则显示每秒请求量随着实际帧率改变。两个证据指向同一个遗漏乘法，不需要先怀疑材质或垃圾回收。
+将 `TutorialSourceLabel` 改为 `fault-delta-time`，并为改动后的真实源码记录新的 `source_revision` 或不可变快照。关闭编辑器→正常构建→重新运行，先在 Editor 断点比较 `DegreesPerSecond / DeltaTime / DeltaYaw`：当 DeltaTime 约 1/60，DeltaYaw 却仍为 60，单位已经不对。调用栈把你带到自有 Tick，窗口日志则显示每秒请求量随着实际帧率改变。两个证据指向同一个遗漏乘法，不需要先怀疑材质或垃圾回收。
 
-随后按同一打包步骤生成该故障 ID 的 Development 包，保留第一份正确包，在新进程以新的 run_id 对照约 30/60 fps，并按第 10 节命中包内 Tick。故障目录与身份文件都使用 `m0-fault-002`，不能让坏包覆盖基线包；原始日志要能够读回该故障 ID。
+随后按同一打包步骤为故障构建分配新的外部 build_id，保留第一份正确包，在新进程以新的 run_id 对照约 30/60 fps，并按第 10 节命中包内 Tick。故障归档目录和身份文件使用同一个 build_id，不能让坏包覆盖基线包；原始日志应能读回 `SourceLabel=fault-delta-time`，运行回执再把 run_id、build_id 与实际 exe 路径连起来。
 
-修回乘法，给新包新 build_id，例如 `m0-fixed-003`，执行正常构建与重新打包，再复跑零速、正负速度、约 30/60 fps 以及独立启动。记录故障输入、公式预测、真实变量/日志、修复 diff、修复后结果。修复后只在 PIE 看一眼，不能代替之前失败的独立包路径复验。
+修回乘法，按实际输入记录 source_revision 和标签：若完整恢复到与基线相同的不可变输入，可恢复 `baseline`；若形成新的修复提交/快照，可使用 `fixed-delta-time` 并记录该新身份。无论哪种情况，都为修复构建分配新的外部 build_id，执行正常构建与重新打包，再复跑零速、正负速度、约 30/60 fps 以及独立启动。记录故障输入、公式预测、真实变量/日志、修复 diff、修复后结果。修复后只在 PIE 看一眼，不能代替之前失败的独立包路径复验。
 
 ## 10. 打包后，在真正游戏进程里验证
 
 回到 [工程地图第 6 节]({{< relref "engine-toolchain/ufs-03a-project-build-map.md" >}}) 设置 Game Default Map、Cook 地图列表、Development 和符号，打包**本工程**。固定相机的 Level Blueprint 与 M0_Rotation 一并保存；独立包中必须看到同一个蓝图实例与行为。
 
-关闭编辑器，从包的运行副本启动 `TwinArena.exe -log -M0RunId=package-001`，核对 `M0Begin` 的 build_id、run_id、引擎版本、Object 与速度。保存原始日志。日志位置以该进程实际输出为准：开发包可能使用包内项目 Saved/Logs，也可能走用户目录配置；不要套用 Unity Player.log 路径或断言永远只有一个目录。
+关闭编辑器，从包的运行副本启动 `TwinArena.exe -log -M0RunId=package-001`，核对 `M0Begin` 的 SourceLabel、run_id、引擎版本、Object 与速度；再用运行回执中的 build_id 和实际 exe 绝对路径确认它来自哪个不可变归档。保存原始日志。日志位置以该进程实际输出为准：开发包可能使用包内项目 Saved/Logs，也可能走用户目录配置；不要套用 Unity Player.log 路径或断言永远只有一个目录。
 
 再做一次包内断点：
 
@@ -367,7 +367,7 @@ const double DeltaYaw = static_cast<double>(DegreesPerSecond);
 - [ ] 在自有 Tick 命中断点，解释参数、成员、局部值与调用栈。
 - [ ] 留下零速、正负速度、不同实际帧率的预测和真实结果；预测没跑不能打勾。
 - [ ] 人为漏乘 DeltaTime，定位单位错误，修复后正常构建、重新打包与独立运行复验。
-- [ ] 包、符号、源码/配置、build_id/run_id 与原始日志可互相对应；读者本人能力仍按 M0 执行计划验收。
+- [ ] 包、符号、source_revision/补丁或快照、tutorial_source_label、build_id/run_id 与原始日志可互相对应；读者本人能力仍按 M0 执行计划验收。
 
 自测与参考答案：
 

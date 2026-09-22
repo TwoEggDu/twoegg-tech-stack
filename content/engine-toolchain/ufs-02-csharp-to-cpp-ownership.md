@@ -38,12 +38,12 @@ weight: 4602
 声明告诉使用者“这个名字存在，参数和返回类型是什么”；定义提供函数体或对象实体。头文件通常承载共享声明，`.cpp` 放非内联实现。`#include` 让当前翻译单元看到头文件内容，不会自动把另一个 `.cpp` 加入链接。
 
 ```text
-main.cpp + 展开的 Training.h   ──编译──> main.o
-Training.cpp + Training.h      ──编译──> Training.o
-main.o + Training.o + 标准库   ──链接──> training.exe
+main.cpp + 展开的 Training.h   ──编译──> main.obj
+Training.cpp + Training.h      ──编译──> Training.obj
+main.obj + Training.obj + 标准库 ──链接──> training.exe
 ```
 
-`.o` 是下文 GCC 的目标文件名；MSVC 常用 `.obj`。调用者看见 `int BonusPoints();` 后可以通过编译，但链接器仍要找到匹配的定义。头文件缺失、类型不匹配通常先卡编译；声明有了而实现没提供，通常卡链接。语法都正确、算法却错，是第三层问题。
+`.obj` 是下文 MSVC 主路径的目标文件名；可选 GCC 路径会生成 `.o`。调用者看见 `int BonusPoints();` 后可以通过编译，但链接器仍要找到匹配的定义。头文件缺失、类型不匹配通常先卡编译；声明有了而实现没提供，通常卡链接。语法都正确、算法却错，是第三层问题。
 
 `#pragma once` 防止同一翻译单元重复包含此头文件；它不是跨所有 `.cpp` 消除重复定义的万能开关。把普通非内联函数体随便放进头文件，可能在链接时得到重复定义。下面的函数模板放在头文件，是为了让使用处能看见实例化需要的定义。
 
@@ -259,38 +259,39 @@ int main()
 
 先在纸上回答：`caller` 和 `after ref` 各是多少？移动 `unique_ptr` 会不会出现第二次 `ctor owned`？`dtor owned` 出现在 `owner reset` 前还是后？`end body` 是不是最后一行？预测写完后再运行。
 
-### 用已存在的 GCC 工具链
+### 默认路径：Visual Studio / MSVC
 
-在 PowerShell 进入上述目录，先执行 `g++ --version` 和 `gdb --version`。本文实际核验环境为 Windows 上的 GCC 8.3.0（x86_64-posix-seh，Strawberry 分发）和 GDB 8.2.1；这是已存在的小练习工具链，**不是 UE 5.8 的 Windows 编译器推荐**，不用为跟课专门安装这套旧版本。
+从开始菜单打开 **x64 Native Tools Command Prompt for VS**。它是 Visual Studio 的开发者命令提示符，会设置编译器需要的 `PATH`、`INCLUDE` 和 `LIB`；普通 `cmd` 或 PowerShell 默认没有这些环境。不要把某个 Visual Studio 安装目录硬编码进教程，因为版本、版本类型和安装位置都可能变化。[Microsoft：在命令行上生成 C/C++ 代码](https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170)
 
-```powershell
-g++ -std=c++17 -Wall -Wextra -Wpedantic -g -O0 -c Training.cpp -o Training.o
-if ($LASTEXITCODE -ne 0) { throw 'Training.cpp compile failed' }
-g++ -std=c++17 -Wall -Wextra -Wpedantic -g -O0 -c main.cpp -o main.o
-if ($LASTEXITCODE -ne 0) { throw 'main.cpp compile failed' }
-g++ -g Training.o main.o -o training.exe
-if ($LASTEXITCODE -ne 0) { throw 'link failed' }
-.\training.exe
-if ($LASTEXITCODE -ne 0) { throw 'run failed' }
-```
-
-三条构建命令把编译和链接分开。`-g` 保留调试信息，`-O0` 关闭优化，让第一次单步更易读；这不是发布构建的性能结论。命令失败就停下，不要运行目录里上一次成功留下的 exe。找不到 `g++` 时，先核对安装位置和终端 PATH，不要用“运行了旧 exe”冒充构建通过。
-
-### 如果使用 Visual Studio / MSVC
-
-已有匹配的 MSVC 时，可以在 **x64 Native Tools Command Prompt**（开发者命令提示符，不是普通 PowerShell）中进入同一目录，执行：
+先在这个提示符中确认当前会调用哪套工具：
 
 ```bat
-cl /nologo /std:c++17 /EHsc /W4 /Zi /Od /c Training.cpp main.cpp
+where cl
+cl
+where link
+link /?
+where devenv
 ```
 
-确认这一步成功，再执行下一条，不能忽略错误继续：
+`cl` 不带输入时会显示版本后以“没有源文件”结束；这里看的是版本和路径，不把这个预检当构建成功。如果 `cl` 或 `link` 找不到，回到 Visual Studio Installer 核对 C++ 工作负载和 Windows SDK；如果只有 `devenv` 找不到，说明下面的 Visual Studio GUI 调试入口尚不可用。把缺项记为待准备，不要自动安装，也不要改用目录里残留的 exe 继续。
+
+在 `cpp-ownership` 下新建一个空的 `build-msvc` 目录，从开发者命令提示符进入它。下面的命令使用 C++17、较高警告级别、调试信息和关闭优化；编译与链接分开，便于判断错误处在哪一层。[Microsoft：MSVC 编译器选项](https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-alphabetically?view=msvc-170)
 
 ```bat
-cl /nologo /Zi /Od Training.obj main.obj /Fe:training.exe /link /DEBUG
+cd /d C:\your\cpp-ownership\build-msvc
+cl /nologo /std:c++17 /EHsc /W4 /Zi /Od /c ..\Training.cpp /Fo:Training.obj /Fd:Training-compile.pdb
+if errorlevel 1 exit /b %errorlevel%
+cl /nologo /std:c++17 /EHsc /W4 /Zi /Od /c ..\main.cpp /Fo:main.obj /Fd:main-compile.pdb
+if errorlevel 1 exit /b %errorlevel%
+link /nologo /debug:full /out:training.exe /pdb:training.pdb Training.obj main.obj
+if errorlevel 1 exit /b %errorlevel%
+training.exe
+if errorlevel 1 exit /b %errorlevel%
 ```
 
-运行 `training.exe`。这是 MSVC 操作路径，本文未在 MSVC 上执行；若采用此路径，记录实际 `cl` 版本，并用 Visual Studio 打开该 exe、加载同次 PDB 后设断点。不要把 GCC 的 `.o`/DWARF 与 MSVC 的 `.obj`/PDB 混用。
+把 `C:\your\cpp-ownership` 换成自己的真实绝对路径。`/c` 只编译，`link` 单独链接；`/Zi` 生成调试信息，`/Od` 关闭优化，`/DEBUG:FULL` 与 `/PDB` 生成链接后的程序数据库。[Microsoft：LINK](https://learn.microsoft.com/en-us/cpp/build/reference/linking?view=msvc-170)、[Microsoft：/DEBUG](https://learn.microsoft.com/en-us/cpp/build/reference/debug-generate-debug-info?view=msvc-170)、[Microsoft：/PDB](https://learn.microsoft.com/en-us/cpp/build/reference/pdb-use-program-database?view=msvc-170)
+
+这些是 `cmd.exe` 语法，所以使用 `if errorlevel`；不要把 PowerShell 的 `$LASTEXITCODE` 粘进开发者命令提示符。每次练习使用新的空构建目录，任何一步失败都会停止，避免误运行上一次留下的 `training.exe`。MSVC 的 `.obj`/PDB 与 GCC 的 `.o`/DWARF 分目录保存，不交叉链接。
 
 ### 正常输出应该是什么
 
@@ -363,7 +364,7 @@ int BonusPoints()
 }
 ```
 
-重新执行第 4 节两条 `-c` 命令：两次编译应成功。再链接，应出现与 `BonusPoints()` 有关的 undefined reference；MSVC 对应 unresolved external symbol，常见错误号 LNK2019。报错文本随平台不同，不要求逐字相同。
+重新执行第 4 节两条带 `/c` 的命令：两次编译应成功。再执行 `link`，应出现与 `BonusPoints()` 有关的 unresolved external symbol，常见错误号是 LNK2019。可选 GCC 路径通常写作 undefined reference。报错文本随版本不同，不要求逐字相同。
 
 先问三个问题：调用者有没有声明？目标文件有没有生成？链接输入里有没有**匹配签名**的定义？把定义恢复、重编 `Training.cpp`、重新链接，输出应重新包含 `bonus=3`。仅添加 `#include` 不能补出不存在的函数体。
 
@@ -373,7 +374,43 @@ int BonusPoints()
 
 在另一份练习副本中，把头文件和实现文件里的 `IncrementRef(Score& value)` **同时**改成 `IncrementRef(Score value)`。重新构建，预期 `after ref` 由 11 变成 10。只改一处会得到签名不匹配的另一类问题。
 
-用调试构建运行 GDB：
+先重新执行第 4 节的 MSVC 编译和链接。然后仍从 `build-msvc` 打开本次 exe：
+
+```bat
+devenv /debugexe "%CD%\training.exe"
+```
+
+`/DebugExe` 是 Visual Studio 官方的“打开指定可执行文件进行调试”入口。[Microsoft：/DebugExe](https://learn.microsoft.com/en-us/visualstudio/ide/reference/debugexe-devenv-exe?view=visualstudio) 在临时项目的 **Project Properties → Configuration Properties → Debugging** 中核对 `Command` 是这个 `training.exe` 的绝对路径、`Working Directory` 是 `build-msvc` 的绝对路径、`Debugger Type` 是 `Native Only`；这些属性分别决定启动对象、相对文件位置和原生调试器。[Microsoft：C++ 调试属性](https://learn.microsoft.com/en-us/cpp/build/reference/debugging-prop-pages?view=msvc-170)
+
+用 Visual Studio 打开同一副本的 `Training.cpp`，在 `IncrementRef` 内的 `++value.Value` 设置断点并按 F5。命中后依次完成：
+
+1. 打开 **Debug → Windows → Modules**（`Ctrl+Alt+U`），确认 `training.exe` 的实际路径是本次 `build-msvc`，Symbol Status 显示加载了同目录的匹配 PDB。Modules 是核对实际模块与符号状态的入口。[Microsoft：指定符号和源文件](https://learn.microsoft.com/en-us/visualstudio/debugger/specify-symbol-dot-pdb-and-source-files-in-the-visual-studio-debugger?view=visualstudio)
+2. 在 Watch 中查看 `value.Value` 和 `&value`，先记下被调函数内的地址。执行这一行前值应为 10。
+3. 在 Call Stack 中确认当前帧是 `IncrementRef`，调用者帧是 `main`。单击 `main` 栈帧后再查看该作用域可见的 `score.Value` 与 `&score`；不要在 `IncrementRef` 当前作用域里假装 `score` 可见。按值故障下，调用者仍为 10，而且地址与刚才记录的 `&value` 不同。随后切回 `IncrementRef` 栈帧，单步越过 `++value.Value`，副本值应为 11，再用 Step Out 返回 `main`，确认调用者仍为 10。
+4. 把头文件和实现文件里的 `&` 恢复，重新编译、重新链接，再以同样步骤启动新 exe。修复后 `&value` 应与调用者 `&score` 指向同一对象，返回后值为 11。
+
+如果断点不绑定或命中旧代码，先停止调试，核对 Command、Working Directory、Modules 中的模块路径和符号状态，再确认源码来自同一副本。单独存在一个名为 `training.pdb` 的文件并不能证明它与当前 exe 匹配。[调试的几层依赖]({{< relref "engine-toolchain/build-debug-02b-how-debugging-works-breakpoints-symbols-runtime.md" >}}) 可以在这里补读。
+
+### 7.3 另外两种编译期故障
+
+把 `BonusPoints()` 临时改成未声明的 `BonusPoint()`，编译 `main.cpp` 应失败；把 `ConsoleReporter::Kind` 声明和定义末尾的 `const` 去掉但保留 `override`，编译器也应拒绝。每次只制造一种错误，记录第一处有效诊断，随后恢复源码并重新编译、链接、运行。
+
+## 8. 可选：在已有 GCC/GDB 环境复做同一练习
+
+如果机器本来就有 GCC/GDB，可以在 PowerShell 进入单独的 `build-gcc` 目录复做；不用为本课专门安装本文历史核验所用的旧版本。本文实际核验环境为 Windows GCC 8.3.0（x86_64-posix-seh，Strawberry 分发）和 GDB 8.2.1；它不是 UE 5.8 的 Windows 工具链建议。
+
+```powershell
+g++ -std=c++17 -Wall -Wextra -Wpedantic -g -O0 -c ..\Training.cpp -o Training.o
+if ($LASTEXITCODE -ne 0) { throw 'Training.cpp compile failed' }
+g++ -std=c++17 -Wall -Wextra -Wpedantic -g -O0 -c ..\main.cpp -o main.o
+if ($LASTEXITCODE -ne 0) { throw 'main.cpp compile failed' }
+g++ -g Training.o main.o -o training.exe
+if ($LASTEXITCODE -ne 0) { throw 'link failed' }
+.\training.exe
+if ($LASTEXITCODE -ne 0) { throw 'run failed' }
+```
+
+对按值故障保留完整 GDB 验证：
 
 ```text
 gdb ./training.exe
@@ -391,19 +428,15 @@ gdb ./training.exe
 (gdb) quit
 ```
 
-在 `++value.Value` 执行前应看到 10，单步后是 11，但回到 `main` 的 `score.Value` 仍是 10。`bt` 应把 `IncrementRef` 与调用它的 `main` 连起来；两个地址不同揭示了这次操作作用于副本。行号随编辑器换行变化，以函数和语句为准。
+执行前参数值为 10，单步后副本为 11，回到 `main` 后 `score.Value` 仍为 10；`bt` 连接两个栈帧，两个地址不同。恢复两处 `&` 并重建后，返回值为 11，地址应指向同一对象。找不到工具时只记录环境缺口，不拿旧 exe 代替本次构建。
 
-把两处 `&` 恢复后重编、重链，再重复断点：函数参数指向调用者对象，返回后 `score.Value` 为 11。记录“源码签名→调用栈→地址/数值→修复后输出”的证据链，别只写“AI 说传引用就行”。
-
-如果停不住，先确认加载的是刚构建的绝对路径、使用 `-g -O0`、断点不是 pending、源码与 exe 来自同一副本。Visual Studio 路径则检查 Modules 中实际模块与 PDB 加载状态，再在 Locals/Watch/Call Stack 看同样的数据。[调试的几层依赖]({{< relref "engine-toolchain/build-debug-02b-how-debugging-works-breakpoints-symbols-runtime.md" >}}) 可以在这里补读。
-
-## 8. 到 UE 之前，保留这条分界线
+## 9. 到 UE 之前，保留这条分界线
 
 UE C++ 仍是 C++，包含普通值、模板、构造析构和资源管理；但是 `UObject` 及其派生对象加入了 UE 的创建、反射和 GC 规则。不要把本例的 `std::make_unique<Tracked>()` 机械改成 `std::make_unique<AActor>()`，也不要用普通 `delete` 或通用共享指针去接管 UObject。
 
 普通文件句柄和非 UObject 工具对象仍然可以应用 RAII；Actor/组件怎样创建、持有和结束，在 [第三篇的对象边界]({{< relref "engine-toolchain/ufs-03b-first-rotating-actor.md" >}}) 里用实际类解释。你不需要为了开始建工程先读完 GC 源码，但要知道这里不能套用同一套删除策略。
 
-## 9. 自测、AI 辅助与验证记录
+## 10. 自测、AI 辅助与验证记录
 
 - [ ] 在运行前写下正常输出预测，解释两个 `dtor` 的位置。
 - [ ] 指出值、引用、裸指针、独占拥有者各在哪一行，解释哪条借用何时失效。
@@ -421,9 +454,10 @@ AI 适合解释一个签名、审查借用区间、出输出预测题，或根�
 
 | 项目 | 本文交付时的状态 |
 | --- | --- |
-| 三个文件及输出 | 2026-09-22 从本文代码块提取至隔离临时目录；GCC 8.3.0 按上述 C++17 参数分步编译/链接成功、无警告；运行退出 0，21 行输出与本篇逐行一致，文件读写通过 |
-| 普通 C++ 故障与调试 | 缺定义时两次编译成功、链接报 BonusPoints 未定义；未声明调用和错误 override 均编译失败。按值故障实测返回后为 10，修复后为 11；GDB 8.2.1 实际命中 IncrementRef，观察了调用栈、参数/调用者地址和修改前后数值 |
-| UE / MSVC / 读者能力 | 未在 UE 或 MSVC 编译；读者能力待本人操作验收 |
+| 默认 MSVC 路径 | 已按 Microsoft 官方文档核对开发者命令提示符、分步编译/链接、PDB、`devenv /debugexe`、Modules 与原生调试属性；当前主机未发现可用 Visual Studio 工具集、`cl` 或 `link`，未安装依赖，因此命令和 GUI 断点仍待目标环境实跑 |
+| 可选 GCC 路径及输出 | 2026-09-22 从本文代码块提取至隔离临时目录；GCC 8.3.0 按上述 C++17 参数分步编译/链接成功、无警告；运行退出 0，21 行输出与本篇逐行一致，文件读写通过 |
+| 普通 C++ 故障与 GDB | 缺定义时两次编译成功、链接报 BonusPoints 未定义；未声明调用和错误 override 均编译失败。按值故障实测返回后为 10，修复后为 11；GDB 8.2.1 实际命中 IncrementRef，观察了调用栈、参数/调用者地址和修改前后数值 |
+| UE / 读者能力 | 未在 UE 编译；读者能力待本人操作验收 |
 
 资料核对日为 2026-09-22。文中的标准链接是持续维护的 C++ 工作草案入口，用于核对这里使用的所有权/容器规则；示例本身限制在 C++17。官方原则不是对本地工程已通过的证明。
 
