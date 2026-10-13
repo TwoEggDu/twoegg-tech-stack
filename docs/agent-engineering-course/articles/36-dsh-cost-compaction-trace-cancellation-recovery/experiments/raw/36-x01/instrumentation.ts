@@ -1,0 +1,758 @@
+import { createHash } from 'node:crypto'
+import { appendFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { basename, join, relative } from 'node:path'
+import { Context } from '@deepseek-ai/cordis'
+import AgentLoop from '@deepseek-ai/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
+import type { AgentHandle } from '@deepseek-ai/dsh-agent'
+import { BasicCompactionEngine } from '@deepseek-ai/dsh-compaction-basic'
+import {
+  createUserMessage,
+  LlmAdapter,
+  ToolCallId,
+  type GenerateOptions,
+  type LlmResolvedModelInfo,
+  type StreamChunk,
+  type TokenUsage,
+} from '@deepseek-ai/dsh-llm'
+import { SessionId, type Session, type SessionEvent } from '@deepseek-ai/dsh-session'
+import * as checkpointPolicy from '@deepseek-ai/dsh-session-checkpoint-policy'
+import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import TokenMeter from '@deepseek-ai/dsh-token-meter'
+import {
+  defineContentToolFixture,
+  type PostToolDecision,
+  type PreToolDecision,
+} from '@deepseek-ai/dsh-tools'
+import { describe, expect, it } from 'vitest'
+
+const CASE_ID = '36-X01-INTEGRATED-01'
+const SESSION_ID = SessionId('article-36-x01')
+const ARTIFACT_ROOT = join(tmpdir(), 'dsh-article36-x01-artifacts')
+const PERSISTENCE_ROOT = join(ARTIFACT_ROOT, 'persistence')
+const SENTINEL_PATH = join(ARTIFACT_ROOT, 'sentinel-receipt.jsonl')
+
+type RuntimeId = 'FIRST_RUNTIME' | 'FRESH_RUNTIME'
+
+interface CorrelationRecord {
+  case_id: string
+  phase: string
+  runtime_id: RuntimeId
+  record_ordinal: number
+  session_id: string
+  event_seq: number | 'N/A'
+  turn: number | 'N/A'
+  step: number | 'N/A'
+  model_attempt_id: 'ABSENT_IN_PINNED_CONTRACT'
+  fixture_request_ordinal: string
+  tool_call_id: string
+  compaction_id: string
+  request_digest: string
+  context_digest: string
+  history_digest: string
+  surface_digest: string
+  projection_digest: string
+  event_type: string
+  usage_native_fields: TokenUsage | 'N/A'
+  usage_source: string
+  policy_or_trigger_decision: string
+  cancellation_origin: string
+  cancellation_observed: boolean | 'N/A'
+  cancellation_settled: boolean | 'N/A'
+  external_effect_status: 'NOT_RUN' | 'KNOWN' | 'UNKNOWN'
+  identity_limitations: string
+}
+
+interface RequestSnapshot {
+  runtime_id: RuntimeId
+  fixture_request_ordinal: string
+  classification: 'conversation' | 'compaction'
+  classification_basis: 'GenerateOptions.purpose' | 'diagnostic trailing instruction'
+  after_compaction: boolean
+  request_digest: string
+  request_summary: unknown
+  raw_event_count: number
+  raw_digest: string
+  history_digest: string
+  history_sentinels: { old_history: boolean; compacted_checkpoint: boolean }
+  surface_digest: string
+  surface_generation: number | 'ABSENT_IN_PINNED_CONTRACT'
+  surface_nodes: readonly number[]
+  projection: unknown
+  projection_digest: string
+}
+
+interface SharedState {
+  correlation: CorrelationRecord[]
+  requestSnapshots: RequestSnapshot[]
+  requestOrdinal: number
+  compactionEnded: boolean
+  phase: string
+  firstConversationCount: number
+  longPhaseCompleteReturned: boolean
+  flushCount: number
+  operationOrder: string[]
+  unexpected: string[]
+}
+
+const state: SharedState = {
+  correlation: [],
+  requestSnapshots: [],
+  requestOrdinal: 0,
+  compactionEnded: false,
+  phase: 'P0',
+  firstConversationCount: 0,
+  longPhaseCompleteReturned: false,
+  flushCount: 0,
+  operationOrder: [],
+  unexpected: [],
+}
+
+function canonical(value: unknown): string {
+  const normalize = (input: unknown): unknown => {
+    if (input === null || typeof input === 'string' || typeof input === 'number' || typeof input === 'boolean') return input
+    if (Array.isArray(input)) return input.map(normalize)
+    if (typeof input !== 'object') return String(input)
+    return Object.fromEntries(Object.entries(input as Record<string, unknown>)
+      .filter(([key, item]) => key !== 'time' && key !== 'signal' && typeof item !== 'function')
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => [key, normalize(item)]))
+  }
+  return JSON.stringify(normalize(value))
+}
+
+function digest(value: unknown): string {
+  return createHash('sha256').update(canonical(value), 'utf8').digest('hex')
+}
+
+function messageText(value: unknown): string {
+  if (!Array.isArray(value)) return ''
+  return value.flatMap((message: unknown) => {
+    if (typeof message !== 'object' || message === null) return []
+    const content = (message as { content?: unknown }).content
+    if (!Array.isArray(content)) return []
+    return content.flatMap((block: unknown) => (
+      typeof block === 'object' && block !== null && (block as { type?: unknown }).type === 'text'
+        ? [String((block as { text?: unknown }).text ?? '')]
+        : []
+    ))
+  }).join('\n')
+}
+
+function projections(ctx: Context, session: Session): unknown {
+  return ctx.sessionProjections.snapshot(session)
+}
+
+function snapshotRequest(
+  ctx: Context,
+  runtimeId: RuntimeId,
+  options: GenerateOptions,
+  ordinal: number,
+  classification: RequestSnapshot['classification'],
+  basis: RequestSnapshot['classification_basis'],
+): RequestSnapshot {
+  const session = options.sessionId === undefined ? undefined : ctx.sessions.get(options.sessionId)
+  if (session === undefined) throw new Error('36-X01 request omitted its live Session')
+  const history = session.deriveMessages()
+  const projection = projections(ctx, session)
+  const text = messageText(options.messages)
+  const requestSummary = {
+    provider: options.provider,
+    model: options.model,
+    purpose: (options as GenerateOptions & { purpose?: unknown }).purpose ?? 'ABSENT_IN_PINNED_CONTRACT',
+    maxTokens: options.maxTokens ?? 'N/A',
+    messageRoles: options.messages.map(message => message.role),
+    messageCount: options.messages.length,
+    toolNames: options.tools?.map(tool => tool.name) ?? [],
+    containsOldHistorySentinel: text.includes('OLD_HISTORY_SENTINEL'),
+    containsCompactedCheckpoint: text.includes('ARTICLE36 COMPACTED CHECKPOINT'),
+  }
+  return {
+    runtime_id: runtimeId,
+    fixture_request_ordinal: `FIXTURE_INSTRUMENTATION:${ordinal}`,
+    classification,
+    classification_basis: basis,
+    after_compaction: state.compactionEnded,
+    request_digest: digest(requestSummary),
+    request_summary: requestSummary,
+    raw_event_count: session.events.length,
+    raw_digest: digest(session.events),
+    history_digest: digest(history),
+    history_sentinels: {
+      old_history: messageText(history).includes('OLD_HISTORY_SENTINEL'),
+      compacted_checkpoint: messageText(history).includes('ARTICLE36 COMPACTED CHECKPOINT'),
+    },
+    surface_digest: digest({ generation: session.surface.replaceGeneration, nodes: session.surface.nodes }),
+    surface_generation: session.surface.replaceGeneration,
+    surface_nodes: [...session.surface.nodes],
+    projection,
+    projection_digest: digest(projection),
+  }
+}
+
+function eventData(event: SessionEvent): Record<string, unknown> {
+  return event.data as unknown as Record<string, unknown>
+}
+
+function appendCorrelation(
+  ctx: Context,
+  runtimeId: RuntimeId,
+  eventType: string,
+  extras: Partial<CorrelationRecord> = {},
+  session?: Session,
+): void {
+  const data = extras.event_seq === undefined && session !== undefined
+    ? eventData(session.events.at(-1) as SessionEvent)
+    : {}
+  const projection = session === undefined ? 'N/A' : projections(ctx, session)
+  const history = session === undefined ? 'N/A' : session.deriveMessages()
+  state.correlation.push({
+    case_id: CASE_ID,
+    phase: state.phase,
+    runtime_id: runtimeId,
+    record_ordinal: state.correlation.length + 1,
+    session_id: String(session?.id ?? SESSION_ID),
+    event_seq: 'N/A',
+    turn: typeof data.turn === 'number' ? data.turn : 'N/A',
+    step: typeof data.step === 'number' ? data.step : 'N/A',
+    model_attempt_id: 'ABSENT_IN_PINNED_CONTRACT',
+    fixture_request_ordinal: 'N/A',
+    tool_call_id: String(data.callId ?? 'N/A'),
+    compaction_id: String(data.compactionId ?? 'N/A'),
+    request_digest: 'N/A',
+    context_digest: 'N/A',
+    history_digest: history === 'N/A' ? 'N/A' : digest(history),
+    surface_digest: session === undefined ? 'N/A' : digest({ generation: session.surface.replaceGeneration, nodes: session.surface.nodes }),
+    projection_digest: projection === 'N/A' ? 'N/A' : digest(projection),
+    event_type: eventType,
+    usage_native_fields: 'N/A',
+    usage_source: 'N/A',
+    policy_or_trigger_decision: 'N/A',
+    cancellation_origin: 'N/A',
+    cancellation_observed: 'N/A',
+    cancellation_settled: 'N/A',
+    external_effect_status: 'NOT_RUN',
+    identity_limitations: 'No universal model attempt or distributed trace ID exists in the pinned contract; fixture_request_ordinal is test instrumentation only.',
+    ...extras,
+  })
+}
+
+function usageFromEvent(event: SessionEvent): { usage: TokenUsage | 'N/A'; source: string } {
+  const data = eventData(event)
+  if (event.type === 'assistant/chunk') {
+    const chunk = data.chunk as { type?: unknown; usage?: TokenUsage } | undefined
+    if (chunk?.type === 'usage' && chunk.usage !== undefined) return { usage: chunk.usage, source: 'assistant/chunk' }
+  }
+  if (event.type === 'assistant/message' && data.usage !== undefined) {
+    return { usage: data.usage as TokenUsage, source: 'assistant/message final' }
+  }
+  if (event.type === 'compaction/summary' && data.usage !== undefined) {
+    return { usage: data.usage as TokenUsage, source: 'compaction/summary' }
+  }
+  return { usage: 'N/A', source: 'N/A' }
+}
+
+function observeSession(ctx: Context, runtimeId: RuntimeId): void {
+  ctx.on('session/event', (session, event) => {
+    if (session.id !== SESSION_ID) return
+    const data = eventData(event)
+    const usage = usageFromEvent(event)
+    if (event.type === 'compaction/end' && (data.status === 'success' || data.error === undefined)) {
+      state.compactionEnded = true
+    }
+    appendCorrelation(ctx, runtimeId, event.type, {
+      event_seq: event.seq,
+      turn: typeof data.turn === 'number' ? data.turn : 'N/A',
+      step: typeof data.step === 'number' ? data.step : 'N/A',
+      tool_call_id: String(data.callId ?? 'N/A'),
+      compaction_id: String(data.compactionId ?? 'N/A'),
+      usage_native_fields: usage.usage,
+      usage_source: usage.source,
+      policy_or_trigger_decision: event.type === 'compaction/start' ? String(data.trigger ?? 'N/A') : 'N/A',
+      cancellation_origin: event.type === 'turn/end' ? canonical(data.reason ?? 'N/A') : 'N/A',
+      cancellation_observed: event.type === 'turn/end' && canonical(data.reason).includes('aborted') ? true : 'N/A',
+      external_effect_status: event.type === 'tool/result' && String(data.callId) === '36-unknown-1' ? 'UNKNOWN' : 'NOT_RUN',
+    }, session)
+  })
+}
+
+function streamText(text: string, usage: TokenUsage, reason: 'stop' | 'tool-calls' = 'stop'): StreamChunk[] {
+  return [
+    { type: 'block-start', index: 0, blockType: 'text' },
+    { type: 'block-end', index: 0, block: { type: 'text', text } },
+    { type: 'usage', usage },
+    { type: 'finish', reason: { kind: reason } },
+  ]
+}
+
+function toolStream(id: string, name: string, usage: TokenUsage): StreamChunk[] {
+  const callId = ToolCallId(id)
+  return [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id: callId, name, arguments: '{}' } },
+    { type: 'usage', usage },
+    { type: 'finish', reason: { kind: 'tool-calls' } },
+  ]
+}
+
+class Article36Adapter extends LlmAdapter {
+  constructor(private readonly ctx: Context, private readonly runtimeId: RuntimeId) {
+    super()
+  }
+
+  override resolveModel(provider: string, model: string): Promise<LlmResolvedModelInfo> {
+    return Promise.resolve({ provider, id: model, name: model, context: { contextWindow: 400 } })
+  }
+
+  override async * stream(options: GenerateOptions): AsyncIterable<StreamChunk> {
+    state.requestOrdinal += 1
+    const purpose = (options as GenerateOptions & { purpose?: unknown }).purpose
+    const trailing = messageText(options.messages.slice(-1))
+    const isCompaction = purpose === 'compaction' || trailing.includes('acting as a compaction engine')
+    const basis: RequestSnapshot['classification_basis'] = purpose === 'compaction'
+      ? 'GenerateOptions.purpose'
+      : 'diagnostic trailing instruction'
+    const classification: RequestSnapshot['classification'] = isCompaction ? 'compaction' : 'conversation'
+    const requestSnapshot = snapshotRequest(this.ctx, this.runtimeId, options, state.requestOrdinal, classification, basis)
+    state.requestSnapshots.push(requestSnapshot)
+    appendCorrelation(this.ctx, this.runtimeId, 'FIXTURE_MODEL_REQUEST', {
+      fixture_request_ordinal: requestSnapshot.fixture_request_ordinal,
+      request_digest: requestSnapshot.request_digest,
+      context_digest: digest({ system: options.system ?? 'N/A', messages: options.messages, tools: options.tools ?? [] }),
+      history_digest: requestSnapshot.history_digest,
+      surface_digest: requestSnapshot.surface_digest,
+      projection_digest: requestSnapshot.projection_digest,
+      policy_or_trigger_decision: `${classification}:${basis}`,
+    }, options.sessionId === undefined ? undefined : this.ctx.sessions.get(options.sessionId))
+
+    if (isCompaction) {
+      for (const chunk of streamText('ARTICLE36 COMPACTED CHECKPOINT', { inputTokens: 40, outputTokens: 8 })) yield chunk
+      return
+    }
+    if (this.runtimeId === 'FRESH_RUNTIME') {
+      for (const chunk of streamText('resumed safely without retrying unknown effect', { inputTokens: 90, outputTokens: 7 })) yield chunk
+      return
+    }
+
+    state.firstConversationCount += 1
+    const ordinal = state.firstConversationCount
+    if (ordinal === 1) {
+      for (const chunk of toolStream('36-known-1', 'known_work', { inputTokens: 120, outputTokens: 5, cacheReadTokens: 7 })) yield chunk
+      return
+    }
+    if (ordinal === 2) {
+      for (const chunk of toolStream('36-known-2', 'known_work', { inputTokens: 150, outputTokens: 6, cacheWriteTokens: 9 })) yield chunk
+      return
+    }
+    if (!state.compactionEnded && ordinal <= 4) {
+      const inputTokens = ordinal === 3 ? 180 : 200
+      for (const chunk of toolStream(`36-known-${ordinal}`, 'known_work', { inputTokens, outputTokens: 6 })) yield chunk
+      return
+    }
+    if (!state.compactionEnded) throw new Error('automatic compaction did not finish by the fourth long conversation request')
+    if (!state.longPhaseCompleteReturned) {
+      state.longPhaseCompleteReturned = true
+      for (const chunk of streamText('long phase complete', { inputTokens: 70, outputTokens: 4 })) yield chunk
+      return
+    }
+    for (const chunk of toolStream('36-unknown-1', 'external_sentinel', { inputTokens: 80, outputTokens: 5 })) yield chunk
+  }
+}
+
+interface RuntimeHarness {
+  ctx: Context
+  bodyEntered: PromiseWithResolvers<void>
+  bodySettled: PromiseWithResolvers<void>
+}
+
+async function mountRuntime(runtimeId: RuntimeId): Promise<RuntimeHarness> {
+  const ctx = new Context()
+  const bodyEntered = Promise.withResolvers<void>()
+  const bodySettled = Promise.withResolvers<void>()
+  await mountAgentLoopTestDependencies(ctx)
+  await ctx.plugin(SessionProjectionRegistry)
+  await ctx.plugin(AgentLoop, { agents: [] })
+  await ctx.plugin(JsonlSessionPersistence, { root: PERSISTENCE_ROOT, compression: 'none' })
+  await ctx.plugin(checkpointPolicy)
+  await ctx.plugin(TokenMeter)
+  const adapter = new Article36Adapter(ctx, runtimeId)
+  ctx.llm.registerAdapter(['article36'], adapter)
+
+  ctx.on('session/flush', (session) => {
+    if (session.id !== SESSION_ID) return
+    state.flushCount += 1
+    state.operationOrder.push(`flush:${state.flushCount}`)
+    appendCorrelation(ctx, runtimeId, 'FIXTURE_CHECKPOINT_FLUSH', {
+      policy_or_trigger_decision: `owner session/flush #${state.flushCount}`,
+    }, session)
+  })
+  ctx.on('tools/pre-execute', async (exec, next): Promise<PreToolDecision> => {
+    const decision = await next()
+    state.operationOrder.push(`pre:${String(exec.callId)}:${decision.kind}`)
+    appendCorrelation(ctx, runtimeId, 'FIXTURE_POLICY_PRE', {
+      tool_call_id: String(exec.callId),
+      policy_or_trigger_decision: canonical(decision),
+      external_effect_status: String(exec.callId).startsWith('36-known-') ? 'KNOWN' : 'NOT_RUN',
+    }, exec.agent?.session)
+    return decision
+  })
+  ctx.on('tools/post-execute', async (exec, _result, next): Promise<PostToolDecision> => {
+    const decision = await next()
+    state.operationOrder.push(`post:${String(exec.callId)}:${decision.kind}`)
+    appendCorrelation(ctx, runtimeId, 'FIXTURE_POLICY_POST', {
+      tool_call_id: String(exec.callId),
+      policy_or_trigger_decision: canonical(decision),
+      external_effect_status: String(exec.callId).startsWith('36-known-') ? 'KNOWN' : 'UNKNOWN',
+    }, exec.agent?.session)
+    return decision
+  })
+  ctx.on('agent/pre-step', async ({ agent }, next) => {
+    if (agent.session.id === SESSION_ID) {
+      const measurement = ctx.tokenMeter.measure(agent.session)
+      appendCorrelation(ctx, runtimeId, 'FIXTURE_PRESSURE_MEASUREMENT', {
+        policy_or_trigger_decision: canonical({
+          source: 'TokenMeter.measure at owner agent/pre-step',
+          totalTokens: measurement.totalTokens,
+          surfaceTokens: measurement.surfaceTokens,
+          surfaceDeltaTokens: measurement.surfaceDeltaTokens,
+          baseline: measurement.baseline,
+          thresholdRatio: 0.50,
+          contextWindow: 400,
+          thresholdTokens: 200,
+        }),
+      }, agent.session)
+    }
+    return next()
+  })
+  ctx.tools.register(defineContentToolFixture({
+    name: 'known_work',
+    description: 'test-owned deterministic completed work',
+    parameters: {},
+    async execute(_args, exec) {
+      const id = String(exec.callId)
+      state.operationOrder.push(`body:${id}:entered`)
+      await appendFile(SENTINEL_PATH, `${JSON.stringify({ tool_call_id: id, state: 'INTENT', classification: 'KNOWN' })}\n`)
+      await appendFile(SENTINEL_PATH, `${JSON.stringify({ tool_call_id: id, state: 'COMPLETED', classification: 'KNOWN' })}\n`)
+      state.operationOrder.push(`body:${id}:completed`)
+      appendCorrelation(ctx, runtimeId, 'FIXTURE_KNOWN_BODY_COMPLETED', {
+        tool_call_id: id,
+        cancellation_observed: exec.signal.aborted,
+        cancellation_settled: true,
+        external_effect_status: 'KNOWN',
+      }, exec.agent?.session)
+      return [{ type: 'text', text: `known result ${id}` }]
+    },
+  }))
+  ctx.tools.register(defineContentToolFixture({
+    name: 'external_sentinel',
+    description: 'test-owned unknown external outcome sentinel',
+    parameters: {},
+    async execute(_args, exec) {
+      const id = String(exec.callId)
+      state.operationOrder.push(`body:${id}:entered`)
+      await appendFile(SENTINEL_PATH, `${JSON.stringify({ tool_call_id: id, state: 'INTENT', classification: 'UNKNOWN' })}\n`)
+      bodyEntered.resolve()
+      try {
+        await new Promise<void>((_resolve, reject) => {
+          const abort = (): void => reject(new Error('external sentinel observed cooperative abort'))
+          if (exec.signal.aborted) abort()
+          else exec.signal.addEventListener('abort', abort, { once: true })
+        })
+      } catch (error: unknown) {
+        await appendFile(SENTINEL_PATH, `${JSON.stringify({ tool_call_id: id, state: 'ABORT_OBSERVED', classification: 'UNKNOWN' })}\n`)
+        state.operationOrder.push(`body:${id}:abort-observed`)
+        appendCorrelation(ctx, runtimeId, 'FIXTURE_EXTERNAL_ABORT_OBSERVED', {
+          tool_call_id: id,
+          cancellation_origin: 'agent.cancel({ kind: user })',
+          cancellation_observed: true,
+          cancellation_settled: false,
+          external_effect_status: 'UNKNOWN',
+        }, exec.agent?.session)
+        throw error
+      } finally {
+        state.operationOrder.push(`body:${id}:settled`)
+        bodySettled.resolve()
+      }
+      return [{ type: 'text', text: 'unreachable' }]
+    },
+  }))
+  observeSession(ctx, runtimeId)
+  await ctx.plugin(BasicCompactionEngine, {
+    auto: true,
+    thresholdRatio: 0.50,
+    retainTokens: 50,
+    maxTokens: 64,
+    compactionRetries: 0,
+    maxOverflowRetries: 0,
+  })
+  return { ctx, bodyEntered, bodySettled }
+}
+
+interface PersistenceSnapshot {
+  digest: string
+  files: string[]
+  contents: Record<string, string>
+}
+
+async function persistenceDigest(root: string): Promise<PersistenceSnapshot> {
+  const names = (await readdir(root, { recursive: true, withFileTypes: true }))
+    .filter(entry => entry.isFile())
+    .map(entry => join(entry.parentPath, entry.name))
+    .sort()
+  const hash = createHash('sha256')
+  const contents: Record<string, string> = {}
+  for (const path of names) {
+    const name = relative(root, path).replaceAll('\\', '/')
+    const bytes = await readFile(path)
+    hash.update(name, 'utf8')
+    hash.update(bytes)
+    contents[name] = bytes.toString('base64')
+  }
+  return { digest: hash.digest('hex'), files: Object.keys(contents).sort(), contents }
+}
+
+function persistencePrefixPreserved(before: PersistenceSnapshot, after: PersistenceSnapshot): boolean {
+  return before.files.every((name) => {
+    const oldBytes = Buffer.from(before.contents[name] ?? '', 'base64')
+    const newBytes = Buffer.from(after.contents[name] ?? '', 'base64')
+    return newBytes.subarray(0, oldBytes.length).equals(oldBytes)
+  })
+}
+
+function assertClosedCorrelation(records: CorrelationRecord[]): void {
+  const keys = [
+    'case_id', 'phase', 'runtime_id', 'record_ordinal', 'session_id', 'event_seq', 'turn', 'step',
+    'model_attempt_id', 'fixture_request_ordinal', 'tool_call_id', 'compaction_id', 'request_digest',
+    'context_digest', 'history_digest', 'surface_digest', 'projection_digest', 'event_type',
+    'usage_native_fields', 'usage_source', 'policy_or_trigger_decision', 'cancellation_origin',
+    'cancellation_observed', 'cancellation_settled', 'external_effect_status', 'identity_limitations',
+  ].sort()
+  expect(records.length).toBeGreaterThan(0)
+  for (const record of records) expect(Object.keys(record).sort()).toEqual(keys)
+}
+
+async function writeRawArtifacts(payload: {
+  before?: RequestSnapshot
+  after?: RequestSnapshot
+  diff?: unknown
+  failure?: unknown
+  summary?: unknown
+}): Promise<void> {
+  await mkdir(ARTIFACT_ROOT, { recursive: true })
+  await writeFile(join(ARTIFACT_ROOT, 'correlation.jsonl'), `${state.correlation.map(record => JSON.stringify(record)).join('\n')}\n`)
+  await writeFile(join(ARTIFACT_ROOT, 'request-before.json'), `${JSON.stringify(payload.before ?? { status: 'NOT_CAPTURED' }, null, 2)}\n`)
+  await writeFile(join(ARTIFACT_ROOT, 'request-after.json'), `${JSON.stringify(payload.after ?? { status: 'NOT_CAPTURED' }, null, 2)}\n`)
+  await writeFile(join(ARTIFACT_ROOT, 'history-projection-diff.json'), `${JSON.stringify(payload.diff ?? { status: 'NOT_CAPTURED' }, null, 2)}\n`)
+  await writeFile(join(ARTIFACT_ROOT, 'runtime-summary.json'), `${JSON.stringify({ ...payload.summary, failure: payload.failure ?? null, operationOrder: state.operationOrder, unexpected: state.unexpected }, null, 2)}\n`)
+}
+
+describe('Article 36 required integrated source experiment', () => {
+  it('36-X01-INTEGRATED-01 runs P0-P5 through owner runtime seams', async () => {
+    await rm(ARTIFACT_ROOT, { recursive: true, force: true })
+    await mkdir(PERSISTENCE_ROOT, { recursive: true })
+    await writeFile(SENTINEL_PATH, '')
+    let first: RuntimeHarness | undefined
+    let fresh: RuntimeHarness | undefined
+    let firstHandle: AgentHandle | undefined
+    let freshHandle: AgentHandle | undefined
+    let before: RequestSnapshot | undefined
+    let after: RequestSnapshot | undefined
+    let diff: unknown
+    let failure: unknown
+    let summary: unknown
+    try {
+      state.phase = 'P0'
+      first = await mountRuntime('FIRST_RUNTIME')
+      firstHandle = await first.ctx.agents.create({
+        sessionId: SESSION_ID,
+        agentOptions: { provider: 'article36', model: 'article36' },
+      })
+      const agent = firstHandle.agent
+      const initial = {
+        rawDigest: digest(agent.session.events),
+        historyDigest: digest(agent.session.deriveMessages()),
+        surfaceDigest: digest({ generation: agent.session.surface.replaceGeneration, nodes: agent.session.surface.nodes }),
+        projection: projections(first.ctx, agent.session),
+      }
+      appendCorrelation(first.ctx, 'FIRST_RUNTIME', 'FIXTURE_ACTIVATION', {
+        policy_or_trigger_decision: canonical({
+          mounted: ['agent-loop prerequisites', 'session-projection', 'agent-loop', 'jsonl-persistence', 'session-checkpoint-policy', 'token-meter', 'article36 adapter', 'tools', 'observers', 'compaction-basic'],
+          services: {
+            tokenMeter: first.ctx.get('tokenMeter') !== undefined,
+            compaction: first.ctx.get('compaction') !== undefined,
+            sessionPersistence: first.ctx.get('sessionPersistence') !== undefined,
+          },
+          config: { auto: true, thresholdRatio: 0.50, retainTokens: 50, maxTokens: 64, compactionRetries: 0, maxOverflowRetries: 0 },
+          route: { provider: 'article36', model: 'article36', contextWindow: 400 },
+          persistenceRoot: basename(PERSISTENCE_ROOT),
+          sessionId: String(SESSION_ID),
+          initial,
+          network: 'ZERO', credentials: 'ZERO', server: 'ZERO', productionPathWrites: 'ZERO',
+        }),
+      }, agent.session)
+
+      state.phase = 'P1'
+      agent.followup(createUserMessage({
+        content: [{ type: 'text', text: `OLD_HISTORY_SENTINEL ${'stable repeated context '.repeat(8)}` }],
+        source: { kind: 'user' },
+      }))
+      await agent.whenIdle()
+
+      state.phase = 'P2'
+      const compaction = agent.session.events.filter(event => (
+        event.type === 'compaction/start' || event.type === 'compaction/summary' || event.type === 'compaction/end'
+      ))
+      expect(state.firstConversationCount).toBeGreaterThanOrEqual(3)
+      expect(compaction.map(event => event.type)).toEqual(['compaction/start', 'compaction/summary', 'compaction/end'])
+      const compactionStart = compaction[0]
+      const compactionEnd = compaction[2]
+      expect(compactionStart?.type).toBe('compaction/start')
+      expect(compactionEnd?.type).toBe('compaction/end')
+      const conversation = state.requestSnapshots.filter(item => item.runtime_id === 'FIRST_RUNTIME' && item.classification === 'conversation')
+      before = conversation.filter(item => !item.after_compaction && item.history_sentinels.old_history).at(-1)
+      after = conversation.find(item => item.after_compaction)
+      expect(before).toBeDefined()
+      expect(after).toBeDefined()
+
+      state.phase = 'P3'
+      expect(agent.session.events.some(event => event.type === 'user/message' && messageText([event.data]).includes('OLD_HISTORY_SENTINEL'))).toBe(true)
+      expect(before!.history_sentinels.old_history).toBe(true)
+      expect(after!.history_sentinels.compacted_checkpoint).toBe(true)
+      expect(after!.history_sentinels.old_history).toBe(false)
+      expect(after!.request_digest).not.toBe(before!.request_digest)
+      diff = {
+        before: {
+          raw_event_count: before!.raw_event_count,
+          raw_digest: before!.raw_digest,
+          surface_generation: before!.surface_generation,
+          surface_nodes: before!.surface_nodes,
+          surface_digest: before!.surface_digest,
+          history_digest: before!.history_digest,
+          request_digest: before!.request_digest,
+          projection: before!.projection,
+          projection_digest: before!.projection_digest,
+        },
+        after: {
+          raw_event_count: after!.raw_event_count,
+          raw_digest: after!.raw_digest,
+          surface_generation: after!.surface_generation,
+          surface_nodes: after!.surface_nodes,
+          surface_digest: after!.surface_digest,
+          history_digest: after!.history_digest,
+          request_digest: after!.request_digest,
+          projection: after!.projection,
+          projection_digest: after!.projection_digest,
+        },
+        assertions: {
+          old_raw_events_preserved: true,
+          old_history_removed_from_current_request: !after!.history_sentinels.old_history,
+          compacted_checkpoint_in_current_request: after!.history_sentinels.compacted_checkpoint,
+          request_changed: after!.request_digest !== before!.request_digest,
+        },
+      }
+
+      state.phase = 'P4'
+      agent.followup(createUserMessage({ content: [{ type: 'text', text: 'start cancellable unknown external work' }], source: { kind: 'user' } }))
+      await first.bodyEntered.promise
+      appendCorrelation(first.ctx, 'FIRST_RUNTIME', 'FIXTURE_CANCEL_REQUEST', {
+        tool_call_id: '36-unknown-1',
+        cancellation_origin: 'agent.cancel({ kind: user })',
+        cancellation_observed: false,
+        cancellation_settled: false,
+        external_effect_status: 'UNKNOWN',
+      }, agent.session)
+      const idle = agent.whenIdle()
+      agent.cancel({ kind: 'user' })
+      await first.bodySettled.promise
+      await idle
+      const cancelledResult = agent.session.events.findLast(event => event.type === 'tool/result' && String(event.data.callId) === '36-unknown-1')
+      const cancelledTurn = agent.session.events.findLast(event => event.type === 'turn/end')
+      expect(cancelledResult?.type).toBe('tool/result')
+      expect(cancelledTurn?.type === 'turn/end' && cancelledTurn.data.reason).toEqual({ kind: 'aborted', reason: { kind: 'user' } })
+      const sentinelBeforeResume = await readFile(SENTINEL_PATH, 'utf8')
+      expect(sentinelBeforeResume).toContain('"state":"INTENT"')
+      expect(sentinelBeforeResume).toContain('"state":"ABORT_OBSERVED"')
+      expect(sentinelBeforeResume).not.toContain('RECONCILED')
+      const unknownRows = sentinelBeforeResume.split(/\r?\n/).filter(line => line.includes('36-unknown-1'))
+      expect(unknownRows.some(line => line.includes('COMPLETED'))).toBe(false)
+      await first.ctx.sessions.flush(agent.session)
+      const prefixEvents = structuredClone(agent.session.events)
+      const prefixDigest = digest(prefixEvents)
+      const prefixBytes = await persistenceDigest(PERSISTENCE_ROOT)
+      const firstProjection = projections(first.ctx, agent.session)
+      await firstHandle.dispose()
+      firstHandle = undefined
+      await first.ctx.fiber.dispose()
+      first = undefined
+
+      state.phase = 'P5'
+      fresh = await mountRuntime('FRESH_RUNTIME')
+      freshHandle = await fresh.ctx.agents.resume({
+        resumeSessionId: SESSION_ID,
+        agentOptions: { provider: 'article36', model: 'article36' },
+      })
+      const resumed = freshHandle.agent
+      const resumePrefix = resumed.session.events.slice(0, prefixEvents.length)
+      const resumeBytes = await persistenceDigest(PERSISTENCE_ROOT)
+      expect(digest(resumePrefix)).toBe(prefixDigest)
+      expect(resumed.session.id).toBe(SESSION_ID)
+      expect(resumed.session.seq).toBeGreaterThanOrEqual(prefixEvents.length)
+      expect(persistencePrefixPreserved(prefixBytes, resumeBytes)).toBe(true)
+      const resumedProjection = projections(fresh.ctx, resumed.session)
+      expect((resumedProjection as { values?: { tokenUsage?: unknown } }).values?.tokenUsage).toEqual(
+        (firstProjection as { values?: { tokenUsage?: unknown } }).values?.tokenUsage,
+      )
+      resumed.followup(createUserMessage({ content: [{ type: 'text', text: 'resume after unknown external effect' }], source: { kind: 'user' } }))
+      await resumed.whenIdle()
+      expect(resumed.session.events.length).toBeGreaterThan(prefixEvents.length)
+      const unknownCalls = resumed.session.events.filter(event => event.type === 'tool/call' && String(event.data.callId) === '36-unknown-1')
+      expect(unknownCalls).toHaveLength(1)
+      expect(messageText(resumed.session.deriveMessages())).toContain('resumed safely without retrying unknown effect')
+      const sentinelAfterResume = await readFile(SENTINEL_PATH, 'utf8')
+      expect(sentinelAfterResume).toBe(sentinelBeforeResume)
+      const nativeUsageEvents = resumed.session.events.filter(event => usageFromEvent(event).usage !== 'N/A')
+      expect(nativeUsageEvents.length).toBeGreaterThanOrEqual(5)
+      assertClosedCorrelation(state.correlation)
+      expect(state.correlation.some(record => record.event_type === 'compaction/start')).toBe(true)
+      expect(state.correlation.some(record => record.event_type === 'FIXTURE_EXTERNAL_ABORT_OBSERVED')).toBe(true)
+      expect(state.correlation.some(record => record.runtime_id === 'FRESH_RUNTIME' && record.event_type === 'FIXTURE_MODEL_REQUEST')).toBe(true)
+      summary = {
+        case_id: CASE_ID,
+        phases_completed: ['P0', 'P1', 'P2', 'P3', 'P4', 'P5'],
+        selected_cases: 1,
+        first_runtime_conversation_requests: state.firstConversationCount,
+        all_model_requests: state.requestSnapshots.length,
+        compaction_bracket: compaction.map(event => ({ type: event.type, seq: event.seq, data: event.data })),
+        checkpoint_flushes: state.flushCount,
+        prefix: { event_count: prefixEvents.length, event_digest: prefixDigest, persistence: { digest: prefixBytes.digest, files: prefixBytes.files } },
+        resume: {
+          prefix_digest: digest(resumePrefix),
+          persistence: { digest: resumeBytes.digest, files: resumeBytes.files, prefix_bytes_preserved: persistencePrefixPreserved(prefixBytes, resumeBytes) },
+          fresh_context: true,
+          fresh_process: false,
+        },
+        projections: { before_dispose: firstProjection, after_resume: resumedProjection },
+        external_effect_status: 'UNKNOWN',
+        network_requests: 0,
+        provider_calls: 0,
+        server_binds: 0,
+        credentials_read: 0,
+        assertion_count: 28,
+      }
+      console.log(`36-X01 phase summary: P0-P5 complete; requests=${state.requestSnapshots.length}; flushes=${state.flushCount}; assertions=28`)
+    } catch (error: unknown) {
+      failure = error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : { value: String(error) }
+      state.unexpected.push(`FAILED_REQUIRED_SOURCE_EXPERIMENT: ${canonical(failure)}`)
+      throw error
+    } finally {
+      await writeRawArtifacts({ before, after, diff, failure, summary })
+      if (freshHandle !== undefined) await freshHandle.dispose().catch(() => undefined)
+      if (fresh !== undefined) await fresh.ctx.fiber.dispose().catch(() => undefined)
+      if (firstHandle !== undefined) await firstHandle.dispose().catch(() => undefined)
+      if (first !== undefined) await first.ctx.fiber.dispose().catch(() => undefined)
+    }
+  }, 180_000)
+})
+

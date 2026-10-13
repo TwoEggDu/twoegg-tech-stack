@@ -1,0 +1,101 @@
+{
+  "schema_version": "36-x01-recovery-cycle-2-final-manifest-v1",
+  "status": "FAILED_REQUIRED_SOURCE_EXPERIMENT",
+  "contract": "self-excluding: final-manifest.json enumerates every other payload file and excludes only itself",
+  "payload_count": 17,
+  "rows": [
+    {
+      "relative_path": "candidate-instrumentation.ts",
+      "byte_count": 34852,
+      "sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B"
+    },
+    {
+      "relative_path": "cleanup-and-postflight.json",
+      "byte_count": 832,
+      "sha256": "CD58BEF9D8A4C6C52B76C8C23DB4105655FE488D9DE309DBAF82DF109FFB9271"
+    },
+    {
+      "relative_path": "collector-command.txt",
+      "byte_count": 475,
+      "sha256": "855FD4A136F7BFCEB20C1CC920CF6F64D9CB3D16BC6360FE5A21606C8440C577"
+    },
+    {
+      "relative_path": "collector-exit-code.txt",
+      "byte_count": 2,
+      "sha256": "1121CFCCD5913F0A63FEC40A6FFD44EA64F9DC135C66634BA001D10BCF4302A2"
+    },
+    {
+      "relative_path": "collector-receipt.json",
+      "byte_count": 765,
+      "sha256": "2D800B29C98C0FD45F7E1DDBF3E0705346F929ADAEFDC0AC6887ED54ACDEF5BB"
+    },
+    {
+      "relative_path": "collector-stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "collector-stdout.json",
+      "byte_count": 765,
+      "sha256": "2D800B29C98C0FD45F7E1DDBF3E0705346F929ADAEFDC0AC6887ED54ACDEF5BB"
+    },
+    {
+      "relative_path": "command.txt",
+      "byte_count": 294,
+      "sha256": "F7A289200BA43B54BC47C182499E305844F6DE075C48086E69C7DD0CAE30BBBB"
+    },
+    {
+      "relative_path": "exit-code.txt",
+      "byte_count": 13,
+      "sha256": "05788133A59E624A10790BAD8449B52572152EE68FB3E4D3F47F7B398AD15014"
+    },
+    {
+      "relative_path": "hashes.json",
+      "byte_count": 1830,
+      "sha256": "97BCA35DBCF56F63591EBE8E76E7C99F9924B954DBDF9FBA5A46173D2CD0997C"
+    },
+    {
+      "relative_path": "instrumentation.patch",
+      "byte_count": 1328,
+      "sha256": "5181F616641D4739CA04EA57D5030FFEF53C51E0B2A2F79A045C291C4FF9640F"
+    },
+    {
+      "relative_path": "instrumentation.patch.stderr.txt",
+      "byte_count": 515,
+      "sha256": "E78829A9E42566AFBFCC5FA4AC949F531ADF2C58D678AB6E54EB2697648DF04E"
+    },
+    {
+      "relative_path": "preflight-environment.json",
+      "byte_count": 2854,
+      "sha256": "C1CC5D05F285844659F276A40AE7DA6264B64452C30CB0CA4673FBEB27164E35"
+    },
+    {
+      "relative_path": "reproduction-and-limitations.md",
+      "byte_count": 1208,
+      "sha256": "6BB306F7F6B5DE60DDCC47C8A171CC6E33E07ED5D8C5A8FD0574EC116E42311E"
+    },
+    {
+      "relative_path": "stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "stdout.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "timing-selection-phase-summary.json",
+      "byte_count": 750,
+      "sha256": "6DE8B6053AD25890741D0491C3C66E5B3E054F264AA609C5162191CF4955D43D"
+    }
+  ],
+  "verification": {
+    "status": "PASS",
+    "rows_expected": 17,
+    "rows_matched": 17,
+    "unlisted_payloads": [],
+    "missing_payloads": [],
+    "mismatched_rows": []
+  }
+}

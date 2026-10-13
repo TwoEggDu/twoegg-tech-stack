@@ -1,0 +1,34 @@
+{
+  "receipt_prefix": "pnpm-version",
+  "invocation_kind": "PROBE",
+  "executable_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+  "executable_is_absolute": true,
+  "executable_matches_captured_corepack": true,
+  "argument_vector": [
+    "pnpm",
+    "--version"
+  ],
+  "native_arguments": "pnpm --version",
+  "display_command": "& 'C:\\nvm4w\\nodejs\\corepack.cmd' 'pnpm' '--version'",
+  "working_directory": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814",
+  "started": true,
+  "started_utc": "2026-09-01T05:49:36.1879666Z",
+  "ended_utc": "2026-09-01T05:49:36.6848625Z",
+  "duration_milliseconds": 493,
+  "timeout_seconds": 60,
+  "timed_out": false,
+  "exit_code": 0,
+  "stdout": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\pnpm-version-stdout.txt",
+    "exists": true,
+    "byte_count": 7,
+    "sha256": "D7C27E39E223D95B17ED257F80E9E4A27633549A13B62A189D3A17D05F9B1816"
+  },
+  "stderr": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\pnpm-version-stderr.txt",
+    "exists": true,
+    "byte_count": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "streams_merged": false
+}

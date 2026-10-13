@@ -1,0 +1,40 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-frozen-identities-v1",
+  "before": {
+    "harness": {
+      "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-instrumentation.ts",
+      "exists": true,
+      "byte_count": 34852,
+      "sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B"
+    },
+    "expected_harness_sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B",
+    "harness_matches": true,
+    "collector": {
+      "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-collector.ps1",
+      "exists": true,
+      "byte_count": 6398,
+      "sha256": "D04A8929EA32CF004D011D0241474C759143B75A8E88DEDBE8DC8E09080A5045"
+    },
+    "expected_collector_sha256": "D04A8929EA32CF004D011D0241474C759143B75A8E88DEDBE8DC8E09080A5045",
+    "collector_matches": true
+  },
+  "after": {
+    "harness": {
+      "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-instrumentation.ts",
+      "exists": true,
+      "byte_count": 34852,
+      "sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B"
+    },
+    "expected_harness_sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B",
+    "harness_matches": true,
+    "collector": {
+      "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-collector.ps1",
+      "exists": true,
+      "byte_count": 6398,
+      "sha256": "D04A8929EA32CF004D011D0241474C759143B75A8E88DEDBE8DC8E09080A5045"
+    },
+    "expected_collector_sha256": "D04A8929EA32CF004D011D0241474C759143B75A8E88DEDBE8DC8E09080A5045",
+    "collector_matches": true
+  },
+  "unchanged": true
+}

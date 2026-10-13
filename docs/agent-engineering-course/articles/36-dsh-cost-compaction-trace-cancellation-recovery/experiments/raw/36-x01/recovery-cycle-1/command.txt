@@ -1,0 +1,4 @@
+COMMAND: corepack pnpm exec vitest run packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts --reporter=verbose
+wall_clock_cap_seconds=180
+allowed_attempts=1
+launcher=corepack pnpm exact-11.7.0 with fixture-local .bin prepended to current process PATH

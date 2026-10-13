@@ -1,0 +1,20 @@
+{
+  "schema_version": "defect-witness-v1",
+  "witness_id": "36-X01-RECOVERY-CYCLE-6-CYCLE5-DEFECT-WITNESS",
+  "source_identities": [
+    {"path_token":"experiments/36-x01-recovery-cycle-5-plan.md","byte_count":21952,"sha256":"B0DD65CF4FC3C06A88EF23B3CE010ACC5F91E1C774903551B98316151EF288AA"},
+    {"path_token":"experiments/36-x01-recovery-cycle-5-diagnostic.Tests.ps1","byte_count":10787,"sha256":"E042BC774E717ABEE31EE9B2BB297A5C4A49063C211B221C75D000BFB797219F"},
+    {"path_token":"experiments/36-x01-recovery-cycle-5-diagnostic.ps1","byte_count":19626,"sha256":"D5AF4F2FF3F11A4BB06DD18D7357989722E851733D2F56220B2E5AFA25107274"},
+    {"path_token":"experiments/preflight/36-x01-recovery-cycle-5-diagnostic-tests/red/manifest.json","byte_count":1086,"sha256":"AC990F709427C60E2B9C312C8C41144A9A74E88E1A1DC33F870222459C555AF7"},
+    {"path_token":"experiments/preflight/36-x01-recovery-cycle-5-diagnostic-tests/green/manifest.json","byte_count":1077,"sha256":"7A5C834D04F200502BAC6D3D2F2C1380E343DB1EDC04FA79163AB22CB989412A"}
+  ],
+  "observations": [
+    {"id":"C5-W1","line":153,"finding":"COUNT_ONLY_CANNOT_DISTINGUISH_NULL_FROM_EMPTY_ARRAY","observed_path":"green/phase-summary.json#/expected_failed_assertions","observed_token_kind":"Null"},
+    {"id":"C5-W2","line":183,"finding":"INLINE_CONDITIONAL_EMPTY_OUTPUT_UNROLLED_BEFORE_SERIALIZATION","correlated_path":"green/phase-summary.json#/expected_failed_assertions","observed_token_kind":"Null"},
+    {"id":"C5-W3","finding":"EXACT_COMMAND_PROVENANCE_ABSENT","red_exact_command":"ABSENT","green_exact_command":"ABSENT"}
+  ],
+  "expected_red_failures": ["C5_EXPLICIT_EMPTY_ARRAY_SERIALIZED_AS_NULL","C5_TEST_ACCEPTS_NULL_FOR_EMPTY_ARRAY","C5_RED_GREEN_EXACT_COMMAND_RECEIPTS_ABSENT","C6_SCHEMA_FIRST_PRODUCTION_CLOSURE_ABSENT"],
+  "cycle5_tests_executed": false,
+  "cycle5_candidate_executed": false,
+  "mutation_count": 0
+}

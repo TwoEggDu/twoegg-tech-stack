@@ -1,0 +1,43 @@
+{
+  "schema_version": "36-x01-recovery-cycle-4-orchestrator-tests-red-process-v1",
+  "mode": "RED",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-4-ORCHESTRATOR-TEST-RED",
+  "status": "EXPECTED_EXIT",
+  "failure_code": null,
+  "failure_message": null,
+  "executable_absolute_path": "C:\\Users\\IGG\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+  "argument_vector": [
+    "-NoLogo",
+    "-NoProfile",
+    "-File",
+    "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-4-orchestrator.Tests.ps1",
+    "-InternalWorker",
+    "-WorkerPhase",
+    "RED",
+    "-TestTemporaryRoot",
+    "C:\\Users\\IGG\\AppData\\Local\\Temp\\36-x01-recovery-cycle-4-orchestrator-tests-red"
+  ],
+  "argument_count": 9,
+  "display_command": "& 'C:\\Users\\IGG\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe' '-NoLogo' '-NoProfile' '-File' 'E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-4-orchestrator.Tests.ps1' '-InternalWorker' '-WorkerPhase' 'RED' '-TestTemporaryRoot' 'C:\\Users\\IGG\\AppData\\Local\\Temp\\36-x01-recovery-cycle-4-orchestrator-tests-red'",
+  "working_directory": "E:\\workspace\\TechStackShow",
+  "started": true,
+  "started_utc": "2026-09-01T07:22:51.9993934Z",
+  "ended_utc": "2026-09-01T07:22:52.5035117Z",
+  "duration_milliseconds": 503,
+  "timeout_seconds": 60,
+  "timed_out": false,
+  "exit_code": 41,
+  "stdout": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-4-orchestrator-tests\\red\\stdout.txt",
+    "exists": true,
+    "byte_count": 1092,
+    "sha256": "77909A7A9053DED348C031D0C1CAE0B3BFAD58EA5BC352174D03F9B8C8FF3162"
+  },
+  "stderr": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-4-orchestrator-tests\\red\\stderr.txt",
+    "exists": true,
+    "byte_count": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "streams_merged": false
+}

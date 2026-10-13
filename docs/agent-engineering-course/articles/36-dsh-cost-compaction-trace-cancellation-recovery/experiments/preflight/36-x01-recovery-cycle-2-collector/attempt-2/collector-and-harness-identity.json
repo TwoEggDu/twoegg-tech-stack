@@ -1,0 +1,8 @@
+{
+  "collector_path": "experiments/36-x01-recovery-cycle-2-collector.ps1",
+  "collector_sha256": "BD36F89F7E6C974453FE50D3A2F3FD253454D45DB5F0E52A9175AC1F869F620E",
+  "harness_identity_reference": "experiments/preflight/36-x01-recovery-cycle-2-collector/harness-hashes-and-diff-check.json",
+  "harness_before_sha256": "C4AF80CEC0B068F7C54A87777F19751FE90EF2FF28ED3DCB619ADE689276660D",
+  "harness_after_sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B",
+  "harness_only_required_hunk": true
+}

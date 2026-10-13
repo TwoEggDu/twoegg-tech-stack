@@ -1,0 +1,19 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-vitest-resolution-v1",
+  "resolver_command": "Get-Command -Name 'vitest.cmd' -All -CommandType Application",
+  "resolver_count": 1,
+  "resolver_entries": [
+    {
+      "name": "vitest.CMD",
+      "command_type": "Application",
+      "source": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD",
+      "path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD",
+      "definition": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD"
+    }
+  ],
+  "selected_absolute_path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD",
+  "expected_fixture_shim": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.cmd",
+  "selected_inside_fixture_bin": true,
+  "selected_matches_fixture_shim": true,
+  "resolved_after_process_path_prepend": true
+}

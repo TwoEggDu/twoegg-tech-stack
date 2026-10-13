@@ -1,0 +1,85 @@
+36-X01 pre-execution environment and cleanliness receipt
+Captured before the unique focused test command.
+
+COMMAND: git rev-parse HEAD
+EXIT: 0
+STDOUT: cd5ef8148158c3a752a658978873241fdf8e2bbc
+
+COMMAND: git rev-parse dsh-v0.1.2-alpha.1^{commit}
+EXIT: 0
+STDOUT: cd5ef8148158c3a752a658978873241fdf8e2bbc
+
+COMMAND: git status --short --branch --untracked-files=all
+EXIT: 0
+STDOUT:
+## HEAD (no branch)
+?? packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts
+
+COMMAND: git diff --check
+EXIT: 0
+STDOUT: <empty>
+NOTE: the temporary untracked spec is not covered by ordinary git diff --check; the no-index patch receipt below covers its full payload.
+
+COMMAND: node --version
+EXIT: 0
+STDOUT: v24.18.1
+
+COMMAND: pnpm --version
+EXIT: 0
+STDOUT: 11.19.0
+LIMITATION: repository package.json pins pnpm@11.7.0, while this host command resolved pnpm 11.19.0. This is recorded as a toolchain boundary, not normalized away.
+
+COMMAND: Get-FileHash -Algorithm SHA256 packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts
+EXIT: 0
+STDOUT: 8DE1035782BE396F2997A476D1B889572A5C200B85277DD6EF9F09F3DF34371F
+
+COMMAND: git diff --no-index -- /dev/null packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts
+EXIT: 1 (expected for a new file)
+STDOUT: preserved verbatim in instrumentation.patch
+
+Safety boundary:
+- fixture HEAD equals the pinned tag commit;
+- only the exact temporary spec is present;
+- no real Provider, credential, network, server, install, update, full suite, production path, or Lab 07 is involved;
+- OS-temp persistence and sentinel roots are test-owned and must be deleted after capture.
+
+Unique focused command result:
+- executed attempts: 1 / 1;
+- exit code: 1;
+- elapsed wall time reported by command runner: 0.8273256 seconds;
+- process result: the shell could not resolve `vitest`; the Vitest process did not start;
+- selection: 0;
+- P0-P5: NOT_EXECUTED;
+- runtime observers: NOT_EXECUTED;
+- OS-temp artifact root: NOT_CREATED;
+- classification: FAILED_REQUIRED_SOURCE_EXPERIMENT.
+
+Post-capture cleanup receipt:
+
+COMMAND: delete exact temporary spec with apply_patch
+RESULT: deleted; exact path no longer exists.
+
+COMMAND: inspect C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts
+RESULT: path did not exist because the test process never started; no recursive delete was necessary.
+
+COMMAND: git rev-parse HEAD
+EXIT: 0
+STDOUT: cd5ef8148158c3a752a658978873241fdf8e2bbc
+
+COMMAND: git rev-parse dsh-v0.1.2-alpha.1^{commit}
+EXIT: 0
+STDOUT: cd5ef8148158c3a752a658978873241fdf8e2bbc
+
+COMMAND: git status --short --branch --untracked-files=all
+EXIT: 0
+STDOUT: ## HEAD (no branch)
+
+COMMAND: git diff --check
+EXIT: 0
+STDOUT: <empty>
+
+COMMAND: git diff --exit-code
+EXIT: 0
+STDOUT: <empty>
+
+Final fixture disposition: HEAD equals pinned tag commit; index/worktree/untracked state is clean; temporary spec and test-owned OS-temp root are absent.

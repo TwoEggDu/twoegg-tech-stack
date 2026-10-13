@@ -1,0 +1,35 @@
+{
+  "schema_version": "36-x01-recovery-cycle-5-test-manifest-v1",
+  "mode": "RED_STATIC_FROZEN_LAUNCHER",
+  "status": "EXPECTED_FAIL",
+  "self_excluding": true,
+  "excluded_relative_path": "manifest.json",
+  "file_count": 5,
+  "files": [
+    {
+      "relative_path": "cleanup-receipt.json",
+      "byte_count": 214,
+      "sha256": "5DA8F306BE28FBE7195B6DC1576A5179544CFE0B81683FE370EDE96B6C35BB05"
+    },
+    {
+      "relative_path": "identities.json",
+      "byte_count": 647,
+      "sha256": "CA06E318033F9B9C7A2C5AA3E5CF12B3D5B26CBE58504D8ED818934B170C5BD3"
+    },
+    {
+      "relative_path": "phase-summary.json",
+      "byte_count": 919,
+      "sha256": "EA1FE94E6435A5F31D0ABE15A0E7437C7FE391EEE985D5F08A90243548CBCD6A"
+    },
+    {
+      "relative_path": "stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "stdout.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  ]
+}

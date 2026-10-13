@@ -1,0 +1,6 @@
+{
+  "status": "NOT_COMPLETED",
+  "schema_version": "36-x01-recovery-cycle-3-focused-prestate-v2",
+  "mode": "VALIDATE_FOCUSED_PRESTATE",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-4-PREVALIDATION-ATTEMPT-1"
+}

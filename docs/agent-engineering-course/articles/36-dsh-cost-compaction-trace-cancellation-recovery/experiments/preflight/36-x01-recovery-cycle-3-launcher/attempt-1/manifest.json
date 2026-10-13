@@ -1,0 +1,114 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-launcher-manifest-v1",
+  "self_excluding": true,
+  "excluded_relative_path": "manifest.json",
+  "generated_utc": "2026-09-01T05:49:37.7663569Z",
+  "file_count": 21,
+  "files": [
+    {
+      "relative_path": "bare-command-audit.json",
+      "byte_count": 1201,
+      "sha256": "F2BC784D5F52DE6717713C2AD29D249360D0DC48A9C708D89BF9D65AB01DFAE5"
+    },
+    {
+      "relative_path": "cleanup-receipt.json",
+      "byte_count": 2204,
+      "sha256": "4F92EF7B193DC1AD80C0A4FE09D7CF3B8A052BA3EEF111AE52DC6B3D6F179ED5"
+    },
+    {
+      "relative_path": "corepack-identity.json",
+      "byte_count": 1284,
+      "sha256": "66CFE6438A23BD437BC110D5279E8DBE3A618C85A586AA20BA52AC0A70C594B4"
+    },
+    {
+      "relative_path": "exact-launcher-command.txt",
+      "byte_count": 468,
+      "sha256": "E4247A94B9D72B9620D6ACCB45D52F82D15F55B6EF0ACD55CAF168B2AC93AC78"
+    },
+    {
+      "relative_path": "frozen-candidate-identities.json",
+      "byte_count": 2089,
+      "sha256": "4168BA3084E29F6032809A540ED048F05701198D14B7F0786C2B06B2B8BABB93"
+    },
+    {
+      "relative_path": "launcher-identity.json",
+      "byte_count": 438,
+      "sha256": "2AC57680E2C026BAA2FD71B829F576BAE06EAB52901E27482730794DA8D35216"
+    },
+    {
+      "relative_path": "package-manager.json",
+      "byte_count": 761,
+      "sha256": "D997CE0D19A0D78614ADFC66AFF3449A3257E4ABB6A0593332F6664F97B04B26"
+    },
+    {
+      "relative_path": "path-scope.json",
+      "byte_count": 9850,
+      "sha256": "C66DE4844636015E124FBAD905C42A0B00D1496D47B8A73F4B78360B831F0A68"
+    },
+    {
+      "relative_path": "pnpm-version-command.txt",
+      "byte_count": 53,
+      "sha256": "E8FBF80D9214F72E83A02AA3F5511CFF848302FC4E39E0F9432E047FBDA8AA56"
+    },
+    {
+      "relative_path": "pnpm-version-exit-code.txt",
+      "byte_count": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+    },
+    {
+      "relative_path": "pnpm-version-process.json",
+      "byte_count": 1499,
+      "sha256": "91D714827BC1CFED1BB951A7474F360265BDC4461156F28E8E2AB7E7B015EB92"
+    },
+    {
+      "relative_path": "pnpm-version-stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "pnpm-version-stdout.txt",
+      "byte_count": 7,
+      "sha256": "D7C27E39E223D95B17ED257F80E9E4A27633549A13B62A189D3A17D05F9B1816"
+    },
+    {
+      "relative_path": "prevalidation-summary.json",
+      "byte_count": 5483,
+      "sha256": "BE073CA66C9EE74F1EC1193483DBA2B3BA207DBB2EBC3CE8F65EA7A59758483B"
+    },
+    {
+      "relative_path": "vitest-resolution.json",
+      "byte_count": 1034,
+      "sha256": "75B4C1EEF2C6BD99CBAB8DA778D2C97461DC9362B80CA3B067B0C66C8CA5E46C"
+    },
+    {
+      "relative_path": "vitest-version-command.txt",
+      "byte_count": 69,
+      "sha256": "085805911EDC93362DF495592E6B8C00EDF019CFC3E5F3CCEFC197080A754F7B"
+    },
+    {
+      "relative_path": "vitest-version-exit-code.txt",
+      "byte_count": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+    },
+    {
+      "relative_path": "vitest-version-process.json",
+      "byte_count": 1562,
+      "sha256": "F84E8761AE788DDB94375379BC730E8550ABDC37DDE29448D3889D0201FA98DB"
+    },
+    {
+      "relative_path": "vitest-version-stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "vitest-version-stdout.txt",
+      "byte_count": 37,
+      "sha256": "062EF18A97B769B53DF611990663F48B4199F8F99B284C5A76A5BB2C7A013262"
+    },
+    {
+      "relative_path": "working-directory.json",
+      "byte_count": 283,
+      "sha256": "56C627C735BB773A8F26655CC388FD8314D57509BE860A11324E0DC0F8C9D844"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+36-X01 Recovery Cycle 1 cleanup and postflight receipt
+temporary_spec_present=False
+test_owned_os_temp_root_present=False
+COMMAND: git rev-parse HEAD
+EXIT: 0
+STDOUT: cd5ef8148158c3a752a658978873241fdf8e2bbc
+
+COMMAND: git rev-parse tag^{commit}
+EXIT: 0
+STDOUT: cd5ef8148158c3a752a658978873241fdf8e2bbc
+
+COMMAND: git status --short --branch --untracked-files=all
+EXIT: 0
+STDOUT: ## HEAD (no branch)
+
+COMMAND: git diff --check
+EXIT: 0
+STDOUT: 

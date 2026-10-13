@@ -1,0 +1,14 @@
+{
+  "schema_version": "36-x01-recovery-cycle-4-orchestrator-tests-green-cleanup-v1",
+  "mode": "GREEN",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-4-ORCHESTRATOR-TEST-GREEN",
+  "status": "PASS",
+  "failure_code": null,
+  "failure_message": null,
+  "cleanup_scope": "EXACT_TEST_TEMPORARY_ROOT_ONLY",
+  "test_temporary_root": "C:\\Users\\IGG\\AppData\\Local\\Temp\\36-x01-recovery-cycle-4-orchestrator-tests-green",
+  "cleanup_attempted": true,
+  "other_cleanup_attempted": false,
+  "temporary_root_absent_after": true,
+  "pass": true
+}

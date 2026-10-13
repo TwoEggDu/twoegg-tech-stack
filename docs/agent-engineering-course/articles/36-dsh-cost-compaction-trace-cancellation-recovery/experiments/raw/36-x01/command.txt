@@ -1,0 +1,4 @@
+pnpm exec vitest run packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts --reporter=verbose
+wall_clock_cap_seconds=180
+allowed_attempts=1
+expected_selection=1

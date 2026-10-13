@@ -1,9 +1,9 @@
 # Agent Engineering 课程状态台账
 
 - Canonical：[Agent Engineering 系列计划](../agent-engineering-series-plan.md)
-- 更新时间：2026-08-30
-- 当前里程碑：Article 34 `END_ARTICLE`；completion commit=`3908174accd733c6bf9ee0e9141b58b168b3f93c`；remote verified。
-- 当前生产对象：Article 35=`PUBLISHED candidate / PRE_COMMIT_RECONCILIATION PASS / INCOMPLETE until Git+remote`；Article 36=`PRECHECK candidate / NOT_STARTED / ZERO ASSETS`；Article 37=`NOT_STARTED / ZERO ASSETS`；Part VI Audit=`NOT_STARTED until Article 37`；Article 38—44=`FORBIDDEN / ZERO ASSETS`。
+- 更新时间：2026-10-13
+- 当前里程碑：Article 35 `END_ARTICLE`；completion commit=`b27b4057fa87f64bc11110cd2cc9e69d738b1f19`；remote verified。
+- 当前生产对象：Article36 `PAUSED / CYCLE10 OUTCOME UNKNOWN / NOT_PUBLISHED`；仅保存恢复 checkpoint，恢复前须核对既有结果与执行预算。
 - Article 00 Published Path：`content/ai-empowerment/agent-engineering-00-agent-engineering-world-map.md`
 - Article 01 Published Path：`content/ai-empowerment/agent-engineering-01-model-api-messages-token.md`
 - Article 02 Published Path：`content/ai-empowerment/agent-engineering-02-prompt-engineering-contract-boundaries.md`
@@ -61,7 +61,7 @@
 - Article 33 Build Verification：`1261 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
 - Article 34 Build Verification：`1262 Pages / 44 Static / 1 Alias / 0 ERROR`；published body exact identity=`PASS`
 - Article 35 Build Verification：`1263 Pages / 44 Static / 1 Alias / 0 ERROR`；published H1-to-EOF exact identity=`PASS`
-- Factory Run State：[course-run-state.md](course-run-state.md)（`READY / Article36 PRECHECK candidate after Article35 resolver / bounded 35—37 / active NONE`）
+- Factory Run State：[course-run-state.md](course-run-state.md)（`PAUSED / Article36 LAB_EXECUTE unresolved / active NONE / BLOCKED_EVIDENCE`）
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；Article 08 的 two-commit history 保留为 regression evidence，不作为未来流程模板
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐
 - Part I Audit：[durable report](audits/part-i-audit.md)；Gate `PASS`；checkpoint `b7fafc5f2e490a5d6590da1cfb54d9f2ced5968c` verified；`PI-F01`—`PI-F03 CLOSED / 0 OPEN MINOR`
@@ -71,7 +71,7 @@
 - Part IV Targeted Reaudit：[post-publication recheck](audits/part-iv-article22-post-publication-recheck.md)；Gate=`PASS / 0 findings / COMMITTED / PUSHED / REMOTE_VERIFIED`；commit=`a6763629aaaeb0520b219423fd5ef9c6b442aba4`；audited fix=`481ebd52d6c0522e68a0ce0897f52a7932f9af89`；old Audit unchanged
 - Part V Audit：[durable report](audits/part-v-audit.md)；Cycle0=`FAIL / PV-AUD-F01 MAJOR / PV-AUD-F02 MINOR`；targeted repairs已独立push/remote verified；Cycle1首个artifact validation被Master拒绝，retry=`PASS / F01/F02 CLOSED / 0 OPEN`；fresh Hugo=`1255 / 0 WARNING / 0 ERROR`
 - Article 23：`OPTIONAL / SKIPPED / ZERO ASSETS`。
-- 下一条允许动作：`GIT_DIFF_VERIFY -> ARTICLE_35_CHECKPOINT_COMMIT`；Article36只有在Article35 completion commit push/remote verified并解析为`END_ARTICLE`后才能PRECHECK。
+- 下一条允许动作：Article36 `PAUSED / CYCLE10 OUTCOME UNKNOWN / NOT_PUBLISHED`；仅保存恢复 checkpoint，恢复前须核对既有结果与执行预算。
 
 ## 状态图例
 
@@ -119,8 +119,8 @@
 | 32 | System Prompt Assembly 与 PromptContext：多来源 Context 怎样组成 | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `13 CONFIRMED / 2 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Lab `PASS / MOCK-BOUNDED` | `NONE`；Final 97 / F01 CLOSED；completion `e6b6ca6d...` remote verified |
 | 33 | Inbox、Turn、Step 与 Agent Loop | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `14 CONFIRMED / 1 PROPOSAL / 0 PARTIAL / 0 BLOCKED` | Required Trace `PASS / 4 OF 4 / 10 OF 10 OWNER TESTS` | `NONE`；Final 98 / F01—F03 CLOSED；completion `be5d36a9...` remote verified |
 | 34 | Append-only Session Event：Replay、Resume、Fork 与 Projection | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `9 CONFIRMED / 5 PARTIAL / 1 PROPOSAL / 0 BLOCKED` | Required Evidence `PASS / 12 TESTS` | `NONE`；Final 98 / A34-PUB-F01 CLOSED；completion=`3908174accd733c6bf9ee0e9141b58b168b3f93c` / remote verified |
-| 35 | Tool Registry 与 Tool Execution Pipeline | VI | L | 否 | `PUBLISHED CANDIDATE / INCOMPLETE` | `EVIDENCE_GATE PASS / 12 CLAIMS / 12 FINAL CARDS / 35-X01—X05 PASS / 0 BLOCKED` | Source experiment `1 file / 5 tests / 13 traces / PASS` | Final=`PASS / 0 OPEN`；Publisher/Build/PRE_COMMIT=`PASS`；completion commit/push/remote=`PENDING` |
-| 36 | Cost、Compaction、Trace、Cancellation 与 Recovery | VI | L | 否 | `PLANNED` | `N/A` | N/A | `NOT_STARTED / ZERO ASSETS` |
+| 35 | Tool Registry 与 Tool Execution Pipeline | VI | L | 否 | `PUBLISHED / COMPLETED / END_ARTICLE` | `EVIDENCE_GATE PASS / 12 CLAIMS / 12 FINAL CARDS / 35-X01—X05 PASS / 0 BLOCKED` | Source experiment `1 file / 5 tests / 13 traces / PASS` | Final=`PASS / 0 OPEN`；completion=`b27b4057fa87f64bc11110cd2cc9e69d738b1f19` / remote verified |
+| 36 | Cost、Compaction、Trace、Cancellation 与 Recovery | VI | L | 否 | `PAUSED / CYCLE10 / NOT_PUBLISHED` | `SOURCE_MAP PASS / REQUIRED RUNTIME EVIDENCE BLOCKED` | `LAB_EXECUTE` | Article36 `PAUSED / CYCLE10 OUTCOME UNKNOWN / NOT_PUBLISHED`；仅保存恢复 checkpoint，恢复前须核对既有结果与执行预算。 |
 | 37 | RAG、Skill、Workflow、Subagent 与 Web / Headless：核心事实和扩展映射 | VI | M | 否 | `PLANNED` | `N/A` | N/A | `NOT_STARTED / ZERO ASSETS`；Part VI Audit remains `NOT_STARTED` until Article 37 |
 | 38 | 游戏生产问题空间：什么时候该写 Script、Rule、Workflow，什么时候才需要 Agent | VII | M | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |
 | 39 | 案例 A：Unity Compile Golden Fixture——设计一个可判定的诊断 Agent | VII | L | 否 | `PLANNED` | `N/A` | N/A | `FORBIDDEN / ZERO ASSETS` |

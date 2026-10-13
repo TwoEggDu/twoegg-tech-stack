@@ -1,0 +1,10 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-launcher-identity-v1",
+  "mode": "PREVALIDATE",
+  "source": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-3-launcher.ps1",
+    "exists": true,
+    "byte_count": 39159,
+    "sha256": "524D95F34F65435D48696B0A688276A106D0A8610D78FFD43E06A8BF375CA8F2"
+  }
+}

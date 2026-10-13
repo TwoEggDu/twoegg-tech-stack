@@ -1,0 +1,20 @@
+{
+  "schema_version": "36-x01-recovery-cycle-2-collector-attempt-3-v1",
+  "attempt": 3,
+  "exact_command": "exact-command.txt",
+  "stdout": "stdout.json",
+  "stderr": "stderr.txt",
+  "exit_code_file": "exit-code.txt",
+  "collector_receipt": "collector-receipt.json",
+  "source_manifest": "source-manifest.json",
+  "destination_manifest": "destination-manifest.json",
+  "identity": "collector-and-harness-identity.json",
+  "cleanup_receipt": "cleanup-receipt.json",
+  "collector_exit_code": 0,
+  "collector_status": "PASS",
+  "source_count": 3,
+  "destination_count": 3,
+  "all_collector_validations_pass": true,
+  "status": "PASS",
+  "wrapper_error": null
+}

@@ -1,0 +1,109 @@
+36-X01 Recovery Cycle 1 preflight and execution receipt
+PATH_SCOPE: current PowerShell process only; fixture node_modules/.bin prepended; no persistent environment change.
+COMMAND: git rev-parse HEAD
+EXIT: 0
+STDOUT:
+cd5ef8148158c3a752a658978873241fdf8e2bbc
+COMMAND: git rev-parse 'dsh-v0.1.2-alpha.1^{commit}'
+EXIT: 0
+STDOUT:
+cd5ef8148158c3a752a658978873241fdf8e2bbc
+COMMAND: git status --short --branch --untracked-files=all
+EXIT: 0
+STDOUT:
+## HEAD (no branch)
+COMMAND: git diff --check
+EXIT: 0
+STDOUT: <empty>
+COMMAND: node --version
+EXIT: 0
+STDOUT:
+v24.18.1
+COMMAND: Get-Command corepack
+EXIT: 0
+STDOUT:
+
+HelpUri            : 
+FileVersionInfo    : File:             C:\nvm4w\nodejs\corepack.cmd
+                     InternalName:     
+                     OriginalFilename: 
+                     FileVersion:      
+                     FileDescription:  
+                     Product:          
+                     ProductVersion:   
+                     Debug:            False
+                     Patched:          False
+                     PreRelease:       False
+                     PrivateBuild:     False
+                     SpecialBuild:     False
+                     Language:         
+                     
+Path               : C:\nvm4w\nodejs\corepack.cmd
+Extension          : .cmd
+Definition         : C:\nvm4w\nodejs\corepack.cmd
+Source             : C:\nvm4w\nodejs\corepack.cmd
+Version            : 0.0.0.0
+Visibility         : Public
+OutputType         : {System.String}
+Name               : corepack.cmd
+CommandType        : Application
+ModuleName         : 
+Module             : 
+RemotingCapability : PowerShell
+Parameters         : 
+ParameterSets      :
+COMMAND: Get-Command pnpm
+EXIT: 0
+STDOUT:
+
+HelpUri            : 
+FileVersionInfo    : File:             C:\Users\IGG\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd
+                     InternalName:     
+                     OriginalFilename: 
+                     FileVersion:      
+                     FileDescription:  
+                     Product:          
+                     ProductVersion:   
+                     Debug:            False
+                     Patched:          False
+                     PreRelease:       False
+                     PrivateBuild:     False
+                     SpecialBuild:     False
+                     Language:         
+                     
+Path               : C:\Users\IGG\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd
+Extension          : .cmd
+Definition         : C:\Users\IGG\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd
+Source             : C:\Users\IGG\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd
+Version            : 0.0.0.0
+Visibility         : Public
+OutputType         : {System.String}
+Name               : pnpm.cmd
+CommandType        : Application
+ModuleName         : 
+Module             : 
+RemotingCapability : PowerShell
+Parameters         : 
+ParameterSets      :
+COMMAND: package.json packageManager
+EXIT: 0
+STDOUT:
+pnpm@11.7.0
+CHECK: node_modules/.bin/vitest.cmd exists
+RESULT: True
+COMMAND: corepack pnpm --version
+EXIT: 0
+STDOUT:
+11.7.0
+CHECK: archived instrumentation.ts SHA256
+RESULT: C4AF80CEC0B068F7C54A87777F19751FE90EF2FF28ED3DCB619ADE689276660D
+COPY: archived instrumentation.ts -> temporary spec
+TEMPORARY_SPEC_SHA256: C4AF80CEC0B068F7C54A87777F19751FE90EF2FF28ED3DCB619ADE689276660D
+COMMAND: git diff --no-index -- /dev/null temporary spec
+EXIT: 1 (expected 1 for untracked new file)
+PATCH_RECEIPT: E:\workspace\TechStackShow\docs\agent-engineering-course\articles\36-dsh-cost-compaction-trace-cancellation-recovery\experiments\raw\36-x01\recovery-cycle-1\instrumentation.patch
+TEST_EXECUTED: True
+TEST_EXIT: 1
+TEST_TIMED_OUT: False
+TEST_ELAPSED_MS: 15939
+FAILURE_REASONS: 

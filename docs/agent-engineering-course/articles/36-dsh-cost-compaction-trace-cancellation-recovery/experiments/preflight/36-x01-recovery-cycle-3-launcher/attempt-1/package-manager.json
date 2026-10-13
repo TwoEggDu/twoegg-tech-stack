@@ -1,0 +1,16 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-package-manager-v1",
+  "package_json": {
+    "path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\package.json",
+    "exists": true,
+    "byte_count": 11435,
+    "sha256": "552FE07638754047FB3DFD29D61DDE835C2A5A618DA8B766A711BC15EAA334E2"
+  },
+  "declared_package_manager": "pnpm@11.7.0",
+  "required_package_manager": "pnpm@11.7.0",
+  "exact_match": true,
+  "fixture_bin_absolute_path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin",
+  "vitest_cmd_absolute_path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.cmd",
+  "vitest_cmd_exists": true,
+  "validated_before_path_mutation": true
+}

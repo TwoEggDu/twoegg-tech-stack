@@ -1,0 +1,58 @@
+{
+  "schema_version": "36-x01-recovery-cycle-2-preflight-v1",
+  "observed_at": "2026-09-01T12:54:57.1423746+08:00",
+  "status": "FAIL",
+  "fail_closed": true,
+  "focused_command_authorized_after_preflight": false,
+  "failure_code": "COREPACK_PNPM_VERSION_PROBE_FAILED",
+  "fixture": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814",
+  "raw_destination_initially_absent": true,
+  "fixture_head": {
+    "exit_code": 0,
+    "stdout": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "stderr": "",
+    "match": true
+  },
+  "fixture_tag_commit": {
+    "exit_code": 0,
+    "stdout": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "stderr": "",
+    "match": true
+  },
+  "fixture_status": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "tracked_and_untracked_clean": true
+  },
+  "fixture_diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "clean": true
+  },
+  "temp_spec_absent": true,
+  "vitest_cmd_exists": true,
+  "package_manager": "pnpm@11.7.0",
+  "path_scope": "current preflight PowerShell process only; fixture-local node_modules/.bin prepended",
+  "pnpm_version_probe": {
+    "exact_command": "corepack pnpm --version",
+    "invocation_executable": "corepack.cmd",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "node:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\corepack\\dist\\corepack.js'\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: []\r\n}\r\n\r\nNode.js v24.18.1",
+    "exact_version_required": "11.7.0",
+    "exact_version_observed": null,
+    "match": false,
+    "retry_performed": false
+  },
+  "candidate_sha256": "D5DFBEC5286309C4BFB1027BA490892992144D49040C6A8E2AF201B842A0199B",
+  "candidate_sha_match": true,
+  "collector_sha256": "D04A8929EA32CF004D011D0241474C759143B75A8E88DEDBE8DC8E09080A5045",
+  "collector_sha_match": true,
+  "archived_sha256": "C4AF80CEC0B068F7C54A87777F19751FE90EF2FF28ED3DCB619ADE689276660D",
+  "archived_sha_match": true,
+  "source_root": "C:\\Users\\IGG\\AppData\\Local\\Temp\\dsh-article36-x01-artifacts",
+  "source_root_initially_absent": true,
+  "focus_command_count": 0
+}

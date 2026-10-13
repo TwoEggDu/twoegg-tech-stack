@@ -5,8 +5,8 @@
 ## 当前基线
 
 - 结构版本：v3.1，文章编号 `00—44` 已冻结
-- 当前里程碑：Article34 `END_ARTICLE`；completion commit=`3908174accd733c6bf9ee0e9141b58b168b3f93c`；remote verified。
-- 当前生产对象：Article35=`PUBLISHED candidate / PRE_COMMIT_RECONCILIATION PASS / INCOMPLETE until Git+remote`；Article36=`PRECHECK candidate / NOT_STARTED / ZERO ASSETS`；Article37=`NOT_STARTED / ZERO ASSETS`；Part VI Audit=`NOT_STARTED until Article 37`；Article38—44=`FORBIDDEN / ZERO ASSETS`；Article23=`OPTIONAL / SKIPPED / ZERO_ASSETS`。
+- 当前里程碑：Article35 `END_ARTICLE`；completion commit=`b27b4057fa87f64bc11110cd2cc9e69d738b1f19`；remote verified。
+- 当前生产对象：Article36 `PAUSED / CYCLE10 OUTCOME UNKNOWN / NOT_PUBLISHED`；仅保存恢复 checkpoint，恢复前须核对既有结果与执行预算。
 - 当前 Article 00 状态：`PUBLISHED`
 - 当前 Article 00 证据状态：`PARTIAL`（直接证据与课程 Proposal 边界齐全；无核心 `BLOCKED`）
 - 当前 Article 00 Formal Review：`PASSED_WITH_NOTES`（`92 / 100`）
@@ -96,10 +96,10 @@
 - 当前 Article 32 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
 - 当前 Article 33 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion由Git history与remote refs解析。
 - 当前 Article 34 状态：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`3908174accd733c6bf9ee0e9141b58b168b3f93c` / remote verified。
-- 当前 Article 35：`PUBLISHED candidate / PRE_COMMIT_RECONCILIATION PASS / INCOMPLETE`；Final=`all findings CLOSED / 0 OPEN`；Hugo=`1263 Pages / 44 Static / 1 Alias / exit0`；Published H1-to-EOF exact；completion commit/push/remote尚未执行。
-- 当前 Article 36—37：`NOT_STARTED / ZERO ASSETS`；Part VI Audit 在 Article 37 `END_ARTICLE` 前保持 `NOT_STARTED`。
+- 当前 Article 35：`PUBLISHED / COMPLETED / END_ARTICLE`；completion=`b27b4057fa87f64bc11110cd2cc9e69d738b1f19` / remote verified；Final=`all findings CLOSED / 0 OPEN`；Hugo=`1263 Pages / 44 Static / 1 Alias / exit0`。
+- 当前 Article 36：Article36 `PAUSED / CYCLE10 OUTCOME UNKNOWN / NOT_PUBLISHED`；仅保存恢复 checkpoint，恢复前须核对既有结果与执行预算。
 - 当前 Article 38—44：`FORBIDDEN / ZERO ASSETS`。
-- Factory Status：`READY / Article36 PRECHECK candidate after Article35 resolver / active NONE`；continuous range=`35—37`；Article36尚未启动，authorization=`INACTIVE`。
+- Factory Status：`PAUSED / Article36 LAB_EXECUTE unresolved / active NONE / BLOCKED_EVIDENCE`；next action=`RECONCILE_CYCLE10_OUTCOME_BEFORE_ANY_EXECUTION`，无当前实验授权。
 - Factory Git Contract：`MAIN_ONLY_PRODUCTION / ONE_ARTICLE_ONE_COMMIT / ONE_ARTICLE_ONE_PUSH / POST_COMMIT_WRITES_ZERO`；completion SHA 由 Git history 提供，checkpoint 后 reconciliation 只读
 - Foundation Independent Review：`CF-IR-F01`—`CF-IR-F05 CLOSED`；`ARTICLE_KICKOFF` 与逐篇 checkpoint commit boundary 已补齐；Review history 见 [course-factory.md](course-factory.md)
 
@@ -156,7 +156,7 @@
 
 - `docs/` 保存写作前的规划、研究、证据、提纲与审查材料。
 - `kb/` 保存写作后可复用的知识沉淀；M5 未向 `kb/` 写入内容。
-- `content/ai-empowerment/` 保存通过 Final Gate 后的 Hugo正文；Article 00—22与Article 24—34已由Git history解析为`END_ARTICLE`；Article 35 Published Content已创建但在completion commit/push/remote前仍为`INCOMPLETE`。Article 23保持Optional/Skipped/zero-assets；Article 36—37未启动，Article 38—44保持forbidden/zero-assets。
+- `content/ai-empowerment/` 保存Final Gate通过的正文。Article00—22、24—35已完成，23 OPTIONAL/SKIPPED/ZERO_ASSETS；Article36未发布，当前为暂停的Cycle10恢复 checkpoint；37未启动，38—44 forbidden/zero-assets。
 - 发布图片最终进入 `static/images/agent-engineering/<id>-<slug>/`。
 - 工作区中的 `draft.md` 只在 `DRAFTING` Gate 创建；`assets/` 只在确有工作资产时创建。
 

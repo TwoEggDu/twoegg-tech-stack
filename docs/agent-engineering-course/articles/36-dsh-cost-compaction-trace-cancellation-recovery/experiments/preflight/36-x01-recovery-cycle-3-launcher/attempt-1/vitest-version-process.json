@@ -1,0 +1,36 @@
+{
+  "receipt_prefix": "vitest-version",
+  "invocation_kind": "PROBE",
+  "executable_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+  "executable_is_absolute": true,
+  "executable_matches_captured_corepack": true,
+  "argument_vector": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "--version"
+  ],
+  "native_arguments": "pnpm exec vitest --version",
+  "display_command": "& 'C:\\nvm4w\\nodejs\\corepack.cmd' 'pnpm' 'exec' 'vitest' '--version'",
+  "working_directory": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814",
+  "started": true,
+  "started_utc": "2026-09-01T05:49:36.7019977Z",
+  "ended_utc": "2026-09-01T05:49:37.4292435Z",
+  "duration_milliseconds": 725,
+  "timeout_seconds": 60,
+  "timed_out": false,
+  "exit_code": 0,
+  "stdout": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\vitest-version-stdout.txt",
+    "exists": true,
+    "byte_count": 37,
+    "sha256": "062EF18A97B769B53DF611990663F48B4199F8F99B284C5A76A5BB2C7A013262"
+  },
+  "stderr": {
+    "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\vitest-version-stderr.txt",
+    "exists": true,
+    "byte_count": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "streams_merged": false
+}

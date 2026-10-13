@@ -1,0 +1,12 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-attempt-2-target-spec-copy-v1",
+  "mode": "VALIDATE_FOCUSED_PRESTATE",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-3-ATTEMPT-2",
+  "status": "NOT_ATTEMPTED",
+  "copy_attempted": false,
+  "source_path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-instrumentation.ts",
+  "destination_path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\packages\\compaction\\compaction-basic\\tests\\36-x01-long-session-compaction-cancel-resume.spec.ts",
+  "destination_absent": true,
+  "reason": "clean-before-copy receipt failed because orchestration native-process argument capture recorded an empty argument vector and every Git command exited 1; copy was structurally gated and did not occur",
+  "pass": false
+}

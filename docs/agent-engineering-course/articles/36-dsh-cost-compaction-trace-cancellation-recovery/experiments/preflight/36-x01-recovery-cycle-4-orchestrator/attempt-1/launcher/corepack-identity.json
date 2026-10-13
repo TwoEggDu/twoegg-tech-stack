@@ -1,0 +1,31 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-corepack-identity-v2",
+  "resolver_command": "Get-Command -Name 'corepack.cmd' -All -CommandType Application",
+  "resolver_started_utc": "2026-09-01T07:34:23.5365400Z",
+  "resolver_ended_utc": "2026-09-01T07:34:23.5461851Z",
+  "resolver_completed_before_path_mutation": true,
+  "process_path_sha256_at_resolution": "4FB20AA4CCFB9B6E185760880AC80BB765A805674E329DE4B584D54EE4543FE2",
+  "resolver_count": 1,
+  "resolver_entries": [
+    {
+      "name": "corepack.cmd",
+      "command_type": "Application",
+      "source": "C:\\nvm4w\\nodejs\\corepack.cmd",
+      "path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+      "definition": "C:\\nvm4w\\nodejs\\corepack.cmd"
+    }
+  ],
+  "resolved_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+  "resolved_is_absolute": true,
+  "resolved_file_exists": true,
+  "resolved_outside_fixture": true,
+  "resolved_sha256": "920630A1D1EC47AEDEA7345E3C868ECDC07E191373497BBF47FBBF5942FBAD4F",
+  "design_expected_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+  "design_expected_sha256": "920630A1D1EC47AEDEA7345E3C868ECDC07E191373497BBF47FBBF5942FBAD4F",
+  "design_path_matches": true,
+  "design_sha256_matches": true,
+  "focused_expected_path": null,
+  "focused_expected_sha256": null,
+  "mode": "VALIDATE_FOCUSED_PRESTATE",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-4-PREVALIDATION-ATTEMPT-1"
+}

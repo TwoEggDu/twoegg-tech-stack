@@ -1,0 +1,6 @@
+COMMAND: corepack pnpm exec vitest run packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts --reporter=verbose
+STATUS: NOT_EXECUTED
+FOCUSED_COMMAND_COUNT: 0
+REASON: COREPACK_PNPM_VERSION_PROBE_FAILED
+WALL_CLOCK_CAP_SECONDS: 180
+RETRY_PERFORMED: False

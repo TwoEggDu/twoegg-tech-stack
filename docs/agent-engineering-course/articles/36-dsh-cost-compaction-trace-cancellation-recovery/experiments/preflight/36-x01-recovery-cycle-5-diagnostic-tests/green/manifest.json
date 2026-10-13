@@ -1,0 +1,35 @@
+{
+  "schema_version": "36-x01-recovery-cycle-5-test-manifest-v1",
+  "mode": "GREEN_ISOLATED_DIAGNOSTIC",
+  "status": "PASS",
+  "self_excluding": true,
+  "excluded_relative_path": "manifest.json",
+  "file_count": 5,
+  "files": [
+    {
+      "relative_path": "cleanup-receipt.json",
+      "byte_count": 214,
+      "sha256": "5DA8F306BE28FBE7195B6DC1576A5179544CFE0B81683FE370EDE96B6C35BB05"
+    },
+    {
+      "relative_path": "identities.json",
+      "byte_count": 647,
+      "sha256": "3366F972D3376CB935558E3E6604D866BF0B2F92DD90BCBEB1D44F73B8FED9D3"
+    },
+    {
+      "relative_path": "phase-summary.json",
+      "byte_count": 6765,
+      "sha256": "ED7F81D008CDFEE01736BC4996FB7CA5303485C5B9AEFE5D900AE79AAF5C65B3"
+    },
+    {
+      "relative_path": "stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "stdout.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  ]
+}

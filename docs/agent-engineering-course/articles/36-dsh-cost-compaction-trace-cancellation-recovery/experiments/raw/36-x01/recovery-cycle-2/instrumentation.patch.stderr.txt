@@ -1,0 +1,2 @@
+warning: in the working copy of 'E:\workspace\TechStackShow\docs\agent-engineering-course\articles\36-dsh-cost-compaction-trace-cancellation-recovery\experiments\raw\36-x01\instrumentation.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'E:\workspace\TechStackShow\docs\agent-engineering-course\articles\36-dsh-cost-compaction-trace-cancellation-recovery\experiments\36-x01-recovery-cycle-2-instrumentation.ts', LF will be replaced by CRLF the next time Git touches it

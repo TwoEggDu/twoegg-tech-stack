@@ -1,0 +1,196 @@
+{
+  "schema_version": "36-x01-recovery-cycle-5-test-phase-summary-v1",
+  "mode": "GREEN_ISOLATED_DIAGNOSTIC",
+  "status": "PASS",
+  "exit_code": 0,
+  "expected_failed_assertions": null,
+  "actual_failed_assertions": [],
+  "required_phase_count": 25,
+  "injection_results": [
+    {
+      "phase": "BOUNDARY_ENTER",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_BOUNDARY_ENTER",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FIXTURE_STATE_BEFORE_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FIXTURE_STATE_BEFORE_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FIXTURE_STATE_BEFORE_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FIXTURE_STATE_BEFORE_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FROZEN_CANDIDATE_IDENTITY_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FROZEN_CANDIDATE_IDENTITY_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FROZEN_CANDIDATE_IDENTITY_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FROZEN_CANDIDATE_IDENTITY_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "TARGET_AND_RAW_PATHS_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_TARGET_AND_RAW_PATHS_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "TARGET_AND_RAW_PATHS_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_TARGET_AND_RAW_PATHS_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_STATE_CALL_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_STATE_CALL_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_GET_FIXTURE_STATE_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_GET_FIXTURE_STATE_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_GET_FIXTURE_STATE_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_GET_FIXTURE_STATE_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_PATH_NORMALIZATION_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_PATH_NORMALIZATION_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_PATH_NORMALIZATION_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_PATH_NORMALIZATION_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_READ_ONLY_GIT_SHAPES_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_READ_ONLY_GIT_SHAPES_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_READ_ONLY_GIT_SHAPES_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_READ_ONLY_GIT_SHAPES_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_CANDIDATE_IDENTITIES_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_CANDIDATE_IDENTITIES_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_CANDIDATE_IDENTITIES_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_CANDIDATE_IDENTITIES_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_BYTE_COMPARISON_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_BYTE_COMPARISON_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_BYTE_COMPARISON_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_BYTE_COMPARISON_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_PREDICATES_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_PREDICATES_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_PREDICATES_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_PREDICATES_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_RETURN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_RETURN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_STATE_CALL_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_STATE_CALL_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_PRESTATE_RECEIPT_WRITE_BEGIN",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_PRESTATE_RECEIPT_WRITE_BEGIN",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "FOCUSED_PRESTATE_RECEIPT_WRITE_END",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_FOCUSED_PRESTATE_RECEIPT_WRITE_END",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    },
+    {
+      "phase": "BOUNDARY_EXIT",
+      "status": "FAIL",
+      "failure_code": "CYCLE5_ISOLATED_BOUNDARY_EXIT",
+      "disposition": "ISOLATED_EXCEPTION_REPRODUCED",
+      "manifest_file_count": 6
+    }
+  ],
+  "original_launcher_invocation_count": 0,
+  "corepack_invocation_count": 0,
+  "pnpm_invocation_count": 0,
+  "vitest_invocation_count": 0,
+  "focused_target_invocation_count": 0,
+  "collector_invocation_count": 0,
+  "dsh_command_count": 0,
+  "network_invocation_count": 0,
+  "started_utc": "2026-09-01T08:22:55.8870270Z",
+  "ended_utc": "2026-09-01T08:22:57.0706887Z"
+}

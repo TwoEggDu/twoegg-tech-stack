@@ -1,0 +1,7 @@
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\persistence
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\correlation.jsonl
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\history-projection-diff.json
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\request-after.json
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\request-before.json
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\runtime-summary.json
+C:\Users\IGG\AppData\Local\Temp\dsh-article36-x01-artifacts\sentinel-receipt.jsonl

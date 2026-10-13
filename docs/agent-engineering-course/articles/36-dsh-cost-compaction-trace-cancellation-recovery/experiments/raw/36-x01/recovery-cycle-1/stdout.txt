@@ -1,0 +1,11 @@
+
+ RUN  v4.1.8 C:/Users/IGG/AppData/Local/Temp/codex-dsh-part-vi-cd5ef814
+
+ × |thread-safe| packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts > Article 36 required integrated source experiment > 36-X01-INTEGRATED-01 runs P0-P5 through owner runtime seams 94ms
+   → Cannot read properties of undefined (reading 'data')
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:34:16
+   Duration  7.84s (transform 3.23s, setup 1.40s, import 5.34s, tests 95ms, environment 0ms)
+

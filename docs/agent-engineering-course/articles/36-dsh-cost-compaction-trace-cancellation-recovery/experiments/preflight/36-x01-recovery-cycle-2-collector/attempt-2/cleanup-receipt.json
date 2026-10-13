@@ -1,0 +1,11 @@
+{
+  "source_root": "C:\\Users\\IGG\\AppData\\Local\\Temp\\a36-cycle2-attempt2-source-b3ad88ade7d8453d82c722ba760d1b1a",
+  "destination_root": "C:\\Users\\IGG\\AppData\\Local\\Temp\\a36-cycle2-attempt2-destination-b3ad88ade7d8453d82c722ba760d1b1a",
+  "pre_cleanup_source_exists": true,
+  "pre_cleanup_destination_exists": true,
+  "collector_exit_code": 9,
+  "cleanup_attempted": true,
+  "source_root_absent": true,
+  "destination_root_absent": true,
+  "status": "PASS"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-attempt-2-target-spec-removal-v1",
+  "mode": "VALIDATE_FOCUSED_PRESTATE",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-3-ATTEMPT-2",
+  "target_spec_path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\packages\\compaction\\compaction-basic\\tests\\36-x01-long-session-compaction-cancel-resume.spec.ts",
+  "existed_before_removal": false,
+  "removal_attempted": false,
+  "removal_method": "NONE_TARGET_ABSENT",
+  "other_cleanup_attempted": false,
+  "removal_error": null,
+  "target_absent_after": true,
+  "pass": true
+}

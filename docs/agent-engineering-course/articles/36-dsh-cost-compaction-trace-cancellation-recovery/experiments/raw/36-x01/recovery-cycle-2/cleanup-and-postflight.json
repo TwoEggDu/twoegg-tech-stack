@@ -1,0 +1,32 @@
+{
+  "schema_version": "36-x01-recovery-cycle-2-cleanup-postflight-v1",
+  "cleanup_actions": [],
+  "cleanup_note": "No temporary spec or test-owned source root was created; no deletion was necessary.",
+  "temporary_spec_present": false,
+  "source_root_present": false,
+  "fixture_head": {
+    "exit_code": 0,
+    "stdout": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "stderr": "",
+    "match": true
+  },
+  "fixture_tag_commit": {
+    "exit_code": 0,
+    "stdout": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "stderr": "",
+    "match": true
+  },
+  "fixture_status": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "clean": true
+  },
+  "fixture_diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "clean": true
+  },
+  "fixture_final_pinned_and_clean": true
+}

@@ -1,0 +1,21 @@
+{
+  "root": "C:\\Users\\IGG\\AppData\\Local\\Temp\\a36-cycle2-attempt3-destination-33a71d2cafef4203bbad6555d8448ea3",
+  "file_count": 3,
+  "files": [
+    {
+      "relative_path": "brackets[].txt",
+      "byte_count": 24,
+      "sha256": "BCCC786E4FD1F63B563C25B3828B4BEE861FF1912F727885DA22AF32B1D7B823"
+    },
+    {
+      "relative_path": "nested/nested.txt",
+      "byte_count": 15,
+      "sha256": "4E7267FD5C54130FE83E69920D63E38117957E56F9172965B8DB27C75A3C1A96"
+    },
+    {
+      "relative_path": "top-level.txt",
+      "byte_count": 18,
+      "sha256": "BB32F3EBF2426CB7E312D81BF77E32AA0F29C8E8763A807ACB0B538D2581295A"
+    }
+  ]
+}

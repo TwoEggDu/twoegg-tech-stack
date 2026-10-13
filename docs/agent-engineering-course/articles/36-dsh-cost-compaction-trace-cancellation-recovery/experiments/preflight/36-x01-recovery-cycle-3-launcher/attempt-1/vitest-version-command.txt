@@ -1,0 +1,1 @@
+& 'C:\nvm4w\nodejs\corepack.cmd' 'pnpm' 'exec' 'vitest' '--version'

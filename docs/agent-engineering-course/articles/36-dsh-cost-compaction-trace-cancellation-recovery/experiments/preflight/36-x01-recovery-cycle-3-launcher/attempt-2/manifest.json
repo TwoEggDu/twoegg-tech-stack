@@ -1,0 +1,41 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-attempt-2-manifest-v1",
+  "mode": "VALIDATE_FOCUSED_PRESTATE",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-3-ATTEMPT-2",
+  "status": "FAIL",
+  "self_excluding": true,
+  "excluded_relative_path": "manifest.json",
+  "includes_every_actual_attempt2_file_except_self": true,
+  "required_tree_complete": false,
+  "nested_launcher_manifest_present": false,
+  "attempt1_files_included": false,
+  "generated_utc": "2026-09-01T06:40:26.7316387Z",
+  "file_count": 5,
+  "files": [
+    {
+      "relative_path": "attempt-summary.json",
+      "byte_count": 2495,
+      "sha256": "094ECA173F31CDA4446E002D00253948736397A0F2B502EB0B4396FF2AC08C23"
+    },
+    {
+      "relative_path": "clean-before-copy.json",
+      "byte_count": 46207,
+      "sha256": "09FCA773A2C47BB6ED8AB42666F551EEC17FE216E2ADBC415A003FD9DD290E37"
+    },
+    {
+      "relative_path": "cleanup-receipt.json",
+      "byte_count": 54503,
+      "sha256": "8552B606AEF34DE9FCE5C06DA10CF54768EB83337CF4FD2F4867CAF0E4B65553"
+    },
+    {
+      "relative_path": "target-spec-copy-receipt.json",
+      "byte_count": 896,
+      "sha256": "3589C97AEDB1BA6639CF90A94DB3B914F1D32E0FBB44BE53CC0BB7E49B1F9035"
+    },
+    {
+      "relative_path": "target-spec-removal-receipt.json",
+      "byte_count": 598,
+      "sha256": "1341B80473B40F0EE2E6B81A92DFBE0D1ED88C7639CF81836211D82D56E8293C"
+    }
+  ]
+}

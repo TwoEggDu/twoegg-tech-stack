@@ -1,0 +1,16 @@
+{
+  "schema_version": "36-x01-recovery-cycle-5-test-identities-v1",
+  "mode": "GREEN_ISOLATED_DIAGNOSTIC",
+  "test": {
+    "path": "experiments/36-x01-recovery-cycle-5-diagnostic.Tests.ps1",
+    "byte_count": 10787,
+    "sha256": "E042BC774E717ABEE31EE9B2BB297A5C4A49063C211B221C75D000BFB797219F"
+  },
+  "candidate": {
+    "path": "experiments/36-x01-recovery-cycle-5-diagnostic.ps1",
+    "byte_count": 19626,
+    "sha256": "D5AF4F2FF3F11A4BB06DD18D7357989722E851733D2F56220B2E5AFA25107274"
+  },
+  "candidate_executed": true,
+  "frozen_launcher_expected_sha256": "2F16A499C1A799C8A15C03384C2BC41FB7C742236BD5DCF07229BA4C0415C64E"
+}

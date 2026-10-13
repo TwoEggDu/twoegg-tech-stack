@@ -1,0 +1,115 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-prevalidation-summary-v1",
+  "mode": "PREVALIDATE",
+  "status": "PASS",
+  "failure_code": null,
+  "failure_message": null,
+  "launcher_source_sha256": "524D95F34F65435D48696B0A688276A106D0A8610D78FFD43E06A8BF375CA8F2",
+  "resolver_completed_before_path_mutation": true,
+  "package_manager_validated_before_path_mutation": true,
+  "resolved_corepack_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+  "process_path_scope": "CURRENT_LAUNCHER_PROCESS_ONLY",
+  "process_path_restored": true,
+  "fixture_vitest_resolution": {
+    "schema_version": "36-x01-recovery-cycle-3-vitest-resolution-v1",
+    "resolver_command": "Get-Command -Name 'vitest.cmd' -All -CommandType Application",
+    "resolver_count": 1,
+    "resolver_entries": [
+      {
+        "name": "vitest.CMD",
+        "command_type": "Application",
+        "source": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD",
+        "path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD",
+        "definition": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD"
+      }
+    ],
+    "selected_absolute_path": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.CMD",
+    "expected_fixture_shim": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814\\node_modules\\.bin\\vitest.cmd",
+    "selected_inside_fixture_bin": true,
+    "selected_matches_fixture_shim": true,
+    "resolved_after_process_path_prepend": true
+  },
+  "actual_processes": [
+    {
+      "receipt_prefix": "pnpm-version",
+      "invocation_kind": "PROBE",
+      "executable_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+      "executable_is_absolute": true,
+      "executable_matches_captured_corepack": true,
+      "argument_vector": [
+        "pnpm",
+        "--version"
+      ],
+      "native_arguments": "pnpm --version",
+      "display_command": "& 'C:\\nvm4w\\nodejs\\corepack.cmd' 'pnpm' '--version'",
+      "working_directory": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814",
+      "started": true,
+      "started_utc": "2026-09-01T05:49:36.1879666Z",
+      "ended_utc": "2026-09-01T05:49:36.6848625Z",
+      "duration_milliseconds": 493,
+      "timeout_seconds": 60,
+      "timed_out": false,
+      "exit_code": 0,
+      "stdout": {
+        "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\pnpm-version-stdout.txt",
+        "exists": true,
+        "byte_count": 7,
+        "sha256": "D7C27E39E223D95B17ED257F80E9E4A27633549A13B62A189D3A17D05F9B1816"
+      },
+      "stderr": {
+        "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\pnpm-version-stderr.txt",
+        "exists": true,
+        "byte_count": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "streams_merged": false
+    },
+    {
+      "receipt_prefix": "vitest-version",
+      "invocation_kind": "PROBE",
+      "executable_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+      "executable_is_absolute": true,
+      "executable_matches_captured_corepack": true,
+      "argument_vector": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "--version"
+      ],
+      "native_arguments": "pnpm exec vitest --version",
+      "display_command": "& 'C:\\nvm4w\\nodejs\\corepack.cmd' 'pnpm' 'exec' 'vitest' '--version'",
+      "working_directory": "C:\\Users\\IGG\\AppData\\Local\\Temp\\codex-dsh-part-vi-cd5ef814",
+      "started": true,
+      "started_utc": "2026-09-01T05:49:36.7019977Z",
+      "ended_utc": "2026-09-01T05:49:37.4292435Z",
+      "duration_milliseconds": 725,
+      "timeout_seconds": 60,
+      "timed_out": false,
+      "exit_code": 0,
+      "stdout": {
+        "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\vitest-version-stdout.txt",
+        "exists": true,
+        "byte_count": 37,
+        "sha256": "062EF18A97B769B53DF611990663F48B4199F8F99B284C5A76A5BB2C7A013262"
+      },
+      "stderr": {
+        "path": "E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\preflight\\36-x01-recovery-cycle-3-launcher\\attempt-1\\vitest-version-stderr.txt",
+        "exists": true,
+        "byte_count": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "streams_merged": false
+    }
+  ],
+  "prevalidation_probe_count": 2,
+  "focused_command_count": 0,
+  "target_spec_execution_count": 0,
+  "bare_corepack_invocation_count": 0,
+  "target_spec_absent": true,
+  "runtime_source_root_absent": true,
+  "cycle3_raw_absent": true,
+  "fixture_head_tag_clean_preserved": true,
+  "frozen_harness_collector_preserved": true,
+  "claim_ceiling": "LAUNCHER_ONLY_PREVALIDATION_NOT_DSH_RUNTIME_EVIDENCE",
+  "target_experiment_authorized": false
+}

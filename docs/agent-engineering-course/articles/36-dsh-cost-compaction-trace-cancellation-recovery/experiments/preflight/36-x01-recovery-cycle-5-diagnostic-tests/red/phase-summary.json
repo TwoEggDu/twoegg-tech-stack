@@ -1,0 +1,28 @@
+{
+  "schema_version": "36-x01-recovery-cycle-5-test-phase-summary-v1",
+  "mode": "RED_STATIC_FROZEN_LAUNCHER",
+  "status": "EXPECTED_FAIL",
+  "exit_code": 41,
+  "expected_failed_assertions": [
+    "durable_precise_phase_receipt",
+    "sanitized_script_stack_receipt",
+    "exception_preserving_finalization"
+  ],
+  "actual_failed_assertions": [
+    "durable_precise_phase_receipt",
+    "sanitized_script_stack_receipt",
+    "exception_preserving_finalization"
+  ],
+  "required_phase_count": 25,
+  "injection_results": [],
+  "original_launcher_invocation_count": 0,
+  "corepack_invocation_count": 0,
+  "pnpm_invocation_count": 0,
+  "vitest_invocation_count": 0,
+  "focused_target_invocation_count": 0,
+  "collector_invocation_count": 0,
+  "dsh_command_count": 0,
+  "network_invocation_count": 0,
+  "started_utc": "2026-09-01T08:20:01.4958803Z",
+  "ended_utc": "2026-09-01T08:20:01.5169637Z"
+}

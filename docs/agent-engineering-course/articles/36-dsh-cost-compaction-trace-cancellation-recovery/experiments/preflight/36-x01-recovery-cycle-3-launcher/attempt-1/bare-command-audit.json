@@ -1,0 +1,37 @@
+{
+  "schema_version": "36-x01-recovery-cycle-3-bare-command-audit-v1",
+  "actual_invocation_count": 2,
+  "bare_corepack_invocation_count": 0,
+  "all_actual_executables_absolute": true,
+  "all_actual_executables_match_pre_path_capture": true,
+  "prevalidation_probe_count": 2,
+  "focused_command_count": 0,
+  "target_spec_execution_count": 0,
+  "forbidden_install_update_argument_vector_count": 0,
+  "resolver_lookup_is_not_execution": true,
+  "launcher_source_parse_error_count": 0,
+  "launcher_source_direct_bare_corepack_command_ast_count": 0,
+  "launcher_source_resolver_before_path_mutation": true,
+  "launcher_source_prevalidate_probe_callsite_count": 2,
+  "launcher_source_prevalidate_contains_focused_arguments": false,
+  "actual_invocations": [
+    {
+      "executable_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+      "argument_vector": [
+        "pnpm",
+        "--version"
+      ],
+      "invocation_kind": "PROBE"
+    },
+    {
+      "executable_absolute_path": "C:\\nvm4w\\nodejs\\corepack.cmd",
+      "argument_vector": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "--version"
+      ],
+      "invocation_kind": "PROBE"
+    }
+  ]
+}

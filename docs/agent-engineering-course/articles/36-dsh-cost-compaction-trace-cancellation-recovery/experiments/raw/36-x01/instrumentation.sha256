@@ -1,0 +1,4 @@
+TEMPORARY_SPEC_BYTES_SHA256  8DE1035782BE396F2997A476D1B889572A5C200B85277DD6EF9F09F3DF34371F  packages/compaction/compaction-basic/tests/36-x01-long-session-compaction-cancel-resume.spec.ts
+ARCHIVED_LF_SOURCE_SHA256    C4AF80CEC0B068F7C54A87777F19751FE90EF2FF28ED3DCB619ADE689276660D  instrumentation.ts
+
+The temporary Windows working-tree file used CRLF bytes. `instrumentation.ts` is the exact text payload archived by apply_patch with repository-standard LF normalization; `instrumentation.patch` preserves the no-index textual diff captured before execution.

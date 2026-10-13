@@ -1,0 +1,9 @@
+{
+  "status": "NOT_OBSERVED",
+  "reason": "COMMAND_LAUNCH_FAILURE",
+  "raw_history": "NOT_CREATED",
+  "model_request_before": "NOT_CREATED",
+  "model_request_after": "NOT_CREATED",
+  "projection_before": "NOT_CREATED",
+  "projection_after": "NOT_CREATED"
+}

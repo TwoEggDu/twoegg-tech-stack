@@ -1,0 +1,48 @@
+{
+  "schema_version": "36-x01-recovery-cycle-4-orchestrator-tests-red-manifest-v1",
+  "mode": "RED",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-4-ORCHESTRATOR-TEST-RED",
+  "status": "EXPECTED_FAIL",
+  "failure_code": "EXPECTED_DEFECT_WITNESSES_OBSERVED",
+  "failure_message": "RED intentionally exits nonzero after both frozen witness failures are observed.",
+  "self_excluding": true,
+  "excluded_relative_path": "manifest.json",
+  "file_count": 7,
+  "files": [
+    {
+      "relative_path": "cleanup-receipt.json",
+      "byte_count": 541,
+      "sha256": "A1ABE4DAF4A3894C00FDD950813D0CB59ED64BE5BA01B1461A50A7240CAAB093"
+    },
+    {
+      "relative_path": "exact-test-command.txt",
+      "byte_count": 529,
+      "sha256": "621900A14D680C73DF02E5D2621DF1B5EE82FF82CCA0D1D95082DAD95E565AD5"
+    },
+    {
+      "relative_path": "exit-code.txt",
+      "byte_count": 4,
+      "sha256": "DDB5C6D217EA442D92DCDEAD04DADE6263EA482787904AB5C50A86D142B3C07D"
+    },
+    {
+      "relative_path": "process.json",
+      "byte_count": 2415,
+      "sha256": "60E9BD9308476A045106D18DB1E67EAB858AF774C9970317CFB32D3C14B9C767"
+    },
+    {
+      "relative_path": "stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "stdout.txt",
+      "byte_count": 1092,
+      "sha256": "77909A7A9053DED348C031D0C1CAE0B3BFAD58EA5BC352174D03F9B8C8FF3162"
+    },
+    {
+      "relative_path": "test-summary.json",
+      "byte_count": 2156,
+      "sha256": "9D67DFDB09947301C2CB5D93D246C36055DC19B680C717B48138251EB8998608"
+    }
+  ]
+}

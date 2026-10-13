@@ -1,0 +1,1 @@
+& 'C:\Users\IGG\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe' -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File 'E:\workspace\TechStackShow\docs\agent-engineering-course\articles\36-dsh-cost-compaction-trace-cancellation-recovery\experiments\36-x01-recovery-cycle-10-caller.ps1'

@@ -8,47 +8,47 @@ factory_mode: SEQUENTIAL_SUBAGENT_FACTORY
 production_branch: main
 checkpoint_sha_source: GIT_HISTORY
 completion_evidence_source: GIT_HISTORY + REMOTE_REFS
-factory_status: READY
+factory_status: PAUSED
 current_article: "36"
-current_gate: PRECHECK
+current_gate: LAB_EXECUTE
 last_published_article: "35"
 active_worker: NONE
 active_worker_execution_id: NONE
 active_worker_record_ref: NONE
 last_worker_result_semantics: LAST_PERSISTED_PRE_COMMIT_RESULT
 last_worker_result:
-  role: MASTER_ORCHESTRATOR
-  article: "35"
-  gate: PRE_COMMIT_RECONCILIATION
-  execution_type: MASTER_DETERMINISTIC
-  execution_id: MASTER
-  result_ref: docs/agent-engineering-course/articles/35-dsh-tool-registry-execution-pipeline/subagent-trace.md#wr-a35-pre-commit-reconciliation-retry1
+  role: REVIEWER
+  article: "36"
+  gate: REVIEW_RECHECK
+  execution_type: REAL_SUBAGENT
+  execution_id: /root/a36_c10_preflight
+  result_ref: docs/agent-engineering-course/articles/36-dsh-cost-compaction-trace-cancellation-recovery/subagent-trace.md#wr-a36-c10-preflight
   status: PASS
   gate_completed: true
   artifact_verified: true
   validation_status: PASS
-  next_allowed_gate: GIT_DIFF_VERIFY
+  next_allowed_gate: LAB_EXECUTE
   blocker: NONE
 last_worker_result_error: NONE
-review_cycle: 0
-active_blocker: NONE
-stop_reason: NONE
-human_decision_required: false
+review_cycle: 1
+active_blocker: BLOCKED_EVIDENCE
+stop_reason: HUMAN_DECISION_REQUIRED
+human_decision_required: true
 article_authorization:
   status: INACTIVE
   scope: NONE
   article: "36"
   continue_until: NONE
   auto_continue_after_gate_pass: false
-  explicit_stop_line: NONE
-  next_article_authorized: true
-last_successful_commit: 3908174accd733c6bf9ee0e9141b58b168b3f93c
-next_action: START_ARTICLE_36_PRECHECK_AFTER_RESOLVE_ARTICLE_35_END_ARTICLE
+  explicit_stop_line: AFTER_RECOVERY_CYCLE_10_REVIEW_RECHECK
+  next_article_authorized: false
+last_successful_commit: b27b4057fa87f64bc11110cd2cc9e69d738b1f19
+next_action: RECONCILE_CYCLE10_OUTCOME_BEFORE_ANY_EXECUTION
 continuous_run:
-  enabled: true
+  enabled: false
   start_article: "35"
   stop_after_article: "37"
-  auto_continue_after_end_article: true
+  auto_continue_after_end_article: false
   stop_at_part_boundary: true
   stop_on:
     blocker: true
@@ -70,8 +70,58 @@ continuous_run:
     - "42"
     - "43"
     - "44"
-last_updated: "2026-08-30T21:48:14+08:00"
+last_updated: "2026-10-13"
 ```
+
+> 2026-10-13 Recovery checkpoint：用户授权保存并推送现有课程资料，不包含继续实验或发布 Article36。仓库中的最后一条 Cycle10 Probe 记录停在 `Dispatch RUNNING`，没有完成结果或 observation；只读检查确认固定 TEMP root 存在但为空。无法据此证明 caller 是否曾启动、预算是否消耗或 Probe 成败，均保持 `UNKNOWN / NOT_DURABLY_PROVABLE`。Factory 当前为 `PAUSED / BLOCKED_EVIDENCE / HUMAN_DECISION_REQUIRED / active NONE`，Article36 保持 `NOT_PUBLISHED`；`current_gate=LAB_EXECUTE` 表示未闭合的历史执行阶段，恢复前必须先核对既有结果与预算，不允许据此重跑。历史 preflight PASS 仅作为最后已保存的 worker result 保留，不代表当前执行授权。旧失败现场、方案、脚本和原始记录不修改、不清理；Article37—44 不启动。
+
+> 2026-09-03 Recovery Cycle 9唯一Probe attempt=`FAIL / HUMAN_DECISION_REQUIRED`。新Tests=`10601 bytes / 97BCE1ED...A19FD`与source identity=`3169 bytes / B08CEF0E...2EEA7`已冻结；唯一TEMP root在caller preflight期间被分配，但保持`0 files / 0 dirs`，没有bootstrap marker、result、inventory或任何Subject receipt。Worker报告原因是`Test-Path`表达式解析错误；由于失败发生在首个durable receipt之前，exact caller command、host exit与error payload保持`NOT_DURABLY_PROVABLE`，fully-qualified Task候选也没有获得runtime验证。Probe预算已消耗；RED/GREEN/compatibility/formal=`0/0/0/0`，production文件=`0/3`。Cycle8三项身份和六文件/三缺失失败现场精确不变，fixture pinned/clean，SPEC/ART absent，Article37 zero-assets。STOP POLICY WINS：Factory=`PAUSED / HUMAN_DECISION_REQUIRED / active NONE`，失败空TEMP root原样保留且禁止cleanup；禁止修复、重跑或后续Gate。
+
+> 2026-09-03 Human Resume=`好的，我授权，请你继续`明确授权Article 36 Recovery Cycle 9。Fresh reconciliation确认`main / local HEAD / origin/main / live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`；Cycle8 plan=`71430 bytes / 7643609E...510707`、Tests=`10571 bytes / EBF92D46...907CFB`、source identity=`3169 bytes / FE7A83FB...34AE2`及failed TEMP均原样保留；Cycle8 recorder/runner/verifier与RED/GREEN/compat/formal均不存在。DSH fixture仍固定于`cd5ef8148158c3a752a658978873241fdf8e2bbc`且clean，Cycle9 assets与Article37—44 assets均为zero。Factory只恢复到`EXPERIMENT_DESIGN`：fresh Researcher仅允许创建新的Cycle9 plan；设计与fresh review通过前禁止Probe、RED、GREEN、compatibility、正式实验及Article37。
+
+> 2026-09-03 Recovery Cycle 8唯一isolated bootstrap Probe=`FAIL / bootstrap exit90 / HUMAN_DECISION_REQUIRED`。Tests=`10571 bytes / EBF92D46...907CFB`与23-row source identity已冻结；Probe marker、identity、ready、stdout、stderr和emergency均持久化，但bootstrap在pump settlement处因PowerShell无法解析短类型`[Task]`而写入`RuntimeException: Unable to find type [Task].`。`result.kv / inventory.tsv / exception.kv`缺失，child exit保持`NOT_DURABLY_PROVABLE`，因此Probe不能接受。失败TEMP root原样保留且cleanup forbidden；RED/GREEN/compatibility/formal计数=`0/0/0/0`，三个production文件未创建，Cycle7仍`3 dirs / 0 files`，fixture pinned/clean，Article37 zero-assets。STOP POLICY WINS：Factory=`PAUSED / HUMAN_DECISION_REQUIRED / active NONE`，禁止修复、Probe重跑、RED或后续Gate。
+
+> 2026-09-03 Human Resume=`好的，请你继续`接受Master提出的Cycle7最小化恢复方案：Cycle5/6保持不可变，不继续修Cycle6通用serializer；改用与被测序列化机制解耦的crash-safe outer recorder、最小兼容性预验证与独立manifest复算，预验证和fresh recheck通过后才恢复Article36正式实验。Fresh reconciliation确认`main / local HEAD / origin/main / live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`、Cycle7 zero-assets、Cycle5/6哈希未漂移、fixture pinned/clean、Article37—44 zero-assets。Factory恢复至`EXPERIMENT_DESIGN`；fresh Researcher只允许创建一份Cycle7 plan，不得执行任何脚本或实验。
+
+> 2026-09-03 Recovery Cycle 6 fresh recheck=`FAIL / CYCLE6_RECEIPT_CLOSURE_NOT_CLOSED / TERMINAL`。唯一RED创建空root后在首个receipt之前异常失败；静态failure surface位于Tests中的PowerShell binder对`JsonObject.Add(key,value)`调用，但exact argv、实际host、exit code与stdout/stderr因无receipt保持`NOT_DURABLY_PROVABLE`。Production serializer、candidate、GREEN与isolated diagnostic均未创建/未运行；Cycle5 explicit-empty-array与exact-command provenance缺陷仍OPEN。Cycle5与launcher/harness/collector哈希保持不变，未发现retrospective backfill。Factory已关闭为`PAUSED / HUMAN_DECISION_REQUIRED / active NONE`；禁止自动修复、第二次RED或任何后续阶段。
+
+> 2026-09-03 Human Resume明确授权Article 36 Recovery Cycle 6：完整保留Cycle5失败证据且不修改/重跑旧GREEN；只允许新的schema-first receipt closure修复explicit empty array与exact-command provenance，并依序执行一次RED、一次GREEN、一次isolated diagnostic。Fresh reconciliation确认`main / local HEAD / origin/main / live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`，Cycle5关键哈希未漂移，Cycle6执行路径在设计前均不存在，Article37—44仍为zero-assets。Fresh Researcher已冻结TDD顺序、exact allowlist与零调用预算；Factory恢复至`REVISION`并设置硬停止线`AFTER_RECOVERY_CYCLE_6_REVIEW_RECHECK`。原launcher、Corepack、pnpm、Vitest、DSH与正式实验均不得调用。
+
+> 2026-09-01 Recovery Cycle 4=`FAIL / HUMAN_DECISION_REQUIRED`。Isolated RED=`EXPECTED_FAIL / exit41 / 7 of 7 exact`与GREEN=`PASS / exit0 / 7 of 7 exact`证明新durable orchestrator已修复argument-vector与empty-list两类failure shape；但唯一launcher-only Attempt1在exact spec copy后调用unchanged launcher v2一次并收到exit90，launcher只完成identity/Corepack/package-manager receipts，未完成focused-prestate、PATH mutation、Vitest resolution或版本探针，nested launcher manifest缺失。Attempt top manifest=`28 of 28 exact`，exact spec removal与fixture cleanup=`PASS`，所有probe/focused/target/collector计数为0。Fresh failure audit另登记`A36-C4-RR-F02`：RED/GREEN receipts未记录test SHA，阶段间测试字节不可durably证明。Launcher内部首因=`NOT_PROVABLE`；Cycle4禁止重试或回填。Factory hard lock=`PAUSED / HUMAN_DECISION_REQUIRED / active NONE`，`LAB_EXECUTE`未授权。
+
+> 2026-09-01 Human Resume=`好的，请你继续`接受上一条交接中明确列出的bounded Recovery Cycle 4：保留Cycle3 Attempt1/Attempt2和全部failure receipts，只允许truthful disposition、修复orchestration argument-vector绑定与empty-list closure、执行一次新的launcher-only prevalidation，并在fresh recheck PASS后才可执行仍未使用的唯一真实实验；hypothesis、acceptance、DSH baseline、harness与collector保持冻结。Fresh reconciliation确认`local HEAD == origin/main == live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`，Article36 transaction是唯一working-tree scope，fixture pinned/clean且target/runtime/Cycle3 raw absent，Article37—44 zero-assets。Factory恢复到`EXPERIMENT_DESIGN`，只授权fresh Researcher冻结Cycle4设计。
+
+> 2026-09-01 Recovery Cycle 3 Attempt2=`FAIL / HUMAN_DECISION_REQUIRED`。Master与fresh read-only Reviewer确认唯一orchestration在copy前因五条Git调用的argument vector均为空而fail closed，随后初始闭合在空nested-file list上触发`String.Join(null)`；launcher/Corepack/pnpm/Vitest/focused/target-test/collector计数均为0。Attempt2现存failure tree=`6 files / top manifest 5 of 5 exact / required launcher subtree absent`，target spec/runtime source/Cycle3 raw均不存在，fixture仍为pinned HEAD/tag且clean。`A36-C3-RR-F01`保持OPEN，`A36-C3-RR-F02`为TERMINAL；addendum禁止Attempt3、重修或重试，`LAB_EXECUTE`未授权。Factory hard lock=`PAUSED / HUMAN_DECISION_REQUIRED / active NONE`，等待新的外部Human Resume。
+
+> 2026-09-01 Human Resume明确授权Article 36 Recovery Cycle 3：允许truthful修复`A36-C2-FR-F01—F05`、修复并预验证Corepack/PATH启动方式、fresh recheck后执行一次实验；禁止改变hypothesis、acceptance和DSH baseline。Fresh reconciliation确认`main / local HEAD / origin/main / live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`，tracked/untracked writes仍仅Article36 transaction，fixture pinned/clean且temp spec/source root absent，Article37—44 zero-assets。Factory只恢复到`EXPERIMENT_DESIGN`；设计、实现与fresh recheck通过前不得执行focused command。
+
+> 2026-09-01 Recovery Cycle 2 hard-lock evidence review=`FAIL / FAILURE_EVIDENCE_INTEGRITY_FAILURE`。底层preflight失败链可信（Corepack probe exit1、focused command 0、P0—P5未观察、acceptance 0/10、collector exit3、manifest 17/17、fixture clean），但`A36-C2-FR-F01—F05`记录了invalid envelope未原样保存、corrected envelope Gate mapping无效、raw reproduction转义污染、durable明细旧值与collector destination描述过度。Hard lock保持`PAUSED / FAILED_LAB / HUMAN_DECISION_REQUIRED`；本轮不修raw、不修envelope、不重试、不进入Article37。
+
+> 2026-09-01 Human Resume明确授权Article 36 Recovery Cycle 2：允许truthful evidence disposition、最小harness修复、collector修复及预验证，并在独立`recovery-cycle-2`中执行一次实验；禁止改变hypothesis、acceptance、safety boundary与DSH baseline。Fresh reconciliation确认`local/origin/live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`、Cycle1 mismatch仍原样存在、Cycle2不存在、fixture pinned/clean、Article37—44 zero-assets。Factory只恢复到`EXPERIMENT_DESIGN`；设计与独立复核PASS前不得执行实验。
+
+> 2026-09-01 Article 36 Recovery Cycle 1=`FAIL / FAILED_LAB`：launcher修正已生效（Corepack pnpm=`11.7.0`，Vitest启动且selection=`1`），但唯一test command exit=`1`；harness在P0 correlation阶段对undefined读取`.data`，P0未完成、P1—P5未观察。同时test-owned runtime raw因collector literal wildcard未能转存，cleanup后源root已删除；现存替代JSON仅为Lab-authored failure receipts，不是重建runtime raw。一次授权attempt已耗尽，fixture已pinned/clean且temporary spec absent。`STOP POLICY WINS`：Factory重新hard lock为`PAUSED / FAILED_LAB / HUMAN_DECISION_REQUIRED`，不得自行修harness、修collector或重试。
+
+> 2026-09-01 Recovery Cycle 1 fresh independent review=`Spec FAIL / Evidence integrity FAIL / State parity FAIL`。Failure verdict本身诚实，但18项manifest中`reproduction-and-limitations.md`登记的bytes/SHA已过期，`correlation.jsonl`虽有26个closed keys却含空sentinel和错误phase/event标签，collector失败缺exact command/exit/stderr raw receipt；因此`artifact_verified=false / validation_status=FAIL / last_worker_result_error=RAW_ARTIFACT_INTEGRITY_FAILURE`。Master已闭合hard-lock projection；没有新Human Decision不得修metadata、harness、collector或重试。
+
+> 2026-09-01 Human Resume已明确授权Article 36 bounded Lab recovery。Fresh reconciliation确认`local HEAD == origin/main == live main == b27b4057fa87f64bc11110cd2cc9e69d738b1f19`，当前tracked/untracked writes仅属于Article36事务，Attempt 1失败raw与14/14 manifest保持不变，DSH fixture仍固定并clean，Article37—44仍zero-assets。Factory解除人工锁并回到`EXPERIMENT_DESIGN`：只允许fresh Researcher冻结一次`fixture-local .bin + Corepack pnpm@11.7.0 + exact archived harness`启动修正；不得覆盖Attempt 1、安装/更新依赖、改变harness语义或自行增加第二次恢复。
+
+> 2026-08-30 Article 36 36-X01=`FAIL / FAILED_LAB`：唯一冻结命令exit=`1`，Vitest未启动、selection=`0`，因此P0—P5与owner observers均未执行；15项失败raw、14/14 manifest和fixture clean/cleanup已验证。原worker envelope因status/Gate mapping无效而保留`INVALID / NON_AUTHORITY`，corrected envelope无文件写入。由于`continuous_run.stop_on.required_lab_failure=true`，`STOP POLICY WINS`：Factory hard lock=`PAUSED / FAILED_LAB / HUMAN_DECISION_REQUIRED`，LAB_EXECUTE仅recovery candidate；不得自行使用已识别的PATH/Corepack修正或重试。
+
+> 2026-08-30 Article 36 fresh Lab Engineer已派发：execution=`/root/a36_lab`；只允许一次冻结focused command、exact temp spec/test-owned temp roots和36-X01 raw allowlist。成功/失败raw均必须保存并清理fixture；不允许第二harness、Lab07或后续Gate写入。
+
+> 2026-08-30 Article 36 EXPERIMENT_DESIGN=`PASS`：唯一36-X01合同冻结为`1 integrated harness / 1 sequential P0—P5 case / 180s`，包含exact temp spec/imports/command、usage/compaction/request diff/cancel-resume/sentinel/correlation JSONL、failure preservation与cleanup receipts；未执行测试，fixture仍clean。下一Gate=`EXPERIMENT_EXECUTE`。
+
+> 2026-08-30 Article 36 fresh EXPERIMENT_DESIGN Researcher已派发：execution=`/root/a36_experiment_design`，只允许追加source-resolved可执行设计与新建单一36-X01合同文件；不得改变已冻结hypothesis/acceptance、安全边界，不执行测试或修改fixture。
+
+> 2026-08-30 Article 36 SOURCE_MAP corrected envelope=`PASS`：首次envelope把既有skeleton误报为created，明确保留为`INVALID / NON_AUTHORITY`；同worker仅重发无文件写入的corrected envelope。Master抽验`30 / 30` source/test paths与关键symbols，固定fixture clean；Hook/Usage/Compaction/Cancel/Resume路径已闭合，spend Budget与universal Trace ID保持bounded absence，runtime仍pending。下一Gate=`EXPERIMENT_DESIGN`。
+
+> 2026-08-30 Article 36 fresh Source Investigator已派发：task=`/root/a36_source_map`，canonical envelope role=`RESEARCHER`，严格writes=`repository-map.md + call-path.md`；只读固定fixture，不执行实验、不改Research/Evidence或后续资产。
+
+> 2026-08-30 Article 36 fresh RESEARCH=`PASS`：`16 / 16 RQ`、`17 / 17 preliminary Claims/Cards`与`36-X01`完整实验合同已冻结；核心DSH行为仍为`BLOCKED_SOURCE_MAP / PENDING_EXPERIMENT`，无runtime confirmation。Master验证两文件allowlist、反证、格式和future boundary后迁移到`SOURCE_MAP`，active worker清零。
+
+> 2026-08-30 Article 36 fresh Researcher已派发：execution=`/root/a36_research`，严格writes=`research.md + evidence.md`，只执行RESEARCH Gate；Source Map、实验、Outline/Draft/Review/发布与global state均不在其权限内。
+
+> 2026-08-30 Article 36 fresh PRECHECK、ARTICLE_KICKOFF与WORKSPACE_INIT已完成：`main / HEAD / origin/main / live main`一致于`b27b4057fa87f64bc11110cd2cc9e69d738b1f19`，Article35由Git history和remote refs解析为`END_ARTICLE`；DSH fixture固定且clean。当前只建立deterministic workspace skeleton，Gate=`RESEARCH`、authorization=`ACTIVE`；Article37未启动，Article38—44与Part VII保持forbidden/zero-assets。
 
 > 2026-08-30 Article 35 fresh `PRE_COMMIT_RECONCILIATION RETRY 1 PASS`：两处new raw-text格式Finding已按before/after hash留痕并由recovery manifest `9 / 9`重验；fresh Hugo仍为`1263/44/1 / exit0`，exact transaction仍为36 files，Article36—44资产仍为zero。此记录取代旧persistence cut；下一步仅允许重新执行`GIT_DIFF_VERIFY`与唯一Article35 completion commit。
 
@@ -223,7 +273,7 @@ last_updated: "2026-08-30T21:48:14+08:00"
 - PRECHECK `PASS` 后必须执行显式 `ARTICLE_KICKOFF`，Factory 才能进入 `RUNNING` 并创建当前 workspace；pointer 指向 Article 不等于 Kickoff 已发生。
 - `article_authorization`记录当前单篇transaction的continuation authority。初次START在PRECHECK PASS后由Kickoff设置`status: ACTIVE`、`scope: ARTICLE_TRANSACTION`、`article: "N"`、`continue_until: END_ARTICLE`、`auto_continue_after_gate_pass: true`；mid-Article CONTINUE必须先fresh Resume Reconciliation，再由幂等`ARTICLE_AUTHORIZATION_RESUME`在durable current Gate设置同一ACTIVE形态，不回放PRECHECK、Kickoff、已完成worker或已通过Gate。如果人类明确收窄范围，再设置非`NONE`的`explicit_stop_line`。`next_article_authorized`始终为`false`，除非另有独立的人类Article N+1授权。
 - Article 17已由Git history与remote refs解析为`END_ARTICLE`。本次明确人类授权在Part III Audit独立checkpoint验证后启用Article 18—22 bounded continuous run；`article_authorization`在具体Article完成PRECHECK / ARTICLE_KICKOFF前仍保持INACTIVE，且不会授权Article 23或24。
-- `article_authorization`与`continuous_run`独立：前者控制当前Article内部Gate续跑，后者只控制完成一篇后是否自动进入下一篇。到达`explicit_stop_line`时唯一durable投影为`factory_status: PAUSED`、`active_blocker: NONE`、`stop_reason: EXPLICIT_HUMAN_STOP_LINE`、`human_decision_required: false`、`current_gate: <next allowed/resume gate>`、`next_action: CONTINUE_ARTICLE_N_AT_<GATE>`；authorization写为`status: INACTIVE / scope: NONE / article: "N" / continue_until: NONE / auto_continue_after_gate_pass: false / explicit_stop_line: <matched line> / next_article_authorized: false`。真实blocker按其normalized mapping暂停；`PRE_COMMIT_RECONCILIATION`写入下一Article pointer时必须把authorization重置为INACTIVE，persistence cut后只读tail不得回写。
+- `article_authorization`与`continuous_run`独立：前者控制当前Article内部Gate续跑，后者只控制完成一篇后是否自动进入下一篇。到达`explicit_stop_line`时唯一durable投影为`factory_status: PAUSED`、`active_blocker: BLOCKED_EVIDENCE`、`stop_reason: EXPLICIT_HUMAN_STOP_LINE`、`human_decision_required: true`、`current_gate: <next allowed/resume gate>`、`next_action: CONTINUE_ARTICLE_N_AT_<GATE>`；authorization写为`status: INACTIVE / scope: NONE / article: "N" / continue_until: NONE / auto_continue_after_gate_pass: false / explicit_stop_line: <matched line> / next_article_authorized: false`。真实blocker按其normalized mapping暂停；`PRE_COMMIT_RECONCILIATION`写入下一Article pointer时必须把authorization重置为INACTIVE，persistence cut后只读tail不得回写。
 - `PRE_COMMIT_RECONCILIATION` 必须把最终 checkpoint 内容写成可恢复状态：Article N Lifecycle Candidate=`PUBLISHED`、`last_published_article = N`、`current_article = N+1`、`current_gate = PRECHECK`、`factory_status = READY`、`active_worker = NONE`、`next_action = START_ARTICLE_N+1_PRECHECK`。这些字段始终只是 candidate pointer；同一 persisted checkpoint 在 commit 前可解析为 `INCOMPLETE`，在 valid commit / push / remote reconciliation 后可解析为 `END_ARTICLE`，中间不写 bridge。启动权威 = candidate pointer + resolver `END_ARTICLE` + policy，且仍不等于 `ARTICLE_KICKOFF`。
 - `active_worker` 只使用 [subagent-contracts.md](subagent-contracts.md) 中的八种 role 或 `NONE`。
 - `active_worker_execution_id` 与 `active_worker_record_ref` 在 worker start 时由 Master 写入。record ref 必须指向当前 Article `subagent-trace.md` 的 stable Worker Result Record，或 Part / Course Audit Report 中的等价 record；record 同时保存 bounded task brief、execution ID、raw envelope 与 validation result。worker 仍运行时保留 active fields；确认结束后才把 `active_worker` 和两个 active fields 统一清为 `NONE`。
@@ -265,7 +315,7 @@ last_updated: "2026-08-30T21:48:14+08:00"
   随后设置 `factory_status: PAUSED`、`active_blocker: MISSING_OR_INVALID_WORKER_RESULT`、`stop_reason: HUMAN_DECISION_REQUIRED`。若 runtime 已确认结束，active worker fields 清为 `NONE`；若仍在运行，则保留 active fields，禁止重复 dispatch。
 - `last_worker_result.next_allowed_gate` 只保存通过 Master common mapping 与 State Machine validation 的 forward transition 或 recovery candidate。非 terminal `status: PASS` 时不得为 `NONE`；`gate_completed: false` 只允许指向合同冻结的 retry / return Gate。`last_worker_result` 是 `LAST_PERSISTED_PRE_COMMIT_RESULT`，不是 Article / Transaction completion，也不能替代 `current_gate`、`factory_status`、canonical raw record、required artifacts 或 Git evidence。未来 Article 以 `PRE_COMMIT_RECONCILIATION` 作为 completion commit 中最后一个可持久化的 result projection；Git Diff Verify、Checkpoint Commit、Commit Verify、Push、Remote Verify、Post-Commit Reconciliation 与 `END_ARTICLE` 都是 runtime resolver facts，不写入本文件，Resume 时由 `ResolveArticleCompletion(N)` 重新执行只读检查。Article 08 的 `GIT_DIFF_VERIFY` projection 是 schema migration 保留的 legacy boundary。
 - `review_cycle` 只在一次 `Findings -> Revision -> Recheck` 完成后递增，最大值为 `3`。
-- `stop_reason` 只使用 `NONE / EXPLICIT_HUMAN_STOP_LINE / BLOCKED_EVIDENCE / FAILED_LAB / FAILED_REVIEW / FAILED_PUBLICATION / HUMAN_DECISION_REQUIRED / REPOSITORY_CONFLICT`。`EXPLICIT_HUMAN_STOP_LINE`是成功到达人类边界，不是failure或blocker，必须同时保持`active_blocker: NONE / human_decision_required: false`。
+- `stop_reason` 只使用 `NONE / EXPLICIT_HUMAN_STOP_LINE / BLOCKED_EVIDENCE / FAILED_LAB / FAILED_REVIEW / FAILED_PUBLICATION / HUMAN_DECISION_REQUIRED / REPOSITORY_CONFLICT`。`EXPLICIT_HUMAN_STOP_LINE`是成功到达人类边界，不是failure或blocker，必须同时保持`active_blocker: BLOCKED_EVIDENCE / human_decision_required: true`。
 - Part Auditor 返回 `PART_AUDIT_FINDINGS` 时不得把 role-specific code 直接写入 `stop_reason`；Master 必须唯一映射为 `factory_status: PAUSED`、`active_blocker: PART_AUDIT_FINDINGS`、`stop_reason: HUMAN_DECISION_REQUIRED`、`human_decision_required: true`。只有人类批准 Audit Report 中的 affected Article 与 targeted repair scope 后，Resume 才能选择具体 Article / Gate。
 - `last_successful_commit` 是最近一个已知可恢复的 durable checkpoint hint（当前 Article 15 hint=`0c9465ca55e095bb1d78e71016b9c6ba357c7ac6`），可以保存 previous verified checkpoint 或 `PENDING_SELF`。它不是 blind checkout target、当前 `HEAD` 的绝对真相、completion authority 或 Resume 的唯一依据；checkpoint commit 不得自引用，也不得为了同步新 SHA 制造第二个 reconciliation commit。
 - Resume 必须联合检查本文件、`status.md`、current Article workspace、Published Content、`git status`、Git `HEAD` / history、checkpoint hint 与 required artifacts。不得默认执行 `git checkout <last_successful_commit>`，也不得因 pointer 落后 state commit 自动 rewind。

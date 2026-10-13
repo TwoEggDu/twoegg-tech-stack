@@ -1,0 +1,16 @@
+diff --git "a/E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\raw\\36-x01\\instrumentation.ts" "b/E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-instrumentation.ts"
+index e4a3692..4978073 100644
+--- "a/E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\raw\\36-x01\\instrumentation.ts"
++++ "b/E:\\workspace\\TechStackShow\\docs\\agent-engineering-course\\articles\\36-dsh-cost-compaction-trace-cancellation-recovery\\experiments\\36-x01-recovery-cycle-2-instrumentation.ts"
+@@ -203,8 +203,9 @@ function appendCorrelation(
+   extras: Partial<CorrelationRecord> = {},
+   session?: Session,
+ ): void {
+-  const data = extras.event_seq === undefined && session !== undefined
+-    ? eventData(session.events.at(-1) as SessionEvent)
++  const lastEvent = session?.events.at(-1)
++  const data = extras.event_seq === undefined && lastEvent !== undefined
++    ? eventData(lastEvent)
+     : {}
+   const projection = session === undefined ? 'N/A' : projections(ctx, session)
+   const history = session === undefined ? 'N/A' : session.deriveMessages()

@@ -1,0 +1,48 @@
+{
+  "schema_version": "36-x01-recovery-cycle-4-orchestrator-tests-green-manifest-v1",
+  "mode": "GREEN",
+  "attempt_identity": "36-X01-RECOVERY-CYCLE-4-ORCHESTRATOR-TEST-GREEN",
+  "status": "PASS",
+  "failure_code": "",
+  "failure_message": "",
+  "self_excluding": true,
+  "excluded_relative_path": "manifest.json",
+  "file_count": 7,
+  "files": [
+    {
+      "relative_path": "cleanup-receipt.json",
+      "byte_count": 549,
+      "sha256": "9A3C43DCE80FF2FDA45602EFDE95F315FABF87DF57DE4AEA3F3E78E7782AF016"
+    },
+    {
+      "relative_path": "exact-test-command.txt",
+      "byte_count": 725,
+      "sha256": "DA2C7340BB265D5AA1F899BF7E19F87730BF17B6A65BE568B82BE54F4BA13FF5"
+    },
+    {
+      "relative_path": "exit-code.txt",
+      "byte_count": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+    },
+    {
+      "relative_path": "process.json",
+      "byte_count": 2858,
+      "sha256": "DDF5957A51C87B2FE208D1B13838EE2D434A8A5781514F80B3D8AA763AAAB102"
+    },
+    {
+      "relative_path": "stderr.txt",
+      "byte_count": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "relative_path": "stdout.txt",
+      "byte_count": 3064,
+      "sha256": "6E0C336378AABBBD97F6E7E541E13F96B524D73D72180535C0494D0610352AD4"
+    },
+    {
+      "relative_path": "test-summary.json",
+      "byte_count": 4674,
+      "sha256": "0EBB3C07A9AE7DAD93FB6C2878CA9A1B7580768895FC14D35DC7956593C97C9C"
+    }
+  ]
+}

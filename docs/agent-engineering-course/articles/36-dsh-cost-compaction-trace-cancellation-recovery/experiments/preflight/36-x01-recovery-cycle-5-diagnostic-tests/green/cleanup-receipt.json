@@ -1,0 +1,7 @@
+{
+  "schema_version": "36-x01-recovery-cycle-5-test-cleanup-v1",
+  "temporary_root_removed": true,
+  "repository_write_count_outside_receipt_root": 0,
+  "dsh_fixture_write_count": 0,
+  "cleanup_pass": true
+}

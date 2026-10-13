@@ -1,0 +1,7 @@
+{
+  "status": "CAPTURE_LOST",
+  "reason": "TEST_OWNED_RAW_TRANSFER_FAILED_AFTER_SINGLE_EXECUTION",
+  "selected_cases": 1,
+  "phases_completed": [],
+  "runtime_evidence": "NOT_AVAILABLE"
+}

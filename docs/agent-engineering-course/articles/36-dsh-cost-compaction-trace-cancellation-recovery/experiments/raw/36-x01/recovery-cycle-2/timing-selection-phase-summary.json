@@ -1,0 +1,27 @@
+{
+  "schema_version": "36-x01-recovery-cycle-2-execution-summary-v1",
+  "status": "FAILED_REQUIRED_SOURCE_EXPERIMENT",
+  "failure_stage": "PREFLIGHT",
+  "blocker": "COREPACK_PNPM_VERSION_PROBE_FAILED",
+  "focused_command_count": 0,
+  "focused_command_exit": "NOT_EXECUTED",
+  "timed_out": false,
+  "elapsed_ms": 0,
+  "vitest_selection_count": 0,
+  "phases": {
+    "P0": "NOT_OBSERVED",
+    "P1": "NOT_OBSERVED",
+    "P2": "NOT_OBSERVED",
+    "P3": "NOT_OBSERVED",
+    "P4": "NOT_OBSERVED",
+    "P5": "NOT_OBSERVED"
+  },
+  "phases_completed": [],
+  "acceptance": {
+    "satisfied": 0,
+    "required": 10,
+    "disposition": "NOT_EVALUABLE_NO_VITEST_EXECUTION"
+  },
+  "claim_ceiling": "BLOCKED_EVIDENCE",
+  "no_retry": true
+}
