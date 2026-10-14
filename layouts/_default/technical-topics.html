@@ -1,0 +1,31 @@
+{{ define "main" }}
+  <header class="directory-intro">
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+  </header>
+  <div class="topic-directory">
+    <nav class="directory-nav" aria-label="技术领域">
+      {{ range .Params.topic_groups }}
+        <a href="#{{ .id }}">{{ .title }}</a>
+      {{ end }}
+    </nav>
+    <div class="directory-groups">
+      {{ range .Params.topic_groups }}
+        <section id="{{ .id }}" class="directory-group" aria-labelledby="directory-{{ .id }}">
+          <h2 id="directory-{{ .id }}">{{ .title }}</h2>
+          <p>{{ .hint }}</p>
+          <ul>
+            {{ range .entries }}
+              {{ $entry := . }}
+              {{ with site.GetPage .page }}
+                <li><a href="{{ .RelPermalink }}">{{ $entry.title }}</a></li>
+              {{ else }}
+                {{ errorf "Technical directory target not found: %s" .page }}
+              {{ end }}
+            {{ end }}
+          </ul>
+        </section>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

@@ -92,7 +92,7 @@
     {{ end }}
   </section>
 
-  {{ if gt (len $featuredPages) 0 }}
+  {{ if and (not .Params.hide_featured) (gt (len $featuredPages) 0) }}
     <section class="feature-block">
       <div class="page-title-block compact">
         <p class="eyebrow">Start Here</p>

@@ -1,0 +1,26 @@
+body.is-technical-topics { overflow-x: clip; }
+.directory-intro { padding: 0 0 28px; border-bottom: 1px solid var(--border); }
+.directory-intro h1 { font-size: 32px; margin: 0 0 14px; }
+.directory-intro p { color: var(--muted); max-width: 48rem; font-size: 14px; margin: 8px 0; }
+.directory-intro a { text-decoration: underline; text-underline-offset: 4px; }
+.topic-directory { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 48px; margin-top: 30px; }
+.directory-nav { position: sticky; top: 24px; align-self: start; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.directory-nav a { padding: 5px 0; color: var(--muted); }
+.directory-group { padding: 0 0 26px; margin-bottom: 28px; border-bottom: 1px solid var(--border); scroll-margin-top: 24px; }
+.directory-group h2 { font-size: 23px; margin: 0 0 7px; }
+.directory-group > p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+.directory-group ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; list-style: none; margin: 0; padding: 0; }
+.directory-group a { display: inline-block; padding: 3px 0; font-size: 15px; color: var(--teal); }
+.topic-directory a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.topic-directory a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+@media (max-width: 760px) {
+  .topic-directory { display: block; margin-top: 22px; }
+  .directory-nav { position: static; flex-direction: row; flex-wrap: wrap; gap: 8px 18px; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .directory-intro h1 { font-size: 28px; }
+  .directory-group ul { gap: 8px 16px; }
+  .directory-group a { font-size: 13px; }
+  .directory-group h2 { font-size: 22px; }
+}
+@media (max-width: 360px) {
+  .directory-group ul { grid-template-columns: 1fr; }
+}

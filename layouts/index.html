@@ -1,120 +1,69 @@
 {{ define "main" }}
-  {{ $sections := slice
-    "engineering-journey"
-    "delivery-engineering"
-    "rendering"
-    "engine-toolchain"
-    "performance"
-    "system-design"
-    "code-quality"
-    "problem-solving"
-    "projects"
-    "essays"
-  }}
+  <section class="home-intro">
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+    <div class="home-search">
+      {{ partial "site-search.html" . }}
+    </div>
+  </section>
 
-  {{ $sectionNames := dict
-    "engineering-journey" "实践与演进"
-    "delivery-engineering" "交付工程"
-    "rendering" "渲染管线"
-    "engine-toolchain" "引擎工具链"
-    "performance" "性能工程"
-    "system-design" "系统设计"
-    "code-quality" "代码质量"
-    "problem-solving" "问题拆解"
-    "projects" "项目案例"
-    "essays" "工程判断"
-  }}
+  <div class="home-editorial">
+    <section id="articles" class="home-articles" aria-labelledby="home-articles-title">
+      <h2 id="home-articles-title" class="home-section-title">文章选读</h2>
+      {{ with .Params.home_feature }}
+        {{ $feature := . }}
+        {{ with site.GetPage .page }}
+          <article class="home-lead">
+            <p class="home-meta">{{ $feature.label }}</p>
+            <h3><a href="{{ .RelPermalink }}">{{ range $feature.title_lines }}<span>{{ . }}</span>{{ end }}</a></h3>
+            <p class="home-description">{{ $feature.summary }}</p>
+            <a class="home-read-link" href="{{ .RelPermalink }}">读这篇文章 →</a>
+          </article>
+        {{ else }}
+          {{ errorf "Home featured article not found: %s" .page }}
+        {{ end }}
+      {{ end }}
 
-  {{ $recommended := slice
-    "engineering-journey/_index.md"
-    "delivery-engineering/delivery-overview-series-index.md"
-    "rendering/player-input-and-game-content-to-screen.md"
-    "engine-toolchain/dotnet-runtime-ecosystem-series-index.md"
-    "problem-solving/一次-assetbundle-构建后-shader-variant-丢失问题的定位与修复.md"
-  }}
+      {{ range .Params.home_articles }}
+        {{ $entry := . }}
+        {{ with site.GetPage .page }}
+          <article class="home-row">
+            <p class="home-meta">{{ $entry.label }}</p>
+            <h3><a href="{{ .RelPermalink }}">{{ $entry.title }}</a></h3>
+            <p class="home-description">{{ $entry.summary }}</p>
+          </article>
+        {{ else }}
+          {{ errorf "Home article not found: %s" .page }}
+        {{ end }}
+      {{ end }}
 
-  <section class="reader-hero">
-    <div class="reader-intro">
-      <p class="eyebrow">TwoEgg Tech Stack</p>
-      <h1>{{ with .Params.hero_title }}{{ . }}{{ else }}游戏工程、引擎链路与交付实践笔记{{ end }}</h1>
-      <div class="reader-lead">{{ .Content }}</div>
-      <nav class="reader-actions" aria-label="首页快捷入口">
-        <a href="#series">推荐系列</a>
-        <a href="#topics">主题入口</a>
-        <a href="{{ `portfolio/` | relURL }}">技术作品集</a>
+      <nav class="home-browse" aria-label="继续阅读">
+        <a href="{{ relref . `game-development.md` }}#stages">按研发阶段阅读 →</a>
+        <a href="{{ relref . `portfolio.md` }}">工程案例 →</a>
       </nav>
-    </div>
 
-    {{ with site.GetPage "ai-empowerment/agent-engineering-series-index.md" }}
-      <section class="home-course-feature" aria-labelledby="home-agent-course-title">
-        <div class="home-course-copy">
-          <p class="eyebrow">Featured Course</p>
-          <h2 id="home-agent-course-title">Agent Engineering <span>系统课程</span></h2>
-          <p>从 Model、Prompt、Tool 与 Agent Loop，逐层进入 Context、Skill、Reliable Agent、Harness、DeepSeek Harness 与 BuildPilot。</p>
-          <div class="home-course-actions">
-            <a class="button" href="{{ .RelPermalink }}">进入课程首页</a>
-            <span>00—44 · 7 Parts · 6 Labs</span>
-          </div>
-        </div>
-        <div class="home-course-path" aria-label="课程主线">
-          <span>Model</span>
-          <span>Agent</span>
-          <span>Harness</span>
-          <span>BuildPilot</span>
-        </div>
+    </section>
+
+    <aside id="topics" class="home-topics" aria-labelledby="home-topics-title">
+      {{ with site.GetPage "technical-topics.md" }}
+        {{ $directory := . }}
+        <h2 id="home-topics-title"><a href="{{ .RelPermalink }}">技术目录 →</a></h2>
+        <ul class="home-topic-list">
+          {{ range .Params.topic_groups }}
+            <li>
+              <a href="{{ $directory.RelPermalink }}#{{ .id }}">{{ .title }}</a>
+              <p>{{ .hint }}</p>
+            </li>
+          {{ end }}
+        </ul>
+      {{ else }}
+        {{ errorf "Technical directory page not found" }}
+      {{ end }}
+      <section class="home-about" aria-labelledby="home-about-title">
+        <h2 id="home-about-title">关于这里</h2>
+        <p>{{ .Params.home_about }}</p>
+        <a href="{{ relref . `about.md` }}">更多介绍 →</a>
       </section>
-    {{ end }}
-
-    <aside id="latest" class="reader-latest" aria-label="最近更新">
-      <div class="reader-block-head">
-        <p class="eyebrow">Latest</p>
-        <h2>最近更新</h2>
-      </div>
-      <ol class="reader-list">
-        {{ range first 4 site.RegularPages.ByDate.Reverse }}
-          <li>
-            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-            <span>{{ with .CurrentSection }}{{ .Title }}{{ end }}</span>
-          </li>
-        {{ end }}
-      </ol>
     </aside>
-  </section>
-
-  <section class="reader-main" aria-label="首页内容导航">
-    <div id="series" class="reader-block">
-      <div class="reader-block-head">
-        <p class="eyebrow">Series</p>
-        <h2>推荐系列</h2>
-      </div>
-      <div class="reader-series-list">
-        {{ range $recommended }}
-          {{ with site.GetPage . }}
-            <a href="{{ .RelPermalink }}">
-              <strong>{{ .Title }}</strong>
-              <span>{{ .Params.description }}</span>
-            </a>
-          {{ end }}
-        {{ end }}
-      </div>
-    </div>
-
-    <div id="topics" class="reader-block">
-      <div class="reader-block-head">
-        <p class="eyebrow">Topics</p>
-        <h2>按主题进入</h2>
-      </div>
-      <div class="reader-topic-grid">
-        {{ range $sections }}
-          {{ $sectionName := index $sectionNames . }}
-          {{ with site.GetPage (printf "/%s" .) }}
-            <a href="{{ .RelPermalink }}">
-              <strong>{{ $sectionName }}</strong>
-              <span>{{ len .RegularPages }} 篇</span>
-            </a>
-          {{ end }}
-        {{ end }}
-      </div>
-    </div>
-  </section>
+  </div>
 {{ end }}

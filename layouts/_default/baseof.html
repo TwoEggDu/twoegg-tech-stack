@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ site.Language.Lang | default `zh-cn` }}">
   <head>
     <meta charset="utf-8">
@@ -26,11 +26,24 @@
     <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
     <meta name="twitter:description" content="{{ $pageDescription }}">
     <link rel="stylesheet" href="{{ `css/site.css` | relURL }}">
+    {{ if .IsHome }}<link rel="stylesheet" href="{{ `css/home.css` | relURL }}">{{ end }}
+    {{ if eq .Layout "technical-topics" }}<link rel="stylesheet" href="{{ `css/technical-topics.css` | relURL }}">{{ end }}
     <script src="{{ `js/site.js` | relURL }}" defer></script>
     <script src="{{ `js/search.js` | relURL }}" defer></script>
   </head>
-  <body{{ if .IsHome }} class="is-home"{{ end }}>
+  <body{{ if .IsHome }} class="is-home"{{ else if eq .Layout "technical-topics" }} class="is-technical-topics"{{ end }}>
     <div class="site-shell">
+      {{ if .IsHome }}
+      <header class="home-masthead">
+        <a class="home-brand" href="{{ site.Home.RelPermalink }}">TwoEgg<span>Tech Stack</span></a>
+        <nav class="home-nav" aria-label="站点导航">
+          <a href="#articles">文章</a>
+          <a href="{{ relref . `technical-topics.md` }}">技术目录</a>
+          <a href="{{ relref . `game-development.md` }}">研发地图</a>
+          <a href="{{ relref . `about.md` }}">关于</a>
+        </nav>
+      </header>
+      {{ else }}
       <header class="site-header">
         <div class="site-header-top">
           <a class="brand" href="{{ site.Home.RelPermalink }}">
@@ -39,29 +52,7 @@
               <strong>{{ site.Title }}</strong>
             </span>
           </a>
-          {{ with site.Home.OutputFormats.Get "JSON" }}
-            <form class="site-search" data-search data-search-index-url="{{ .RelPermalink }}" role="search">
-              <label class="sr-only" for="site-search-input">搜索站内内容</label>
-              <div class="site-search-field">
-                <span class="site-search-prefix" aria-hidden="true">Search</span>
-                <input
-                  id="site-search-input"
-                  class="site-search-input"
-                  type="search"
-                  name="q"
-                  placeholder="搜索文章、标签、栏目"
-                  autocomplete="off"
-                  spellcheck="false"
-                  enterkeyhint="search"
-                  aria-expanded="false"
-                >
-              </div>
-              <div class="search-panel" data-search-panel hidden>
-                <p class="search-status" data-search-status>输入关键词搜索文章、标签和栏目。</p>
-                <ul class="search-results" data-search-results hidden></ul>
-              </div>
-            </form>
-          {{ end }}
+          {{ partial "site-search.html" . }}
         </div>
         <nav class="site-nav" aria-label="Primary">
           {{ range site.Menus.main }}
@@ -69,11 +60,20 @@
           {{ end }}
         </nav>
       </header>
+      {{ end }}
 
       <main class="page-shell">
         {{ block "main" . }}{{ end }}
       </main>
 
+      {{ if .IsHome }}
+      <footer class="home-footer">
+        <span>TwoEgg · 游戏开发笔记</span>
+        <a href="{{ relref . `game-development.md` }}">游戏研发地图</a>
+        <a href="{{ relref . `about.md` }}">关于作者</a>
+        <a href="https://twoeggdu.github.io/" target="_blank" rel="noreferrer">其他记录 ↗</a>
+      </footer>
+      {{ else }}
       <footer class="site-footer">
         <nav class="footer-links">
           <a href="{{ site.Home.RelPermalink }}">TwoEgg Tech Stack</a>
@@ -83,6 +83,7 @@
           <a href="https://twoeggdu.github.io/AllWeather/" target="_blank" rel="noreferrer">宏观全天候研究日志</a>
         </nav>
       </footer>
+      {{ end }}
     </div>
   </body>
 </html>

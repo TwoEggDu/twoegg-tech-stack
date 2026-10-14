@@ -3280,3 +3280,8 @@ body.is-home .section-card .card-link {
   }
 }
 
+
+/* Home delivery reading paths reuse the existing responsive card grid. */
+.home-reading-paths {
+  padding: 34px 18px 0;
+}

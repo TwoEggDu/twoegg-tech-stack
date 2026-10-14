@@ -1,0 +1,80 @@
+/* The home page uses the approved reading layout; article pages keep site.css. */
+body.is-home {
+  background: #faf9f5;
+  color: #242a27;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+body.is-home::before { display: none; }
+.is-home .site-shell { max-width: 1120px; padding: 0 46px; }
+body.is-home .page-shell { padding: 0; }
+.is-home a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.is-home a:focus-visible { outline: 2px solid #9c4634; outline-offset: 5px; }
+.home-masthead { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 35px 0 28px; border-bottom: 1px solid #dddcd3; }
+.home-brand { font-size: 25px; font-weight: 700; letter-spacing: -.8px; line-height: 1.2; }
+.home-brand span { display: block; font-size: 11px; font-weight: 400; letter-spacing: .8px; margin-top: 8px; color: #777d76; }
+.home-nav { display: flex; flex-wrap: wrap; gap: 28px; font-size: 14px; }
+.home-intro { padding: 47px 0 38px; }
+.home-intro h1 { font-family: Georgia, "Songti SC", SimSun, serif; font-size: 37px; font-weight: 600; line-height: 1.45; letter-spacing: 2px; margin: 0 0 15px; }
+.home-intro p { margin: 0; color: #69716b; line-height: 1.95; }
+.home-editorial { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 78px; }
+.home-articles, .home-topics { min-width: 0; scroll-margin-top: 24px; }
+.home-section-title { font-size: 12px; font-weight: 400; color: #787b70; margin: 0; padding-bottom: 12px; border-bottom: 1px solid #d9d8ce; }
+.home-meta { font-size: 12px; color: #8b6957; letter-spacing: .3px; margin: 0; }
+.home-lead { padding: 24px 0 29px; border-bottom: 1px solid #d9d8ce; }
+.home-lead h3 { font-family: Georgia, "Songti SC", SimSun, serif; font-size: 31px; font-weight: 600; line-height: 1.45; margin: 13px 0 17px; letter-spacing: .5px; }
+.home-lead h3 span { display: block; }
+.home-description { color: #69716b; margin: 0; }
+.home-lead .home-description { max-width: 540px; line-height: 1.95; }
+.home-read-link { display: inline-block; margin-top: 17px; color: #9b4938; font-size: 13px; }
+.home-row { padding: 25px 0; border-bottom: 1px solid #e3e1d8; }
+.home-row h3 { font-size: 20px; font-weight: 600; line-height: 1.45; margin: 8px 0 10px; }
+.home-row .home-description { font-size: 14px; }
+.home-topics h2 { font-size: 13px; color: #777d73; font-weight: 400; line-height: 1.45; margin: 0 0 22px; }
+.home-topic-list { padding: 0; margin: 0; list-style: none; }
+.home-topic-list li { margin-bottom: 23px; }
+.home-topic-list a { font-size: 15px; font-weight: 600; }
+.home-topics p { color: #69716b; font-size: 12px; margin: 4px 0 0; line-height: 1.9; }
+.home-about { border-top: 1px solid #dddcd3; padding-top: 24px; margin-top: 31px; }
+.home-about h2 { margin-bottom: 10px; }
+.home-about a { display: inline-block; font-size: 12px; margin-top: 12px; color: #9b4938; }
+.home-browse { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 26px; font-size: 12px; color: #69716b; }
+.home-search { margin-top: 22px; }
+.home-search h2 { font-size: 13px; font-weight: 400; margin: 0 0 12px; color: #777d73; }
+body.is-home .site-search { width: 100%; max-width: 32rem; margin: 0; font-size: 14px; }
+.is-home .site-search-field { background: transparent; border-radius: 3px; }
+.is-home .search-panel { left: 0; right: auto; width: 100%; z-index: 10; }
+.home-footer { display: flex; align-items: baseline; flex-wrap: wrap; gap: 16px 24px; border-top: 1px solid #dedfd6; margin-top: 55px; padding: 23px 0 35px; color: #7c8178; font-size: 12px; }
+.home-footer > span { margin-right: auto; }
+
+@media (max-width: 760px) {
+  .is-home .site-shell { padding: 0 24px; }
+  .home-masthead { padding: 26px 0 22px; }
+  .home-brand { font-size: 22px; }
+  .home-brand span { font-size: 10px; }
+  .home-nav { gap: 12px 16px; font-size: 12px; }
+  .home-intro { padding: 32px 0; }
+  .home-intro h1 { font-size: 30px; }
+  .home-intro p { font-size: 13px; }
+  .home-editorial { grid-template-columns: 1fr; gap: 36px; }
+  .home-lead h3 { font-size: 27px; }
+  .home-lead .home-description { font-size: 14px; }
+  .home-row h3 { font-size: 19px; }
+  .home-topics { border-top: 1px solid #d9d8ce; padding-top: 25px; }
+  .home-topic-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .home-about { margin-top: 0; }
+  .home-footer { margin-top: 35px; font-size: 11px; gap: 14px; }
+  .home-footer > span { flex-basis: 100%; }
+}
+
+@media (max-width: 360px) {
+  .home-masthead { align-items: flex-start; flex-direction: column; }
+  .home-nav { width: 100%; justify-content: space-between; }
+  .home-lead h3 { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

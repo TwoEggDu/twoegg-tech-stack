@@ -10,9 +10,9 @@ disableKinds = ["taxonomy", "term"]
   home = ["HTML", "RSS", "JSON"]
 
 [params]
-  description = "交付工程、渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章。"
+  description = "从引擎工具到游戏产品交付，连接内容生产、研发协作、上线反馈与技术深度。"
   author = "TwoEgg"
-  tagline = "交付工程、渲染管线、引擎工具链、性能工程、系统设计 — 系统级技术文章。"
+  tagline = "从引擎工具到游戏产品交付。"
 
 [[params.externalSites]]
   title = "个人首页"
@@ -47,6 +47,16 @@ disableKinds = ["taxonomy", "term"]
   essays = "/essays/:slug/"
 
 [[menu.main]]
+  name = "技术目录"
+  pageRef = "/technical-topics/"
+  weight = 2
+
+[[menu.main]]
+  name = "研发总览"
+  pageRef = "/game-development/"
+  weight = 1
+
+[[menu.main]]
   name = "实践与演进"
   pageRef = "/engineering-journey/"
   weight = 5
@@ -77,8 +87,8 @@ disableKinds = ["taxonomy", "term"]
   weight = 50
 
 [[menu.main]]
-  name = "求职"
-  pageRef = "/career/"
+  name = "工程案例"
+  pageRef = "/portfolio/"
   weight = 80
 
 [[menu.main]]
