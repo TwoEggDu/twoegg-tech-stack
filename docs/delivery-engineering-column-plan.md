@@ -1,5 +1,33 @@
 # 交付工程体系 · 旗舰专栏总规划
 
+<a id="lifecycle-additions"></a>
+
+## 生命周期归并增量（2026-10-14）
+
+平台生态、国际化、无障碍与适用性核对归本专栏，连接 V02 内容生产、V09 平台发布与 V13 验证，不另开与发布重叠的系列。原分卷“待展开”和“新写”是早期状态；本轮已确认[内容生产](../content/delivery-engineering/delivery-content-pipeline-series-index.md)、[平台发布](../content/delivery-engineering/delivery-platform-publishing-series-index.md)、[验证](../content/delivery-engineering/delivery-verification-testing-series-index.md)等索引和正文存在，不以旧估算推断缺口。以下为附加提纲标识，不改动既有编号与文章身份。
+
+### DE-LC-01｜平台能力与适用性账本：账号、权益和发布要求怎样交接
+
+- **主问题**：同一产品跨平台、跨地区时，哪些是技术能力、平台约定或待核法律义务？
+- **责任边界**：身份/权益集成和适用范围交接；安全检测归服务端，市场渠道选择归产品系列。不复述受限认证材料，不写普遍强制结论。
+- **前置**：账号与会话、版本身份、平台发布基本概念；法律研究不依赖完整 ET 教程。
+- **可复用文章**：[平台发布索引](../content/delivery-engineering/delivery-platform-publishing-series-index.md)、[主机发布](../content/delivery-engineering/delivery-platform-publishing-06-console.md)、[事件契约](../content/code-quality/game-analytics-integration-event-schema-and-privacy.md)。主机文的具体要求先按问题登记核对。
+- **关键小节（研究问题）**：平台身份、游戏账号、存档、跨端联机与购买权益如何分责？SDK/插件/音乐/字体/外包素材的许可如何追溯？地区、年龄、隐私、分级、内容与支付要求怎样记录官方来源、版本、适用条件和复核日期？
+- **所需证据**：对应平台/地区的一手公开资料、版本支持矩阵、许可清单、合成身份/权益边界案例；有争议的义务需专业核对。
+- **当前状态**：已有发布正文，跨系统衔接仅规划；未查询最新法规、平台政策或验证 SDK。
+
+### DE-LC-02｜地区体验如何进入交付：本地化与无障碍的验收接口
+
+- **主问题**：翻译、输入、界面、声音和文化差异怎样成为可交付、可回归的体验规格？
+- **责任边界**：连接内容管线和验收；不重写 UI/字体/渲染机制或游戏设计教程，不把辅助功能建议写成所有平台的认证条款。
+- **前置**：内容/资源/配置区别、目标用户与平台矩阵；产品研究为延伸。
+- **可复用文章**：[内容边界](../content/delivery-engineering/delivery-content-pipeline-01-boundaries.md)、[多端资产](../content/delivery-engineering/delivery-content-pipeline-06-multiplatform-assets.md)、[兼容质量](../content/code-quality/game-quality-06-compatibility-quality.md)。已有主机文只列局部本地化/辅助功能提示，不能替代此链路。
+- **关键小节（研究问题）**：文本键、占位符、复数/RTL、字体与语音如何版本化并交付？日期、时区、货币、叙事和文化内容由谁复核？字幕、字号、对比度、色彩、输入重映射和设备辅助能力怎样由目标玩家参与验收？
+- **所需证据**：获准公开的语言资源样例、伪本地化与设备/输入测试设计、目标用户研究计划、平台公开辅助功能指南；本轮只列证据需求。
+- **当前状态**：仅规划，未写正文、未做语言或设备测试。
+
+阶段导航见[生命周期地图](game-lifecycle-knowledge-map.md)，该地图不接管本专栏篇级目录。
+
 > 版本：v1.0 | 日期：2026-04-14
 > 状态：规划阶段，待逐卷展开
 

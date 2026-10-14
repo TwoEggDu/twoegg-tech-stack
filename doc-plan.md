@@ -43,6 +43,8 @@
 
 | 文档 | 用途 | 何时优先读 |
 |------|------|-----------|
+| [docs/game-lifecycle-knowledge-map.md](./docs/game-lifecycle-knowledge-map.md) | 生命周期阅读导航，不维护篇级目录 | 需要按产品阶段寻找问题、文章与交付物时 |
+| [docs/game-lifecycle-coverage-audit.md](./docs/game-lifecycle-coverage-audit.md) | 跨仓覆盖、归并与版本审查快照 | 需要核对本轮依据、缺口和未验证范围时 |
 | [docs/site-entry-and-audience-plan.md](./docs/site-entry-and-audience-plan.md) | 站点定位、入口设计、目标读者 | 需要判断“站点先服务谁”时 |
 | [docs/site-full-expansion-plan-2026-04.md](./docs/site-full-expansion-plan-2026-04.md) | 全站扩张地图 | 需要看全局版图时 |
 | [docs/tech-foundation-priority-plan.md](./docs/tech-foundation-priority-plan.md) | 技术底座优先级 | 需要决定“先补哪条底座”时 |
@@ -103,6 +105,7 @@
 | 高性能服务端 ECS | [docs/game-server-ecs-high-performance-series-plan.md](./docs/game-server-ecs-high-performance-series-plan.md) | 已拆出 | 服务端 ECS 专项 |
 | 技能系统 | [docs/skill-system-series-plan.md](./docs/skill-system-series-plan.md) | 已拆出 | 游戏核心系统专项 |
 | 游戏预算管理 | [docs/game-budget-management-series-plan.md](./docs/game-budget-management-series-plan.md) | 已拆出 | 业务与工程边界主题 |
+| 游戏产品证据与决策 | [docs/game-product-evidence-series-plan.md](./docs/game-product-evidence-series-plan.md) | 仅规划，正文未写 | 市场立项、玩法研究、市场发行与持续经营；复用技能、数据、支付与交付专题 |
 
 ### 交付、运营、质量与验证
 
