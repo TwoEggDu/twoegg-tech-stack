@@ -3,6 +3,7 @@
 > 角色：根入口 / 路由页 / 状态页
 > 目标：让人和 AI 都先定位主题，再跳到唯一的 canonical plan
 > 版本：2026-04-18（v27，结构重构版）
+> 定位更新：2026-10-14；以职业经历中的游戏产品交付为主线，持续补强引擎工具，逐步接入上线运行与数据反馈。当前原则和调整顺序以[站点定位与演进原则](./docs/site-entry-and-audience-plan.md)为准；页面入口调整尚待实施。
 
 ---
 
@@ -43,9 +44,9 @@
 
 | 文档 | 用途 | 何时优先读 |
 |------|------|-----------|
+| [docs/site-entry-and-audience-plan.md](./docs/site-entry-and-audience-plan.md) | 当前站点定位、职业经历与交付主线、渐进调整原则 | 判断选题、技术深度和入口调整是否符合当前方向时先读 |
 | [docs/game-lifecycle-knowledge-map.md](./docs/game-lifecycle-knowledge-map.md) | 生命周期阅读导航，不维护篇级目录 | 需要按产品阶段寻找问题、文章与交付物时 |
 | [docs/game-lifecycle-coverage-audit.md](./docs/game-lifecycle-coverage-audit.md) | 跨仓覆盖、归并与版本审查快照 | 需要核对本轮依据、缺口和未验证范围时 |
-| [docs/site-entry-and-audience-plan.md](./docs/site-entry-and-audience-plan.md) | 站点定位、入口设计、目标读者 | 需要判断“站点先服务谁”时 |
 | [docs/site-full-expansion-plan-2026-04.md](./docs/site-full-expansion-plan-2026-04.md) | 全站扩张地图 | 需要看全局版图时 |
 | [docs/tech-foundation-priority-plan.md](./docs/tech-foundation-priority-plan.md) | 技术底座优先级 | 需要决定“先补哪条底座”时 |
 | [docs/execution-priority-plan-2026-04.md](./docs/execution-priority-plan-2026-04.md) | 近期执行顺序 | 需要排近期写作顺序时 |
