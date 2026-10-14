@@ -22,6 +22,8 @@ delivery_reading_lines:
   - "L2"
 ---
 
+> **证据状态（2026-10-14）**：三层并行方案的来源、资源数据及部分插件行为待核；同一 Agent 不自动意味着同一 workspace，需核对实际分配路径。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
+
 ## 在本篇你会读到
 
 - **三种并行的语义层次** —— 同进程 / 跨 Agent / 跨流水线
@@ -93,7 +95,7 @@ parallel {
 }
 ```
 
-`unity-builder` 标签下只有 2 台 Agent，但同一台 Agent 上的两个 build 会**共用 workspace**——iOS / Android build 的 `Library/` 内容不同，互相 reimport，**总时长比串行还慢**。
+这里的风险是两个执行分支实际写入了同一个 workspace 或共享目录，不能仅由“同一台 Agent”推出。`node` / `ws` 会分配工作目录，并发申请可能得到带 `@2` 等后缀的目录；应检查 `pwd()`、显式路径和外部缓存，再判断是否相互覆盖。[Jenkins 工作目录分配说明](https://www.jenkins.io/doc/pipeline/steps/workflow-durable-task-step/#ws-allocate-workspace)（核对于 2026-10-14）
 
 **正解：** 平台特化的 Agent 标签 + workspace 隔离：
 

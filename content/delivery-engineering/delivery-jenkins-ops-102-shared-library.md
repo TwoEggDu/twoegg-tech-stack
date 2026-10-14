@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "Shared Library 设计：抽象出可复用的游戏构建原语"
-description: 'Shared Library 不是放代码的杂物间。游戏团队的 Shared Library 设计成败，关键是抽象层级——什么算"原语"、什么不算，以及一个真实演进案例：从 0 个共享库到 3 层共享库的 18 个月。'
+description: '讨论共享库的抽象层级、参数与产物接口、版本维护；原演进案例和规模数字待核实。'
 slug: "delivery-jenkins-ops-102-shared-library"
 weight: 1573
 featured: false
@@ -22,6 +22,8 @@ delivery_reading_lines:
   - "L2"
 leader_pick: true
 ---
+
+> **证据状态（2026-10-14）**：“18 个月、三层共享库”的经历、复用比例与规模阈值尚无可核来源。本轮只撤下保证许可释放的模板。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
 
 ## 在本篇你会读到
 
@@ -131,26 +133,9 @@ gameCleanup()                            // 释放 license + 清理中间产物
 
 ### 1. Unity License 管理
 
-License 是稀缺资源 + 泄漏风险高 + 处理细节碎（[详见 301]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})）。这是 Shared Library 最高 ROI 的下沉对象——
+可把许可前置检查、调度名额、构建收尾与异常核对封装为共享能力，但实现应先区分机器激活、浮动租约与 Jenkins 锁，见 [301 许可边界]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})。
 
-```groovy
-// vars/withUnityLicense.groovy
-def call(Closure body) {
-    try {
-        unityActivate()
-        body()
-    } finally {
-        unityReturnLicense()  // 关键：finally 保证释放
-    }
-}
-
-// Jenkinsfile 用法
-withUnityLicense {
-    sh 'unity -batchmode -quit -executeMethod Build.iOS'
-}
-```
-
-封装在 Shared Library 后，所有业务方流水线**自动**遵守"激活-释放"规范，不再依赖每个 Jenkinsfile 自己记得加 `post { always { } }`。
+旧稿的 `unityActivate()` / `unityReturnLicense()` 是未验证的抽象函数；这里撤下“每次构建激活、finally 保证释放”的通用模板。共享库应分别返回构建结果、收尾结果和待核对状态，失联后的恢复不能只靠 finally。
 
 ### 2. 参数化的真值表
 

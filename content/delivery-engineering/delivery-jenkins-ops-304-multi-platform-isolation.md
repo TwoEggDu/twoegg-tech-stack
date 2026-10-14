@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "多平台并行打包与隔离"
-description: '同时出 iOS / Android / WebGL 看似简单 parallel，实际是 Library 平台敏感 + workspace 不能共享的隔离问题。本篇讲三类隔离方案（workspace / Agent / Library cache 分层）的取舍，以及一个真实"假并发反而变慢"的案例。'
+description: '讨论多平台构建的工作目录、节点与缓存隔离；旧架构案例和性能数字待核实。'
 slug: "delivery-jenkins-ops-304-multi-platform-isolation"
 weight: 1585
 featured: false
@@ -22,6 +22,8 @@ delivery_reading_lines:
   - "L1"
   - "L2"
 ---
+
+> **证据状态（2026-10-14）**：三平台架构及性能表的来源、机器规格和采样条件待核，不能作为已验证的并行收益。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
 
 ## 在本篇你会读到
 

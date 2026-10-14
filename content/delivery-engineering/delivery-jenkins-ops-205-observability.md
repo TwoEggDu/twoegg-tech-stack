@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "Jenkins 自身的可观测性：监控与告警"
-description: '"Jenkins 自己挂了谁来发现"——这个问题在 99% 的团队里答案是"业务方报警"。本篇讲怎么从被动救火变成主动监控：三层观测、关键指标、告警分级、Prometheus 落地。'
+description: '讨论 Jenkins、Agent 和 Pipeline 的观测与告警职责；原指标、阈值和告警案例待核实。'
 slug: "delivery-jenkins-ops-205-observability"
 weight: 1581
 featured: false
@@ -23,6 +23,8 @@ delivery_reading_lines:
   - "L2"
   - "L4"
 ---
+
+> **证据状态（2026-10-14）**：告警故事、阈值和指标名称尚待与插件版本及实际采样核对，不能直接作为生产告警标准。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
 
 ## 在本篇你会读到
 

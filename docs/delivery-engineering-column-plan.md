@@ -349,6 +349,17 @@ Part IX  组织篇        V18 组织治理  ·  V19 案例与模板
 
 **估算**：0 篇改写 + 5 篇新写 + 1 篇链接
 
+#### V04.2 原位补强：多版本协作（2026-10-14）
+
+- **候选标题 / 落点**：沿用《版本与分支管理 02｜分支策略》，增加[三个版本并行](../content/delivery-engineering/delivery-version-management-02-branching.md#parallel-release-lines)小节；不新建系列或篇号。
+- **主问题**：线上维护、待发布候选与远期开发怎样并行，且不会混用代码、资源和配置？
+- **责任边界**：本卷维护版本协作与交接规则；Jenkins 104 只负责触发和调度映射，不重复规划。
+- **前置**：提交、构建身份、配置导出与兼容范围；Jenkins 操作是延伸阅读。
+- **关键小节**：哪些变更允许进入各工作线？代码、资源、源表、协议和工具链怎样组成固定输入？一个修复怎样逐线确认？候选冻结后哪些测试需重跑，回退还依赖什么？
+- **可复用文章**：[内容冻结](../content/delivery-engineering/delivery-version-management-03-content-freeze.md)、[环境配置](../content/delivery-engineering/delivery-version-management-04-environments-and-flags.md)、[Jenkins 多分支](../content/delivery-engineering/delivery-jenkins-ops-104-multi-branch.md)。
+- **所需证据**：后续补脱敏的版本组合清单、修复传播记录、候选构建身份和兼容验收；本轮场景明确为设计示例。
+- **当前状态**：02 已有正文，本轮原位补充协作场景并收窄 GitFlow 推荐条件；没有执行分支合并、构建或发布。上面的“新写”估算属于早期规划，不代表 02 仍无正文。
+
 ---
 
 ### V05 · 资源管线

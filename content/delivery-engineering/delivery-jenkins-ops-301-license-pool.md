@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "Unity License 池管理：稀缺资源的治理"
-description: 'Unity License 是激活式（不是 floating），泄漏后 seat 不释放。游戏团队 Jenkins 最早撞墙的地方就是 License 池——本篇拆解三类故障（不够用 / 泄漏 / 占用不释放）和池化治理方案。'
+description: '区分 Unity 授权与激活、Licensing Server 浮动租约、Jenkins 并发锁。先确认授权模式，再设计排队、退出和异常后的状态核对。'
 slug: "delivery-jenkins-ops-301-license-pool"
 weight: 1582
 featured: false
@@ -25,326 +25,82 @@ delivery_reading_lines:
 leader_pick: true
 ---
 
+> **核对说明（2026-10-14）**：本篇按 Unity 官方资料修正授权模型。旧稿“Unity 不是 floating”、故障占比和“半夜全队卡死”的时间线缺乏依据，相关结论已撤回；本轮没有运行许可实验，也没有核验任何团队的订阅权益。
+
 ## 在本篇你会读到
 
-- **License 不是 token，是激活** —— 这一个区别决定一切
-- **三类故障** —— 不够用 / 泄漏 / 占用不释放
-- **License 池架构** —— 中央 server vs Agent 池的取舍
-- **自动化激活与释放** —— 流水线必须 finally 释放
-- **监控与告警** —— License 占用是核心指标
-- **真实事故** —— "半夜全队卡死"的还原
+- 授权、机器激活、浮动租约和 Jenkins 调度锁分别管理什么。
+- 任务在等待许可、失去连接和结束清理时怎样留下可核对的状态。
+- 怎样设计验证，判断一个许可管理封装能否用于自己的环境。
 
----
+## 先分清授权、激活、租约与调度锁
 
-## License 不是 token，是激活
+Unity 存在官方浮动许可方案：Unity Licensing Server 管理许可池，客户端向它申请许可。因此，不能把所有 Unity CI 都描述成“每次构建激活，结束后归还”的单一模型。[Unity Licensing Server 官方介绍](https://docs.unity.com/en-us/licensing-server)
 
-理解 Unity License 的关键认知：**它和 SaaS 软件的"floating license"完全不同**。
+设计管线前先记录四类信息：
 
-### Floating License（典型软件）
+| 对象 | 要确认的问题 | 不应混同的概念 |
+| --- | --- | --- |
+| 订阅与授权权益 | 当前组织获准使用哪种许可与构建方式？ | 购买席位不直接等于可任意轮转的机器池 |
+| 激活状态 | 所用 Editor 与授权模式怎样激活、停用或迁移？ | Editor 进程退出不一定等于解除机器激活 |
+| 浮动租约 | 当前客户端、服务器版本怎样申请、续约与回收？ | 租约和授权权益不是一回事 |
+| Jenkins 并发锁 | 哪个任务占了哪个调度名额？ | 拿到锁不能证明已经获准启动 Unity |
 
-- 中央 license server 维护 `N` 个 token
-- 客户端启动时**借用**一个 token，结束时**归还**
-- 网络断了 → 客户端自动归还（server 看 timeout）
-- token 数 = 真实并发数
-
-### Unity License（激活式）
-
-- 每个 Unity 安装做"激活"动作，绑定一个 seat
-- 激活之后 Unity 在该机器上可以**离线**运行
-- 退出 Unity 时**不自动释放** seat
-- 必须显式做"返回激活"（return activation）才释放
-
-```bash
-# 激活
-unity -batchmode -quit -nographics -username xxx -password xxx -serial xxx
-
-# 返回激活
-unity -batchmode -quit -returnlicense
-```
-
-### 为什么这一点是关键
-
-通用 CI 经验假设的是 floating license——build 进程崩溃 → 自动释放。
-
-Unity 不行：
-
-- build 进程崩溃 → seat 仍然占着
-- Agent 强杀 → seat 仍然占着
-- Agent 重启 → seat 仍然占着
-- 几天后 seat 池被"幽灵激活"占满
-
-这就是游戏团队 Jenkins 第一个撞墙的地方。
-
----
+具体权益和自动化方式需要按当前授权与版本确认。本文不推断某个订阅名称一定包含浮动许可，也不把自建计数器描述成授权系统。
 
 ## 三类故障
 
-### 故障 1：License 不够用
+### 故障 1：有合法容量，但任务仍在等待
 
-**现象**：build 排队，理由是 "no license available"。
+先区分等 Agent、等 Jenkins 锁和等许可。记录三个等待阶段的开始、结束与失败原因；只看总排队时间，无法判断该扩机器、调整调度还是检查许可服务。
 
-**真实原因可能有几种**：
+### 故障 2：构建结束，状态还未对齐
 
-- **真不够用**：团队规模长大，原来 10 个 seat 不够支撑 20 个工程师
-- **未优化分配**：local 工程师机和 build farm 共用 seat 池，工程师机器占用过多
-- **泄漏导致看起来不够用**（最常见）
+任务状态、Unity 进程状态和许可侧状态应分别核对。旧稿把这些情况统称“泄漏”，会掩盖连接故障、清理失败或尚未到期的租约。
 
-### 故障 2：License 泄漏
+Unity Licensing Server 文档区分租约续约间隔和发给客户端的许可有效期；服务端在租约失去续约后有回收机制。两者不能混成一个超时时间，也不能套用到所有激活模式。[服务器管理与配置](https://docs.unity.com/en-us/licensing-server/server-admin)
 
-**现象**：license server 显示 100% seat 占用，但 build farm 只有 30% Agent 在跑 build。
+### 故障 3：机器失联，无法确认仍在运行什么
 
-**根因**：build 异常退出（OOM / 强杀 / Agent 离线）没释放 license。这是 Unity license 的"原罪"——它没有 timeout 自动释放机制。
-
-### 故障 3：占用不释放（Stuck Activation）
-
-**现象**：某 Agent 上的激活记录一直在，但 Agent 实际已经停机或迁移。
-
-**触发**：
-
-- Agent 整机迁移（换硬件、换云实例），新机器无法激活，因为旧激活还挂着
-- Agent 装的 Unity 被重装，激活记录冗余
-- License server 网络抖动期间，激活状态不一致
-
-### 三类故障的关系
-
-```
-[License 不够用] ← 大多数情况是表象
-    ↓
-[License 泄漏] ← 真正根因（70%）
-[占用不释放] ← 真正根因（20%）
-[真不够用] ← 真正根因（10%）
-```
-
-**先排除泄漏和占用不释放，再考虑加 seat**——盲目买 seat 是浪费。
-
----
+Agent 离线不等于 Unity 已退出。先将节点停止接收新任务，核对进程、租约或激活记录，再按对应授权流程处置。无法确认时保留异常状态并交给维护者处理，不因“Jenkins 看起来空闲”就强制释放其他任务的资源。
 
 ## License 池架构
 
-### 模式 A：每 Agent 单独激活（最简单）
+建议把职责分成两层：许可系统负责实际授权，Jenkins 负责在已确认容量内调度工作。容量策略还需结合目标平台、机器资源和团队的授权约束。
 
-每台 Agent 装 Unity 后单独激活，绑定一个 seat。
-
-```
-Agent 1 → License Seat 1
-Agent 2 → License Seat 2
-...
-Agent N → License Seat N
-```
-
-**优点**：简单，Agent 离线不会影响其他 Agent。
-**缺点**：seat 数 = Agent 数，浪费严重（Agent 不跑 build 时 seat 也占着）。
-
-### 模式 B：Floating License Server（Unity 提供）
-
-Unity 提供企业版 floating license server，能动态分配 seat：
-
-```
-[License Server]
-    ↓ 动态分配
-Agent 1 → Seat #?
-Agent 2 → Seat #?
-...
-```
-
-**优点**：seat 数 = 实际并发数（不是 Agent 数）。
-**缺点**：需要 Unity Pro 企业级订阅，成本高；server 自身要高可用。
-
-### 模式 C：自建 License 池调度（推荐中型团队）
-
-自建一个 license 调度器，根据当前 build 队列决定哪些 Agent 激活、哪些休眠：
-
-```
-[Pool Manager]
-    ↓ 分配
-Active Agents → 激活状态（有 seat）
-    ↑ 释放后
-Standby Agents → 休眠（无 seat）
-```
-
-实现：在 Jenkins Shared Library 里写一个 `requestLicense()` / `releaseLicense()` 包装：
-
-```groovy
-// vars/withUnityLicense.groovy
-def call(Closure body) {
-    def licenseAcquired = false
-    try {
-        // 阻塞获取 seat（来自池）
-        licenseAcquired = poolManager.acquire(env.NODE_NAME, timeout: 30)
-        if (!licenseAcquired) {
-            error("Cannot acquire Unity license, pool exhausted")
-        }
-        body()
-    } finally {
-        if (licenseAcquired) {
-            poolManager.release(env.NODE_NAME)
-        }
-    }
-}
-```
-
-**Pool Manager** 是一个独立进程（Redis / 文件锁 / 简单 HTTP 服务都行），管理"哪些 Agent 当前持有激活、哪些是空闲池"。
-
----
+- 对需要机器激活的环境，先维护节点的激活与迁移流程；是否逐次激活、是否支持归还，要按该模式确认。
+- 对浮动许可环境，维护客户端配置、服务可达性和租约观察；不要再叠加一套伪造的“激活池”。
+- Jenkins 锁只限制作业并发。锁的获取、释放和许可状态的核对分别留记录，避免一个成功掩盖另一个失败。
 
 ## 自动化激活与释放
 
-### 关键模板：finally 释放
+共享库可以封装“前置检查 → 取得调度名额 → 确认许可可用 → 执行 → 收尾 → 记录结果”，但收尾行为必须按许可模式实现。
 
-每个 Pipeline 的 Unity 调用必须包在 `try-finally` 里：
+`finally` 或 `post { always { ... } }` 可以安排正常控制流中的清理；节点断电、进程被强杀或网络不可用时，不能保证远端清理已经执行。清理失败应成为可见结果，不能用 `|| true` 抹掉后再报告“已释放”。
 
-```groovy
-pipeline {
-    agent { label 'unity-builder' }
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                            unity -batchmode -quit -nographics \
-                                -username "$UNITY_USER" \
-                                -password "$UNITY_PASS" \
-                                -serial "$UNITY_SERIAL" \
-                                -executeMethod Build.iOS
-                        '''
-                    } finally {
-                        sh 'unity -batchmode -quit -nographics -returnlicense || true'
-                    }
-                }
-            }
-        }
-    }
-    post {
-        always {
-            // 双保险：post 块再尝试释放
-            sh 'unity -batchmode -quit -nographics -returnlicense || true'
-        }
-    }
-}
-```
-
-**关键点**：
-
-- `finally` 块（stage 内）和 `post { always {} }`（pipeline 级）双保险
-- `|| true` 防止释放失败导致 stage 标记 FAILURE（释放可能因为 Unity 进程已死而失败）
-- 即使 build 成功也要释放——Unity 不会因为正常退出而自动释放 seat
-
-### Shared Library 封装
-
-每个 Jenkinsfile 都写这段重复代码不可持续。封装到 Shared Library：
-
-```groovy
-// Jenkinsfile
-@Library('game-pipeline-lib@v1.4.0') _
-
-pipeline {
-    agent { label 'unity-builder' }
-    stages {
-        stage('Build') {
-            steps {
-                withUnityLicense {
-                    sh 'unity -batchmode -executeMethod Build.iOS'
-                }
-            }
-        }
-    }
-}
-```
-
-`withUnityLicense` 内部处理激活、释放、错误处理。所有业务方流水线**自动**遵守规范。
-
----
+封装至少应区分三个返回值：构建结果、收尾结果、后续核对状态。重试清理要能够识别原任务，避免重复归还或释放他人的资源。重启后的核对流程和日常清理同样需要维护者负责。
 
 ## 监控与告警
 
-### 核心指标
+分别观察可用容量、许可请求失败、等待时间、长时间未结束的占用以及收尾失败。阈值由实际构建时长和授权机制决定，旧稿的固定比例不再作为通用值。
 
-```
-unity_license_total                 # 总 seat 数
-unity_license_used                  # 当前占用
-unity_license_active_agents         # 当前激活 Agent 列表
-unity_license_acquire_duration_ms   # 获取 license 等待时长
-```
+### 如何验证
 
-### 告警阈值
+以下是待执行的验证设计，不是本轮实验结果：
 
-| 信号 | 阈值 | 级别 |
-|------|------|------|
-| License 占用率 > 90% | 持续 10 分钟 | P1 |
-| License 占用率 > 99% | 持续 1 分钟 | P0 |
-| 等待 license 超时（30 秒） | 1 次 | P1 |
-| License 占用 Agent 数 > 实际跑 build Agent 数 + 20% | 持续 30 分钟 | P1（疑似泄漏） |
+| 场景 | 需要观察的证据 | 验收问题 |
+| --- | --- | --- |
+| 正常完成 | 任务、进程、许可和调度锁的对应记录 | 是否按所用模式完成收尾？ |
+| 构建报错或主动取消 | 原始失败与清理结果分别记录 | 清理失败是否可见，后续任务是否误用占用？ |
+| Agent 失联 | 节点、进程和许可侧时间线 | 恢复后能否对齐状态，避免重复启动？ |
+| 超过确认容量 | 排队与拒绝原因 | 是否等待正确的资源，避免不断重复激活？ |
 
-最后一条最关键——**"占用 Agent 数远大于活跃 Agent 数"是泄漏的最强信号**。
+只在获准的隔离环境演练。公开记录使用脱敏摘要，不包含账号、序列号、令牌、机器身份或原始许可日志。
 
-### 自动检测泄漏
+## 事故材料待核
 
-Pool Manager 定期扫描：
-
-```python
-# 伪代码
-for agent in active_agents:
-    if not agent.is_running_build():
-        if agent.last_build_finished_at < (now - 10 minutes):
-            # Agent 没在跑 build 但仍持有 license
-            log.warning(f"License leak suspected on {agent.name}")
-            agent.force_release_license()
-```
-
-强制释放可能让"刚结束 build 的"Agent 误伤——但在游戏团队的实践中，**误伤代价远小于让 license 池一直堵着**。
-
----
-
-## 真实事故："半夜全队卡死"还原
-
-### T 时刻
-
-周三晚上 22:00，业务方所有夜间 build 触发。
-
-### T+30 分钟
-
-某个夜间 build 因为 OOM 挂了（资源烘焙阶段内存不够，[详见 305]({{< relref "delivery-engineering/delivery-jenkins-ops-305-il2cpp-build.md" >}})）。Agent 强杀进程。**license 没释放。**
-
-### T+1 小时
-
-队列里 5 个其他 Pipeline 排队，等不到空闲 license seat。
-
-### T+3 小时（半夜 1 点）
-
-队列堆到 30+ Pipeline，license 池 100% 占用。但实际只有 2 个 build 在跑——其他 28 个都是泄漏。
-
-### T+8 小时（早上 6 点）
-
-业务方早班拿 build，发现一个都没出来。研发负责人被电话叫醒。
-
-### T+9 小时
-
-排查链路：Jenkins UI 看 Agent 状态正常 → 看 Unity license server 显示"License pool exhausted" → 登 license server 看占用，发现 28 个"激活记录"对应的 Agent 实际不在跑 build。
-
-### T+10 小时
-
-紧急救火：所有 Agent 跑 `unity -returnlicense`（部分能释放，部分因为 Unity 进程已死失败）→ 重启所有 Unity Agent（强制释放 license seat）→ 队列开始消化。
-
-### 上午全员开复盘会
-
-事故损失：
-
-- 2 个产品的 dev / qa build 全部延迟一晚
-- 2 个发版 release 流程被迫延后
-- 业务方对 Jenkins 信任度下降一档
-
-### 改进项
-
-- ✅ 所有 Pipeline 强制 `try-finally` + `post-always` 双重释放
-- ✅ Pool Manager 加入"泄漏检测 + 强制释放"
-- ✅ License 占用监控告警接入（之前只监控 Master 内存）
-- ✅ Agent 配置 OOM-killer 时主动释放 license（trap 信号）
-
----
+旧稿的“半夜全队卡死”叙述没有可核对的出处，暂不保留为真实事故复盘。后续至少需要：授权模式、Editor 与许可组件版本、故障前后状态、收尾是否执行、恢复动作及结果。只有这些材料能解释因果关系后，才决定是否恢复案例。
 
 ## 文末导读
 
-下一步进 302 大仓库在 Jenkins 下的 Workspace 策略——License 解决之后，下一个游戏团队特化问题是几十 GB 仓库怎么 checkout。
-
-L3 面试官线读者：本篇核心是"激活式 vs floating"那一节——一个产品设计决策（Unity 选了激活式 license），决定了所有团队必须自建池化治理。这是"产品约束反向影响工程实践"的典型例子。
+资源排队与节点恢复继续看 [Agent 调度与标签体系]({{< relref "delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md" >}})；工作目录的版本隔离见 [多平台并行打包与隔离]({{< relref "delivery-engineering/delivery-jenkins-ops-304-multi-platform-isolation.md" >}})，其中旧性能数据仍待核实。

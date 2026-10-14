@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "Declarative vs Scripted Pipeline：游戏团队的选型取舍"
-description: 'Declarative 限制能力换可读性，Scripted 给你完整 Groovy 但维护成本高。游戏团队不是二选一，而是分层选——从一个真实迁移案例看清两种语法各自的天花板，以及"必须切换"的四个信号。'
+description: '讨论 Declarative、Scripted 与共享库的职责边界；原迁移案例和切换阈值待核实。'
 slug: "delivery-jenkins-ops-101-declarative-vs-scripted"
 weight: 1572
 featured: false
@@ -21,6 +21,8 @@ delivery_reading_lines:
   - "L1"
   - "L2"
 ---
+
+> **证据状态（2026-10-14）**：迁移时间线、比例以及“必须切换”的语法边界未完成来源与插件版本核对。不能作为真实迁移成本或选型硬阈值。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
 
 ## 在本篇你会读到
 

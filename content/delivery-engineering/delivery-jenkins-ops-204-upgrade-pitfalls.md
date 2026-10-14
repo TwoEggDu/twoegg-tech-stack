@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "Jenkins 升级踩坑：JVM / 插件 / 迁移"
-description: 'Jenkins 升级不是"点 Update 按钮"——它有四类失败模式：JVM 版本不兼容、插件冲突、配置迁移、Pipeline 语法变化。游戏团队规模下任何一类失败都会导致全队半天产出归零，必须有完整回滚预案。'
+description: '围绕 Java、Jenkins core、插件和配置的兼容关系设计升级与回退。区分控制器恢复、构建节点重建和实际产物验收。'
 slug: "delivery-jenkins-ops-204-upgrade-pitfalls"
 weight: 1580
 featured: false
@@ -24,329 +24,78 @@ delivery_reading_lines:
   - "L4"
 ---
 
+> **核对说明（2026-10-14）**：本篇已修正原 Java 版本表。旧稿的三小时停机、具体插件 API 变化与固定三十分钟恢复目标未找到依据，已撤回为案例或通用要求；本轮只核对官方资料并补充演练设计，没有执行 Jenkins 升级。
+
 ## 在本篇你会读到
 
-- **升级不是"点 Update 按钮"** —— Jenkins 升级的四个层次
-- **失败模式 1：JVM 版本不兼容** —— Jenkins 大版本对 Java 的隐式要求
-- **失败模式 2：插件冲突** —— 插件依赖图比 Jenkins 本身复杂
-- **失败模式 3：配置迁移** —— XML schema 漂移
-- **失败模式 4：Pipeline 语法变化** —— 改 step 行为不向后兼容
-- **回滚预案** —— 30 分钟内回到升级前
-- **升级演练流程** —— 灰度 + Sandbox + 全量
+- Java、Jenkins core、插件与配置应按一组兼容版本评估。
+- 升级前怎样留下能恢复的版本与状态。
+- 怎样在隔离环境验证升级和回退，并确认产物仍可交接。
 
----
+## 升级不是“点 Update 按钮”
 
-## 升级不是"点 Update 按钮"
-
-Jenkins 升级看似一个动作（替换 war 包 / 更新 Docker 镜像），实际涉及四个层次：
-
-```
-Layer 1: JVM            → 系统层，最难回滚
-Layer 2: Jenkins core   → war 包替换
-Layer 3: Plugins        → 几十到几百个插件
-Layer 4: Configuration  → XML / Pipeline / Shared Library
-```
-
-每一层都可能出问题。"升级失败"通常是**某一层和其他层不匹配**。
-
-游戏团队的特殊性：
-
-- 多产品 + 多分支 + 复杂 Shared Library 让"配置面"庞大
-- 单次 Master 停机的代价高（[详见 203 真实事故]({{< relref "delivery-engineering/delivery-jenkins-ops-203-disk-governance.md" >}})）
-- 升级一旦失败，业务影响至少半天
-
-不允许"试一下不行就回滚"——必须有计划、有演练、有预案。
-
----
+升级会同时影响运行 Jenkins 的 Java、core、插件、Job 配置、Jenkinsfile 和 Shared Library。先列出当前与目标组合，再制定中间步骤。单独换回一个 war 文件不能证明整套系统已回到升级前。
 
 ## 失败模式 1：JVM 版本不兼容
 
 ### Jenkins 与 JVM 的版本依赖
 
-Jenkins 不同大版本对 JVM 有不同要求：
+旧稿把 weekly 与 LTS 边界混在一起。核对时应使用完整版本号与对应升级指南；“2.427+ 一直支持 Java 17”不成立。官方支持表同时覆盖 controller 与 agent 等 Jenkins 组件，构建业务代码所用的 JDK 则需要另行配置与验证。[Java 支持策略](https://www.jenkins.io/doc/book/platform-information/support-policy-java/)
 
-| Jenkins 版本 | 最低 Java | 推荐 Java |
-|------------|---------|----------|
-| 2.357 之前 | Java 8 | Java 8 / 11 |
-| 2.357 - 2.426 | Java 11 | Java 11 / 17 |
-| 2.427+ | Java 17 | Java 17 / 21 |
-
-跨大版本升级时**必须先升 JVM**——但很多团队 Jenkins 跑了几年没动过 JVM，跳级升级时炸。
-
-### 真实故障
-
-> 团队从 Jenkins 2.319 升到 2.450，没看 release notes，直接跑——启动报 `UnsupportedClassVersionError: 61.0`（Java 17 字节码）。当时 Master 跑的是 Java 11。
-> 救火：先升 Java 17（涉及 OS 包管理 + JAVA_HOME 切换），再启 Jenkins，又出 GC 配置不兼容（G1 GC 参数在 Java 17 改了名）。
-> 总停机 3 小时。
+一个已核对的具体边界：**升级到 Jenkins LTS 2.555.1 时，controller 和 agent JVM 均要求 Java 21 或 25**。若 Android 等业务构建仍需要其他 JDK，可在节点上分别指定运行 Jenkins 与执行业务工具的 Java，不能只改全局 `JAVA_HOME` 后便宣告完成。[2.555.x 官方升级指南](https://www.jenkins.io/doc/upgrade-guide/2.555/)
 
 ### 防范方法
 
-升级前在 Jenkins release notes 里搜：
+先检查旧 core 是否支持计划中的新 Java，再检查目标 core 和插件要求。存在共同支持的版本时，可分步迁移；不存在时，需要设计受支持的中间版本或隔离迁移路径。“先升 JVM 再升 Jenkins”不是无条件适用的顺序。
 
-- "minimum supported version of Java" / "requires Java"
-- "deprecated"
-
-如果跨 Jenkins 大版本（比如 2.319 → 2.450 跨了一个 LTS 区间），**先单独升 JVM 再升 Jenkins**：
-
-1. 测试环境装新 JVM，跑老版本 Jenkins，确认无问题
-2. 生产升级 JVM
-3. 跑几天确认 Jenkins 在新 JVM 上稳定
-4. 再升 Jenkins
-
----
+验收记录至少包括 controller 和每类 agent 的实际 Java 版本、启动参数、core 版本，以及项目构建 JDK 的选择结果。启动失败时按具体错误与版本查证，不把所有 `UnsupportedClassVersionError` 都归因于同一段旧故事。
 
 ## 失败模式 2：插件兼容性
 
-游戏团队 Jenkins 通常装 30-80 个插件——这是最容易踩雷的层。
+记录插件及其传递依赖的完整版本集合，列出关键 Pipeline 使用的步骤、配置项和 Shared Library 接口。升级指南和依赖声明用于筛查候选组合；仍需用代表性 Job 验证行为。
 
-### 插件依赖图的复杂度
-
-每个插件声明：
-
-- 最低 Jenkins core 版本
-- 依赖的其他插件 + 版本范围
-
-升级时 Jenkins 自动检查依赖，但**只检查"装了什么版本"，不检查"是否真的兼容"**——很多插件标的依赖范围比实际能跑的范围宽。
-
-### 真实故障类型
-
-#### 类型 A：插件配置漂移
-
-老插件 v1.5 的 config.xml 和 v2.0 的 config.xml 字段不同，升级后某些配置丢失。典型：
-
-> 升级 Pipeline plugin 后发现某些 Pipeline 的"启用 Sandbox"开关被重置为默认值——所有 Pipeline 突然又要审批 in-process script。业务方一片骂声。
-
-#### 类型 B：API 不兼容
-
-Shared Library 调用了某插件的 API，插件升级后 API 变了：
-
-```groovy
-// 老插件 API
-def slack = SlackClient.instance
-slack.send(channel: '#deploy', text: 'done')
-
-// 新插件 API（v2.0）
-slack(channel: '#deploy', message: 'done')
-// 老 API 报 NoSuchMethodError
-```
-
-Shared Library 跑挂了，所有依赖它的 Pipeline 全挂。
-
-#### 类型 C：依赖冲突
-
-插件 A 依赖插件 X v3.0+，插件 B 依赖插件 X v2.x，**升级后 X 升到 v3.0，B 挂掉**。
-
-### 防范方法
-
-#### 升级前快照所有插件版本
-
-```bash
-curl -s "$JENKINS_URL/pluginManager/api/json?depth=1" \
-    | jq '.plugins[] | "\(.shortName):\(.version)"' \
-    > plugins-before.txt
-```
-
-升级失败时这个文件是回滚依据。
-
-#### 分批升级
-
-不要一次升所有插件——升关键 5-10 个，跑 1-2 天，再升下一批。
-
-#### 关键插件单独审视
-
-每个插件的 release notes 在升级前必读：
-
-- workflow-cps（Pipeline 引擎）
-- workflow-aggregator
-- 任何 Shared Library 用到的插件
-
----
+不要为了“每批只升几个”拆散有依赖关系的插件集合。每一批应形成可安装、可启动、可执行的组合，并保留与之匹配的配置快照。旧稿的某插件 API、Sandbox 开关和 `sh` 返回值变更没有具体版本或出处，本篇不再将它们写成已发生事实。
 
 ## 失败模式 3：配置迁移
 
-Jenkins 的配置存在 `JENKINS_HOME` 下的 XML 文件里。Jenkins 大版本升级时，这些 XML 会被**自动迁移**——看起来无感知，但会出问题。
+备份范围需覆盖恢复所需的配置、Job 记录、插件版本与必要产物；可重建的 workspace 和缓存是否备份，由恢复目标决定。对运行中的系统随意复制目录，不能保证拿到同一时刻的一致状态。
 
-### 迁移内容
+Jenkins 官方建议把 `master.key` 与常规备份分开保护，并实际验证备份能否恢复。这里仅讨论保管职责，公开材料不包含密钥或生产备份内容。[备份与恢复文档](https://www.jenkins.io/doc/book/system-administration/backing-up/)
 
-- 全局配置（`config.xml`）
-- 节点配置（`nodes/<name>/config.xml`）
-- 用户配置（`users/<name>/config.xml`）
-- Job 配置（`jobs/<name>/config.xml`）
-
-### 典型问题
-
-#### 问题 1：废弃字段被删
-
-老版本有 `enableSomething: true`，新版本这个字段被废弃 → 升级后 Jenkins 默默忽略，行为变成默认值。
-
-#### 问题 2：默认值变化
-
-某个全局开关老版本默认 false，新版本改成 true → 升级后行为悄悄变了，你才知道。
-
-#### 问题 3：XML schema 不向后兼容
-
-老版本能正常解析的 XML，新版本认为格式错误。Job 加载失败，Job history 看起来"消失了"——其实是没解析成功。
-
-### 防范方法
-
-#### 升级前完整备份 JENKINS_HOME
-
-```bash
-tar czf jenkins-home-before-upgrade.tar.gz \
-    --exclude=workspace \
-    --exclude='*/builds/*/archive' \
-    $JENKINS_HOME
-```
-
-不带 workspace 和 archive，只备份配置 + history 元数据，几 GB 就够。
-
-#### 升级后立刻检查
-
-- 系统管理 → 系统信息（看 plugin 状态有没有 broken）
-- 系统管理 → 节点管理（看 Agent 是不是都在）
-- 抽查 5-10 个核心 Job，看 config 是不是和升级前一致
-- 跑一条端到端流水线（test job），看 Pipeline 引擎工作
-
----
+恢复验收同时检查：Job 是否加载、关键配置是否迁移、凭据是否在授权范围内可用、节点是否能连接，以及历史产物与记录是否满足团队的追溯需求。登录页面能打开只是第一项信号。
 
 ## 失败模式 4：Pipeline 语法 / API 变化
 
-游戏团队投入最大的代码资产——Jenkinsfile 和 Shared Library——在 Jenkins 升级时可能突然不兼容。
+把核心行为写成升级前后的对照清单：参数解析、分支过滤、环境选择、失败传播、取消与清理、归档命名、测试回执。分别检查 Jenkinsfile、插件步骤与共享库的变化，避免把所有差异统称为“Jenkins 升级问题”。
 
-### 真实场景
+### 隔离演练
 
-#### 场景 1：step 行为变化
+演练实例在启动前就应隔离生产触发和外部写入：关闭计划触发、Webhook、下游生产 Job 与发布步骤，替换通知目标，使用仅供测试的凭据和存储。只删掉 secrets 既不能证明业务步骤可执行，也不能防止其他配置误连生产。
 
-某 step 在 plugin v1 行为是 A，v2 改成 B（不报错，但行为不同）。比如：
+先用固定源码版本与固定输入跑代表性链路，再检查升级后的结果。共享库单元检查可以提前发现部分问题，但不能代替实际插件、agent 和工具链的集成验证。
 
-```groovy
-sh script: 'build.sh', returnStdout: true
-// v1: 返回 stdout（trim）
-// v2: 返回 stdout（不 trim，包含末尾换行）
-```
+## 回滚预案：按约定的恢复目标验收
 
-`returnStdout` 的 trim 行为变了 → 你的字符串比较挂了 → Pipeline 走错分支。**没有报错**，但产物里包错了。
+回退单应记录旧版本组合、备份身份、恢复路径、执行人、触发条件和验收人。旧稿“三十分钟以内，否则不合格”的说法没有业务依据；恢复目标应由可接受停工时间决定，并通过演练测量。
 
-#### 场景 2：环境变量行为变化
+1. 暂停新调度，确认在途任务与外部产物状态，防止恢复后重复执行。
+2. 使用与旧 Java、core、插件匹配的配置和备份；避免让旧组件继续读取已经迁移且不兼容的配置。
+3. 先在隔离环境确认节点连接、权限与代表性流水线，再逐项恢复触发。
+4. 记录恢复耗时、缺失状态、重复或丢失的任务，以及测试方能否接受产物。
 
-```groovy
-environment {
-    BUILD_NAME = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
-}
-```
-
-某次升级后 `env.JOB_NAME` 在 multibranch 下行为变了（包不包含 folder 路径）→ 命名规则变了 → 归档路径错位。
-
-#### 场景 3：Groovy CPS 兼容性
-
-CPS（Continuation Passing Style）的实现细节在升级时变化，老 Pipeline 在新版本可能 NotSerializableException。
-
-### 防范方法
-
-#### Sandbox 升级演练
-
-最重要的一步。专门搞一个 sandbox Jenkins 实例：
-
-1. 复制生产 Jenkins 的 JENKINS_HOME（去掉敏感 secrets）
-2. 升级 sandbox 到目标版本
-3. 跑所有核心 Pipeline 至少 1 次
-4. 对照产物和 Pipeline 行为
-5. 发现问题就在 sandbox 修，不影响生产
-
-游戏团队**每次 Jenkins 升级前必须跑 sandbox 演练**——这是不可省的步骤。
-
-#### Shared Library 测试
-
-如果用了 JenkinsPipelineUnit 做单元测试（[详见 102]({{< relref "delivery-engineering/delivery-jenkins-ops-102-shared-library.md" >}})），升级前在 sandbox 跑测试。
-
----
-
-## 回滚预案：30 分钟内回到升级前
-
-### 回滚的难度排序
-
-由难到易：
-
-1. **JVM 回滚最难**——需要 OS 包管理介入，可能有依赖
-2. **Jenkins core 回滚中等**——换回老 war 包
-3. **插件回滚容易**——文件夹替换
-4. **配置回滚容易**——从备份还原 JENKINS_HOME
-
-### 完整回滚 Checklist
-
-```bash
-# 1. 停 Jenkins
-sudo systemctl stop jenkins
-
-# 2. 还原 JENKINS_HOME
-sudo tar xzf /backup/jenkins-home-before-upgrade.tar.gz -C /var/
-
-# 3. 换回老 war 包
-sudo cp /backup/jenkins-old.war /usr/share/jenkins/jenkins.war
-
-# 4. （如有需要）切回老 JVM
-sudo update-alternatives --set java /opt/openjdk-11/bin/java
-
-# 5. 启 Jenkins
-sudo systemctl start jenkins
-
-# 6. 检查
-curl http://localhost:8080/login  # 看是否启动成功
-```
-
-**目标：30 分钟以内做完**——超过 30 分钟说明回滚预案不够熟练。
-
-### 何时回滚
-
-升级后立刻检查的关键信号：
-
-- Jenkins 启动失败（startup log 报错）
-- 系统信息页面显示 plugin broken（即使是单个）
-- 关键 Pipeline 跑挂（哪怕只 1 条）
-- Shared Library 加载失败
-
-任何一条 → 立刻回滚，不要"先看看能不能修"。修生产是高风险动作，先回滚到稳定，再在 sandbox 慢慢修。
-
----
+“退回旧版本”也可能影响升级期间新增的配置、Job 记录和产物；这些变化必须有保留与对账办法。哪些失败立即回退、哪些暂停排查，由事先约定的影响范围和恢复条件决定。
 
 ## 升级演练流程
 
-完整的升级流程（4 周）：
+| 阶段 | 主要交付物 | 验收问题 |
+| --- | --- | --- |
+| 核对当前与目标组合 | 版本清单、升级指南、依赖差异 | 每类 agent 与业务工具链是否兼容？ |
+| 隔离恢复与升级 | 备份恢复记录、代表性 Job 结果 | 是否恢复了所需状态，且无生产写入？ |
+| 升级后回退演练 | 旧组合恢复记录、数据对账 | 是否满足团队约定的恢复目标？ |
+| 受控切换 | 调度恢复顺序、监控与责任人 | 失败时是否有可用的退路？ |
 
-### 第 1 周：调研
-
-- 读 Jenkins core 和所有插件的 release notes
-- 列出"已知不兼容"清单
-- 决定升级版本（不跨太多 LTS 版本）
-
-### 第 2 周：Sandbox 演练
-
-- 搭 sandbox 实例
-- 在 sandbox 升级
-- 跑所有核心 Pipeline，对比产物
-- 修复 sandbox 中发现的问题
-
-### 第 3 周：低风险流水线灰度
-
-- 生产 Jenkins 升级
-- **只让"非关键流水线"先用新版本** —— 内部工具流水线、文档构建之类
-- 观察 1 周
-
-### 第 4 周：全量切换
-
-- 所有流水线切到新版本
-- 全员通知 + 紧急联系人 on call
-
-### 升级窗口选择
-
-- **避免发版前 1-2 周**（业务方紧张）
-- **避免周五 / 节假日前**（出问题救火困难）
-- **推荐周二 / 周三早上**（救火窗口长）
-
----
+同一 controller 升级后，其下的 Job 共享 core；不能宣称“只让几个 Job 升级到新 core”。需要并行比较时，使用隔离 controller；同机升级后分批恢复 Job 调度只能降低初期业务暴露。
 
 ## 文末导读
 
-下一步进 205 Jenkins 自身的可观测性：监控与告警——升级踩坑预防的最后一环是"早发现"。
-
-L3 面试官线读者：本篇核心是"四层失败模式 + 30 分钟回滚预案"——升级是高风险变更，工程化体现在"演练 + 预案"而不是"升级一次成功率"。
+控制器备份不能替代操作系统、SDK、Editor 和签名环境的重建。节点侧继续读 [构建节点重建验收]({{< relref "delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md#agent-rebuild-acceptance" >}})；运行后的信号见 [Jenkins 可观测性]({{< relref "delivery-engineering/delivery-jenkins-ops-205-observability.md" >}})，其旧阈值与案例仍待核实。

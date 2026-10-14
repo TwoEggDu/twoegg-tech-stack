@@ -24,6 +24,8 @@ delivery_reading_lines:
 leader_pick: true
 ---
 
+> **证据状态（2026-10-14）**：构建耗时占比、缓存命中率、仓库量级与“通用 CI”的对比概括缺少样本；Library 跨机器复用条件也待按版本核对。本轮只修正许可摘要和共享目录推断。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
+
 ## 在本篇你会读到
 
 - **通用 CI 经验在哪里失效** —— 开篇钩子 + 四维度速览
@@ -86,17 +88,17 @@ leader_pick: true
 | 指标 | 通用 CI | 游戏团队 |
 |------|--------|---------|
 | 并发上限 | Agent 数决定，水平扩展（20-200 并发常见） | 受 Unity license seat 约束（典型 10-50 seat） |
-| License 复杂度 | 编译器免费，Docker 免费 | Unity Pro 是激活式 license（不是 floating），有锁、不释放问题 |
+| License 复杂度 | 编译器免费，Docker 免费 | 存在不同授权模式，须分别核对激活或浮动租约 |
 | 平台矩阵 | 一份 Docker 跑所有 Linux | iOS / Android / WebGL / Console 各自独立产物，**资源不能共享 workspace** |
 | 平台 Agent 要求 | 任意 Linux runner | iOS 必须 macOS（且 Xcode 版本绑定）；Console 平台需要专属机和 NDA SDK |
 
 这些约束让 Agent 调度从通用 CI 的"找空闲机器"变成"调度受约束的稀缺资源"。三个典型故障：
 
-**License 泄漏。** Unity license 是激活式的——你每次启动 Unity，license 服务器记录一个 seat 占用；正常退出会释放，但 build 进程崩溃 / Agent 强杀时 seat 不会释放。结果是 build farm seat 100% 占用，但实际只有 30% 在跑 build，其余是泄漏的"幽灵激活"。新 build 排队几小时，全队卡住。半夜 license 全部被泄漏 job 占了，第二天全组发不了版本——这是大公司游戏团队都踩过的坑。解药是流水线 `post { always { unityReturnLicense() } }`，但 Unity 官方文档把"Returning Activations"章节藏在角落，很多教程不告诉你这一点。
+**许可状态不一致。** Agent 离线、构建结束和许可释放属于不同状态。先区分机器激活、浮动租约与 Jenkins 调度锁，再核对异常时各自怎样恢复。`post` 中安排清理不等于断电或失联后也已完成清理；具体边界见 301 的本轮修订。
 
-**Workspace 资源冲突。** 通用 CI 的 `parallel { stage('iOS')...; stage('Android')... }` 在共享 workspace 下没问题——Linux 文件系统 + 编译器是无状态的。但 Unity 不是：iOS 和 Android build 的 `Library/` 内容不同（Texture 压缩格式不同、Player Settings 不同），同 workspace 跑两个平台 → Library 来回 reimport → 一次 30 分钟的 build 变成 2 小时。新人配 `parallel` 期望加速，结果**比串行慢 40%**，用户投诉构建变慢——这是参数化模板里最常见的错误。
+**Workspace 资源冲突。** 并发任务若实际写入相同项目目录、Library 或输出路径，可能互相覆盖或触发重复导入。需要检查分配到的真实 workspace 和共享路径；这种风险不只存在于游戏构建，也不能仅凭同一台 Agent 就断言目录一定共享。
 
-**macOS Agent 的"假并发"。** 通用 CI 经验：标签 `mac` 一打，调度器自动分配。Unity 现实：macOS 机贵（Mac Mini M2 ~ ¥10000）+ Apple 限制虚拟化 → 团队通常只有 2-5 台物理 Mac → 同台机不能并发跑 iOS build（Xcode 锁、license seat、磁盘）。标签是 `mac` 但实际可用并发是 1/机，调度器把多个 job 排到同一台 → 排队 / 卡死。
+**平台能力与并发容量。** 有符合标签的节点，不代表它能同时承担任意数量的构建。可并发数量还取决于工作目录隔离、编译工具、许可模式以及 CPU、内存和磁盘峰值，应通过代表性任务核对。
 
 具体的 License 池治理见 [301 Unity License 池管理]({{< relref "delivery-engineering/delivery-jenkins-ops-301-license-pool.md" >}})，Agent 调度策略见 [202 Agent 调度与标签体系]({{< relref "delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md" >}})，多平台并行隔离见 [304 多平台并行打包与隔离]({{< relref "delivery-engineering/delivery-jenkins-ops-304-multi-platform-isolation.md" >}})。
 

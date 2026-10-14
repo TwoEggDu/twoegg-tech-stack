@@ -1,7 +1,7 @@
 # 游戏团队 Jenkins 实战 · 系列规划
 
-> 版本：v1.0 | 日期：2026-04-24
-> 状态：规划阶段，索引 + 总论先行
+> 版本：v1.1 | 核对日期：2026-10-14
+> 状态：索引 + 16 篇正文实际存在；本轮完成重点勘误与证据标注，全系列技术验证仍未完成
 > 所属：交付工程旗舰专栏 V16（CI/CD 管线）的深度下钻子系列
 
 ---
@@ -35,7 +35,7 @@ V16.6 CI 工具选型已经给出"什么场景选 Jenkins"的决策依据，但�
 |--------|---------|
 | TA / 构建工程师（游戏团队） | 自己团队的 Jenkins 怎么撑住 Unity 构建 |
 | DevOps / SRE | Jenkins 在游戏项目场景下的运维特殊性 |
-| 技术 Leader / 面试官 | 架构决策与事故复盘的判断力 |
+| 技术负责人 | 架构决策、维护边界与证据判断 |
 
 ---
 
@@ -47,7 +47,7 @@ V16.6 CI 工具选型已经给出"什么场景选 Jenkins"的决策依据，但�
 |---|---------|---------|---------|
 | **L1 · 游戏构建侧** | TA / 构建工程师 | 从 Unity 集成痛点切入 | 索引 → 总论 → Part 3 → Part 1 → Part 2 |
 | **L2 · DevOps / SRE 侧** | 平台 / 运维工程师 | 从稳定性底座切入 | 索引 → 总论 → Part 2 → Part 1 → Part 3 |
-| **L3 · 技术 Leader 侧** | 面试官 / 技术决策者 | 精选"决策 + 事故复盘" | 索引 → 总论 → 各组 `leader_pick: true` 的精选篇 |
+| **L3 · 技术 Leader 侧** | 技术负责人 / 技术决策者 | 决策依据与待核案例边界 | 索引 → 总论 → 各组 `leader_pick: true` 的精选篇 |
 
 L3 线的精选机制通过文章 frontmatter 的 `leader_pick: true` 字段实现。
 
@@ -77,7 +77,7 @@ L3 线的精选机制通过文章 frontmatter 的 `leader_pick: true` 字段实�
 | # | weight | 标题 | 核心问题 |
 |---|--------|------|---------|
 | 201 | 1577 | Master 的三类瓶颈：连接、内存、磁盘 I/O | Master 为什么会在"大作业 + 大产物"场景下崩 |
-| 202 | 1578 | Agent 调度与标签体系 | 标签设计失败会带来什么现象、怎么回到正轨 |
+| 202 | 1578 | Agent 调度与标签体系 | 标签怎样匹配真实能力，节点怎样按清单重建并验收 |
 | 203 | 1579 | Workspace 与产物的磁盘治理 | 几十 G 的游戏产物怎么让磁盘不爆 |
 | 204 | 1580 | Jenkins 升级踩坑：JVM / 插件 / 迁移 | 升级路径的四个失败模式与回滚预案 |
 | 205 | 1581 | Jenkins 自身的可观测性：监控与告警 | Jenkins 自己挂了谁来发现、怎么告警 |
@@ -86,7 +86,7 @@ L3 线的精选机制通过文章 frontmatter 的 `leader_pick: true` 字段实�
 
 | # | weight | 标题 | 核心问题 |
 |---|--------|------|---------|
-| 301 | 1582 | Unity License 池管理：稀缺资源的治理 | License 不够用、泄漏、占用不释放的三类故障 |
+| 301 | 1582 | Unity License 池管理：稀缺资源的治理 | 激活、浮动租约与 Jenkins 并发锁如何分责并核对异常 |
 | 302 | 1583 | 大仓库在 Jenkins 下的 Workspace 策略 | Git LFS / 浅克隆 / 缓存仓在真实大仓下的取舍 |
 | 303 | 1584 | 符号表与崩溃栈：IL2CPP 产物的符号链路 | 线上崩溃栈还原的完整链路怎么自动化 |
 | 304 | 1585 | 多平台并行打包与隔离 | iOS / Android / WebGL 同时出包的资源冲突与隔离 |
@@ -123,11 +123,33 @@ L3 线的精选机制通过文章 frontmatter 的 `leader_pick: true` 字段实�
 
 ---
 
-## 七、创作优先级建议
+## 七、当前修订与证据优先级
 
-- **优先级 1（先写）**：000 索引 + 001 总论 + 301 License 池管理（Unity 特化组开篇，直接建立差异化叙事）
-- **优先级 2**：顺 Part 1 → Part 2 → Part 3 推进；每组先写"纲领篇"（101 / 201 / 301），再写子篇
-- **优先级 3**：事故复盘密度高的篇优先（201 Master 瓶颈 / 305 IL2CPP 构建 / 301 License 池）——这类最能支撑 L3 面试官线的差异化叙事
+本轮实际核对文件后，原“索引与总论先行”的创作状态已过时。继续维护现有 17 篇，不新增一套 Jenkins 教程。逐篇待核记录与本轮检查结果见[四项补强记录](build-delivery-strengthening-report.md)。
+
+### 既有 301 / 204 修订：许可与升级边界
+
+- **候选标题 / 落点**：沿用[301 许可池](../content/delivery-engineering/delivery-jenkins-ops-301-license-pool.md)与[204 升级](../content/delivery-engineering/delivery-jenkins-ops-204-upgrade-pitfalls.md)原题，各自维护授权与升级问题。
+- **主问题**：哪些状态由许可系统负责，哪些由 Jenkins 负责？哪些版本与备份必须一起恢复？
+- **责任边界**：只引用公开官方资料，不代替授权权益核对，不把教程片段视为真实运维记录。
+- **前置**：Agent、任务状态与版本清单；不以全部 Jenkins 系列为硬前置。
+- **关键小节**：激活、租约与调度锁怎样区分？断线后如何核对清理结果？Java、core、插件与配置怎样形成可回退组合？怎样阻止演练实例写入生产？
+- **可复用文章**：[001 总论](../content/delivery-engineering/delivery-jenkins-ops-001-why-different.md)、[102 共享库](../content/delivery-engineering/delivery-jenkins-ops-102-shared-library.md)、[202 节点](../content/delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md)。本轮同步修正许可摘要与封装建议。
+- **所需证据**：官方版本资料；后续需获准环境的授权模式、版本组合、取消/断线/回退结果，公开只保留脱敏摘要。
+- **当前状态**：重点勘误已写入正文，官方资料核对于 2026-10-14；旧事故来源未确认，未执行实验。
+
+### 既有 202 增量：构建节点重建验收
+
+- **候选标题 / 落点**：沿用《Agent 调度与标签体系》，原位增加[构建节点重建验收](../content/delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md#agent-rebuild-acceptance)。
+- **主问题**：旧机器不可用后，新节点能否按清单恢复到可交付状态？
+- **责任边界**：节点环境与代表性链路验收；控制器恢复归 204，游戏功能与设备验收归质量/验证系列。
+- **前置**：构建输入身份、Agent 与 executor、缓存和不可重建输入的区别。
+- **关键小节**：环境清单如何涵盖 OS、Editor、SDK 与受控凭据引用？干净环境首构建和缓存复用分别证明什么？失败、取消与重启后怎样核对状态？谁确认产物可交接？
+- **可复用文章**：[V16 构建自动化](../content/delivery-engineering/delivery-cicd-pipeline-03-build-automation.md)、[多平台隔离](../content/delivery-engineering/delivery-jenkins-ops-304-multi-platform-isolation.md)、[204 升级](../content/delivery-engineering/delivery-jenkins-ops-204-upgrade-pitfalls.md)。
+- **所需证据**：可公开的环境清单摘要、固定输入、冷/热缓存构建记录、清理结果、产物身份与接收回执、实测恢复耗时。
+- **当前状态**：已补正文中的验收设计，未实施节点重建或验收；原标签演进故事仍待核。
+
+后续优先核实 203 的删除范围与保留策略、305 的故障归因和容量估算、302/304 的性能材料。新增说明不等于这些旧命令与结论已获验证。
 
 ---
 

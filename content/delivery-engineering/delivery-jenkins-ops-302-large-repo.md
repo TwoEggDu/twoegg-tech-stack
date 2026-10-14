@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "大仓库在 Jenkins 下的 Workspace 策略"
-description: 'Unity 仓库 50-200 GB 是常态，Git LFS / 浅克隆 / 缓存仓 / 镜像加速各有适用边界。本篇拆解四种工具的取舍，给出一个真实大仓的组合方案——把 checkout 时间从 40 分钟压到 3 分钟。'
+description: '比较大仓库的 LFS、浅克隆、部分克隆与缓存策略；旧耗时表和优化案例待核实。'
 slug: "delivery-jenkins-ops-302-large-repo"
 weight: 1583
 featured: false
@@ -23,6 +23,8 @@ delivery_reading_lines:
   - "L2"
 ---
 
+> **证据状态（2026-10-14）**：“40 分钟降到 3 分钟”、其他耗时表与成本数字缺少来源、缓存条件及采样口径，不作为性能结果。本轮未运行 Git 或 LFS 对照实验。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
+
 ## 在本篇你会读到
 
 - **几十 GB 仓库的 git 操作物理代价** —— checkout / clone / fetch 时间分布
@@ -30,7 +32,7 @@ delivery_reading_lines:
 - **浅克隆与部分克隆** —— 历史压缩的取舍
 - **缓存仓（reference repo）** —— Agent 上的"本地 git mirror"
 - **CDN 镜像与边缘加速** —— 跨地域团队必备
-- **真实组合方案** —— 40 分钟 → 3 分钟的演进路径
+- **待核案例材料** —— 优化时间线需要哪些证据
 
 ---
 
@@ -101,15 +103,9 @@ git lfs install --system   # 系统级初始化
 
 #### 陷阱 2：LFS 和浅克隆冲突
 
-LFS pull 默认拉所有 LFS 历史。和"只要最新"冲突——你以为浅克隆省了空间，结果 LFS 把空间又拉回来了。
+旧稿“LFS pull 默认拉所有历史”不正确。`git lfs pull` 针对当前检出的 ref 下载 LFS 对象并更新工作副本，不能把浅克隆与 LFS 简单描述成互相冲突。[Git LFS 官方命令说明](https://github.com/git-lfs/git-lfs/blob/main/docs/man/git-lfs-pull.adoc)（核对于 2026-10-14）
 
-修复：
-
-```bash
-# 浅克隆 + LFS 也只拉最新
-GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 ...
-git lfs pull --include="Assets/Textures/" --exclude=""
-```
+需要缩小下载范围时，先确认当前构建需要的资源闭包，再按对应 Git/LFS 版本核对 include/exclude、属性与稀疏检出的行为。旧稿只拉贴图目录的片段不能代表完整 Unity 项目的可构建输入，故撤下作为通用修复的命令。
 
 #### 陷阱 3：LFS server 带宽
 
@@ -281,6 +277,8 @@ LFS 大文件单独走 CDN：
 
 ## 真实组合方案：40 分钟 → 3 分钟
 
+> **本节整体待核**：标题、各阶段数字和收益均来自未确认来源的旧稿。没有原始测量与环境记录，不能据此认定优化有效；保留本节是为了逐项追查，不是认证为真实案例。
+
 某游戏团队 80 GB 仓库的优化时间线：
 
 ### 起点：纯 git clone（40 分钟）
@@ -288,7 +286,7 @@ LFS 大文件单独走 CDN：
 最早的 Pipeline：
 
 ```groovy
-checkout scm   // Jenkins 默认全量 clone
+checkout scm   // 行为由 SCM 配置和 workspace 状态决定，不等于每次全量 clone
 ```
 
 每条 build 开头 40 分钟 git clone。一天 50 条 build = 33 小时纯 git 开销。
@@ -317,7 +315,7 @@ sh 'git lfs pull --include="Assets/Textures/Build/" --exclude=""'  // 只拉 bui
 
 ### 阶段 3：部分克隆 + 缓存仓（4 分钟）
 
-放弃浅克隆，改用 partial clone + reference repo：
+原稿声称本阶段使用 partial clone + reference repo，但下列配置仅展示 reference 等选项，没有指定 partial clone filter，不能作为已启用部分克隆的证据：
 
 ```groovy
 checkout([
@@ -364,4 +362,4 @@ sh 'git sparse-checkout set Assets/Code Assets/Common Assets/iOS Packages'
 
 下一步进 303 符号表与崩溃栈：IL2CPP 产物的符号链路——大仓库 checkout 优化后，下一个游戏团队特化是符号表归档。
 
-L3 面试官线读者：本篇核心是"40 分钟 → 3 分钟"的演进——大仓库优化不是单一技术，是分层组合。每一层各解决 30% 的问题，叠加起来才有数量级降本。
+判断优化收益前，先补齐相同输入、机器与网络条件、冷/热缓存、Git/LFS 版本、各阶段时间和重复样本。旧稿“40 → 3 分钟”及“92%”暂不用于结论或个人成果展示。

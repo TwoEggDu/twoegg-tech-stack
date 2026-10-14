@@ -23,6 +23,8 @@ delivery_reading_lines:
   - "L2"
 ---
 
+> **证据状态（2026-10-14）**：标签从 5 台演进到 40 台的故事尚未核实；其数字不是已确认经历。新增环境重建部分是验收设计，本轮未执行。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
+
 ## 在本篇你会读到
 
 - **标签不是名字** —— 标签是调度策略的输入
@@ -30,7 +32,7 @@ delivery_reading_lines:
 - **标签设计反例** —— 一个团队的"标签爆炸"故事
 - **调度策略** —— 排他、亲和、优先级
 - **离线监控与自动恢复** —— Agent 掉线该怎么处理
-- **平台特化运维：自动更新与强制重启** —— Windows / macOS / Linux 三类系统的"自动操作"杀手
+- **维护与重建验收** —— 维护窗口、环境清单和新节点交接
 
 ---
 
@@ -96,7 +98,7 @@ Agent 的**资源规格分级**：
 - `cpu-8` / `cpu-16`：CPU 等级
 - `disk-large`：超大磁盘（专门跑大产物 build）
 
-游戏团队 IL2CPP 构建机至少要 `mem-32g`——见 305。配 IL2CPP 任务时调度到资源不足的 Agent 会 OOM。
+容量标签要来自代表性任务的峰值测量，并为并发和系统进程留出余量。不能按 IL2CPP 名称直接规定所有项目的最低内存。
 
 ```
 labels: linux unity-2022.3 unity-builder mem-64g cpu-16
@@ -184,7 +186,7 @@ agent-Z → macos unity-2022.3 unity-6.0 unity-builder  # 双版本机
 
 ### 策略 1：排他（exclusive）
 
-某些任务**必须独占 Agent 整机**——比如 IL2CPP 构建（[详见 305]({{< relref "delivery-engineering/delivery-jenkins-ops-305-il2cpp-build.md" >}})），同 Agent 跑两个 IL2CPP 会 OOM。
+峰值资源需求高或工作目录尚未隔离的任务，可先使用单 executor 节点。是否允许并发，要按目标项目实测；不能断言同机两个 IL2CPP 构建一定 OOM。
 
 Jenkins Pipeline 配置：
 
@@ -204,7 +206,7 @@ pipeline {
 
 希望同一个产品的 build **尽量调度到同一台 Agent**——为了利用 workspace 缓存。
 
-Jenkins 不直接支持"亲和性调度"，但可以**通过 workspace 路径管理近似实现**：
+`customWorkspace` 可以指定工作目录，但不能据此选择某一台节点；是否复用缓存仍取决于调度结果和输入是否兼容：
 
 ```groovy
 agent {
@@ -215,7 +217,7 @@ agent {
 }
 ```
 
-`customWorkspace` 让多次同名 build 用同一个工作目录——只要调度到同一台 Agent，Library 缓存就能复用。
+`customWorkspace` 不是节点亲和策略。同一固定路径还需要互斥或按并发任务隔离；能否复用 Library 必须另外核对 Editor、平台和项目输入。
 
 ### 策略 3：优先级
 
@@ -247,37 +249,15 @@ Agent 掉线是常态——网络抖动、Agent 重启、Master 重启都会导�
 
 Master 把 Agent 标记为 offline 的几种情况：
 
-- **JNLP 通道断开** → 几秒内重连成功 → 不影响 build
+- **连接短暂中断后恢复** → 核对 Pipeline 步骤是否支持续跑以及进程是否仍在，不预先保证构建不受影响
 - **JNLP 通道断开** → 长时间未重连 → Agent 标记 offline → 进行中的 build 失败
 - **Agent 心跳超时** → 标记 offline → 同上
 
 ### 自动恢复
 
-Agent 配置层面：
+节点启动方式应使用当前 Jenkins 节点页面给出的连接方法，并核对 agent 与 controller 的 Java 兼容要求。节点凭据由受控配置提供，避免写进公开启动脚本或日志；自签证书环境应配置可信证书链，不以关闭 HTTPS 证书校验作为默认解决方式。
 
-```bash
-# JNLP Agent 启动参数
--jnlpUrl http://master:8080/computer/agent-name/slave-agent.jnlp
--secret xxx
--workDir /home/jenkins
--disableHttpsCertValidation        # 自签证书时
--jvmargs -XX:+UseG1GC
-```
-
-启动脚本封装为 systemd / launchd 服务，挂掉自动重启：
-
-```ini
-# /etc/systemd/system/jenkins-agent.service
-[Unit]
-Description=Jenkins Agent
-After=network.target
-
-[Service]
-ExecStart=/path/to/agent.sh
-Restart=always
-RestartSec=10
-User=jenkins
-```
+进程可由对应操作系统的服务管理机制托管，但“服务自动重启”只表示尝试恢复连接，不代表原构建已经安全续跑。应设置重启退避和离线告警，并在重连后核对在途任务与残留进程。
 
 ### 监控告警
 
@@ -302,147 +282,50 @@ Agent 长时间离线时，正在跑的 build 会失败。处理策略：
 
 ## 平台特化运维：自动更新与强制重启
 
-调度策略和离线恢复都做对了，还有一个 build farm 常见杀手藏在你不太管的地方——**操作系统自己的自动更新策略**。Windows / macOS / Linux 都有"我觉得现在该重启了"的机制，半夜触发 = 凌晨 build 全死 = 早班 QA 拿不到包。
+系统补丁、Editor、SDK 和编译工具升级都应进入维护流程。旧稿按团队规模建议永久禁用更新，忽略了补丁维护职责；本轮撤下相关停用服务和注册表命令，改为明确维护窗口、验证节点和回退条件。
 
-**小团队（5-10 台 Agent）受到的相对冲击更大——单机重启就是 10-20% 产能掉线。** 这一节讲三大系统各自的"自动操作"陷阱和治理方式。
+Windows 需要确认实际生效的更新与重启策略；macOS 还要记录所选 Xcode、SDK 和签名访问方式；Linux 需要核对包更新与服务重启行为。具体设置随系统版本和组织管理方式变化，本篇不提供未经对应环境验证的通用关闭命令。
 
-### Windows：自动更新 + 强制重启（最常见杀手）
+维护时先停止给目标节点分配新任务，等待已有任务结束或按约定取消，再更新并重启。恢复连接后先完成环境探测和代表性构建，最后恢复调度。避免使用“切换在线状态”代替设置明确目标状态：维护脚本重复执行时，不应意外把待修机器重新放回池中。
 
-Windows 默认更新策略一句话总结：**它会按它想的时间重启你的机器**。半夜撞上的概率非常高——Windows 倾向于"用户不活跃时间"重启，而那正是游戏团队夜间 build 的高峰。
+## 构建节点重建验收 {#agent-rebuild-acceptance}
 
-#### 三层治理
+一台节点上的工具“都装好了”，还不足以证明它能替代旧节点。需要从版本清单重建环境，再用固定输入证明资源检查、导出、构建和交接仍然可用。以下是待执行的工程方案，本轮没有重建构建机。
 
-**第一层：GPO / 注册表锁定重启窗口**
+### 环境清单应留下什么
 
-域机器走组策略：
+| 层 | 应记录的可重建输入 | 恢复后的核对方式 |
+| --- | --- | --- |
+| 基础环境 | OS 与架构、补丁基线、服务账号权限、磁盘布局、区域与时区 | 环境探测记录与清单比对 |
+| Jenkins 连接 | agent 启动方式、运行 Java、标签、executor 数 | 连接与调度检查；标签与实际能力一致 |
+| 游戏工具链 | Editor 精确版本、平台模块、SDK/NDK、JDK、Xcode、插件锁定信息 | 检查实际执行路径和版本，避免只检查安装目录 |
+| 项目输入 | 代码、资源、配置与构建脚本的固定版本 | 检出版本和输入清单比对 |
+| 外部依赖 | 依赖源、下载校验、代理/证书配置、所需服务 | 使用测试范围内的权限验证可达与可用 |
+| 敏感能力 | 签名与许可模式、凭据引用、注入与轮换负责人 | 受控注入后做权限检查；镜像和公开清单不保存秘密 |
 
-```
-gpedit.msc → 计算机配置 → 管理模板 → Windows 组件 → Windows 更新
-  ├─ 配置自动更新 → 已启用 + "通知下载并通知安装"
-  ├─ 没有登录用户时不自动重启 → 已启用
-  └─ 始终自动重启计划时间 → 改成你能控制的窗口（比如周六 04:00）
-```
+基础镜像、安装脚本和环境清单也需要版本身份。缓存单独管理：先在干净 workspace、缺少可再生缓存的情况下完成链路，再测缓存复用；不能通过复制旧机器的全部目录来掩盖缺失依赖。
 
-非域机器改注册表：
+### 从重建到恢复接单
 
-```
-HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
-  AUOptions = 2                       # 仅通知，不自动下载
-  NoAutoRebootWithLoggedOnUsers = 1
-  ScheduledInstallDay = 7             # 周六
-  ScheduledInstallTime = 4            # 04:00
-```
+1. 选一台隔离的新节点，固定环境清单与项目输入。记录开始时间和操作者，定义团队可接受的恢复时间。
+2. 按清单安装并注入测试所需的受控配置；不连接正式发布、通知或生产写入步骤。
+3. 执行环境探测，再跑资源检查、导出与构建。保留每段结果，定位是环境失败还是内容失败。
+4. 核对产物身份、结构与签名信息，并完成约定的安装/启动检查；测试方另行确认能否进入其测试流程。
+5. 按场景验证任务失败、取消和节点重启后的状态核对，检查残留进程、workspace、调度名额和许可状态。
+6. 达到约定验收条件后恢复接单，并记录失败回退方式、维护人和下次复核时间。
 
-**第二层：Agent 装成 Windows Service**
+### 怎样判断“恢复了”
 
-阻止不了重启的话，至少让重启后自动恢复：
+| 验收层 | 需要留下的结果 | 仍不能据此推断的事 |
+| --- | --- | --- |
+| 环境恢复 | 清单一致性、实际工具版本、连接与权限检查 | 所有项目都能构建 |
+| 链路恢复 | 固定输入的检查、导出、构建和清理结果 | 游戏功能与设备性能已通过 |
+| 产物交接 | 构建身份、文件清单、校验值、测试接收回执 | 线上发布与玩家体验已通过 |
+| 恢复能力 | 实测耗时、人工补步骤、失败点与修订 | 下一次环境变化后仍自动有效 |
 
-```powershell
-# 用 nssm 把 jenkins-agent 装成系统服务
-nssm install JenkinsAgent "C:\Program Files\Java\jdk-17\bin\java.exe"
-nssm set JenkinsAgent AppParameters "-jar C:\jenkins\agent.jar -jnlpUrl <url> -secret xxx -workDir C:\jenkins"
-nssm set JenkinsAgent Start SERVICE_AUTO_START
-nssm set JenkinsAgent AppRestartDelay 10000
-```
+同一输入的两次产物哈希是否必须相同，取决于是否建立了确定性构建约束。签名、时间戳等可变字段存在时，应事先确定比较范围；不能把整包哈希不同直接判为恢复失败，也不能只凭构建成功就放行。
 
-机器重启 → 服务自启 → Agent 重连 Master。**正在跑的 build 仍会丢，只能减少损失。**
-
-**第三层：主动维护窗口 + Agent 排空**
-
-终极方案：与其被动接受重启，不如**主动把更新和重启放在你能控制的窗口**。脚本化流程：
-
-```powershell
-# 1. 通过 Jenkins API 排空 Agent（不再调度新 build）
-Invoke-RestMethod -Uri "http://master:8080/computer/agent-1/toggleOffline?offlineMessage=scheduled-update" `
-    -Method POST -Credential $jenkinsCred
-
-# 2. 等正在跑的 build 完成（轮询 /computer/agent-1/api/json）
-
-# 3. 跑 Windows Update（用 PSWindowsUpdate 模块）
-Install-WindowsUpdate -AcceptAll -AutoReboot
-
-# 4. 重启后 Agent 服务自启 → 再 toggle 回 online
-```
-
-#### 极端选项：完全禁用更新服务
-
-```powershell
-Stop-Service wuauserv -Force; Set-Service wuauserv -StartupType Disabled
-Stop-Service UsoSvc -Force; Set-Service UsoSvc -StartupType Disabled
-Stop-Service WaaSMedicSvc -Force; Set-Service WaaSMedicSvc -StartupType Disabled
-```
-
-**代价**：build 机不再收安全补丁。**只在 build 机完全在内网（不上公网）的前提下接受**。否则要配手动维护窗口定期补丁。
-
-### macOS：System Update / Xcode 升级
-
-macOS Agent（iOS 构建机）有两类自动操作问题：
-
-#### 系统级 Software Update
-
-游戏团队推荐**全部关掉自动**：
-
-```bash
-sudo softwareupdate --schedule off
-sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
-sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
-sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false
-```
-
-#### Xcode 自动升级（**这条最坑**）
-
-Mac App Store 默认会自动升级 Xcode。问题：
-
-- 新版 Xcode 改 build settings 默认值 → build 突然失败
-- 升级期间锁住磁盘 → 进行中的 build 全 fail
-- iOS 项目对 Xcode 版本敏感（Unity 项目在 Xcode 14 / 15 行为不同）
-
-```bash
-sudo defaults write /Library/Preferences/com.apple.commerce AutoUpdate -bool false
-sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallAppUpdates -bool false
-```
-
-**Xcode 升级必须是有计划的工程动作**：先在一台 sandbox Mac 试，验证 Unity 项目能 build，再灰度推到生产 Agent。
-
-### Linux：unattended-upgrades 与 needrestart
-
-#### Ubuntu / Debian：unattended-upgrades
-
-默认装的 `unattended-upgrades` 自动装安全更新。问题：
-
-- 内核更新后 needrestart 提示，**有些配置下会自动重启**
-- 包升级中途锁住 dpkg → apt 操作中的 build 步骤失败
-
-```bash
-# 关掉自动重启
-sudo sed -i 's|//Unattended-Upgrade::Automatic-Reboot ".*";|Unattended-Upgrade::Automatic-Reboot "false";|' \
-    /etc/apt/apt.conf.d/50unattended-upgrades
-
-# 或完全关掉 unattended-upgrades
-sudo systemctl disable unattended-upgrades
-```
-
-#### needrestart 的自动重启提示
-
-Ubuntu 22.04+ 默认装 `needrestart`，apt 操作后会问"是否重启服务"。在 build 机上改为 silent：
-
-```bash
-sudo sed -i "s/#\$nrconf{restart} = 'i';/\$nrconf{restart} = 'l';/" /etc/needrestart/needrestart.conf
-# 'l' = list only（推荐）, 'a' = auto restart, 'i' = interactive
-```
-
-### 通用模式：维护窗口 + Agent 排空
-
-不管哪个系统，都遵循同一个治理模式：
-
-1. **关闭"系统自己决定"的自动操作**（更新、重启、升级）
-2. **明确一个维护窗口**（每周 / 每月一次，避开发版高峰）
-3. **维护窗口自动化**：脚本依次做"排空 Agent → 跑更新 → 重启 → 恢复"
-4. **加监控告警**：Agent 离线超过预期时长就告警，不要靠人记得
-
-### 小团队的简化路径
-
-如果你只有 5-10 台 Agent，**直接关掉所有自动更新机制**，每月人工挑一天集中维护——比维护"完美的自动维护窗口脚本"更省事。脚本化的维护窗口适合 30+ Agent 规模才值得投入。
+控制器恢复另见 [Jenkins 升级与回退]({{< relref "delivery-engineering/delivery-jenkins-ops-204-upgrade-pitfalls.md" >}})。一次节点重建只能覆盖该环境与代表任务，不替代完整构建系统的灾备演练。
 
 ---
 
@@ -450,4 +333,4 @@ sudo sed -i "s/#\$nrconf{restart} = 'i';/\$nrconf{restart} = 'l';/" /etc/needres
 
 下一步进 203 Workspace 与产物的磁盘治理——Agent 调度对了，但 Agent 上的磁盘还是会被产物撑爆。
 
-L3 面试官线读者：本篇核心是"三维度标签"那一节——调度策略的工程化是治理边界的工程化。
+技术负责人：本篇核心是"三维度标签"那一节——调度策略的工程化是治理边界的工程化。
