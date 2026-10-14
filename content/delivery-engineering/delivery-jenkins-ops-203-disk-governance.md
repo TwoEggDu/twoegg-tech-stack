@@ -1,7 +1,7 @@
 ---
 date: "2026-04-27"
 title: "Workspace 与产物的磁盘治理"
-description: '几十 GB 的游戏产物 + 几十个分支 + 几十个产品 = TB 级磁盘压力。Jenkins 的磁盘治理不是"加大磁盘"能解决的——必须按 workspace / 产物归档 / Pipeline state 三层分别治理。'
+description: '按 workspace、构建记录与归档产物区分磁盘责任，核对保留策略、清理范围和恢复需求；说明 Jenkins 配置能够管理什么，以及哪些删除操作需要另行验证。'
 slug: "delivery-jenkins-ops-203-disk-governance"
 weight: 1579
 featured: false
@@ -25,304 +25,177 @@ delivery_reading_lines:
 leader_pick: true
 ---
 
-> **证据状态（2026-10-14）**：磁盘占比、容量与事故时间线尚未核实；旧清理脚本未做路径范围、运行中任务与产物保留验证，不能直接用于生产删除。旧稿中“真实”字样不代表已核验；未确认来源的内容也不自动改称虚构示例。
+> **维护说明（2026-10-14）**：本篇已按 Jenkins 官方文档修订工作目录、构建保留与清理边界。旧稿的容量比例、事故时间线及未经验证的删除脚本已撤下。以下是机制说明与工程建议，尚未在实际 Jenkins 实例中演练。引用页面随产品演进，使用前应核对 core 与插件版本。
 
 ## 在本篇你会读到
 
-- **磁盘占用的真实分布** —— 三层结构与每层量级
-- **Workspace 治理** —— Library 是大头，清理策略要分层
-- **产物归档策略** —— 按分支类型、按用途分级保留
-- **Pipeline state 持久化清理** —— 隐藏的"workflow/" 目录
-- **报警与自动清理** —— 不要等磁盘满了才知道
-- **真实事故案例** —— Master 磁盘满了之后会发生什么
+- **磁盘占用怎么盘点** —— 区分工作目录、构建记录和归档产物。
+- **Workspace 治理** —— 怎样复用缓存，怎样避免清理仍在使用的目录。
+- **产物归档策略** —— 把构建历史保留和产物保留分开设置。
+- **Pipeline 状态的保留边界** —— 为什么不能按目录年龄单独删除运行状态。
+- **报警与自动清理** —— 把可用空间、增长速度和清理条件放在一起判断。
+- **空间不足时的处置** —— 先确定影响范围，再决定释放哪些数据。
 
 ---
 
-## 磁盘占用的真实分布
+## 磁盘占用怎么盘点 {#磁盘占用的真实分布}
 
-游戏团队 Jenkins 磁盘占用大致分布：
+同样是“Jenkins 磁盘满了”，占满的可能是 Agent 的工作盘、controller 的数据盘，也可能是归档服务。先找到实际写入的存储，再讨论清理，避免把不同机器的占用相加后当成一个磁盘的利用率。
 
-| 位置 | 内容 | 典型占比 |
-|------|------|---------|
-| Agent 上的 `workspace/` | 源码 + Library + 中间产物 | 60-70% |
-| Master 上的 `JENKINS_HOME/jobs/*/builds/` | build 元数据 + 日志 + 归档产物 | 20-30% |
-| Master 上的 `JENKINS_HOME/workflow/` | Pipeline state 持久化 | 5-15% |
+| 对象 | 需要盘点的内容 | 治理责任 |
+|------|----------------|----------|
+| Agent 工作目录 | 源码、Unity 导入结果、构建缓存、临时输出 | 工作目录分配、缓存复用与任务结束后的回收 |
+| 构建记录 | 状态、日志和 Pipeline 执行数据 | Jenkins 的构建记录保留与恢复策略 |
+| 归档产物 | 包、符号文件、测试报告等 | Jenkins 归档机制或外部产物服务的保留策略 |
 
-Agent 上的 workspace 是真正的大头——单个 Unity 项目的 Library 缓存就 5-50 GB，多分支 × 多产品 × 多 Agent 让总量轻松到 TB 级。
+归档产物可能使用外部存储；本地目录布局也会受 Folder、Multibranch 和插件影响。不能假定所有任务都位于同一层 `jobs/*/builds/`，也不能把 `JENKINS_HOME/workflow/` 当作统一的全局状态目录。
 
-### 真实数字（典型中型团队）
+### 容量数据怎样记录 {#真实数字典型中型团队}
 
-- 5 个产品 × 平均 20 个分支 × 每分支 30 GB = 3 TB （workspace）
-- Master 归档 200 build × 平均 10 GB = 2 TB （归档）
-- workflow/ 历史累积 ~ 50 GB（Pipeline state）
+每个存储卷分别记录可用字节、目录占用、统计时间、正在运行的任务，以及构建期间新增占用。目录汇总要避免把父目录与子目录重复计数。
 
-总计：5+ TB 级磁盘消耗。
+本篇没有可核验的团队容量样本，因此不提供“典型占比”。容量预算应使用该项目的并发任务、实测工作目录增长和保留需求；工作盘、归档盘与外部存储分别计算。
 
 ---
 
-## Workspace 治理：Library 是大头
+## Workspace 治理：复用与清理的边界 {#workspace-治理library-是大头}
 
 ### Workspace 占用拆解
 
-单个 Unity 项目的 workspace 大致：
+| 内容 | 盘点时需要回答的问题 |
+|------|----------------------|
+| 源码与资源输入 | 能否从固定版本重新获取，是否夹带未提交文件？ |
+| `Library/` 等缓存 | 使用哪个 Editor、平台与构建设置，重建成本是多少？ |
+| 临时文件与中间产物 | 谁仍在读写，后续导出或打包是否还需要？ |
+| 最终包、符号与日志 | 是否已交接、能否下载，失败诊断是否需要保留？ |
 
-| 子目录 | 内容 | 大小 |
-|-------|------|------|
-| `Assets/` | 源资源 | 2-20 GB |
-| `Library/` | Unity 缓存（含 import 中间产物） | 5-50 GB |
-| `Temp/` | 构建中间产物 | 1-10 GB |
-| `Build/` | 输出产物 | 1-10 GB |
-| `Logs/` | Unity 日志 | 几十 MB |
-| `obj/` | C# 编译中间产物 | 100MB-1GB |
-
-**Library 占总 workspace 的 50-70%**——治理它就治理了大头。
+这里按用途分类，不给目录名直接贴上“可删”标签。Unity 2022.3 的增量构建会复用 `Library/Bee` 中的构建结果，缓存范围还包括工作目录外的位置；盘点时需要识别实际配置。[Unity 2022.3 增量构建说明](https://docs.unity3d.com/2022.3/Documentation/Manual/incremental-build-pipeline.html)
 
 ### 三层 workspace 策略
 
-#### 策略 1：完全独立 workspace（最简单，最贵）
+#### 策略 1：显式安排干净工作目录 {#策略-1完全独立-workspace最简单最贵}
 
-每个 Pipeline 的每次 build 用新的 workspace：
+如果要验证干净环境能否构建，需要显式准备独立环境或安排受控清理。仅写一个 `agent { node { ... } }` 并不会保证每次构建获得全新目录。
 
-```groovy
-agent {
-    node {
-        label 'unity-builder'
-        // 默认行为：每次新 workspace
-    }
-}
-```
+Jenkins 的 `node` 会分配工作目录，并发竞争时可能分配带 `@2` 等后缀的路径。实际目录应从该次构建确认，不能从 Job 名猜测。[Pipeline 节点与工作目录](https://www.jenkins.io/doc/pipeline/steps/workflow-durable-task-step/)
 
-每次都从零 reimport Library——完整 build 慢得离谱（多 1-2 小时）。**不推荐**，除非是发版关键 build（要保证完全干净）。
+#### 策略 2：在明确输入和占用关系后复用 {#策略-2固定-workspace-复用推荐}
 
-#### 策略 2：固定 workspace 复用（推荐）
+复用可以保留仍有效的缓存，但需要记录源码版本、Editor 与工具链版本、目标平台和输出位置。失败后残留了什么，也属于下一次构建的输入条件。
 
-同名 Pipeline 的多次 build 共用同一个 workspace：
+`customWorkspace` 是路径配置，不是并发控制策略。即使通过 `ws` 分配目录，也应检查实际获得的路径；跨任务读写共享缓存时，需要额外设计互斥或独立副本。旧稿中直接用 Job、分支变量拼绝对路径的模板已撤下，路径编码和并发语义应在具体配置中验证。
 
-```groovy
-agent {
-    node {
-        label 'unity-builder'
-        customWorkspace "/data/workspaces/${env.JOB_NAME}-${env.BRANCH_NAME}"
-    }
-}
-```
+#### 策略 3：按文件用途决定清理范围 {#策略-3分层-workspace高级}
 
-Library 增量复用，build 速度快。**风险**：workspace 状态污染（上次 build 留下的临时文件影响下次）。
+可以将可重建缓存、临时输出和需要留存的交付物分别管理，但不能仅凭 `Temp/`、`Build/` 等名字递归删除。工程建议是先列出候选对象，核对实际绝对路径、链接或挂载边界、占用任务和后续消费者，再执行已验证的清理流程。
 
-#### 策略 3：分层 workspace（高级）
-
-把 workspace 分成"持久层"和"临时层"：
-
-- 持久层：`Library/` + `obj/`（增量复用）
-- 临时层：`Temp/` + `Build/`（每次 build 清理）
-
-```groovy
-stages {
-    stage('Cleanup Temp') {
-        steps {
-            sh 'rm -rf Temp/ Build/'
-        }
-    }
-    stage('Build') {
-        steps {
-            sh 'unity -batchmode ...'
-        }
-    }
-}
-```
-
-Library 不动，Build 干净——速度和卫生平衡。
+若使用 Workspace Cleanup 插件，要确认 include/exclude 模式和目录选项。官方说明特别指出：目录一旦命中包含规则，其内部文件即使符合排除规则也可能随目录删除；整目录清理还可能委托 Resource Disposer 延后处理。因此需要在样例目录核对保留结果，并检查实际释放空间的结果。[Workspace Cleanup 配置说明](https://plugins.jenkins.io/ws-cleanup/)
 
 ### Workspace 容量限制
 
-Agent 必须**给每个 workspace 设大小上限**，否则一个 Pipeline 的 workspace 漏出去能撑爆整台 Agent。
+配额、构建准入和清理策略解决不同问题：配额限制占用，准入决定是否继续接任务，清理回收已不再需要的数据。是否使用它们，应由节点用途与实测增长决定。
 
-- **方案 A**：定时清理脚本（cron 每天凌晨清理超过 7 天未访问的 workspace）
-- **方案 B**：Jenkins WS Cleanup 插件（`cleanWs()` step），按需清理
-- **方案 C**：每个 workspace 用独立 Linux quota（最严格，配置麻烦）
-
-游戏团队**推荐方案 A + B 组合**：日常用 B 在 Pipeline 里清理临时层；周期任务用 A 清理 stale workspace。
+仅凭“七天未访问”无法确认工作目录已闲置。周期清理还应核对运行或暂停的任务、可能恢复的构建、固定保留对象和共享路径；无法确认归属的目录先留在候选清单中。
 
 ---
 
 ## 产物归档策略：按分支 / 按用途分级
 
-Master 上 `jobs/<name>/builds/` 目录里堆积的归档产物是第二大头。
-
 ### 按分支类型保留
 
-复用 104 多分支策略的真值表：
+分支名称是分类线索，保留期限仍取决于使用者和恢复需求。下表是决策问题，不是已经实施的保留配置。
 
-| 分支 | 保留次数 | 保留时间 | 含符号表 |
-|------|---------|---------|---------|
-| feature/* | 5 | 7 天 | 否 |
-| dev | 30 | 30 天 | 否 |
-| qa | 30 | 60 天 | 是 |
-| release/* | 不限 | 永久 | 是 |
-| hotfix/* | 不限 | 永久 | 是 |
+| 分支用途 | 保留策略需要回答的问题 |
+|----------|--------------------------|
+| 功能验证 | 哪些结果仍在评审，复现问题是否需要对应包与日志？ |
+| 集成与 QA | 测试还在使用哪些版本，过期下载怎样补发？ |
+| 发布与修复 | 需要支持哪些回滚、符号化和问题追查，何时可以退役？ |
 
-Jenkins MBP 配置 → Properties → Discard old items，按分支类型设。
+两类 Jenkins 配置需要分开：
+
+- `buildDiscarder(logRotator(...))` 管理 Job 的构建历史及归档产物保留。
+- Multibranch 的 Orphaned Item Strategy 管理扫描后不再存在的分支项目，不等于每个分支内的构建保留策略。
+
+分别见 [Pipeline 语法](https://www.jenkins.io/doc/book/pipeline/syntax/)与 [Orphaned Item Strategy](https://www.jenkins.io/doc/book/pipeline/pipeline-as-code/#orphaned-item-strategy)。
 
 ### 按用途分级归档
 
-不是所有产物都归档到 Master 上，按用途分流：
+| 产物类型 | 需要保留的关系 |
+|----------|----------------|
+| 安装包或可运行产物 | 构建身份、目标平台、参数与可用的下载入口 |
+| 符号与混淆映射文件 | 与对应二进制版本匹配；期限覆盖实际排障需求 |
+| 日志和测试报告 | 能解释这次构建、失败或验收结果 |
+| 缓存和中间产物 | 依据重建成本与诊断价值决定，不默认长期归档 |
 
-| 产物类型 | 归档位置 | 理由 |
-|---------|---------|------|
-| 用户可下载的 build（IPA / APK） | Master 归档（短期）+ OSS / S3（长期） | 业务方频繁下载，Master 便利；长期保留靠对象存储 |
-| 符号表（dSYM / mapping.txt） | OSS / S3（永久） | Master 不适合 GB 级长期归档 |
-| 中间产物（Temp/ / Library/） | **不归档** | 没价值，不要进 Master |
-| 日志 | Master 归档 | 调试用 |
-| 测试报告 | Master 归档 + 监控系统 | 业务方查看 |
+Jenkins 本地归档和外部产物服务可以分别承担短期访问与长期保留。外部对象的生命周期需要另行配置；迁移后应核对访问权限、版本对应关系与可恢复性，不能只检查“上传成功”。
 
-### 归档清理脚本
+### 用保留配置管理归档 {#归档清理脚本}
 
-定期（每周）清理逻辑：
+`LogRotator` 区分构建记录的天数/数量字段与产物的天数/数量字段，并支持保留构建记录而删除其归档产物。[Jenkins LogRotator API](https://javadoc.jenkins.io/hudson/tasks/LogRotator.html)
 
-```bash
-#!/bin/bash
-# 清理超过保留期的 build artifacts
-find $JENKINS_HOME/jobs/*/builds/ -maxdepth 2 -type d -mtime +60 \
-    -exec rm -rf {}/archive/ \;
-# 注意：保留 build.xml 和 log.gz，只删 archive/ 子目录
-```
+这提供了“历史记录仍可查、产物已到期”的管理入口。正式应用前应核对固定保留的构建、仍在使用的版本、运行中任务及外部归档插件的行为。目录修改时间不表达这些保留条件，旧稿绕过 Jenkins 直接扫描并删除 `archive/` 的脚本已撤下。
 
-**不要直接删整个 build 目录**——这会让 Jenkins build history 出现"空洞"，UI 显示混乱。只删 `archive/` 子目录，保留元数据。
+验证策略时，先在隔离任务准备需要保留与允许到期的样例，列出预期结果，再核对记录、产物和下载入口的实际变化。本轮没有执行这项验证。
 
 ---
 
-## Pipeline state 持久化清理
-
-`JENKINS_HOME/workflow/` 是 Pipeline 引擎的状态持久化目录，每条 Pipeline 一个子目录。
+## Pipeline 状态的保留边界 {#pipeline-state-持久化清理}
 
 ### 目录结构
 
-```
-$JENKINS_HOME/jobs/<job-name>/builds/<build-#>/workflow/
-├── 1.xml      # Pipeline 启动状态
-├── 2.xml      # 第一个 step 完成
-├── 3.xml      # ...
-├── ...
-└── 124.xml    # 每个 step 一个文件
-```
+Pipeline 执行数据服务于运行状态、历史查看及重启后的恢复。具体存储布局随 Jenkins core 和 Pipeline 插件实现变化，不宜从示意目录推导删除规则。
 
-一条复杂 Pipeline 可能产生几百个 XML 文件——单独不大，但累积起来很可观。
+官方文档说明了持久化频率与意外中断后恢复能力的取舍。减少写入和删除状态数据是两回事；降低 durability 也不是清理历史文件的替代方案。[Scaling Pipelines](https://www.jenkins.io/doc/book/pipeline/scaling-pipeline/)
 
 ### 清理策略
 
-**默认行为**：Jenkins 在 build 完成（成功 / 失败）后**不自动删除** workflow 状态文件。
+仍在运行、暂停或等待恢复的构建需要作为保留对象核对。已结束构建的记录应通过已验证的保留机制管理，不能仅按构建号差值判断“足够旧”。
 
-清理时机：
+### 撤下直接删除状态目录的脚本 {#一个救火脚本}
 
-- 跟随 build 历史清理（discard old builds 时连带删除）
-- 手动清理 stale Pipeline state（用 Groovy 脚本扫描）
-
-### 一个救火脚本
-
-```groovy
-import jenkins.model.Jenkins
-import org.jenkinsci.plugins.workflow.job.WorkflowJob
-
-Jenkins.instance.getAllItems(WorkflowJob).each { job ->
-    job.getBuilds().each { build ->
-        if (build.number < (job.getLastBuild().number - 50)) {
-            // 删 50 次之前的 build 的 workflow 目录
-            def workflowDir = new File(build.getRootDir(), "workflow")
-            if (workflowDir.exists()) {
-                workflowDir.deleteDir()
-            }
-        }
-    }
-}
-```
-
-跑一次能释放几十 GB，但风险：删了之后这些 build 的 Pipeline graph 就不能再 replay。
+旧稿的 Groovy 片段会绕过构建生命周期直接删除 `workflow` 子目录，没有核对运行状态、保留标记或插件版本。本轮撤下该片段及“只影响 replay”的说明。历史展示、Replay 与恢复分别依赖什么，需要在固定版本的隔离实例验证，不能声称删除某个目录只有一种后果。
 
 ---
 
 ## 报警与自动清理
 
-绝对不要"磁盘满了才发现"——那时候 Master 已经卡死，救火困难。
+### 报警阈值怎样确定 {#三级报警阈值}
 
-### 三级报警阈值
+空间告警应同时观察剩余容量、增长速度、正在执行的任务和处置所需时间。若短期增长近似稳定，可以估算剩余空间还能支撑多久；这只是预警参考，不能覆盖突然出现的大产物。
 
-| 阈值 | 行为 |
-|------|------|
-| 70% 占用 | 告警邮件（运维 Owner） |
-| 85% 占用 | 触发自动清理（删 stale workspace） |
-| 95% 占用 | 紧急告警（电话） + 暂停接受新 build |
+本篇撤回固定百分比阈值。何时提醒、何时限制新构建、何时执行清理，需要结合本节点的构建峰值和维护响应时间确定。
 
 ### 自动清理触发器
 
-Jenkins 上的 [Disk Usage Plugin](https://plugins.jenkins.io/disk-usage/) 提供 API：
+自动化流程应先识别可清理对象，再重新检查占用与保留条件，并通过调度隔离或互斥防止检查后被新任务重新占用，直到清理结束。执行后记录实际结果。空间紧张不应直接扩大删除范围；没有合格候选对象时，应限制新增负载并转入处置。
 
-```groovy
-// 在 Pipeline 里检查磁盘
-def disk = Jenkins.instance.getNode('master').getDiskUsage()
-if (disk.usedPercent > 85) {
-    // 触发清理 Job
-    build job: 'disk-cleanup-job', wait: false
-}
-```
+旧稿的 `getDiskUsage().usedPercent` 调用未核对适用插件、对象和版本，已撤下。接入前应依据已安装插件的接口与实际输出确定采集方式，不能将展示插件名当作 API 已经验证的证据。[Disk Usage 插件说明](https://plugins.jenkins.io/disk-usage/)
 
-清理 Job 的逻辑：
+### 监控指标的含义 {#监控指标接入-prometheus}
 
-1. 删除超过 30 天的 archived artifacts（保留元数据）
-2. 删除超过 50 次以前的 workflow state
-3. 清理 stale workspace（7 天未访问）
-4. 重新检查磁盘占用，写入监控
+需要观测的是各卷可用空间、工作目录及归档的增长、清理耗时和失败原因。指标名、标签与单位取决于采集器及版本，本篇不再提供未经验证的“默认指标名”。
 
-### 监控指标（接入 Prometheus）
-
-```
-jenkins_master_disk_usage_bytes{path="/var/jenkins"}
-jenkins_master_disk_total_bytes{path="/var/jenkins"}
-jenkins_agent_disk_usage_bytes{agent="agent-1"}
-jenkins_workflow_dir_size_bytes
-```
-
-详见 [205 Jenkins 自身的可观测性]({{< relref "delivery-engineering/delivery-jenkins-ops-205-observability.md" >}})。
+可继续阅读 [205 Jenkins 自身的可观测性]({{< relref "delivery-engineering/delivery-jenkins-ops-205-observability.md" >}})；其中插件指标和告警样例仍需按该篇的证据说明核对。
 
 ---
 
-## 真实事故案例：Master 磁盘满了之后
+## 磁盘告警后的处置边界 {#真实事故案例master-磁盘满了之后}
 
-### 时间线
+旧稿的事故时间线、停工时长和数据损失没有来源，已撤回，不改称真实匿名案例。下面是待演练的处置顺序：
 
-- T-30 天：开始累积，无报警
-- T-7 天：磁盘 80%，告警被忽略（"还能撑"）
-- T-3 天：磁盘 92%，运维计划周末清理
-- **T 时刻**：磁盘满
-- T+5 分钟：Pipeline 无法启动新 build（无法写 build.xml）
-- T+10 分钟：UI 卡顿（用户登录请求写 session 文件失败）
-- T+20 分钟：所有进行中的 build 状态卡住
-- T+30 分钟：业务方反馈"Jenkins 挂了"
+1. 确定受影响的存储卷、写入任务和保留对象，记录错误与剩余空间。
+2. 控制继续增长的负载，确认已有任务如何结束、暂停或恢复。
+3. 在已确认的候选对象中选择清理范围；迁移或扩容也应纳入判断。
+4. 核对实际释放空间、保留记录和产物入口，检查代表性任务能否正常交接。
 
-### 救火过程
+是否重启应由故障状态与恢复方案决定。空间释放不能自动证明 Pipeline 状态完整，也不能证明此前构建成功。
 
-1. SSH 到 Master，发现磁盘 100%
-2. 紧急 `du -sh /var/jenkins/jobs/*` 找最大占用 Job
-3. `rm -rf /var/jenkins/jobs/<huge-job>/builds/*/archive/`（先释放空间）
-4. 重启 Jenkins（很多卡住的状态需要重启清理）
-5. **Pipeline state 损坏**：进行中的 build 全部失败，需要重跑
-6. 配置 build retention：每个 Job 限制最多保留 50 个 build
-
-### 成本
-
-- 救火时长：4 小时
-- 业务影响：所有产品流水线停 4 小时
-- 数据损失：当时进行中的 build 全部失败重跑（多耗 2 小时）
-
-### 教训
-
-- **磁盘报警阈值不要超过 80%**——95% 已经太晚
-- **自动清理必须早于人工介入**——指望"运维周末清理"不可靠
-- **Master 磁盘必须独立**（不和系统盘共用）
+<!-- DATA-TODO: 固定 Jenkins core、Pipeline、Workspace Cleanup 与归档插件版本，补脱敏容量样本、清理候选和保护对象、隔离任务验证及恢复结果。 -->
 
 ---
 
 ## 文末导读
 
-下一步进 204 Jenkins 升级踩坑：JVM / 插件 / 迁移——磁盘治理稳定后，下一个不稳定源是升级。
+下一篇 [204 Jenkins 升级踩坑：JVM / 插件 / 迁移]({{< relref "delivery-engineering/delivery-jenkins-ops-204-upgrade-pitfalls.md" >}})继续讨论版本组合和恢复验证。
 
-L3 面试官线读者：本篇核心是"按用途分流归档"那一节——把"长期归档"和"短期访问"分开，是大产物场景的工程必经之路。
+磁盘治理需要知道数据归谁、为何保留、谁仍在使用，以及删后怎样确认结果。

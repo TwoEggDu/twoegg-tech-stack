@@ -92,7 +92,7 @@ Master 瓶颈、Agent 调度、磁盘/内存、升级踩坑、可观测性——
 |---|------|---------|
 | 201 | [Master 的三类瓶颈：连接、内存、磁盘 I/O]({{< relref "delivery-engineering/delivery-jenkins-ops-201-master-bottleneck.md" >}}) | 为什么在"大作业 + 大产物"场景下容易崩 |
 | 202 | [Agent 调度与标签体系]({{< relref "delivery-engineering/delivery-jenkins-ops-202-agent-scheduling.md" >}}) | 标签设计失败会带来什么现象、怎么回到正轨 |
-| 203 | [Workspace 与产物的磁盘治理]({{< relref "delivery-engineering/delivery-jenkins-ops-203-disk-governance.md" >}}) | 几十 G 产物怎么让磁盘不爆 |
+| 203 | [Workspace 与产物的磁盘治理]({{< relref "delivery-engineering/delivery-jenkins-ops-203-disk-governance.md" >}}) | 工作目录、构建记录与归档产物怎样分别保留和清理 |
 | 204 | [Jenkins 升级踩坑：JVM / 插件 / 迁移]({{< relref "delivery-engineering/delivery-jenkins-ops-204-upgrade-pitfalls.md" >}}) | 升级路径的四个失败模式与回滚预案 |
 | 205 | [Jenkins 自身的可观测性：监控与告警]({{< relref "delivery-engineering/delivery-jenkins-ops-205-observability.md" >}}) | Jenkins 自己挂了谁来发现 |
 
@@ -106,7 +106,7 @@ License、大仓库、符号表、多平台打包、IL2CPP——"游戏构建和
 | 302 | [大仓库在 Jenkins 下的 Workspace 策略]({{< relref "delivery-engineering/delivery-jenkins-ops-302-large-repo.md" >}}) | Git LFS / 浅克隆 / 缓存仓在真实大仓下的取舍 |
 | 303 | [符号表与崩溃栈：IL2CPP 产物的符号链路]({{< relref "delivery-engineering/delivery-jenkins-ops-303-symbols-crashstack.md" >}}) | 线上崩溃栈还原怎么自动化 |
 | 304 | [多平台并行打包与隔离]({{< relref "delivery-engineering/delivery-jenkins-ops-304-multi-platform-isolation.md" >}}) | 同时出 iOS / Android / WebGL 的资源冲突与隔离 |
-| 305 | [IL2CPP 构建的时间与内存特征]({{< relref "delivery-engineering/delivery-jenkins-ops-305-il2cpp-build.md" >}}) | 为什么 IL2CPP 构建机最容易挂 |
+| 305 | [IL2CPP 构建的时间与内存特征]({{< relref "delivery-engineering/delivery-jenkins-ops-305-il2cpp-build.md" >}}) | 怎样按阶段和实际资源记录诊断构建瓶颈 |
 
 ---
 

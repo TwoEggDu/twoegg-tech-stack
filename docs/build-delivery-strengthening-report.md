@@ -2,6 +2,8 @@
 
 > 日期：2026-10-14。本文是执行记录，不是新的系列规划。
 
+下文先保留首次四项补强的审查快照；同日后续对 203 / 305 的全文复核及当前状态见[后续记录](#jenkins-203-305-review)。两轮检查分别记录，不互相替代。
+
 本轮沿用 Jenkins、版本与分支管理、工程实践三个既有主规划，补充事实核对、多版本协作、管线案例取材和构建节点恢复验收。
 
 ## 版本与审查范围
@@ -93,3 +95,86 @@
 ## 下一步取材
 
 优先补一条“群提醒 → 本地定位 → 修正 → 复检”的脱敏过程，再补通知中的版本与实际产物的对应结果。其次核实 203 清理脚本和 305 故障归因；构建节点恢复先准备获准的环境清单，再另行安排演练。没有新增写作或运行任务自动启动。
+
+## 后续记录：203 / 305 全文复核（2026-10-14） {#jenkins-203-305-review}
+
+本轮起点为本地 `main` 的 `23f88e00cdf3a5ff90c89ad8230ade7c177173ec`。全文读取 203、305；核对相关系列规划、索引入口及本文首次记录。没有将邻篇或其他系列描述为完成复审，没有访问实际 Jenkins、Unity 工程、内网日志或设备。
+
+两篇均按机制与工程方法文维护，保留原主题顺序：203 从占用分类进入 workspace、归档、执行状态和清理；305 从代码构建链进入时间、内存、磁盘、配置和故障诊断。旧稿的数字、脚本和因果判断相互关联，修改覆盖了相应段落；不将未知来源材料重新包装成虚构样例或个人经历。
+
+### 主要问题与处理
+
+以下按问题类别归并，原句用于定位旧稿，不是当前建议。官方资料支持的是相应机制；撤回无来源数据的决定不需要虚构一个替代数字。
+
+| 位置 / 旧稿代表原句 | 风险与判断 | 本轮处理 / 后续证据 |
+| --- | --- | --- |
+| 203：“Library 占总 workspace 的 50-70%” | 无样本的容量占比；还混合不同主机的存储 | 撤回比例与团队容量算例，按存储卷和用途盘点；实际容量待测 |
+| 203：“默认行为：每次新 workspace” | `node` 分配目录不等于每次创建干净环境 | 按 J1 修正，说明实际分配及并发后缀 |
+| 203：“固定 workspace 复用（推荐）” | 路径模板未覆盖编码、占用与并发语义 | 撤下模板，保留条件化复用说明；并发隔离需在目标配置验证 |
+| 203：“Library 不动，Build 干净——速度和卫生平衡。” | 前面的递归删除没有路径归属与消费者检查 | 撤下删除命令，改为先确认范围、使用者与保留对象 |
+| 203：“方案 A：定时清理脚本（cron 每天凌晨清理超过 7 天未访问的 workspace）” | 访问时间不足以证明目录已闲置 | 不再推荐按年龄直接删除；记录运行、暂停、恢复与共享占用 |
+| 203：“Jenkins MBP 配置 → Properties → Discard old items，按分支类型设。” | 把孤儿分支项目与构建保留混淆 | 按 J2 / J3 / J4 区分两个层级 |
+| 203：“中间产物（Temp/ / Library/）”对应“没价值，不要进 Master” | 把诊断价值、重建成本和长期归档混在一起 | 按用途决定保留，不再给符号与发布产物统一“永久”期限 |
+| 203：“只删 `archive/` 子目录，保留元数据。” | 绕过 Jenkins 按目录时间删除，不能表达在用与保留状态 | 撤下脚本；改用 J4 支持的记录/产物保留概念，实施前隔离验证 |
+| 203：“`JENKINS_HOME/workflow/` 是 Pipeline 引擎的状态持久化目录，每条 Pipeline 一个子目录。” | 将实现布局写成全局固定目录 | 撤回固定布局断言；按实际版本识别执行数据 |
+| 203：“跑一次能释放几十 GB，但风险：删了之后这些 build 的 Pipeline graph 就不能再 replay。” | 无容量样本，直接删除状态且缩窄后果 | 撤下 Groovy 片段与收益断言；J6 只支持持久化/恢复的取舍，不证明删除安全 |
+| 203：“85% 占用”对应“触发自动清理（删 stale workspace）” | 固定阈值直接触发未经核对的删除 | 改为剩余空间、增长与处置时间判断；清理单独核对保护条件 |
+| 203：“Jenkins 上的 Disk Usage Plugin 提供 API” | 后附调用及 Prometheus 指标未核版本和接口 | J7 不足以支持旧片段，撤下调用与指标名；实际采集接口待核 |
+| 203：“救火时长：4 小时” | 事故时间线、影响与重启效果没有来源 | 撤回整段事故，换为明确标注待演练的处置问题 |
+| 305：“每个泛型实例化展开成具体 C++ 类” | 忽略泛型共享和生成设置 | 按 U1 / U2 修正代码构建链并补托管裁剪 |
+| 305：“三层流程串联 → 单步失败要从头来” | 忽略依赖判断与可复用结果 | 按 U3 修正，不承诺失败后一律全量或增量 |
+| 305：“典型 Unity 游戏（C# 代码 50-200K 行）的 IL2CPP build 阶段拆解” | 表格、生成文件数和耗时没有测量条件 | 撤回数值表，改为分阶段记录；U4 仅支持获取构建步骤信息 |
+| 305：“配 16 核机器编译 = 4 核机器 1/4 时间” | 线性扩展没有依据 | 改为固定输入下核对可并行工作及资源约束 |
+| 305：“不能并行（ld / lld 单线程）” | LLD 官方资料有明确反例 | 按 L1 修正；不推断某 Unity 工程的实际链接器 |
+| 305：“OOM 高发在链接阶段——这一步不能拆。” | 内存曲线、峰值与频率无样本 | 撤回曲线和阶段定论，区分进程、整机与容器观测 |
+| 305：“所以修一行代码的 incremental build 仍然要 5-15 分钟链接 → 这是最低时长。” | 混淆链接内部增量与上层任务跳过，固定下限无据 | 撤回最低时长，按 U3 和实际任务日志判断 |
+| 305：“公式：`并发数 ≤ 可用内存 / 1GB`。” | 估算及所附环境变量无适用依据 | 撤回公式和执行示例；`UNITY_IL2CPP_PARALLEL_JOBS` 接口状态待核，不断言其普遍不存在 |
+| 305：“中间产物总量 100-150 GB / 单平台 build” | 路径、容量、I/O 加速倍数均未核平台与样本 | 撤回固定表与按猜测路径清理的建议 |
+| 305：“同 Agent 跑两个 IL2CPP build → OOM 必然。” | 配机表把代码行数和任务数当成容量证据 | 撤回配机表、固定 CPU/内存比和存储禁令；先单任务观测，再验证同机负载 |
+| 305：“build 在 80% 进度处突然失败，错误日志含 `linker exit code -9` 或 `Killed`。” | 进度和退出词不能单独归因 OOM | 按阶段、进程和系统记录核对；K1 的累计事件也需对齐时间 |
+| 305：“最常见原因：clang 进程死锁（IL2CPP 转译生成的 C++ 触发了 clang bug）。” | 静默、CPU 低与工具缺陷之间没有因果证据 | 撤回最常见原因与直接升级建议，先查进程、等待和复现 |
+| 305：“加 `link.xml` 配置保留特定类型” | 被作为 IL2CPP 失败的通用修复 | 按 U5 限定为托管保留问题，先区分失败阶段 |
+| 305：“看 IL2CPP cache 命中率：`Library/Bee/Stats/` 下有 cache hit 数据” | 入口未找到可核对的对应版本依据 | 撤下步骤；固定 CPU、延迟阈值和缓存最常见根因也不再保留 |
+| 305：“作者是否真的踩过这些坑（具体数字、具体故障模式、具体救火经过）” | 无来源细节被用于证明经历，且偏离当前站点定位 | 撤下求职与薪资叙述，改为技术负责人的证据判断；正文存在不等于全系列验证完成 |
+
+### 本轮核对的官方资料
+
+以下资料于 2026-10-14 读取。Jenkins 网页不是用户实例的版本快照；Workspace Cleanup 页面标注 0.49，LogRotator API 页面标注 core 2.586。Unity 资料限定 2022.3；LLVM 与内核资料用于纠正通用性断言，不证明用户工程使用同样配置。
+
+- J1：[Pipeline 节点与工作目录](https://www.jenkins.io/doc/pipeline/steps/workflow-durable-task-step/)。
+- J2：[Pipeline 语法](https://www.jenkins.io/doc/book/pipeline/syntax/)。
+- J3：[Pipeline as Code / Orphaned Item Strategy](https://www.jenkins.io/doc/book/pipeline/pipeline-as-code/#orphaned-item-strategy)。
+- J4：[LogRotator API](https://javadoc.jenkins.io/hudson/tasks/LogRotator.html)。
+- J5：[Workspace Cleanup](https://plugins.jenkins.io/ws-cleanup/)：模式、目录删除和 deferred wipeout 的边界。
+- J6：[Scaling Pipelines](https://www.jenkins.io/doc/book/pipeline/scaling-pipeline/)。
+- J7：[Disk Usage 插件](https://plugins.jenkins.io/disk-usage/)；不据页面名称推断旧 API 可用。
+- U1：[IL2CPP 概述](https://docs.unity3d.com/2022.3/Documentation/Manual/IL2CPP.html)。
+- U2：[Scripting restrictions](https://docs.unity3d.com/2022.3/Documentation/Manual/ScriptingRestrictions.html)。
+- U3：[Incremental build pipeline](https://docs.unity3d.com/2022.3/Documentation/Manual/incremental-build-pipeline.html)。
+- U4：[BuildReport](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Build.Reporting.BuildReport.html)。
+- U5：[Managed code stripping](https://docs.unity3d.com/2022.3/Documentation/Manual/ManagedCodeStripping.html)。
+- L1：[LLVM LLD](https://lld.llvm.org/)。
+- K1：[Linux cgroup v2 内存事件](https://docs.kernel.org/admin-guide/cgroup-v2.html)。
+
+对旧环境变量、缓存统计目录和插件调用的官方域名检索未取得可支撑其用法的对应证据。检索无结果不等于证明不存在，正文采取撤下操作示例、保留待核问题的处理。
+
+### 文件与维护位置
+
+本轮仅改五份既有文档：203、305 原正文；系列索引的两条摘要；唯一的 Jenkins 系列规划；本记录。标题、slug、URL、series、weight、编号和文章文件位置保持原值，摘要随正文勘误；有关主节的旧锚点尽量保留，实际引用另做检查。根路由、历史归档和其他 P3 / ET 修改不在本轮范围。
+
+### 检查与未验证项
+
+实际执行了以下本地检查；临时脚本和输出仅作本轮核验材料，不进入文章，也不作为项目运行证据。
+
+| 检查 | 实际命令 / 方法 | 本轮结果 |
+| --- | --- | --- |
+| 版本与范围基线 | `git status --short`、`git rev-parse HEAD`；`python .codex_tmp/jenkins-203-305-20261014/check.py prepare` | 基线 SHA 如本节开头；保存 2697 个已跟踪/非忽略文件的 SHA-256，临时目录排除 |
+| 修改前构建 | `python .codex_tmp/jenkins-203-305-20261014/check.py before` | 调用现有 Hugo，输出与 cache 定向到本轮临时目录，使用 `--noBuildLock`；退出 0，ERROR / WARN 均为 0 |
+| 修改后构建 | `python .codex_tmp/jenkins-203-305-20261014/check.py after` | 退出 0，ERROR / WARN 均为 0；未安装依赖 |
+| 范围、身份与公开化 | `python .codex_tmp/jenkins-203-305-20261014/check.py verify` | 仅上述五份文档变化；范围外文件字节不变；三个 content 文件除两篇摘要外的 frontmatter 不变；新增行未检出原通知的内部标识 |
+| 本地路径与锚点 | 同一脚本扫描 Markdown 路径、relref、显式文档锚点和生成 HTML 的 href/id | 范围内源路径与显式锚点错误 0；前后各 1250 个 HTML，历史链接/锚点问题均为 283 项，新增错误与新增重复 id 均为 0 |
+| 差异与内容复查 | `git diff --check -- <本节五份文档>`；逐段核对两篇改后正文、索引两行和规划增量 | 空白检查退出 0；仅有 Git 的 LF → CRLF 提示；无新增文章编号、主规划或运行脚本 |
+
+本轮复用了已读取的 HTML 检查逻辑，但重新构建并扫描当前修改前后输出，没有复用上一轮的检查结果。未做浏览器视觉检查，也未逐篇处理那 283 项历史链接/锚点问题。
+
+本轮只核对公开资料和文档，没有执行 Jenkins 清理、修改 Job、重建节点、运行 Unity 构建、压力测试或设备验收，没有提交、推送或部署。下一步运行验证需另有获准环境、固定版本和受控样例，不能从 Hugo 成功推断运行安全。
