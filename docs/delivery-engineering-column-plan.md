@@ -1,5 +1,57 @@
 # 交付工程体系 · 旗舰专栏总规划
 
+## P1 阅读路径增量（2026-10-14）
+
+依据[三条交付路径盘点](game-delivery-reading-paths-audit.md)。下列是现有文章的增量与修订提纲，不新增系列或文章身份；原文尚未修改。编号与早期 V 分卷、DE-LC 增量分别管理。
+
+<a id="de-p1-01"></a>
+
+### DE-P1-01｜一次玩法交付的版本集合与联合验收
+
+- **候选标题 / 落点**：作为[端服版本协调](../content/delivery-engineering/delivery-server-versioning-01-coordination.md)的增量小节；仍属 V12。待写作时再判断篇幅，本轮不新增文章。
+- **主问题**：怎样把策划配置、美术资源、客户端、服务端和协议绑定为一组可追溯、可重验的交付对象？
+- **责任边界**：只补产物与验收之间的连接；技能执行归技能系列，门所有权与豁免归 V13，团队节奏归 V18，玩法研究归产品证据系列。
+- **前置**：知道客户端/服务端与资源/配置的基本区别；下列相关文章为按问题延伸，不要求全部读完。
+- **关键小节**：版本集合如何标识构建、内容清单、配置和协议？每次交接谁确认输入，失败退给谁？输入变化后哪些功能、表现、性能和发布证据需要重验？这些是研究问题，不预设统一组织模板。
+- **可复用文章**：[技能策划管线](../content/system-design/skill-system-27-designer-data-pipeline.md)、[美术交付](../content/system-design/skill-system-28-artist-vfx-delivery-standard.md)、[验证门](../content/delivery-engineering/delivery-verification-testing-02-gates.md)、[多团队协作](../content/delivery-engineering/delivery-org-governance-03-multi-team.md)。已有兼容矩阵、门责任和发布列车不重写。
+- **所需证据**：一组经授权脱敏的版本关系、角色职责、失败退回和变更重验记录；若使用示意数据必须明示，不写成亲历项目。
+- **当前状态**：已有正文，补衔接仅提纲；真实联合验收材料未知。优先级：先。
+
+<a id="de-p1-02"></a>
+
+### DE-P1-02｜异步加载的阶段与验收边界
+
+- **候选标题 / 落点**：修订[资源加载与生命周期](../content/delivery-engineering/delivery-resource-pipeline-05-loading-lifecycle.md)，归 V05，保留文章身份。
+- **主问题**：原文把异步表述为“不阻塞主线程”时，是否混淆了读取、对象恢复、实例化和首次使用？
+- **责任边界**：修订通用交付解释和前后文一致性；不重建 Unity 加载实现或性能诊断系列。
+- **前置**：资源与运行时对象、帧预算的基本概念；不要求先读完整 CLR 或操作系统系列。
+- **关键小节**：加载完成具体结束了哪一阶段？哪些工作可能在主线程或首次使用时发生？怎样分别验收时延、帧尖峰和生命周期，而不把异步 API 当作性能保证？
+- **可复用文章**：[AB 加载链](../content/engine-toolchain/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md)、[读完不等于可用](../content/performance/game-performance-read-does-not-mean-ready.md)、[帧链路](../content/performance/game-performance-frame-breakdown.md)。
+- **所需证据**：目标引擎及包版本的官方文档；如写观察结论，需有明确阶段与环境的合法测量摘要。旧文通用结论与具体观察分别标注。
+- **当前状态**：正文已有，存在待核对表述；本轮未查官方机制或运行测量，仅登记修订。优先级：先。
+
+<a id="de-p1-03"></a>
+
+### DE-P1-03｜交付旧文的示例、版本与经验口径核对
+
+- **候选标题 / 落点**：原位修订下表文章，逐项关闭，不合并成一篇新教程；各项继续归原 V 分卷。
+- **主问题**：哪些数值只是示意，哪些平台规则需要版本与适用范围，哪些“真实案例”有可公开依据？
+- **责任边界**：只核对交付文章，个人经历认领回实践演进规划；法规和平台义务未查官方来源前只列待研究问题。
+- **前置**：原文章的问题语境；不存在候选篇之间的硬依赖。
+- **关键小节**：原句属于事实、观察、建议还是假设？来源能否支持其对象、时间和范围？缺证据时应移除断言、改为明确示意还是暂缓推荐？
+- **所需证据**：带日期的官方资料、适用环境与合法公开样本；个人故事另需本人职责确认。不得用同系列其他文章充当独立事实证明。
+- **当前状态**：以下正文均存在，本轮只发现风险并登记，未作技术修正或事实认证。优先级：推荐前核对。
+
+| 原位落点（兼作可复用文章） | 本轮发现的核对问题 |
+| --- | --- |
+| [V02 美术生产](../content/delivery-engineering/delivery-content-pipeline-02-art-production.md)、[配置验证](../content/delivery-engineering/delivery-content-pipeline-05-config-validation.md) | 资源量级与修复成本倍数的依据、样本和示意身份 |
+| [V02 多端资源](../content/delivery-engineering/delivery-content-pipeline-06-multiplatform-assets.md) | 纹理支持范围与小游戏包限制的版本、平台和当前官方依据；不直接替换成未经核对的新值 |
+| [V11 部署](../content/delivery-engineering/delivery-server-operations-01-deployment.md) | HTTP/Web 与游戏服务的概括是否过宽；排水、会话迁移和零停机分别依赖哪些状态条件 |
+| [V17 灰度](../content/delivery-engineering/delivery-release-operations-01-canary.md)、[回退](../content/delivery-engineering/delivery-release-operations-02-rollback.md) | 比例、时间、阈值是例子还是规范；各平台更新/回退路径适用性；观察日志来源 |
+| [V18 多团队](../content/delivery-engineering/delivery-org-governance-03-multi-team.md)、[V13 验证门](../content/delivery-engineering/delivery-verification-testing-02-gates.md) | “真实过渡故事”、绕过事故及效果描述的来源与作者角色；本轮未核验，不能作为个人实践背书 |
+
+这些修订不构成新增教程任务。完成某项后在本段回写其核对范围及证据，不把 Hugo 通过当技术正确。
+
 <a id="lifecycle-additions"></a>
 
 ## 生命周期归并增量（2026-10-14）
