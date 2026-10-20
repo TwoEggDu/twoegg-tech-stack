@@ -87,8 +87,8 @@ disableKinds = ["taxonomy", "term"]
   weight = 50
 
 [[menu.main]]
-  name = "工程案例"
-  pageRef = "/portfolio/"
+  name = "生产管线实践"
+  pageRef = "/engineering-journey/production-pipeline-overview/"
   weight = 80
 
 [[menu.main]]
