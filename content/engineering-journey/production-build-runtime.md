@@ -161,4 +161,4 @@ flowchart TD
 
 构建输入、环境与产物的组织见[构建自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-03-build-automation.md" >}})；从文件检查继续走到运行和兼容验证，可以看[热更新验证]({{< relref "delivery-engineering/delivery-hot-update-05-verification.md" >}})。
 
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：构建环境（提纲）]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) · [后续：发布验收（提纲）]({{< relref "engineering-journey/production-release-readiness.md" >}})
+[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：构建环境（提纲）]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})

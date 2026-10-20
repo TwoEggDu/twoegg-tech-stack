@@ -48,4 +48,4 @@ tags:
 
 **成稿前待补**：一项跨线修复的来源与目标、依赖或冲突判断、复验和职责记录。已有受控提交实践与拟议的修复传播方案将分别说明。
 
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：平台差异（提纲）]({{< relref "engineering-journey/production-multiplatform.md" >}}) · [后续：发布验收（提纲）]({{< relref "engineering-journey/production-release-readiness.md" >}})
+[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：平台差异（提纲）]({{< relref "engineering-journey/production-multiplatform.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})
