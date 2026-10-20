@@ -40,7 +40,7 @@ tags:
 | [02｜配置表导出了，为什么资源与双端仍然对不上？]({{< relref "engineering-journey/production-config-consistency.md" >}}) | 梳理配置含义、资源引用、生成物与双端消费之间的配套关系。 |
 | [03｜构建成功了，为什么设备上仍然跑不起来？]({{< relref "engineering-journey/production-build-runtime.md" >}}) | 从 AOT 元数据漏包的定位与修复，展开受控输入、失败条件与流程沉淀。 |
 | [08｜包已经准备好了，怎样持续维护一个可发布版本？]({{< relref "engineering-journey/production-release-readiness.md" >}}) | 将候选产物、检查报告、QA 验收和端服生效结果接到同一个交付对象上。 |
-| [09｜线上有异常、有数据，怎样推动下一轮改进？]({{< relref "engineering-journey/production-feedback-loop.md" >}}) | 从日志回收、数据整理与问题交接出发，将反馈接回后续处理和生产改进。 |
+| [09｜线上有异常、有数据，怎样推动下一轮改进？]({{< relref "engineering-journey/production-feedback-loop.md" >}}) | 从转化反馈追查语言环境下的 JSON 浮点解析问题，交接修复并补入发布回归。 |
 
 ### 开发期检查
 
