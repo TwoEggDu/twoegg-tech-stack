@@ -5,6 +5,7 @@ date: "2026-10-20"
 description: "区分配置含义、资源引用、生成物配套和实际消费，结合历史材料与说明场景分析配置交接的检查方法。"
 draft: false
 series: "工程实践与演进"
+hide_section_context: true
 weight: 30
 tags:
   - "生产管线"

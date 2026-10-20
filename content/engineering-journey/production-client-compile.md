@@ -5,6 +5,7 @@ date: "2026-10-20"
 description: "记录客户端代码提交后的编译检查与通知做法，说明怎样把共享工程的错误接回修正和复查。"
 draft: false
 series: "工程实践与演进"
+hide_section_context: true
 weight: 40
 tags:
   - "生产管线"

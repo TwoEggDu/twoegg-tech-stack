@@ -6,6 +6,7 @@ description: "提纲，正文待写：识别构建环境的隐含依赖，从首
 draft: false
 content_stage: "outline"
 series: "工程实践与演进"
+hide_section_context: true
 weight: 100
 tags:
   - "生产管线"

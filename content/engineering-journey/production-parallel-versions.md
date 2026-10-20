@@ -6,6 +6,7 @@ description: "新功能验证、测试与发布分支同时出包，多个 Jenki
 draft: false
 content_stage: "article"
 series: "工程实践与演进"
+hide_section_context: true
 weight: 80
 tags:
   - "生产管线"

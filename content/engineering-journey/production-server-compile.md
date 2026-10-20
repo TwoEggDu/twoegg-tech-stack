@@ -5,6 +5,7 @@ date: "2026-10-20"
 description: "从服务端工程、依赖与编译环境出发，说明提交检查的输入输出，以及它与后续联调验证的边界。"
 draft: false
 series: "工程实践与演进"
+hide_section_context: true
 weight: 50
 tags:
   - "生产管线"

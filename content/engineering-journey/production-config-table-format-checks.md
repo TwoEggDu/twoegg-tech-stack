@@ -5,6 +5,7 @@ date: "2026-10-20"
 description: "围绕提交触发的配置格式检查，说明本地工具、源表定位、修正和复查怎样进入策划日常工作。"
 draft: false
 series: "工程实践与演进"
+hide_section_context: true
 weight: 60
 tags:
   - "生产管线"

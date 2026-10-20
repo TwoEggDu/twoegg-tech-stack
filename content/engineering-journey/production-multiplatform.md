@@ -6,6 +6,7 @@ description: "提纲，正文待写：管理公共能力与平台输入，讨论
 draft: false
 content_stage: "outline"
 series: "工程实践与演进"
+hide_section_context: true
 weight: 90
 tags:
   - "生产管线"
