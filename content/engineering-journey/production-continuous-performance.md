@@ -48,4 +48,4 @@ tags:
 
 **成稿前待补**：原始测量样本及完整条件、已有检查的执行频率与负责人。持续门禁方案会与已运行的检查分别说明。
 
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}}) · [后续：线上反馈（提纲）]({{< relref "engineering-journey/production-feedback-loop.md" >}})
+[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}}) · [后续：线上反馈]({{< relref "engineering-journey/production-feedback-loop.md" >}})
