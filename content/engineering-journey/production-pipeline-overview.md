@@ -6,6 +6,7 @@ description: "整理近几年生产管线工作的判断方法与落地过程：
 draft: false
 series: "工程实践与演进"
 weight: 10
+hide_section_context: true
 tags:
   - "生产管线"
   - "交付工程"
