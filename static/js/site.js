@@ -27,6 +27,25 @@
 })();
 
 (() => {
+  document.querySelectorAll('.article-reading .article-body table').forEach((table) => {
+    if (table.parentElement?.classList.contains('article-table')) {
+      return;
+    }
+
+    const headers = Array.from(table.querySelectorAll('thead th'));
+    const wrapper = document.createElement('div');
+    wrapper.className = 'article-table';
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', `表格：${headers[0]?.textContent.trim() || '文章数据'}`);
+    table.dataset.columns = String(headers.length);
+    headers.forEach((header) => header.setAttribute('scope', 'col'));
+    table.before(wrapper);
+    wrapper.appendChild(table);
+  });
+})();
+
+(() => {
   const mermaidCodeBlocks = Array.from(document.querySelectorAll('pre code.language-mermaid'));
   if (!mermaidCodeBlocks.length) {
     return;

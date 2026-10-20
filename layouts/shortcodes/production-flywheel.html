@@ -1,0 +1,56 @@
+{{- $arrowID := printf "production-flywheel-arrow-%d" .Ordinal -}}
+<figure class="production-flywheel" aria-label="反复交付版本并积累生产能力的循环">
+  <div class="production-flywheel-intro"><strong>一轮轮交付版本，一轮轮完善生产能力</strong><p>对外产出游戏版本，对内留下可复用的规范、工具与协作经验。</p></div>
+  <div class="production-flywheel-wheel">
+    <svg class="production-flywheel-arrows" viewBox="0 0 860 620" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="{{ $arrowID }}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 1 1 L 8 5 L 1 9" /></marker>
+      </defs>
+      <g marker-end="url(#{{ $arrowID }})">
+        <path d="M 565 75 C 680 75 730 137 730 223" />
+        <path d="M 730 396 C 730 494 680 545 565 545" />
+        <path d="M 295 545 C 180 545 130 487 130 396" />
+        <path d="M 130 223 C 130 132 180 75 295 75" />
+        <path class="capability-arrow" d="M 265 310 L 302 310" />
+        <path class="capability-arrow" d="M 558 310 L 595 310" />
+        <path class="capability-arrow" d="M 430 182 L 430 145" />
+      </g>
+    </svg>
+    <ol class="production-flywheel-stages" role="list">
+      <li class="production-flywheel-stage">
+        <h3><span aria-hidden="true">01</span>制作与交接</h3>
+        <dl><dt>输入</dt><dd>本轮目标 ＋ 已有生产能力</dd><dt>产出</dt><dd>已提交的资源、配置与代码</dd></dl>
+      </li>
+      <li class="production-flywheel-stage">
+        <h3><span aria-hidden="true">02</span>构建与验收</h3>
+        <dl><dt>输入</dt><dd>确定版本的工程内容与标准</dd><dt>过程</dt><dd>生成候选、执行检查、QA 验收</dd><dt>产出</dt><dd>验收结论；通过后交付同组产物</dd></dl>
+      </li>
+      <li class="production-flywheel-stage">
+        <h3><span aria-hidden="true">03</span>发布与观察</h3>
+        <dl><dt>输入</dt><dd>验收通过的产物 ＋ 发布安排</dd><dt>产出</dt><dd>生效版本 ＋ 运行与使用反馈</dd></dl>
+      </li>
+      <li class="production-flywheel-stage">
+        <h3><span aria-hidden="true">04</span>处理与复盘</h3>
+        <dl><dt>输入</dt><dd>内部问题、线上与使用者反馈</dd><dt>过程</dt><dd>研判、修正、重新验证效果</dd><dt>产出</dt><dd>经过验证的解决经验</dd></dl>
+      </li>
+    </ol>
+    <div class="production-flywheel-core">
+      <span>持续积累 · 实际应用</span>
+      <h3>生产能力</h3>
+      <ul><li>制作与提交规范</li><li>工具功能与自动检查</li><li>回归用例与操作知识</li></ul>
+      <p>团队在使用中形成协作默契</p>
+    </div>
+    <span class="production-flywheel-arrow-label production-flywheel-deposit">沉淀</span>
+    <span class="production-flywheel-arrow-label production-flywheel-apply-build">应用</span>
+    <span class="production-flywheel-arrow-label production-flywheel-apply-making">支撑制作</span>
+    <span class="production-flywheel-lap">↗ 进入下一轮版本</span>
+  </div>
+  <div class="production-flywheel-equation" aria-label="上一轮能力加上本轮有效改进，形成下一轮生产基础">
+    <span>上一轮的生产能力</span><span class="operator" aria-hidden="true">＋</span><span>本轮验证有效的改进</span><span class="operator" aria-hidden="true">→</span><strong>下一轮的生产基础</strong>
+  </div>
+  <div class="production-flywheel-result"><strong>持续改进的目标：协作更熟练，版本产出更稳定</strong><p>观察重复错误是否减少、交接是否更顺畅、每个版本的产出是否更可预期。</p></div>
+  <figcaption class="production-flywheel-caption">
+    <p><strong>构建管线持续承担的工作：</strong>把反复遇到的问题转成可执行的规范，补齐工具功能、自动检查、诊断和回归能力，并根据使用反馈持续维护。</p>
+    <p>内部问题随时返回责任环节；修正仍需重新构建与验收，线上修正还需发布后的效果确认。有效经验才进入下一轮的生产机制。</p>
+  </figcaption>
+</figure>
