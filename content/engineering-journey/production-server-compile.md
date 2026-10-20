@@ -51,6 +51,10 @@ tags:
 
 **服务端的代码变更有自己的编译反馈，后续联调才有一个明确的起点。**
 
+## 继续深入
+
+服务端工程的依赖、环境与产物怎样管理，可以继续看[构建自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-03-build-automation.md" >}})；多项检查怎样组织和呈现，见[质量门自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-04-quality-gates.md" >}})。两篇补充通用机制，服务启动与端服联调仍有各自的验证步骤。
+
 ---
 
 [返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})

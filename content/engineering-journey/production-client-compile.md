@@ -53,6 +53,10 @@ tags:
 
 **这项检查留下的能力，是让客户端编译错误更早被看见，并更直接地进入开发者的修正过程。**
 
+## 继续深入
+
+怎样组织检查、聚合结果并处理误报，可以继续看[质量门自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-04-quality-gates.md" >}})。编译入口所依赖的脚本、环境与产物管理，见[构建自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-03-build-automation.md" >}})。这些机制可用于完善检查，本文已经确认的实践范围仍是提交触发编译与错误反馈。
+
 ---
 
 [返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [服务端编译检查]({{< relref "engineering-journey/production-server-compile.md" >}})

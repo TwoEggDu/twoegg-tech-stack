@@ -154,6 +154,10 @@ flowchart TD
 
 **配置交付要让每个消费者拿到含义明确、来源可追溯、彼此配套的内容，并在实际使用中验证它们。**
 
+## 继续深入
+
+不同错误应在哪一层发现、检查在什么时候执行，可以继续看[配置验证]({{< relref "delivery-engineering/delivery-content-pipeline-05-config-validation.md" >}})。将生成与编译组织成受控步骤时，可以参考[构建自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-03-build-automation.md" >}})中的参数、环境与产物管理。这里连接的是设计方法，本文提出的生成物一致性改进仍需独立实现和验证。
+
 ---
 
 [返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [配置表格式检查]({{< relref "engineering-journey/production-config-table-format-checks.md" >}})

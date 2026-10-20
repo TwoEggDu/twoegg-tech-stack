@@ -112,6 +112,10 @@ flowchart TD
 
 **一项资源检查要真正发挥作用，还需要让收到报错的人知道去哪里查、怎样修正。**
 
+## 继续深入
+
+检查放在制作、导入还是构建环节，可以结合[代码与资产质量工具]({{< relref "code-quality/static-analysis-and-asset-quality-tools.md" >}})理解；交付内容和验收条件怎样事先约定，可以参考[美术技能表现的交付标准]({{< relref "system-design/skill-system-28-artist-vfx-delivery-standard.md" >}})。两篇提供通用机制与协作方法，本文记录工具逐步形成的实际过程。
+
 ---
 
 [返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [深入资源引用与资产机制]({{< relref "engine-toolchain/unity-asset-system-and-serialization-series-index.md" >}}) · [继续阅读：配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}})

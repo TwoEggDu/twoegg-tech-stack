@@ -69,6 +69,10 @@ tags:
 
 **让配置修改及时得到格式检查反馈，并让策划能够按报错修正和复查，检查才成为日常开发的一部分。**
 
+## 继续深入
+
+格式检查之后还需要哪些验证，可以继续看[配置验证]({{< relref "delivery-engineering/delivery-content-pipeline-05-config-validation.md" >}})中的分层模型。涉及资源引用、生成物和两端实际消费时，沿下方的配置一致性专题继续阅读。
+
 ---
 
 [返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}})
