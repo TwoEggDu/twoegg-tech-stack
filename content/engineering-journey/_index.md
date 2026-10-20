@@ -13,7 +13,7 @@ hero_title: "从引擎工具到产品交付"
 
 先读[生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}})了解问题与整体模型；再按当前问题选择：
 
-- **资源与配置**：[资源完整性案例]({{< relref "engineering-journey/production-resource-completeness.md" >}}) → [配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}})。
+- **资源、配置与设备运行**：[资源完整性案例]({{< relref "engineering-journey/production-resource-completeness.md" >}}) → [配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}}) → [构建成功后的设备故障]({{< relref "engineering-journey/production-build-runtime.md" >}})。
 - **提交后的开发检查**：[客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})、[服务端编译检查]({{< relref "engineering-journey/production-server-compile.md" >}})、[配置表格式检查]({{< relref "engineering-journey/production-config-table-format-checks.md" >}})。
 
 文章分别说明历史实践、分析场景与待验证改进，局部检查通过后仍需相应的运行和交付验收。

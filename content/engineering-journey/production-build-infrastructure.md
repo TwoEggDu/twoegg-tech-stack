@@ -48,4 +48,4 @@ tags:
 
 **成稿前待补**：一个有完整操作与复验记录的维护事件。环境重建、升级或灾难恢复若只有方案，会保留其待验证状态。
 
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [相关：构建与运行故障（提纲）]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后续：发布验收（提纲）]({{< relref "engineering-journey/production-release-readiness.md" >}})
+[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [相关：构建与运行故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后续：发布验收（提纲）]({{< relref "engineering-journey/production-release-readiness.md" >}})
