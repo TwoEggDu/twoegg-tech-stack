@@ -30,7 +30,7 @@ tags:
 
 ## 已发布：从具体问题开始
 
-目前已有 **9 篇正文，包含本总览和下面 8 篇独立文章**。建议依次阅读 **01 资源完整性 → 02 配置一致性 → 03 构建与运行故障 → 08 可发布版本 → 09 线上反馈**：从制作交接、数据与程序配套，走到设备运行、发布交接与下一轮改进。三篇开发期检查可以按需阅读。
+目前已有 **10 篇正文，包含本总览和下面 9 篇独立文章**。建议依次阅读 **01 资源完整性 → 02 配置一致性 → 03 构建与运行故障 → 04 版本范围与协作 → 08 可发布版本 → 09 线上反馈**：从制作交接、数据与程序配套，走到设备运行、版本范围、发布交接与下一轮改进。三篇开发期检查可以按需阅读。
 
 ### 从资源交接到线上反馈
 
@@ -39,6 +39,7 @@ tags:
 | [01｜本地资源完整，为什么手机包里仍然缺内容？]({{< relref "engineering-journey/production-resource-completeness.md" >}}) | 从漏提交出发，展开 Missing 检查、对象定位、依赖提交与使用反馈。 |
 | [02｜配置表导出了，为什么资源与双端仍然对不上？]({{< relref "engineering-journey/production-config-consistency.md" >}}) | 梳理配置含义、资源引用、生成物与双端消费之间的配套关系。 |
 | [03｜构建成功了，为什么设备上仍然跑不起来？]({{< relref "engineering-journey/production-build-runtime.md" >}}) | 从 AOT 元数据漏包的定位与修复，展开受控输入、失败条件与流程沉淀。 |
+| [04｜多个版本同时开发，怎样避免漏合修复和发错内容？]({{< relref "engineering-journey/production-parallel-versions.md" >}}) | 通过分时打包、正式包重新测试、单号检查和 SVN 日志核对，控制交付范围并让 QA 知情。 |
 | [08｜包已经准备好了，怎样持续维护一个可发布版本？]({{< relref "engineering-journey/production-release-readiness.md" >}}) | 将候选产物、检查报告、QA 验收和端服生效结果接到同一个交付对象上。 |
 | [09｜线上有异常、有数据，怎样推动下一轮改进？]({{< relref "engineering-journey/production-feedback-loop.md" >}}) | 从转化反馈追查语言环境下的 JSON 浮点解析问题，交接修复并补入发布回归。 |
 
@@ -65,11 +66,10 @@ tags:
 
 ## 后续专题：先看提纲
 
-下面 4 篇已整理为可阅读的**提纲页，正文待写**。链接内列出准备回答的问题与展开顺序；篇目规划不代表相关工程能力已经全部落地或通过验证。
+下面 3 篇已整理为可阅读的**提纲页，正文待写**。链接内列出准备回答的问题与展开顺序；篇目规划不代表相关工程能力已经全部落地或通过验证。
 
 | 篇目（均为提纲） | 准备展开的问题 |
 | --- | --- |
-| [04｜多个版本同时开发，怎样避免漏合修复和发错内容？]({{< relref "engineering-journey/production-parallel-versions.md" >}}) | 管理配套变更、修复传播与候选版本范围。 |
 | [05｜同一项目交付多个平台，怎样控制构建差异？]({{< relref "engineering-journey/production-multiplatform.md" >}}) | 明确平台输入、公共能力、构建隔离和逐平台验收。 |
 | [06｜换台构建机就失败，怎样让管线稳定运行？]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) | 识别环境依赖，定位失败阶段，让维护工作能够交接。 |
 | [07｜单资源合格，为什么游戏运行仍然卡顿？]({{< relref "engineering-journey/production-continuous-performance.md" >}}) | 连接资源规格、场景组合与设备测量，维护性能基线。 |
