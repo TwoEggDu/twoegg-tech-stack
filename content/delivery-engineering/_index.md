@@ -9,6 +9,20 @@ hero_title: "交付不是发布。从代码到产品稳定运行在用户设备�
 
 不只讲"怎么打包"，而是讲整条链路上每一环的工程设计——出了什么问题会怎样，应该怎样预防和恢复。
 
+## 选择阅读入口
+
+- **[从生产管线实践开始]({{< relref "engineering-journey/production-pipeline-overview.md" >}})**：先读第 0 节《从解决问题到形成生产飞轮》，看资源、配置与代码检查怎样连接跨工种协作，并逐步积累可复用的生产能力。
+- **[按交付工程体系深入](#delivery-system-guide)**：从下方设计原则进入，按原有 19 卷结构与五条阅读线，系统查阅原理、实现和平台专题。
+
+### 按具体问题继续阅读
+
+- **资源与配置**：[资源完整性案例]({{< relref "engineering-journey/production-resource-completeness.md" >}}) → [配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}})。
+- **提交后的开发检查**：[客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})、[服务端编译检查]({{< relref "engineering-journey/production-server-compile.md" >}})、[配置表格式检查]({{< relref "engineering-journey/production-config-table-format-checks.md" >}})。
+
+两种入口共用已有文章：从具体问题进入实践，也可以按需回到专题理解机制与取舍。
+
+<a id="delivery-system-guide"></a>
+
 ## 设计原则
 
 这套专栏按三层模型组织：
