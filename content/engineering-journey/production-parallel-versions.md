@@ -141,4 +141,4 @@ tags:
 
 **版本管理要让应当交付的修改进入正确的包，也让负责测试和发布的人知道这个包实际改变了什么。**
 
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [前篇：构建与运行故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后续：平台差异（提纲）]({{< relref "engineering-journey/production-multiplatform.md" >}}) · [继续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})
+[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [前篇：构建与运行故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后篇：平台差异与参数化准备]({{< relref "engineering-journey/production-multiplatform.md" >}}) · [继续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})
