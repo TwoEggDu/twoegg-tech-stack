@@ -94,11 +94,13 @@
 
   {{ if and (not .Params.hide_featured) (gt (len $featuredPages) 0) }}
     <section class="feature-block">
+      {{ if not .Params.hide_group_headings }}
       <div class="page-title-block compact">
         <p class="eyebrow">Start Here</p>
         <h2>第一次来先看</h2>
         <p class="section-lead">先读这几篇入口文，再按系列或问题继续往下走。</p>
       </div>
+      {{ end }}
       <div class="post-grid">
         {{ range $featuredPages }}
           <article class="post-card">
@@ -118,11 +120,13 @@
 
   {{ if gt (len $seriesEntries) 0 }}
     <section class="series-block">
+      {{ if not .Params.hide_group_headings }}
       <div class="page-title-block compact">
         <p class="eyebrow">Indexed Series</p>
         <h2>带入口的系列</h2>
         <p class="section-lead">这些系列已经有独立索引页。先看索引，再按入口页里的阅读路径进入正文。</p>
       </div>
+      {{ end }}
 
       <div class="series-grid">
         {{ range $seriesEntries }}
@@ -245,11 +249,13 @@
 
   {{ if gt (len $legacySeriesTitles) 0 }}
     <section class="series-block">
+      {{ if not .Params.hide_group_headings }}
       <div class="page-title-block compact">
         <p class="eyebrow">Legacy Series</p>
         <h2>待补入口页的系列</h2>
         <p class="section-lead">这些系列还没有独立索引页，当前先用代表文章兜底。补完入口页后，它们会自动进入上面的主区块。</p>
       </div>
+      {{ end }}
 
       <div class="series-grid">
         {{ range $legacySeriesTitles }}
@@ -339,11 +345,13 @@
 
   {{ if gt (len $soloPages) 0 }}
     <section class="feature-block">
+      {{ if not .Params.hide_group_headings }}
       <div class="page-title-block compact">
         <p class="eyebrow">Notes</p>
         <h2>独立专题</h2>
         <p class="section-lead">不属于某个系列主线的单篇文章，适合按问题直接进入。</p>
       </div>
+      {{ end }}
       <div class="post-grid">
         {{ range $soloPages }}
           <article class="post-card">

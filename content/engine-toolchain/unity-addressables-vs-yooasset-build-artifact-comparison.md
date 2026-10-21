@@ -11,8 +11,12 @@ tags:
   - "YooAsset"
   - "Build"
   - "Comparison"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 2
 ---
+
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
 
 [Cmp-01]({{< relref "engine-toolchain/unity-addressables-vs-yooasset-runtime-scheduling-comparison.md" >}}) 把两个框架的运行时调度模型放到同一组问题上对照了：定位机制、Provider 链 vs Loader 链、引用计数、异步模型。那篇解决的是"运行时结构差异在哪"。
 

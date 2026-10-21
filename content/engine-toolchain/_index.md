@@ -3,6 +3,8 @@ date: "2026-04-12"
 title: "引擎工具链"
 description: "把构建、资源系统、脚本编译、热更新、异步运行时和崩溃分析接成同一条工具链主线。"
 hero_title: "工具链不是零散脚本，而是从构建到交付的完整系统链路。"
+hide_featured: true
+hide_group_headings: true
 ---
 
 这一栏把构建管线、资源系统、脚本编译、IL2CPP、HybridCLR 热更新、异步运行时和崩溃分析放回同一条工具链里理解。

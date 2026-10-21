@@ -1,7 +1,8 @@
 ---
 date: "2026-04-13"
-title: "YooAsset 的 PackageManifest 到底存了什么：版本校验、文件索引和运行时查找"
-description: "拆开 YooAsset PackageManifest 的序列化结构，讲清 AssetInfo、BundleInfo、dependBundleIDs 各自存了什么，版本号 + CRC + Hash 三层校验怎么工作，以及和 Addressables Catalog 的结构对比。"
+lastmod: "2026-10-21"
+title: "YooAsset Manifest 的三种边界：定位索引、内容身份与完整性验证"
+description: "以 YooAsset 3.0.6 固定源码拆开清单的数据结构、location 索引、两种依赖集合，以及版本、Hash、Unity CRC、文件 CRC 和大小的真实职责。"
 slug: "unity-yooasset-manifest-version-fileindex-lookup"
 weight: 55
 featured: false
@@ -11,445 +12,180 @@ tags:
   - "Manifest"
   - "PackageManifest"
   - "Runtime"
-series: "Addressables 与 YooAsset 源码解读"
+series: "YooAsset 资源管理与交付"
+primary_series: "yooasset"
+series_order: 4
+yooasset_version: "3.0.6"
 ---
-[上一篇]({{< relref "engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})把 YooAsset 运行时的完整内部链路从 `LoadAssetAsync` 到 bundle 加载完成拆了一遍。那篇里提到 `PackageManifest` 负责将 address 映射到 `AssetInfo`，但只用一小节带过了 manifest 的内部结构。这篇要把 `PackageManifest` 完全拆开。
 
-（对比参考：Addressables 侧的 Catalog 深度拆解见 [Addr-02]({{< relref "engine-toolchain/unity-addressables-catalog-encoding-loading-cost-update.md" >}})。）
+> 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
 
-具体要回答的问题是：`YooAsset 的 PackageManifest 到底存了什么，运行时怎么用它来定位和校验资源？`
+“这个资源在不在包里”和“这个文件可不可以用”，看似都在查 Manifest，实际回答的是不同问题。
 
-为什么要专门拆 manifest？因为不管是 Addressables 还是 YooAsset，运行时的一切资源操作，最终都要查一张索引表。Addressables 那边叫 `ContentCatalogData`，YooAsset 这边叫 `PackageManifest`。这张表的结构直接决定了：
+地址找不到，可能是定位索引不包含这个名字；版本有变化，未必需要重新下载所有 bundle；文件名或 Hash 对得上，也不能单独证明缓存没有损坏。若把这些现象统称为“三层校验”，清单就会被误写成既决定版本、又比较差量、还自动保证安全的万能表。
 
-- 资源定位有多快
-- 依赖关系怎么表达
-- 版本校验有几道防线
-- 热更新的粒度和安全性
+**Manifest 的核心价值是把逻辑资产、资源包内容和验证参数联系起来；真正执行取得、缓存和验证工作的，是使用这张表的其他组件。**
 
-拆开 `PackageManifest`，这些问题的答案就会变得具体。
+> 源码基线：YooAsset **3.0.6**，固定提交 `3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`。本篇只陈述该版本源码能证明的结构与职责；文末实验尚未运行，没有以源码结构推导跨框架性能排名。
 
-> **版本基线：** 本文源码分析基于 YooAsset 2.x（https://github.com/tuyoogame/YooAsset）。
+运行时消费这些记录的过程见[请求到 bundle 就绪]({{< relref "engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})；文件来源与缓存路由见[文件系统与运行模式]({{< relref "engine-toolchain/unity-yooasset-filesystems-playmodes.md" >}})。
 
-## 一、PackageManifest 在 YooAsset 里的位置
+## 一、先建立模型：一张清单连接三类信息
 
-先把它在整个系统里的位置标清楚。
+资源系统需要维护三种关系：
 
-`PackageManifest` 是 YooAsset 运行时的核心索引结构。一句话概括它的职责：**把所有资产地址映射到 bundle 文件，让运行时能根据一个 address 找到要加载哪个 bundle、依赖哪些其他 bundle**。
+1. **定位关系**：业务输入的 location 对应哪个资产记录。
+2. **内容关系**：这个资产位于哪个主包、需要哪些依赖内容，包文件又属于哪个内容身份。
+3. **验证关系**：取得的数据是否符合预期格式、大小和校验值。
 
-它的生命周期分两段：
-
-**构建期生成：** 在 YooAsset 的构建流程中，`ManifestContext` 收集所有 `AssetBundleCollector` 的分析结果（资产列表、bundle 分组、依赖关系），最终序列化成一个 manifest 文件。这个文件随构建产物一起输出。
-
-**运行时加载：** 在 `ResourcePackage` 初始化流程中，manifest 文件被反序列化成 `PackageManifest` 对象。反序列化完成后，`PackageManifest` 会立刻构建内部的查找字典，供后续所有资源操作使用。
+版本字符串属于“选择哪份清单”的控制信息；它不是资产地址，也不是文件校验码。资源包列表下标是清单内部引用；它不是跨版本稳定 ID，更不是跨 Package 引用。
 
 ```mermaid
 flowchart LR
-    subgraph Build["构建期"]
-        A["AssetBundleCollector<br/>收集资产和依赖"] --> B["ManifestContext<br/>构建 manifest 数据"]
-        B --> C["序列化<br/>写入 manifest 文件"]
-    end
-    subgraph Runtime["运行时"]
-        D["ResourcePackage<br/>初始化"] --> E["反序列化<br/>读取 manifest 文件"]
-        E --> F["PackageManifest<br/>构建查找字典"]
-        F --> G["LoadAssetAsync<br/>查字典定位资源"]
-    end
-    C -->|"manifest 文件"| D
+    V[版本选择<br/>PackageVersion] --> M[某个 Package 的 Manifest]
+    M --> I[定位索引<br/>location / GUID]
+    I --> A[PackageAsset]
+    A -->|BundleID| B[主 PackageBundle]
+    A -->|DependentBundleIDs| D[依赖 PackageBundle 集合]
+    B --> F[内容身份与命名<br/>FileHash / BundleGuid / FileName]
+    B --> C[验证参数<br/>UnityCrc / FileCrc / FileSize]
+    F --> FS[文件系统与缓存执行取得]
+    C --> FS
 ```
 
-这里有一个和 Addressables 的关键差异需要先记住：
+图中的每个箭头都有明确作用域。同一份 Manifest 的 `BundleList[3]` 与另一份 Manifest 的 `BundleList[3]` 没有身份相等的含义。内容相等要看内容标识与构建约定，不能看列表位置。
 
-**Addressables 的 Catalog** 是 Base64 编码的 JSON 或二进制格式（`ContentCatalogData`），加载时需要解码和解析 `m_KeyDataString`、`m_BucketDataString`、`m_EntryDataString` 等紧凑编码字段，再构建 `ResourceLocationMap`。
+## 二、二进制文件和运行时对象不是同一层
 
-**YooAsset 的 Manifest** 是自定义二进制序列化（通过 `BufferReader` / `BufferWriter` 实现）。反序列化后拿到的就是带类型的 C# 对象列表，字典构建只是遍历列表做 `Dictionary.Add`。
+3.0.6 的 `PackageManifest` 包含 `FileVersion`、定位配置、输出命名样式、构建包类型、构建管线、Package 名称/版本/备注，以及 `AssetList`、`BundleList`。列表之外，还有五张运行时字典：
 
-这个差异在大项目里会有可感知的影响——后面第五节会详细讲。
+| 字典 | 查询方向 |
+|---|---|
+| `AssetsByLocation` | location → `PackageAsset` |
+| `AssetsByGuid` | 资产 GUID → `PackageAsset`，受 `IncludeAssetGuid` 控制 |
+| `BundlesByBundleName` | 逻辑资源包名 → `PackageBundle` |
+| `BundlesByFileName` | 输出文件名 → `PackageBundle` |
+| `BundlesByGuid` | BundleGuid → `PackageBundle` |
 
-## 二、PackageManifest 的顶层结构
+这意味着“bundle 只有列表，不需要字典”并不准确：ID 引用确实走列表下标，但文件名、逻辑包名与 GUID 查询另有索引。[完整字段定义](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageManifest.cs#L14)
 
-打开 `YooAsset/Runtime/PackageSystem/PackageManifest.cs`，顶层字段非常清晰。
-
-### 核心字段
-
-```
-PackageManifest
-├── PackageVersion          // string, 包版本号
-├── EnableAddressable       // bool, 是否启用地址模式
-├── _assetList              // List<PackageAsset>, 所有资产信息
-├── _bundleList             // List<PackageBundle>, 所有 bundle 信息
-```
-
-`PackageVersion` 是整个 manifest 的版本标识。它不是一个自增数字，而是构建时生成的版本字符串，用于远端版本比对。
-
-`EnableAddressable` 控制资产查找的方式。开启时，用户可以通过自定义地址（address）查找资产；关闭时，只能通过完整资产路径（AssetPath）查找。
-
-`_assetList` 和 `_bundleList` 是 manifest 的两大核心列表。一个存资产信息，一个存 bundle 信息。它们之间通过整数索引关联。
-
-### 运行时构建的查找结构
-
-以下字段名为简化示意，具体命名见源码。
-
-`PackageManifest` 在反序列化之后，会立刻从 `_assetList` 构建查找字典。`_bundleList` 本身已经是列表，通过整数下标直接索引，不需要额外构建字典：
-
-```
-运行时查找结构
-├── _assetDic               // Dictionary<string, PackageAsset>
-│                            //   key = address 或 assetPath
-│                            //   value = PackageAsset
-├── _assetPathDic            // Dictionary<string, PackageAsset>
-│                            //   key = assetPath（全路径）
-│                            //   value = PackageAsset
-├── _bundleList              // List<PackageBundle>
-│                            //   BundleID 就是列表下标，直接索引
-```
-
-构建过程的核心逻辑大致是：
-
-```
-// 伪代码，简化自 PackageManifest 初始化逻辑
-foreach (var asset in _assetList)
-{
-    if (EnableAddressable)
-        _assetDic[asset.Address] = asset;
-    _assetPathDic[asset.AssetPath] = asset;
-}
-// _bundleList 不需要额外构建——BundleID 就是列表下标，直接 _bundleList[bundleID] 即可
-```
-
-字典和列表就位后，整个 manifest 的查找就是 `O(1)` 的字典查询加列表下标访问。
+磁盘上也不是这些对象的原样转储。`DeserializeManifestOperation` 先处理可选解密，读取文件标记与格式版本，再读取全局标签表、目录表和资产/资源包记录。资产路径由目录索引和文件名还原，GUID、Hash 用专用读取方法恢复；运行时字典在读取记录时填入。最后还构建每个 bundle 的 `MainAssets` 与反向引用 `ReferrerBundleIDs`。[解析入口与文件头](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/DeserializeManifestOperation.cs#L60)、[记录解析](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/DeserializeManifestOperation.cs#L137)、[索引与反向引用构建](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/DeserializeManifestOperation.cs#L354)
 
 ```mermaid
 flowchart TD
-    subgraph Manifest["PackageManifest"]
-        V["PackageVersion<br/>版本标识"]
-        AL["_assetList<br/>List&lt;PackageAsset&gt;"]
-        BL["_bundleList<br/>List&lt;PackageBundle&gt;"]
-    end
-    subgraph Dicts["运行时查找结构（初始化时构建）"]
-        AD["_assetDic<br/>address → PackageAsset"]
-        APD["_assetPathDic<br/>assetPath → PackageAsset"]
-    end
-    AL -->|"遍历构建"| AD
-    AL -->|"遍历构建"| APD
-    AD -->|"查找时"| R["PackageAsset.BundleID<br/>→ 直接索引 _bundleList"]
-    R --> BL
+    S[清单二进制数据] --> D[可选 Manifest 解密]
+    D --> H[检查文件标记与 FileVersion]
+    H --> T[读取配置、标签表与目录表]
+    T --> A[逐条解析资产<br/>恢复路径、标签和依赖 ID]
+    A --> AI[填入 AssetList<br/>AssetsByLocation / AssetsByGuid]
+    AI --> B[逐条解析 bundle<br/>初始化输出文件名]
+    B --> BI[填入 BundleList<br/>三张 bundle 字典]
+    BI --> R[构建 MainAssets<br/>与 ReferrerBundleIDs]
+    R --> M[可供运行时查询的 Manifest]
 ```
 
-## 三、PackageAsset 和 PackageBundle 的字段
+资产与 bundle 的解析循环会检查 `IsBusy` 并允许退出当前更新，因此不能把全流程描述成“零成本的一次字典构建”。但反向关系等初始化仍有自己的遍历工作。是否达到帧预算，需要结合记录规模与设备测量。
 
-这两个类是 manifest 里的核心数据单元。拆开它们的字段，就能看清 YooAsset 在数据层面做了什么、省了什么。
+## 三、location 如何变成资产：别名是索引策略
 
-### PackageAsset（资产信息）
+定位查询本身很短：`ConvertLocationToAssetInfo(string location, System.Type assetType)` 检查空输入后，对 `AssetsByLocation` 执行 `TryGetValue`，成功则创建 `AssetInfo`，失败则返回包含错误的无效 `AssetInfo`。[定位查询源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageManifest.cs#L301)
 
-源码位置：`YooAsset/Runtime/PackageSystem/PackageAsset.cs`
+决定哪些字符串能命中的关键，在反序列化时的字典构建：
 
-| 字段 | 类型 | 职责 |
-|------|------|------|
-| Address | string | 用户定义的加载地址，比如 `"hero_prefab"` |
-| AssetPath | string | 资产在工程中的完整路径，比如 `"Assets/Prefabs/Hero.prefab"` |
-| AssetGUID | string | Unity 资产 GUID，用于唯一标识 |
-| BundleID | int | 这个资产所在的 bundle 在 `_bundleList` 中的索引 |
-| DependBundleIDs | int[] | 这个资产依赖的所有其他 bundle 在 `_bundleList` 中的索引数组 |
+- 先添加资产路径映射。
+- `SupportExtensionless` 开启时，再尝试加入去后缀路径；冲突路径会发出警告并保留已有映射。
+- `EnableAddressable` 开启且没有替换资产路径时，再加入非空 Address。
+- 未开启地址模式且 `LocationToLower` 开启时，字典使用 `StringComparer.OrdinalIgnoreCase`。它不依赖每次查询先把输入转成小写。
+- `IncludeAssetGuid` 决定是否读取、建立 GUID 索引；并不是每份 Manifest 必然包含 GUID。
 
-这里最值得注意的是 `BundleID` 和 `DependBundleIDs` 的设计。
+这些规则均来自[字典创建与填充源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/DeserializeManifestOperation.cs#L278)。因此，“开启 Address 后只认 Address”“关闭 Address 后只认带后缀完整路径”都过于绝对。
 
-**它们不是字符串引用，而是整数索引。** 每个 `PackageAsset` 用一个 `int` 指向自己所在的 bundle，用一个 `int[]` 指向所有依赖 bundle。索引直接对应 `_bundleList` 的下标。
+还要单独看 `ReplaceAssetPathWithAddress`：运行状态下启用此选项时，解析器将 `AssetPath` 设置为 Address，并跳过原文件名解析。此时不能继续假定原工程路径一定留在内存里，也不能把普通地址别名规则原样套过来。解析器还明确拒绝地址模式同时开启 `LocationToLower`、以及未开启地址模式却要求替换路径的组合。[路径替换与配置约束](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/Internal/DeserializeManifestOperation.cs#L121)
 
-这意味着从资产到 bundle 的查找，不需要任何字符串匹配或哈希表查询——一次数组下标访问就够了。
+这是一种工程约定：业务层可以用稳定地址隔离工程路径变化，但地址唯一性、去后缀冲突和构建配置必须成为内容生产的检查项，不能留到加载失败时才猜。
 
-**`DependBundleIDs` 创建了一个显式的、扁平的依赖图。** 不需要递归遍历，每个资产直接声明"我需要这些 bundle 全部就位才能加载"。运行时只要遍历这个 `int[]`，逐个确保对应 bundle 已加载。
+## 四、资产依赖与资源包依赖为什么各存一份
 
-对比一下 Addressables 的做法：每个 `IResourceLocation` 有一个 `Dependencies` 列表，里面是其他 `IResourceLocation` 对象。依赖本身也可能有依赖，形成递归结构。`ResourceManager` 需要递归遍历并去重。
+`PackageAsset` 的真实字段是 `Address`、`AssetPath`、`AssetGuid`、`BundleID`、`DependentBundleIDs`，标签在运行时恢复为 `PackageTags`。其中 `DependentBundleIDs` 标注为框架层收集查询结果。[PackageAsset 定义](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageAsset.cs#L11)
 
-YooAsset 把这件事在构建期就展平了——每个资产的完整依赖链在构建时已经算好，运行时不需要递归。
+`PackageBundle` 也有 `DependentBundleIDs`，源码标注为引擎层构建查询结果。它不是冗余副本：加载一个资产和加载整个 bundle 的全部资产，所需依赖集合可能不同。[PackageBundle 定义](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageBundle.cs#L43)
 
-### PackageBundle（Bundle 信息）
-
-源码位置：`YooAsset/Runtime/PackageSystem/PackageBundle.cs`
-
-| 字段 | 类型 | 职责 |
-|------|------|------|
-| BundleName | string | bundle 文件名 |
-| FileHash | string | 内容哈希值，基于 bundle 文件内容计算 |
-| FileCRC | string | CRC32 校验值 |
-| FileSize | long | 文件大小（字节） |
-| Tags | string[] | 标签数组，用于过滤和分组 |
-
-每个字段的用途都不含糊：
-
-**BundleName** 是物理文件名。在缓存目录和 CDN 路径上都用这个名字定位 bundle 文件。
-
-**FileHash** 是基于文件内容计算的哈希值。它有两个用途：作为缓存的 key（判断本地是否已有这个版本的 bundle）和作为下载校验的参考（服务端 manifest 里的 hash 和下载后文件的 hash 做比对）。
-
-**FileCRC** 是 CRC32 校验码。和 FileHash 的用途不同——CRC 主要用于检测下载传输过程中的数据损坏，而不是判断版本变化。
-
-**FileSize** 在下载管理中使用：计算下载进度、预估下载时间、判断磁盘空间。
-
-**Tags** 是 YooAsset 的标签过滤机制的数据基础。项目可以给 bundle 打标签（比如 `"base"`、`"chapter1"`、`"event_2026spring"`），运行时按标签批量查询需要下载的 bundle 列表。
-
-### 用一个具体例子串起来
-
-假设项目里有一个 `hero_prefab` 预制体，它引用了一个共享材质和一张贴图：
-
-```
-PackageAsset:
-  Address       = "hero_prefab"
-  AssetPath     = "Assets/Characters/Hero.prefab"
-  AssetGUID     = "a1b2c3d4..."
-  BundleID      = 3          // → _bundleList[3] = characters_bundle
-  DependBundleIDs = [7, 12]  // → _bundleList[7] = shared_materials
-                             //   _bundleList[12] = shared_textures
-
-PackageBundle (_bundleList[3]):
-  BundleName = "characters_assets_a1b2c3"
-  FileHash   = "e5f6a7b8..."
-  FileCRC    = "1234567890"
-  FileSize   = 2457600
-  Tags       = ["base"]
-
-PackageBundle (_bundleList[7]):
-  BundleName = "shared_materials_c3d4e5"
-  FileHash   = "f9a0b1c2..."
-  FileCRC    = "9876543210"
-  FileSize   = 512000
-  Tags       = ["base"]
-
-PackageBundle (_bundleList[12]):
-  BundleName = "shared_textures_d4e5f6"
-  FileHash   = "0b1c2d3e..."
-  FileCRC    = "5678901234"
-  FileSize   = 8192000
-  Tags       = ["base"]
-```
-
-运行时加载 `"hero_prefab"` 时，manifest 告诉加载器：你要加载 `_bundleList[3]`，但在加载它之前，先确保 `_bundleList[7]` 和 `_bundleList[12]` 已经就位。
-
-## 四、版本号 + CRC + Hash 三层校验
-
-YooAsset 的版本校验不是一个单一机制，而是三层结构，每层解决不同的问题。
-
-### 第一层：PackageVersion — "有没有新版本？"
-
-`PackageVersion` 是整个 manifest 的版本标识符。它是一个字符串（通常是时间戳或递增版本号），在 `ResourcePackage` 的更新流程中最先被检查。
-
-运行时调用 `UpdatePackageVersionAsync()` 时，做的事情是：
-
-```
-1. 从远端下载版本文件（轻量级，只包含版本字符串）
-2. 和本地已缓存的 PackageVersion 做字符串比较
-3. 不同 → 有新版本，进入 manifest 更新流程
-4. 相同 → 当前是最新，不需要更新
-```
-
-这一层的设计意图是：**用最小的网络开销判断"要不要更新"**。版本文件可能只有几十个字节，即使在弱网环境下也能快速完成检查。
-
-### 第二层：FileHash — "哪些 bundle 变了？"
-
-`PackageBundle.FileHash` 是基于 bundle 文件内容计算的哈希值。它在两个场景下发挥作用：
-
-**差量更新判定：** 当新 manifest 下载完成后，运行时会遍历新旧 manifest 的 `_bundleList`，比较每个 bundle 的 `FileHash`。hash 不同的 bundle 才需要重新下载。这就是 YooAsset 实现增量更新的核心机制——只下载变化的 bundle，不是全量替换。
-
-**本地缓存命中：** 在缓存系统（`CacheSystem`）中，FileHash 作为缓存文件的唯一标识。检查某个 bundle 是否已缓存，就是检查对应 hash 的文件是否存在于缓存目录中。
-
-### 第三层：FileCRC — "下载有没有坏？"
-
-`PackageBundle.FileCRC` 是 CRC32 校验值。它只在一个场景下使用：**下载完成后的完整性校验**。
-
-```
-1. bundle 文件从 CDN 下载到本地
-2. 对下载后的文件计算 CRC32
-3. 和 manifest 中记录的 FileCRC 比对
-4. 匹配 → 文件完整，写入缓存
-5. 不匹配 → 传输损坏，丢弃文件，触发重试
-```
-
-### 三层各管一件事
-
-```
-PackageVersion  → 粗粒度：有没有更新
-FileHash        → 中粒度：哪些 bundle 需要更新
-FileCRC         → 细粒度：下载的文件有没有损坏
-```
-
-这三层之间没有相互替代的关系。版本号告诉你"要不要查"，hash 告诉你"要查哪些"，CRC 告诉你"查到的东西是不是完好的"。
+`FileSystemHost.GetDependentBundleInfos` 在 `LoadAllAssets` 时使用主包的 bundle 依赖集合，其他分支使用资产依赖集合，再为每个依赖构造 `BundleInfo`。[依赖选择源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/FileSystemHost.cs#L194)
 
 ```mermaid
 flowchart TD
-    A["客户端启动 / 触发更新检查"] --> B["UpdatePackageVersionAsync<br/>下载远端版本文件"]
-    B --> C{"PackageVersion<br/>和本地相同？"}
-    C -->|"相同"| D["无需更新<br/>使用本地 manifest"]
-    C -->|"不同"| E["UpdatePackageManifestAsync<br/>下载新 manifest"]
-    E --> F["遍历新旧 _bundleList"]
-    F --> G{"逐个比较<br/>FileHash"}
-    G -->|"hash 相同"| H["跳过，已有缓存"]
-    G -->|"hash 不同"| I["加入下载队列"]
-    I --> J["下载 bundle 文件"]
-    J --> K{"下载后计算 CRC<br/>和 FileCRC 比对"}
-    K -->|"匹配"| L["写入缓存<br/>bundle 可用"]
-    K -->|"不匹配"| M["文件损坏<br/>丢弃并重试"]
+    Q[当前加载请求] --> K{LoadMethod 是<br/>LoadAllAssets 吗}
+    K -->|否| A[PackageAsset.DependentBundleIDs]
+    K -->|是| B[主 PackageBundle.DependentBundleIDs]
+    A --> I[逐个索引当前 Manifest.BundleList]
+    B --> I
+    I --> F[FileSystemHost 选择归属文件系统]
+    F --> L[资源包 Loader 集合]
+    L --> W[等待主包与依赖都成功]
+    W --> O[提取对象或对象集合]
 ```
 
-对比 Addressables 的做法：Addressables 用 `catalog.hash` 做版本比对（对应 YooAsset 的 PackageVersion 层），用 Unity 内置的 `UnityWebRequestAssetBundle` 的 hash 参数做缓存命中（对应 FileHash 层），但在 CRC 校验这一层，默认行为依赖 `AssetBundle.LoadFromFile` 的内置校验，不像 YooAsset 在应用层做显式的 CRC 比对。
+整数数组让运行时能够直接枚举已记录的结果，不意味着工程中的依赖图只有一层。反向引用仍参与卸载判断；包内循环依赖、构建结果变化和依赖收集策略，也不会因为最终记录是数组而消失。更不能把这里的 ID 解读成另一个 Package 中的 bundle ID。
 
-YooAsset 把三层校验全部放在自己的控制范围内，项目可以自定义每一层的行为。Addressables 则把底层校验委托给了 Unity 引擎 API，项目的控制空间更小。
+## 五、把版本、身份和完整性拆成五个问题
 
-## 五、运行时查找链路
+### 1. 我选择哪份清单：PackageVersion
 
-这一节沿着一次 `LoadAssetAsync(address)` 的调用，追踪 manifest 在运行时是怎么被查询的。
+`RequestPackageVersionAsync` 从主文件系统请求版本，并把结果字符串交给调用方。该操作本身没有执行“与当前版本不同才自动更新”的完整决策。随后加载哪个版本、是否允许更新、失败怎样回退，是更新流程的控制逻辑。[请求版本源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/RequestPackageVersionOperation.cs#L43)
 
-### 完整查找路径
+`LoadPackageManifestAsync(LoadPackageManifestOptions options)` 才加载指定版本清单；对应操作发现当前激活清单已经是同版本时，会直接成功返回，否则委托主文件系统加载，并在成功后激活新 Manifest。[加载清单操作](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/Operations/LoadPackageManifestOperation.cs#L52)
 
-```
-LoadAssetAsync("hero_prefab")
-  → ResourcePackage.LoadAssetAsync("hero_prefab")
-    → PackageManifest._assetDic["hero_prefab"]
-      → 拿到 PackageAsset
-        → PackageAsset.BundleID = 3
-          → _bundleList[3]
-            → 拿到 PackageBundle
-              → 检查 FileHash 是否在缓存中
-                → 命中缓存 → 直接加载 bundle
-                → 未命中   → 下载 bundle → CRC 校验 → 写入缓存 → 加载
-        → PackageAsset.DependBundleIDs = [7, 12]
-          → _bundleList[7], _bundleList[12]
-            → 对每个依赖 bundle 执行同样的缓存检查/下载/加载流程
-              → 所有依赖就位
-                → 加载主 bundle
-                  → 从 bundle 中提取资产对象
-                    → 返回 AssetOperationHandle
-```
+这解释了为什么已发布版本应保持不可变：同一版本字符串下替换内容，可能与客户端“已是该版本”的判断相冲突。版本字符串本身也没有在这里承担大小排序或语义版本比较。
 
-这条链路的关键特征是：**没有递归，没有间接层，没有中间抽象**。
+### 2. 清单二进制是否匹配：清单 Hash 与格式版本
 
-从 address 到 `PackageAsset` 是一次字典查找。从 `PackageAsset` 到 `PackageBundle` 是一次数组下标访问。依赖列表是一个 `int[]`，遍历它、查对应的 `PackageBundle`，也是数组下标访问。
+清单也有自身的 Hash 文件，不能与每个 bundle 的 `FileHash` 混为一谈。当前构建任务对生成后的清单文件计算 CRC32，写入清单 Hash 文件；`PackageManifestHelper.VerifyManifestData` 为兼容旧数据，按校验字符串长度选择 MD5 或 CRC32。[构建清单校验文件](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Editor/BundleBuilder/BuildTasks/TaskCreateManifest.cs#L87)、[清单数据验证](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageManifestHelper.cs#L25)
 
-### 对比 Addressables 的查找路径
+例如 Sandbox 缓存清单先通过该验证，再进入反序列化；解析器又检查 FileMagic 和 `FileVersion`。这些检查回答“二进制是否匹配、格式是否能读”，并不等于内容来源的密码学认证。[缓存清单加载](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/FileSystem/Services/SandboxFileSystem/Operations/Internal/LoadCachePackageManifestOperation.cs#L70)
 
-在[前文]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})中拆过的 Addressables 查找链路：
+### 3. 要取得哪个 bundle 内容：FileHash 与输出文件名
 
-```
-LoadAssetAsync(key)
-  → AddressablesImpl
-    → IResourceLocator.Locate(key)
-      → ResourceLocationMap 内部字典
-        → key → hash → bucket → entry offset → IResourceLocation
-          → IResourceLocation.InternalId (bundle 路径)
-          → IResourceLocation.ProviderId (provider 类型)
-          → IResourceLocation.Dependencies (List<IResourceLocation>)
-            → 递归遍历每个依赖的 IResourceLocation
-              → ResourceManager.ProvideResource 对每个依赖
-```
+`PackageBundle.BundleGuid` 返回 `FileHash`。以 SBP 构建任务为例，FileHash 对最终源文件计算 MD5；但不能把这句话扩大成所有自定义管线与虚拟构建都必定采用同一过程。[内容身份定义](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageBundle.cs#L49)、[SBP 文件校验数据生成](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Editor/BundleBuilder/BuildPipeline/ScriptableBuildPipeline/BuildTasks/TaskUpdateBundleInfo_SBP.cs#L47)
 
-差异在三个地方：
+`BundleName` 是逻辑资源包名，不一定等于远端物理文件名。`GetFileName()` 返回按 `OutputNameStyle` 和 FileHash 派生的名称；框架支持 HashName、BundleName、BundleName_HashName 三种样式。[命名规则](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/BundleFileNaming.cs#L17)
 
-**定位环节：** Addressables 的 `ContentCatalogData` 用 `m_BucketDataString` 做哈希桶映射，key 需要经过 hash → bucket → entry → index 的多步跳转。YooAsset 的 `_assetDic` 就是一个标准的 `Dictionary<string, PackageAsset>`，一步到位。
+差量下载也不必先拿旧 Manifest 与新 Manifest 逐项比较。创建资源下载器时，FileSystemHost 枚举目标清单的 bundle，选择文件系统，再以 `IsDownloadRequired` 过滤。已有内容是否可用由所选文件系统及缓存状态回答。[下载列表构造](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/FileSystemHost.cs#L283)
 
-**依赖环节：** Addressables 的依赖是 `List<IResourceLocation>`，每个依赖本身也是一个完整的 location 对象，可以有自己的依赖列表，需要递归处理。YooAsset 的 `DependBundleIDs` 是一个 `int[]`，在构建期已经把完整依赖链展平成一个扁平数组，运行时不需要递归。
+### 4. 取得的文件是否完整：FileSize 与 FileCrc
 
-**中间抽象：** Addressables 在定位和加载之间有 `IResourceProvider` 选择、`ProviderOperation` 创建等中间步骤，这些抽象层为自定义 provider 提供了扩展空间，但也增加了运行时的间接跳转。YooAsset 的链路更直接——从 manifest 拿到 bundle 信息后，直接交给对应的 `BundleLoaderBase` 去加载。
+3.0.6 字段名为 `FileCrc`，类型为 `uint`，不是字符串 `FileCRC`。Sandbox 缓存的 `FileVerifyHelper.VerifyFile` 先检查存在性，随后按调用参数检查大小和 CRC；大小或 CRC 为零表示跳过对应检查。临时下载文件验证传入文件大小和 CRC，并非再计算 FileHash 做统一比对。[文件验证实现](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/FileVerifyHelper.cs#L18)、[临时文件验证调用](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/Operations/Internal/VerifyTempFileOperation.cs#L81)
 
-```mermaid
-flowchart TD
-    subgraph YooAsset["YooAsset 查找链路"]
-        Y1["LoadAssetAsync(address)"] --> Y2["_assetDic 字典查找<br/>O(1)"]
-        Y2 --> Y3["PackageAsset<br/>BundleID + DependBundleIDs"]
-        Y3 --> Y4["_bundleList 数组索引<br/>O(1)"]
-        Y4 --> Y5["PackageBundle<br/>FileHash 检查缓存"]
-        Y5 --> Y6["加载 bundle / 下载"]
-    end
-    subgraph Addressables["Addressables 查找链路"]
-        A1["LoadAssetAsync(key)"] --> A2["ResourceLocationMap<br/>hash → bucket → entry"]
-        A2 --> A3["IResourceLocation<br/>InternalId + Dependencies"]
-        A3 --> A4["ResourceManager<br/>选择 IResourceProvider"]
-        A4 --> A5["递归加载<br/>Dependencies"]
-        A5 --> A6["AssetBundleProvider<br/>加载 bundle"]
-    end
-```
+缓存扫描还有 Low、Middle、High 等验证级别：Middle 检查大小，High 增加 CRC，不能说 CRC 只在下载结束时使用，也不能说所有缓存命中每次都重算 CRC。[扫描级别分支](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/BundleCache/Services/SandboxBundleCache/Operations/Internal/VerifyCacheFilesOperation.cs#L137)
 
-### 加载成本的实际差异
+### 5. Unity 接收哪种 CRC：UnityCrc
 
-manifest/catalog 加载这一步本身也有成本差异。
+`UnityCrc` 与 `FileCrc` 是两个字段。前者来自引擎构建结果，后者是发布文件字节的 CRC；它们的验证对象和使用路径不同。Web 默认策略构造 `DownloadHandlerAssetBundle` 时传入 `UnityCrc`，不能把它替换成文件 CRC。[字段定义](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/PackageBundle.cs#L17)、[Web 平台策略](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/FileSystem/Strategies/DefaultWebPlatformStrategy.cs#L43)
 
-**Addressables 的 catalog 加载：** 需要对 `m_KeyDataString`、`m_BucketDataString`、`m_EntryDataString` 做 Base64 解码，然后解析紧凑编码的二进制数据，构建 `ResourceLocationMap`。对于大项目（上万资产），这个过程可能在主线程上耗费数十毫秒甚至更长。社区里有不少项目在启动阶段被这一步卡住。
+这些机制组合后提供的是分工明确的验证链。若项目还需要来源认证、抗篡改或防回滚，应另外定义可信发布与版本策略，不能从 CRC、MD5 或版本字符串推导出这些保证。
 
-**YooAsset 的 manifest 加载：** 二进制反序列化直接还原成 C# 对象列表，然后遍历列表做 `Dictionary.Add`。数据结构更紧凑，不需要多层解码。对于同等规模的项目，通常比 Addressables 的 catalog 加载更快。
+## 六、可复现验证：用小清单验证索引和校验边界
 
-但需要注意：这个差异在小项目（几百个资产）里基本不可感知。只有当资产规模上到数千甚至上万时，catalog/manifest 的加载成本才会变成可感知的瓶颈。
+以下方案**尚未执行**。使用独立 YooAsset 3.0.6 测试工程、独立输出与缓存目录，保留两版构建产物，记录配置和构建报告。
 
-## 六、和 Addressables Catalog 的结构对比
+### 实验 A：地址命中是否符合索引配置
 
-把两边的核心差异放到一张表里做对照。
+1. 收集 `Assets/Probe/Hero.prefab`，设置 Address 为 `hero_probe`；开启 Address 与去后缀定位，关闭路径替换。构建并加载对应版本 Manifest。
+2. 分别用 `package.GetAssetInfo(location)` 查询 Address、完整工程路径和去后缀路径。预期三者均有效并定位到同一资产路径；使用完全未登记的 location 时预期 `IsValid == false`。
+3. 在独立构建配置中关闭 Address，并开启不区分大小写。预期路径大小写变化仍能命中，自定义 Address 不再因其 Address 字段而获得映射。
+4. 另做开启路径替换的构建，在运行状态检查 `AssetInfo.AssetPath`。预期它采用 Address；不要继续期待原工程路径一定可用。若两资产去后缀后同名，观察警告及实际保留映射，不能把这种歧义当正常生产约定。
 
-| 维度 | Addressables Catalog | YooAsset Manifest |
-|------|---------------------|-------------------|
-| 序列化格式 | Base64 JSON（1.x）/ 二进制（Unity 6 的 2.x） | 自定义二进制序列化（BufferReader/BufferWriter） |
-| 查找复杂度 | key → hash → bucket → entry → InternalId | address → dict → PackageAsset → PackageBundle |
-| 依赖表达 | `IResourceLocation.Dependencies`（递归 location 对象） | `DependBundleIDs`（int 数组，直接索引，构建期展平） |
-| 版本校验层数 | `catalog.hash` 单一文件 hash | PackageVersion + 每 bundle FileHash + 每 bundle CRC，三层分离 |
-| 加载成本 | 全量解码 + 解析（大 catalog 在主线程有可感知卡顿） | 二进制反序列化 + dict 构建（结构更紧凑，通常更快） |
-| 扩展模型 | 通过 `IResourceProvider` / `IResourceLocator` 自定义 | 通过 `IDecryptionServices` / `IQueryServices` 自定义 |
-| 每资产数据量 | InternalId + ProviderId + Dependencies + ResourceType + labels | Address + AssetPath + GUID + BundleID + DependBundleIDs |
-| 运行时内存 | `ResourceLocationMap` + 所有 `IResourceLocation` 对象（对象多、引用复杂） | `Dictionary` + `PackageAsset` / `PackageBundle` 对象（结构更扁平） |
+### 实验 B：下载判断是否依赖旧清单
 
-几个值得展开的差异：
+1. 构建 v1 并完成下载；修改一个独立资产后构建 v2，记录两版 bundle 的 `FileHash` 与输出文件名。
+2. 重启测试程序，保留 v1 已下载的 bundle 缓存，只加载 v2 清单；创建覆盖全部资源的下载器，记录其计划文件列表。
+3. 预期：是否进入下载列表由目标清单与当前文件系统可用状态决定，未变化且已可用的内容可被复用；不需要把 v1 Manifest 作为比较输入。变化范围还会受打包分组和依赖影响，不能预设只改一个资产就只变一个文件。
 
-### 依赖表达的设计取舍
+### 实验 C：分别破坏大小和 CRC
 
-Addressables 的递归 location 依赖模型更灵活——它允许依赖链动态组合，支持复杂的 provider 链（比如一个 location 指向加密 bundle，由自定义 provider 解密后再交给 `AssetBundleProvider`）。
+1. 复制一份测试 Sandbox 缓存，对测试副本中的数据文件做截短；重新运行对应缓存验证。预期要求大小检查时报告不完整。
+2. 重新恢复副本，改动一个字节但保持长度，分别以 Middle 与 High 进行扫描。预期 Middle 的大小检查不能识别这类变化，High 在 CRC 参数有效时能识别；从断点确认实际采用的验证级别。
+3. 对测试清单二进制另做单字节改动，保留原清单 Hash。预期在缓存清单校验阶段失败；若还需验证 FileVersion 分支，应重新生成匹配的清单校验值后再单独观察格式检查，不能把两种失败混为一谈。
 
-YooAsset 的扁平 `int[]` 依赖模型更直接——构建期把所有传递依赖算好，运行时不需要做图遍历。但代价是灵活性更低：如果需要在依赖链中间插入自定义处理逻辑（比如某些 bundle 需要特殊解密），需要在其他层面解决。
+这些实验用于验证机制，不是性能基准。评估启动成本时，还需固定资产数量、别名数量、依赖边数量、加密、设备和帧预算，并分别测量文件读取、解密、反序列化及索引初始化。只有这样的数据，才能支撑工程预算或跨框架比较。
 
-### 版本校验的设计取舍
-
-Addressables 依赖 `catalog.hash` 做单一入口的版本比对。一旦 hash 变了，就认为有新 catalog，然后下载整个新 catalog。新旧 bundle 的差异比对交给 Unity 的缓存系统（通过 `UnityWebRequestAssetBundle` 的 hash 参数）。
-
-YooAsset 把版本比对拆成三步（PackageVersion → FileHash → FileCRC），每一步的职责清晰分离。项目可以选择只检查版本而不下载 manifest，可以精确知道哪些 bundle 需要更新，可以在下载后做显式的 CRC 校验。
-
-这意味着 YooAsset 在版本管理的控制粒度上更细，但也意味着项目需要理解这三层各自的语义，才能正确使用更新流程。Addressables 的模型更"托管"——把更多决策交给了框架内部。
-
-### 序列化格式的演进
-
-Addressables 在 Unity 6 随附的 2.x 版本中引入了二进制 catalog 格式（`catalog.bin`），试图解决 1.x 版本 Base64 JSON 的解析性能问题。这说明 Addressables 团队也意识到了 catalog 加载成本是一个需要解决的问题。
-
-YooAsset 从一开始就选择了二进制序列化，没有经历过 JSON 阶段。这不一定说明 YooAsset 的方案更好，而是说两个框架在这件事上面临的约束不同——Addressables 作为官方 package 需要更多的调试可读性和跨版本兼容性考量，YooAsset 可以更大胆地选择性能优先的方案。
-
-## 七、项目判断
-
-拆完 `PackageManifest` 的结构之后，回到项目层面收束。
-
-### YooAsset 的 manifest 结构在什么场景下是优势
-
-**快速迭代的中小项目。** manifest 加载快、查找链路短、依赖关系直观。对于资产规模在几百到几千的项目，manifest 不会成为瓶颈，而且简单的数据结构让调试和排查更容易。
-
-**需要精细版本控制的热更项目。** 三层校验（版本号 + hash + CRC）让项目可以精确控制更新粒度：先检查有没有更新，再看哪些 bundle 变了，最后确认下载没有损坏。每一步都在项目的控制范围内，可以自定义策略。
-
-**对启动速度敏感的移动端项目。** manifest 的二进制反序列化和字典构建通常比 Addressables 的 catalog 解析更快，在大资产规模下差异更明显。如果项目启动阶段的帧预算很紧，这个差异值得关注。
-
-### Addressables 的 catalog 结构在什么场景下更有价值
-
-**需要复杂 provider 链的项目。** 如果你的项目需要在加载链路中插入自定义逻辑（加密/解密 provider、远端资产重定向、多源内容合并），Addressables 的 location + provider 模型提供了更多扩展点。YooAsset 的扁平模型在这类场景下需要绕路实现。
-
-**依赖 Unity 官方工具链的团队。** Addressables 和 Unity Profiler、Event Viewer、Build Report 深度集成。如果团队的排查能力强依赖这些官方工具，catalog 结构的"多层间接"反而是这些工具能够介入的前提。
-
-**多内容源合并的场景。** Addressables 支持多个 catalog、多个 locator 的注册和查找。如果项目需要从不同来源（本地、CDN A、CDN B）合并资源索引，Addressables 的 locator 列表模型更自然。YooAsset 通过 `ResourcePackage` 分包来实现类似能力，但模型不同。
-
-### 两边都没解决的问题
-
-不管选 Addressables 还是 YooAsset，manifest/catalog 都面临一个共同的规模问题：**当资产数量上万时，这张索引表本身的内存占用和加载时间都会变成需要关注的指标**。
-
-Addressables 在大 catalog 上卡主线程的问题在社区里有大量讨论。YooAsset 虽然加载通常更快，但数万级 `PackageAsset` 对象的字典构建同样不是零成本。
-
-如果项目的资产规模会持续增长到万级以上，需要在早期就关注 manifest/catalog 的分包策略——把一个巨大的索引表拆成多个较小的包级 manifest/catalog，按需加载。YooAsset 的 `ResourcePackage` 分包设计天然支持这种拆分，Addressables 则需要通过多 catalog 来实现。
-
----
-
-这篇把 YooAsset 的 `PackageManifest` 从顶层结构到字段细节到运行时链路全部拆开了。
-
-核心结论就三句话：
-
-1. **manifest 的结构是扁平的**——`PackageAsset` 和 `PackageBundle` 通过整数索引关联，依赖关系在构建期展平，运行时查找是 `O(1)` 字典查询加数组下标访问。
-
-2. **三层校验各管一件事**——PackageVersion 管"要不要查"，FileHash 管"要下哪些"，FileCRC 管"下的对不对"。
-
-3. **和 Addressables 的 catalog 相比，manifest 更简单更直接，但也更"固执"**——更少的中间抽象意味着更快的查找和更低的学习成本，但也意味着在需要复杂扩展时的灵活度更低。
-
-下一步如果想看 YooAsset 拿到 `PackageBundle` 信息之后，下载器和缓存系统是怎么工作的，可以等 Yoo-03（下载器和缓存系统）。如果想对照 Addressables 的 catalog 内部编码细节，可以等 Addr-02（ContentCatalogData 深度拆解）。
+Manifest 让加载可被解释：**地址索引决定找到谁，内容标识决定取得谁，验证流程决定取得的数据能否继续使用。**

@@ -11,8 +11,12 @@ tags:
   - "Architecture"
   - "HotUpdate"
   - "Production"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 资源管理与交付"
+primary_series: "addressables"
+series_order: 5
 ---
+
+> 专题首页：[Addressables 资源管理与交付]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
 
 前四篇把 Addressables 从运行时到构建期完整拆了一遍：[Addr-01]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) 拆运行时链路，[Addr-02]({{< relref "engine-toolchain/unity-addressables-catalog-encoding-loading-cost-update.md" >}}) 拆 Catalog 编码和更新，[Addr-03]({{< relref "engine-toolchain/unity-addressables-refcount-lifecycle-release-harder-than-load.md" >}}) 拆引用计数和生命周期，[Addr-04]({{< relref "engine-toolchain/unity-addressables-build-time-group-schema-to-bundle-output.md" >}}) 拆构建期从 Group Schema 到 bundle 产物。
 

@@ -11,8 +11,12 @@ tags:
   - "Build"
   - "SBP"
   - "ContentUpdate"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 资源管理与交付"
+primary_series: "addressables"
+series_order: 4
 ---
+
+> 专题首页：[Addressables 资源管理与交付]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
 
 [Addr-01]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) 拆的是运行时：从 `LoadAssetAsync` 到资产对象就绪，整条内部链路怎么工作。[Addr-02]({{< relref "engine-toolchain/unity-addressables-catalog-encoding-loading-cost-update.md" >}}) 拆的是 Catalog：`ContentCatalogData` 怎么编码、怎么查找、怎么更新。[Addr-03]({{< relref "engine-toolchain/unity-addressables-refcount-lifecycle-release-harder-than-load.md" >}}) 拆的是生命周期：引用计数为什么让 Release 比 Load 更难做对。
 

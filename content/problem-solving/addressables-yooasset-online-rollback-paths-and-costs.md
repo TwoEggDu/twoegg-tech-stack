@@ -12,10 +12,14 @@ tags:
   - "HotUpdate"
   - "Rollback"
   - "Production"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 6
 ---
 
-这篇是 Addressables 与 YooAsset 源码解读系列的 Case-03。
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
+
+这篇是 Addressables 与 YooAsset 对比与选型系列的 Case-03。
 
 [Case-02]({{< relref "problem-solving/addressables-yooasset-half-update-catalog-manifest-bundle-mismatch.md" >}}) 追的是"半更新状态"——索引更新了但 bundle 没下完。那篇的结论是 Addressables 的半更新窗口是结构性的，YooAsset 的三步分离在设计上消除了这个窗口。
 

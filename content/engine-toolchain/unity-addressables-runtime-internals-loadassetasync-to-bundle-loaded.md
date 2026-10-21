@@ -11,8 +11,13 @@ tags:
   - "AssetBundle"
   - "Runtime"
   - "ResourceManager"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 资源管理与交付"
+primary_series: "addressables"
+series_order: 1
 ---
+
+> 专题首页：[Addressables 资源管理与交付]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
+
 [上一篇]({{< relref "engine-toolchain/unity-addressables-and-assetbundle-format-vs-management-layer.md" >}})把 Addressables 和 AssetBundle 的层次关系讲清了：AssetBundle 更像底层交付格式，Addressables 更像建在它之上的定位、调度和生命周期管理层。
 
 那篇回答的是：

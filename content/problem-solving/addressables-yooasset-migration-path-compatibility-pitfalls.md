@@ -11,10 +11,14 @@ tags:
   - "YooAsset"
   - "Migration"
   - "Architecture"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 8
 ---
 
-这篇是 Addressables 与 YooAsset 源码解读系列的 Case-05，也是整个系列的最后一篇。
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
+
+这篇是 Addressables 与 YooAsset 对比与选型系列的 Case-05，也是整个系列的最后一篇。
 
 前面 17 篇做的事情：主线 A 把 Addressables 从运行时到构建期拆到了源码级别，主线 B 对 YooAsset 做了同样的拆解，对比线 C 在运行时、构建期和治理层三个维度把两个框架放到同一组问题上结构对比，Case-01 到 Case-04 用四个生产场景验证了这些结构差异在实际事故中的表现。
 

@@ -11,8 +11,12 @@ tags:
   - "YooAsset"
   - "Governance"
   - "Comparison"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 3
 ---
+
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
 
 [Cmp-01]({{< relref "engine-toolchain/unity-addressables-vs-yooasset-runtime-scheduling-comparison.md" >}}) 把两个框架的运行时调度模型放到同一组问题上对照了。[Cmp-02]({{< relref "engine-toolchain/unity-addressables-vs-yooasset-build-artifact-comparison.md" >}}) 把构建输入、产物格式和增量更新拆开比了一遍。
 

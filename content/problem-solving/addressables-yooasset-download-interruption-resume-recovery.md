@@ -12,10 +12,14 @@ tags:
   - "HotUpdate"
   - "Download"
   - "Debugging"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 4
 ---
 
-这篇是 Addressables 与 YooAsset 源码解读系列的 Case-01。
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
+
+这篇是 Addressables 与 YooAsset 对比与选型系列的 Case-01。
 
 [Yoo-03]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) 把 YooAsset 的下载器和缓存系统从队列管理到断点续传完整拆了一遍。[Addr-01]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) 把 Addressables 运行时从 `LoadAssetAsync` 到 bundle 加载的完整链路拆清楚了。
 

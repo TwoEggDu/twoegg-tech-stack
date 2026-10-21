@@ -11,10 +11,14 @@ tags:
   - "YooAsset"
   - "HotUpdate"
   - "Debugging"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 5
 ---
 
-这篇是 Addressables 与 YooAsset 源码解读系列的 Case-02。
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
+
+这篇是 Addressables 与 YooAsset 对比与选型系列的 Case-02。
 
 [Catalog 篇]({{< relref "engine-toolchain/unity-addressables-catalog-encoding-loading-cost-update.md" >}})和 [Manifest 篇]({{< relref "engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md" >}})分别把两个框架的索引结构拆到了字段级别。Catalog 篇最后专门提到了一个危险状态：
 

@@ -11,8 +11,12 @@ tags:
   - "Catalog"
   - "ContentCatalog"
   - "Runtime"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 资源管理与交付"
+primary_series: "addressables"
+series_order: 2
 ---
+
+> 专题首页：[Addressables 资源管理与交付]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
 
 [上一篇]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})把 Addressables 运行时从 `LoadAssetAsync` 到资产对象就绪的完整内部链路拆开了。那篇里提到 `IResourceLocator` 负责把 key 映射到 `IResourceLocation`，而 `ResourceLocationMap` 是运行时最常用的实现——它的数据源就是 catalog。
 

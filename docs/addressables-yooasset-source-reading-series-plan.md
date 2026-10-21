@@ -1,4 +1,26 @@
-# Addressables 与 YooAsset ���码解读系列规划
+# Addressables 与 YooAsset 源码解读系列规划
+
+## 三个阅读入口（2026-10-21）
+
+原来的混合系列按阅读目的分成三个入口，仍由本文件统一维护篇级规划；不另建相互重复的系列规划文件。
+
+| 首页 | 主线归属 | 职责 |
+|---|---|---|
+| [YooAsset](../content/engine-toolchain/unity-yooasset-series-index.md) | Yoo-01～08，8 篇 | 独立组织 YooAsset 的加载、清单、下载缓存、构建和能力边界 |
+| [Addressables](../content/engine-toolchain/unity-addressables-series-index.md) | Addr-01～05，5 篇 | 独立组织 Addressables 的加载、Catalog、引用计数、构建和能力边界 |
+| [两者对比与选型](../content/engine-toolchain/unity-addressables-yooasset-comparison-series-index.md) | Cmp-01～03 与 Case-01～05，8 篇 | 连接两个系统的独立首页，组织同层对照、选型和故障案例 |
+
+三页互相链接；18 篇原有正文增加相应首页的返回入口，原文件路径和 slug 保持不变。前置知识和其他系列的选型文章通过相关链接进入，不改变其原系列归属。
+
+内容元数据使用各自的 `series`、`primary_series` 与 `series_order`；首页使用站点已有的 `series_id`、`series_role`、`series_entry` 等字段，在引擎工具链栏目显示三个独立入口。跨栏目的五篇问题解决案例由对比首页显式列出。
+
+## 3.0.6 内容基线与本轮状态
+
+- YooAsset 主线采用官方 tag `3.0.6`，固定提交 `3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`。本地源码位于忽略目录 `.codex_tmp/yooasset-source/3.0.6/`。
+- 原 Yoo-01～05 已按固定源码重审；新增 Yoo-06 整体架构、Yoo-07 文件系统、Yoo-08 生命周期。稳定编号保留，首页阅读顺序改为 06 → 07 → 01 → 02 → 03 → 08 → 04 → 05。
+- Addressables 五篇、对比三篇与案例五篇保留原内容基线；本轮未将它们声明为 3.0.6 对比实证。共同首页标注版本范围。
+- 本轮交付为源码核对正文、代码示例与可复现验证方案；Unity 构建、播放器、设备、网络和性能实验尚待执行，文中没有伪造实测数据。
+- 后续主题：完整更新与失败恢复、异步操作与时间片、调试与构建报告实验、WebGL 与小游戏平台验证。
 
 ## 系列定位
 
@@ -63,7 +85,7 @@
 
 ---
 
-## 系列结构（18 篇）
+## 系列结构（21 篇正文）
 
 ### 主线 A：Addressables 源码解读（5 篇）
 
@@ -85,24 +107,33 @@
 - `Addr-05` **Addressables 的边界：它接不住什么、项目必须自己补什么**
   下载队列控制、断点续传、灰度发布、多环境版本共存、审核包 / 线上包分离
 
-### 主线 B：YooAsset 源码解读（5 篇）
+### 主线 B：YooAsset 资源管理与交付（8 篇）
 
-职责：沿 YooAsset 源码，把同一组问题从 YooAsset 的视角拆到类/方法级别。
+职责：按 3.0.6 固定源码解释模块职责、调用链与条件，再提供可复现实验。保留原编号，新增三篇作为阅读前置和生命周期补充。
 
-- `Yoo-01` **YooAsset 运行时四阶段与 LoadAssetAsync 完整链路**
-  ResourcePackage / PackageManifest / BundleLoaderBase / AssetOperationHandle，从 address 到对象就绪的全链
+- `Yoo-06` **[整体架构与初始化](../content/engine-toolchain/unity-yooasset-architecture-package-initialization.md)**
+  Package、清单、文件、对象如何协作；初始化之后还需要哪些条件。
 
-- `Yoo-02` **PackageManifest 到底存了什么：版本校验、文件索引和运行时查找**
-  PackageManifest 的序列化结构（AssetInfo / BundleInfo / dependBundleIDs），版本号 + CRC + 文件 Hash 三层校验，和 Addressables Catalog 的结构对比
+- `Yoo-07` **[文件系统与运行模式](../content/engine-toolchain/unity-yooasset-filesystems-playmodes.md)**
+  理解文件系统组合、Bundle 路由、主文件系统与 BundleCache。
 
-- `Yoo-03` **YooAsset 的下载器和缓存系统：ResourceDownloaderOperation、CacheFileSystem 和断点续传**
-  下载队列、并发控制、校验重试、断点续传的实现路径，CacheFileSystem 的磁盘结构和版本清理
+- `Yoo-01` **[运行时加载与请求复用](../content/engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md)**
+  追踪 Provider 和 Loader 的复用、依赖等待与对象提取。
 
-- `Yoo-04` **YooAsset 构建期到底做了什么：从 Collector 到 bundle 产物**
-  AssetBundleCollector / CollectMode / FilterRule / 依赖分析 / bundle 命名 / 构建报告，和 Addressables Group Schema / SBP 的对应关系
+- `Yoo-02` **[Manifest、内容身份与完整性](../content/engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md)**
+  拆开定位索引、资源与 Bundle 依赖、清单和文件的验证职责。
 
-- `Yoo-05` **YooAsset 的边界：它接不住什么、项目必须自己补什么**
-  Addressables 式的官方工具链集成、Editor 内 Analyze 规则、和 Unity 新特性的跟进节奏
+- `Yoo-03` **[下载调度与磁盘缓存](../content/engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md)**
+  核对下载集合、续传条件、缓存提交和启动校验。
+
+- `Yoo-08` **[资源生命周期与卸载](../content/engine-toolchain/unity-yooasset-handle-lifetime-unload.md)**
+  明确实例、Handle、Provider、Loader 和文件缓存各自的持有期。
+
+- `Yoo-04` **[资源收集、构建与产物](../content/engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md)**
+  分清收集规划、构建缓存复用、完整版本产物与差异交付。
+
+- `Yoo-05` **[框架能力与项目职责](../content/engine-toolchain/unity-yooasset-boundaries-what-projects-must-build.md)**
+  把工具、发布选择、灰度、CI 和长期监控按契约分开。
 
 ### 对比线 C：同层问题对照（3 篇）
 
@@ -138,46 +169,12 @@
 
 ---
 
-## 推荐推进顺序
+## 推荐阅读与维护顺序
 
-```
-Phase 1 - 运行时链路:
-  Addr-01  已完成
-  Yoo-01   下一篇
-  Cmp-01   两篇运行时都写完后立即对比
-  Case-04  Handle 泄漏案例（紧跟运行时链路）
-
-Phase 2 - 数据层深度:
-  Addr-02（Catalog 深度）
-  Yoo-02（Manifest 深度）
-  Cmp-02（构建与产物对比）
-  Case-02  半更新状态案例（紧跟 Catalog/Manifest）
-
-Phase 3 - 生命周期与缓存:
-  Addr-03（引用计数和生命周期）
-  Yoo-03（下载器和缓存系统）
-  Case-01  断点续传失败案例（紧跟下载器）
-
-Phase 4 - 构建期:
-  Addr-04（构建期）
-  Yoo-04（构建期）
-
-Phase 5 - 边界与治理:
-  Addr-05（Addressables 边界）
-  Yoo-05（YooAsset 边界）
-  Cmp-03（治理能力对比）
-  Case-03  线上回滚案例（紧跟治理对比）
-
-Phase 6 - 迁移:
-  Case-05  框架迁移案例（系列收尾篇）
-```
-
-这个顺序的好处是：
-- 先各自追运行时链路（最核心的能力层）
-- 马上做一次对比 + 一个案例，第一时间建立"同层问题不同解法"的认知
-- 再各自深入 Catalog/Manifest、生命周期/缓存，每层配一个对应案例
-- 最后收到构建期和边界，让"选型判断"有完整证据
-- 迁移案例放最后，作为系列收尾
+1. 系统学习单个框架时，从对应首页进入，沿运行时、索引、生命周期或下载缓存、构建、边界阅读。
+2. 做技术选型时，从共同首页进入，先看问题空间，再对照运行时、构建产物和交付治理。
+3. 处理事故时，从共同首页的案例表进入；需要补机制时返回各自首页。
+4. 新增单框架文章时更新对应首页和本规划；新增比较或跨框架案例时更新共同首页和本规划。根 `doc-plan.md` 继续只维护系列路由。
 
 ---
 
@@ -201,7 +198,7 @@ Phase 6 - 迁移:
 
 ### 4. 版本标注
 - 标注 Addressables package 版本（当前主力：1.21.x，Unity 6 随附 2.x）
-- 标注 YooAsset 版本（当前主力：2.x）
+- YooAsset 主线标注 `3.0.6` 与固定提交；比较和历史案例另行声明版本，不混用 2.x 兼容层与 3.x 原生 API。
 - 在机制有版本差异的地方加 Unity 6 注记
 
 ### 5. 可复现性

@@ -11,10 +11,14 @@ tags:
   - "YooAsset"
   - "Memory"
   - "Debugging"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 与 YooAsset 对比与选型"
+primary_series: "addressables-yooasset-comparison"
+series_order: 7
 ---
 
-这篇是 Addressables 与 YooAsset 源码解读系列的 Case-04。
+> 专题首页：[Addressables 与 YooAsset 对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}}) · [Addressables]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [YooAsset]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}})
+
+这篇是 Addressables 与 YooAsset 对比与选型系列的 Case-04。
 
 [运行时链路篇]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})已经把从 `LoadAssetAsync` 到 bundle 加载完成的完整内部路径拆开了。那篇最后提到了一个项目里出现频率最高的问题：
 

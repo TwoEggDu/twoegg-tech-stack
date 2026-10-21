@@ -1,7 +1,8 @@
 ---
 date: "2026-04-13"
-title: "YooAsset 运行时到底怎么工作：从 LoadAssetAsync 到 bundle 加载完成的完整内部链路"
-description: "沿 YooAsset 源码，追踪 LoadAssetAsync 从调用到资产对象就绪的完整内部链路，拆开 ResourcePackage、PackageManifest、BundleLoaderBase 和 AssetOperationHandle 各自在做什么。"
+lastmod: "2026-10-21"
+title: "YooAsset 运行时加载链：请求如何复用，以及 bundle 就绪以后还要等什么"
+description: "以 YooAsset 3.0.6 固定源码拆解 ResourceManager、Provider、LoadBundleOperation 与 AssetHandle，说明请求合并、依赖等待和对象提取的真实边界。"
 slug: "unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded"
 weight: 53
 featured: false
@@ -11,397 +12,143 @@ tags:
   - "AssetBundle"
   - "Runtime"
   - "ResourcePackage"
-series: "Addressables 与 YooAsset 源码解读"
+series: "YooAsset 资源管理与交付"
+primary_series: "yooasset"
+series_order: 3
+yooasset_version: "3.0.6"
 ---
-[上一篇]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})把 Addressables 运行时的完整内部链路拆开了：从 key 到 IResourceLocator 定位，到 ResourceManager 调度 Provider 链，到 AsyncOperationHandle 返回给调用方。
 
-那篇回答的是：
-`Addressables 内部那条链路长什么样。`
+> 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
 
-这一篇要回答的是：
-`同样是 LoadAssetAsync，YooAsset 内部走的是一条什么样的链路？`
+同一个资源被两个界面同时请求，应该发生两次加载，还是只做一次工作？某个 bundle 已经下载完成，为什么资源对象仍未返回？这些问题都指向一件事：**调用次数、共享加载工作和物理文件的数量，属于三个不同的计数维度。**
 
-YooAsset 在 API 层和 Addressables 看起来差不多——都是一行 `LoadAssetAsync` 拿到 handle。但内部的调度模型完全不同。Addressables 用的是 ResourceManager + Provider 链的松散匹配；YooAsset 用的是 ResourcePackage + Manifest 直查 + Loader 直接持有 bundle 的紧凑路径。
+只沿一条箭头从地址画到 AssetBundle，很容易漏掉真正影响行为的部分：第二个请求在哪一层合并，主包与依赖何时启动，以及文件就绪和对象就绪之间还有哪些步骤。
 
-这条链路如果不拆开，很多运行时问题同样没法定位：
+本文聚焦单个 Package 内一次普通资产加载的运行时链路。Package 初始化见[架构与初始化]({{< relref "engine-toolchain/unity-yooasset-architecture-package-initialization.md" >}})，文件来源见[文件系统与运行模式]({{< relref "engine-toolchain/unity-yooasset-filesystems-playmodes.md" >}})，完整的卸载策略见[句柄与资源生命周期]({{< relref "engine-toolchain/unity-yooasset-handle-lifetime-unload.md" >}})。
 
-- 多 Package 环境下资源到底从哪个包加载的
-- bundle 没下完的时候 LoadAssetAsync 为什么卡住了
-- Release 以后内存为什么没降
-- HostPlayMode 下首次加载比后续加载慢一个数量级
+> 源码基线：YooAsset **3.0.6**，固定提交 `3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`。下文使用该版本的 `AssetHandle`、`ResourceManager`、`LoadBundleOperation` 等真实名称；不把旧版兼容 API 当作主线。本文给出的是源码结论和待执行验证方案，没有在本文环境运行 Unity 或采集耗时。
 
-这些问题的根因，全在 YooAsset 运行时链路里。
+## 一、先把四种身份分开
 
-> **版本基线：** 本文源码分析基于 YooAsset 2.x（https://github.com/tuyoogame/YooAsset）。
+资源系统面对的不是一个“加载对象”，而是几种不同身份：
 
-## 一、YooAsset 运行时的四个核心角色
+| 身份 | 要回答的问题 | 3.0.6 中的承载者 |
+|---|---|---|
+| 逻辑资源 | 请求的是哪个资产、什么类型？ | `AssetInfo`，关联 `PackageAsset` |
+| 对象加载工作 | 哪些请求可以共享一次对象提取？ | `ProviderBase`，普通资产为 `AssetProvider` |
+| bundle 加载工作 | 哪些资产共同等待同一资源包？ | `LoadBundleOperation` |
+| 调用方所有权 | 谁仍然需要这次加载结果？ | 每次创建的 `AssetHandle` |
 
-和 Addressables 一样，先把参与的核心角色立住。
-
-YooAsset 的运行时比 Addressables 少一层间接——没有 Addressables 那种全局 ResourceManager 调度中心，也没有 Provider 模式的松散匹配。它的调度是以 Package 为单位的，每个 Package 自带完整的定位、加载和生命周期管理能力（内部由 `AssetSystem` 协调）。
-
-### 1. ResourcePackage
-
-包级别的入口对象。YooAsset 的多 Package 设计意味着一个项目里可以同时存在多个独立的 ResourcePackage 实例，每个 Package 有自己的 Manifest、自己的缓存目录、自己的版本号。所有资源操作的起点都是某个具体的 Package。
-
-源码位置：`YooAsset/Runtime/ResourcePackage/ResourcePackage.cs`
-
-### 2. PackageManifest
-
-资产索引和 bundle 索引的容器。它在内存中维护一张核心字典 `_assetDic` 把 address 映射到 `PackageAsset`，以及一个列表 `_bundleList`（`List<PackageBundle>`），通过整数下标直接索引到 `PackageBundle`。定位阶段的所有查找都在这两个结构上完成，不需要像 Addressables 那样经过 hash bucket → entry offset 的多层解码。
-
-源码位置：`YooAsset/Runtime/PackageSystem/PackageManifest.cs`
-
-### 3. BundleLoaderBase / AssetBundleFileLoader
-
-实际执行 bundle 加载的工人。`BundleLoaderBase` 是抽象基类，`AssetBundleFileLoader`（从本地文件加载）和 `AssetBundleWebLoader`（从网络加载）是最常用的两个实现。它们直接持有一个 `AssetBundle` 引用，负责从文件系统或网络加载 bundle，管理 bundle 级别的引用计数。每个 bundle 在运行时只有一个 Loader 实例。
-
-源码位置：
-- `Runtime/AssetSystem/Loader/BundleLoaderBase.cs`
-- `Runtime/AssetSystem/Loader/AssetBundleFileLoader.cs`
-- `Runtime/AssetSystem/Loader/AssetBundleWebLoader.cs`
-
-### 4. AssetOperationHandle
-
-用户侧拿到的凭证。它包裹一个 `ProviderBase`（如 `BundledAssetProvider`），暴露 `Status`、`AssetObject`、`Completed` 回调等接口。和 Addressables 的 `AsyncOperationHandle<T>` 角色一致，但生命周期管理方式不同——YooAsset 的引用计数挂在 ProviderBase 上，而不是挂在 handle 自身。
-
-源码位置：`Runtime/AssetSystem/Handles/AssetOperationHandle.cs`
-
-四个角色的关系如下：
+复用粒度沿这四层逐渐变化。两个调用可以有两个句柄、共享一个 Provider；两个不同资源则可能有两个 Provider、共享一个主包或依赖包的 Loader。它们不能用“加载了两次”概括。
 
 ```mermaid
 flowchart TD
-    A["调用方<br/>package.LoadAssetAsync&lt;T&gt;(address)"] --> B["ResourcePackage"]
-    B --> C["PackageManifest"]
-    C -->|"address → AssetInfo<br/>(bundleID + dependBundleIDs)"| B
-    B --> D["创建 ProviderBase"]
-    D --> E["BundleLoaderBase / AssetBundleFileLoader<br/>加载主 bundle + 依赖 bundle"]
-    E -->|"bundle ready"| F["AssetBundle.LoadAssetAsync<br/>从 bundle 提取资产"]
-    F -->|"asset loaded"| G["AssetOperationHandle<br/>返回给调用方"]
+    H1[界面 A 的 AssetHandle] --> P1[Hero 的 AssetProvider]
+    H2[界面 B 的 AssetHandle] --> P1
+    H3[界面 C 的 AssetHandle] --> P2[Enemy 的 AssetProvider]
+    P1 --> L1[角色主包 LoadBundleOperation]
+    P2 --> L1
+    P1 --> L2[共享材质 LoadBundleOperation]
+    P2 --> L2
+    L1 --> BH1[IBundleHandle]
+    L2 --> BH2[IBundleHandle]
 ```
 
-和 Addressables 对比，最明显的结构差异是：YooAsset 没有 Addressables 那种全局 ResourceManager，也没有 Provider 模式的间接查找。Package 通过内部的 AssetSystem 管自己的全部资源，定位和加载都在 Package 内部闭环完成。
+图中的资源只是示意配置；能否共享主包，取决于构建时的打包结果。共享的作用域是当前 Package 的 ResourceManager，不能据此推出不同 Package 会共享 Provider 或 Loader。
 
-## 二、从 address 到 AssetInfo：定位阶段
+## 二、定位结束时，得到的还不是文件路径
 
-调用从这里开始。
+`ResourcePackage.LoadAssetAsync<TObject>(string location, uint priority = 0)` 先检查初始化状态，再把 location 和请求类型转换为 `AssetInfo`，最后交给 ResourceManager。入口返回的是句柄，后续工作由异步操作推进，并非等整个链路完成才创建句柄。[入口与内部转发源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/ResourcePackage.cs#L584)
 
-### 1. 入口：package.LoadAssetAsync
+这里有两个边界：
 
-YooAsset 没有 Addressables 那样的静态门面类。调用方必须先拿到一个 `ResourcePackage` 实例，然后在它上面发起加载：
+1. Manifest 将 location 解析到资产记录；记录给出主包 ID 和资产依赖包 ID。
+2. `FileSystemHost` 将相应 `PackageBundle` 绑定到负责它的文件系统，形成 `BundleInfo`。
 
-```
-var package = YooAssets.GetPackage("DefaultPackage");
-var handle = package.LoadAssetAsync<GameObject>("hero_prefab");
-```
+因此 Manifest 描述“需要哪个内容”，文件系统决定“从哪里、怎样取得这个内容”。`BundleInfo.CreateBundleLoader()` 实际转发到 `_fileSystem.LoadPackageBundleAsync(options)`，没有在这里把 Host 模式硬编码成某一种网络 Loader。[BundleInfo 源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/BundleInfo.cs#L43)
 
-`ResourcePackage.LoadAssetAsync<T>` 内部做两件事：从 Manifest 查找 AssetInfo，然后创建 ProviderBase（如 `BundledAssetProvider`）交给调度系统。
+定位失败也不是进入下载器重试。无效 `AssetInfo` 会在 ResourceManager 中形成已失败的 `ErrorProvider`，再返回相应句柄。排障时先区分地址未收集、文件未取得和对象提取失败，才能找到正确层。[错误分支源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/ResourceManager.cs#L200)
 
-### 2. Manifest 查找：address → AssetInfo
+## 三、复用发生两次：Provider 一次，Loader 一次
 
-`PackageManifest` 内部维护的核心数据结构：
+### 相同请求不会每次创建 Provider
 
-以下字段名为简化示意，具体命名见源码。
+普通资产加载的 Provider key 在该版本中是：
 
-**`_assetDic`**：`Dictionary<string, PackageAsset>`。key 是资产的 address 字符串（也可以是完整路径，取决于 Collector 配置），value 是 `PackageAsset` 对象。
-
-**`PackageAsset`** 包含：
-- `Address`：资产地址
-- `AssetPath`：资产在工程中的完整路径（如 `Assets/Prefabs/Hero.prefab`）
-- `BundleID`：这个资产属于哪个 bundle（整数索引）
-- `DependBundleIDs`：这个资产依赖的其他 bundle 的 ID 列表
-
-**`_bundleList`**：`List<PackageBundle>`。BundleID 就是列表下标，直接索引到 `PackageBundle` 对象，包含 bundle 的文件名、Hash、大小、CRC 等信息。
-
-查找过程非常直接：
-
-```
-PackageManifest.TryGetPackageAsset(address)
-  → _assetDic[address]
-  → 拿到 PackageAsset
-  → 通过 BundleID 索引 _bundleList 得到主 bundle 信息
-  → 通过 DependBundleIDs 索引 _bundleList 得到所有依赖 bundle 信息
+```csharp
+// 摘录：ResourceManager.LoadAssetAsync 内部；省略校验、创建分支和优先级设置。
+string providerKey = nameof(LoadAssetAsync) + assetInfo.AssetKey;
+ProviderBase provider = GetAssetProvider(providerKey);
+// ……仅在 provider == null 时创建 AssetProvider 并登记。
+return provider.CreateHandle<AssetHandle>();
 ```
 
-这和 Addressables 的定位路径有一个本质区别：Addressables 的 catalog 在磁盘上是 Base64 编码的紧凑格式，运行时需要先解码成 `ResourceLocationMap`，然后通过 hash bucket 跳转到 entry 再索引到 InternalId。YooAsset 的 `PackageManifest` 反序列化后直接就是内存中的字典和列表，定位就是一次字典查找加列表下标索引，没有中间编码层。
+`AssetKey` 由资产路径与请求类型名组成，具体格式为 `[AssetPath][AssetType.Name]`，类型为空时写入 `[null]`。所以“同一个 address”不是完整复用条件；应以定位后的路径、请求类型、加载方法及当前 Provider 是否仍存在为准。不同别名若落到同一记录和相同类型，也可能汇合到相同 key。[Provider 查询与创建](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/ResourceManager.cs#L219)、[AssetKey 定义](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourcePackage/AssetInfo.cs#L76)
 
-### 3. AssetInfo 的信息完备性
+命中同一个 Provider 后，每个调用仍通过 `CreateHandle<T>()` 创建新句柄，并增加 Provider 的引用计数。**共享工作不等于共享所有权凭证。** 这也是为什么释放一个调用方的句柄，不应该让另一个调用方失去资源。[句柄创建源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs#L270)
 
-从 `PackageAsset` 和 `PackageBundle` 拼出来的信息，已经足够发起完整的加载流程：
+这套普通资产规则不应直接套到场景：`LoadSceneAsync` 在 Provider key 后加递增实例计数，每次场景请求对应独立 Provider。[场景 key 源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/ResourceManager.cs#L177)
 
-- 知道主 bundle 是谁 → 知道要加载哪个文件
-- 知道依赖 bundle 列表 → 知道要先加载哪些前置
-- 知道 bundle 的 Hash 和文件名 → 知道在缓存目录里找哪个文件
-- 知道资产的 AssetPath → 知道从 bundle 里用什么路径提取
+### 不同 Provider 可以继续共享 Loader
 
-定位阶段到这里结束。address 已经变成了完整的加载计划。
+创建 Provider 时，它立即取得主包和依赖包的 Loader，并增加这些 Loader 的引用计数。3.0.6 特意把这部分放在构造阶段，防止等待异步 Start 时共享 Loader 的引用保护尚未建立。[构造与引用登记](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs#L101)
 
-## 三、从 AssetInfo 到资产对象：Loader 链
+ResourceManager 的 `_bundleLoaderDict` 以 `BundleName` 为 key；存在则复用，不存在才创建 `LoadBundleOperation`。所以它既不是每次请求一个 Loader，也不是跨所有 Package 的全局唯一 Loader。[Loader 查询源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/ResourceManager.cs#L595)
 
-定位完成后，进入实际加载。
+## 四、主包和依赖一起启动，对象提取等待它们全部就绪
 
-### 1. ProviderBase 的创建
+依赖的约束是“提取目标对象前必须就绪”，不能自动改写成“依赖下载完成后才允许加载主包”。
 
-`ResourcePackage` 在拿到 AssetInfo 后，创建一个 `ProviderBase`（具体子类如 `BundledAssetProvider`）。这个 provider 负责协调整个加载流程：先确保所有依赖 bundle 就绪，再加载主 bundle，最后从 bundle 里提取资产。
-
-ProviderBase 内部通过 `AssetSystem`（注意：这里的 AssetSystem 是 YooAsset 内部的调度中心，和 Addressables 的 ResourceManager 是完全不同的类）获取或创建 BundleLoader。
-
-### 2. BundleLoaderBase：每个 bundle 一个 Loader
-
-`AssetSystem` 维护一个 Loader 字典，每个 bundleID 对应一个 `BundleLoaderBase` 实例。如果 Loader 已存在就复用，不存在就创建。
-
-创建时根据当前 PlayMode 选择具体实现：
-
-- **HostPlayMode** → `AssetBundleWebLoader`（标准路径，支持远程下载 + 本地缓存）
-- **OfflinePlayMode** → `AssetBundleFileLoader`（只查本地文件，不触发下载）
-- **EditorSimulateMode** → 使用 `EditorSimulateLoader`（直接用 AssetDatabase，不加载真实 bundle）
-
-### 3. AssetBundleFileLoader / AssetBundleWebLoader 的加载流程
-
-以 HostPlayMode 场景（`AssetBundleWebLoader`）为例，内部状态机大致经过这些阶段：
-
-**阶段 1：检查缓存**
-通过 `CacheSystem` 检查本地是否已经有这个 bundle 的缓存文件。检查依据是 bundle 的 Hash 和文件名。
-
-**阶段 2：下载（如果需要）**
-如果缓存未命中，创建下载任务。下载完成后写入缓存目录，并做 CRC 校验。
-
-**阶段 3：加载 AssetBundle**
-缓存就绪后，调用：
-```
-AssetBundle.LoadFromFileAsync(cachedFilePath)
-```
-从本地文件异步加载 AssetBundle 对象。
-
-**阶段 4：提取资产**
-bundle 就绪后，ProviderBase 调用：
-```
-assetBundle.LoadAssetAsync<T>(assetPath)
-```
-从 bundle 中提取目标资产。
-
-### 4. 依赖加载顺序
-
-ProviderBase 拿到 `DependBundleIDs` 列表后，先为每个依赖创建或获取 BundleLoader，等所有依赖 Loader 都进入 Succeed 状态，才启动主 bundle 的加载。
+在 `ProviderBase.InternalUpdate()` 中，框架对 `_bundleLoaders` 中的主包和依赖包逐个调用 `StartOperation()`，随后更新所有 Loader，并检查它们是否完成、是否成功。只有全部通过，才读取主包的 `BundleHandle` 并进入 `InternalProcessBundleHandle()`。[启动和等待源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs#L153)
 
 ```mermaid
-flowchart TD
-    A["ProviderBase 启动"] --> B["从 AssetInfo 读取<br/>DependBundleIDs"]
-    B --> C["为每个依赖 bundle<br/>获取/创建 BundleLoader"]
-    C --> D["依赖 Loader 1<br/>检查缓存 → 下载 → 加载"]
-    C --> E["依赖 Loader 2<br/>检查缓存 → 下载 → 加载"]
-    C --> F["依赖 Loader N<br/>..."]
-    D --> G{"所有依赖 Loader<br/>都 Succeed?"}
-    E --> G
-    F --> G
-    G -->|"否，等待"| G
-    G -->|"是"| H["主 bundle Loader<br/>检查缓存 → 下载 → 加载"]
-    H --> I["AssetBundle.LoadFromFileAsync"]
-    I --> J["bundle.LoadAssetAsync&lt;T&gt;(assetPath)"]
-    J --> K["资产对象就绪<br/>ProviderBase → Succeed"]
+sequenceDiagram
+    participant C as 调用方
+    participant R as ResourceManager
+    participant P as AssetProvider
+    participant M as 主包 Loader
+    participant D as 依赖 Loader 集合
+    participant B as 主包 IBundleHandle
+    C->>R: LoadAssetAsync
+    R->>P: 查询或创建 Provider
+    R-->>C: 新的 AssetHandle
+    P->>M: StartOperation
+    P->>D: StartOperation
+    Note over M,D: 受并发限制及各文件系统进度影响
+    M-->>P: 完成状态与 BundleHandle
+    D-->>P: 完成状态
+    Note over P: 所有 Loader 成功后
+    P->>B: LoadAssetAsync(AssetInfo)
+    B-->>P: BHLoadAssetOperation.Result
+    P-->>C: Provider 成功，通知有效句柄
 ```
 
-和 Addressables 的依赖处理对比：Addressables 的依赖是通过 `IResourceLocation.Dependencies` 递归，由 ResourceManager 统一调度；YooAsset 的依赖是通过 `DependBundleIDs` 扁平列表，由 ProviderBase 自己协调。YooAsset 的依赖结构是扁平的（只有一层依赖列表），没有 Addressables 那种依赖的依赖的递归情况。
+“一起启动”也不表示所有底层请求在同一时刻发出。`LoadBundleOperation` 先经过 `CheckConcurrency`；ResourceManager 正忙时会等待。取得名额后才创建文件系统的加载操作，再等待该操作返回非空 `IBundleHandle`。[并发门槛与文件系统加载](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Operations/Internal/LoadBundleOperation.cs#L85)
 
-## 四、三种 PlayMode 的调度差异
+Loader 成功只说明 bundle 的访问句柄可用。`AssetProvider` 随后调用 `LoadedBundleHandle.LoadAssetAsync(MainAssetInfo)`，等待 `BHLoadAssetOperation`，再把结果赋给 `AssetObject`。普通 AssetBundle 实现才进一步调用 Unity 的 `AssetBundle.LoadAssetAsync(assetPath, assetType)`；其他 BundleHandle 可以有自己的提取方式。[AssetProvider 源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Providers/AssetProvider.cs#L14)、[AssetBundle 对象提取源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/BundleHandle/Services/AssetBundleHandle/Operations/ABHLoadAssetOperation.cs#L58)
 
-YooAsset 用 PlayMode 把"开发期"和"发布期"的差异隔离在框架层，上层代码不需要改一行。三种 PlayMode 共享同一套 `LoadAssetAsync` API，但内部走完全不同的路径。
+由此可以把加载等待拆成：定位、Loader 复用与排队、文件系统取得 bundle、bundle 内对象提取。异步接口仍可能包含网络等待或 Unity 主线程工作，不能仅凭 API 名称推断“没有卡顿”。同步等待分支会绕过这处普通并发门槛，不能把异步请求的并发上限直接解释成同步等待时也成立；WebGL 强制同步提取还需另行核对与测量。
 
-### 1. EditorSimulateMode
+## 五、释放改变的是所有权，不保证当场完成卸载
 
-开发期专用。不打 bundle，不加载 bundle，甚至不需要 Manifest。
+`HandleBase.Release()` 先调用 `Provider.ReleaseHandle(this)`；Provider 引用归零时尝试 `TryUnloadBundle()`，最后把本句柄的 Provider 置空。`TryUnloadBundle()` 是否主动发起卸载，还受 `AutoUnloadBundleWhenUnused` 控制。[Release 源码](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Handles/HandleBase.cs#L28)、[自动卸载条件](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs#L313)
 
-加载路径：
-```
-LoadAssetAsync<T>(address)
-  → 通过 Manifest 拿到 AssetPath
-  → 直接调用 AssetDatabase.LoadAssetAtPath<T>(assetPath)
-  → 资产对象就绪
-```
+即使触发尝试，正在加载的 Provider 不能正常销毁；Loader 也要检查自身引用和资源包反向引用关系，满足条件后才通过 `IBundleHandle.UnloadBundle()` 执行卸载。因此“最后一个句柄 Release 必定立即 `AssetBundle.Unload(true)`”不是该版本的保证。[Provider 销毁条件](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Providers/ProviderBase.cs#L258)、[Loader 销毁条件](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Runtime/ResourceManager/Operations/Internal/LoadBundleOperation.cs#L242)
 
-这个模式的价值在于：开发期的迭代完全不需要经过构建流程。修改资产后立刻就能在 Editor 里看到效果，不用等打 bundle。
+两个计数也在不同时间变化：句柄创建和释放改变 Provider 计数，Provider 的构造和销毁才改变它持有的 Loader 计数。排查“Release 后包还在”时，应先查哪一个计数、哪一个销毁条件尚未满足，再讨论内存曲线。
 
-限制：只能在 Unity Editor 中使用，真机上不存在 AssetDatabase。
+## 六、可复现验证：证明复用和等待，而不是只看耗时
 
-### 2. OfflinePlayMode
+以下方案**尚未执行**。在独立的 YooAsset 3.0.6 测试工程中做，避免改变正在使用的项目缓存或清单。
 
-内置资源模式。所有 bundle 都打在包体内的 StreamingAssets 目录，运行时不触发任何下载。
+准备一个已完成初始化、已加载目标版本 Manifest 的 Package。收集 `Hero.prefab` 与 `Enemy.prefab`，让它们引用共享材质，并从构建报告确认主包和共享依赖的实际分组。使用正式构建产物验证 bundle 链；编辑器模拟不能替代这一步。
 
-加载路径：
-```
-LoadAssetAsync<T>(address)
-  → Manifest 定位 → 找到 bundle 文件名
-  → 从 StreamingAssets 路径加载
-  → AssetBundle.LoadFromFileAsync(streamingAssetsPath)
-  → bundle.LoadAssetAsync<T>(assetPath)
-```
+1. 在 `ResourceManager.LoadAssetAsync` 的 `provider == null` 分支、`GetOrCreateBundleLoader`、`ProviderBase.CreateHandle` 设置断点。连续两次 `package.LoadAssetAsync<GameObject>("hero_prefab")`，保留两个返回句柄。
+2. 预期观察：Provider 只创建一次，`CreateHandle` 经过两次，Provider 引用计数变为 2。若 Provider 已提前销毁、路径或类型不同，应先解释 key 差异再判断复用。
+3. 再加载 `enemy_prefab`。预期观察：创建另一个 Provider；共享依赖对应的 Loader 从字典复用，而不是再次创建。若打包结果不同，则不应期待图中的共享关系。
+4. 在 `ProviderBase` 的 `StartBundleLoader`、`WaitBundleLoader` 和 `AssetProvider.InternalProcessBundleHandle` 记录帧号、bundle 名称和状态。预期观察：主包和依赖均被启动，只有它们全部成功后才进入对象提取。底层请求启动顺序可能受并发上限影响。
+5. 加载完成后释放 Hero 的第一个句柄。预期观察：Hero Provider 仍有一个句柄引用，第二个句柄仍有效。释放其余句柄，再结合自动卸载配置和显式卸载操作检查 Provider、Loader 的实际销毁过程。
 
-适用场景：单机游戏、不需要热更的项目、或者作为联网失败时的兜底模式。
+如果还要研究首次加载延迟，再为同一构建分别记录冷缓存、暖缓存和已加载对象三组结果，并区分网络、文件、Unity 对象提取阶段。未统一资源、设备、压缩与缓存条件之前，不从“链路层数少”推出性能胜负。
 
-### 3. HostPlayMode
-
-完整的远程资源模式，也是线上项目最常用的模式。
-
-加载路径：
-```
-LoadAssetAsync<T>(address)
-  → Manifest 定位 → 找到 bundle 信息
-  → 检查 CacheSystem 本地缓存
-  → 缓存命中 → AssetBundle.LoadFromFileAsync(cachedPath)
-  → 缓存未命中 → 下载 → 校验 → 写入缓存 → 再从缓存加载
-  → bundle.LoadAssetAsync<T>(assetPath)
-```
-
-HostPlayMode 下的 `LoadAssetAsync` 可能隐含网络请求。如果调用方没有预下载策略，首次加载某个资源可能触发同步等待下载，表现为明显卡顿。
-
-### 4. PlayMode 的切换机制
-
-`ResourcePackage` 在初始化时通过 `InitializeAsync` 接收一个 `InitializeParameters` 参数，参数的具体类型决定了 PlayMode：
-
-- `EditorSimulateModeParameters` → EditorSimulateMode
-- `OfflinePlayModeParameters` → OfflinePlayMode
-- `HostPlayModeParameters` → HostPlayMode
-
-初始化完成后，Package 内部持有对应的 `IPlayMode` 实现。后续所有操作都委托给这个实现，调用方完全无感。
-
-这个设计意味着：项目代码只需要在初始化时根据环境选择 PlayMode 参数，后续所有资源操作代码完全不用改。
-
-## 五、AssetOperationHandle 的生命周期
-
-调用方拿到的 `AssetOperationHandle` 背后是一个 `ProviderBase` 实例。
-
-### 1. 状态流转
-
-ProviderBase 的状态机：
-
-```
-None → Processing → Succeed / Failed
-```
-
-- **None**：刚创建，还没开始执行
-- **Processing**：正在加载（可能在等依赖、等下载、等 AssetBundle 加载）
-- **Succeed**：资产对象就绪，`handle.AssetObject` 可用
-- **Failed**：加载失败，`handle.LastError` 里有原因
-
-调用方可以通过 `handle.Completed += callback` 注册回调，也可以在协程里用 `yield return handle` 等待完成。
-
-### 2. 引用计数和 Release
-
-YooAsset 的引用计数模型和 Addressables 有一个关键区别。
-
-**Addressables 的引用计数挂在 operation 级别：** 多次加载同一个 key 共享同一个 operation，每次加载递增 operation 的 refcount，Release 递减。operation 的 refcount 归零后触发 bundle 卸载。
-
-**YooAsset 的引用计数挂在 ProviderBase 级别：** 每个 `LoadAssetAsync` 调用都创建一个 ProviderBase，ProviderBase 内部记录自己引用了哪些 BundleLoader。BundleLoader 维护自己的引用计数（被多少个 ProviderBase 引用）。
-
-Release 的链条：
-
-```
-handle.Release()
-  → ProviderBase 标记释放
-  → 通知 AssetSystem
-  → AssetSystem 递减相关 BundleLoader 的引用计数
-  → 如果某个 BundleLoader 的引用计数归零
-    → 调用 AssetBundle.Unload(true)
-    → 从 Loader 字典中移除
-```
-
-### 3. 和 Addressables 的引用计数对比
-
-Addressables 里，两次 `LoadAssetAsync` 同一个 key 会共享底层 operation：
-
-```
-// Addressables
-var h1 = Addressables.LoadAssetAsync<T>(key); // op refcount = 1
-var h2 = Addressables.LoadAssetAsync<T>(key); // op refcount = 2（共享）
-Addressables.Release(h1); // op refcount = 1
-Addressables.Release(h2); // op refcount = 0 → unload
-```
-
-YooAsset 里，两次 `LoadAssetAsync` 同一个 address 会创建两个 ProviderBase，但共享底层的 BundleLoader：
-
-```
-// YooAsset
-var h1 = package.LoadAssetAsync<T>(address); // provider1, bundleLoader refcount = 1
-var h2 = package.LoadAssetAsync<T>(address); // provider2, bundleLoader refcount = 2
-h1.Release(); // provider1 释放, bundleLoader refcount = 1
-h2.Release(); // provider2 释放, bundleLoader refcount = 0 → unload
-```
-
-结果一样（最后一次 Release 触发卸载），但中间层的粒度不同。YooAsset 的粒度更细——你可以单独追踪每个加载请求的生命周期，而不是只能看到一个合并后的 operation。
-
-### 4. ForceUnloadAllAssets
-
-`ResourcePackage` 提供了 `ForceUnloadAllAssets()` 方法，强制卸载当前 Package 下所有已加载的 bundle。
-
-它的内部实现是：遍历所有 BundleLoader，无视引用计数，直接调用 `AssetBundle.Unload(true)`，然后清空 Loader 字典和 ProviderBase 列表。
-
-这是一个核武器级别的 API。它会销毁所有已加载资产，包括正在使用的。用它的正确时机是场景完全切换、确认没有任何旧资产还在被引用的时候。
-
-## 六、项目里最常踩的三个坑
-
-前五节把 YooAsset 运行时的内部链路拆完了。这一节回到项目现场。
-
-### 1. 多 Package 初始化顺序导致 Manifest 不一致
-
-YooAsset 的多 Package 是一个强大的设计：主包一个 Package，DLC 一个 Package，各自独立版本、独立更新。
-
-但多 Package 的初始化有顺序要求。如果 Package A 先完成初始化拿到 Manifest v2，Package B 还在用 Manifest v1，而 A 里有资源依赖 B 里的 bundle（通过 `DependBundleIDs` 跨 Package 引用），就可能出现 A 认为 B 应该有某个 bundle，但 B 的 Manifest 里根本没有这个 bundle 的情况。
-
-**表现：** 加载某些资源时报 bundle 找不到，但同样的资源在所有 Package 都更新完后又能正常加载。
-
-**防御方式：** 所有 Package 的 `InitializeAsync` 和 `UpdateManifestAsync` 必须全部完成后，再开始任何资源加载。在初始化流程中加一个屏障等所有 Package 就绪。
-
-### 2. HostPlayMode 首次加载触发下载但没有预下载策略
-
-这是最常被忽略的性能陷阱。
-
-`LoadAssetAsync` 的 API 签名看起来是纯本地操作，但在 HostPlayMode 下，如果目标 bundle 不在本地缓存中，它会触发网络下载。调用方如果没有做预下载，首次加载某个资源可能要等几百毫秒到几秒的下载时间。
-
-**表现：** 角色进入新区域，首次加载该区域的资源时有明显卡顿，后续加载正常。
-
-**正确做法：** 在合适的时机（比如 loading 界面、场景切换间隙）使用 `ResourceDownloaderOperation` 预下载即将使用的资源组。确保关键路径上的 `LoadAssetAsync` 命中的都是本地缓存。
-
-```
-// 先预下载
-var downloader = package.CreateResourceDownloader(tag, downloadingMaxNum, failedTryAgain);
-downloader.BeginDownload();
-yield return downloader;
-
-// 预下载完成后再加载，此时全部命中缓存
-var handle = package.LoadAssetAsync<GameObject>("hero_prefab");
-```
-
-### 3. ForceUnloadAllAssets 和手动 Release 的冲突
-
-常见的事故场景：项目里一些模块在 `OnDestroy` 里做了规范的 `handle.Release()`，同时场景切换时又调用了 `ForceUnloadAllAssets()`。
-
-`ForceUnloadAllAssets` 先执行，直接清空了所有 Loader 和 ProviderBase。然后各模块的 `OnDestroy` 开始跑，调用 `handle.Release()`，但对应的 ProviderBase 已经不存在了。
-
-**表现：** 场景切换时报空引用异常或者日志里出现 "provider is null" 警告。大部分时候不影响功能（因为资源反正已经卸载了），但会产生大量错误日志，混淆真正的问题。
-
-**防御方式：** 二选一。要么全用 `ForceUnloadAllAssets`，在场景切换时一刀切，各模块不做单独 Release。要么全用手动 Release，不调 ForceUnloadAllAssets。不要混用。
-
----
-
-这一篇把 YooAsset 运行时从入口到出口的完整内部链路拆开了。
-
-核心链路就是这条：
-`address → PackageManifest.TryGetPackageAsset → AssetInfo(bundleID + dependBundleIDs) → BundleLoaderBase 加载依赖 bundle → AssetBundleFileLoader/AssetBundleWebLoader 加载主 bundle → AssetBundle.LoadAssetAsync 提取资产 → AssetOperationHandle 返回给调用方`
-
-和 Addressables 那条链路放在一起看，最大的结构差异在三个地方：
-
-| 对比维度 | Addressables | YooAsset |
-|---------|-------------|---------|
-| 定位机制 | key → IResourceLocator → IResourceLocation（经过 hash bucket 间接查找） | address → PackageManifest._assetDic 字典直查 |
-| 调度中心 | 全局 ResourceManager + Provider 模式松散匹配 | Package 内闭环（AssetSystem 调度），没有全局调度，没有 Provider 间接层 |
-| 引用计数粒度 | operation 级别（多次加载同 key 共享一个 operation） | ProviderBase 级别（每次加载独立 provider，bundle 引用计数独立维护） |
-| 依赖结构 | `IResourceLocation.Dependencies` 递归，可能有依赖的依赖 | `DependBundleIDs` 扁平列表，只有一层 |
-| PlayMode 切换 | 通过不同的 Build Script 和 Play Mode Script 在 Editor 面板切换 | 通过 `InitializeParameters` 类型在代码中切换 |
-
-理解这条链路之后，再回去看那些运行时问题，定位就会清楚很多：
-
-- 加载失败 → 先看是定位阶段（Manifest 里没有这个 address），还是 Loader 阶段（bundle 文件不存在或下载失败），还是提取阶段（bundle 里没有这个 assetPath）
-- 内存不释放 → 看 BundleLoader 的引用计数是不是归零了，哪些 ProviderBase 还在引用它
-- 首次加载卡顿 → 看是不是 HostPlayMode 下命中了未缓存的 bundle，需要加预下载策略
-
-下一步如果想看两套框架的运行时调度在同层问题上的完整对比，可以等后续 Cmp-01 那篇。如果想先深入 YooAsset 的 Manifest 结构和版本校验机制，可以等 Yoo-02。
+读运行时源码最有用的结果，是给每一次等待找到归属：**句柄代表需求，Provider 合并对象工作，Loader 合并 bundle 工作，文件系统完成内容取得。**

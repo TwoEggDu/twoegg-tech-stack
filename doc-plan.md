@@ -90,7 +90,7 @@
 |------|----------------|------|------|
 | Unity 资产系统与序列化 | [docs/unity-asset-system-and-serialization-series-plan.md](./docs/unity-asset-system-and-serialization-series-plan.md) | 已拆出 | 对应旧 `系列八·D` |
 | Unity 打包、加载与流式系统 | [docs/unity-packaging-loading-streaming-series-plan.md](./docs/unity-packaging-loading-streaming-series-plan.md) | 已拆出 | 对应旧 `系列八` |
-| Addressables / YooAsset 源码阅读 | [docs/addressables-yooasset-source-reading-series-plan.md](./docs/addressables-yooasset-source-reading-series-plan.md) | 已拆出 | 偏资源系统源码视角 |
+| Addressables / YooAsset 源码阅读与对比 | [docs/addressables-yooasset-source-reading-series-plan.md](./docs/addressables-yooasset-source-reading-series-plan.md) | 三个首页 | YooAsset、Addressables 独立主线与共同对比入口 |
 | Unity 代码与资源裁剪 | [docs/unity-stripping-series-plan.md](./docs/unity-stripping-series-plan.md) | 已拆出 | 对应旧 `系列八·E` |
 | Unity DOTS 后续延伸 | [docs/unity-dots-follow-up-series-plan.md](./docs/unity-dots-follow-up-series-plan.md) | 已拆出 | 承接 `DOTS-E01~E18` |
 | Unity 6 渲染升级 | [docs/unity6-rendering-upgrade-series-plan.md](./docs/unity6-rendering-upgrade-series-plan.md) | 已拆出 | Unity 6 专项 |

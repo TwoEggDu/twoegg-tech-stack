@@ -11,8 +11,12 @@ tags:
   - "ReferenceCount"
   - "Lifecycle"
   - "Memory"
-series: "Addressables 与 YooAsset 源码解读"
+series: "Addressables 资源管理与交付"
+primary_series: "addressables"
+series_order: 3
 ---
+
+> 专题首页：[Addressables 资源管理与交付]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
 
 [Addr-01]({{< relref "engine-toolchain/unity-addressables-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) 把 Addressables 运行时从 `LoadAssetAsync` 到资产对象就绪的完整内部链路拆开了。那篇最后一节提到了引用计数和 Release 触发 Unload 的基本路径，但只用了一小节带过。
 
