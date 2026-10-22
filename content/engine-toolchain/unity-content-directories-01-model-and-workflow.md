@@ -1,8 +1,8 @@
 ---
-title: 'Unity 6.6 Content Directories 01｜从分包布局转向按需加载：原理与最小流程'
+title: 'Unity 6.6 Content Directories 01｜内容产物、引用模型与最小接入'
 slug: "unity-content-directories-01-model-and-workflow"
 date: "2026-10-22"
-description: "从内容组织与加载生命周期的矛盾出发，解释 Content Directories、Root Asset 和 Loadable 的关系，并给出构建、部署、注册与释放的最小流程。"
+description: "解释 Content Directory 的内容产物、Root Asset 与 Loadable 的引用模型，并以 Windows Player 串起内容构建、代码裁剪信息、部署、启动加载和释放。"
 tags:
   - "Unity"
   - "Content Directories"
@@ -12,7 +12,7 @@ series: "Unity 资产系统与序列化"
 weight: 55
 ---
 
-> 版本说明：本篇依据 Unity 6.6（6000.6）公开手册与 API，资料核查于 2026-10-22。代码按文档核对，尚未在 Unity Editor 中编译运行。
+> 版本说明：本篇依据 Unity 6.6（6000.6）公开手册与 API，资料核查于 2026-10-22。最小接入限定 Windows x64；示例已做 API 静态核对，尚未在 Unity 6.6 Editor 中编译运行。
 
 做一个角色预览界面，业务上只需要当前角色的模型、材质和贴图。但在资源系统里，你还要考虑：它们在哪些 Bundle 里，共享依赖会带进哪些容器，关闭界面后又能释放哪些内容。
 
@@ -45,7 +45,22 @@ Content Directories 提供了一种新的组织方式：用入口定义构建范
 
 一个 Content Directory 包含内容构建的产物，以及加载它们所需的 manifest。项目通过 `ScriptableObject` 形式的 **Root Asset** 定义入口；构建过程从入口沿可追踪引用收集内容。
 
-这里的 Directory 不是要求你在 `Assets` 下创建某种特殊文件夹，Root Asset 也不用对应旧项目的每个 Bundle。官方建议大多数项目先使用一个根入口，有独立可选内容时再考虑更多入口。[创建流程与 Root Asset 说明](https://docs.unity.com/en-us/engine/6000.6/manual/assets-and-media/assets-managing-runtime/content-directories/create)
+这里的 Directory 指**内容构建的输出目录**；Root Asset 指项目中的 **ScriptableObject 根资产**。两者分别回答“产物在哪里”和“从哪里收集内容”。根资产不用对应旧项目的每个 Bundle；官方建议大多数项目先使用一个根入口，有独立可选内容时再扩展。[创建流程与 Root Asset 说明](https://docs.unity3d.com/6000.6/Documentation/Manual/content-directories-create.html)
+
+一次未归档构建的产物可以概括为：
+
+```text
+GameContent/                       内容输出目录
+├─ BuildManifestHash.txt            指向本次 manifest 的哈希
+├─ <hash>.json                     manifest：内容、依赖与加载入口
+├─ <hash>.cf                       Content File：序列化 Unity 对象
+├─ <hash>.resS                     纹理、网格等流式数据
+└─ <hash>.resource                 音频、视频等数据
+```
+
+这些是面向目标平台构建的内容，不是把 PNG、FBX 原样复制过去。源资产经过导入、对象收集和序列化后形成产物，**一个源资产不保证严格对应一个文件**。例如，模型中的对象层级与网格数据可以落在不同产物中。
+
+启用归档时，内容文件、资源数据和 manifest 可以装入 `content0.archive`，旁边保留 `BuildManifestHash.txt`。归档改变存储组织，内层仍有自己的内容与依赖边界。以上是 6.6 手册描述的产物形态，不应作为手写内部 manifest 解析器的稳定格式协议。[构建产物与可选归档](https://docs.unity3d.com/6000.6/Documentation/Manual/content-directories-create.html)
 
 ```mermaid
 flowchart LR
@@ -53,11 +68,11 @@ flowchart LR
     Build --> Files[细粒度内容产物]
     Build --> Manifest[Manifest]
     Manifest --> Register[运行时注册]
-    Register --> Catalog[取得根目录对象]
+    Register --> Catalog[取得根资产]
     Catalog --> Load[按需加载内容]
 ```
 
-这个模型里，根目录可以列出一百个角色，但打开目录并不要求加载一百个角色。能否做到这一点，取决于下面的引用方式。
+注册目录会读取 manifest、建立运行时索引，并加载根资产及其直接依赖。因此注册有成本；只有根资产通过按需引用列出的重内容，才会留到后续请求时加载。
 
 ## 3. Loadable 把构建包含与立即加载分开
 
@@ -71,95 +86,169 @@ using UnityEngine;
 public sealed class GameContentRoot : ScriptableObject
 {
     public Loadable<Texture2D> previewIcon;
-    public Loadable<GameObject> characterPrefab;
-    public LoadableSceneId gameplayScene;
 }
 ```
 
-字段表达了三类内容的入口，但它们还没有因此全部加载。
+例子先只放一张预览图。扩展到角色和场景时，可以分别增加 `Loadable<GameObject>` 与 `LoadableSceneId` 字段。三种引用要从构建与运行时两侧理解：
 
-- 普通直接引用：加载持有者时，会把对应的直接依赖一起带入。
-- `Loadable<T>`：构建时追踪目标，运行时由代码调用加载。
-- `LoadableSceneId`：让场景进入内容构建，再通过 `SceneManager` 加载。
+- 普通直接引用：构建时跟随引用收集内容；加载持有者时，也需要加载目标及其直接依赖。
+- `Loadable<T>`：构建时同样追踪目标；运行时把目标的加载时机留给代码，已加载引用由所有者释放。
+- `LoadableSceneId`：把场景纳入内容构建，运行时再通过 `SceneManager` 管理场景加载和卸载。
 
 如果你只把资源路径放进字符串，构建器无法据此自动发现那个运行时目标，仍需保证它从根入口可达。[引用规则](https://docs.unity.com/en-us/engine/6000.6/manual/assets-and-media/assets-managing-runtime/content-directories/references)
 
 因此，根入口适合保存轻量描述与按需引用。把大量大贴图、Prefab 都改成普通直接引用，会重新把“读取目录”变成一次大范围加载。
 
-## 4. 最小构建流程
+## 4. Windows 最小接入：先准备资产与启动场景
 
-在 Project 窗口创建 `Game Root` 资产，保存为 `Assets/Content/GameContentRoot.asset`，为字段指定对应资产。
+以下流程针对 Unity 6.6 的 **Windows x64 Player**，工程需安装对应构建模块：
 
-接着把构建脚本放进 `Assets/Editor/BuildGameContent.cs`：
+1. 导入一张 PNG，命名为 `PreviewIcon`。
+2. 保存前面的 `GameContentRoot.cs`，创建 `Content > Game Root` 资产，保存为 `Assets/Content/GameContentRoot.asset`，把贴图拖入 `previewIcon`。
+3. 创建场景 `Assets/Scenes/Bootstrap.unity`，添加一个空 GameObject，挂上下一节的 `ContentProbe`。场景中不要直接挂载根资产或贴图。
+4. 在 Build Profiles 激活 Windows 的 x64 目标；等平台切换完成后，再执行下面的构建菜单。
+
+### 内容输出与构建报告分别交给谁
+
+这里有三条路径，不能相互替代：
+
+| 对象 | 本例位置或取得方式 | 用途 |
+|---|---|---|
+| 内容输出目录 | `Builds/ContentDirectories/GameContent` | 部署到 Player，供运行时注册 |
+| 内容构建报告目录 | 用本次报告的 `buildSessionGuid` 查询 `BuildHistory` | 交给 Player 构建，保留内容使用的类型与模块 |
+| `ScriptsOnlyCache.yaml` | 位于该构建报告目录内 | 类型使用记录，不作为运行时内容分发 |
+
+把内容放在 `Assets` 外，避免重新导入产物。构建 Player 时，一路把内容加入 StreamingAssets，另一路把报告目录传给裁剪流程。[部署手册](https://docs.unity3d.com/6000.6/Documentation/Manual/content-directories-load.html)、[代码裁剪手册](https://docs.unity3d.com/6000.6/Documentation/Manual/managed-code-stripping-content.html)
+
+将下面的完整构建脚本保存为 `Assets/Editor/BuildGameContent.cs`：
 
 ```csharp
 using System;
+using System.IO;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 
 public static class BuildGameContent
 {
-    [MenuItem("Build/Game Content")]
-    public static void Build()
-    {
-        var parameters = new BuildContentDirectoryParameters
-        {
-            outputPath = "Builds/GameContent",
-            rootAssetPaths = new[]
-            {
-                "Assets/Content/GameContentRoot.asset"
-            }
-        };
+    internal const string ContentParent = "Builds/ContentDirectories";
+    internal static bool BuildingDemo;
 
-        BuildReport report = BuildPipeline.BuildContentDirectory(parameters);
-        if (report.summary.result != BuildResult.Succeeded)
-            throw new InvalidOperationException("Content build failed.");
+    [MenuItem("Build/Content Demo/Windows x64")]
+    public static void BuildWindows()
+    {
+        if (EditorUserBuildSettings.activeBuildTarget !=
+            BuildTarget.StandaloneWindows64)
+            throw new InvalidOperationException("Activate Windows x64 first.");
+
+        const string root = "Assets/Content/GameContentRoot.asset";
+        const string scene = "Assets/Scenes/Bootstrap.unity";
+        if (!File.Exists(root) || !File.Exists(scene))
+            throw new FileNotFoundException("Create the root asset and scene first.");
+
+        var contentReport = BuildPipeline.BuildContentDirectory(
+            new BuildContentDirectoryParameters
+            {
+                outputPath = ContentParent + "/GameContent",
+                rootAssetPaths = new[] { root }
+            });
+        RequireSuccess(contentReport);
+
+        if (!BuildHistory.TryGetBuildReportDirectory(
+                contentReport.summary.buildSessionGuid, out string reportDirectory))
+            throw new InvalidOperationException("Content build report not found.");
+
+        Directory.CreateDirectory("Builds/Win64");
+        BuildingDemo = true;
+        try
+        {
+            var playerReport = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            {
+                scenes = new[] { scene },
+                locationPathName = "Builds/Win64/ContentDemo.exe",
+                target = BuildTarget.StandaloneWindows64,
+                options = BuildOptions.Development,
+                previousBuildReportDirectories = new[] { reportDirectory }
+            });
+            RequireSuccess(playerReport);
+        }
+        finally
+        {
+            BuildingDemo = false;
+        }
+    }
+
+    static void RequireSuccess(BuildReport report)
+    {
+        if (report == null || report.summary.result != BuildResult.Succeeded)
+            throw new InvalidOperationException("Build failed; inspect Editor.log.");
+    }
+}
+
+public sealed class ContentDemoDeployment : BuildPlayerProcessor
+{
+    public override int callbackOrder => 0;
+
+    public override void PrepareForBuild(BuildPlayerContext context)
+    {
+        if (BuildGameContent.BuildingDemo)
+            context.AddAdditionalPathToStreamingAssets(
+                Path.GetFullPath(BuildGameContent.ContentParent));
     }
 }
 ```
 
-调用前先在 Build Profiles 选择目标平台。`BuildContentDirectory` 使用当前激活的构建目标，输出目录名本身不会决定平台。[构建 API 契约](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/BuildPipeline.BuildContentDirectory.html)
+`BuildContentDirectory` 使用当前激活平台；脚本先检查目标，避免把其他平台的内容带入 Windows Player。回调把 `ContentDirectories` 下的子目录一起带到 StreamingAssets，保留 `GameContent` 这一层。[构建 API](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/BuildPipeline.BuildContentDirectory.html)、[官方完整构建示例](https://docs.unity3d.com/6000.6/Documentation/Manual/build-script-build.html)
 
-这里特意把输出放在 `Assets` 外。这样可以避免 Unity 再导入大量构建产物。部署 Player 时，需要另行把完整内容输出复制到目标位置，不能只完成内容构建，就认为 Player 已经带上它。[构建输出的部署说明](https://docs.unity.com/en-us/engine/6000.6/manual/assets-and-media/assets-managing-runtime/content-directories/load)
+代码裁剪明确使用 `BuildPlayerOptions.previousBuildReportDirectories`，传入**内容构建报告目录**。采用 `BuildPlayerProcessor` 统一构建入口的项目，也可在回调中调用 `AddPreviousBuildReportDirectory`；本例只用前一种接法。[报告目录 API](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/BuildPlayerOptions-previousBuildReportDirectories.html)
 
-**构建 Player 还要接上代码裁剪信息。** 独立内容中使用、启动场景却没有使用的脚本类型或引擎模块，可能被 Player 构建裁掉。应先构建内容，再按当前版本的构建接口把内容的构建报告目录传入 Player 构建流程；仅复制内容文件不能解决类型被裁剪的问题。具体接口以所用 6000.6 补丁的文档为准。[内容与代码裁剪](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/script-compilation/managed-code-stripping/content)
+## 5. 从 Start 调用：注册、取得根、加载、释放
 
-**构建 Player 还要接上代码裁剪信息。** 独立内容中使用、启动场景却没有使用的脚本类型或引擎模块，可能被 Player 构建裁掉。应先构建内容，再按当前版本的构建接口把内容的构建报告目录传入 Player 构建流程；仅复制内容文件不能解决类型被裁剪的问题。具体接口以所用 6000.6 补丁的文档为准。[内容与代码裁剪](https://docs.unity.com/en-us/engine/6000.6/manual/programming-environment/script-compilation/managed-code-stripping/content)
-
-## 5. 运行时：注册、取得根、加载、释放
-
-下面是一个只读取贴图名称的同步探针，放在 `ContentProbe.cs`。在 Play Mode 或 Player 中，向 `Inspect` 传入已部署内容目录的本地路径：
+将以下脚本保存为 `Assets/ContentProbe.cs`，挂到 Bootstrap 场景中。它只读取贴图名称，使用结束便清理：
 
 ```csharp
+using System;
+using System.IO;
 using Unity.Loading;
 using UnityEngine;
 
-public static class ContentProbe
+public sealed class ContentProbe : MonoBehaviour
 {
-    public static void Inspect(string localDirectoryPath)
+    void Start()
     {
-        var directory = ContentLoadManager.RegisterContentDirectory(
-            localDirectoryPath);
+#if UNITY_EDITOR
+        string localPath = Path.GetFullPath(
+            "Builds/ContentDirectories/GameContent");
+#else
+        string localPath = Path.Combine(
+            Application.streamingAssetsPath, "GameContent");
+#endif
+        if (!Directory.Exists(localPath))
+            throw new DirectoryNotFoundException(localPath);
+
+        var directory = ContentLoadManager.RegisterContentDirectory(localPath);
         try
         {
-            foreach (var root in
-                     ContentLoadManager.GetRootAssets<GameContentRoot>(directory))
-            {
-                var icon = new Loadable<Texture2D>(
-                    root.previewIcon.LoadableObjectId);
-                try
-                {
-                    icon.Load();
-                    if (icon.Status != LoadableStatus.Loaded)
-                        throw new System.InvalidOperationException(
-                            "Preview icon failed to load.");
+            var roots = ContentLoadManager.GetRootAssets<GameContentRoot>(directory);
+            if (roots.Length != 1)
+                throw new InvalidOperationException(
+                    $"Expected one GameContentRoot, found {roots.Length}.");
+            if (roots[0].previewIcon == null)
+                throw new InvalidOperationException("previewIcon is not assigned.");
 
-                    Debug.Log(icon.Target.name);
-                }
-                finally
-                {
-                    icon.Release();
-                }
+            var iconId = roots[0].previewIcon.LoadableObjectId;
+            var icon = new Loadable<Texture2D>(ref iconId);
+            try
+            {
+                icon.Load();
+                if (icon.Status != LoadableStatus.Loaded || icon.Target == null)
+                    throw new InvalidOperationException("Preview icon load failed.");
+
+                Debug.Log($"CONTENT_PROBE_OK: {icon.Target.name}");
+            }
+            finally
+            {
+                icon.Release();
             }
         }
         finally
@@ -170,13 +259,30 @@ public static class ContentProbe
 }
 ```
 
-这个探针只在方法内部使用对象，所以能在 `finally` 中释放。真实 UI 如果仍在显示贴图，就需要把加载引用保留到 UI 使用结束；不能照搬这段短作用域。
+构造函数专页当前列出的签名是 `Loadable<T>(ref LoadableObjectId id)`。这里先复制 ID 到局部变量，再以 `ref` 传入，得到探针独立持有的加载实例；不沿用部分官方示例中省略 `ref` 的写法。[构造函数签名](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1-ctor.html)
 
-同步的 `Load()` 会等待完成。需要异步时可使用 `await icon.LoadAsync()`，完成后检查状态，再读取 `Target`。[Loadable API](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1.html)
+`GetRootAssets<T>(handle)` 只查询指定目录，空参数重载则查询所有已注册目录。`Load()` 同步等待；`LoadAsync()` 返回 `Awaitable<T>`，可以 `await`，完成后检查 `Status == LoadableStatus.Loaded` 与 `Target`。[根资产查询](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.ContentLoadManager.GetRootAssets.html)、[异步加载签名](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1.LoadAsync.html)
 
-生产项目通常把注册放进启动流程，保持目录可用，再按界面、场景或角色生命周期持有加载引用。场景卸载和资源释放都完成之后，才注销目录；注销不能代替这些清理工作。[注销 API 的前置条件](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.ContentLoadManager.UnregisterContentDirectory.html)
+### 执行与成功标志
 
-平台路径也要单独处理。尤其 Web 的预加载与虚拟文件系统有专门部署流程，不能把桌面文件夹示例直接当成所有平台的接入方案。
+执行 `Build > Content Demo > Windows x64`。输出结构应包含：
+
+```text
+Builds/Win64/
+├─ ContentDemo.exe
+└─ ContentDemo_Data/StreamingAssets/GameContent/
+   └─ 完整的内容构建输出
+```
+
+从 PowerShell 启动 Player，并指定日志文件：
+
+```powershell
+.\Builds\Win64\ContentDemo.exe -logFile .\Builds\Win64\ContentDemo.log
+```
+
+日志出现 `CONTENT_PROBE_OK: PreviewIcon`，表示探针取得了根资产并成功加载目标贴图；根资产数量不符、路径缺失或加载失败会抛出异常，不会静默当作成功。执行到 `finally` 时先释放贴图加载引用，再注销目录。
+
+这段代码的使用期只有一次名称读取。真实 UI 显示贴图时，要把加载引用保留到 UI 退出；已加载的场景也应先经 `SceneManager` 卸载，再注销目录。[注销前置条件](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.ContentLoadManager.UnregisterContentDirectory.html)
 
 ## 6. 最容易写错的是引用所有权
 
@@ -194,13 +300,15 @@ public static class ContentProbe
 
 因此，只验证“在编辑器里能显示角色”，还没有验证内容构建是否完整。应从已注册的构建目录取得根资产，再测试对应加载路径，并最终在目标 Player 上复核。
 
-还要留意：按当前 6000.6 API 说明，Loadable 字段的内容构建支持来自 `BuildContentDirectory`；直接把带这类字段的对象放进普通 Player 或 AssetBundle 构建，不能假定引用同样有效。[Play Mode 与构建支持范围](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1.html)
+当前 6000.6 API 对普通 Player／AssetBundle 构建的后果也有明确说明：如果它们的序列化数据里包含 Loadable 字段，输出中的底层引用会被设为 null，并记录错误。`BuildOptions.SuppressLoadableErrors` 和 `BuildAssetBundleOptions.SuppressLoadableErrors` 只抑制对应错误，不会让这种引用获得支持。
+
+所以本例的 Bootstrap 只挂不含 Loadable 字段的探针；含 Loadable 字段的根资产通过 `BuildContentDirectory` 构建，再从已注册内容中取得。**把运行时代码编进 Player，与把含 Loadable 字段的资产直接序列化进 Player，是两件事。**[Play Mode 与构建支持范围](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1.html)
 
 ## 8. 把它放回完整工程
 
 Unity 6.6 提供的是本地内容构建与加载基础。远程下载、版本切换、失败恢复和回滚仍需另行设计，或继续使用现有 AssetBundle 分发方案；Addressables 可以使用 Content Directories，业务管理层也不必因底层变化而被整体替换。[Unity 6.6 功能边界](https://docs.unity.com/en-us/engine/6000.6/manual/assets-and-media/assets-managing-runtime/content-directories/introduction)
 
-第一次接入时，建议先做一份小内容：一个根、两个共享贴图的 Prefab、一张可按需加载的图标。依次走通构建、部署、注册、加载、释放和退出，再扩大内容范围。
+本例只读取名称，展示的是接入链路。接到真实角色或场景后，再让业务所有者决定加载引用的持有期。Android、Web 等平台的内容部署与路径访问应按各自平台流程接入，不照搬 Windows 文件路径。
 
 <!-- DATA-TODO: 在固定的 Unity 6000.6 补丁版本和目标平台运行上述探针，补充构建报告、Player 日志与加载前后内存截图；当前仅完成公开 API 核查。 -->
 

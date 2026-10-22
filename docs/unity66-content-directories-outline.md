@@ -57,7 +57,7 @@
 - Addressables 包手册的直接页面本轮未能通过网页工具读取。正文只写已由 Unity 6.6 手册和官方博客确认的后端关系，不写具体包最低版本、右键菜单路径或完整迁移操作。
 - 官方博客的性能案例属于官方指定 Beta 版本与机器，不是本仓实测。正文不迁移其比例作为项目收益承诺。
 - C# 示例仅按公开 API 核对，未在 Unity Editor 中编译执行。
-- Introduction 与代码裁剪专题出现不同的 Player 构建信息接口命名；正文不硬写接口名，提示使用对应补丁版本的构建报告接入接口。GetRootAssets(handle) 已另查 6000.6 API 重载。
+- 初稿曾因页面命名不一致而省略裁剪接入接口。本次已用 6000.6 裁剪手册、构建示例和对应 API 明确：通过 `BuildHistory.TryGetBuildReportDirectory(report.summary.buildSessionGuid, out reportDirectory)` 取得报告目录，传入 `BuildPlayerOptions.previousBuildReportDirectories`。
 - 待作者补充：具体 Unity/Addressables 版本、目标平台、构建报告、Profiler/Memory Profiler、冷暖缓存记录。
 
 ## 验证计划
@@ -66,10 +66,36 @@
 - 最小实验由作者在 Unity 6.6 项目执行：共享贴图的两个 Prefab，分别观察构建去重、两次 Load/Release、跨构建重复、引用循环和单资产修改后的增量构建。
 - 本文件仅记录该篇执行信息；篇级目录以现有 series-plan 为准。
 
-## 本轮验证结果
+## 初稿验证结果（历史记录）
 
 - 2026-10-22，Hugo v0.157.0 extended 构建退出码 0，1291 页，未输出 ERROR。
 - 命令：`hugo --destination E:/workspace/TechStackShow/.codex_tmp/content-directories-20261022/site --cacheDir E:/workspace/TechStackShow/.codex_tmp/content-directories-20261022/cache --noBuildLock`。
 - 三篇生成页面均存在，生成 HTML 中均包含另两篇链接；系列索引和 canonical plan 已回写。
 - `git diff --check` 检查修改的索引与 plan 通过；plan 原有未提交改动已保留。
 - 未运行 Unity Editor 编译、目标 Player、Profiler 或性能对照；未提交、推送或验证线上发布。
+
+## 2026-10-22 修订记录
+
+- 原理篇：统一根资产术语；补充 6.6 产物与可选归档示意；明确注册成本；给出 Windows x64 的资产、启动场景、构建、裁剪报告、StreamingAssets 部署、日志与清理链路；无根资产会明确失败。
+- 对比篇：区分业务、资源框架、引擎内容后端；承认旧管线的自动共享依赖治理；共享 T 案例只解释去重，同包大厅图标／活动海报案例解释生命周期。
+- 对比基线采用 [Addressables 2.7.6 memory-assets](https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assets.html) 中正常引用计数释放策略，不推定所有 AB 管线同样实现，也不推定该版本已在 Unity 6.6 复测。
+- 性能篇按官方博客 Build、Addressing、Load 重组；分开任务重跑、产物变化与客户端下载；概念图无时间刻度，非实测；实验与收益条件集中在后部。
+- [UnityDataTools 参考固定到 db19dff](https://github.com/Unity-Technologies/UnityDataTools/blob/db19dffbf40008e3a61e7566a5ddd6888eb68717/Documentation/contentdirectory-format.md)，只采纳明确区分版本的说明，不将其 6.7 示例 schema 作为 6.6 契约。
+
+### API 复核与资料差异
+
+- [构造函数专页](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1-ctor.html) 列出 `Loadable<T>(ref LoadableObjectId id)`；部分官方通用／构建示例仍省略 ref。正文以签名专页为准，先复制 ID 到局部变量，再传 ref；没有用 Editor 程序集做编译验证。
+- `GetRootAssets<T>()` 查询全部注册目录；`GetRootAssets<T>(ContentDirectoryHandle)` 查询指定目录。
+- `Loadable<T>` 是 class；`LoadableObjectId` 由字段公开；`LoadAsync()` 返回 `Awaitable<T>`。成功状态为 `LoadableStatus.Loaded`，读取 `Target`；每个所有者各持有加载实例，Release 非递归。
+- Loadable 字段进入普通 Player／AB 序列化输出时，底层引用置 null 并记错；SuppressLoadableErrors 只抑制错误。正文已明确写出实际后果。
+- `previousBuildReportDirectories` API 的描述比裁剪手册宽泛，提到 output folders 或 report directories；正文采用双方都支持的构建报告目录，不传 ScriptsOnlyCache.yaml 路径。
+- Unity Hub 只登记 2022.3.62f3；已发现的编辑器文件另有 2022.3.21f1，未找到 Unity 6.6，因此本轮不运行或声称通过 Unity 编译／Player／性能验证。
+
+### 修订验证结果
+
+- Hugo v0.157.0 extended：退出码 0，1291 页，零 ERROR。输出位于 `.codex_tmp/content-directories-revision-20261022/site/twoegg-tech-stack`，缓存也位于本轮临时目录。
+- 三篇正文与系列索引的 148 个站内链接／锚点检查通过；slug 与 series 对照 HEAD 保持不变；三篇没有重复的长正文段落。
+- 示例静态检查通过：三段 C# 代码块、ref 构造调用、指定目录根资产查询、无根资产失败检查、裁剪报告接口与成功日志文本均存在；这不等于 Unity 编译。
+- 本地浏览器检查：第一、三篇的两张 Mermaid 图均生成 SVG；第三篇图示已目视检查；第一篇 6 个非 Mermaid 代码块显示正常，第一、二篇未出现页面整体横向溢出。第二篇版本限定、生命周期案例与三种分发方案、第三篇两张表格可读。
+- `git diff --check` 通过；未改 URL、站点配置或其他系列内容。系列 plan 原有 2026-10-14 未提交段落保留。
+- 未执行 Unity 6.6 编译、Player 或性能实验；未提交、推送或更新线上页面。临时浏览器页与本地服务已关闭。

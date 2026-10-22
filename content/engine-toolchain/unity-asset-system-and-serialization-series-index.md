@@ -132,7 +132,7 @@ series_reading_hint: "第一次进入这个系列，建议先顺读资产认知�
 
 按下面顺序阅读：
 
-1. [Content Directories 01｜原理与最小流程]({{< relref "engine-toolchain/unity-content-directories-01-model-and-workflow.md" >}})：先理解 Root Asset、Loadable，以及构建到释放的链路。
+1. [Content Directories 01｜内容产物与最小接入]({{< relref "engine-toolchain/unity-content-directories-01-model-and-workflow.md" >}})：先理解内容文件、Root Asset、Loadable，以及 Windows 构建到释放的链路。
 2. [Content Directories 02｜与 AssetBundle 对比]({{< relref "engine-toolchain/unity-content-directories-02-vs-assetbundle.md" >}})：比较依赖、内存、本地与远程交付，判断迁移条件。
 3. [Content Directories 03｜为什么可能更快]({{< relref "engine-toolchain/unity-content-directories-03-why-faster.md" >}})：拆解构建、加载与驻留机制，区分官方案例和待验证的项目收益。
 

@@ -282,11 +282,11 @@ Scene、Prefab 和 AssetBundle 为什么共用一部分恢复链，但又不是�
 
 | 篇目 | 核心问题 | 正文 | 状态 |
 |---|---|---|---|
-| D07｜原理与最小流程 | Root Asset、Loadable 怎样串起构建、部署、注册与释放 | [Content Directories 01](../content/engine-toolchain/unity-content-directories-01-model-and-workflow.md) | 已写本地初稿，待作者审阅 |
-| D08｜与 AssetBundle 对比 | 依赖、内存、Addressables、本地与远程交付有哪些取舍 | [Content Directories 02](../content/engine-toolchain/unity-content-directories-02-vs-assetbundle.md) | 已写本地初稿，待作者审阅 |
-| D09｜为什么可能更快 | 增量失效范围、稳定 ID、加载流水线与驻留粒度如何影响性能 | [Content Directories 03](../content/engine-toolchain/unity-content-directories-03-why-faster.md) | 已写本地初稿，待作者审阅 |
+| D07｜内容产物与最小接入 | 内容文件、Root Asset、Loadable 与 Windows 构建、裁剪、部署、释放怎样衔接 | [Content Directories 01](../content/engine-toolchain/unity-content-directories-01-model-and-workflow.md) | 已写；2026-10-22 本地修订待审 |
+| D08｜与 AssetBundle 对比 | 区分三层，用共享依赖与同包不同生命周期解释取舍 | [Content Directories 02](../content/engine-toolchain/unity-content-directories-02-vs-assetbundle.md) | 已写；2026-10-22 本地修订待审 |
+| D09｜为什么可能更快 | 沿 Build、Addressing、Load 解释工作范围、内容身份与流水线 | [Content Directories 03](../content/engine-toolchain/unity-content-directories-03-why-faster.md) | 已写；2026-10-22 本地修订待审 |
 
-执行记录见[大纲与证据记录](unity66-content-directories-outline.md)。三篇均依据公开资料，不引用私有 Unity C++ 源码；C# 示例与性能实验未在 Unity 中运行。官方性能案例与本仓实测分开标注；本轮写作不代表已经提交或线上发布。
+执行记录见[大纲与证据记录](unity66-content-directories-outline.md)。三篇均依据公开资料，不引用私有 Unity C++ 源码；C# 示例与性能实验未在 Unity 6.6 中运行。初稿曾提交，当前状态指本次本地修订，修订尚未提交或线上发布。
 
 ## 重点番外
 
