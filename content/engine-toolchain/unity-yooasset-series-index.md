@@ -20,12 +20,22 @@ series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件�
 series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线。"
 series_reading_hint: "先读整体架构和文件系统，再沿加载、清单、下载、生命周期与构建深入；按问题回查时注意版本范围。"
 yooasset_version: "3.0.6"
-lastmod: "2026-10-21"
+lastmod: "2026-10-22"
 ---
 
 YooAsset 把资源收集、构建、版本清单、内容获取和运行时加载连接起来。要理解这条链路，需要分别判断目录是否有效、内容文件是否就绪、对象是否加载，以及它们的使用期是否结束。
 
 本系列以 **YooAsset 3.0.6** 为主线，源码固定到提交 `3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`。先建立模块职责和资源状态的整体认识，再沿具体链路深入。
+
+## 前置阅读：Unity 资产与 AssetBundle
+
+- [Unity 里到底有哪些资产：文件、Importer、Object、组件与实例]({{< relref "engine-toolchain/unity-assets-what-exists-and-how-they-become-visible-in-game.md" >}})
+- [Unity 的 Importer 到底做了什么]({{< relref "engine-toolchain/unity-importer-what-does-it-do-and-why-source-file-is-not-just-a-file.md" >}})
+- [Unity 为什么需要 AssetBundle]({{< relref "engine-toolchain/unity-why-needs-assetbundle-delivery-not-loading.md" >}})
+- [Unity 怎么把资源编成 AssetBundle：依赖、序列化、Manifest 与压缩]({{< relref "engine-toolchain/unity-how-assets-become-assetbundles-dependencies-manifest-compression.md" >}})
+- [AssetBundle 文件内部结构：Header、Block、Directory 与 SerializedFile]({{< relref "engine-toolchain/unity-assetbundle-file-internal-structure-header-block-directory-serializedfile.md" >}})
+- [Unity 的序列化资产怎样还原成运行时对象]({{< relref "engine-toolchain/unity-serialized-assets-how-they-restore-to-runtime-objects.md" >}})
+- [AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate 与 Unload]({{< relref "engine-toolchain/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md" >}})
 
 ## 推荐阅读顺序
 
@@ -75,8 +85,7 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 
 下一阶段继续补完整更新流程与失败恢复、异步操作与时间片调度、调试器和构建报告实验，以及 WebGL、微信与抖音的平台验证。这些主题会在具备对应证据后再进入正文目录。
 
-## 前置知识与其他入口
+## 其他入口
 
-- [AssetBundle 运行时加载与依赖管理]({{< relref "engine-toolchain/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md" >}})：理解底层资源包的加载、缓存和卸载背景。
 - [Addressables 首页]({{< relref "engine-toolchain/unity-addressables-series-index.md" >}})：阅读另一套资源管理系统。
 - [Addressables 与 YooAsset 对比首页]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})：沿共同问题对照两个系统，并核对各篇版本范围。
