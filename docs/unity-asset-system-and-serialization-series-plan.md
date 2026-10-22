@@ -276,6 +276,18 @@ Scene、Prefab 和 AssetBundle 为什么共用一部分恢复链，但又不是�
 
 ### D06｜Addressables 和 AssetBundle 到底是什么关系：谁是格式，谁是调度层
 
+### D07–D09｜Unity 6.6 Content Directories 专题
+
+补充日期：2026-10-22。沿用本系列的资产与交付边界，不另立系列。
+
+| 篇目 | 核心问题 | 正文 | 状态 |
+|---|---|---|---|
+| D07｜原理与最小流程 | Root Asset、Loadable 怎样串起构建、部署、注册与释放 | [Content Directories 01](../content/engine-toolchain/unity-content-directories-01-model-and-workflow.md) | 已写本地初稿，待作者审阅 |
+| D08｜与 AssetBundle 对比 | 依赖、内存、Addressables、本地与远程交付有哪些取舍 | [Content Directories 02](../content/engine-toolchain/unity-content-directories-02-vs-assetbundle.md) | 已写本地初稿，待作者审阅 |
+| D09｜为什么可能更快 | 增量失效范围、稳定 ID、加载流水线与驻留粒度如何影响性能 | [Content Directories 03](../content/engine-toolchain/unity-content-directories-03-why-faster.md) | 已写本地初稿，待作者审阅 |
+
+执行记录见[大纲与证据记录](unity66-content-directories-outline.md)。三篇均依据公开资料，不引用私有 Unity C++ 源码；C# 示例与性能实验未在 Unity 中运行。官方性能案例与本仓实测分开标注；本轮写作不代表已经提交或线上发布。
+
 ## 重点番外
 
 ### 番外 01｜Shader 在 AssetBundle 里到底是怎么存的：资源定义、编译产物和 Variant 边界

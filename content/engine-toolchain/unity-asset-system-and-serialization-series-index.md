@@ -128,6 +128,14 @@ series_reading_hint: "第一次进入这个系列，建议先顺读资产认知�
 - [Unity Shader Variant 运行时命中机制：从 SetPass 到变体匹配的完整链路]({{< relref "rendering/unity-shader-variant-runtime-hit-mechanism.md" >}})
 - [Unity 为什么 Shader Variant 问题总在 AssetBundle 上爆出来]({{< relref "rendering/unity-why-shader-variant-problems-explode-on-assetbundle.md" >}})
 
+### 9. 你想了解 Unity 6.6 的 Content Directories，以及它与 AssetBundle 的区别
+
+按下面顺序阅读：
+
+1. [Content Directories 01｜原理与最小流程]({{< relref "engine-toolchain/unity-content-directories-01-model-and-workflow.md" >}})：先理解 Root Asset、Loadable，以及构建到释放的链路。
+2. [Content Directories 02｜与 AssetBundle 对比]({{< relref "engine-toolchain/unity-content-directories-02-vs-assetbundle.md" >}})：比较依赖、内存、本地与远程交付，判断迁移条件。
+3. [Content Directories 03｜为什么可能更快]({{< relref "engine-toolchain/unity-content-directories-03-why-faster.md" >}})：拆解构建、加载与驻留机制，区分官方案例和待验证的项目收益。
+
 ## 当前主线覆盖了什么
 
 目前这组内容已经基本把下面几条主线铺齐了：
