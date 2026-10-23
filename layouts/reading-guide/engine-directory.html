@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default `zh-cn` }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }} | {{ site.Title }}</title>
+  <meta name="description" content="{{ .Description }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+  <meta property="og:title" content="{{ .Title }} | {{ site.Title }}">
+  <meta property="og:description" content="{{ .Description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:site_name" content="{{ site.Title }}">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ .Title }} | {{ site.Title }}">
+  <meta name="twitter:description" content="{{ .Description }}">
+  <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/engine-directory.css` | relURL }}">
+  <script src="{{ `js/search.js` | relURL }}" defer></script>
+</head>
+<body class="reading-site page-engine-directory">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  {{ partial "site-masthead.html" . }}
+  <main id="main" class="wrap" tabindex="-1">
+    <nav class="breadcrumb" aria-label="面包屑">
+      {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
+      {{ if .Params.engine_name }}{{ partial "reading/link.html" (dict "page" "reading/engine.md" "label" "引擎研发") }}<span aria-hidden="true">/</span>{{ end }}
+      <span aria-current="page">{{ .Title }}</span>
+    </nav>
+    <header class="topic-heading">
+      <p class="eyebrow">{{ if .Params.engine_name }}引擎专题{{ else }}技术主题{{ end }}{{ with .Params.reading_status }} · {{ . }}{{ end }}</p>
+      <h1>{{ .Title }}</h1><p>{{ .Description }}</p>
+    </header>
+    <nav class="engine-switch" aria-label="引擎阅读入口">
+      {{ $current := .RelPermalink }}
+      {{ range (slice (dict "page" "reading/engine.md" "label" "引擎研发总览") (dict "page" "reading/piccolo-engine.md" "label" "Piccolo") (dict "page" "reading/unreal-engine.md" "label" "Unreal") (dict "page" "reading/unity-engine.md" "label" "Unity")) }}
+        {{ $target := site.GetPage .page }}
+        {{ if and $target (eq $target.RelPermalink $current) }}<span aria-current="page">{{ .label }}</span>{{ else }}{{ partial "reading/link.html" . }}{{ end }}
+      {{ end }}
+    </nav>
+    <div class="performance-guide">
+      <aside class="engine-outline" aria-label="本页目录">
+        <p class="eyebrow">本页目录</p>
+        {{ .TableOfContents }}
+        <p class="small-note">按正在研究的系统或遇到的问题直接跳读。</p>
+      </aside>
+      <article class="engine-content" aria-label="{{ .Title }}内容导航">{{ .Content }}</article>
+    </div>
+  </main>
+  <footer class="footer wrap">
+    <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>
+    <nav aria-label="更多阅读入口">
+      {{ partial "reading/link.html" (dict "page" "technical-topics.md" "label" "完整技术目录") }}
+      {{ partial "reading/link.html" (dict "page" "game-development.md" "label" "研发地图") }}
+      {{ partial "reading/link.html" (dict "page" "about.md" "label" "关于作者") }}
+    </nav>
+  </footer>
+</body>
+</html>

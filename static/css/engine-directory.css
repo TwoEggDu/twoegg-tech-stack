@@ -1,0 +1,15 @@
+/* Only loaded by the four engine directory pages. */
+.page-engine-directory .engine-switch { display:flex; flex-wrap:wrap; gap:10px 24px; padding:16px 0; border-block:1px solid var(--line); }
+.page-engine-directory .engine-switch a { color:var(--accent); }
+.page-engine-directory .engine-switch [aria-current] { font-weight:600; }
+.page-engine-directory .engine-outline > nav > ul > li > ul { margin:8px 0 0 12px; }
+.page-engine-directory .engine-outline > nav > ul > li > ul a { font-size:12px; color:var(--muted); }
+.page-engine-directory .engine-content h2:first-child { margin-top:0; }
+.page-engine-directory .engine-content h3 { margin-top:26px; font-size:19px; }
+.page-engine-directory .engine-content blockquote p:last-child { margin-bottom:0; }
+.page-engine-directory .engine-content > ul + p { margin-top:18px; }
+.page-engine-directory .engine-content hr { border:0; border-top:1px solid var(--line); margin-block:32px; }
+@media(max-width:760px) {
+  .page-engine-directory .engine-switch { gap:8px 18px; font-size:14px; }
+  .page-engine-directory .engine-outline > nav > ul > li > ul { display:none; }
+}

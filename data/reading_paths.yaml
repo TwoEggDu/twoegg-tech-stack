@@ -124,10 +124,10 @@ topics:
       - { label: "Task / UniTask 与异步运行时", page: "engine-toolchain/unity-async-runtime-series-index.md" }
       - { label: "资源加载与生命周期", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }
   - title: "引擎研发"
-    description: "沿资产、对象与系统分层，理解客户端能力的实现机制。"
+    description: "按 Piccolo、Unreal、Unity 进入具体实现，或直接查找架构、图形、运行时与计算基础。"
     page: "reading/engine.md"
     key: "engine"
-    directory: "system-design/game-engine-architecture-series-index.md"
+    directory: "reading/engine.md"
     start:
       page: "system-design/game-engine-architecture-00-overview.md"
       value: "先区分内容生产、运行时基础与专业子系统，再沿资产和对象机制深入。"
@@ -135,8 +135,9 @@ topics:
       - { page: "engine-toolchain/unity-assets-what-exists-and-how-they-become-visible-in-game.md" }
       - { page: "engine-toolchain/unity-serialized-assets-how-they-restore-to-runtime-objects.md" }
     entries:
-      - { label: "游戏引擎架构", page: "system-design/game-engine-architecture-series-index.md" }
-      - { label: "资产系统与序列化", page: "engine-toolchain/unity-asset-system-and-serialization-series-index.md" }
+      - { label: "Piccolo · 筹备中", page: "reading/piccolo-engine.md" }
+      - { label: "Unreal", page: "reading/unreal-engine.md" }
+      - { label: "Unity", page: "reading/unity-engine.md" }
   - title: "服务端框架"
     description: "从客户端的通信与协作需求，深入会话、Actor、服务端分工与框架机制。"
     page: "reading/server.md"
