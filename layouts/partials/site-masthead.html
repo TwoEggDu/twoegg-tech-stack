@@ -1,0 +1,20 @@
+{{ $topic := .Params.topic_key | default "" }}
+{{ if eq .Params.reading_kind "series" }}{{ $topic = "performance" }}{{ end }}
+{{ if not $topic }}
+  {{ $sections := dict "delivery-engineering" "delivery" "engineering-journey" "delivery" "live-ops-engineering" "delivery" "performance" "performance" "et-framework" "server" "et-framework-prerequisites" "server" "engine-toolchain" "engine" "rendering" "engine" }}
+  {{ $topic = index $sections .Section | default "" }}
+  {{ if eq .Params.series "Unity 异步运行时" }}{{ $topic = "client" }}{{ end }}
+  {{ if in (slice "技能系统深度" "游戏编程设计模式") .Params.series }}{{ $topic = "gameplay" }}{{ end }}
+  {{ if eq .Params.series "游戏引擎架构地图" }}{{ $topic = "engine" }}{{ end }}
+{{ end }}
+<header class="unified-header{{ if eq .Type "reading-guide" }} wrap{{ else if .IsHome }} wrap{{ end }}">
+  <a class="unified-brand" href="{{ site.Home.RelPermalink }}" aria-label="TwoEgg Tech Stack 首页">TwoEgg<span>Tech Stack</span></a>
+  <nav class="unified-nav" aria-label="站点导航">
+    {{ range site.Data.reading_paths.topics }}
+      {{ $target := site.GetPage .page }}
+      {{ if not $target }}{{ errorf "Navigation target not found: %s" .page }}{{ end }}
+      <a href="{{ $target.RelPermalink }}"{{ if eq $.RelPermalink $target.RelPermalink }} aria-current="page"{{ else if and $topic (eq $topic .key) }} aria-current="location"{{ end }}>{{ .title }}</a>
+    {{ end }}
+  </nav>
+  {{ partial "site-search.html" . }}
+</header>

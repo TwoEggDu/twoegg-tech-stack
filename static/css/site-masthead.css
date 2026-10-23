@@ -1,0 +1,42 @@
+/* Shared navigation only; article typography keeps its existing stylesheet. */
+.unified-header {
+  --paper:#fbfaf6; --ink:#25374a; --muted:#617080; --accent:#315d87; --line:#d5dce1;
+  position:relative; z-index:40; display:flex; align-items:center; gap:34px;
+  max-width:1120px; margin-inline:auto; padding-block:25px;
+  border-bottom:1px solid var(--line); color:var(--ink);
+  font:14px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+}
+.unified-header .unified-brand { flex-shrink:0; color:var(--ink); font:700 26px/1.25 Georgia,"Songti SC",serif; letter-spacing:-.7px; text-decoration:none; white-space:nowrap; }
+.unified-header .unified-brand span { display:block; margin-top:5px; color:var(--muted); font:11px/1.5 "Segoe UI",sans-serif; letter-spacing:.14em; }
+.unified-header .unified-nav { display:flex; flex-wrap:wrap; gap:8px 20px; margin-left:auto; }
+.unified-header .unified-nav a { padding-block:8px; color:var(--accent); white-space:nowrap; text-decoration:underline; text-decoration-color:#879fb5; text-underline-offset:.22em; text-decoration-thickness:1px; }
+.unified-header .unified-nav a:hover { background:#edf1f4; text-decoration-color:currentColor; text-decoration-thickness:2px; }
+.unified-header .unified-nav [aria-current] { box-shadow:0 1px var(--accent); }
+.unified-header a:focus-visible,.unified-header input:focus-visible { outline:2px solid var(--accent); outline-offset:5px; }
+.unified-header .site-search { position:relative; width:250px; flex:0 0 250px; margin-left:0; order:0; }
+.unified-header .site-search-field { display:flex; gap:8px; align-items:center; background:transparent; border:0; border-bottom:1px solid #aeb4a7; border-radius:0; padding:7px 0; box-shadow:none; }
+.unified-header .site-search-prefix { color:var(--muted); font-size:10px; font-weight:400; text-transform:none; letter-spacing:.05em; }
+.unified-header .site-search-input { background:transparent; color:var(--ink); width:100%; min-width:0; border:0; border-radius:0; padding:3px; font:inherit; font-size:12px; }
+.unified-header .site-search-input::placeholder { color:var(--muted); }
+.unified-header .search-panel { position:absolute; z-index:50; top:calc(100% + 8px); right:0; left:auto; width:min(520px,80vw); max-height:65vh; overflow-y:auto; background:var(--paper); border:1px solid var(--line); border-radius:0; box-shadow:0 12px 30px #282c2912; padding:18px; }
+.unified-header [hidden] { display:none !important; }
+.unified-header .search-status { font-size:13px; color:var(--muted); }
+.unified-header .search-results { list-style:none; padding:0; margin:0; }
+.unified-header .search-result-item + .search-result-item { border-top:1px solid var(--line); margin-top:14px; padding-top:14px; }
+.unified-header .search-result-link { display:block; color:var(--ink); text-decoration:none; }
+.unified-header .search-result-meta,.unified-header .search-result-summary { display:block; font-size:12px; color:var(--muted); }
+.unified-header .search-result-title { display:block; font-size:15px; line-height:1.7; }
+.unified-header .search-tag-list { display:none; }
+@media(max-width:1100px) {
+  .unified-header { flex-wrap:wrap; }
+  .unified-header .unified-nav { order:3; flex-basis:100%; margin-left:0; justify-content:space-between; }
+  .unified-header .site-search { margin-left:auto; }
+}
+@media(max-width:760px) {
+  .unified-header { gap:18px; padding-block:20px; }
+  .unified-header .unified-brand { font-size:23px; }
+  .unified-header .unified-nav { order:2; gap:4px 18px; justify-content:flex-start; font-size:12px; }
+  .unified-header .site-search { order:3; flex:1 1 100%; width:100%; }
+  .unified-header .site-search-input { font-size:16px; }
+  .unified-header .search-panel { width:100%; left:0; right:auto; }
+}

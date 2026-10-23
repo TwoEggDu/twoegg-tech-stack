@@ -20,22 +20,13 @@
   {{ range .AlternativeOutputFormats }}<link rel="alternate" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }} — {{ .Name }}">{{ end }}
   <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
   {{ if .IsHome }}<link rel="stylesheet" href="{{ `css/delivery-home.css` | relURL }}">{{ end }}
+  <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
   <script src="{{ `js/search.js` | relURL }}" defer></script>
 </head>
 {{ $kind := .Params.reading_kind | default "home" }}
 <body class="reading-site page-{{ $kind }}">
   <a class="skip-link" href="#main">跳到主要内容</a>
-  <header class="masthead wrap">
-    <a class="brand" href="{{ site.Home.RelPermalink }}" aria-label="TwoEgg Tech Stack 首页">TwoEgg <span>Tech Stack</span></a>
-    <nav class="primary-nav" aria-label="站点导航">
-      {{ range site.Data.reading_paths.topics }}
-        {{ $target := site.GetPage .page }}
-        {{ if not $target }}{{ errorf "Reading navigation target not found: %s" .page }}{{ end }}
-        <a href="{{ $target.RelPermalink }}{{ with .anchor }}#{{ . }}{{ end }}"{{ if eq $.RelPermalink $target.RelPermalink }} aria-current="page"{{ else if and (eq $kind "series") (eq .page "reading/performance.md") }} aria-current="location"{{ end }}>{{ .title }}</a>
-      {{ end }}
-    </nav>
-    {{ partial "site-search.html" . }}
-  </header>
+  {{ partial "site-masthead.html" . }}
   <main id="main" class="wrap" tabindex="-1">
     {{ if .IsHome }}{{ partial "reading/home.html" . }}{{ else if .Params.topic_key }}{{ partial "reading/topic.html" . }}{{ else }}{{ partial "reading/guide.html" . }}{{ end }}
   </main>

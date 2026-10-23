@@ -28,39 +28,13 @@
     <link rel="stylesheet" href="{{ `css/site.css` | relURL }}">
     {{ if .IsHome }}<link rel="stylesheet" href="{{ `css/home.css` | relURL }}">{{ end }}
     {{ if eq .Layout "technical-topics" }}<link rel="stylesheet" href="{{ `css/technical-topics.css` | relURL }}">{{ end }}
+    <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
     <script src="{{ `js/site.js` | relURL }}" defer></script>
     <script src="{{ `js/search.js` | relURL }}" defer></script>
   </head>
   <body{{ if .IsHome }} class="is-home"{{ else if eq .Layout "technical-topics" }} class="is-technical-topics"{{ end }}>
     <div class="site-shell">
-      {{ if .IsHome }}
-      <header class="home-masthead">
-        <a class="home-brand" href="{{ site.Home.RelPermalink }}">TwoEgg<span>Tech Stack</span></a>
-        <nav class="home-nav" aria-label="站点导航">
-          <a href="#articles">文章</a>
-          <a href="{{ relref . `technical-topics.md` }}">技术目录</a>
-          <a href="{{ relref . `game-development.md` }}">研发地图</a>
-          <a href="{{ relref . `about.md` }}">关于</a>
-        </nav>
-      </header>
-      {{ else }}
-      <header class="site-header">
-        <div class="site-header-top">
-          <a class="brand" href="{{ site.Home.RelPermalink }}">
-            <span class="brand-mark">TE</span>
-            <span class="brand-copy">
-              <strong>{{ site.Title }}</strong>
-            </span>
-          </a>
-          {{ partial "site-search.html" . }}
-        </div>
-        <nav class="site-nav" aria-label="Primary">
-          {{ range site.Menus.main }}
-            <a href="{{ .URL | relURL }}" {{ if $.IsMenuCurrent "main" . }}class="is-active"{{ end }}>{{ .Name }}</a>
-          {{ end }}
-        </nav>
-      </header>
-      {{ end }}
+      {{ partial "site-masthead.html" . }}
 
       <main class="page-shell">
         {{ block "main" . }}{{ end }}
