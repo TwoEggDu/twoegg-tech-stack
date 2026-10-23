@@ -12,7 +12,7 @@ series: "Unity 资产系统与序列化"
 weight: 56
 ---
 
-> 版本说明：Content Directories 依据 Unity 6.6（6000.6）；释放策略的对照明确采用 Addressables 2.7.6 文档中的 AssetBundle 后端行为。案例用于解释机制，未在本仓复测。
+> 版本说明：Content Directories 依据 Unity 6.6（6000.6），资料复核于 2026-10-23；释放策略的对照明确采用 Addressables 2.7.6 文档中的 AssetBundle 后端行为。案例用于解释机制，未在本仓复测。
 
 项目已经有成熟的 YooAsset 或 Addressables 管线，寻址、句柄、引用计数和依赖调度都能工作，为什么还要关注 Content Directories？
 
@@ -85,7 +85,7 @@ weight: 56
 
 **这个案例解释的是构建去重。** A 退出而 B 还使用 T 时，两套系统都应保留 T；它不能用来证明 CD 释放得更细。
 
-## 4. 必须纠正：加载 Bundle 不等于加载全部资产
+## 4. 打开容器与加载资产，分别发生了什么
 
 这是讨论新旧方案时最容易夸大的地方。
 
@@ -123,11 +123,13 @@ Content Directories 改善的重点，是让依赖和释放边界少受预先设
 
 观察结果时，把四个时刻分开：**业务句柄释放 → 底层内容具备卸载条件 → 对象实际销毁 → 进程内存变化**。引用计数只解释前两者的关系；对象销毁后，Unity 分配器或图形驱动仍可能保留已申请的内存。
 
-## 6. 存储归档与加载单元可以分开讨论
+## 6. 把 AB 拆小，能获得多少相同的收益
 
-看到 Content Directories 输出很多文件，很容易得出“它更快只是因为没有压缩”的判断；看到它也能归档，又容易认为“最后还是一个 Bundle”。
+把大厅图标和活动海报分别放进两个 AB，旧管线同样可以在保留图标时卸载海报。按整包下载和更新的分发策略，还能只获取海报所在的小包。也就是说，合理拆包确实能获得一部分细粒度收益。
 
-两种判断都忽略了内层结构。归档负责文件组织与压缩，内层内容负责依赖与加载关系。Content File 与归档不是同一个概念；不能只数磁盘上有几个文件，就推断有几个运行时加载单元。
+代价发生在这些小包又必须一起使用时：所需资产没有减少，却要打开更多容器、维护更多依赖和元数据。若把两个角色引用的同一贴图分别打进各自的包，还会产生重复；提取共享包能消除重复，但又要管理它的持有期。Unity 官方也将“大包减少容器开销、小包降低不必要驻留”列为需要权衡的两面。[Addressables 的包粒度与内存取舍](https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assetbundles.html)
+
+CD 的变化是把这个取舍进一步拆开：**归档负责物理文件组织与压缩，内层内容单元负责依赖和加载生命周期。** 图标和海报即使被装入同一个归档，也不必仅因物理上相邻就共同驻留。AB 也可以自建外层容器，利用 `LoadFromFile` 的 `offset` 从指定位置打开内层 Bundle，但索引、对齐和分发由项目额外处理；每个内层 AB 仍保留自己的加载与卸载边界。[AB 文件偏移 API](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/AssetBundle.LoadFromFile.html)
 
 UnityDataTools 的[固定提交格式说明](https://github.com/Unity-Technologies/UnityDataTools/blob/db19dffbf40008e3a61e7566a5ddd6888eb68717/Documentation/contentdirectory-format.md)也明确区分了 6.6 与 6.7 的布局细节。这里采用的是内容文件与归档分层这一模型，不把后续版本的内部字段当成 6.6 契约。
 
@@ -142,6 +144,14 @@ Unity 6.6 没有提供完整的 CD 远程交付工作流，**不等于这些文�
 | CD＋自建分发层 | 自己决定版本、下载与本地部署，再使用 CD 加载 | 完整性校验、原子切换、断线恢复、缓存淘汰与回滚 |
 
 第三种方案的网络层不由 `RegisterContentDirectory` 代劳。第一篇的最小 Windows 例子只演示内容已经在本地时怎样接入。[6.6 的分发边界与混用说明](https://docs.unity3d.com/6000.6/Documentation/Manual/content-directories-introduction.html)
+
+### 细粒度内容会不会下载更慢
+
+如果同样约 100 MB 的内容全部需要，10 个约 10 MB 的包与 1,000 个约 100 KB 的包，传输字节数接近，请求数量却差了两个数量级。后者会增加请求调度、响应等待与缓存文件处理的次数，在高延迟网络和有限并发下尤其容易拖慢完成时间。Addressables 的 `Max Concurrent Web Requests` 就会把超过并发上限的请求排队。连接复用和并发能缓解等待，因此也不能直接按“文件数乘一次网络延迟”计算总耗时。[下载并发与排队设置](https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/AddressableAssetSettings.html#downloads)
+
+反过来，若当前只需要其中 5 MB，细粒度分发就可能通过少下载 95 MB 获益。这里分别比较的是“传完相同内容”和“只传当前需要的内容”，不能混用结果。
+
+自建分发层可以把细粒度内容按使用时机组合成较大的下载单元；若选择每次整份替换归档，改动一个内部产物也可能需要重新下载整个归档。下载单位、更新单位与运行时加载单位要分别设计，归档本身不会自动提供细粒度远程补丁。
 
 ## 8. 哪些项目值得先试
 

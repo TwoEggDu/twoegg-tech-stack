@@ -12,7 +12,7 @@ series: "Unity 资产系统与序列化"
 weight: 55
 ---
 
-> 版本说明：本篇依据 Unity 6.6（6000.6）公开手册与 API，资料核查于 2026-10-22。最小接入限定 Windows x64；示例已做 API 静态核对，尚未在 Unity 6.6 Editor 中编译运行。
+> 版本说明：本篇依据 Unity 6.6（6000.6）公开手册与 API，资料复核于 2026-10-23。最小接入限定 Windows x64；示例已做 API 静态核对，尚未在 Unity 6.6 Editor 中编译运行。
 
 做一个角色预览界面，业务上只需要当前角色的模型、材质和贴图。但在资源系统里，你还要考虑：它们在哪些 Bundle 里，共享依赖会带进哪些容器，关闭界面后又能释放哪些内容。
 
@@ -60,7 +60,7 @@ GameContent/                       内容输出目录
 
 这些是面向目标平台构建的内容，不是把 PNG、FBX 原样复制过去。源资产经过导入、对象收集和序列化后形成产物，**一个源资产不保证严格对应一个文件**。例如，模型中的对象层级与网格数据可以落在不同产物中。
 
-启用归档时，内容文件、资源数据和 manifest 可以装入 `content0.archive`，旁边保留 `BuildManifestHash.txt`。归档改变存储组织，内层仍有自己的内容与依赖边界。以上是 6.6 手册描述的产物形态，不应作为手写内部 manifest 解析器的稳定格式协议。[构建产物与可选归档](https://docs.unity3d.com/6000.6/Documentation/Manual/content-directories-create.html)
+设置 `BuildContentOptions.UseArchive`，或把 `BuildContentDirectoryParameters.compression` 设为压缩模式，会把内容文件、资源数据和 manifest 装入 `content0.archive`，旁边只保留 `BuildManifestHash.txt`。归档改变物理存储组织，内层仍有自己的内容与依赖边界；运行时仍注册 `GameContent` 目录，无需把代码改成注册单个 `.cf` 或归档文件。以上是 6.6 手册描述的产物形态，不应作为手写内部 manifest 解析器的稳定格式协议。[构建产物与可选归档](https://docs.unity.com/en-us/engine/6000.6/manual/assets-and-media/assets-managing-runtime/content-directories/create)
 
 ```mermaid
 flowchart LR
@@ -259,7 +259,7 @@ public sealed class ContentProbe : MonoBehaviour
 }
 ```
 
-构造函数专页当前列出的签名是 `Loadable<T>(ref LoadableObjectId id)`。这里先复制 ID 到局部变量，再以 `ref` 传入，得到探针独立持有的加载实例；不沿用部分官方示例中省略 `ref` 的写法。[构造函数签名](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1-ctor.html)
+构造函数专页当前列出的签名是 `Loadable<T>(ref LoadableObjectId id)`。这里先复制 ID 到局部变量，再以 `ref` 传入，得到探针独立持有的加载实例。部分官方示例省略了 `ref`，与签名专页存在差异；本例暂按签名页编写，尚未用目标 Editor 的程序集编译确认。[构造函数签名](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1-ctor.html)
 
 `GetRootAssets<T>(handle)` 只查询指定目录，空参数重载则查询所有已注册目录。`Load()` 同步等待；`LoadAsync()` 返回 `Awaitable<T>`，可以 `await`，完成后检查 `Status == LoadableStatus.Loaded` 与 `Target`。[根资产查询](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.ContentLoadManager.GetRootAssets.html)、[异步加载签名](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Unity.Loading.Loadable_1.LoadAsync.html)
 
@@ -296,7 +296,7 @@ Builds/Win64/
 
 ## 7. 编辑器能显示，还需要验证构建内容
 
-在 Play Mode 中，从 AssetDatabase 取得的项目资产，其 Loadable 可以解析到项目中的最新内容。这条路径的释放行为也不同于构建内容。
+在 Play Mode 中，从 AssetDatabase 取得的项目资产，其 Loadable 始终解析到项目中的最新内容，即使已经注册了包含该资产旧版本的内容目录。这条路径不使用构建内容的引用计数，`Release` 不会卸载目标。相反，从已注册构建内容取得的根资产，其 Loadable 解析到构建版本。
 
 因此，只验证“在编辑器里能显示角色”，还没有验证内容构建是否完整。应从已注册的构建目录取得根资产，再测试对应加载路径，并最终在目标 Player 上复核。
 

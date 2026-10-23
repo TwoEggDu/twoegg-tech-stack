@@ -54,7 +54,7 @@
 ## 版本与证据限制
 
 - 6000.6 Introduction 当前页面的循环引用段落包含 circularrefs.json 与 64 MB 限制；UnityDataTools 文档把 circularrefs.json 明确列为 6.7 行为，并说明 6.6 合并循环。因此正文只使用双方一致的结论：循环引用会破坏独立加载边界。不把报告文件名或数值门槛当作所有 6.6 补丁的契约。
-- Addressables 包手册的直接页面本轮未能通过网页工具读取。正文只写已由 Unity 6.6 手册和官方博客确认的后端关系，不写具体包最低版本、右键菜单路径或完整迁移操作。
+- 初稿阶段未能通过网页工具读取 Addressables 包手册；后续修订已核对 2.7.6 的 AB 内存策略。CD 接入仍不写未经核实的包最低版本、右键菜单路径或完整迁移操作。
 - 官方博客的性能案例属于官方指定 Beta 版本与机器，不是本仓实测。正文不迁移其比例作为项目收益承诺。
 - C# 示例仅按公开 API 核对，未在 Unity Editor 中编译执行。
 - 初稿曾因页面命名不一致而省略裁剪接入接口。本次已用 6000.6 裁剪手册、构建示例和对应 API 明确：通过 `BuildHistory.TryGetBuildReportDirectory(report.summary.buildSessionGuid, out reportDirectory)` 取得报告目录，传入 `BuildPlayerOptions.previousBuildReportDirectories`。
@@ -99,3 +99,23 @@
 - 本地浏览器检查：第一、三篇的两张 Mermaid 图均生成 SVG；第三篇图示已目视检查；第一篇 6 个非 Mermaid 代码块显示正常，第一、二篇未出现页面整体横向溢出。第二篇版本限定、生命周期案例与三种分发方案、第三篇两张表格可读。
 - `git diff --check` 通过；未改 URL、站点配置或其他系列内容。系列 plan 原有 2026-10-14 未提交段落保留。
 - 未执行 Unity 6.6 编译、Player 或性能实验；未提交、推送或更新线上页面。临时浏览器页与本地服务已关闭。
+
+## 2026-10-23 按当前源文件复核与补充
+
+- 附件中的 Windows 构建闭环、裁剪报告、独立 Loadable 所有权、正常 AB 释放策略及官方 Build／Addressing／Load 主线已在现有版本中解决，本轮保留，不重复重写。
+- 第一篇明确 `BuildContentOptions.UseArchive` 和压缩设置如何生成归档；注册入口仍为目录。补清 AssetDatabase 路径始终解析项目最新版本，Release 不卸载该路径内容；从构建根资产取得的 Loadable 则解析构建版本。
+- 第二篇增加“把 AB 拆小能获得什么”对照：同生命周期拆包的收益、容器开销、外层归档与内层边界；远程部分用相同 100 MB、不同请求数量和只需 5 MB 两种场景区分传输效率与减少下载量。数字仅为算例，无实测耗时。
+- 第三篇用 A／B／C 说明读取与反序列化重叠、就绪任务与真实依赖；明确拆小 AB 不自动获得 CD 流水线，收益条件中的散文件 I/O 与物理归档指回第二篇。
+- 复核来源：Unity 6000.6 Introduction、Create、References、Load、裁剪手册、Loadable 类型／构造函数／Release、GetRootAssets、LoadAsync、AssetBundle 依赖与 Unload；官方博客的四项数据和测试环境未变。Addressables 2.7.6 的 [包粒度](https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assetbundles.html) 和 [下载并发](https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/AddressableAssetSettings.html#downloads) 支撑第二篇的新增取舍。
+- 构造函数仍存在“签名页带 ref，部分示例省略”的文档差异，正文显式记录未用目标程序集确认。GetRootAssets 的数组及指定目录重载、LoadAsync 的 Awaitable<T> 返回类型均与现有代码吻合。
+- 本机 Unity Hub 登记 2022.3.62f3，另一个已发现 Editor 为 2022.3.21f1，已读取文件版本确认；没有找到目标 6.6 Editor，本轮继续只做 API 静态核对。
+- URL、标题、slug、series、weight 和索引关系保持不变；系列 plan 仅更新 D07–D09 状态与本轮修订说明，原有 2026-10-14 段落保留。
+
+### 本轮验证结果
+
+- 采用 `.github/workflows/hugo.yaml` 的 Hugo 0.157.0 extended 与 `--gc --minify --baseURL` 发布构建参数，输出和缓存改到 `.codex_tmp/content-directories-review-20261023/`。构建退出码 0，1291 页，没有 ERROR。
+- 三篇与系列索引共 149 个站内链接／锚点通过检查；标题、slug、series、weight 与 HEAD 一致；无重复长正文段落，代码围栏闭合、表格和两处 Mermaid 源块存在。
+- 静态检查确认三段 C# 代码及关键调用、根资产失败检查、加载成功状态、报告目录接口与清理顺序保留。这是文档和文本核对，不等于 Unity 编译或执行。
+- 浏览器实读三篇本地页面：两张 Mermaid 均生成 SVG；性能篇完整流程图目视通过，表格与六个非 Mermaid 代码块存在；三篇在 1280 像素视口下页面宽度均为 1265，无页面整体横向溢出。浏览器没有报告性能篇脚本错误。
+- `git diff --check` 通过；本轮只修改三篇正文、canonical 系列 plan 与本证据记录，没有修改站点配置、索引标题或其他系列内容。临时浏览器页和本地静态服务已关闭。
+- 未执行 Unity 6.6 编译、Player 运行、Profiler 或性能实验。本轮没有提交、推送或更新线上页面。

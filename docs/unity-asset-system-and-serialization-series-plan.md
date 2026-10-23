@@ -282,11 +282,11 @@ Scene、Prefab 和 AssetBundle 为什么共用一部分恢复链，但又不是�
 
 | 篇目 | 核心问题 | 正文 | 状态 |
 |---|---|---|---|
-| D07｜内容产物与最小接入 | 内容文件、Root Asset、Loadable 与 Windows 构建、裁剪、部署、释放怎样衔接 | [Content Directories 01](../content/engine-toolchain/unity-content-directories-01-model-and-workflow.md) | 已写；2026-10-22 本地修订待审 |
-| D08｜与 AssetBundle 对比 | 区分三层，用共享依赖与同包不同生命周期解释取舍 | [Content Directories 02](../content/engine-toolchain/unity-content-directories-02-vs-assetbundle.md) | 已写；2026-10-22 本地修订待审 |
-| D09｜为什么可能更快 | 沿 Build、Addressing、Load 解释工作范围、内容身份与流水线 | [Content Directories 03](../content/engine-toolchain/unity-content-directories-03-why-faster.md) | 已写；2026-10-22 本地修订待审 |
+| D07｜内容产物与最小接入 | 内容文件、Root Asset、Loadable 与 Windows 构建、裁剪、部署、释放怎样衔接 | [Content Directories 01](../content/engine-toolchain/unity-content-directories-01-model-and-workflow.md) | 已写；2026-10-23 补清归档选项与编辑器解析路径，本地修订待审 |
+| D08｜与 AssetBundle 对比 | 区分三层，用共享依赖与同包不同生命周期解释取舍 | [Content Directories 02](../content/engine-toolchain/unity-content-directories-02-vs-assetbundle.md) | 已写；2026-10-23 补充拆包、归档与下载粒度取舍，本地修订待审 |
+| D09｜为什么可能更快 | 沿 Build、Addressing、Load 解释工作范围、内容身份与流水线 | [Content Directories 03](../content/engine-toolchain/unity-content-directories-03-why-faster.md) | 已写；2026-10-23 补清流水线重叠与真实依赖，本地修订待审 |
 
-执行记录见[大纲与证据记录](unity66-content-directories-outline.md)。三篇均依据公开资料，不引用私有 Unity C++ 源码；C# 示例与性能实验未在 Unity 6.6 中运行。初稿曾提交，当前状态指本次本地修订，修订尚未提交或线上发布。
+执行记录见[大纲与证据记录](unity66-content-directories-outline.md)。三篇均依据公开资料，不引用私有 Unity C++ 源码；C# 示例与性能实验未在 Unity 6.6 中运行。此前版本已提交，当前状态指 2026-10-23 本次本地修订，尚未提交或线上发布。
 
 ## 重点番外
 
