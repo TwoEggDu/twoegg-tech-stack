@@ -6,7 +6,7 @@
 
 | 首页 | 主线归属 | 职责 |
 |---|---|---|
-| [YooAsset](../content/engine-toolchain/unity-yooasset-series-index.md) | Yoo-01～08，8 篇专题；Yoo-09，1 篇导读 | 独立组织 YooAsset 的加载、清单、下载缓存、构建和能力边界 |
+| [YooAsset](../content/engine-toolchain/unity-yooasset-series-index.md) | Yoo-01～08，8 篇专题；Yoo-09～10，2 篇导读 | 独立组织 YooAsset 的加载、清单、下载缓存、构建和能力边界 |
 | [Addressables](../content/engine-toolchain/unity-addressables-series-index.md) | Addr-01～05，5 篇 | 独立组织 Addressables 的加载、Catalog、引用计数、构建和能力边界 |
 | [两者对比与选型](../content/engine-toolchain/unity-addressables-yooasset-comparison-series-index.md) | Cmp-01～03 与 Case-01～05，8 篇 | 连接两个系统的独立首页，组织同层对照、选型和故障案例 |
 
@@ -85,7 +85,7 @@
 
 ---
 
-## 系列结构（22 篇正文，含 1 篇加载流程导读）
+## 系列结构（23 篇正文，含加载与分包两篇流程导读）
 
 ### 主线 A：Addressables 源码解读（5 篇）
 
@@ -107,9 +107,9 @@
 - `Addr-05` **Addressables 的边界：它接不住什么、项目必须自己补什么**
   下载队列控制、断点续传、灰度发布、多环境版本共存、审核包 / 线上包分离
 
-### 主线 B：YooAsset 资源管理与交付（8 篇专题与 1 篇导读）
+### 主线 B：YooAsset 资源管理与交付（8 篇专题与 2 篇导读）
 
-职责：按 3.0.6 固定源码解释模块职责、调用链与条件，再提供可复现实验。保留稳定编号，以单次加载导读连接基础接口与加载复用专题。
+职责：按 3.0.6 固定源码解释模块职责、调用链与条件，再提供可复现实验。保留稳定编号，以单次加载导读连接基础接口与加载复用专题，以分包导读连接具体资源与构建产物专题。
 
 - `Yoo-06` **[整体架构与初始化](../content/engine-toolchain/unity-yooasset-architecture-package-initialization.md)**
   Package、清单、文件、对象如何协作；初始化之后还需要哪些条件。
@@ -132,6 +132,10 @@
 
 - `Yoo-08` **[资源生命周期与卸载](../content/engine-toolchain/unity-yooasset-handle-lifetime-unload.md)**
   明确实例、Handle、Provider、Loader 和文件缓存各自的持有期。
+
+- `Yoo-10` **[分包流程：从一个 Prefab 到共享 Bundle](../content/engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md)**
+  沿单 Prefab、跨包共用与 AB/CD 引用组合推演目录分包和两个构建开关，说明引用包集合分组的自定义扩展点与工程代价。
+  2026-10-23 补充；放在资源生命周期与构建专题之间（`series_order: 6.5`）。正文为 3.0.6 固定源码推演，含 Mermaid 流程图；Unity 对照构建、设备性能与自定义策略实现尚未验证。
 
 - `Yoo-04` **[资源收集、构建与产物](../content/engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md)**
   分清收集规划、构建缓存复用、完整版本产物与差异交付。

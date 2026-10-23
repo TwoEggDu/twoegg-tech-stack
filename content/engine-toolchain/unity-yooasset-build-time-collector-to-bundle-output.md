@@ -1,6 +1,6 @@
 ---
 date: "2026-04-13"
-lastmod: "2026-10-21"
+lastmod: "2026-10-23"
 title: "YooAsset 3.0.6 构建链路：收集规划、缓存复用与完整版本产物"
 description: "从 Collector 规则和共享依赖规划追到 SBP 任务、构建检查、清单与报告，区分构建缓存复用、完整版本输出、CDN 差异上传和客户端下载，并给出可复现的产物对照实验。"
 slug: "unity-yooasset-build-time-collector-to-bundle-output"
@@ -78,6 +78,8 @@ flowchart TD
 打包规则则通过 `IBundlePackRule` 生成规则结果，包含逐资源、逐目录、顶层目录、Collector、Group，以及原始文件、视频和 Shader 等规则。原始文件规则需要配合相应构建管线，不能理解为在任意 AssetBundle 管线中切换一个开关即可。[内置打包规则](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Editor/BundleCollector/DefaultRules/DefaultBundlePackRule.cs#L54-L222)
 
 ## 三、共享依赖不是无条件自动抽包
+
+要从具体资源开始推演，先看[分包流程：从一个 Prefab 到共享 Bundle]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}})。该导读逐步比较单引用依赖、同目录 AB/CD 合包、两个构建开关，以及按引用包集合分组的自定义方案。
 
 假设 `HeroA.prefab` 和 `HeroB.prefab` 被分别打包，并引用同一材质。首先要判断材质有没有被 Collector 显式分配包名；如果有，规划沿用该归属。如果没有，再看共享打包开关。
 

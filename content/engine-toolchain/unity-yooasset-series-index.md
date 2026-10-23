@@ -1,7 +1,7 @@
 ---
 date: "2026-10-21"
 title: "YooAsset 资源管理与交付"
-description: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
+description: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供加载与分包流程导读。"
 slug: "unity-yooasset-series-index"
 weight: 52
 featured: false
@@ -16,9 +16,9 @@ series_entry: true
 series_audience: ["Unity 客户端", "资源与构建工具链"]
 series_level: "进阶"
 series_best_for: "已经使用 YooAsset，希望理解模块职责、追踪资源链路或定位加载与更新问题。"
-series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
-series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
-series_reading_hint: "单次加载先读流程导读；系统阅读再沿架构、文件系统、加载、清单、下载、生命周期与构建深入。"
+series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供加载与分包流程导读。"
+series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供加载与分包流程导读。"
+series_reading_hint: "单次加载与分包先读相应流程导读；系统阅读再沿架构、文件系统、加载、清单、下载、生命周期与构建深入。"
 yooasset_version: "3.0.6"
 lastmod: "2026-10-23"
 ---
@@ -49,10 +49,11 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 | 4 | [Manifest、内容身份与完整性]({{< relref "engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md" >}}) | 拆开定位索引、资源与 Bundle 依赖、清单和文件的验证职责。 |
 | 5 | [下载调度与磁盘缓存]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) | 核对下载集合、续传条件、缓存提交和启动校验。 |
 | 6 | [资源生命周期与卸载]({{< relref "engine-toolchain/unity-yooasset-handle-lifetime-unload.md" >}}) | 明确实例、Handle、Provider、Loader 和文件缓存各自的持有期。 |
+| 导读 | [分包流程：从一个 Prefab 到共享 Bundle]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}}) | 推演专属依赖、目录共享包、两个开关与引用包集合分组的自定义边界。 |
 | 7 | [资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}}) | 分清收集规划、构建缓存复用、完整版本产物与差异交付。 |
 | 8 | [框架能力与项目职责]({{< relref "engine-toolchain/unity-yooasset-boundaries-what-projects-must-build.md" >}}) | 把工具、发布选择、灰度、CI 和长期监控按契约分开。 |
 
-首次系统阅读按上面的顺序推进。处理打包问题时，可以先读构建篇；处理内存和对象失效时，可以先读生命周期篇，再回查加载与依赖。
+首次系统阅读按上面的顺序推进。处理打包问题时，先读[分包流程导读]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}})，再进入构建篇；处理内存和对象失效时，可以先读生命周期篇，再回查加载与依赖。
 
 ## 按当前问题回查
 
@@ -65,6 +66,7 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 | 版本号、清单 Hash、Bundle 身份与 CRC 各管什么？ | [Manifest、内容身份与完整性]({{< relref "engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md" >}}) |
 | 下载是否续传，缓存何时被检查，零下载量代表什么？ | [下载调度与磁盘缓存]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) |
 | Release 之后资源为何仍在，实例应由谁持有？ | [资源生命周期与卸载]({{< relref "engine-toolchain/unity-yooasset-handle-lifetime-unload.md" >}}) |
+| 一个 Prefab 的依赖如何分包，目录与两个开关怎样决定共享包？ | [分包流程导读]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}}) |
 | 完整版本目录是否意味着所有 Bundle 都重新构建？ | [资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}}) |
 | 已有调试工具能看到什么，灰度和发布又由谁负责？ | [框架能力与项目职责]({{< relref "engine-toolchain/unity-yooasset-boundaries-what-projects-must-build.md" >}}) |
 
