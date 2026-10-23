@@ -20,7 +20,7 @@ series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件�
 series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
 series_reading_hint: "单次加载先读流程导读；系统阅读再沿架构、文件系统、加载、清单、下载、生命周期与构建深入。"
 yooasset_version: "3.0.6"
-lastmod: "2026-10-22"
+lastmod: "2026-10-23"
 ---
 
 YooAsset 把资源收集、构建、版本清单、内容获取和运行时加载连接起来。要理解这条链路，需要分别判断目录是否有效、内容文件是否就绪、对象是否加载，以及它们的使用期是否结束。
@@ -83,6 +83,12 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 | [下载中断与恢复]({{< relref "problem-solving/addressables-yooasset-download-interruption-resume-recovery.md" >}}) | 续传、重试与最终验证需要哪些条件。 |
 | [清单与 Bundle 不一致]({{< relref "problem-solving/addressables-yooasset-half-update-catalog-manifest-bundle-mismatch.md" >}}) | 清单已经激活与目标内容已经就绪之间的区别。 |
 | [线上版本回滚]({{< relref "problem-solving/addressables-yooasset-online-rollback-paths-and-costs.md" >}}) | 版本选择、文件保留和缓存清理如何影响恢复。 |
+
+## 完整更新与发布流程
+
+[Unity 游戏更新与发布：从首次整包到资源热更新]({{< relref "delivery-engineering/unity-game-update-release-series-index.md" >}})从首次交付、线上 Bug 和新英雄与活动出发，继续讲版本绑定、本次构建内容、客户端强更与热更，以及发布和回退。七篇章节当前均为提纲，正文将逐篇补齐。
+
+本页继续负责 YooAsset 的源码机制；新系列把这些能力连接到代码、配置、美术与客户端整包的交付决策。
 
 ## 后续主题
 

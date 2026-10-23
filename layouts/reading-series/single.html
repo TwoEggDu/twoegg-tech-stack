@@ -1,0 +1,68 @@
+{{ $isIndex := eq .Params.series_role "index" }}
+{{ $members := partial "reading/series-members.html" . }}
+{{ $seriesId := .Params.series_id | default .Params.primary_series }}
+{{ $indexes := where (where site.RegularPages "Params.series_role" "index") "Params.series_id" $seriesId }}
+{{ if ne (len $indexes) 1 }}{{ errorf "Reading series requires one index: %s" $seriesId }}{{ end }}
+{{ $index := index $indexes 0 }}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default `zh-cn` }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }} | {{ site.Title }}</title>
+  <meta name="description" content="{{ .Description }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ .Description }}">
+  <meta property="og:type" content="{{ if $isIndex }}website{{ else }}article{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:site_name" content="{{ site.Title }}">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:description" content="{{ .Description }}">
+  <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/series-reading.css` | relURL }}">
+  <script src="{{ `js/site.js` | relURL }}" defer></script>
+  <script src="{{ `js/search.js` | relURL }}" defer></script>
+</head>
+<body class="reading-site {{ if $isIndex }}page-series{{ else }}page-article{{ end }}">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="wrap">{{ partial "site-masthead.html" . }}</div>
+  <main id="main" class="wrap" tabindex="-1">
+    <nav class="breadcrumb" aria-label="面包屑">
+      {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
+      {{ partial "reading/link.html" (dict "page" "reading/delivery.md" "label" "工程与交付") }}<span aria-hidden="true">/</span>
+      {{ if $isIndex }}<span aria-current="page">{{ .Params.reading_title | default .Params.series_title }}</span>
+      {{ else }}<a href="{{ $index.RelPermalink }}">{{ $index.Params.series_title }}</a><span aria-hidden="true">/</span><span aria-current="page">第 {{ printf "%02d" (int .Params.series_order) }} 篇</span>{{ end }}
+    </nav>
+    {{ if $isIndex }}
+      <header class="series-cover">
+        <div class="series-cover-copy">
+          <p class="eyebrow">阅读系列 · {{ len $members }} 篇</p>
+          <h1>{{ .Params.reading_title | default .Params.series_title | default .Title }}</h1>
+          <p class="series-lead">{{ .Params.reading_lead }}</p>
+          <p class="series-intro">{{ .Params.reading_intro | default .Params.series_intro }}</p>
+        </div>
+        <aside class="series-cover-note" aria-label="阅读说明">
+          <p class="eyebrow">这条路线怎样读</p>
+          <p class="series-route">发布场景<br><span aria-hidden="true">↓</span><br>版本与构建<br><span aria-hidden="true">↓</span><br>玩家更新与上线</p>
+          <p class="series-status">{{ .Params.reading_status }}</p>
+        </aside>
+      </header>
+      <div class="series-copy article-reading"><div class="article-body reading-prose">{{ .Content }}</div></div>
+    {{ else }}
+      {{ partial "reading/series-article.html" (dict "page" . "index" $index "members" $members) }}
+    {{ end }}
+  </main>
+  <footer class="footer wrap">
+    <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>
+    <nav aria-label="更多阅读入口">
+      {{ partial "reading/link.html" (dict "page" "technical-topics.md" "label" "完整技术目录") }}
+      {{ partial "reading/link.html" (dict "page" "game-development.md" "label" "研发地图") }}
+      {{ partial "reading/link.html" (dict "page" "about.md" "label" "关于作者") }}
+    </nav>
+  </footer>
+</body>
+</html>

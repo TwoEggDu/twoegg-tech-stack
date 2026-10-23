@@ -1,0 +1,19 @@
+{{ $members := partial "reading/series-members.html" .Page }}
+<div class="reading-chapter-groups">
+{{ range .Page.Params.reading_groups }}
+  {{ $group := . }}
+  {{ $pages := where (where $members "Params.series_order" "ge" $group.first) "Params.series_order" "le" $group.last }}
+  <section class="reading-chapter-group" aria-labelledby="reading-group-{{ $group.first }}">
+    <div class="reading-chapter-group-heading"><h3 id="reading-group-{{ $group.first }}">{{ $group.title }}</h3><p>{{ $group.intro }}</p></div>
+    <ol class="reading-chapters" start="{{ $group.first }}">
+      {{ range $pages }}
+      <li>
+        <span class="reading-chapter-number" aria-hidden="true">{{ printf "%02d" (int .Params.series_order) }}</span>
+        <div><h4><a href="{{ .RelPermalink }}">{{ .Params.reading_title | default .Title }} <span aria-hidden="true">→</span></a></h4><p>{{ .Params.reading_summary | default .Description }}</p></div>
+        <span class="reading-chapter-state">{{ if eq .Params.content_stage "outline" }}提纲{{ else }}正文{{ end }}</span>
+      </li>
+      {{ end }}
+    </ol>
+  </section>
+{{ end }}
+</div>
