@@ -97,6 +97,12 @@
 | Unity 6 运行时与工具链 | [docs/unity6-runtime-toolchain-series-plan.md](./docs/unity6-runtime-toolchain-series-plan.md) | 已拆出 | Unity 6 专项 |
 | Unity 2022 → 6 升级指南 | [docs/unity6-upgrade-guide-series-plan.md](./docs/unity6-upgrade-guide-series-plan.md) | 已拆出 | 决策导向 |
 
+### GamePlay 与游戏设计
+
+| 主题 | Canonical 文件 | 状态 | 备注 |
+|------|----------------|------|------|
+| GamePlay：可玩性与游戏设计 | [docs/gameplay-series-plan.md](./docs/gameplay-series-plan.md) | 索引与 24 篇章节提纲已建；正文待写 | 围绕可玩性、技能与战斗、剧情、角色养成和玩法循环；[阅读地图](./content/gameplay/gameplay-series-index.md)连接实际提纲，技术延伸至全栈框架，原型研究方法复用产品证据系列 |
+
 ### 服务端、ET 与业务系统
 
 | 主题 | Canonical 文件 | 状态 | 备注 |

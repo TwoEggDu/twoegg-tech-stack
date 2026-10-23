@@ -6,14 +6,15 @@
 
 首页只保留站点方向、首篇推荐与交付地图。不放作者介绍，不展开个人实践列表、六主题重复目录或多工种协作列表。作者介绍留给后续独立页面；当前页脚保留已有的关于作者入口。
 
-首页采用已选定的 B 地图结构与 C 蓝灰配色，顶部六个主题是主导航。交付地图的四个目标整块可点，文字入口带下划线和键盘焦点。
+首页采用已选定的 B 地图结构与 C 蓝灰配色，顶部七个主题是主导航。交付地图的四个目标整块可点，文字入口带下划线和键盘焦点。
 
-## 六个二级首页
+## 七个二级首页
 
 | 主题 | 地址 | 阅读起点与系列范围 |
 | --- | --- | --- |
 | 工程与交付 | `/reading/delivery/` | 从资源漏提交实践进入；组织生产管线、CI/CD、资源管线，并承接六组跨工种协作。发布、回退和 A/B 作为文章入口。 |
-| 战斗与玩法 | `/reading/gameplay/` | 从技能系统总论进入；组织技能系统与游戏编程模式，保留配置和回归文章捷径。 |
+| GamePlay | `/reading/gameplay/` | 以可玩性与游戏设计为主线，从阅读地图进入 24 篇章节提纲；正文与真实案例待补，技术实现跳转全栈框架。 |
+| 全栈框架 | `/reading/frameworks/` | 承接 GamePlay 的技术延伸，连接完整功能链路、技能系统与既有客户端和服务端入口。 |
 | 客户端框架 | `/reading/client/` | 从 Unity 执行模型进入；组织异步运行时与资源生命周期。 |
 | 引擎研发 | `/reading/engine/` | 从引擎分层总论进入；组织引擎架构、资产系统与序列化。 |
 | 服务端框架 | `/reading/server/` | 从客户端熟悉的请求响应进入；组织 ET 前置桥接与框架解析。 |
@@ -27,8 +28,8 @@
 
 - `layouts/index.html`、`layouts/partials/reading/home.html`：正式首页。
 - `content/reading/*.md`：主题与精选系列的路由、标题和说明。
-- `data/reading_paths.yaml`：六主题导航、推荐起点、系列和文章捷径的共用数据。
-- `layouts/partials/reading/topic.html`：六主题共用模板。
+- `data/reading_paths.yaml`：七主题导航、推荐起点、系列和文章捷径的共用数据。
+- `layouts/partials/reading/topic.html`：主题共用模板。
 - `layouts/partials/reading/guide.html`：启动与加载精选阅读页。
 - `layouts/partials/reading/document.html`：页框架、SEO、导航、搜索与页脚。
 - `static/css/reading.css`、`delivery-home.css`：只由首页和导读页面加载。

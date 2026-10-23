@@ -12,6 +12,7 @@
 
 | 交叉领域 | 唯一主维护位置 | 本系列只负责什么 |
 | --- | --- | --- |
+| 可玩性与游戏设计 | [GamePlay](gameplay-series-plan.md) | 围绕具体设计假设组织原型与玩家研究；设计机制、技能、剧情、成长和循环主线由 GamePlay 维护 |
 | 权责、评审、跨团队协作 | [工程判断](engineering-judgment-series-plan.md) | 决策所需产品证据，不复制组织机制 |
 | 技能、战斗执行、数值实现 | [技能系统](skill-system-series-plan.md) | 体验假设、玩家选择和原型验收 |
 | 数据质量、分流与因果实验 | [长线运营](live-ops-engineering-column-plan.md#lifecycle-additions) | 提出要回答的产品问题，消费有边界的分析 |
@@ -51,7 +52,7 @@
 ## GPD-02｜玩法原型怎样成为玩家研究：从核心循环到可玩性证据
 
 - **主问题**：玩家的选择、理解、节奏和动机是否符合体验目标？
-- **责任边界**：玩法与用户研究；不重复技能执行、Bug 分诊或完整游戏设计教材。难度、公平与经济奖励只研究体验交点。
+- **责任边界**：玩法原型与用户研究的方法和证据；设计机制主线引用 [GamePlay](gameplay-series-plan.md)，不重复技能执行、Bug 分诊或完整游戏设计教材。难度、公平与经济奖励只研究体验交点。
 - **前置**：明确目标玩家与待验证体验假设；不要求先读完整服务端系列。
 - **可复用文章**：[Bug 与 Playtest](../content/code-quality/bug-management-and-playtest.md)、[技能总索引](../content/system-design/skill-system-series-index.md)、[玩法规模与性能](../content/performance/game-performance-design-scaling-risk.md)。
 - **所需证据**：经授权的研究招募条件、任务脚本、观察编码、匿名反馈与反例、原型版本和复测目标；没有招募或原型结果时只写研究设计。

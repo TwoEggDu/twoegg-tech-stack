@@ -67,20 +67,47 @@ topics:
       - { label: "Unity 游戏更新与发布", page: "delivery-engineering/unity-game-update-release-series-index.md", value: "从首次整包、线上修复与新内容上线，进入版本绑定、构建范围、强更热更和发布回退。七篇章节当前均为提纲，正文待写。" }
       - { label: "CI/CD 流水线", page: "delivery-engineering/delivery-cicd-pipeline-series-index.md" }
       - { label: "资源管线", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }
-  - title: "战斗与玩法"
-    description: "配置与资源进入运行时后，规则、状态和表现怎样形成玩法。"
+  - title: "GamePlay"
+    description: "理解游戏的可玩性，分析技能、战斗、剧情、角色养成与玩法循环的设计。"
     page: "reading/gameplay.md"
     key: "gameplay"
-    directory: "system-design/skill-system-series-index.md"
+    eyebrow: "游戏设计与可玩性"
+    focus_title: "从玩家体验理解游戏设计"
+    focus_note: "已按五组主题建立阅读索引与 24 篇章节提纲，正文与真实游戏案例将逐篇补充。操作与反馈纳入可玩性主线。"
+    focus:
+      - title: "可玩性与玩家选择"
+        value: "玩家在观察什么、判断什么、承担什么风险？从目标、挑战、选择与反馈，分析一个机制为什么能带来乐趣，以及它在什么条件下成立。"
+      - title: "技能与战斗设计"
+        value: "技能定位、资源消耗、时机、空间、组合和反制，怎样形成不同打法？继续看敌人、关卡与遭遇怎样让玩家的能力产生新用途。"
+      - title: "操作与体验反馈"
+        value: "角色控制、动作、相机、声音和界面怎样支持玩家表达意图、理解结果？从响应、节奏与信息呈现讨论操作体验。"
+      - title: "剧情与角色关系"
+        value: "剧情怎样赋予行动意义，角色关系怎样影响选择？讨论叙事、探索、任务与玩法过程如何配合。"
+      - title: "角色养成与构筑"
+        value: "属性、装备、技能组合和内容解锁怎样改变能力与选择？讨论成长目标、构筑差异，以及数值提升与玩法变化的关系。"
+      - title: "玩法循环与节奏"
+        value: "一次行动、一场战斗、一次冒险和长期成长怎样互相推动？结合具体游戏，分析挑战、奖励、合作与竞争怎样组织持续体验。"
+    start_title: "从阅读地图开始"
     start:
-      page: "system-design/skill-system-00-overview.md"
-      value: "先沿输入、请求、校验、效果与表现看清执行链，再选择需要深入的机制。"
-    shortcuts:
-      - { page: "system-design/skill-system-27-designer-data-pipeline.md" }
-      - { page: "system-design/skill-system-13-testing-and-regression.md" }
+      page: "gameplay/gameplay-series-index.md"
+      value: "沿可玩性、技能与战斗、剧情与角色、成长与构筑、循环与整体体验，阅读 24 篇章节提纲；首批先展开 8 篇骨架文章。"
     entries:
-      - { label: "技能系统", page: "system-design/skill-system-series-index.md" }
-      - { label: "游戏编程模式", page: "system-design/game-programming-patterns-series-index.md" }
+      - label: "全栈框架：继续看技术实现"
+        page: "reading/frameworks.md"
+        value: "技能执行、角色控制的技术实现、多人同步和玩法代码组织，由全栈框架承接，再沿客户端与服务端路径深入。"
+  - title: "全栈框架"
+    description: "沿完整功能链路，连接客户端、服务端、数据与版本。"
+    page: "reading/frameworks.md"
+    key: "frameworks"
+    directory: "technical-topics.md"
+    directory_anchor: "runtime"
+    start:
+      page: "reading/fullstack.md"
+      value: "先看两端职责、数据契约和同步，再进入各端的系统实现。"
+    entries:
+      - { label: "全栈框架", page: "reading/fullstack.md" }
+      - { label: "客户端框架", page: "reading/client.md" }
+      - { label: "服务端框架", page: "reading/server.md" }
   - title: "客户端框架"
     description: "组织功能、状态、异步与生命周期，支撑内容持续接入。"
     page: "reading/client.md"
