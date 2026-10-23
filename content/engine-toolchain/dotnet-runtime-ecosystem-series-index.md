@@ -2,7 +2,7 @@
 title: ".NET Runtime 生态全景系列｜从 ECMA-335 到 5 个 CLR 实现"
 slug: "dotnet-runtime-ecosystem-series-index"
 date: "2026-04-15"
-description: "94 篇正文 + 8 个索引页（共 102 个文件），8 条阅读线，覆盖 ECMA-335 + CoreCLR + Mono + IL2CPP + HybridCLR + LeanCLR + 9 篇横切对比。"
+description: "以 ECMA-335 为共同语义基础，连接 IL2CPP、HybridCLR、CoreCLR、Mono、LeanCLR 与横切对比；Unity 读者优先沿 AOT 与热更新路线阅读。"
 weight: 1
 featured: true
 tags:
@@ -26,7 +26,7 @@ series_id: "index"
 
 | 你是谁 | 推荐路径 |
 |--------|---------|
-| **Unity 工程师**（做热更新） | ECMA-335 → [IL2CPP]({{< relref "engine-toolchain/il2cpp-series-index.md" >}}) → [HybridCLR]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) |
+| **Unity 工程师**（做热更新） | [ECMA-335 前置主线]({{< relref "engine-toolchain/ecma335-series-index.md" >}}) → [IL2CPP]({{< relref "engine-toolchain/il2cpp-series-index.md" >}}) → [HybridCLR]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) |
 | **Runtime 工程师**（想理解 CLR 实现） | ECMA-335 → [CoreCLR]({{< relref "engine-toolchain/coreclr-series-index.md" >}}) → [Mono]({{< relref "engine-toolchain/mono-series-index.md" >}}) → [LeanCLR]({{< relref "engine-toolchain/leanclr-series-index.md" >}}) |
 | **H5/小游戏开发者** | ECMA-335 → [LeanCLR F1]({{< relref "engine-toolchain/leanclr-survey-architecture-source-map.md" >}}) → [F9 WASM]({{< relref "engine-toolchain/leanclr-webassembly-build-h5-minigame-embedding.md" >}}) → [F10 选型]({{< relref "engine-toolchain/leanclr-vs-hybridclr-two-routes-same-team.md" >}}) → [G8 体积]({{< relref "engine-toolchain/runtime-cross-size-embedding-50mb-to-300kb.md" >}}) |
 | **做技术选型的人** | ECMA-335 → [横切对比 G1~G9]({{< relref "engine-toolchain/runtime-cross-series-index.md" >}}) |
@@ -48,7 +48,7 @@ series_id: "index"
 
 | 模块 | 篇数 | 定位 |
 |------|------|------|
-| [**ECMA-335 基础层**]({{< relref "engine-toolchain/ecma335-series-index.md" >}}) | 14 | 所有阅读线的公共地基。术语、metadata、CIL、类型系统、执行模型、程序集、内存模型、泛型共享、verification、custom attributes、P/Invoke、security、threading、PE 文件格式 |
+| [**ECMA-335 基础层**]({{< relref "engine-toolchain/ecma335-series-index.md" >}}) | 导读 1 + 主线 9；另 6 篇桥接／按需材料 | 优先服务 IL2CPP 与 HybridCLR：DLL、类型、签名解析、CIL、调用、程序集、类型初始化、GC 与反射；其他 runtime 可复用规范知识 |
 | [**CoreCLR**]({{< relref "engine-toolchain/coreclr-series-index.md" >}}) | 10 | .NET 主线 runtime。架构、ALC、MethodTable、RyuJIT、GC、异常、泛型、线程、Reflection、Tiered Compilation |
 | [**Mono**]({{< relref "engine-toolchain/mono-series-index.md" >}}) | 8 | Unity 第一代 runtime。架构、解释器、Mini JIT、SGen GC、类型加载、方法编译、AOT、Unity 转型 |
 | [**IL2CPP**]({{< relref "engine-toolchain/il2cpp-series-index.md" >}}) | 8 | Unity AOT runtime。管线、转换器、libil2cpp、metadata.dat、泛型、GC、ECMA 覆盖度、裁剪 |
@@ -58,4 +58,4 @@ series_id: "index"
 
 ---
 
-**94 篇正文 + 8 个索引页 · 29 张图 · 5 个 runtime · 8 条阅读线**
+各模块的阅读顺序以对应索引为准；跨模块共享的前置与桥接文章复用同一个源文件，不累加为不同正文。

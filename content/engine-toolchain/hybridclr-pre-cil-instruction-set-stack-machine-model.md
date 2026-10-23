@@ -1,7 +1,8 @@
 ---
-title: "HybridCLR 前置篇｜CIL 指令集与栈机模型：ldloc、add、call 到底在做什么"
+slug: "HybridCLR 前置篇｜CIL 指令集与栈机模型：ldloc、add、call 到底在做什么"
+title: "ECMA-335 基础｜CIL 与栈机模型：指令语义和最小验证规则"
 date: "2026-04-13"
-description: "在进入 HybridCLR 解释器优化之前，先把 CIL 指令集和栈机执行模型讲清楚：eval stack 怎么运转、核心指令分几类、一个最小方法的 IL 逐行拆解、栈机为什么慢，以及这些概念在 HybridCLR 源码里对应什么。"
+description: "从求值栈、参数和局部变量读懂 CIL，合并最小 IL 验证规则，再理解 IL2CPP 编译与 HybridCLR 转换的边界。"
 weight: 11
 featured: false
 tags:
@@ -11,34 +12,20 @@ tags:
   - "CIL"
   - "ECMA-335"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+lastmod: "2026-10-23"
 series_order: -1
 ---
-> HybridCLR 的 transform 阶段把 CIL 方法体转成 HiOpcode IR。如果不知道 CIL 长什么样，后面看 transform 优化就会一直卡在"它到底在优化什么"这个问题上。
+一个方法只有几行 C#，IL 中却包含多次加载、存储和跳转。这些指令在描述什么，为什么 IL2CPP 能把它们编译成 native，HybridCLR 又能把它们转换后解释执行？
 
-这是 HybridCLR 系列的前置篇 B，位于 Pre-A（CLI Metadata）之后、HCLR-1（原理拆解）之前。
-
-Pre-A 解决的是"metadata 里存了什么"——类型表、方法表、字段表这些静态结构。这篇解决的是"方法体里存了什么"——CIL 指令怎么编码、求值栈怎么运转、一条 `add` 在运行时到底做了几件事。
-
-把这两篇前置补完之后，再进 HCLR-1 看 RuntimeApi 到 Interpreter::Execute 的调用链，每一层都能对上。
-
-> 本文的 CIL 语义遵循 ECMA-335 规范。所有 IL 示例均可通过 `ildasm`、`dnSpy` 或 `ILSpy` 在 Unity 编译产物上验证。
-
-## 为什么要先讲 CIL
-
-直接原因：HCLR-27（解释器指令优化）的核心主题是 CIL 栈机到寄存器 IR 的转换。那篇文章的第一句话就提到"CIL 是类型多态的，一个 `add` 处理 i4、i8、f4、f8"。如果读者不知道 CIL 的 `add` 长什么样、为什么是类型多态的，后面的 8 种 transform 优化就全变成了抽象描述。
-
-根本原因：HybridCLR 解释器的输入就是 CIL 方法体。`TransformContext.cpp` 里的 `TransformBodyImpl` 逐条读 CIL 指令，生成 HiOpcode 指令流。如果把 CIL 当黑盒，那 transform 的输入侧就是不可读的。
-
-所以这篇不讲 HybridCLR 源码，只讲 CIL 本身。目标是让读者看完之后，能直接读懂任意一段 IL dump，然后顺畅地进入 HCLR-1 和 HCLR-27。
+本篇保留 HybridCLR Pre-B 的旧地址，作为 ECMA 主线第 4 篇。先读懂求值栈，再把原验证篇的基础规则放到同一个例子中。具体解释器优化留给后续专题。
 
 ## CIL 是栈机
 
 CIL（Common Intermediate Language）是 .NET 运行时的中间语言。C# 编译器（Roslyn）把源代码编译成 CIL，存储在 DLL 的方法体中。运行时（CLR 或 IL2CPP）再把 CIL 转成目标平台的机器码或解释执行。
 
-CIL 的执行模型是栈机（stack machine），而不是寄存器机。这意味着所有计算都通过一个隐式的栈来完成，指令不会直接指定"从哪个寄存器读、往哪个寄存器写"。
+CIL 的执行模型是栈机（stack machine），而不是寄存器机。算术指令通常消费隐式求值栈；加载、存储等指令仍可通过索引或 token 指定参数、局部变量和字段。这个抽象栈不要求实现真的逐条进行内存 push/pop。
 
-每个方法在执行时维护三个数据区域：
+在 CIL 抽象模型中，可以区分三个数据区域；实现不必为它们分配三块独立物理内存：
 
 ```
 ┌──────────────────────────────────────────┐
@@ -61,7 +48,7 @@ CIL 的执行模型是栈机（stack machine），而不是寄存器机。这意
 
 ## 核心指令逐类介绍
 
-CIL 一共大约 220 条指令。按功能分成以下几类，每类只列最核心的几条。
+按功能先看以下几类，每类只列最核心的几条。
 
 ### 加载 / 存储
 
@@ -77,7 +64,7 @@ CIL 一共大约 220 条指令。按功能分成以下几类，每类只列最�
 | `ldc.i4.s V` | 短格式，V 为 int8 范围 |
 | `ldc.i4.0` ~ `ldc.i4.8` | 把 0~8 push 到求值栈（专用短指令） |
 
-`ldloc.0` ~ `ldloc.3` 是索引 0~3 的短指令，占 1 字节；`ldloc.s` 带一个 uint8 操作数，覆盖索引 4~255；`ldloc` 带 uint16 操作数，覆盖更大范围。这种长/短格式在 CIL 中很常见，目的是压缩方法体体积。
+`ldloc.0` ~ `ldloc.3` 是索引 0~3 的短指令，占 1 字节；`ldloc.s` 带一个 uint8 操作数，覆盖索引 0~255；`ldloc` 带 uint16 操作数，覆盖更大范围。这种长/短格式在 CIL 中很常见，目的是压缩方法体体积。
 
 ### 算术
 
@@ -90,9 +77,7 @@ CIL 一共大约 220 条指令。按功能分成以下几类，每类只列最�
 | `mul` | pop 两个值，相乘，push 结果 |
 | `div` | pop 两个值，相除，push 结果 |
 
-重点：**同一条 `add` 指令处理所有数值类型**。运行时根据栈上操作数的实际类型决定是做 int32 加法、int64 加法、float32 加法还是 float64 加法。CIL 规范用一张类型合并表（ECMA-335 Partition III, Table 2）定义了所有合法的操作数类型组合和结果类型。
-
-这就是所谓的"类型多态"——一条指令，多种行为，运行时判断。
+同一条 `add` 可以处理规范允许的多种数值表示。参数签名与前序指令决定求值栈中的类型；编译器或解释器转换阶段可以分析这些信息。它并不要求每次执行 `add` 都做动态类型判断。
 
 ### 字段访问
 
@@ -103,24 +88,24 @@ CIL 一共大约 220 条指令。按功能分成以下几类，每类只列最�
 | `ldsfld <token>` | push 指定静态字段的值（不需要对象引用） |
 | `stsfld <token>` | pop 值，写入指定静态字段 |
 
-`<token>` 是 metadata token，指向字段定义表中的一行。运行时通过 token 解析到字段的内存偏移量。
+`<token>` 可引用字段定义或成员引用，需要结合所属模块与声明类型解析。上表以引用类型的实例字段为例，值类型的地址访问还会涉及托管指针。
 
 ### 方法调用
 
 | 指令 | 动作 |
 |------|------|
-| `call <token>` | 调用指定方法（静态方法或非虚实例方法） |
-| `callvirt <token>` | 虚调用：pop 对象引用，查 vtable，调用实际方法 |
-| `newobj <token>` | 分配对象 + 调用构造函数，push 新对象引用 |
+| `call <token>` | 按指定目标调用，不按接收者做虚分派；也可直接调用某个虚方法实现 |
+| `callvirt <token>` | 消费接收者和参数；保留空引用检查语义，需要时进行虚分派 |
+| `newobj <token>` | 构造实例；引用类型产生对象引用，值类型产生相应值 |
 
-`call` 在编译时就确定目标方法，`callvirt` 需要在运行时查虚方法表。C# 编译器对实例方法默认生成 `callvirt`（即使方法不是 virtual），因为 `callvirt` 会先做 null check。
+`call` 的目标仍需按 metadata 引用解析。`callvirt` 也可以用于非虚实例方法，此时不需要虚分派。调用指令还要按签名消费参数，不能只看接收者。
 
 ### 类型操作
 
 | 指令 | 动作 |
 |------|------|
 | `box <token>` | 把值类型装箱成引用类型 |
-| `unbox.any <token>` | 把引用类型拆箱成值类型 |
+| `unbox.any <token>` | 对普通值类型取出装箱的值；引用类型目标具有相应的类型转换语义 |
 | `castclass <token>` | 强制类型转换，失败抛 InvalidCastException |
 | `isinst <token>` | 类型检查，成功 push 对象引用，失败 push null |
 
@@ -145,7 +130,7 @@ public static int Add(int a, int b)
 }
 ```
 
-C# 编译器为这个方法生成的 IL（用 `ildasm` 或 `ILSpy` 可以直接看到）：
+下面是保留计算核心的 IL 示意；实际 Debug／Release 产物的 nop、局部变量与 header 可能不同：
 
 ```
 .method public hidebysig static int32 Add(int32 a, int32 b) cil managed
@@ -171,7 +156,7 @@ C# 编译器为这个方法生成的 IL（用 `ildasm` 或 `ILSpy` 可以直接�
             空栈               └───┘
 ```
 
-`.maxstack 2` 告诉运行时：这个方法执行过程中求值栈最多同时存在 2 个值（`ldarg.1` 之后、`add` 之前的瞬间）。这个值由编译器计算，运行时用它来分配栈空间。
+示例需要的最大求值栈深度为 2。方法头中的 maxstack 是上界，允许更大；Tiny header 的隐含值为 8。不要把示意中的 `.maxstack 2` 当成每次编译后必定出现的头部数值。
 
 注意：这是静态方法，所以 `ldarg.0` 是第一个参数 `a`，`ldarg.1` 是第二个参数 `b`。如果是实例方法，`ldarg.0` 就是 `this`，实际参数从 `ldarg.1` 开始。
 
@@ -190,7 +175,7 @@ public class Character
 }
 ```
 
-生成的 IL：
+计算核心的 IL 示意：
 
 ```
 .method public hidebysig instance int32 GetHp() cil managed
@@ -224,106 +209,54 @@ public class Character
                          └──────┘    └──────────┘
 ```
 
-这里可以看到一个特征：为了读两个字段，`this` 被 load 了两次。CIL 栈机没有"把 this 留在某个寄存器里复用"的能力——每次 `ldfld` 都会消耗栈顶的对象引用，下次用就得重新 push。
+两个 ldfld 都消费一个接收者，因此示例两次加载 this。CIL 也有 dup 等栈操作；后端还可以消除重复加载，不能由 IL 文本中的次数推导最终访存次数。
 
-## 为什么栈机直接解释慢
+## 最小验证规则：从同一段 IL 检查类型和栈
 
-把上面两个例子的指令数量对比一下：
+原 A8 的入门部分并入这里。先区分两个问题：IL 是否满足格式与执行语义要求，以及它能否通过规范的类型安全验证。满足前者的程序仍可能无法通过后者，不能把所有 unverifiable IL 都叫作损坏文件。
 
-**C# 表达式 `a + b`（静态方法）：**
+以 Add 为例，可以在执行前沿控制流追踪栈：
 
-CIL 需要 4 步才能完成一次加法并存储结果：
+| 位置 | 栈形状 | 要检查什么 |
+|---|---|---|
+| 方法入口 | 空 | 参数类型来自方法签名 |
+| ldarg.0、ldarg.1 后 | int32、int32 | 索引合法，栈深度未超界 |
+| add 后 | int32 | 操作数类型组合合法 |
+| ret | 返回一个 int32 | 与返回签名相容，返回时没有多余栈项 |
 
-```
-ldarg.0     // 1. push a
-ldarg.1     // 2. push b
-add         // 3. pop + pop + push
-stloc.0     // 4. pop → 存到局部变量
-```
+加入分支后，到达同一个汇合点的栈深度和类型状态还需要兼容。不能一条路径留下对象引用、另一条留下整数，再假定后面的 add 能自行解决问题。
 
-如果换成寄存器式 IR，同样的语义只需要 1 条：
+局部变量的初始化、托管指针的使用、受保护区域的跳转也各有规则。`leave` 与普通 `br` 不可随意互换：离开异常保护区域涉及清栈和 finally 语义，下一篇会继续说明。
 
-```
-add r0, r1, r2    // r0 = r1 + r2，直接寻址，无栈操作
-```
+### 编译通过不是完整的 IL 验证证明
 
-**开销差异来自三个方面：**
+C# 编译器、IL 转换器、C++ 编译器和完整 CLI verifier 检查的是不同问题。尤其不能因为 IL2CPP 生成的 C++ 能编译，就宣布输入 IL 已完成全部类型安全验证。
 
-**第一，指令条数。** 4 条 vs 1 条，意味着 4 次 dispatch vs 1 次 dispatch。每次 dispatch 都要读 opcode、查跳转表、跳到 handler——在解释器里这是主要的固定开销。
+对于 IL weaving、混淆或手工修改后的程序集，应保留修改前后的产物，用适合目标框架的验证工具检查，再做目标 Player 测试。工具拒绝了某项扩展与程序必然无法运行也不能直接划等号。
 
-**第二，隐式栈操作。** 每条 CIL 指令背后都有 push/pop 操作。`add` 不是简单的"读两个数相加"，而是"从栈顶弹出两个值、相加、把结果压回栈顶"。如果解释器老老实实模拟这个栈，每条指令都要做栈指针的加减和内存读写。
+更完整的规则和边界放在 [IL 验证附录]({{< relref "engine-toolchain/ecma335-cli-verification-il-type-safety.md" >}})，不要求主线读者在这里掌握所有指令的验证条件。
 
-**第三，类型判断。** CIL 的 `add` 在运行时需要判断操作数类型。如果解释器按 CIL 语义逐条执行，每遇到一个 `add` 都要走一次类型分派：这是 int32 加法？int64 加法？float 加法？
+## 从求值栈到执行实现
 
-这就是 HybridCLR 为什么不直接解释 CIL，而是先做 transform 的根本原因。transform 把栈式操作转成寄存器式操作，同时把类型多态指令展开成类型特化指令，一次性消除上面三层开销。
+IL2CPP 可以在构建期分析栈状态并生成 C++；HybridCLR 的转换阶段可以把隐式栈上的中间值映射为内部 IR 的显式位置，再选择类型特化的操作。
 
-## CIL 的类型多态 vs HiOpcode 的类型特化
-
-CIL 的设计哲学是"一条指令打天下"：
-
-```
-add     →  同时处理 int32、int64、float32、float64、IntPtr
-ceq     →  同时处理所有可比较类型
-ldelem  →  同时处理所有数组元素类型
+```text
+CIL：加载参数 → 加载参数 → add → 返回
+  → 分析栈与类型
+  → 内部表示或生成代码
+  → native 执行／解释执行
 ```
 
-这对编译器生成 IL 来说很方便——不需要为每种类型选不同的指令。但对解释器来说，每次执行都要做一次运行时类型判断，这是纯开销。
+对直接逐条调度的朴素解释器，指令数、栈维护和分派可能构成成本；预解码、类型分析和优化能改变这些成本。它们是实现选择，不是“栈机必然每次动态判断类型”的规范要求，也不能从图中的指令数量直接推导加速倍数。
 
-HybridCLR 的 HiOpcode 走了相反的路：把一条 CIL 指令展开成多条类型特化指令。
+后续看 [解释器基础桥接]({{< relref "engine-toolchain/hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md" >}}) 与 [HiOpcode 转换优化]({{< relref "engine-toolchain/hybridclr-interpreter-instruction-optimization-hiopcode-ir-transforms.md" >}})。
 
-```
-CIL:     add
-           ↓ transform 阶段，根据 EvalStackVarInfo 确定操作数类型
-HiOpcode:  BinOpVarVarVar_Add_i4    （两个 int32 相加）
-           BinOpVarVarVar_Add_i8    （两个 int64 相加）
-           BinOpVarVarVar_Add_f4    （两个 float32 相加）
-           BinOpVarVarVar_Add_f8    （两个 float64 相加）
-```
+规范依据：[ECMA-335](https://ecma-international.org/publications-and-standards/standards/ecma-335/) Partition I 的执行与验证模型，以及 Partition III 的指令语义。
 
-transform 阶段通过 `GetEvalStackReduceDataType()` 在编译时就确定了操作数的归约类型（i4、i8、f4、f8、obj 等），然后直接选择对应的 HiOpcode 变体。执行时不再需要任何类型判断——每条 HiOpcode 只做一种类型的计算。
-
-这也是为什么 `HiOpcodeEnum` 有 1000 多个条目，而 CIL 只有 220 条指令。不是 HybridCLR 发明了更多语义，而是它把类型维度展开了。
-
-## 这些概念在 HybridCLR 里对应什么
-
-读完 CIL 的栈机模型之后，可以直接把每个概念映射到 HybridCLR 的源码结构上。
-
-| CIL 概念 | HybridCLR 源码对应 | 位置 |
-|----------|-------------------|------|
-| Evaluation Stack（求值栈） | `EvalStackVarInfo` 数组 | `TransformContext.h` |
-| Local Variable（局部变量） | `localVarBase` 偏移 | `Interpreter_Execute.cpp` |
-| Argument（参数） | `localVarBase` 起始区域 | 参数和局部变量共享同一段连续内存 |
-| CIL 方法体 | `MethodBodyCache` 的输入 | transform 阶段的原始输入 |
-| CIL opcode | `HiTransform` 的输入 | `TransformContext.cpp` 逐条读取 |
-| HiOpcode | `Interpreter::Execute` 的输入 | `Interpreter_Execute.cpp` 的 switch 循环 |
-| `.maxstack` | `InterpMethodInfo.evalStackSize` | transform 产出物的一部分 |
-
-几个值得注意的对应关系：
-
-**eval stack 在 transform 之后就消失了。** CIL 的求值栈在 transform 阶段被 `EvalStackVarInfo` 模拟，目的是追踪每个栈位置的类型和偏移。transform 完成后，所有栈操作都被转成了对 `localVarBase` 的直接偏移寻址。执行阶段没有求值栈——只有一段连续内存和一组偏移量。
-
-**参数、局部变量、临时变量共享同一段内存。** CIL 把它们分成三个逻辑区域，但 HybridCLR 在 transform 之后把它们拍平成一段 `StackObject` 数组，统一用 `uint16_t` 偏移寻址：
-
-```
-localVarBase
-├── [0 .. argEnd)           参数区
-├── [argEnd .. localEnd)    局部变量区
-└── [localEnd .. evalEnd)   求值栈临时区（transform 后变成临时变量区）
-```
-
-**CIL opcode 和 HiOpcode 是一对多。** 一条 CIL `add` 可能变成 `BinOpVarVarVar_Add_i4`、`_Add_i8`、`_Add_f4` 或 `_Add_f8` 中的一条。一条 CIL `ldfld` 可能变成 `LdfldVarVar_1`（1 字节字段）到 `LdfldVarVar_32`（32 字节字段）中的一条。这种一对多展开是 transform 消除运行时判断的基本手段。
-
-## 收束
-
-CIL 是一套基于求值栈的指令集。每条指令隐式操作栈顶，不直接寻址寄存器或内存位置。这个设计让 IL 格式紧凑、编译器实现简单，但给解释器带来了三层额外开销：指令条数多、隐式栈操作多、运行时类型判断多。
-
-HybridCLR 的 transform 阶段做的核心工作，就是把这三层开销一次性消除：栈式变寄存器式、多态变特化、多条变一条。理解了 CIL 这一侧的输入长什么样，再去看 HCLR-27 的 transform 优化，每一种优化的动机和效果就能直接对上。
-
----
+**CIL 规定如何计算以及必须满足的栈与类型条件；怎样高效实现这套语义，是 AOT 编译器和解释器的工作。**
 
 ## 系列位置
 
-- 上一篇：Pre-A CLI Metadata
-- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}}">HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute</a>
-- 回到入口：<a href="{{< relref "engine-toolchain/hybridclr-series-index.md" >}}">HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇</a>
-- 相关后文：<a href="{{< relref "engine-toolchain/hybridclr-interpreter-instruction-optimization-hiopcode-ir-transforms.md" >}}">HybridCLR 解释器指令优化｜标准优化与高级优化在 HiOpcode 层到底做了什么</a>
+- 上一篇：[签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})
+- 下一篇：[方法调用与异常处理]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md" >}})
+- 返回：[ECMA-335 主线索引]({{< relref "engine-toolchain/ecma335-series-index.md" >}})

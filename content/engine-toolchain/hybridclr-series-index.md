@@ -1,4 +1,4 @@
-﻿---
+---
 date: "2026-03-26"
 title: "HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇"
 description: "给 HybridCLR 系列先补一个总入口：推荐阅读顺序、按问题回看路径、公共前置文章，以及已经开始往下延伸的高级主题。"
@@ -84,13 +84,13 @@ series_reading_hint: "第一次进入系列时，建议按目录顺序顺读主�
 
 ### 前置层（.NET / IL2CPP 底层地图）
 
-> 如果你已经熟悉 ECMA-335 metadata 和 CIL 指令集，可以跳过前置层直接进入基础层。
+> 完整前置路线见 [ECMA-335：读懂 IL2CPP 与 HybridCLR]({{< relref "engine-toolchain/ecma335-series-index.md" >}})。其中补充了 [签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}}) 和 [类型初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。熟悉这些语义时可以直接进入基础层。
 
-Pre-A. [HybridCLR 前置篇｜CLI Metadata 基础：TypeDef、MethodDef、Token、Stream 到底是什么]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})
+Pre-A. [DLL 与 CLI Metadata：文件入口、表、堆、Token 和方法体]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})
    给"metadata"这个贯穿全系列的核心词一个实体定义。后面所有涉及 token、image、method body 的讨论都建在这层之上。
 
-Pre-B. [HybridCLR 前置篇｜CIL 指令集与栈机模型：ldloc、add、call 到底在做什么]({{< relref "engine-toolchain/hybridclr-pre-cil-instruction-set-stack-machine-model.md" >}})
-   先知道 CIL 长什么样、栈机怎么执行、为什么直接解释慢，后面的 transform 和 HiOpcode 才不是空中楼阁。
+Pre-B. [CIL 与栈机模型：指令语义和最小验证规则]({{< relref "engine-toolchain/hybridclr-pre-cil-instruction-set-stack-machine-model.md" >}})
+   先知道 CIL 的栈与类型语义，再理解 transform 怎样选择执行表示。
 
 ### 基础层（HybridCLR runtime 主链）
 
@@ -129,8 +129,8 @@ Bridge-C. [HybridCLR 桥接篇｜ABI 与跨边界调用：为什么 interpreter 
 
 ### 进阶层（高级能力）
 
-Bridge-D. [HybridCLR 桥接篇｜IL2CPP 泛型共享规则：引用类型共享 object，值类型为什么不能]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}})
-   补上 HCLR-2 到 HCLR-10 之间的断层：IL2CPP 原本就做了部分 generic sharing，引用类型共享 object，值类型独立实例。不先知道这层，FGS 和 DisStripCode 的底层原因就接不上。
+Bridge-D. [HybridCLR 桥接篇｜从泛型语义到 IL2CPP 代码共享]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}})
+   补上 HCLR-2 到 HCLR-10 之间的断层：IL2CPP 的共享规则、值类型限制和具体版本的 FGS 能力需要分别理解。不先知道这层，FGS 和 DisStripCode 的底层原因就接不上。
 
 10. [HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版]({{< relref "engine-toolchain/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}})
    这是第二轮高级篇的第一篇，专门解释为什么它改的是 generic 调用模型，不是 metadata 可见性。

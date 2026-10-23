@@ -2,7 +2,7 @@
 title: "ECMA-335 基础｜术语约定：runtime、toolchain、metadata、execution engine 的边界"
 slug: "ecma335-terminology-conventions"
 date: "2026-04-14"
-description: "86 篇文章中同一个词在不同语境下含义不同。这篇术语约定页按易混淆词对组织，定义 runtime vs toolchain、metadata vs stream vs table、execution engine vs interpreter vs JIT、hot update vs hot reload vs hot fix 等核心术语的精确边界，作为全系列的参照锚点。"
+description: "同一个词在不同语境下含义不同。这篇术语约定页按易混淆词对组织，定义 runtime vs toolchain、metadata vs stream vs table、execution engine vs interpreter vs JIT、hot update vs hot reload vs hot fix 等核心术语的精确边界，作为全系列的参照锚点。"
 weight: 9
 featured: false
 tags:
@@ -14,9 +14,9 @@ series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 ---
 
-> 如果一个系列的不同文章里，同一个词指代了不同的东西，读者建立的心智模型就会在某一篇突然崩塌。术语约定不是学术洁癖，而是 86 篇文章能被串联阅读的前提。
+> 如果一个系列的不同文章里，同一个词指代了不同的东西，读者建立的心智模型就会在某一篇突然崩塌。术语约定不是学术洁癖，而是文章能被串联阅读的前提。
 
-这是 .NET Runtime 生态全景系列的术语约定页，位于所有正文之前。
+这是 ECMA-335 前置主线的导读，主要服务于 IL2CPP 与 HybridCLR；其他 runtime 的文章也可复用这些术语。
 
 ## 为什么需要术语约定
 
@@ -77,14 +77,14 @@ series_id: "ecma335"
 
 - TypeDef 表：每行描述一个类型定义
 - MethodDef 表：每行描述一个方法定义
-- FieldDef 表：每行描述一个字段定义
-- MemberRef 表：跨程序集的成员引用
+- Field 表：每行描述一个字段定义，一些工具称为 FieldDef
+- MemberRef 表：成员引用；跨程序集引用是常见用途，也用于构造泛型类型上的成员等情况
 
 **约定：** 本系列中"metadata"无修饰时指整体概念。需要区分物理层和逻辑层时，会明确使用"stream"或"table"。Pre-A（ECMA-A1）已经用 ildasm 示例展示了这三层的对应关系。
 
 ## Execution Engine vs Interpreter vs JIT
 
-**Execution Engine**（执行引擎）——runtime 中负责执行方法体的子系统的泛称。不指定具体执行策略。ECMA-335 Partition I 12.1 使用 VES（Virtual Execution System）这个术语，execution engine 是它的通俗叫法。
+**Execution Engine**（执行引擎）——本系列中用于指 runtime 内执行方法体的子系统，不指定具体执行策略。ECMA-335 的 VES（Virtual Execution System）还涵盖类型、对象和存储等运行机制，不与这个狭义用法作严格同义替换。
 
 **Interpreter**（解释器）——逐条读取 IL 指令（或转换后的中间指令），在软件层面模拟执行的方式。不生成 native code。
 
@@ -210,6 +210,5 @@ public class Item
 
 ## 系列位置
 
-这是 .NET Runtime 生态全景系列的术语约定页（A0），位于所有正文之前。
-
-ECMA-335 基础层的正文从 ECMA-A1（Pre-A：CLI Metadata 基础）开始。本页不包含技术分析，只定义术语边界。后续文章中遇到术语使用歧义时，可以回到这里对照。
+- 下一篇：[DLL 与 CLI Metadata]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})
+- 返回：[ECMA-335 主线索引]({{< relref "engine-toolchain/ecma335-series-index.md" >}})

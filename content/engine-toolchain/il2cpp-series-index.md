@@ -10,6 +10,10 @@ tags: [IL2CPP, Unity, AOT, Index]
 
 IL2CPP 是 Unity 当前的主力 runtime。这 8 篇从完整管线、转换器、runtime 内部、metadata 格式、泛型代码生成、GC 集成、ECMA-335 覆盖度到代码裁剪，覆盖 IL2CPP 的核心机制。
 
+## 前置知识
+
+建议先完成 [ECMA-335 前置主线]({{< relref "engine-toolchain/ecma335-series-index.md" >}})。读 D3 前区分 [类型信息准备与静态初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})，读 D5 前确认 [签名与泛型上下文]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})。
+
 ## 文章列表
 
 | # | 主题 | 一句话 |

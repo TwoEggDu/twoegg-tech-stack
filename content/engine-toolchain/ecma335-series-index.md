@@ -1,44 +1,64 @@
 ---
-title: "ECMA-335 基础层索引｜规范 + 最小桥接的 14 个核心主题"
+title: "ECMA-335 基础层｜读懂 IL2CPP 与 HybridCLR 的前置主线"
 slug: "ecma335-series-index"
 date: "2026-04-15"
+lastmod: "2026-10-23"
+description: "从 DLL、类型和签名，到 CIL、调用、程序集加载、静态初始化和反射，建立理解 IL2CPP 与 HybridCLR 的规范基础。"
 weight: 8
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335-index"
-tags: [ECMA-335, CLR, Index]
+series_role: "index"
+series_order: 0
+series_entry: true
+series_audience: ["Unity 客户端工程师", "准备深入 IL2CPP 与 HybridCLR 的读者"]
+series_level: "进阶"
+series_best_for: "能写 C#，希望读懂 AOT 泛型、补充元数据、解释执行与调用桥接"
+series_summary: "用 CLI 规范解释程序怎样被描述、解析、初始化和执行，再进入 IL2CPP 与 HybridCLR 的实现。"
+series_intro: "元数据里有一个方法，为什么运行时还是不能调用它？这条主线逐层拆开描述、解析和执行的边界。"
+series_reading_hint: "先读导读和九篇主线；原生互操作、并发与文件格式按需深入。"
+tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 ---
 
-这 14 篇文章定位为"规范 + 最小桥接"：以 ECMA-335 规范为骨架，必要时引入最小的 runtime 实现示例（IL2CPP / HybridCLR）来锚定抽象概念，避免读者只读规范而无法将概念映射到代码。
+热更 DLL 已经加载，类型也能通过反射找到，第一次调用却失败了。要解释这种现象，仅记住“缺 metadata”或“缺 AOT 泛型”还不够：需要分清文件中的描述、运行时的解析结果，以及实际可执行的方法实现。
 
-A0~A6 以规范层为主；A1/A2/A7 引入 IL2CPP/HybridCLR 视角的桥接段；A8~A13 补齐 verification、custom attributes、P/Invoke、security、threading 内存模型、PE 文件格式 6 个原本缺失的规范层主题。纯规范读者可跳过桥接段。
+本系列主要为 **IL2CPP 与 HybridCLR** 服务。我们选取读懂这两套系统所需的 CLI 语义，用最小 C#／IL 示例把它们连起来。读完应能回答：一个调用引用了谁、参数如何被描述、类型何时初始化，以及为什么找到成员仍不代表能够执行。
 
-> **本文明确不展开的内容：**
-> - 各 runtime 的具体实现细节（在 B/C/D/F 模块展开）
-> - 横向对比同一概念在 5 个 runtime 里的差异（在 G 模块展开）
+规范基线为 ECMA-335 第六版。具体运行时的版本与功能边界由后续实现篇说明；泛型共享、裁剪和桥接策略不能反写成 CLI 的规范要求。
 
 ## 推荐阅读顺序
 
-| # | 文章 | 一句话定位 |
-|---|------|-----------|
-| A0 | [术语约定：runtime、toolchain、metadata、execution engine 的边界]({{< relref "engine-toolchain/ecma335-terminology-conventions.md" >}}) | 统一全系列的核心术语边界，消除歧义 |
-| A1 | [CLI Metadata 基础：TypeDef、MethodDef、Token、Stream]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}}) | metadata 表和 token 的编码规则，所有 runtime 解析 DLL 的起点 |
-| A2 | [CIL 指令集与栈机模型：ldloc、add、call]({{< relref "engine-toolchain/hybridclr-pre-cil-instruction-set-stack-machine-model.md" >}}) | 规范定义的指令集和栈机语义，JIT/AOT/解释器的共同输入 |
-| A3 | [CLI Type System：值类型 vs 引用类型、泛型、接口、约束]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}}) | 类型系统的规范定义，理解各 runtime 类型加载差异的基准 |
-| A4 | [CLI Execution Model：方法调用约定、虚分派、异常处理模型]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md" >}}) | 调用约定和异常模型的规范层定义 |
-| A5 | [CLI Assembly Model：程序集身份、版本策略与加载模型]({{< relref "engine-toolchain/ecma335-assembly-model-identity-versioning-loading.md" >}}) | 程序集的身份标识与版本绑定规则 |
-| A6 | [CLI Memory Model：对象布局、GC 契约与 finalization 语义]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}}) | 对象布局和 GC 契约的规范约束，各 runtime GC 实现的共同约束 |
-| A7 | [IL2CPP 泛型共享规则：引用类型共享 object，值类型为什么不能]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}}) | 泛型共享的规范基础，对比各 runtime 的共享策略差异 |
-| A8 | [CLI Verification：IL 验证规则与 type safety 的运行时边界]({{< relref "engine-toolchain/ecma335-cli-verification-il-type-safety.md" >}}) | Verifiable / Unverifiable / Invalid 三层级，unsafe 与 calli 为什么走 unverifiable |
-| A9 | [Custom Attributes 与 Reflection 元数据编码]({{< relref "engine-toolchain/ecma335-custom-attributes-reflection-encoding.md" >}}) | CustomAttribute 表 + blob 二进制编码 + 反射读取路径 |
-| A10 | [P/Invoke 与 Native Interop：marshaling 的规范层定义]({{< relref "engine-toolchain/ecma335-pinvoke-native-interop-marshaling-spec.md" >}}) | ImplMap 表 + MarshalingDescriptor + Calling Convention 三层规范 |
-| A11 | [CLI Security：Strong Name、CAS 与现代演进]({{< relref "engine-toolchain/ecma335-cli-security-strong-name-cas.md" >}}) | Strong Name 密码学标识、CAS 规范与废弃、现代 .NET 安全替代 |
-| A12 | [Threading 内存模型：volatile、原子操作与内存屏障]({{< relref "engine-toolchain/ecma335-threading-memory-model-volatile-barriers.md" >}}) | CLI 内存模型核心承诺、3 层 barrier、与 C++/Java 内存模型对比 |
-| A13 | [CLI File Format：PE 头、CLI 头与 metadata 物理布局]({{< relref "engine-toolchain/ecma335-cli-file-format-pe-cli-header.md" >}}) | PE → CLI Header → Metadata Root → Streams → Tables → Method Body 五层嵌套（基础层完结篇） |
+导读：[术语约定：runtime、toolchain、metadata 与 execution engine]({{< relref "engine-toolchain/ecma335-terminology-conventions.md" >}})。
 
-## 读完后可以进入
+| 顺序 | 文章 | 读完要能回答 |
+|---|---|---|
+| 1 | [DLL 与 CLI Metadata：文件入口、表、堆、token 和方法体]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}}) | DLL 里有哪些信息，如何定位一段 IL？ |
+| 2 | [类型系统：值、引用、泛型与接口]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}}) | 类型身份、存储语义与可执行代码为什么要分开？ |
+| 3 | [签名与引用解析：一个泛型调用如何找到目标方法]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}}) | token、签名和泛型上下文怎样组成完整调用目标？ |
+| 4 | [CIL 与栈机模型：指令语义和最小验证规则]({{< relref "engine-toolchain/hybridclr-pre-cil-instruction-set-stack-machine-model.md" >}}) | 方法体怎样表达计算，哪些 IL 约束必须成立？ |
+| 5 | [方法调用与异常处理：call、callvirt、constrained. 与 EH]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md" >}}) | 参数、分派、装箱和异常展开怎样连接？ |
+| 6 | [程序集身份、引用与加载边界]({{< relref "engine-toolchain/ecma335-assembly-model-identity-versioning-loading.md" >}}) | 依赖解析、程序集加载和补充元数据分别解决什么？ |
+| 7 | [类型加载与初始化：.cctor、beforefieldinit 与泛型静态字段]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}}) | 找到了类型，是否已经执行它的静态初始化？ |
+| 8 | [对象布局、GC 契约与终结语义]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}}) | AOT 与解释执行怎样共同维护对象生命周期？ |
+| 9 | [反射与特性：元数据可见到方法可调用]({{< relref "engine-toolchain/ecma335-custom-attributes-reflection-encoding.md" >}}) | 裁剪、特性构造与执行能力如何区分？ |
 
-- [CoreCLR 实现分析索引]({{< relref "engine-toolchain/coreclr-series-index.md" >}}) — .NET 主线 runtime，JIT 路线的标杆实现
-- [Mono 实现分析索引]({{< relref "engine-toolchain/mono-series-index.md" >}}) — Unity 第一代 runtime，理解 IL2CPP 转型的必经坐标
-- [IL2CPP 实现分析]({{< relref "engine-toolchain/il2cpp-architecture-csharp-to-cpp-to-native-pipeline.md" >}}) — Unity 当前 AOT runtime，从 D1 架构总览开始
-- [LeanCLR 调研报告]({{< relref "engine-toolchain/leanclr-survey-architecture-source-map.md" >}}) — 轻量级独立 CLR，从 F1 调研报告开始
-- [横切对比 G1~G9]({{< relref "engine-toolchain/runtime-cross-series-index.md" >}}) — 同一概念在 5 个 runtime 中的不同实现决策
+原 A0～A13 标号仅作为旧文对应关系保留，不再代表必读顺序。旧文章地址继续有效。
+
+## 进入 IL2CPP 与 HybridCLR
+
+1. 先读 [IL2CPP 实现分析]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，将 DLL 输入、构建产物和 runtime 职责对应起来。
+2. 遇到泛型问题，接着读 [泛型共享桥接篇（原 A7／Bridge-D）]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}}) 和 [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})。共享规则属于实现层，要结合版本理解。
+3. 再进入 [HybridCLR 系列]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})。ABI、解释器 IR、GC 接入、裁剪、async 和工程排障继续在该系列展开。
+
+## 带着问题按需查阅
+
+| 场景 | 入口 |
+|---|---|
+| SDK、原生插件、托管与 native 互调 | [P/Invoke 与 Marshaling（原 A10）]({{< relref "engine-toolchain/ecma335-pinvoke-native-interop-marshaling-spec.md" >}}) → [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}}) |
+| 多线程可见性、volatile 和屏障 | [线程内存模型（原 A12）]({{< relref "engine-toolchain/ecma335-threading-memory-model-volatile-barriers.md" >}}) |
+| 分析 DLL、损坏文件或 coded index | [PE／CLI 文件格式附录（原 A13）]({{< relref "engine-toolchain/ecma335-cli-file-format-pe-cli-header.md" >}})；基础定位路径已并入第 1 篇 |
+| IL 重写、unsafe 或验证工具报错 | [IL 验证附录（原 A8）]({{< relref "engine-toolchain/ecma335-cli-verification-il-type-safety.md" >}})；最小规则已并入第 4 篇 |
+| 旧 .NET 安全模型、strong name 与 CAS | [历史背景（原 A11）]({{< relref "engine-toolchain/ecma335-cli-security-strong-name-cas.md" >}})，不作为热更新前置 |
+
+如果目标是 CoreCLR、Mono 或 LeanCLR，也可以复用这些规范知识，再从 [.NET Runtime 生态总图]({{< relref "engine-toolchain/dotnet-runtime-ecosystem-series-index.md" >}}) 进入相应实现。
+
+**这条主线的终点，是能区分程序的描述、解析、初始化与执行，再解释 IL2CPP 和 HybridCLR 为什么需要各自的机制。**

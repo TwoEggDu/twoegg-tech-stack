@@ -1,339 +1,149 @@
 ---
-title: "ECMA-335 基础｜CLI Type System：值类型 vs 引用类型、泛型、接口、约束"
+title: "ECMA-335 基础｜类型系统：值、引用、泛型与接口"
 slug: "ecma335-type-system-value-ref-generic-interface"
 date: "2026-04-14"
-description: "从 ECMA-335 规范出发，讲清 CLI 类型系统的核心模型：值类型与引用类型的本质区别、泛型的开放/封闭类型、接口与约束的运行时语义，以及这些概念在 IL2CPP、CoreCLR、LeanCLR 中的不同实现。"
+lastmod: "2026-10-23"
+description: "区分值复制、对象引用、托管指针和泛型上下文，为 IL2CPP 泛型共享与 HybridCLR 调用边界建立语义基础。"
 weight: 12
 featured: false
-tags:
-  - "ECMA-335"
-  - "CLR"
-  - "TypeSystem"
-  - "Generics"
-  - "Unity"
-  - "IL2CPP"
+tags: ["ECMA-335", "IL2CPP", "HybridCLR", "TypeSystem", "Generics"]
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 ---
-> 值类型和引用类型的区别不是"struct vs class"这么简单——它决定了内存布局、参数传递、泛型共享策略，以及最终每个 runtime 会为你的代码生成什么样的机器码。
 
-这是 .NET Runtime 生态全景系列的 ECMA-335 基础层第 3 篇。
+把一个 class 改成 struct，可能同时改变赋值结果、装箱行为、泛型代码生成和跨边界传参。原因不是某个 runtime 对 struct “支持较差”，而是程序要求的语义已经改变。
 
-Pre-A 解决的是 metadata 的物理结构——TypeDef、MethodDef、token 这些静态记录。Pre-B 解决的是 CIL 指令的执行模型——栈机怎么运转、一条 `add` 做了什么。这篇解决的是第三个前提：当 runtime 看到一个类型时，它怎么判断这个类型的内存布局、怎么决定赋值语义、怎么处理泛型参数。
+这篇先区分三件事：**变量存什么、类型参数绑定成什么、某个方法怎样获得可执行实现。** 前两件由 CLI 类型模型描述，第三件需要具体 runtime 作出选择。
 
-## 为什么类型系统是地基
-
-CLI 类型系统不是一个"语言特性"层面的概念。它是所有 runtime 实现决策的起点。
-
-CoreCLR 用 JIT，Mono 有解释器和 AOT 两条路，IL2CPP 做全量 AOT，LeanCLR 走双层解释器——这些看起来完全不同的执行策略，最终都要回答同一组问题：
-
-- 一个 `int` 字段在对象里占多大、放在哪
-- 一个 `string` 字段在对象里存的是值还是指针
-- `List<int>` 和 `List<string>` 能不能共享同一份代码
-- 调用接口方法时怎么查到具体实现
-- `where T : struct` 这个约束对代码生成有什么影响
-
-这些问题的答案不在"用了什么编译策略"里，而在类型系统的规范定义里。不同 runtime 只是对同一份规范做了不同的实现。
-
-所以类型系统是地基：GC 策略依赖它（要知道哪些字段是引用、哪些是值），JIT/AOT 代码生成依赖它（要知道字段偏移和对象大小），泛型处理依赖它（要知道类型参数是值类型还是引用类型），接口分派依赖它（要知道 vtable 怎么排列）。
-
-把类型系统讲清楚，后面每个 runtime 的实现分析才有共同的参照坐标。
-
-{{< figure src="/images/runtime-ecosystem/ecma335-type-hierarchy.svg" caption="CLI 类型分类体系：值类型继承 ValueType 但内存布局完全不同——无对象头、直接嵌入容器、赋值复制内容。" >}}
-
-## 值类型与引用类型的本质区别
-
-C# 层面的直觉是：struct 是值类型，class 是引用类型。这个直觉在语法上没错，但它掩盖了真正的区分标准。
-
-ECMA-335 Partition I 8.2.4 定义的区分不在语法层，而在语义层：
-
-**值类型**——类型的实例直接包含数据。变量里存的就是数据本身。赋值 = 复制全部内容。没有对象头，没有独立的堆分配（除非 boxing）。
-
-**引用类型**——类型的实例是一个堆上分配的对象。变量里存的是指向对象的指针（managed reference）。赋值 = 复制指针，两个变量指向同一个对象。对象在堆上有对象头（用于 GC、锁、类型标识）。
-
-用一个具体的例子来说明这个区别对内存布局的影响：
+## 值复制与引用复制
 
 ```csharp
-struct Vector3 { public float x, y, z; }   // 值类型
-class Transform { public Vector3 pos; public string name; }  // 引用类型
-```
-
-当 runtime 为 `Transform` 对象分配内存时：
-
-```
-Transform 对象的内存布局（引用类型）：
-┌──────────────────────┐
-│  对象头 (16 bytes)    │  ← SyncBlock index + MethodTable*
-├──────────────────────┤
-│  pos.x  (4 bytes)    │  ← float，值类型字段直接嵌入
-│  pos.y  (4 bytes)    │
-│  pos.z  (4 bytes)    │
-├──────────────────────┤
-│  name   (8 bytes)    │  ← string 是引用类型，这里存的是指针
-└──────────────────────┘
-```
-
-`Vector3` 是值类型，所以 `pos` 字段的三个 float 直接嵌入 `Transform` 对象的内存块里，总共 12 字节。`string` 是引用类型，所以 `name` 字段存的是一个 8 字节（64 位平台）的指针，指向堆上另一个位置的 string 对象。
-
-这个区别直接影响缓存友好度。值类型字段和宿主对象在同一块连续内存里，访问时不需要额外的指针解引用。引用类型字段意味着一次间接寻址，如果对象分布在堆的不同位置，就可能产生 cache miss。
-
-### 赋值语义
-
-值类型赋值是内容复制，引用类型赋值是指针复制：
-
-```csharp
-Vector3 a = new Vector3 { x = 1, y = 2, z = 3 };
-Vector3 b = a;    // 复制了 12 字节内容。修改 b 不影响 a。
-
-Transform t1 = new Transform();
-Transform t2 = t1; // 复制了 8 字节指针。t1 和 t2 指向同一个对象。
-```
-
-这不是"语法糖"或"编译器行为"，而是 CLI 规范定义的类型语义。任何符合 ECMA-335 的 runtime 都必须保证这个语义。
-
-### Boxing 和 Unboxing
-
-当值类型需要被当作引用类型使用时（比如赋值给 `object` 变量，或者作为接口调用的目标），runtime 执行 boxing：
-
-1. 在堆上分配一个对象，大小 = 对象头 + 值类型数据
-2. 把值类型的内容复制到这个堆对象里
-3. 返回指向这个对象的引用
-
-```csharp
-int x = 42;
-object boxed = x;   // box: 堆分配 + 复制 4 字节 + 设置对象头
-int y = (int)boxed;  // unbox: 从堆对象里复制 4 字节回来
-```
-
-Boxing 的成本是真实的：一次堆分配 + 一次内存复制 + 后续 GC 压力。在 Unity 的热路径上，隐式 boxing（比如值类型实现接口后通过接口调用）是常见的性能陷阱。
-
-## ECMA-335 的类型分类体系
-
-ECMA-335 Partition I 8.2.3 把 CLI 的所有类型分成三大类：
-
-### 引用类型（Reference Types）
-
-变量里存的是指向堆对象的 managed pointer。包括：
-
-- **class** — 用户定义的类
-- **interface** — 接口类型（可以作为变量类型，存的是实现了该接口的对象的引用）
-- **delegate** — 委托，本质是继承自 `System.MulticastDelegate` 的类
-- **array** — 数组，包括一维和多维
-- **string** — `System.String`，虽然内容不可变，但它是引用类型
-
-### 值类型（Value Types）
-
-变量里直接存数据内容。包括：
-
-- **primitive types** — `int`（System.Int32）、`float`（System.Single）、`bool`（System.Boolean）等
-- **user-defined struct** — 用户定义的 struct
-- **enum** — 枚举，底层是整数类型，继承自 `System.Enum`
-
-### 指针类型（Pointer Types）
-
-这一类在日常 C# 里不常用，但在 runtime 内部和 unsafe 代码里是核心概念：
-
-- **managed pointer**（`ref`）— 指向托管堆或栈上某个位置的引用，GC 能跟踪。CIL 中用 `&` 表示。C# 中的 `ref` 参数和 `ref` 局部变量就是 managed pointer。
-- **unmanaged pointer**（`*`）— 原始指针，GC 不跟踪。只能在 unsafe 上下文中使用。
-
-### 类型继承关系
-
-所有类型最终都继承自 `System.Object`，但值类型和引用类型的继承链路不同：
-
-```
-System.Object                        ← 所有类型的根
-├── System.ValueType                 ← 所有值类型的基类
-│   ├── System.Enum                  ← 所有枚举的基类
-│   │   └── MyEnum                   ← 用户定义的枚举
-│   ├── System.Int32                 ← int
-│   ├── System.Single                ← float
-│   └── MyStruct                     ← 用户定义的 struct
-├── System.String                    ← string
-├── System.Array                     ← 所有数组的基类
-│   └── int[]                        ← 具体数组类型
-├── System.Delegate
-│   └── System.MulticastDelegate     ← 所有委托的基类
-│       └── Action<T>                ← 具体委托类型
-└── MyClass                          ← 用户定义的 class
-```
-
-这里有一个容易混淆的点：`System.ValueType` 本身是一个 class（引用类型），但它的子类（int、float、用户 struct）是值类型。这不是矛盾——ECMA-335 规范明确规定：直接继承自 `System.ValueType`（且不是 `System.ValueType` 本身）的类型，按值类型语义处理。类型的"值/引用"属性不是由基类的属性传递的，而是由规范在继承链上的特殊规则定义的。
-
-## 泛型：开放类型 vs 封闭类型
-
-ECMA-335 Partition II 9 定义了泛型的基本模型。泛型的核心概念是类型参数化——一个类型定义可以带有类型参数，在使用时绑定为具体类型。
-
-### 开放类型与封闭类型
-
-```csharp
-// 泛型定义
-class List<T> { ... }
-class Dictionary<TKey, TValue> { ... }
-```
-
-当类型参数未绑定时，这个类型就是**开放类型（open type）**。当所有类型参数都绑定为具体类型时，就是**封闭类型（closed type）**。
-
-| 类型表达式 | 分类 | 说明 |
-|-----------|------|------|
-| `List<T>` | 开放类型 | T 未绑定 |
-| `List<int>` | 封闭类型 | T = int，完全绑定 |
-| `List<string>` | 封闭类型 | T = string，完全绑定 |
-| `Dictionary<string, T>` | 部分封闭 | TKey 绑定，TValue 未绑定 |
-| `Dictionary<string, int>` | 封闭类型 | 两个参数都绑定 |
-
-一个关键规则：**runtime 只能实例化封闭类型**。你不能创建 `List<T>` 的实例——必须告诉 runtime T 是什么，才能确定对象的内存布局、字段偏移、方法实现。
-
-```csharp
-// 合法：封闭类型，runtime 知道 T = int
-var list = new List<int>();
-
-// 非法：开放类型，runtime 不知道 T 的大小和布局
-// var list = new List<T>();  // 编译错误（除非在泛型方法/类型内部）
-```
-
-### Metadata 中的泛型表示
-
-泛型实例化信息存储在 metadata 的 TypeSpec 表（表编号 0x1B）和 MethodSpec 表（表编号 0x2B）中。
-
-当 C# 代码写下 `new List<int>()` 时，编译器在 metadata 中生成一条 TypeSpec 记录，编码了 `List<int>` 的签名——基础类型 `List<T>` 的 TypeDef token + 类型参数 `int`。
-
-runtime 在遇到这条 TypeSpec 时，需要做**泛型实例化**：基于泛型定义和具体的类型参数，构造出一个完整的类型描述——包括字段布局、方法列表、vtable。这个过程在不同 runtime 里的实现差异巨大：
-
-- **CoreCLR**：运行时按需 JIT，遇到新的泛型实例化就现场生成
-- **IL2CPP**：构建时预生成所有可能的实例化，运行时只查表
-- **LeanCLR**：运行时动态膨胀，用 `RtGenericClass` 记录实例化结果
-
-这个差异是后续很多 runtime 行为差异的根源。
-
-## 泛型约束
-
-泛型参数可以附加约束（constraints），限制调用者能传入什么类型。约束定义在 ECMA-335 Partition II 10.1.7。
-
-```csharp
-// struct 约束：T 必须是值类型
-void Process<T>(T value) where T : struct { ... }
-
-// class 约束：T 必须是引用类型
-void Process<T>(T value) where T : class { ... }
-
-// new() 约束：T 必须有无参构造函数
-void Create<T>() where T : new() { return new T(); }
-
-// 接口约束：T 必须实现 IComparable<T>
-void Sort<T>(T[] items) where T : IComparable<T> { ... }
-
-// 基类约束：T 必须继承自 Component
-void FindAll<T>() where T : Component { ... }
-```
-
-约束不只是编译器的静态检查工具。它们对 runtime 的代码生成有直接影响。
-
-### 约束影响代码生成
-
-当 runtime 知道 `T : struct` 时，它可以确定：
-
-- T 的实例不需要堆分配
-- T 的赋值是值复制
-- 对 T 的操作不需要 null check
-- 不需要为 T 做 boxing（除非通过接口调用）
-
-当 runtime 知道 `T : class` 时，它可以确定：
-
-- T 的变量存的是指针
-- 所有 T 的泛型实例化可以共享同一份代码（因为指针大小固定）
-
-这直接影响了 CoreCLR 的 JIT 和 IL2CPP 的 AOT 代码生成策略。CoreCLR 的 shared generic code 机制依赖于：所有引用类型的指针大小相同，所以 `List<string>` 和 `List<MyClass>` 可以共享一份 JIT 产物，只有值类型实例化才需要独立生成。IL2CPP 的泛型共享规则也遵循同样的逻辑。
-
-### 约束影响类型检查
-
-runtime 在泛型实例化时会验证约束。如果用户通过反射传入一个不满足约束的类型参数，runtime 会抛出 `TypeLoadException`。这个检查在 CoreCLR 中由 `MethodTable::SatisfiesClassConstraints` 完成，在 IL2CPP 中由 `il2cpp::vm::Class::Init` 中的约束验证逻辑完成。
-
-## 接口的运行时语义
-
-接口在 C# 层面的理解常常是"只有方法签名没有实现的类型"。但从 runtime 的角度，接口是一种**类型契约**——它定义了一组方法签名，实现了该接口的类型保证提供这些方法的具体实现。
-
-### 接口方法调用 = 间接分派
-
-普通虚方法调用的分派路径：
-
-```
-对象引用 → 对象头中的类型指针 → MethodTable/Il2CppClass → vtable[slot_index] → 目标方法
-```
-
-接口方法调用多一层查找：
-
-```
-对象引用 → 类型指针 → MethodTable → 接口分派表 → 找到接口对应的 vtable 区域 → vtable[slot_index] → 目标方法
-```
-
-为什么多一层？因为虚方法的 slot index 在继承链上是固定的——基类的第 3 个虚方法，子类重写后还是第 3 个 slot。但接口不在继承链上，同一个类型可能实现多个接口，每个接口的方法 slot 需要一个额外的映射来定位。
-
-```csharp
-interface IMovable { void Move(); }
-interface IDamageable { void TakeDamage(int amount); }
-
-class Enemy : IMovable, IDamageable
+public struct Point
 {
-    public void Move() { ... }
-    public void TakeDamage(int amount) { ... }
+    public int X;
+}
+
+public sealed class Unit
+{
+    public int Hp;
 }
 ```
 
-当通过 `IMovable` 接口调用 `Move()` 时，runtime 需要先在 `Enemy` 的接口分派表里找到 `IMovable` 接口对应的 vtable 偏移，然后再从那个偏移处取 `Move` 方法的函数指针。
-
-这个额外的查表开销在大多数场景下可以忽略（现代 CPU 的分支预测和缓存通常能覆盖），但在极高频率的调用场景下（比如 ECS 系统中每帧处理上万个实体），接口分派的间接性会成为可测量的成本。
-
-### 默认接口方法
-
-C# 8.0 / .NET Core 3.0 引入了默认接口方法（Default Interface Methods, DIM），允许在接口中提供方法的默认实现：
+复制 Point 变量，会复制它的值；复制 Unit 变量，会复制指向对象的引用：
 
 ```csharp
-interface ILogger
+Point p1 = new Point { X = 1 };
+Point p2 = p1;
+p2.X = 2;                  // p1.X 仍为 1
+
+Unit u1 = new Unit { Hp = 10 };
+Unit u2 = u1;
+u2.Hp = 20;                // u1.Hp 也为 20
+```
+
+值类型内部如果包含引用字段，复制的是那个引用，不会递归复制它指向的对象。因此 struct 的复制不等于对象图的深拷贝。
+
+“值类型在栈上，引用类型在堆上”不能替代这个模型。值类型可内嵌在堆对象或数组中，也可以装箱；局部变量如何放入寄存器或栈，是实现选择。真正稳定的是赋值、访问和对象身份的语义。
+
+## 对象引用与托管指针
+
+| 形状 | 描述什么 | 常见来源 |
+|---|---|---|
+| 对象引用 O | 指向一个托管对象，也可为 null | class 变量、数组引用 |
+| 托管指针 & | 指向某个存储位置 | ref 参数、局部变量地址、对象内部字段地址 |
+| 非托管指针 * | 原始地址及相关操作 | unsafe 和原生互操作 |
+
+`ref Unit` 指向的是“保存 Unit 引用的那个位置”，不等于普通 Unit 引用。被调用者可以替换该变量指向的对象。
+
+托管指针也不天然意味着地址被永久固定。跨 native 边界时，地址是否可移动、需要 pin 多久、何时失效，要按具体运行时与互操作契约处理。
+
+## 装箱改变存储形态
+
+```csharp
+Point p = new Point { X = 1 };
+object boxed = p;
+p.X = 3;
+Point copy = (Point)boxed;   // copy.X 为 1
+```
+
+本例把 Point 的值复制到装箱对象中。随后修改 p 不会修改那个副本。CIL 中 `box`、`unbox` 与 `unbox.any` 的职责不同：unbox 取得指向装箱值的托管指针，unbox.any 对普通值类型取出相应的值。
+
+因此“struct 没有对象头”只适用于未装箱的值存储，不能概括装箱后的形态。Nullable<T> 的装箱另有专门规则，不能用这一个 Point 例子推导所有细节。
+
+## 泛型：定义、开放类型与封闭类型
+
+`List<T>` 定义了一组可按类型参数构造的类型。`List<int>` 和 `List<string>` 是不同的封闭类型；`Dictionary<string, T>` 仍含未绑定参数，属于开放类型。
+
+“不能创建开放类型的对象”不等于“runtime 不能表示开放类型”。反射可以拿到泛型定义；在泛型代码中写 `new List<T>()` 也是合法的，因为真正执行时会带上调用者的类型实参。
+
+更需要分开的三个层次是：
+
+| 层次 | 例子 | 应确认的事实 |
+|---|---|---|
+| 定义 | List<T>、Box<T>.Echo<U> | 类型／方法参数及成员定义 |
+| 构造后的类型或方法身份 | List<int>、Box<int>.Echo<string> | 类型实参与方法实参、约束、布局 |
+| 可执行实现 | 某个具体调用使用的 native 代码或解释路径 | AOT 产物、共享策略或可解释的方法体是否可用 |
+
+不能写成“IL2CPP 运行时只能查表，所以任何新类型信息都不能构造”。也不能写成“只要反射能获得封闭类型，它的方法就一定可以调用”。HybridCLR 官方的 [AOT 泛型说明](https://www.hybridclr.cn/docs/basic/aotgeneric)专门区分了类型元数据与方法实现的可用性。
+
+## 泛型在 metadata 中如何表达
+
+GenericParam 记录类型或方法的参数；GenericParamConstraint 记录基类／接口约束；TypeSpec 和 MethodSpec 用签名表达相应的类型形状和方法实例化。
+
+例如，一个泛型类型中的泛型方法有两组上下文：
+
+```text
+Box<int>.Echo<string>
+    └ int：类型参数上下文
+                └ string：方法参数上下文
+```
+
+IL 中用 `!0` 与 `!!0` 区分这两组参数。它们怎样连接到 MemberRef 和调用目标，下一篇 [签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}}) 用一个完整例子说明。
+
+泛型代码共享是实现策略，不会抹掉封闭类型的身份。即使两种实例化共用方法代码，它们仍可能有各自的静态字段、反射身份和初始化状态，详见 [类型初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。
+
+## 约束提供保证，不替代存储和执行分析
+
+```csharp
+public static T Create<T>() where T : new() => new T();
+
+public static void Reset<T>(ref T value) where T : IResettable
+    => value.Reset();
+
+public interface IResettable
 {
-    void Log(string message);
-    void LogError(string message) => Log($"ERROR: {message}"); // 默认实现
+    void Reset();
 }
 ```
 
-从 ECMA-335 的角度，这意味着接口的 MethodDef 可以有 method body（RVA 非零）。runtime 在做接口分派时，如果实现类没有提供覆盖，就回退到接口自身的默认实现。
+约束限制合法实参，并让编译器和运行时知道允许哪些操作。但它不自动承诺以下事情：
 
-这个特性在 IL2CPP 中需要特别注意：IL2CPP 的接口分派表需要额外处理默认实现的回退逻辑。Unity 对 DIM 的支持受限于 IL2CPP 版本和 .NET 目标框架的配置。
+- `where T : struct` 不保证对象绝不分配在堆上，也不保证整个方法永不装箱。
+- `where T : class` 不直接规定必须使用哪一种 native 代码共享策略。
+- 通过反射构造泛型时，不能绕过约束；具体异常取决于 API 和失败阶段，不宜统一写成 TypeLoadException。
 
-## 这些概念在不同 runtime 里怎么实现
+Reset 的接口调用是否需要装箱，还要看接收者表示和 `constrained.` 等 IL 语义，见 [调用与异常处理]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md" >}})。
 
-同一份 ECMA-335 类型系统规范，不同 runtime 的实现决策差异很大。下面用一张表把核心概念的实现对齐：
+## 接口是契约，分派是执行机制
 
-| 概念 | CoreCLR | IL2CPP | LeanCLR |
-|------|---------|--------|---------|
-| **值类型字段嵌入** | MethodTable 记录字段偏移和实例大小，EEClass 持有详细布局 | `Il2CppClass` 的 `field_offsets` 数组记录每个字段的偏移 | `RtClass` 的 `instance_size` 记录实例大小 |
-| **引用类型对象头** | SyncBlock index + MethodTable* (16 bytes, 64-bit) | `Il2CppObject`: `klass*` + `monitor*` (16 bytes) | `RtObject`: `klass*` + `sync*` (16 bytes) |
-| **泛型实例化** | 运行时按需 JIT + shared generic code（引用类型共享，值类型特化） | 构建时生成 + supplementary metadata（引用类型共享 `__Il2CppFullySharedGenericType`，值类型独立生成） | 运行时类型膨胀，`RtGenericClass` 记录实例化参数 |
-| **接口分派** | Interface dispatch map + virtual stub dispatch (VSD) | vtable + `interface_offsets` 数组 | vtable + `interface_vtable_offsets` 映射表 |
-| **Boxing** | 堆分配 + 复制值 + 设置 MethodTable | 堆分配 + 复制值 + 设置 `klass` | 堆分配 + 复制值 + 设置 `klass` |
+当变量类型是 IResettable 时，它表达“目标支持 Reset”，没有直接指定某个最终方法入口。运行时必须依据实际类型确定实现。
 
-几个值得注意的差异：
+vtable、接口映射表、缓存或编译期去虚化，都是完成这项工作的方法。CLI 定义可观察的覆盖与调用语义，并不要求每个 runtime 使用同一张物理表、同一个 slot 编号或固定数量的间接查找。
 
-**对象头大小。** 三个 runtime 的对象头都是 16 字节（64 位平台），但内部字段的用途不同。CoreCLR 的 SyncBlock index 用于锁和哈希码缓存，是一个指向全局 SyncBlock 表的索引。IL2CPP 的 `monitor` 字段更直接地用于 `Monitor.Enter/Exit`。LeanCLR 的 `sync` 字段是类似的设计，但目前实现较为简化。
+这也是为什么不能直接从“接口调用”推导固定性能倍数。接口调用的语义、编译后是否还能去虚化、跨 AOT／解释边界的方式，需要分层确认。
 
-**泛型实例化的时机。** 这是三个 runtime 之间最大的架构差异之一。CoreCLR 可以在运行时现场 JIT 一个从未见过的泛型实例化——这意味着它不需要提前枚举所有可能的类型参数组合。IL2CPP 必须在构建时确定所有实例化，漏掉的就无法在运行时补充（这正是 HybridCLR 要解决的问题之一）。LeanCLR 作为解释器，在运行时动态膨胀类型信息，不需要预生成 native code，但需要在内存中构建完整的类型描述。
+## 读到 IL2CPP 与 HybridCLR 时怎么使用这些知识
 
-**接口分派优化。** CoreCLR 使用了 Virtual Stub Dispatch (VSD) 技术——第一次接口调用走慢路径做完整查找，然后把结果缓存在一个 dispatch stub 里，后续调用直接命中缓存。IL2CPP 和 LeanCLR 则使用更直接的 vtable + offset 方案，没有运行时缓存优化，但也没有 stub 管理的开销。
+遇到 `List<HotStruct>` 问题，先确认 HotStruct 是值类型、具体调用的成员及参数组合，再检查方法实现路径；遇到 struct 修改未生效，先排除复制或装箱；遇到接口调用问题，先确定实际接收者和分派语义。
 
-## 收束
+共享规则、补充元数据、FGS 等机制放在 [泛型实现桥接]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}}) 继续讨论。它们需要满足类型语义，但并非类型规范本身。
 
-CLI 类型系统的核心模型可以压到四条规则：
+规范依据：[ECMA-335](https://ecma-international.org/publications-and-standards/standards/ecma-335/) Partition I 的类型系统、Partition II 的泛型，以及 Partition III 的装箱与调用指令。
 
-1. **值类型 vs 引用类型的区别在语义层**：值类型的内容直接嵌入容器，赋值 = 复制内容，无对象头；引用类型在堆上分配对象，变量存指针，赋值 = 复制指针。这个区别决定了内存布局、参数传递、GC 扫描策略。
-
-2. **泛型有开放和封闭之分**：runtime 只能实例化封闭类型。泛型实例化信息存在 TypeSpec / MethodSpec 表中。不同 runtime 在"何时实例化"这个问题上做了根本不同的决策——JIT 可以运行时按需生成，AOT 必须构建时预备，解释器走运行时膨胀。
-
-3. **约束不只是编译期检查**：`where T : struct` 让 runtime 知道可以避免 boxing 和 null check，`where T : class` 让 runtime 知道可以共享泛型代码。约束直接影响 JIT/AOT 的代码生成策略。
-
-4. **接口分派比虚方法多一层间接查找**：虚方法通过 vtable slot 直接分派，接口方法需要先查接口分派表找到对应的 vtable 区域，再从那里取方法指针。
-
-这四条规则是后面所有 runtime 实现分析的公共坐标。CoreCLR 的 MethodTable 怎么编码类型信息、IL2CPP 的 `Il2CppClass` 怎么记录字段偏移、LeanCLR 的 `RtGenericClass` 怎么做运行时膨胀——都是对这同一套规范的不同实现。
+**先确定值、引用和泛型身份，再判断存储、分派与执行路径，才能把 AOT 问题定位到正确的一层。**
 
 ## 系列位置
 
-- 上一篇：Pre-B CIL 指令集与栈机模型
-- 下一篇：ECMA-A4 CLI Execution Model：方法调用约定、虚分派、异常处理模型
+- 上一篇：[DLL 与 CLI Metadata]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})
+- 下一篇：[签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})
+- 返回：[ECMA-335 主线索引]({{< relref "engine-toolchain/ecma335-series-index.md" >}})

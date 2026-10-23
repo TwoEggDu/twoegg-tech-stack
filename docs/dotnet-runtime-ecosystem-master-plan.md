@@ -44,27 +44,17 @@
 | **线 3：H5/小游戏线** | WebAssembly/小游戏开发者 | ECMA-335 → LeanCLR 接入与工程化 |
 | **线 4：架构对比线** | 做技术选型的人 | 横切：同一个概念在 5 个 runtime 里的不同实现 |
 
-所有线共享同一个 ECMA-335 基础层。
+其他阅读线可复用 ECMA-335 的规范内容；其必读目录优先按 Unity 的 IL2CPP / HybridCLR 需求组织。
 
 ---
 
 ## 二、模块划分与预计规模
 
-### 模块 A：ECMA-335 基础层（公共地基）
+### 模块 A：ECMA-335 前置层
 
-**定位：** 所有阅读线的公共入口。不讲任何 runtime 实现，只讲规范本身。
+**2026-10-23 调整：** 优先服务 IL2CPP 与 HybridCLR，保留其他 runtime 可复用的规范基础。篇级目录与状态统一迁至 [ecma335-series-plan.md](./ecma335-series-plan.md)，本总图不再维护另一份 A 编号清单。
 
-| 编号 | 主题 | 状态 | 说明 |
-|------|------|------|------|
-| ECMA-A1 | CLI Metadata 基础：TypeDef、MethodDef、Token、Stream | ✅ 已有（Pre-A） | 对应 ECMA-335 Partition II §22-24 |
-| ECMA-A2 | CIL 指令集与栈机模型：ldloc、add、call | ✅ 已有（Pre-B） | 对应 ECMA-335 Partition III |
-| ECMA-A3 | CLI Type System：值类型 vs 引用类型、泛型、接口、约束 | ✅ 已写 | 对应 ECMA-335 Partition I §8 |
-| ECMA-A4 | CLI Execution Model：方法调用约定、虚分派、异常处理模型 | ✅ 已写 | 对应 ECMA-335 Partition I §12 |
-| ECMA-A5 | CLI Assembly Model：程序集身份、strong naming、版本策略 | ✅ 已写 | 对应 ECMA-335 Partition II §6 |
-| ECMA-A6 | CLI Memory Model：对象布局、GC 契约、finalization 语义 | ✅ 已写 | 对应 ECMA-335 Partition I §12.6 |
-| ECMA-A7 | CLI 泛型实例化模型：开放类型 vs 封闭类型、共享与特化 | ✅ 部分已有（Bridge-D） | 需要从 IL2CPP 视角扩展为规范视角 |
-
-**小计：7 篇（6 篇已有，1 篇待写）**
+内容已调整为导读 1 篇、主线 9 篇、实现桥接 1 篇、按需及历史材料 5 篇。新增签名解析、类型初始化；验证与 PE 的入门内容分别并入 CIL 和 metadata。旧地址保留，A11 退出主线，A7 成为实现桥接。
 
 ---
 
@@ -183,24 +173,26 @@
 
 | 模块 | 篇数 | 状态 |
 |------|------|------|
-| A. ECMA-335 基础层 | 7 | 3 已有 + 4 待写 |
+| A. ECMA-335 前置层 | 导读 1 + 主线 9 + 桥接／按需 6 | 本地修订已写，详见 canonical 系列计划 |
 | B. CoreCLR | 10 | 待写 |
 | C. Mono | 6 | 待写 |
 | D. IL2CPP | 8 | 待写（部分可复用已有前置） |
 | E. HybridCLR | 37 | ✅ 已完成 |
 | F. LeanCLR | 10 | 待写 |
 | G. 横切对比 | 8 | 待写 |
-| **总计** | **~86** | **37 已有 + ~49 待写** |
+| **总计** | 各模块有跨系列复用，不以旧估算累加 | A 模块已更新；其余行保留原规划状态，不代表本次重新盘点 |
 
 ---
 
-## 四、分阶段推进计划
+## 四、原分阶段推进计划（历史参考）
 
-### Phase 1：地基 + LeanCLR（当前优先）
+以下阶段保留原立项顺序与估算。ECMA-335 的当前目录和完成状态以专属系列计划为准，不使用旧阶段小计判断当前进度。
+
+### Phase 1：地基 + LeanCLR（原优先级）
 
 | 优先级 | 内容 | 篇数 | 理由 |
 |--------|------|------|------|
-| P0 | ECMA-335 基础层补齐（ECMA-A3~A6） | 4 | 所有模块的公共地基 |
+| P0 | ECMA-335 前置层重组 | 见系列计划 | 2026-10-23 已写入新主线及两篇新文，验证状态另记 |
 | P0 | LeanCLR 核心分析（LEAN-F1~F6） | 6 | 源码可读、已 clone 编译跑通 |
 | P1 | 首批横切对比（CROSS-G1~G3） | 3 | 把已有知识串起来 |
 | **Phase 1 小计** | | **13 篇** | |
@@ -240,7 +232,7 @@
 ```
 .NET Runtime 生态全景系列
 │
-├─ ECMA-335 基础层（7 篇）— 所有线的公共入口
+├─ ECMA-335 前置层 — 主线优先服务 IL2CPP / HybridCLR，详见专属计划
 │
 ├─ 阅读线 1：Unity 工程师线
 │  ├─ IL2CPP 实现分析（8 篇）
