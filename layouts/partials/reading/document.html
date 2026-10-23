@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default `zh-cn` }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ $title := site.Title }}{{ if not .IsHome }}{{ $title = printf "%s | %s" .Title site.Title }}{{ end }}
+  {{ $description := .Description | default site.Params.description }}
+  <title>{{ $title }}</title>
+  <meta name="description" content="{{ $description }}">
+  <link rel="canonical" href="{{ .Permalink }}">
+  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:description" content="{{ $description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:site_name" content="{{ site.Title }}">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ $title }}">
+  <meta name="twitter:description" content="{{ $description }}">
+  {{ range .AlternativeOutputFormats }}<link rel="alternate" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }} — {{ .Name }}">{{ end }}
+  <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
+  {{ if .IsHome }}<link rel="stylesheet" href="{{ `css/delivery-home.css` | relURL }}">{{ end }}
+  <script src="{{ `js/search.js` | relURL }}" defer></script>
+</head>
+{{ $kind := .Params.reading_kind | default "home" }}
+<body class="reading-site page-{{ $kind }}">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="masthead wrap">
+    <a class="brand" href="{{ site.Home.RelPermalink }}" aria-label="TwoEgg Tech Stack 首页">TwoEgg <span>Tech Stack</span></a>
+    <nav class="primary-nav" aria-label="站点导航">
+      {{ range site.Data.reading_paths.topics }}
+        {{ $target := site.GetPage .page }}
+        <a href="{{ $target.RelPermalink }}{{ with .anchor }}#{{ . }}{{ end }}"{{ if eq $.RelPermalink $target.RelPermalink }} aria-current="page"{{ else if and (eq $kind "series") (eq .page "reading/performance.md") }} aria-current="location"{{ end }}>{{ .title }}</a>
+      {{ end }}
+    </nav>
+    {{ partial "site-search.html" . }}
+  </header>
+  <main id="main" class="wrap" tabindex="-1">
+    {{ if .IsHome }}{{ partial "reading/home.html" . }}{{ else }}{{ partial "reading/guide.html" . }}{{ end }}
+  </main>
+  <footer class="footer wrap">
+    <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>
+    <nav aria-label="更多阅读入口">
+      {{ partial "reading/link.html" (dict "page" "technical-topics.md" "label" "完整技术目录") }}
+      {{ partial "reading/link.html" (dict "page" "game-development.md" "label" "研发地图") }}
+      {{ partial "reading/link.html" (dict "page" "about.md" "label" "关于作者") }}
+    </nav>
+  </footer>
+</body>
+</html>

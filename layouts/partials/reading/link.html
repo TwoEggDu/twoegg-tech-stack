@@ -1,0 +1,7 @@
+{{- $entry := . -}}
+{{- with site.GetPage .page -}}
+  {{- if .Draft }}{{ errorf "Reading references a draft: %s" $entry.page }}{{ end -}}
+  <a href="{{ .RelPermalink }}{{ with $entry.anchor }}#{{ . }}{{ end }}"{{ with $entry.class }} class="{{ . }}"{{ end }}>{{ $entry.label | default .Title }}{{ with $entry.arrow }} <span aria-hidden="true">→</span>{{ end }}</a>
+{{- else -}}
+  {{- errorf "Reading reference not found: %s" .page -}}
+{{- end -}}
