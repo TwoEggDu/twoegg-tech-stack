@@ -1,7 +1,7 @@
 ---
 date: "2026-10-21"
 title: "YooAsset 资源管理与交付"
-description: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线。"
+description: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
 slug: "unity-yooasset-series-index"
 weight: 52
 featured: false
@@ -16,9 +16,9 @@ series_entry: true
 series_audience: ["Unity 客户端", "资源与构建工具链"]
 series_level: "进阶"
 series_best_for: "已经使用 YooAsset，希望理解模块职责、追踪资源链路或定位加载与更新问题。"
-series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线。"
-series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线。"
-series_reading_hint: "先读整体架构和文件系统，再沿加载、清单、下载、生命周期与构建深入；按问题回查时注意版本范围。"
+series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
+series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供单次加载流程导读。"
+series_reading_hint: "单次加载先读流程导读；系统阅读再沿架构、文件系统、加载、清单、下载、生命周期与构建深入。"
 yooasset_version: "3.0.6"
 lastmod: "2026-10-22"
 ---
@@ -36,6 +36,8 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 - [AssetBundle 文件内部结构：Header、Block、Directory 与 SerializedFile]({{< relref "engine-toolchain/unity-assetbundle-file-internal-structure-header-block-directory-serializedfile.md" >}})
 - [Unity 的序列化资产怎样还原成运行时对象]({{< relref "engine-toolchain/unity-serialized-assets-how-they-restore-to-runtime-objects.md" >}})
 - [AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate 与 Unload]({{< relref "engine-toolchain/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md" >}})
+
+第一次跟踪 `package.LoadAssetAsync` 时，可以先读[LoadAssetAsync 单次加载流程导读]({{< relref "engine-toolchain/unity-yooasset-loadassetasync-single-request-walkthrough.md" >}})，再进入下面的源码专题。
 
 ## 推荐阅读顺序
 
@@ -56,6 +58,7 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 
 | 现象或问题 | 阅读入口 |
 |---|---|
+| 一次 LoadAssetAsync 请求从发起到完成经过哪些步骤？ | [LoadAssetAsync 单次加载流程导读]({{< relref "engine-toolchain/unity-yooasset-loadassetasync-single-request-walkthrough.md" >}}) |
 | 初始化成功，为什么还不能加载资源？ | [整体架构与初始化]({{< relref "engine-toolchain/unity-yooasset-architecture-package-initialization.md" >}}) |
 | 同一份资源在编辑器、安装包和 Web 中由哪里提供？ | [文件系统与运行模式]({{< relref "engine-toolchain/unity-yooasset-filesystems-playmodes.md" >}}) |
 | 两个请求是否重复加载，Bundle 就绪后还要等什么？ | [运行时加载与请求复用]({{< relref "engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) |
