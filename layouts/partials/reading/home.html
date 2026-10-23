@@ -1,11 +1,10 @@
 {{ $data := site.Data.reading_paths }}
 <section class="atlas-cover" aria-labelledby="atlas-title">
-  <div class="atlas-intro"><p class="eyebrow">TwoEgg Tech Stack · 游戏开发笔记</p><h1 id="atlas-title">我做游戏客户端，<br>也关心版本怎样交到<br>玩家手里。</h1><p>这里记录开发中遇到的问题，以及沿着这些问题，对框架、引擎和性能的进一步研究。</p><p>客户端是我写得最多的方向。涉及服务端时，也会从两端怎样配合讲起。</p><div class="actions"><a class="text-action" href="#practice">看看实践记录 ↓</a><a class="text-action" href="#topics">按主题查找 ↓</a></div></div>
-  <aside class="atlas-first" aria-labelledby="first-read-title"><p class="eyebrow">第一次来，我建议从这篇开始</p><h2 id="first-read-title">{{ partial "reading/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "arrow" true) }}</h2><p>资源在本地是完整的，到了包里却缺了；构建成功，设备上还是跑不起来。这篇总览串起我近几年处理的生产管线问题。</p><p>先读它，可以了解这些文章从哪里来，再挑一个与你手头工作有关的问题继续看。</p></aside>
+  <div class="atlas-intro"><p class="eyebrow">TwoEgg Tech Stack</p><h1 id="atlas-title">游戏开发笔记</h1><p>围绕游戏版本的持续交付，从内容制作、构建发布到客户端运行，深入玩法、框架、引擎和性能。</p><div class="actions">{{ partial "reading/link.html" (dict "page" "reading/delivery.md" "label" "从工程与交付开始" "class" "text-action" "arrow" true) }}</div></div>
+  <aside class="atlas-first" aria-labelledby="first-read-title"><p class="eyebrow">先读一篇</p><h2 id="first-read-title">{{ partial "reading/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "arrow" true) }}</h2><p>本地资源完整，为什么包里仍然缺内容？从资源、配置与构建中的实际问题，理解一个版本怎样交接完成。</p></aside>
 </section>
-{{ partial "reading/variant-practice.html" . }}
 <section class="variant-section delivery-section" aria-labelledby="delivery-title">
-  <div class="delivery-context"><p class="eyebrow">把这些问题放回一个版本里</p><h2 id="delivery-title">内容做好以后，<br>还有哪些事要接着做？</h2><p>资源要进包，功能要联调，设备上要跑得稳，更新出了问题还要能恢复。我用这张地图整理相关的阅读入口。</p><p>下面的协作文章再具体展开：规则怎样交给程序，表现怎样交给美术，以及 QA 根据什么验收。</p></div>
+  <div class="delivery-context"><p class="eyebrow">按问题进入</p><h2 id="delivery-title">内容做好以后，<br>还有哪些事要接着做？</h2><p>资源要进包，功能要联调，设备上要跑得稳，更新出了问题还要能恢复。</p>{{ partial "reading/link.html" (dict "page" "reading/delivery.md" "anchor" "collaboration" "label" "查看多工种协作" "class" "read-link" "arrow" true) }}</div>
   <div class="delivery-map" aria-label="游戏交付的四个目标">
     <div class="map-center"><p>共同交付</p><strong>玩家可体验的<br>游戏版本</strong><span>内容 · 功能 · 体验 · 迭代</span></div>
     {{ range $i, $entry := $data.delivery_route }}
@@ -19,6 +18,3 @@
     {{ end }}
   </div>
 </section>
-{{ partial "reading/variant-collaboration.html" . }}
-{{ partial "reading/variant-topics.html" . }}
-<section class="variant-more"><div><h2>其他阅读入口</h2></div><nav aria-label="深入与发布阅读">{{ partial "reading/link.html" (dict "page" "game-development.md" "label" "完整研发地图" "arrow" true) }}{{ range $data.release_reading }}{{ partial "reading/link.html" . }}{{ end }}</nav></section>

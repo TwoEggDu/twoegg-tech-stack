@@ -50,43 +50,98 @@ handoffs:
 topics:
   - title: "工程与交付"
     description: "把制作、构建、测试与发布连接成可追溯、可验收的版本。"
-    page: "technical-topics.md"
-    anchor: "delivery"
+    page: "reading/delivery.md"
+    key: "delivery"
+    directory: "technical-topics.md"
+    directory_anchor: "delivery"
+    start:
+      page: "engineering-journey/production-resource-completeness.md"
+      value: "从一次资源漏提交的处理过程，理解检查、工具和交接怎样进入日常生产。"
+    shortcuts:
+      - { page: "engineering-journey/production-build-runtime.md" }
+      - { page: "engineering-journey/production-release-readiness.md" }
+      - { page: "engine-toolchain/unity-assetbundle-governance-version-hash-cdn-cache-rollback.md" }
+      - { page: "delivery-engineering/delivery-version-management-04-environments-and-flags.md" }
     entries:
       - { label: "生产管线实践", page: "engineering-journey/production-pipeline-overview.md" }
       - { label: "CI/CD 流水线", page: "delivery-engineering/delivery-cicd-pipeline-series-index.md" }
+      - { label: "资源管线", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }
   - title: "战斗与玩法"
     description: "配置与资源进入运行时后，规则、状态和表现怎样形成玩法。"
-    page: "system-design/skill-system-series-index.md"
+    page: "reading/gameplay.md"
+    key: "gameplay"
+    directory: "system-design/skill-system-series-index.md"
+    start:
+      page: "system-design/skill-system-00-overview.md"
+      value: "先沿输入、请求、校验、效果与表现看清执行链，再选择需要深入的机制。"
+    shortcuts:
+      - { page: "system-design/skill-system-27-designer-data-pipeline.md" }
+      - { page: "system-design/skill-system-13-testing-and-regression.md" }
     entries:
       - { label: "技能系统", page: "system-design/skill-system-series-index.md" }
       - { label: "游戏编程模式", page: "system-design/game-programming-patterns-series-index.md" }
   - title: "客户端框架"
     description: "组织功能、状态、异步与生命周期，支撑内容持续接入。"
-    page: "technical-topics.md"
-    anchor: "runtime"
+    page: "reading/client.md"
+    key: "client"
+    directory: "technical-topics.md"
+    directory_anchor: "runtime"
+    start:
+      page: "engine-toolchain/unity-async-runtime-extra-02-unity-execution-model.md"
+      value: "先分清代码在哪个线程、哪个循环阶段执行，再讨论异步调度和生命周期。"
+    shortcuts:
+      - { page: "delivery-engineering/delivery-resource-pipeline-05-loading-lifecycle.md" }
+      - { page: "engine-toolchain/unity-async-runtime-00-task-unity-mismatch.md" }
     entries:
       - { label: "Task / UniTask 与异步运行时", page: "engine-toolchain/unity-async-runtime-series-index.md" }
-      - { label: "资源持有与生命周期", page: "delivery-engineering/delivery-resource-pipeline-05-loading-lifecycle.md" }
+      - { label: "资源加载与生命周期", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }
   - title: "引擎研发"
     description: "沿资产、对象与系统分层，理解客户端能力的实现机制。"
-    page: "system-design/game-engine-architecture-series-index.md"
+    page: "reading/engine.md"
+    key: "engine"
+    directory: "system-design/game-engine-architecture-series-index.md"
+    start:
+      page: "system-design/game-engine-architecture-00-overview.md"
+      value: "先区分内容生产、运行时基础与专业子系统，再沿资产和对象机制深入。"
+    shortcuts:
+      - { page: "engine-toolchain/unity-assets-what-exists-and-how-they-become-visible-in-game.md" }
+      - { page: "engine-toolchain/unity-serialized-assets-how-they-restore-to-runtime-objects.md" }
     entries:
       - { label: "游戏引擎架构", page: "system-design/game-engine-architecture-series-index.md" }
       - { label: "资产系统与序列化", page: "engine-toolchain/unity-asset-system-and-serialization-series-index.md" }
   - title: "服务端框架"
     description: "从客户端的通信与协作需求，深入会话、Actor、服务端分工与框架机制。"
-    page: "et-framework/_index.md"
+    page: "reading/server.md"
+    key: "server"
+    directory: "et-framework/_index.md"
+    start:
+      page: "et-framework-prerequisites/et-pre-05-session-request-response-timeout-and-heartbeat.md"
+      value: "从客户端熟悉的请求与响应出发，理解会话、超时和心跳，再进入服务端框架。"
+    shortcuts:
+      - { page: "et-framework-prerequisites/et-pre-06-actor-mailbox-serial-processing-and-location-transparency.md" }
+      - { page: "delivery-engineering/delivery-server-versioning-01-coordination.md" }
     entries:
       - { label: "ET 前置桥接", page: "et-framework-prerequisites/_index.md" }
       - { label: "ET 框架源码解析", page: "et-framework/_index.md" }
   - title: "性能优化"
     description: "从加载与运行中的体验问题，深入帧时间、内存和设备约束。"
     page: "reading/performance.md"
+    key: "performance"
+    directory: "performance/_index.md"
+    start:
+      page: "performance/game-performance-judgment-framework.md"
+      value: "先区分持续慢、偶发抖与首次卡顿，再决定要测量什么。"
+    shortcuts:
+      - { page: "performance/game-performance-diagnosis-method.md" }
+      - { page: "performance/rendering-tier-design-06-validation-loop.md" }
     featured: true
     entries:
-      - { label: "启动与加载", page: "reading/startup-loading.md" }
-      - { label: "游戏性能判断", page: "performance/game-performance-judgment-series-index.md" }
+      - { label: "启动与加载", page: "reading/startup-loading.md", value: "沿资源取得、对象准备、首次使用与释放，拆解等待和卡顿。" }
+      - { label: "移动端硬件与优化", page: "performance/mobile-hardware-and-optimization-series-index.md", value: "按 CPU、GPU 与帧时间的问题，选择对应的硬件机制和分析工具。" }
+      - { label: "内存专题索引", page: "performance/memory-topic-index.md", value: "跨系列查阅工作集、分配、资源生命周期与系统内存约束。" }
+      - { label: "机型分档", page: "performance/device-tiering-series-index.md", value: "从设备能力和体验底线，决定不同机型应采用哪些设置。" }
+      - { label: "性能预算", page: "performance/game-budget-management-series-index.md", value: "将性能约束落实到资源、场景和具体预算。" }
+      - { label: "性能与稳定性交付", page: "delivery-engineering/delivery-performance-stability-series-index.md", value: "把设备复测、基线与性能回归接到发布判断。" }
 practice:
   - page: "engineering-journey/production-resource-completeness.md"
     label: "资源交接 · 项目实践"

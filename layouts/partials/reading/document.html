@@ -30,13 +30,14 @@
     <nav class="primary-nav" aria-label="站点导航">
       {{ range site.Data.reading_paths.topics }}
         {{ $target := site.GetPage .page }}
+        {{ if not $target }}{{ errorf "Reading navigation target not found: %s" .page }}{{ end }}
         <a href="{{ $target.RelPermalink }}{{ with .anchor }}#{{ . }}{{ end }}"{{ if eq $.RelPermalink $target.RelPermalink }} aria-current="page"{{ else if and (eq $kind "series") (eq .page "reading/performance.md") }} aria-current="location"{{ end }}>{{ .title }}</a>
       {{ end }}
     </nav>
     {{ partial "site-search.html" . }}
   </header>
   <main id="main" class="wrap" tabindex="-1">
-    {{ if .IsHome }}{{ partial "reading/home.html" . }}{{ else }}{{ partial "reading/guide.html" . }}{{ end }}
+    {{ if .IsHome }}{{ partial "reading/home.html" . }}{{ else if .Params.topic_key }}{{ partial "reading/topic.html" . }}{{ else }}{{ partial "reading/guide.html" . }}{{ end }}
   </main>
   <footer class="footer wrap">
     <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>
