@@ -1,0 +1,6 @@
+<article class="article-entry">
+  {{ with .label }}<p class="eyebrow">{{ . }}</p>{{ end }}
+  <h3>{{ partial "reading-preview/link.html" (dict "page" .page "arrow" true) }}</h3>
+  <p>{{ .value }}</p>
+  {{ with .evidence }}<p class="evidence">{{ . }}</p>{{ end }}
+</article>

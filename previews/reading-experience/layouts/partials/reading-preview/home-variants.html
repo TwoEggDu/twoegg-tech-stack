@@ -1,0 +1,46 @@
+{{ $data := site.Data.reading_preview }}
+{{ $variant := .Params.home_variant }}
+{{ if eq $variant "editorial" }}
+<section class="editorial-cover" aria-labelledby="cover-title">
+  <div class="cover-copy">
+    <p class="eyebrow">TwoEgg Tech Stack / 游戏工程笔记</p>
+    <h1 id="cover-title">把游戏做出来，<br>也把它<span>交付好。</span></h1>
+    <p class="cover-deck">内容怎样成为体验，<br>一次协作怎样支撑下一次更新。</p>
+    <p class="cover-intro">我从客户端工程出发，记录游戏持续交付中的问题与实践，再沿玩法、框架、引擎、渲染和性能深入。</p>
+    <div class="actions"><a class="button" href="#goals">从交付目标开始 ↓</a><a class="text-action" href="#topics">直接找技术主题 ↓</a></div>
+  </div>
+  <aside class="cover-feature">
+    <p class="eyebrow">本次首读 / 实践总览</p>
+    <div class="cover-mark" aria-hidden="true"><span>制作</span><span>协作</span><span>交付</span><span>反馈</span></div>
+    <h2>{{ partial "reading-preview/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md") }}</h2>
+    <p>从资源漏提交、配置配套到设备故障，看一个人的产出怎样交给下游，成为玩家可用的内容。</p>
+    {{ partial "reading-preview/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "label" "打开首读" "class" "read-link" "arrow" true) }}
+  </aside>
+</section>
+{{ partial "reading-preview/variant-goals.html" . }}
+{{ partial "reading-preview/variant-practice.html" . }}
+{{ partial "reading-preview/variant-collaboration.html" . }}
+{{ partial "reading-preview/variant-topics.html" . }}
+{{ else if eq $variant "atlas" }}
+<section class="atlas-cover" aria-labelledby="atlas-title">
+  <div class="atlas-intro"><p class="eyebrow">TwoEgg Tech Stack / 从整体到细节</p><h1 id="atlas-title">围绕一个版本，<br>看见整个游戏。</h1><p>让内容可用、功能协同、体验达标，并且能够持续迭代。把不同工种的工作接起来，再沿客户端走进技术深处。</p><div class="actions"><a class="button" href="#collaboration">看看怎样协作 ↓</a><a class="text-action" href="#topics">沿客户端深入 ↓</a></div></div>
+  <div class="delivery-map" aria-label="游戏交付的四个目标">
+    <div class="map-center"><p>共同交付</p><strong>玩家可体验的<br>游戏版本</strong><span>内容 · 功能 · 体验 · 迭代</span></div>
+    {{ range $i, $entry := $data.delivery_route }}<div class="map-goal map-goal-{{ $i }}"><span class="map-dot" aria-hidden="true"></span>{{ partial "reading-preview/link.html" (dict "page" .page "label" .title "arrow" true) }}<p>{{ index (slice "完整到达，需要时可用" "规则、表现与逻辑相互配合" "在目标设备上保住体验" "可验收、可恢复、能改进") $i }}</p></div>{{ end }}
+  </div>
+</section>
+<aside class="atlas-first"><p class="eyebrow">第一次来，从实际问题认识这张地图</p><h2>{{ partial "reading-preview/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "arrow" true) }}</h2><p>从一个人的产出，到下游能够继续工作的交接。</p></aside>
+{{ partial "reading-preview/variant-collaboration.html" . }}
+{{ partial "reading-preview/variant-topics.html" . }}
+{{ partial "reading-preview/variant-practice.html" . }}
+{{ else }}
+<section class="reading-cover" aria-labelledby="reading-title"><p class="eyebrow">TwoEgg Tech Stack / 一本持续更新的工程手册</p><h1 id="reading-title">从交付的问题出发，<br>把客户端读深。</h1><p>一份内容怎样可用，一个功能怎样协作完成，一次优化怎样成为下一版的起点。沿这些问题阅读，也可以直接查找技术主题。</p><div class="actions"><a class="button" href="#start">开始阅读 ↓</a><a class="text-action" href="#topics">查找主题 ↓</a></div></section>
+<div class="manual-layout"><aside class="manual-nav"><p class="eyebrow">阅读目录</p><nav aria-label="本页阅读目录"><a href="#start">先读一篇</a><a href="#goals">带着问题深入</a><a href="#collaboration">理解协作</a><a href="#practice">查看实践</a><a href="#topics">查找技术主题</a></nav><p>主线是交付，<br>深入处在客户端。</p></aside><div class="manual-body">
+<section id="start" class="manual-first"><p class="eyebrow">先读一篇 / 实践总览</p><h2>{{ partial "reading-preview/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md") }}</h2><p>先看资源、配置和运行故障中的真实交接。理解共同的问题之后，再选择值得深入的原理与方案。</p>{{ partial "reading-preview/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "label" "从这篇开始" "class" "read-link" "arrow" true) }}</section>
+{{ partial "reading-preview/variant-goals.html" . }}
+{{ partial "reading-preview/variant-collaboration.html" . }}
+{{ partial "reading-preview/variant-practice.html" . }}
+{{ partial "reading-preview/variant-topics.html" . }}
+</div></div>
+{{ end }}
+<section class="variant-more"><div><p class="eyebrow">继续查阅</p><h2>问题会变，阅读可以继续。</h2></div><nav aria-label="深入与发布阅读">{{ partial "reading-preview/link.html" (dict "page" "game-development.md" "label" "完整研发地图" "arrow" true) }}{{ range $data.release_reading }}{{ partial "reading-preview/link.html" . }}{{ end }}</nav></section>

@@ -1,0 +1,7 @@
+<nav class="variant-switch wrap" aria-label="首页版本对比">
+  <span>首页对比</span>
+  {{ $current := .Params.home_variant | default "baseline" }}
+  {{ range slice (dict "id" "baseline" "page" "preview" "label" "当前版") (dict "id" "editorial" "page" "preview/editorial.md" "label" "A · 杂志") (dict "id" "atlas" "page" "preview/atlas.md" "label" "B · 交付地图") (dict "id" "reading" "page" "preview/reading.md" "label" "C · 阅读手册") }}
+    <a href="{{ (site.GetPage .page).RelPermalink }}"{{ if eq $current .id }} aria-current="page"{{ end }}>{{ .label }}</a>
+  {{ end }}
+</nav>

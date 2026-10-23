@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{ .Title }} · 阅读预览 | {{ site.Title }}</title>
+  <meta name="description" content="{{ .Description }}">
+  <link rel="stylesheet" href="{{ `css/reading-preview.css` | relURL }}">
+  {{ if eq .Params.preview_kind "home" }}<link rel="stylesheet" href="{{ `css/home-variants.css` | relURL }}">{{ end }}
+  <script src="{{ `js/search.js` | relURL }}" defer></script>
+</head>
+<body class="reading-preview page-{{ .Params.preview_kind }}{{ with .Params.home_variant }} variant-{{ . }}{{ end }}">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="preview-note"><div class="wrap">阅读组织预览 <span>仅本地 · 正文沿用原地址</span><a href="{{ site.Home.RelPermalink }}">查看现有首页 ↗</a></div></div>
+  <header class="masthead wrap">
+    <a class="brand" href="{{ (site.GetPage `preview`).RelPermalink }}" aria-label="TwoEgg Tech Stack 预览首页">TwoEgg <span>Tech Stack</span></a>
+    <nav class="primary-nav" aria-label="预览页面">
+      {{ $kind := .Params.preview_kind }}
+      {{ range slice (dict "page" "preview" "label" "首页" "kind" "home") (dict "page" "preview/performance" "label" "性能优化" "kind" "topic") (dict "page" "preview/performance/startup-loading.md" "label" "启动与加载" "kind" "series") }}
+        <a href="{{ (site.GetPage .page).RelPermalink }}"{{ if eq $kind .kind }} aria-current="page"{{ end }}>{{ .label }}</a>
+      {{ end }}
+    </nav>
+    {{ partial "site-search.html" . }}
+  </header>
+  {{ if eq .Params.preview_kind "home" }}{{ partial "reading-preview/variant-switch.html" . }}{{ end }}
+  <main id="main" class="wrap" tabindex="-1">{{ block "main" . }}{{ end }}</main>
+  <footer class="footer wrap">
+    <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>
+    <nav aria-label="更多阅读入口">
+      {{ partial "reading-preview/link.html" (dict "page" "technical-topics.md" "label" "完整技术目录") }}
+      {{ partial "reading-preview/link.html" (dict "page" "game-development.md" "label" "研发地图") }}
+      {{ partial "reading-preview/link.html" (dict "page" "about.md" "label" "关于作者") }}
+    </nav>
+  </footer>
+</body>
+</html>
