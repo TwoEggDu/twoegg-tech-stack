@@ -55,11 +55,40 @@
     try {
       const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
 
+      const readingStyles = document.body.classList.contains('reading-site')
+        ? getComputedStyle(document.body)
+        : null;
+      const themeVariables = readingStyles
+        ? {
+            fontFamily: readingStyles.fontFamily,
+            fontSize: '16px',
+            primaryColor: readingStyles.getPropertyValue('--paper').trim(),
+            primaryTextColor: readingStyles.getPropertyValue('--ink').trim(),
+            primaryBorderColor: readingStyles.getPropertyValue('--line').trim(),
+            lineColor: readingStyles.getPropertyValue('--accent').trim(),
+            secondaryColor: readingStyles.getPropertyValue('--wash').trim(),
+            secondaryTextColor: readingStyles.getPropertyValue('--ink').trim(),
+            tertiaryColor: readingStyles.getPropertyValue('--paper').trim(),
+            edgeLabelBackground: readingStyles.getPropertyValue('--paper').trim(),
+            clusterBkg: readingStyles.getPropertyValue('--wash').trim(),
+            clusterBorder: readingStyles.getPropertyValue('--line').trim()
+          }
+        : {
+            fontFamily: '"IBM Plex Sans", "Segoe UI", sans-serif',
+            fontSize: '18px',
+            primaryColor: '#fffaf2',
+            primaryTextColor: '#14211f',
+            primaryBorderColor: '#a14d34',
+            lineColor: '#1e5d5f',
+            secondaryColor: '#f4efe6',
+            tertiaryColor: '#f8f4ed'
+          };
+
       mermaid.initialize({
         startOnLoad: false,
         securityLevel: 'loose',
         theme: 'base',
-        fontFamily: '"IBM Plex Sans", "Segoe UI", sans-serif',
+        fontFamily: themeVariables.fontFamily,
         flowchart: {
           useMaxWidth: false,
           htmlLabels: true,
@@ -67,16 +96,7 @@
           rankSpacing: 54,
           padding: 12
         },
-        themeVariables: {
-          fontFamily: '"IBM Plex Sans", "Segoe UI", sans-serif',
-          fontSize: '18px',
-          primaryColor: '#fffaf2',
-          primaryTextColor: '#14211f',
-          primaryBorderColor: '#a14d34',
-          lineColor: '#1e5d5f',
-          secondaryColor: '#f4efe6',
-          tertiaryColor: '#f8f4ed'
-        }
+        themeVariables
       });
 
       const mermaidNodes = mermaidCodeBlocks
@@ -88,6 +108,9 @@
 
           const wrapper = document.createElement('div');
           wrapper.className = 'mermaid-block';
+          wrapper.tabIndex = 0;
+          wrapper.setAttribute('role', 'region');
+          wrapper.setAttribute('aria-label', `图示 ${index + 1}，可横向滚动`);
 
           const graph = document.createElement('div');
           graph.className = 'mermaid';

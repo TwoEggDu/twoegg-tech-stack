@@ -1,30 +1,39 @@
 ---
 title: "Piccolo"
-description: "沿工程启动、一帧执行、对象、资源与渲染链路，理解一台具体引擎中的系统协作。当前提供前置阅读、官方材料与待写方向。"
+description: "从架构地图进入工程启动、一帧执行、对象、资源与渲染链路，学习读懂并调试一台具体引擎。首篇已有正文，构建与运行实践待补。"
 url: "/reading/engine/piccolo/"
 layout: "engine-directory"
 reading_kind: "engine"
 topic_key: "engine"
 engine_name: "piccolo"
-reading_status: "专题筹备中"
+series_id: "piccolo-engine"
+series_role: "index"
+series_title: "Piccolo 源码阅读与调试"
+reading_status: "架构首篇已有正文，实践待验证"
 ---
 
 > **已有内容与待写内容**
 >
-> 当前尚无 Piccolo 专篇。下面可点击的站内链接均为已有的公共前置或其他引擎的对照阅读，不代表已经完成 Piccolo 实现分析。
+> 已有首篇架构地图，依据固定提交核对模块职责、构建关系和运行数据流。Piccolo 的构建、断点观察与图形捕获仍待开展。
 >
-> Piccolo 篇目均为**待写建议拟题**，尚未形成正文或正式提纲。源码阅读、构建与运行实践尚待开展。
+> 下方其余 Piccolo 篇目仍为**待写建议拟题**；前置和对照链接继续指向已有公共专题或其他引擎文章。
 
 **官方材料**
 
 - [Piccolo 官方仓库与构建说明](https://github.com/BoomingTech/Piccolo)
 - [Piccolo 官方 Wiki](https://github.com/BoomingTech/Piccolo/wiki)
 
-后续主线拟从工程启动进入一帧执行，再沿对象、资源、渲染与编辑器深入；具体实现以届时选定的源码版本为准。
+建议先读架构地图，再建立构建与调试基线，沿启动和一帧执行进入对象、资源、渲染与编辑器。当前源码基线为 `f5053707fed4`，每篇分别说明核对与实践范围。
+
+<a id="chapters"></a>
 
 ## 工程、构建与启动
 
 理解怎样建立工程基线，引擎从哪里启动，以及各个系统怎样完成初始化与退出。
+
+**已有专篇**
+
+- [Piccolo 源码阅读 00｜架构地图：编辑器、世界、资源与渲染怎样协作]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}})：先分清职责、构建和数据流三种关系，再选择启动与一帧调试入口。源码已核对，实践待验证。
 
 **已有前置阅读**
 
@@ -33,7 +42,7 @@ reading_status: "专题筹备中"
 
 **待写建议**
 
-- **Piccolo 工程地图：源码、依赖、构建目标与运行产物（待写）**
+- **Piccolo 构建与调试基线：源码、生成文件、配置与程序怎样对应（待写）**
 - **Piccolo 启动链：从程序入口到系统初始化与退出（待写）**
 
 本站的 Piccolo 构建与运行实践尚待补充。

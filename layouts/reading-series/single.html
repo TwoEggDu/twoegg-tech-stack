@@ -2,8 +2,12 @@
 {{ $members := partial "reading/series-members.html" . }}
 {{ $seriesId := .Params.series_id | default .Params.primary_series }}
 {{ $indexes := where (where site.RegularPages "Params.series_role" "index") "Params.series_id" $seriesId }}
+{{ with .Params.reading_index }}
+  {{ with site.GetPage . }}{{ $indexes = slice . }}{{ else }}{{ errorf "Reading index not found: %s" . }}{{ end }}
+{{ end }}
 {{ if ne (len $indexes) 1 }}{{ errorf "Reading series requires one index: %s" $seriesId }}{{ end }}
 {{ $index := index $indexes 0 }}
+{{ if or (ne $index.Params.series_role "index") (ne $index.Params.series_id $seriesId) }}{{ errorf "Reading index does not match series: %s" $seriesId }}{{ end }}
 <!DOCTYPE html>
 <html lang="{{ site.Language.Lang | default `zh-cn` }}">
 <head>
@@ -33,7 +37,9 @@
   <main id="main" class="wrap" tabindex="-1">
     <nav class="breadcrumb" aria-label="面包屑">
       {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
-      {{ partial "reading/link.html" (dict "page" "reading/delivery.md" "label" "工程与交付") }}<span aria-hidden="true">/</span>
+      {{ range first 1 (where site.Data.reading_paths.topics "key" ($index.Params.topic_key | default "delivery")) }}
+        {{ partial "reading/link.html" (dict "page" .page "label" .title) }}<span aria-hidden="true">/</span>
+      {{ end }}
       {{ if $isIndex }}<span aria-current="page">{{ .Params.reading_title | default .Params.series_title }}</span>
       {{ else }}<a href="{{ $index.RelPermalink }}">{{ $index.Params.series_title }}</a><span aria-hidden="true">/</span><span aria-current="page">第 {{ printf "%02d" (int .Params.series_order) }} 篇</span>{{ end }}
     </nav>

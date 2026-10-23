@@ -135,7 +135,7 @@ topics:
       - { page: "engine-toolchain/unity-assets-what-exists-and-how-they-become-visible-in-game.md" }
       - { page: "engine-toolchain/unity-serialized-assets-how-they-restore-to-runtime-objects.md" }
     entries:
-      - { label: "Piccolo · 筹备中", page: "reading/piccolo-engine.md" }
+      - { label: "Piccolo", page: "reading/piccolo-engine.md" }
       - { label: "Unreal", page: "reading/unreal-engine.md" }
       - { label: "Unity", page: "reading/unity-engine.md" }
   - title: "服务端框架"
