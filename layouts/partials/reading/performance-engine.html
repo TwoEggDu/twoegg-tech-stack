@@ -1,0 +1,31 @@
+{{ $isUnity := eq .Params.performance_engine "unity" }}
+{{ $otherPage := cond $isUnity "reading/unreal-performance.md" "reading/unity-performance.md" }}
+<nav class="breadcrumb" aria-label="面包屑">
+  {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
+  {{ partial "reading/link.html" (dict "page" "reading/performance.md" "label" "性能优化") }}<span aria-hidden="true">/</span>
+  <span aria-current="page">{{ .Title }}</span>
+</nav>
+<header class="topic-heading performance-heading">
+  <p class="eyebrow">引擎性能路线 · {{ if $isUnity }}七个模块{{ else }}已有主线与专项延伸{{ end }}</p>
+  <h1>{{ .Title }}</h1><p>{{ .Description }}</p>
+</header>
+<nav class="section-nav" aria-label="切换性能路线">
+  {{ partial "reading/link.html" (dict "page" "reading/performance.md" "label" "通用方法与问题索引") }}
+  <span aria-current="page">{{ cond $isUnity "Unity" "Unreal" }}</span>
+  {{ partial "reading/link.html" (dict "page" $otherPage "label" (cond $isUnity "Unreal" "Unity")) }}
+</nav>
+<div class="performance-guide">
+  <aside class="engine-outline" aria-label="模块目录">
+    <p class="eyebrow">{{ if $isUnity }}七模块目录{{ else }}阅读顺序{{ end }}</p>
+    {{ .TableOfContents }}
+    <p class="small-note">已有明确问题，可以直接跳读对应模块。</p>
+  </aside>
+  <article class="engine-content" aria-label="{{ .Title }}阅读路线">
+    {{ .Content }}
+  </article>
+</div>
+<div class="continue-reading">
+  <p class="eyebrow">回到通用方法，检查本轮优化</p>
+  <h2>{{ partial "reading/link.html" (dict "page" "reading/performance.md" "label" "性能优化：判断、定位与验证" "arrow" true) }}</h2>
+  <p>固定复现场景与设备条件，再比较帧时间、内存、画质和功能行为。</p>
+</div>

@@ -1,0 +1,63 @@
+{{ $data := site.Data.reading_paths }}
+<nav class="breadcrumb" aria-label="面包屑">
+  {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}
+  <span aria-hidden="true">/</span><span aria-current="page">{{ .Title }}</span>
+</nav>
+<header class="topic-heading performance-heading">
+  <p class="eyebrow">玩家感受 → 操作系统 → 硬件 → 引擎</p>
+  <h1>{{ .Title }}</h1>
+  <p>{{ .Description }}</p>
+</header>
+<section id="experience" class="section" aria-labelledby="experience-title">
+  <h2 id="experience-title">01 · 为什么要优化游戏性能</h2>
+  <p class="performance-layer-intro">玩家感受到的是画面是否连贯、操作是否及时，以及能否舒服地持续游玩。优化需要在流畅、响应、画质、稳定和能耗之间找到适合目标设备的平衡。</p>
+  <dl class="performance-experiences">
+    <div><dt>画面流畅</dt><dd>帧率够不够，镜头移动是否连贯，帧与帧之间的节奏是否均匀。</dd></div>
+    <div><dt>操作响应</dt><dd>按下按钮多久看到反馈，转向、瞄准和出招是否跟手。</dd></div>
+    <div><dt>卡顿与等待</dt><dd>首次放技能、打开界面会不会停一下，进场和切场景要等多久。</dd></div>
+    <div><dt>发热与续航</dt><dd>设备是否烫手、风扇是否吵、耗电是否过快，以及玩久后是否越来越慢。</dd></div>
+    <div><dt>运行稳定</dt><dd>能否持续游玩，是否出现闪退、无响应，或切回游戏就得重新加载。</dd></div>
+    <div><dt>画质与体验一致性</dt><dd>画面清晰度、内容及时呈现与流畅性如何取舍，不同设备能否守住可玩的底线。</dd></div>
+  </dl>
+  <p class="performance-reading-label">共同起点</p>
+  <ol class="inline-links performance-method-links">
+    {{ range $data.start }}
+      <li>{{ partial "reading/link.html" (dict "page" .page "label" .label "arrow" true) }}</li>
+    {{ end }}
+  </ol>
+</section>
+<section id="operating-system" class="section" aria-labelledby="os-title">
+  <h2 id="os-title">02 · 操作系统怎样影响游戏体验</h2>
+  <p class="performance-layer-intro">游戏与其他进程共享设备。线程调度、内存管理、文件缓存、I/O 排队和显示同步，会影响工作何时执行、何时完成，以及结果何时呈现在屏幕上。</p>
+  <ul class="inline-links performance-method-links">
+    <li>{{ partial "reading/link.html" (dict "page" "engine-toolchain/unity-async-runtime-extra-01-thread-three-layers.md" "label" "线程与调度" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "performance/memory-topic-index.md" "label" "内存与系统回收" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" "label" "文件与 I/O" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "rendering/game-graphics-stack-05-os-and-driver.md" "label" "显示系统与驱动" "arrow" true) }}</li>
+  </ul>
+</section>
+<section id="hardware" class="section" aria-labelledby="hardware-title">
+  <h2 id="hardware-title">03 · 硬件决定工作要付出什么成本</h2>
+  <p class="performance-layer-intro">继续看 CPU 的执行与缓存、GPU 的计算与带宽、内存容量和存储延迟，再看功耗与散热怎样限制持续性能。这些约束解释了同一份内容为何在不同设备上表现不同。</p>
+  <ul class="inline-links performance-method-links">
+    <li>{{ partial "reading/link.html" (dict "page" "performance/hardware-cpu-index.md" "label" "CPU、缓存与内存" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "rendering/game-graphics-stack-06-gpu-hardware-basics.md" "label" "GPU 硬件" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "engine-toolchain/storage-io-02-device-types-hdd-ssd-nvme-emmc-ufs.md" "label" "存储与访问延迟" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "performance/mobile-hardware-03-power-thermal.md" "label" "功耗与散热" "arrow" true) }}</li>
+    <li>{{ partial "reading/link.html" (dict "page" "performance/mobile-hardware-05-battery-power.md" "label" "耗电与续航" "arrow" true) }}</li>
+  </ul>
+</section>
+<section id="engines" class="section" aria-labelledby="engines-title">
+  <h2 id="engines-title">04 · 回到具体引擎，定位与验证</h2>
+  <p class="performance-layer-intro">带着体验目标和系统、硬件约束，进入引擎的采样工具与模块。明确改动影响哪一段成本，再检查玩家实际感受到的变化。</p>
+  <div class="performance-engines">
+    <article class="performance-engine-card">
+      <h3>{{ partial "reading/link.html" (dict "page" "reading/unity-performance.md" "label" "Unity 性能优化" "arrow" true) }}</h3>
+      <p>瓶颈定位、内存、动画、物理、UGUI、加载与渲染。</p>
+    </article>
+    <article class="performance-engine-card">
+      <h3>{{ partial "reading/link.html" (dict "page" "reading/unreal-performance.md" "label" "Unreal 性能优化" "arrow" true) }}</h3>
+      <p>性能采样、CPU、GPU、内存与流送。</p>
+    </article>
+  </div>
+</section>

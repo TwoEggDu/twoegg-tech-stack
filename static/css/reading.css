@@ -237,3 +237,54 @@ body.reading-site { margin: 0; background: var(--paper); color: var(--ink); font
   .reading-site .primary-nav { margin-left: 0; flex-basis: 100%; }
   .reading-site .topics { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Performance hub and engine routes share the existing reading language. */
+.reading-site .performance-heading { max-width: 860px; padding-bottom: 26px; }
+.reading-site .performance-method-links { font-size: 16px; gap: 12px 32px; }
+.reading-site .performance-layer-intro { max-width: 900px; font-size: 15px; color: var(--muted); }
+.reading-site .performance-reading-label { margin: 24px 0 10px; font-size: 13px; color: var(--muted); }
+.reading-site .performance-experiences { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 40px; margin: 24px 0; }
+.reading-site .performance-experiences > div { min-width: 0; border-left: 2px solid var(--line); padding-left: 16px; }
+.reading-site .performance-experiences dt { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.reading-site .performance-experiences dd { margin: 0; font-size: 14px; color: var(--muted); }
+.reading-site .performance-engines { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.reading-site .performance-engine-card { border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: 26px; background: var(--wash); min-width: 0; }
+.reading-site .performance-engine-card h3 { font-size: 25px; }
+.reading-site .performance-engine-card h3 a { color: var(--accent); }
+.reading-site .performance-engine-card > p:not(.eyebrow):not(.small-note) { font-size: 15px; color: var(--muted); }
+.reading-site .performance-engine-card .read-link { display: inline-block; margin-top: 8px; }
+.reading-site .performance-guide { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 56px; padding-block: 32px 42px; }
+.reading-site .engine-outline { align-self: start; position: sticky; top: 24px; min-width: 0; }
+.reading-site .engine-outline ul { list-style: none; padding: 0; margin: 0; }
+.reading-site .engine-outline li + li { margin-top: 12px; }
+.reading-site .engine-outline a { font-size: 14px; text-decoration: none; }
+.reading-site .engine-outline .small-note { margin-top: 22px; }
+.reading-site .engine-content { min-width: 0; }
+.reading-site .engine-content > p { color: var(--muted); font-size: 15px; }
+.reading-site .engine-content h2 { border-top: 1px solid var(--line); padding-top: 30px; margin-top: 40px; scroll-margin-top: 24px; }
+.reading-site .engine-content li { font-size: 15px; margin-bottom: 12px; overflow-wrap: anywhere; }
+.reading-site .engine-content li p { margin-bottom: 8px; }
+.reading-site .engine-content a { color: var(--accent); }
+.reading-site .engine-content blockquote { border-left: 3px solid #aa8753; background: #f2eee5; margin: 24px 0 0; padding: 18px 22px; }
+.reading-site .engine-content blockquote p { margin-bottom: 12px; font-size: 14px; }
+.reading-site .engine-content blockquote ul { margin-block: 0; }
+.reading-site .engine-content blockquote li { color: #655743; font-size: 14px; }
+.reading-site .engine-content blockquote li:last-child { margin-bottom: 0; }
+.reading-site .engine-content code { font-size: .9em; overflow-wrap: anywhere; }
+.reading-site .section-nav [aria-current="page"] { color: var(--accent); font-weight: 600; }
+@media (max-width: 1000px) {
+  .reading-site .performance-guide { grid-template-columns: 190px minmax(0, 1fr); gap: 32px; }
+}
+@media (max-width: 760px) {
+  .reading-site .performance-engines, .reading-site .performance-guide, .reading-site .performance-experiences { grid-template-columns: minmax(0, 1fr); }
+  .reading-site .performance-engine-card { padding: 22px; }
+  .reading-site .performance-engine-card h3 { font-size: 23px; }
+  .reading-site .performance-guide { gap: 24px; padding-top: 22px; }
+  .reading-site .engine-outline { position: static; padding: 18px; background: var(--wash); }
+  .reading-site .engine-outline ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px; }
+  .reading-site .engine-outline li + li { margin-top: 0; }
+  .reading-site .engine-outline a { font-size: 13px; }
+  .reading-site .engine-outline .small-note { margin: 14px 0 0; }
+  .reading-site .engine-content h2 { font-size: 22px; }
+  .reading-site .engine-content blockquote { padding: 16px; }
+}

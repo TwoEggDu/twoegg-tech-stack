@@ -1,12 +1,21 @@
+{{ if .Params.performance_engine }}
+{{ partial "reading/performance-engine.html" . }}
+{{ else if eq .Params.topic_key "performance" }}
+{{ partial "reading/performance-hub.html" . }}
+{{ else }}
 {{ $topic := index (where site.Data.reading_paths.topics "key" .Params.topic_key) 0 }}
 {{ if not $topic }}{{ errorf "Reading topic not found: %s" .Params.topic_key }}{{ end }}
 <nav class="breadcrumb" aria-label="面包屑">{{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span><span aria-current="page">{{ .Title }}</span></nav>
-<header class="topic-heading"><p class="eyebrow">技术主题</p><h1>{{ .Title }}</h1><p>{{ .Description }}</p></header>
-<section class="topic-start" aria-labelledby="topic-start-title"><h2 id="topic-start-title">从这里开始</h2>{{ partial "reading/article.html" $topic.start }}</section>
-<section class="topic-series" aria-labelledby="topic-series-title"><h2 id="topic-series-title">选择一个系列</h2><div class="topic-series-list">{{ range $topic.entries }}{{ $target := site.GetPage .page }}<article><h3>{{ partial "reading/link.html" (dict "page" .page "label" .label "arrow" true) }}</h3><p>{{ .value | default $target.Params.series_summary | default $target.Description }}</p></article>{{ end }}</div></section>
+<header class="topic-heading"><p class="eyebrow">{{ $topic.eyebrow | default "技术主题" }}</p><h1>{{ .Title }}</h1><p>{{ .Description }}</p></header>
+{{ with $topic.focus }}
+<section class="topic-series" aria-labelledby="topic-focus-title"><h2 id="topic-focus-title">{{ $topic.focus_title }}</h2>{{ with $topic.focus_note }}<p>{{ . }}</p>{{ end }}<div class="topic-series-list">{{ range . }}<article><h3>{{ .title }}</h3><p>{{ .value }}</p></article>{{ end }}</div></section>
+{{ end }}
+{{ with $topic.start }}<section class="topic-start" aria-labelledby="topic-start-title"><h2 id="topic-start-title">{{ $topic.start_title | default "从这里开始" }}</h2>{{ partial "reading/article.html" . }}</section>{{ end }}
+{{ with $topic.entries }}<section class="topic-series" aria-labelledby="topic-series-title"><h2 id="topic-series-title">选择一个系列</h2><div class="topic-series-list">{{ range . }}{{ $target := site.GetPage .page }}<article><h3>{{ partial "reading/link.html" (dict "page" .page "label" .label "arrow" true) }}</h3><p>{{ .value | default $target.Params.series_summary | default $target.Description }}</p></article>{{ end }}</div></section>{{ end }}
 {{ if eq .Params.topic_key "delivery" }}
 <section class="topic-handoffs" id="collaboration" aria-labelledby="topic-handoffs-title"><h2 id="topic-handoffs-title">多工种怎样协作</h2><p class="topic-note">从具体交接问题，进入相关的设计方法与实践记录。</p><div class="topic-handoff-list">{{ range site.Data.reading_paths.handoffs }}<article><h3>{{ .title }}</h3>{{ partial "reading/link.html" (dict "page" .page "label" .label "arrow" true) }}</article>{{ end }}</div></section>
 {{ end }}
-<section class="topic-shortcuts" aria-labelledby="topic-shortcuts-title"><h2 id="topic-shortcuts-title">直接读文章</h2><ul>{{ range $topic.shortcuts }}<li>{{ partial "reading/link.html" . }}</li>{{ end }}</ul></section>
+{{ with $topic.shortcuts }}<section class="topic-shortcuts" aria-labelledby="topic-shortcuts-title"><h2 id="topic-shortcuts-title">直接读文章</h2><ul>{{ range . }}<li>{{ partial "reading/link.html" . }}</li>{{ end }}</ul></section>{{ end }}
 {{ if eq .Params.topic_key "performance" }}<details class="topic-foundations"><summary>需要补基础时：CPU、存储 I/O 与内存</summary><ul>{{ range site.Data.reading_paths.foundations }}<li>{{ partial "reading/link.html" . }}</li>{{ end }}</ul></details>{{ end }}
-<nav class="topic-directory" aria-label="完整目录">{{ partial "reading/link.html" (dict "page" $topic.directory "anchor" $topic.directory_anchor "label" "查看完整目录" "arrow" true) }}</nav>
+{{ with $topic.directory }}<nav class="topic-directory" aria-label="完整目录">{{ partial "reading/link.html" (dict "page" . "anchor" $topic.directory_anchor "label" "查看完整目录" "arrow" true) }}</nav>{{ end }}
+{{ end }}
