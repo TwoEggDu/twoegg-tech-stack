@@ -135,7 +135,7 @@
 
 - `Yoo-10` **[分包流程：从一个 Prefab 到共享 Bundle](../content/engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md)**
   沿单 Prefab、跨包共用与 AB/CD 引用组合推演目录分包和两个构建开关，说明引用包集合分组的自定义扩展点与工程代价。
-  2026-10-23 补充；放在资源生命周期与构建专题之间（`series_order: 6.5`）。正文为 3.0.6 固定源码推演，含 Mermaid 流程图；Unity 对照构建、设备性能与自定义策略实现尚未验证。
+  2026-10-23 补充；放在资源生命周期与构建专题之间（`series_order: 6.5`）。正文为 3.0.6 固定源码推演，含 Mermaid 流程图；补充引用集合分组的前置索引、稳定命名、构建任务替换与入口接入参考代码。示例未在 Unity 中编译运行或接入项目，对照构建与设备性能尚未验证。
 
 - `Yoo-04` **[资源收集、构建与产物](../content/engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md)**
   分清收集规划、构建缓存复用、完整版本产物与差异交付。

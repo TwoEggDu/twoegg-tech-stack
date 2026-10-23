@@ -1,5 +1,6 @@
 ---
 date: "2026-10-23"
+lastmod: "2026-10-23"
 title: "YooAsset 分包流程：从一个 Prefab 到共享 Bundle"
 description: "从一个 Prefab 的材质、纹理依赖出发，推演显式分包、目录共享包与两个构建开关，再比较按引用包集合分组的自定义方案及验证方法。"
 slug: "unity-yooasset-bundle-layout-prefab-to-shared-bundle"
@@ -17,7 +18,7 @@ yooasset_version: "3.0.6"
 
 回答这些问题，需要把两个决定分开：**先决定一个资源是否单独分包，再决定它与哪些资源合包。** 引用它的 Bundle 数量参与第一个决定；默认共享规则使用它自身的直接父目录完成第二个决定。
 
-本文沿一个 Prefab 逐步增加引用方，画出资源关系和分包结果。版本基线为 **YooAsset 3.0.6**，固定提交 [`3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`](https://github.com/tuyoogame/YooAsset/tree/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804)。示例是基于源码条件的推演，未执行本文的 Unity 对照构建、设备加载或性能实验；按引用包集合分组是后文讨论的自定义方案，尚未实现和验证。
+本文沿一个 Prefab 逐步增加引用方，画出资源关系和分包结果。版本基线为 **YooAsset 3.0.6**，固定提交 [`3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`](https://github.com/tuyoogame/YooAsset/tree/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804)。示例是基于源码条件的推演，未执行本文的 Unity 对照构建、设备加载或性能实验；按引用包集合分组是后文讨论的自定义方案；本文提供参考代码，尚未在 Unity 中编译运行或接入项目。
 
 ## 一、先确定 Prefab 自己属于哪个 Bundle
 
@@ -208,21 +209,174 @@ flowchart LR
 
 普通 `IBundlePackRule` 接收的输入是资产路径、采集路径、Group 和用户数据，不包含全局引用包集合。因此，这个方案应在掌握依赖关系的构建映射阶段完成，不能只在 Collector 下拉框中增加一个规则名就认为已经接通。[资源构建信息](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Editor/BundleBuilder/BuildAssetInfo.cs#L11-L49)、[规则输入](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Editor/BundleCollector/CollectRules/IBundlePackRule.cs#L7-L43)、[默认任务列表](https://github.com/tuyoogame/YooAsset/blob/3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804/Assets/YooAsset/Editor/BundleBuilder/BuildPipeline/ScriptableBuildPipeline/ScriptableBuildPipeline.cs#L18-L49)
 
-算法可以概括如下；这是设计伪代码，不是可直接调用的 YooAsset API，也不是已经运行过的实现：
+### 把扩展分成前置索引、逐资源分配和管线接入
 
-```text
-共享分包前：
-    快照主动采集资源的原始 Bundle 归属与递归依赖
-    反向建立每个依赖的引用包集合
+扩展放在项目的 Editor 代码中；使用 asmdef 时，需要引用 `YooAsset.Editor`。不需要修改默认目录规则，也不需要改运行时加载器。我们只替换构建映射任务，让后续 SBP、清单和报告继续消费新的资源归属。
 
-逐个处理未分包的普通依赖：
-    根据引用包数量与单引用开关，判断是否独立分包
-    引用包集合 → 去重 → 按固定序排序 → 无歧义序列化
-    对序列化结果计算稳定摘要，并检查命名冲突
-    用该标识生成共享包名，相同集合得到相同包名
+```mermaid
+flowchart TD
+    Collect["默认采集与递归依赖分析"] --> Shader["保留显式归属与自动 Shader 处理"]
+    Shader --> Pre["自定义前置阶段<br/>冻结依赖到引用包集合的索引"]
+    Pre --> Each["逐个处理仍无包名的依赖"]
+    Each --> Filter["保留多引用与单引用开关判断"]
+    Filter --> Key["引用包名去重、排序<br/>长度前缀编码后计算稳定摘要"]
+    Key --> Assign["相同集合分配相同共享包名"]
+    Assign --> Rest["沿用后续 SBP 构建、清单与报告任务"]
 ```
 
-不能用依赖遍历顺序或不保证跨进程稳定的字符串哈希生成持久包名。自定义规则也要保留显式分包、Shader 和资源类型约束；图中的普通依赖方案不能直接推广为所有文件无差别合包。
+例如源资源分别位于 A、B、C、D 包中，前置索引记录的是：
+
+```text
+1.png -> { A.bundle, B.bundle }
+2.png -> { C.bundle, D.bundle }
+3.png -> { A.bundle, B.bundle }
+```
+
+这张索引在共享包命名之前建立。本次分组始终使用这些原始引用方；不能给 1 分完包后，又把刚生成的 AB 共享包当成 3 的引用方。也不需要根据最终共享包关系反复重算分组。
+
+下面给出两段配套参考代码，采用上文 3.0.6 的公开类型和扩展方法。**它们已经按固定源码核对接口，但尚未在 Unity 中编译或运行，也未接入任何项目的正式打包入口。** 示例针对普通 AssetBundle 依赖，保留原框架的显式归属和自动 Shader 处理；RawFile、场景专门约束、分组体积上限及升级兼容仍需按项目要求处理。
+
+### 第一步：派生构建映射任务，建立反向索引
+
+继承 `TaskGetBuildMap_SBP` 可以继续使用它已有的 `IBuildTask.Run`，由基类调用 `CreateBuildMap`；我们重写共享处理的两个阶段。私有的 `_referenceBundleNames` 无须反射读取，前置阶段可从公开的递归依赖列表重建同样的原始引用集合。
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
+using YooAsset.Editor;
+
+public sealed class ReferenceSetBuildMapTask : TaskGetBuildMap_SBP
+{
+    private readonly Dictionary<string, SortedSet<string>> references =
+        new Dictionary<string, SortedSet<string>>(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> identities =
+        new Dictionary<string, string>(StringComparer.Ordinal);
+
+    protected override void PreProcessPackShareBundle(
+        BuildParameters parameters, CollectCommand command,
+        Dictionary<string, BuildAssetInfo> assets)
+    {
+        references.Clear();
+        identities.Clear();
+
+        foreach (BuildAssetInfo source in assets.Values)
+        {
+            // 主动采集的 Main、Static、Depend 资源已经有包名。
+            // CollectorType.None 是补入的依赖，不作为原始引用方。
+            if (source.CollectorType == ECollectorType.None ||
+                !source.HasBundleName() || source.AllDependAssetInfos == null)
+                continue;
+
+            string originalBundle = source.BundleName;
+            foreach (BuildAssetInfo dependency in source.AllDependAssetInfos)
+            {
+                string path = dependency.AssetInfo.AssetPath;
+                if (!references.TryGetValue(path, out var owners))
+                {
+                    owners = new SortedSet<string>(StringComparer.Ordinal);
+                    references.Add(path, owners);
+                }
+                owners.Add(originalBundle);
+            }
+        }
+    }
+
+    protected override void ProcessingPackShareBundle(
+        BuildParameters parameters, CollectCommand command,
+        BuildAssetInfo asset)
+    {
+        // 基类只会把尚无 Bundle 归属的资源传到这里。
+        string path = asset.AssetInfo.AssetPath;
+        if (!references.TryGetValue(path, out var owners) || owners.Count == 0)
+            throw new InvalidOperationException("Missing reference set: " + path);
+        if (owners.Count != asset.GetReferenceBundleCount())
+            throw new InvalidOperationException("Reference count mismatch: " + path);
+
+        if (owners.Count <= 1 && !parameters.SingleReferencedPackAlone)
+            return; // 沿用单引用依赖留在引用包中的语义。
+
+        // SortedSet 已按 Ordinal 排序。长度前缀避免连接歧义。
+        var key = new StringBuilder();
+        foreach (string owner in owners)
+            key.Append(owner.Length.ToString(CultureInfo.InvariantCulture))
+               .Append(':').Append(owner);
+        string canonical = key.ToString();
+
+        string digest;
+        using (var sha = SHA256.Create())
+            digest = BitConverter.ToString(
+                sha.ComputeHash(Encoding.UTF8.GetBytes(canonical)))
+                .Replace("-", "").ToLowerInvariant();
+
+        string identity = "refset_v1_" + digest;
+        if (identities.TryGetValue(identity, out var previous) &&
+            !StringComparer.Ordinal.Equals(previous, canonical))
+            throw new InvalidOperationException("Reference-set hash collision.");
+        identities[identity] = canonical;
+
+        var rule = new BundlePackRuleResult(
+            identity, DefaultBundlePackRule.AssetBundleFileExtension);
+        asset.SetBundleName(rule.GetShareBundleName(
+            command.PackageName, command.UniqueBundleName));
+    }
+}
+```
+
+引用索引的键是依赖资产路径；分组标识的输入则只有引用包集合。因而 1 和 3 会生成同一个标识，2 得到另一个标识。`SortedSet` 同时完成去重和固定排序，`{A,B}` 与 `{B,A}` 的输出一致。
+
+名称中的 `refset_v1` 表示这套自定义算法的版本。保留完整 SHA-256，并在本次构建内校验“同一标识是否对应同一集合”；不要把 `string.GetHashCode()` 当作跨进程稳定的内容身份。正式工具还应输出“共享包名 → 原始引用集合 → 资源列表”的可读映射，便于排查哈希名称背后的分组原因。 示例的 `identities` 只校验引用集合之间的摘要冲突；正式接入还应检查最终包名是否与已有显式包名冲突，或为 `share_refset_v1_` 保留专用命名空间。
+
+当 `SingleReferencedPackAlone=true` 时，集合只有 `{A}` 的未分包依赖也会归入一个 A 专属的引用集合包；设为 `false` 时，这些依赖不独立命名。**换了分组键，并不意味着两个开关的语义也要跟着改变。**
+
+### 第二步：在真正执行的任务列表中替换默认任务
+
+默认 `ScriptableBuildPipeline` 的任务列表由私有方法创建。继承一个新任务后继续调用原来的 `new ScriptableBuildPipeline().Run(...)`，执行的仍是默认 `TaskGetBuildMap_SBP`。
+
+项目可以显式构造 3.0.6 的对应任务列表，只替换第二项：
+
+```csharp
+using System.Collections.Generic;
+using YooAsset.Editor;
+
+public static class ReferenceSetBuild
+{
+    public static BuildResult Run(ScriptableBuildParameters parameters)
+    {
+        var tasks = new List<IBuildTask>
+        {
+            new TaskPrepare_SBP(),
+            new ReferenceSetBuildMapTask(), // 唯一替换的构建阶段。
+            new TaskBuilding_SBP(),
+            new TaskVerifyBuildResult_SBP(),
+            new TaskEncryption_SBP(),
+            new TaskUpdateBundleInfo_SBP(),
+            new TaskCreateManifest_SBP(),
+            new TaskCreateReport_SBP(),
+            new TaskCreatePackage_SBP(),
+            new TaskCopyBundledFiles_SBP(),
+            new TaskCreateCatalog_SBP()
+        };
+        return new BundleBuilder().Run(parameters, tasks, true);
+    }
+}
+```
+
+最后在项目原有资源构建入口，保留平台、输出目录、Package、版本、压缩及拷贝设置，把执行调用替换为：
+
+```csharp
+// parameters 是原入口已经完整填写的 ScriptableBuildParameters。
+parameters.EnableSharePackRule = true;
+BuildResult result = ReferenceSetBuild.Run(parameters);
+// 保留原入口对 result.Success 和失败原因的处理。
+```
+
+`SingleReferencedPackAlone` 继续使用项目明确选择的值。这个示例从代码入口调用，不会自动在 YooAsset 窗口增加一种策略；如果团队还要通过窗口选择，需要另外接入对应的编辑器视图。
+
+升级 YooAsset 时，应重新对照默认任务列表和共享处理接口。这里复用了框架的后续任务，但项目维护了一份显式任务装配；新增、删除或调整默认阶段后，需要同步检查这份装配，不能只升级包版本就认为自定义管线自动跟进。
+
 
 ## 六、三种选择分别付出什么代价
 
