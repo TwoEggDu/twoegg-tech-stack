@@ -16,7 +16,7 @@ topic_key: engine
 
 围绕启动流程、一帧执行、资源加载与系统交互，梳理各个模块怎样组成一台能够运行的游戏引擎。
 
-首篇 [Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}}) 已有正文，依据固定源码梳理模块职责、构建关系与运行数据流；构建与调试实践待验证。
+[Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}}) 与 [C++ 智能指针前置]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}}) 已有正文，分别梳理系统协作和对象持有关系；Piccolo 构建与调试实践待验证。
 
 ### [Unreal｜理解核心系统与扩展边界]({{< relref "reading/unreal-engine.md" >}})
 

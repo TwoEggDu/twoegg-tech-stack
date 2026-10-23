@@ -1,6 +1,6 @@
 ---
 title: "Piccolo"
-description: "从架构地图进入工程启动、一帧执行、对象、资源与渲染链路，学习读懂并调试一台具体引擎。首篇已有正文，构建与运行实践待补。"
+description: "从架构地图和 C++ 对象生命周期进入工程启动、一帧执行、资源与渲染链路，学习读懂并调试一台具体引擎。"
 url: "/reading/engine/piccolo/"
 layout: "engine-directory"
 reading_kind: "engine"
@@ -9,12 +9,12 @@ engine_name: "piccolo"
 series_id: "piccolo-engine"
 series_role: "index"
 series_title: "Piccolo 源码阅读与调试"
-reading_status: "架构首篇已有正文，实践待验证"
+reading_status: "架构与 C++ 前置已有正文，引擎实践待验证"
 ---
 
 > **已有内容与待写内容**
 >
-> 已有首篇架构地图，依据固定提交核对模块职责、构建关系和运行数据流。Piccolo 的构建、断点观察与图形捕获仍待开展。
+> 已有架构地图与智能指针前置篇，依据固定提交核对系统协作和对象持有关系。前置篇提供独立教学程序；Piccolo 的构建、断点观察与图形捕获仍待开展。
 >
 > 下方其余 Piccolo 篇目仍为**待写建议拟题**；前置和对照链接继续指向已有公共专题或其他引擎文章。
 
@@ -23,7 +23,7 @@ reading_status: "架构首篇已有正文，实践待验证"
 - [Piccolo 官方仓库与构建说明](https://github.com/BoomingTech/Piccolo)
 - [Piccolo 官方 Wiki](https://github.com/BoomingTech/Piccolo/wiki)
 
-建议先读架构地图，再建立构建与调试基线，沿启动和一帧执行进入对象、资源、渲染与编辑器。当前源码基线为 `f5053707fed4`，每篇分别说明核对与实践范围。
+建议先读架构地图，按需补 C++ 前置，再建立构建与调试基线，沿启动和一帧执行进入对象、资源、渲染与编辑器。当前源码基线为 `f5053707fed4`，每篇分别说明核对与实践范围。
 
 <a id="chapters"></a>
 
@@ -37,6 +37,7 @@ reading_status: "架构首篇已有正文，实践待验证"
 
 **已有前置阅读**
 
+- [读懂引擎 C++：智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})：沿 Piccolo 系统、关卡、对象和组件区分强持有、弱观察、显式清理与实际析构，含独立小程序。
 - [从 C# 到 C++：所有权与编译链接]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})：普通 C++ 练习，补充生命周期、RAII、编译与链接基础。
 - [构建与调试前置]({{< relref "engine-toolchain/build-debug-prereqs-series-index.md" >}})：补充构建配置、符号、断点与调试原理。
 

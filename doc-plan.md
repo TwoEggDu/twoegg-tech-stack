@@ -76,7 +76,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 游戏引擎架构地图 | [docs/game-engine-architecture-series-plan.md](./docs/game-engine-architecture-series-plan.md) | 已拆出 | 系列定义层 |
-| Piccolo 源码阅读与调试 | [docs/piccolo-engine-series-plan.md](./docs/piccolo-engine-series-plan.md) | 架构首篇已有正文，实践待验证 | 从架构地图进入构建、启动、一帧、对象、资源与渲染；源码固定版本，分别记录源码与运行证据 |
+| Piccolo 源码阅读与调试 | [docs/piccolo-engine-series-plan.md](./docs/piccolo-engine-series-plan.md) | 架构与 C++ 前置已有正文，引擎实践待验证 | 从架构地图按需补前置，再进入构建、启动、一帧、对象、资源与渲染；源码固定版本，分别记录源码、小程序与引擎运行证据 |
 | UE 全栈工程师成长路线 | [docs/ue-fullstack-expert-series-plan.md](./docs/ue-fullstack-expert-series-plan.md) | 规划已建立，实践待验证 | 从 Unity/C# 经验进入 UE 客户端、权威战斗服、业务后端与交付；只管理贯通路径和新增桥梁，复用 Unreal、技能、服务端、渲染与交付专题；[盘点快照](./docs/ue-fullstack-content-audit.md) |
 | 游戏引擎架构地图执行计划 | [docs/game-engine-architecture-series-execution-plan.md](./docs/game-engine-architecture-series-execution-plan.md) | 执行层已拆出 | 6 周执行顺序与证据需求 |
 | 游戏引擎渲染栈 | [docs/game-engine-rendering-stack-series-plan.md](./docs/game-engine-rendering-stack-series-plan.md) | 已拆出 | 引擎到 GPU 的链路主线 |
