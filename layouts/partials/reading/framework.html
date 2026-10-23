@@ -1,0 +1,40 @@
+{{ $data := site.Data.framework_reading }}
+{{ $laneKey := .Params.framework_lane }}
+{{ if not .Params.framework_hub }}
+<nav class="breadcrumb" aria-label="面包屑">
+  {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
+  {{ if $laneKey }}{{ partial "reading/link.html" (dict "page" "reading/frameworks.md" "label" "全栈框架") }}<span aria-hidden="true">/</span>{{ end }}
+  <span aria-current="page">{{ .Title }}</span>
+</nav>
+{{ end }}
+{{ if .Params.framework_hub }}
+<header class="topic-heading framework-heading"><h1>{{ .Title }}</h1><p class="framework-lead">沿一个游戏功能，理解两端如何协同。</p><p>{{ .Description }}</p></header>
+<section class="section" id="why" aria-labelledby="why-title">
+  <div class="section-heading"><div><p class="eyebrow">为什么建立全栈视角</p><h2 id="why-title">从一次操作，看见完整链路</h2></div></div>
+  <p class="framework-intro">玩家按下技能按钮，背后涉及输入、请求、服务端校验、伤害计算、状态同步与客户端表现。把这些环节连接起来，才能判断职责该放在哪里、问题出现在哪一层，以及一次修改需要哪些系统配合。</p>
+  <div class="framework-benefits">{{ range $data.benefits }}<article><h3>{{ .title }}</h3><p>{{ .value }}</p></article>{{ end }}</div>
+</section>
+<section class="section" id="routes" aria-labelledby="routes-title">
+  <div class="section-heading"><div><p class="eyebrow">按学习目标进入</p><h2 id="routes-title">选择一条阅读路径</h2></div></div>
+  <div class="framework-routes">{{ range $data.routes }}<article><h3>{{ partial "reading/link.html" (dict "page" .page "label" .title "arrow" true) }}</h3><p class="framework-question">{{ .question }}</p><p>{{ .value }}</p></article>{{ end }}</div>
+</section>
+<section class="section" id="outcomes" aria-labelledby="outcomes-title">
+  <div class="section-heading"><div><p class="eyebrow">先确定产出，再设计 Demo</p><h2 id="outcomes-title">文章、实验与总结 Demo</h2></div></div>
+  <ol class="framework-steps"><li><strong>解释设计</strong><p>先说明问题、对象与边界，再用具体实现解释取舍。</p></li><li><strong>形成可复现实验</strong><p>记录版本、输入、观测方法、实际结果与适用条件。</p></li><li><strong>串起完整循环</strong><p>用两人合作副本连接运行、同步、存档与更新；状态同步、帧同步和小游戏分别验收。</p></li></ol>
+  <p class="framework-note">先推进 Unity＋ET 学习路线。总结 Demo、同步对照与小游戏适配仍是待完成目标；专栏中的既有文章与版本说明继续独立维护。</p>
+</section>
+{{ else }}
+{{ $lane := index $data.lanes $laneKey }}
+{{ if not $lane }}{{ errorf "Framework reading lane not found: %s" $laneKey }}{{ end }}
+<header class="topic-heading framework-heading"><p class="eyebrow">{{ $lane.kicker }}</p><h1>{{ .Title }}</h1><p>{{ .Description }}</p><p class="framework-outcome"><strong>学习目标：</strong>{{ $lane.outcome }}</p></header>
+<nav class="framework-switch" aria-label="切换框架阅读路径">{{ range $data.routes }}{{ if eq .key $laneKey }}<span aria-current="page">{{ .title }}</span>{{ else }}{{ partial "reading/link.html" (dict "page" .page "label" .title) }}{{ end }}{{ end }}</nav>
+<section class="topic-start" aria-labelledby="topic-start-title"><h2 id="topic-start-title">从这里开始</h2>{{ partial "reading/article.html" $lane.start }}</section>
+{{ range $index, $group := $lane.groups }}
+<section class="section framework-group" id="group-{{ add $index 1 }}" aria-labelledby="group-title-{{ add $index 1 }}">
+  <div class="section-heading"><div><p class="eyebrow">学习方向 {{ add $index 1 }}</p><h2 id="group-title-{{ add $index 1 }}">{{ $group.title }}</h2></div></div><p class="framework-intro">{{ $group.question }}</p>
+  <div class="framework-columns">{{ range $group.entries }}<article><p class="framework-meta">{{ .scope }}</p><h3>{{ if .page }}{{ partial "reading/link.html" (dict "page" .page "label" .title "arrow" true) }}{{ else }}{{ .title }}{{ end }}</h3><p>{{ .value }}</p><p class="framework-state">{{ .state }}</p>{{ if .reference }}<p>{{ partial "reading/link.html" (dict "page" .reference "label" .reference_label "class" "read-link" "arrow" true) }}</p>{{ end }}</article>{{ end }}</div>
+</section>
+{{ end }}
+{{ end }}
+<section class="section" id="engines" aria-labelledby="engines-title"><div class="section-heading"><div><p class="eyebrow">按实现范围阅读</p><h2 id="engines-title">通用原理、Unity 与 Unreal</h2></div></div><div class="framework-engine-list">{{ range $data.engines }}<article><h3>{{ .title }}</h3><p>{{ .value }}</p></article>{{ end }}</div></section>
+<div class="framework-related"><p>继续沿相关问题深入：</p>{{ partial "reading/link.html" (dict "page" "reading/gameplay.md" "label" "GamePlay") }}{{ partial "reading/link.html" (dict "page" "reading/delivery.md" "label" "工程与交付") }}{{ partial "reading/link.html" (dict "page" "reading/engine.md" "label" "引擎研发") }}{{ partial "reading/link.html" (dict "page" "reading/performance.md" "label" "性能优化") }}</div>

@@ -1,6 +1,7 @@
 ---
 title: "客户端框架"
-description: "围绕客户端功能怎样组织、异步怎样收尾、资源由谁持有，选择运行时与结构设计文章。"
+description: "从启动与运行流程进入异步、资源、UI、热更新和平台适配，建立客户端的职责与生命周期模型。"
 reading_kind: topic
-topic_key: client
+topic_key: frameworks
+framework_lane: client
 ---

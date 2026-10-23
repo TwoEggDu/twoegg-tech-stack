@@ -1,9 +1,9 @@
 {{ $topic := .Params.topic_key | default "" }}
 {{ if eq .Params.reading_kind "series" }}{{ $topic = "performance" }}{{ end }}
 {{ if not $topic }}
-  {{ $sections := dict "delivery-engineering" "delivery" "engineering-journey" "delivery" "live-ops-engineering" "delivery" "performance" "performance" "et-framework" "server" "et-framework-prerequisites" "server" "engine-toolchain" "engine" "rendering" "engine" }}
+  {{ $sections := dict "delivery-engineering" "delivery" "engineering-journey" "delivery" "live-ops-engineering" "delivery" "performance" "performance" "et-framework" "frameworks" "et-framework-prerequisites" "frameworks" "engine-toolchain" "engine" "rendering" "engine" }}
   {{ $topic = index $sections .Section | default "" }}
-  {{ if eq .Params.series "Unity 异步运行时" }}{{ $topic = "client" }}{{ end }}
+  {{ if in (slice "Unity 异步运行时" "HybridCLR" "YooAsset 资源管理与交付" "Addressables 资源管理与交付" "Addressables 与 YooAsset 对比与选型") .Params.series }}{{ $topic = "frameworks" }}{{ end }}
   {{ if in (slice "技能系统深度" "游戏编程设计模式") .Params.series }}{{ $topic = "frameworks" }}{{ end }}
   {{ if eq .Params.series "游戏引擎架构地图" }}{{ $topic = "engine" }}{{ end }}
 {{ end }}

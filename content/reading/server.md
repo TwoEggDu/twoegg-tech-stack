@@ -1,6 +1,7 @@
 ---
 title: "服务端框架"
-description: "沿客户端的网络与版本配套需求，进入 ET 的会话、Actor、服务端分工与框架实现。"
+description: "沿会话与请求进入 Actor、地图实例、业务数据与持久化，理解服务端规则和失败恢复。"
 reading_kind: topic
-topic_key: server
+topic_key: frameworks
+framework_lane: server
 ---
