@@ -28,7 +28,7 @@ weight: 500
 
 > **读这篇之前**：建议先看 [对象容器、借用与遍历]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}}) 与 [窗口和编辑器回调]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})，掌握值、借用与调用者寿命。完整的一帧入口见 [主线 03]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})，具体位置变化和 Vulkan 提交分别见主线 06、07。
 >
-> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。引擎线程与同步结论来自固定源码，尚未取得实际运行采样；独立 C++17 程序只验证本文的最小交接模型。布局、字节与转换的公共规则见 [CXX-06]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})；并发完整单元 CXX-11 仍待写，状态见 [公共目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。引擎线程与同步结论来自固定源码，尚未取得实际运行采样；独立 C++17 程序只验证本文的最小交接模型。布局、字节与转换的公共规则见 [CXX-06]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})；mutex、条件变量、原子发布与线程收尾的完整公共课见 [CXX-11]({{< relref "engine-toolchain/cpp-foundations-11-concurrency-handoff.md" >}})，先掌握语言规则，再核对本文的项目线程入口与完成协议。完整顺序见 [公共目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 ## 读缓冲，先找四个动作
 

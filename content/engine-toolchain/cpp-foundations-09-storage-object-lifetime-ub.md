@@ -444,7 +444,7 @@ if ($LASTEXITCODE -ne 0) { throw 'run failed' }
 
 本次只验证这些合法路径与诊断：不包含 Sanitizer、异常析构、真实分配失败、所有 union 异常路径、复杂透明替换、跨平台布局/对齐、引擎运行、GC、并发与性能测量。C++17 实验也不替后续标准版本或各引擎规定统一对象模型。
 
-按补写顺序，下一篇是 **CXX-11：数据交给另一个线程后，谁保证它有效且可见**，继续补寿命、互斥、原子与发布/消费的关系。完整路径见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按补写顺序，下一篇进入 [CXX-11：数据交给另一个线程后，谁保证它有效且可见]({{< relref "engine-toolchain/cpp-foundations-11-concurrency-handoff.md" >}})，继续补寿命、互斥、原子与发布/消费的关系。完整路径见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **空间由谁提供，对象由谁建立和结束，资源由谁清理，访问由谁保证。**
 

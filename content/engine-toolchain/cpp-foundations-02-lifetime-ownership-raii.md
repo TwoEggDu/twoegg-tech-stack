@@ -455,4 +455,6 @@ g++ -std=c++17 -O0 -g -Wall -Wextra -Wpedantic raii.cpp -o raii.exe
 
 进一步区分“对象析构”与“存储归还”，以及普通 new / placement new 构造失败后的不同责任，见 [CXX-09：有内存为什么还没有对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})。本篇保留 RAII、共享持有与断环的入门实验。
 
+跨线程使用时，保活与同步还要分别证明，见 [CXX-11：数据交给另一个线程后，谁保证它有效且可见]({{< relref "engine-toolchain/cpp-foundations-11-concurrency-handoff.md" >}})。共享持有不自动保护对象字段，任务完成前也不能提前结束借用目标。
+
 下一篇进入 [CXX-03：一次成员调用执行谁]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}})，从静态接口和对象来源追踪重载、覆盖、切片与虚析构。项目应用继续读 [Piccolo 类、继承与虚函数前置]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})，完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。

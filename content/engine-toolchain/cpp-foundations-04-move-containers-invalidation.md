@@ -490,7 +490,7 @@ last-owner=destroyed
 
 需要更稳定的访问时，常见选择各有代价：索引需要处理删除和重排，ID/句柄需要查找和复用检测，间接拥有需要追目标寿命与分配，节点存储需要考虑访问局部性。选择哪种方式取决于操作协议，而不是仅看当前地址是否碰巧没变。
 
-回调中保存的 this、引用或容器元素地址，也要在上述修改后重新判断，继续回看 [CXX-05]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}})。跨线程修改还需要同步，局部强持有不保证遍历和字段访问线程安全；并发基础由 CXX-11 负责。
+回调中保存的 this、引用或容器元素地址，也要在上述修改后重新判断，继续回看 [CXX-05]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}})。跨线程修改还需要同步，局部强持有不保证遍历和字段访问线程安全；并发基础见 [CXX-11：数据交给另一个线程后，谁保证它有效且可见]({{< relref "engine-toolchain/cpp-foundations-11-concurrency-handoff.md" >}})。
 
 ## 8. 自测与验证边界
 
