@@ -11,318 +11,39 @@ tags:
   - "FAQ"
   - "Architecture"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
+lastmod: "2026-10-25"
 ---
-> 这篇不再讲新的源码细节。它只做一件事：把前面几篇里最容易混掉、但又最影响项目判断的 10 句话重新拉直。因为很多时候，团队不是"不会用 HybridCLR"，而是脑子里默认站着几句错判断。
 
-这是 HybridCLR 系列第 13 篇。  
-如果说前面的主链、AOT 泛型、工具链、资源挂载、`Full Generic Sharing`、`DHE` 和选型篇都在补地图，那这一篇更像是把地图边上最容易误导人的几句路标重新写对。
+这个 FAQ 用来快速找回机制边界，不再重复主线的整段论证。看到一句过于确定的结论时，先找它缺少了哪一项前提。
 
-## 这篇要回答什么
+> **阅读基线**：本篇按 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）与 package v9.0.3 核对公开源码。实际 Player 使用本机自定义 Unity；环境与固定提交见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。源码判断与实测范围分别标明。
 
-这篇主要回答 3 个问题：
+这是系列第 13 篇，按问题跳转即可。
 
-1. HybridCLR 系列里最容易混掉的 10 个判断到底是什么。
-2. 每个判断为什么不对，它真正混掉的是哪两层。
-3. 如果项目现场又出现类似说法，第一反应应该改成什么。
+## 十个判断与对应入口
 
-## 收束
+| 常见判断 | 更准确的边界 | 继续读 |
+|---|---|---|
+| HybridCLR 就是一个解释器 | 还包含装载、metadata、工具链和跨边界设施 | [总论]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}}) |
+| 补 metadata 就是在加载热更 DLL | 两种入口不同；补充针对已有 AOT 程序集 | [泛型篇]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}) |
+| 没有 native 泛型实例就只能重发主包 | 补充原始方法体可提供解释实现；需要 native 性能时再保实例 | [修法决策]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md" >}}) |
+| AOTGenericReferences 生成完就自动安全 | 它是需求线索；还要核对定义、实现和 Player 路径 | [工作流衔接]({{< relref "engine-toolchain/hybridclr-aotgenericreferences-disstripcode-metadata-how-to-work-together.md" >}}) |
+| MethodBridge 只是性能优化 | 它首先承担跨调用布局的正确性 | [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}}) |
+| AddComponent 成功就证明资源挂载成功 | 资源反序列化还有身份登记与版本条件 | [资源篇]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}}) |
+| Assembly.Load 之后方法都已准备好 | 装载与转换分开；模块初始化也可能提前触发部分方法 | [调用链]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}}) |
+| PreJit 把热更方法编成 native | 它准备符合条件的方法的解释表示 | [性能篇]({{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}}) |
+| 出现 FullySharedGenericAny 就代表商业 FGS 或泛型故障 | 这是生成调用形态的线索，不能证明授权能力、兼容范围或根因 | [FGS 边界]({{< relref "engine-toolchain/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}}) |
+| DHE 只是解释器更快 | 它讨论已修改模块的函数执行分流，需满足自身版本与支持条件 | [DHE]({{< relref "engine-toolchain/hybridclr-dhe-why-not-just-faster-interpreter.md" >}}) |
 
-HybridCLR 最常见的误解，不是某个 API 名字记错了，而是把本来不在一层的东西误当成同一种能力：装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享、函数级分流。
+## 两个容易被旧结论带偏的现场
 
-只要先把层分对，很多误解其实会自动消失。
+第一，`AOT generic method not instantiated` 不表示 metadata 一定无关。先查定义所在程序集的补充情况和方法体，再区分 native 与解释路径；[综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})提供了同一热更 DLL 的对照。
 
-![高频误解对照](../../images/hybridclr/faq-wrong-vs-right.svg)
-
-*图：5 个最常见的错误判断与实际情况对照。完整 10 条见下文。*
-
-## FAQ 1：HybridCLR 本质上只是一个解释器
-
-不对。
-
-解释器当然是 HybridCLR 的核心组成之一，但把它压成"只是一个解释器"，会直接抹掉前后两大块真正决定项目行为的东西：
-
-- 前面：动态程序集装载、AOT metadata 补充、MethodBridge、资源挂载身份链
-- 后面：`PreJit`、`Full Generic Sharing`、`DHE` 这些继续往外扩的能力
-
-更准确的说法应该是：
-
-`HybridCLR` 是一套把 `IL2CPP` 热更补成可工程化方案的 runtime 体系，解释器只是其中负责"热更方法怎么执行"的那一层。
-
-源码层面，`RuntimeApi.cpp` 里的入口就已经分成了 `LoadAssembly`（装载）、`LoadMetadataForAOTAssembly`（metadata 补充）、`PreJitMethod`（预热）等多条不同职责的链。仅看 `Interpreter::Execute` 一跳会丢掉前后大量工程细节。
-
-> 完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}}">HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute</a>
-
-如果项目里有人说"它不就是个解释器"，你最好立刻追问：
-
-`你现在说的是方法执行层，还是把整条装载到执行的链都压扁了？`
-
-## FAQ 2：`LoadMetadataForAOTAssembly` 就是在加载热更 DLL
-
-不对。
-
-这两件事在运行时入口上就不是同一条链：
-
-- `Assembly.Load(byte[])` 才是在把热更程序集真正接进 runtime
-- `LoadMetadataForAOTAssembly` 是给已有 AOT assembly 补一份同源 metadata 视图
-
-它解决的是：
-
-`runtime 看不看得见那份 AOT metadata`
-
-它不在做的是：
-
-`把一个新的热更程序集装进来`
-
-如果把这两个动作混成一件事，你后面就会同时看错两类问题：
-
-- 热更 DLL 根本没装进来
-- AOT metadata 补错了 DLL 或顺序不对
-
-源码上，`Assembly::Load` 走的是 `RawImage -> Assembly` 注册链，而 `Assembly::LoadMetadataForAOTAssembly` 走的是 `AOTHomologousImage` 注册链，两者在 `metadata/Assembly.cpp` 里是完全独立的函数。
-
-> 详细拆解见：<a href="{{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}">HybridCLR AOT 泛型与补充元数据</a>
-
-更准确的说法应该是：
-
-`一个负责把新程序集接进来，一个负责让 AOT 世界在运行时重新变得可查询。`
-
-## FAQ 3：补充 metadata 以后，泛型问题就都解决了
-
-不对。
-
-补充 metadata 解决的是：
-
-`AOT metadata 在运行时能不能被看见、被解释器继续消费`
-
-它不等于：
-
-`所有原本没有被 AOT 出来的泛型 native 实现，都会自动出现`
-
-这就是为什么现场会同时出现两类完全不同的问题：
-
-- 一类是 metadata 不可见，解释器拿不到 method body、泛型签名或上下文
-- 另一类是 metadata 看懂了，但真正要调的那个具体泛型实例根本没有 native implementation
-
-最典型的边界提醒，就是：
-
-`AOT generic method not instantiated in aot`
-
-看到这句时，第一反应就不该再问"metadata 补了没"，而该问：
-
-`这个具体实例到底有没有被 AOT 出来。`
-
-运行时报出的 `AOT generic method not instantiated in aot` 来自 IL2CPP 的 `il2cpp::vm::Runtime::GetGenericVirtualMethod` 路径，它检查的是 native instantiation 是否存在，和 metadata 补充与否无关。
-
-> 两层区别的完整分析见：<a href="{{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}">HybridCLR AOT 泛型与补充元数据</a>
-
-更准确的说法应该是：
-
-补 metadata 能让更多 AOT 泛型场景退回 interpreter 兜底。  
-但它不是 generic native instantiation 的总开关。
-
-## FAQ 4：`AOTGenericReference` 一生成，运行时就自动安全了
-
-也不对。
-
-`AOTGenericReference` 的价值很大，但它不是自动修复器。  
-它更像是：
-
-`帮你把一部分需要显式暴露的 AOT 泛型实例，提前放到构建视野里。`
-
-它解决不了三类事情：
-
-- 你没覆盖到的实例
-- 真正发生在业务动态组合里的新实例
-- 和 `MethodBridge`、metadata 顺序、资源身份链有关的其他问题
-
-所以它最多只能说明：
-
-`你显式声明过一部分风险`
-
-不能说明：
-
-`运行时已经天然安全`
-
-生成逻辑在 `Editor/AOT/AOTReferenceGeneratorCommand.cs` 的 `GenerateAOTGenericReference` 里，它只是从已编译的热更 DLL 中静态扫描泛型实例列表，无法覆盖运行时动态组合出的新实例。
-
-> 工具链生成流程的完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-toolchain-what-generate-buttons-do.md" >}}">HybridCLR 工具链拆解</a>
-
-更准确的说法应该是：
-
-`AOTGenericReference` 是显式暴露和前移泛型风险的工具，不是对泛型问题的运行时担保。
-
-## FAQ 5：MethodBridge 只是性能优化
-
-不对。
-
-这是系列里最容易把人带偏的一句。
-
-如果某个调用场景真的缺桥接，现场通常不是"慢一点"，而是直接报错：
-
-- `GetReversePInvokeWrapper fail...`
-- `NotSupportNative2Managed`
-- `NotSupportAdjustorThunk`
-
-这说明 `MethodBridge` 首先解决的是：
-
-`interpreter / AOT / native 之间的 ABI 正确性`
-
-性能只是在"桥已经正确存在"的前提下，才有资格继续讨论。
-
-源码上，`MethodBridge.cpp` 是 `Generate/All` 产出的桥接表，构建时 `CheckSettings` 会校验其 DEVELOPMENT flag 一致性；缺桥时 runtime 直接在 `InterpreterModule` 的 invoker 查找阶段报错。
-
-> 边界拆解见：<a href="{{< relref "engine-toolchain/hybridclr-boundaries-and-tradeoffs.md" >}}">HybridCLR 的边界与 trade-off</a>
-
-更准确的说法应该是：
-
-`MethodBridge` 是跨边界调用契约的一部分，先是正确性能力，其次才是性能问题。
-
-## FAQ 6：支持 MonoBehaviour，就等于支持 `AddComponent`
-
-不对。
-
-代码里 `AddComponent(type)` 能成立，只说明：
-
-`这个类型对象在运行时能被拿到，并沿普通代码路径实例化`
-
-而资源上的热更 `MonoBehaviour` 能成立，真正难的是另一条链：
-
-`Prefab / Scene / AssetBundle 反序列化出来的脚本引用，能不能沿程序集身份链重新接回真实热更程序集`
-
-所以这两件事不是一回事：
-
-- 一个偏代码实例化路径
-- 一个偏资源反序列化和程序集身份链
-
-Unity 在 build 时把 `scriptGuid`（.meta GUID）和 `fileID` 写入序列化数据；反序列化时沿程序集名 + 类型名去查找。HybridCLR 保证的是目标类型在 runtime 的 metadata 世界里存在，能被这条查找链命中。
-
-> 身份链的完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}}">HybridCLR MonoBehaviour 与资源挂载链路</a>
-
-更准确的说法应该是：
-
-`HybridCLR` 对资源挂载 `MonoBehaviour` 的支持，本质上是脚本身份链问题。  
-不是"这个类能不能继承 `MonoBehaviour`"这么简单。
-
-## FAQ 7：`Assembly.Load(byte[])` 之后，方法就已经"编译好了"
-
-不对。
-
-`Assembly.Load(byte[])` 之后，你最多只能说：
-
-`程序集对象已经进了 runtime`
-
-但这离"方法已经准备好执行"还差了好几步：
-
-- 元数据结构要先接好
-- 某些方法第一次执行时还会现场走 transform
-- 真正调用时还要看 `MethodInfo`、`invoker_method`、桥接路径和 interpreter 主链
-
-所以如果有人把 `Assembly.Load` 理解成"相当于已经编译完成"，那通常会立刻看错首调尖峰、transform 成本和实际调用路径。
-
-源码上，`Assembly.Load` 完成后方法的 `interpData` 仍为空；直到首次调用时 `InterpreterModule::GetInterpMethodInfo` 才触发 `HiTransform::Transform`，把 IL 翻译成解释器指令并缓存到 `InterpMethodInfo`。
-
-> 调用链的完整跟踪见：<a href="{{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}}">HybridCLR 调用链实战</a>
-
-更准确的说法应该是：
-
-`Assembly.Load` 是装载入口，不是"方法已经 ready"的终点。
-
-## FAQ 8：`PreJitMethod` 真的是"提前 JIT 成 native 代码"
-
-不对。
-
-这句误解通常来自名字，而不是行为。
-
-`PreJitMethod / PreJitClass` 真正预热的，不是新的 native 机器码，而是：
-
-- 解释器方法信息
-- 首次 transform 成本
-- 一部分首次调用前置准备
-
-它当然能减少首调尖峰，但它没有把解释器方法"变成 JIT native code"。
-
-所以如果把 `PreJit` 理解成：
-
-`把热更代码提前编成原生代码`
-
-那后面你一定会高估它的能力边界。
-
-源码上，`PreJitMethod0` 内部调用的是 `InterpreterModule::GetInterpMethodInfo`，产出的是 `InterpMethodInfo`（解释器方法信息），不是 native code。它还会获取 `g_MetadataLock`，大量方法同时 PreJit 时需注意锁竞争。
-
-> 预热策略的完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}}">HybridCLR 性能与预热策略</a>
-
-更准确的说法应该是：
-
-`PreJit` 是把解释器首调成本前移，不是给 IL2CPP 补一个真正的 runtime native JIT。
-
-## FAQ 9：`Full Generic Sharing` 是补充 metadata 的升级版
-
-不对。
-
-这两条路线都和 AOT 泛型有关，但层级完全不同：
-
-- 补充 metadata 解决的是 metadata 可见性和 interpreter 兜底
-- `Full Generic Sharing` 解决的是 generic runtime 共享上限
-
-它们最大的区别不是"谁更高级"，而是：
-
-- 一个在回答"runtime 能不能继续看懂并解释"
-- 一个在回答"更多 generic 调用能不能不再退回补 metadata + interpreter"
-
-这也是为什么 `Full Generic Sharing` 会直接触到：
-
-- generic method 签名形态
-- `MethodInfo` 相关字段
-- `methodPointer / invoker_method / virtualMethodPointer`
-
-这些都已经不是 metadata 文件层能单独解释的事了。
-
-源码上，FGS 开启后 IL2CPP 生成的 C++ 代码里会出现带 `Il2CppFullySharedGenericAny` 标记的完全共享版本函数，调用模型本身发生了变化。
-
-> 完整对比见：<a href="{{< relref "engine-toolchain/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}}">HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版</a>
-
-更准确的说法应该是：
-
-`Full Generic Sharing` 改的是 generic 调用模型，不是"metadata 更多一点"的升级版。
-
-## FAQ 10：`DHE` 就是普通解释执行更快一点
-
-还是不对。
-
-普通热更主线更像是：
-
-`新热更程序集进来后，里面的方法进入解释执行主链`
-
-而 `DHE` 的核心语义是另一件事：
-
-`对已经打进包体的 AOT 程序集做任意增删改后，运行时按函数是否变化，分别走原 AOT 路径或最新解释执行路径`
-
-这就是为什么 `DHE` 必须引入：
-
-- 离线差分得到的 `dhao`
-- 更严格的加载顺序
-- 对资源挂载和 `extern` 的更保守边界
-
-所以它真正改的不是"解释器速度曲线"，而是：
-
-`AOT 与 interpreter 在同一程序集里的函数级分流策略`
-
-其中 `dhao` 文件保存的就是离线差分计算出的"哪些类型和函数发生了变化"的结果，运行时据此决定每个函数走 AOT 还是 interpreter。
-
-> 完整拆解见：<a href="{{< relref "engine-toolchain/hybridclr-dhe-why-not-just-faster-interpreter.md" >}}">HybridCLR DHE｜为什么它不是普通解释执行更快一点</a>
-
-更准确的说法应该是：
-
-`DHE` 不是普通解释器的加速补丁，而是"修改现有 AOT 模块"这件事的函数级混合执行方案。
-
-## 收束
-
-这 10 个判断几乎都指向同一个根因：把不在一层的能力误当成同一种东西。
-
-真正稳的做法，不是多记几个结论，而是先问自己现在讨论的到底是装载、metadata、AOT 泛型实例、MethodBridge、资源身份链、generic 共享，还是函数级分流。
+第二，`SIGSEGV`、重复 native 帧和 `Il2CppFullySharedGenericAny` 的组合仍然不是唯一根因。历史 async 案例只保留当时能支持的观察，未知环节见 [案例续篇]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})。
 
 ## 系列位置
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-advanced-capability-selection-community-metadata-fgs-dhe.md" >}}">HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上</a>
-- 下一篇：无。到这里，这个系列已经同时有主链、边界、高级能力和 FAQ 入口了。
+回到 [系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})选路线；需要看历史定位过程时继续 [案例诊断]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}})。
+
+**先辨认问题与证据属于哪一层，再决定下一步检查什么。**

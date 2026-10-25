@@ -1,19 +1,20 @@
 ---
 date: "2026-03-20"
 title: "HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute"
-description: "保留 v6.1.0 的源码调用链，并用 v9 配套 Player 的原生断点，验证同一热更方法首次转换、再次复用和两次执行。"
+description: "沿固定 v9 配套源码与 Player 原生断点，验证同一热更方法首次转换、再次复用和两次执行，另列 v6 历史路径差异。"
 weight: 34
 featured: false
 tags: [Unity, IL2CPP, HybridCLR, Runtime, SourceCode]
 series: "HybridCLR"
-hybridclr_version: "源码阅读 v6.1.0；Player 实测 runtime v9.0.1 / package v9.0.3"
+hybridclr_version: "源码与 Player runtime v9.0.1 / package v9.0.3；v6.1.0 仅历史对照"
+lastmod: "2026-10-25"
 ---
 
 热更 DLL 已经加载，反射也取到了方法，调用后返回了正确结果。这些现象能证明业务入口可用，却还没有回答：参数经过了哪个 invoker，什么时候转换方法体，第二次调用又复用了什么？
 
 这篇沿着一个独立的 `HotUpdate.ReadingProbe.Add(int, int)` 回答这些问题。工程准备、版本身份和符号检查放在 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})，这里集中跟状态变化，不依赖业务项目的启动框架。
 
-> **版本与证据范围**：前八跳保留 HybridCLR v6.1.0（`5567f367502d916c6742873d8ed2ab13d0f6900a`）的历史源码分析。后面的 Player 实测使用 runtime v9.0.1、package v9.0.3 与本机自定义 Unity；完整 commit 见起步篇。旧版路径、版本差异和实测表分别标明。
+> **版本与证据范围**：前八跳按 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）与 package v9.0.3 核对。Player 实测使用同一套 runtime 与本机自定义 Unity；完整 commit 见起步篇。v6.1.0 仅保留在历史差异表，不能把旧版源码与新版断点拼成一条链。
 
 ## 先把装载、准备与执行分开
 
@@ -49,7 +50,7 @@ var second = (int)method.Invoke(null, new object[] { 7, 8 });
 
 ## 第二跳：装载后得到什么
 
-固定版本的 [Assembly.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/metadata/Assembly.cpp) 中，`LoadFromBytes` 调用 `Create`，后者创建和加载 `InterpreterImage`，初始化相关 metadata，并构造、注册程序集与 image 信息。
+固定版本的 [Assembly.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/metadata/Assembly.cpp) 中，`LoadFromBytes` 调用 `Create`，后者创建和加载 `InterpreterImage`，初始化相关 metadata，并构造、注册程序集与 image 信息。
 
 断点观察应放在相应对象创建之后：输入长度是否匹配，image 是否属于本次 DLL，程序集名是否为 `HotUpdate`。这一步把 DLL 接入 runtime 的 metadata 体系，为后面的类型、方法和 token 解析建立依据，并不意味着每个方法都已生成内部指令。
 
@@ -73,7 +74,7 @@ var second = (int)method.Invoke(null, new object[] { 7, 8 });
 
 ## 第五跳：InterpreterInvoke 怎样准备参数
 
-在 [InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.cpp) 的 Unity 2021+ 分支中，`InterpreterInvoke` 先检查 `method->interpData`；没有转换结果时调用 `GetInterpMethodInfo`。随后按方法描述准备 `StackObject` 参数槽，把调用参数转换为解释器需要的布局，再调用 `Interpreter::Execute`。
+在 [InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp) 中，`InterpreterInvoke` 先检查 `method->interpData`；没有转换结果时调用 `GetInterpMethodInfo`。随后按方法描述准备 `StackObject` 参数槽，把调用参数转换为解释器需要的布局，再调用 `Interpreter::Execute`。
 
 因此实际顺序是“准备方法表示 → 转换参数 → 执行”。在断点中依次看：
 
@@ -85,11 +86,11 @@ var second = (int)method.Invoke(null, new object[] { 7, 8 });
 
 ## 第六跳：第一次怎样准备 InterpMethodInfo
 
-固定版本的 `InterpreterModule::GetInterpMethodInfo` 从 [第 588 行附近](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.cpp#L588) 开始。它先处理 `RuntimeInitClassCCtor`，进入 metadata 锁后再次检查缓存，再选择 image、取得方法体、分配 `InterpMethodInfo` 并调用 Transform，最后经内存屏障发布到 `methodInfo->interpData`。
+固定版本的 `InterpreterModule::GetInterpMethodInfo` 在 [InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp#L529) 中。它取得 metadata 锁、再次检查 `interpData`，调用 `Class::Init`，随后由 `HiTransform::Transform(methodInfo)` 返回 `InterpMethodInfo`，最后经内存屏障发布到 `methodInfo->interpData`。
 
 这里有三个必须分开的细节：
 
-1. 类型初始化不能简化成“只做 metadata 布局”；显式静态构造可能引入额外调用。本样本刻意没有这类逻辑。
+1. 这里的 `Class::Init` 不能直接等同于执行 C# 静态构造函数。静态构造触发应沿实际调用入口和类型初始化路径核对；本样本没有显式静态构造，避免混入额外业务调用。
 2. invoker 的快速缓存检查与锁内再次检查承担不同职责，不能删掉第二次检查来理解并发行为。
 3. `interpData` 保存转换后的方法表示。它不是本次参数或返回值的缓存。
 
@@ -97,17 +98,17 @@ var second = (int)method.Invoke(null, new object[] { 7, 8 });
 
 ## 第七跳：从哪个 image 取方法体，再转换什么
 
-本版本在 `GetInterpMethodInfo` 中选择 image 并调用 `image->GetMethodBody(methodInfo->token, tempMethodBody)`。热更方法使用解释 image；AOT 解释路径还涉及同源 image，本例不负责验证后者。
+v9 的 [HiTransform::Transform](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/Transform.cpp#L34) 接收 `MethodInfo`，先用 `MetadataModule::GetUnderlyingInterpreterImage` 取得对应 image，再经 `MethodBodyCache::GetMethodBody(image, token)` 获取方法体。本例走热更解释 image；AOT 补充元数据的同源 image 是另一组需独立验证的输入。
 
-拿到方法体后，调用 [HiTransform::Transform](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/transform/Transform.cpp#L150)，传入 image、MethodInfo、方法体和输出对象。Transform 解析、转换 CIL，形成解释器的内部表示。
+随后创建转换上下文，调用 `TransformBody` 解析、转换 CIL，返回解释器需要的 `InterpMethodInfo`。方法体不可用时存在显式异常分支，不能把它概括成必然 native 崩溃。
 
-**旧文的 `MethodBodyCache.cpp` 与 `Transform(methodInfo)` 写法不适用于本文固定的 v6.1.0。** 方法体读取发生在上层；不要拿其他版本的调用片段拼接这条链。方法体本身与转换结果 `InterpMethodInfo` 也不是同一层缓存。
+`MethodBodyCache` 缓存原始方法体，`methodInfo->interpData` 持有转换后的解释方法信息，两者不是同一层缓存。读取方法体与转换缓存的维护位置在 v6、v9 之间有变化，历史对照列在后文。
 
 在这一跳记录 image 来源、token、方法体输入，以及 Transform 返回后的 `codes`、`codeLength`。第二次调用没有进入目标 Transform，只有和同一方法的有效 `interpData` 一起观察，才构成复用证据。
 
 ## 第八跳：Execute 执行的是内部指令
 
-[Interpreter_Execute.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/Interpreter_Execute.cpp#L1645) 中的 `Interpreter::Execute` 为从 native 进入的调用建立执行现场，随后按内部 `HiOpcode` 分派。第一次跟读只需要关注当前方法、参数、建帧后的指令指针和返回位置，不必遍历所有分支。
+[Interpreter_Execute.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Interpreter_Execute.cpp) 中的 `Interpreter::Execute` 为从 native 进入的调用建立执行现场，随后按内部 `HiOpcode` 分派。第一次跟读只需要关注当前方法、参数、建帧后的指令指针和返回位置，不必遍历所有分支。
 
 这里执行的是 Transform 的产物，不是直接拿原始 CIL 字节逐条分派。第二次复用转换结果后仍需进入 Execute，处理 `(7, 8)`，产生新的返回值 `15`。这也不是一次 native JIT 编译。
 
@@ -131,16 +132,16 @@ var second = (int)method.Invoke(null, new object[] { 7, 8 });
 
 2026-10-25，使用本机自定义 Unity `2022.3.62f3_96770f904ca7`，构建 Windows x64、IL2CPP、Development、C++ Debug Player。package v9.0.3 配套 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）和 il2cpp_plus v2022.3.x-9.0.1。这个实验没有沿用旧版兼容补丁，构建输入核对与完整版本表见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。
 
-### 先核对与 v6 的路径差异
+### 历史对照：v6 与当前 v9 的路径差异
 
-| 位置 | v6.1.0 阅读基线 | v9.0.1 实验基线 |
+| 位置 | v6.1.0 历史对照 | v9.0.1 阅读与实验基线 |
 |---|---|---|
 | GetInterpMethodInfo | 处理 RuntimeInitClassCCtor，选择 image 并读取 body | 锁内检查缓存，Class::Init 后调用 Transform |
 | Transform 签名 | 接收 image、MethodInfo、body、输出对象 | 接收 MethodInfo，返回 InterpMethodInfo |
 | 方法体来源 | 上层调用 image->GetMethodBody | Transform 内经 MethodBodyCache 读取 |
 | 转换结果发布 | 写入 methodInfo->interpData | 仍写入 methodInfo->interpData |
 
-因此，`MethodBodyCache` 是新版的真实入口，只是不应写进旧版链路。对应公开源码见 [v9 InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp#L521) 和 [v9 Transform.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/Transform.cpp#L34)。本次缓存结论来自下面的实际断点，不靠两份源码“看起来相似”推定。
+v6 对照固定在 [5567f367](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.cpp#L588)。`MethodBodyCache` 是 v9 的真实入口，不应反写进旧版链路。对应公开源码见 [v9 InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp#L521) 和 [v9 Transform.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/Transform.cpp#L34)。本次缓存结论来自下面的实际断点，不靠两份源码“看起来相似”推定。
 
 ### 首次隔离实验记录
 

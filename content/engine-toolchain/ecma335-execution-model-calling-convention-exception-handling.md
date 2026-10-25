@@ -2,6 +2,7 @@
 title: "ECMA-335 基础｜CLI Execution Model：方法调用约定、虚分派、异常处理模型"
 slug: "ecma335-execution-model-calling-convention-exception-handling"
 date: "2026-04-14"
+lastmod: "2026-10-25"
 description: "从 call、callvirt、constrained.、装箱与异常处理理解托管调用语义，再衔接 IL2CPP 与 HybridCLR 的跨边界实现。"
 weight: 13
 featured: false
@@ -177,6 +178,59 @@ void C()
 
 两遍扫描的设计意图是：在实际展开栈帧之前，先确认有 handler 能处理这个异常。如果整个调用栈上没有匹配的 handler，runtime 可以在第一遍结束时直接报告未处理异常，而不需要执行任何 finally（某些 runtime 的策略）。
 
+### 用 filter 看见查找先于展开
+
+只有 finally 和 catch 的日志，还不容易看出两阶段的区别。异常过滤器在查找阶段执行，可以观察到内层 finally 尚未完成的状态。把下面代码作为独立控制台项目的 Program.cs：
+
+```csharp
+using System;
+
+public static class Program
+{
+    private static bool cleaned;
+
+    private static bool Accept(Exception error)
+    {
+        Console.WriteLine($"filter: cleaned={cleaned}, {error.GetType().Name}");
+        return true;
+    }
+
+    private static void Inner()
+    {
+        try
+        {
+            throw new InvalidOperationException("sample");
+        }
+        finally
+        {
+            cleaned = true;
+            Console.WriteLine("inner finally");
+        }
+    }
+
+    public static void Main()
+    {
+        try { Inner(); }
+        catch (InvalidOperationException error) when (Accept(error))
+        {
+            Console.WriteLine($"catch: cleaned={cleaned}");
+        }
+    }
+}
+```
+
+预期输出：
+
+```text
+filter: cleaned=False, InvalidOperationException
+inner finally
+catch: cleaned=True
+```
+
+filter 接受异常后，才进入展开并执行内层 finally，最后进入 catch。因此不要在 filter 中假定内层清理已经完成。若过滤器返回 false，查找会继续寻找其他匹配项；这个样例没有演示后续匹配、未处理异常或 native 异常传播。
+
+本机验证：2026-10-25，Windows、.NET SDK 10.0.402、net10.0、Release，从本文提取代码独立编译运行，实际输出与上面三行一致。这验证了该桌面样例的可观察顺序；跨 AOT／HybridCLR 解释器的同类路径仍需在对应 Player 中单独验证。
+
 ### Protected Region 在 metadata 中的表示
 
 每个方法的异常处理信息存储在方法体的 exception handling clause 表中（不是 metadata 表，而是 method body 的一部分，跟在 CIL 指令之后）。每个子句记录：
@@ -215,7 +269,7 @@ AOT 调用方
 
 1. 对上述 Counter 示例分别执行装箱调用与 constrained 泛型调用，检查原变量值。
 2. 在 IL 工具中核对 box、constrained.、callvirt 与参数类型。
-3. 给前面的 A／B／C 异常示例加入日志，观察查找、finally、catch 的顺序；加入 when 条件后，比较 filter 与内层 finally 的相对位置。
+3. 运行上面的 filter 示例，核对 filter、内层 finally、catch 的顺序及 cleaned 的变化，再设计返回 false 且外层仍有 catch 的变体。
 4. 若用于验证 HybridCLR，分别记录纯 AOT 与跨 AOT／解释器路径。桌面 CLR 结果只验证示例语义，不代表后者已通过。
 
 规范依据：[ECMA-335](https://ecma-international.org/publications-and-standards/standards/ecma-335/) Partition I §12.4、Partition III 中 call、callvirt、calli、constrained.、leave 等条目。

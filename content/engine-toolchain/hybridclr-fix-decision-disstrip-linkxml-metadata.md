@@ -2,7 +2,7 @@
 title: "HybridCLR 修法决策｜DisStripCode、link.xml、补充元数据分别在什么时候用"
 date: "2026-03-31"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
 tags:
   - "IL2CPP"
   - "AOT"
@@ -11,178 +11,67 @@ tags:
   - "LoadMetadataForAOTAssembly"
   - "MissingMethodException"
 weight: 48
+lastmod: "2026-10-25"
 ---
 
-这是 HybridCLR 系列第 19 篇。
+同一条 `MissingMethodException`，可能指向定义被裁剪，也可能指向一个 AOT 泛型方法没有可用实现。修法必须跟着缺失的东西走，不能只按异常名字选择 `link.xml` 或补充元数据。
 
-前两篇案例（HCLR-17、HCLR-18）记录了 async 崩溃和 `Dictionary<ValueTuple, 热更类型>` 各自的根因和修法。这一篇不再拆案例，而是把这两次排查过程里反复要做的判断收成一张决策图：
+本文接着 [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}) 做修法决策；具体共享规则和保留代码写法留给后两篇。历史 async 案例尚未完成根因闭环，不把它作为某种修法必然有效的依据。
 
-**看到同一条 `MissingMethodException`，我该改 `DisStripCode`，还是补 metadata，还是加 `link.xml`？**
+> **阅读基线**：本篇按 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）与 package v9.0.3 核对公开源码。实际 Player 使用本机自定义 Unity；环境与固定提交见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。源码判断与实测范围分别标明。
 
-三者经常同时出现在讨论里，但修的不是同一件事。混用不会报编译错误，只会让问题若隐若现或带来新的性能坑。
+## 先沿构建时序定位缺口
 
----
+主包构建先对托管程序集做裁剪，再由 IL2CPP 转换保留下来的 IL，生成、编译并链接 native 代码。运行时则解析类型与方法身份，选择已有 native 实现，或在满足条件时解释相应方法体。
 
-## 一、同一个报错，三种可能根因
+这个时序很关键：“托管裁剪删除了定义”和“该泛型实例没有生成 native 实现”是不同的问题。不能描述成“native 代码先生成，再被托管裁剪器删掉”。
 
-触发本篇写作的现场报错：
+| 核对对象 | 要拿到的证据 | 可能的修法 |
+|---|---|---|
+| AOT 类型、方法定义 | 最终裁剪 DLL 中是否存在目标定义和必要成员 | 调整静态引用、`link.xml` 或 `Preserve`，重建主包 |
+| 目标泛型方法的 native 实现 | 本包生成代码、注册信息与实际调用路径 | 在 AOT 构建输入中显式引用所需实例，或使用可用的共享实例 |
+| AOT 泛型方法的解释执行条件 | 对应 AOT assembly 的同源补充 DLL、加载返回值、目标方法体 | 补充匹配元数据，使缺少 native 实现的方法可以解释执行 |
+| 名字、token、签名或程序集身份 | 热更 DLL、主包和补充 DLL 是否来自兼容输入 | 修正发布组合；保留代码不能修复版本身份错误 |
 
-```
-MissingMethodException: AOT generic method not instantiated in aot.
-assembly:mscorlib.dll
-method: System.Boolean System.Collections.Generic.Dictionary`2
-  [System.ValueTuple`2[System.Int32,System.String],
-   System.Collections.Generic.List`1[Game.Data.T_AreaUnlockTips]]
-  ::TryGetValue(...)
-```
+这里列的是检查方向。单条异常没有提供上表全部证据，必须先保留完整签名和原始堆栈。
 
-看到这条报错，直觉反应通常是三条路之一：去 `DisStripCode.cs` 加一行，或者去补 metadata，或者去 `link.xml` 加保留规则。
+## link.xml：保留定义和成员
 
-这三条路解决的不是同一个问题。要判断走哪条，先要分清报错的根因层：
+当代码只通过反射、序列化或热更路径引用 AOT 成员时，主包裁剪分析可能看不到它。`link.xml`、`Preserve` 或可达的静态引用用于告诉裁剪器保留相应定义。
 
-**根因 A：native 代码从未生成过**
-IL2CPP 构建时没见过某个泛型参数组合，没为它生成 native 实现。这个组合在 `GameAssembly.so` 里根本不存在。
+但“保留了泛型定义”不等于“为所有未来类型参数生成了 native 实例”。同样，显式 AOT 调用也会参与裁剪可达性分析，所以不能把保留代码与 `link.xml` 的作用说成完全互斥。它们在保留定义这一层可能重叠，在表达具体泛型调用这一层则不同。
 
-**根因 B：native 代码曾经存在但被裁掉了**
-IL2CPP Managed Stripper 在树摇阶段认为某个类型/方法没有引用，把它从 AOT 产物里删除了。代码写了，但最终没进包。
+如果已发布主包根本不包含所需 AOT 定义，不能假定补充 metadata 会把整套已裁掉的 AOT API 自动恢复。应核对支持范围，并在需要时发布新主包。新增热更程序集里的类型属于另一条装载路径。
 
-**根因 C：解释器缺乏 AOT 类型的元信息**
-HybridCLR 解释器在执行热更代码时需要查询 AOT 程序集的类型布局，但运行时拿不到对应的 IL 元数据，无法继续。
+## 显式 AOT 引用：让构建看见具体方法
 
-三条根因对应三种修法，一一对应，不互相替代。
+项目常把这类代码命名为 `DisStripCode`，但这不是特殊 runtime API。有效性来自保留下来的 IL 中有目标调用，例如某个闭包上的 `Dictionary<TKey,TValue>.set_Item`，而不是文件名叫得正确。
 
----
+只声明变量、写 `typeof`，或构造一个 builder 默认值，均不足以证明所需方法被生成。应先按 [共享规则]({{< relref "engine-toolchain/hybridclr-sharing-type-judgment-valuetuple-int-string-valuetuple-int-object.md" >}}) 确定候选实例，再按 [可验证模板]({{< relref "engine-toolchain/hybridclr-disstripcode-writing-patterns-valuetype-reftype-nestedgeneric-delegate.md" >}}) 核对裁剪后 IL、生成物和 Player。
 
-## 二、三种机制各自在修什么
+适合优先考虑显式实例化的场景，是调用频繁、参数集合稳定，并且性能测量支持把目标路径保留为 native。新增 AOT 引用要重新构建主包，无法仅靠下发一个文本文件改变已发布 native 代码。
 
-**DisStripCode（AOT 泛型实例化保留）**
+## 补充元数据：正常的功能方案
 
-在 AOT 程序集里写出对某个泛型类型组合的显式引用，迫使 IL2CPP 在构建时为该组合生成 native 实现。
+`LoadMetadataForAOTAssembly` 补回对应 AOT assembly 的方法体信息，使本来缺少 native 实现的泛型方法有机会走解释执行。这是社区版支持 AOT 泛型的正常方案，不应一概称作“临时止血”。
 
-修的是根因 A：native 代码不存在。
+对 `List<HotStruct>.Add`，应检查 `List<T>.Add` 所属 AOT 程序集的补充数据，而不是把热更参数类型所在的 DLL 当成补充对象。可用 native 共享实现已经存在时，runtime 会优先使用它；补 metadata 不意味着整套 AOT 程序集都改成解释执行。
 
-它不负责防止代码被裁剪，也不给 HybridCLR 解释器提供任何信息。
+补充 DLL 必须匹配已发布主包。`Consistent` 要求对应裁剪产物；`SuperSet` 接受符合要求的同源超集，并不允许随便拿另一版 framework DLL 代替。元数据应在首次需要它的方法执行前加载成功，工程上常放在热更入口启动前。
 
-**何时用：** 热更代码使用了一组 AOT 从未见过的泛型参数组合，且该路径对性能敏感。典型场景：热更逻辑在战斗循环里每帧访问 `Dictionary<(int,int), HotUpdateType>`，需要 native 速度。
+## 用一个失败路径做最小决策
 
-**link.xml / [Preserve]**
+假设报错目标是 `Dictionary<ValueTuple<int,int>,HotClass>.set_Item`，`HotClass` 是热更引用类型：
 
-指示 IL2CPP Managed Stripper 在树摇阶段保留指定类型或成员，使其进入最终 AOT 产物。
+1. 核对这次 Player 的版本、完整签名和输入 DLL，先排除“读的是另一包日志”。
+2. 检查主包的泛型定义是否存在，再查该方法是否有可用共享 native 实现。
+3. 若没有 native 实现，检查定义所在程序集的补充元数据是否匹配并已加载。它可能直接提供正确的解释路径。
+4. 若需要 native 性能，再评估共享形态的显式调用，并重新构建验证；不是看到报错就自动要求重发主包。
 
-修的是根因 B：native 代码被删掉了。
+[泛型综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) 已用固定环境对照缺失、补充 metadata 与显式 AOT 实例。这个证据支持上述分层模型，不能代替对所有容器、平台和性能的验收。
 
-它不生成新的 native 代码，只阻止现有代码被删。如果某个泛型组合从来没有被写进 AOT 代码，`link.xml` 对它无效——保留的前提是"有东西可以保留"。
+## 修复后的交付标准
 
-**何时用：** 调高 Managed Stripping Level 后，原本正常的类型或方法突然报 `TypeLoadException` / `MissingMemberException`。典型场景：项目从 Low 调到 Medium，某个通过反射访问的序列化类被裁掉。
+修复记录至少包含：缺的是哪一层、改了哪个构建或加载输入、对应主包身份、失败路径如何重新执行，以及最终走 native 还是解释路径。功能通过后再决定性能优化，避免把“能执行”和“必须 native”混成一个标准。
 
-**LoadMetadataForAOTAssembly（补充元数据）**
-
-运行时向 HybridCLR 注册一份 AOT 程序集的裁剪后 IL 字节，使解释器在执行热更代码时能查询该程序集的类型布局和泛型定义。
-
-修的是根因 C：解释器看不懂。
-
-它不让 AOT native 代码凭空出现。补了 metadata 之后，如果 AOT native 实例仍不存在，解释器走的是 fallback 解释路径——报错可能消失，但执行路径已经从 native 切换成了解释器。
-
-**何时用：** 线上已出现 `AOT generic method not instantiated` 崩溃，需要在不发 APK 的前提下先恢复运行。典型场景：版本刚上线，发现新热更功能触发了 AOT 缺口，通过 MPQ 下发裁剪后 DLL 紧急止血。
-
-`DisStripCode` 和 `link.xml` 在构建期生效（决定哪些代码进入 AOT 二进制），`LoadMetadataForAOTAssembly` 在运行期生效（给解释器补可见性）。三者是互补关系，不是互斥替代。
-
----
-
-## 三、报错信号与修法的对应关系
-
-| 报错信号 | 根因 | 修法 | 能否热更（不发 APK）|
-|---|---|---|---|
-| `MissingMethodException: AOT generic method not instantiated in aot` | AOT 泛型 native 实例缺失 | LoadMetadataForAOTAssembly（先恢复运行） / DisStripCode（要 native 性能时） | metadata ✅ / native 方案 ❌ |
-| `TypeLoadException` / `MissingMemberException` / `MissingFieldException` | 类型或成员被 Stripper 裁掉 | link.xml / `[Preserve]` | ❌ 必须重打 APK |
-| `ExecutionEngineException: metadata not found` / 解释器找不到 AOT 类型布局 | HybridCLR 解释器缺 AOT 元信息 | LoadMetadataForAOTAssembly | ✅ 可通过热更 MPQ 下发 |
-| `AOT generic method not instantiated`（已上线，无法立即发 APK）| 同上，但要先恢复运行 | LoadMetadataForAOTAssembly（先恢复运行）→ 性能敏感或要回 native 时再补 DisStripCode | 先恢复运行 ✅ / native 方案 ❌ |
-
-**DisStripCode 的具体写法规则：**
-
-泛型参数里出现值类型时，不能简单拿 `object` 覆盖整个实例，至少要把值类型部分按实际共享类型写出来；泛型参数里的热更引用类型，在 AOT 代码里看不见，用 `object` 替代。
-
-本篇触发场景的修法：
-
-```csharp
-[Preserve]
-static void ForceDreamSpiritAOTInstantiation()
-{
-    // (int, int) 键的组合——原有
-    var d = new Dictionary<(int, int), object>();
-    d[(0, 0)] = default;
-
-    // (int, string) 键的新变体——本次新增
-    // string 是引用类型，用 object 替代；List<热更类型> 同理
-    var d2 = new Dictionary<(int, string), List<object>>();
-    d2.TryGetValue((0, ""), out _);
-}
-```
-
-为什么 `object` 能覆盖 `List<T_AreaUnlockTips>`：IL2CPP Full Generic Sharing 对引用类型参数共享一套 native 实现，`object` 实例化时生成的 native 代码在运行时被所有引用类型值复用。细节见 HCLR-18。
-
----
-
-## 四、容易混淆的两个边界
-
-### 边界一：`MissingMethodException` 有两种根因，报错名字相同
-
-`MissingMethodException` 本身不区分"从未生成"和"生成后被裁掉"。鉴别方式：
-
-- **查 AOTGenericReferences.cs**：如果该泛型组合在自动生成的清单里有记录，说明热更侧已经依赖到了它；接下来再继续判断 AOT 侧到底是没实例化，还是实例化后又被裁剪。这个文件更像需求清单，不是"native 代码已经生成过"的直接证据。
-- **查报错是否带 "AOT generic method not instantiated in aot"**：这条固定措辞来自 IL2CPP 的 `RaiseAOTGenericMethodNotInstantiatedException`，至少能说明当前缺的是 AOT 泛型 native 实例。后续是先补 metadata 恢复运行，还是补 DisStripCode 回到 native，要看你是在抢修功能，还是在修性能路径。
-- **查 Managed Stripping Level**：如果项目最近刚从 Low 调到 Medium 或 High，出现的新报错优先怀疑裁剪，走 link.xml 方向。
-
-### 边界二：补 metadata 后报错消失，不代表问题解决了
-
-这是最常见的误判。
-
-补了 `LoadMetadataForAOTAssembly` 之后，`AOT generic method not instantiated` 的报错有时会消失。原因不是 native 代码出现了，而是 HybridCLR 解释器拿到了 AOT 类型的 IL 元信息后，切换到了 interpreter-only 路径兜底执行。
-
-两条路径的区别：
-- native 路径：IL2CPP 为该泛型组合生成了 C++ native 实现，直接 native 调用
-- interpreter fallback 路径：HybridCLR 解释器用 IL 字节码逐条解释执行，有性能代价
-
-如果是热路径（每帧调用、大量数据处理），fallback 路径的性能代价会在帧率上直接显现。报错消失但帧率下降，是这个误判最典型的后果。
-
-正确做法：如果当前目标只是先恢复运行，补 metadata 已经是有效修法；如果这条路径是热路径，或者你希望回到 native 执行，再在下一个 APK 版本里把对应泛型实例补进 DisStripCode，让 native 代码真正进包。
-
----
-
-## 五、修完还要做什么
-
-三种修法的交付动作不同，不能混用：
-
-**DisStripCode 改动 → 必须重打 APK**
-
-修改进入 AOT 程序集，最终编译进 `GameAssembly.so` / `libil2cpp.so`。只更新热更包（MPQ）无效，设备上的 native 代码不会变。
-
-**link.xml / [Preserve] 改动 → 必须重打 APK**
-
-Managed Stripper 在构建阶段运行，结果影响最终 AOT 产物。同样无法通过热更修复。
-
-**LoadMetadataForAOTAssembly 改动 → 可以热更**
-
-常见做法是把 AOT DLL 文件（通常是 `AssembliesPostIl2CppStrip` 目录下的裁剪后产物）打进热更包（MPQ）下发。运行时调用 `LoadMetadataForAOTAssembly` 加载即可生效。
-
-两个使用约束：
-1. 如果使用 `HomologousImageMode.Consistent`，必须使用 `AssembliesPostIl2CppStrip` 里的 DLL；如果使用 `SuperSet`，裁剪后 DLL 和原始 AOT DLL 都可以，但最好和本次打包产物同源
-2. 补充元数据没有硬性的加载顺序要求；只要在相关 AOT 泛型第一次被使用前完成加载即可。若项目里把它固化成"热更 DLL 之前统一加载"，那是工程约定，不是机制强制要求
-
-**AOTGenericReferences.cs 需要定期重新生成**
-
-DisStripCode 里手动加的泛型引用和 `AOTGenericReferences.cs` 是两件事：前者是让 IL2CPP 生成 native 代码的可执行代码，后者是 HybridCLR 工具链扫描热更 DLL 后输出的"当前需要哪些 AOT 实例"的注释清单。
-
-手动加了 DisStripCode 并不代表 AOTGenericReferences.cs 已经覆盖了所有缺口。每次热更 DLL 有变更，都应该重新运行 `HybridCLR > Generate > AOT Generic Reference`，用新清单检查是否有遗漏，再补进 DisStripCode。
-
----
-
-## 收束
-
-> 看到 `AOT generic method not instantiated`，先判断目标是恢复运行还是回到 native 路径。恢复运行补 metadata，性能敏感路径再补 DisStripCode。写 DisStripCode 时值类型按实际共享类型写，热更引用类型用 `object` 替代。`link.xml` 解决的是"类型存在但被裁掉了"，不解决"实例没进 AOT"。
-
----
-
-## 系列位置
-
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}}">HybridCLR 案例｜Dictionary\<ValueTuple, 热更类型\> 的 MissingMethodException 与 object 替代法</a>
+下一篇进入 [共享类型判断]({{< relref "engine-toolchain/hybridclr-sharing-type-judgment-valuetuple-int-string-valuetuple-int-object.md" >}})；完整发布协作放在 [AOT 泛型工作流]({{< relref "engine-toolchain/hybridclr-aotgenericreferences-disstripcode-metadata-how-to-work-together.md" >}})。

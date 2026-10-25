@@ -56,22 +56,6 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 3. 准备动手跟源码时，先看 [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})，再进入 [HybridCLR 系列]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})。ABI、解释器 IR、GC 接入、裁剪、async 和工程排障继续在该系列展开。
 4. 完成签名、调用和泛型前置后，做 [泛型调用综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})：用同一个 `Echo<T>` 对照实际 call／MethodSpec、AOT 产物和 Player 执行路径。该案例已在本机自定义 Unity 与固定 v9 组合实测，三栏共用一篇，不改变导读 + 九篇规范主线。
 
-## 配套实验仓库
-
-完成签名、调用与泛型前置后，对照实际 DLL 的 MethodSpec 和签名输出，再看对应 Player 结果。三个专栏共用公开仓库 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；调用链与泛型实验对应 [固定提交 `e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)。
-
-- [复现说明与固定环境](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/README.md)：包含 Add、generic-p0、generic-p1 三个隔离工程，先 checkout 到对应提交再运行。
-- [本次实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)：构建标识、结果摘要、DLL 哈希与 CLI 签名输出。
-- 对象保留与托管工作线程：[固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，可查看[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)。
-
-原生插件回调与在途停止也已补入 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：对照已登记线程与插件新建线程，核对 wrapper、临时接入／清理和 Join 后释放。本轮对应 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb)，入口为[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/b9156325820312f4d290c4af8158f76a3a6f9beb/projects/native-callbacks)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/results.json)。
-
-原生回调下的 [GC引用保留与有界压力]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 也已补入：Normal句柄、无上下文句柄的活跃回调引用，以及1024回调的分配／引用修改三组各运行三个Player。线程所有权见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮固定提交为 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，可查看[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)。
-
-后续 [对象快照与活跃根区间验证]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 也已完成：实际GC查询中，活跃解释帧报告288字节，目标引用位于其中；解释方法返回、线程仍等待时返回空区间。另取21份对象快照，核对Normal句柄的保留路径及Free后的目标变化，并用官方读取器交叉校验。活跃／空闲／退出关系见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮固定提交为 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)；旧 `449a994` 仍为前轮实验基线。
-
-当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；完整动态根路径归因、持续跨片段引用修改、长期压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
-
 ## 带着问题按需查阅
 
 | 场景 | 入口 |
@@ -85,5 +69,20 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 | 旧 .NET 安全模型、strong name 与 CAS | [历史背景（原 A11）]({{< relref "engine-toolchain/ecma335-cli-security-strong-name-cas.md" >}})，不作为热更新前置 |
 
 如果目标是 CoreCLR、Mono 或 LeanCLR，也可以复用这些规范知识，再从 [.NET Runtime 生态总图]({{< relref "engine-toolchain/dotnet-runtime-ecosystem-series-index.md" >}}) 进入相应实现。
+
+## 配套实验与复现入口
+
+实验仓库为 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)。先按下面的问题选择实验，再 checkout 对应固定提交；详细计数、哈希和原生事件保留在正文与实验记录中。
+
+| 实验 | 主要回答的问题 | 固定记录 |
+|---|---|---|
+| [调用链与泛型四组对照]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) | 目标身份、native 实现和解释路径怎样对应？ | [e0220099](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md) |
+| [对象保留与托管线程]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | 谁保留对象，线程状态怎样复用与退出？ | [a387d28](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md) |
+| [原生线程回调]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | wrapper 谁来接入，怎样等待回调结束再释放？ | [b915632](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md) |
+| [回调下的 GC 保留与压力]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 句柄与活跃引用怎样跨收集保持可用？ | [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md) |
+| [对象快照与活跃根区间]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 分配容量、实际报告区间与对象保留路径有什么区别？ | [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md) |
+| [跨增量片段的引用修改]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 如何关联持续写入、屏障、脏页与重扫？ | 已有本地实验记录，固定提交待补 |
+
+上述 Player 证据限于本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 package v9.0.3／runtime v9.0.1 和 Windows x64。最后一组将 GCMode 改为 Manual，采用常驻托管 worker 的串行握手；不是原生回调竞争或所有屏障路径的验收。其本地记录为 `evidence/2026-10-25-incremental-barriers/`，build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb`，不能借用前轮提交充当本轮源码版本。
 
 **这条主线的终点，是能区分程序的描述、解析、初始化与执行，再解释 IL2CPP 和 HybridCLR 为什么需要各自的机制。**

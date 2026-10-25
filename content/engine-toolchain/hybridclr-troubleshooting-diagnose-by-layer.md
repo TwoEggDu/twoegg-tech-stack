@@ -11,354 +11,80 @@ tags:
   - "Troubleshooting"
   - "Runtime"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
+lastmod: "2026-10-25"
 ---
-> HybridCLR 排错最浪费时间的，不是修 bug，而是把不同层的问题混成一锅；真正稳的诊断方式，不是先搜报错，而是先判断这次坏的是哪一层。
 
-这是 HybridCLR 系列第 8 篇。  
-前面几篇已经把主链、AOT 泛型、工具链、资源挂载和 best practice 拆开了；这一篇不再补新原理，而是把这些认识收回排障现场，回答一个更现实的问题：
+同一句 MissingMethodException，可能来自裁剪后的定义缺失，也可能来自泛型实现或解释方法体不可用。排障的第一步是固定失败位置和输入，再缩小根因范围。
 
-`项目里真的报错时，应该先从哪一层查，而不是一上来就把整个 HybridCLR 全翻一遍？`
+> **阅读基线**：本篇按 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）与 package v9.0.3 核对公开源码。实际 Player 使用本机自定义 Unity；环境与固定提交见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。源码判断与实测范围分别标明。
 
-## 这篇要回答什么
+这是系列第 8 篇，提供定位入口。表里的信号只帮助选择第一轮检查，**不能仅靠异常名或 native 信号唯一归因**。
 
-这篇主要回答 5 个问题：
+## 先留住现场
 
-1. HybridCLR 的高频报错，分别落在装载、metadata、泛型实例、ABI 桥接、资源身份链中的哪一层。
-2. 哪些报错名字看起来像一个问题，实际上根因完全不在同一层。
-3. 遇到报错时，第一轮应该先下哪些断点，而不是先读哪 3000 行源码。
-4. 哪些症状该优先怀疑生成物一致性，哪些该优先怀疑业务启动顺序。
-5. 怎么把这套诊断方式固定成团队共同语言，而不是靠个别人经验救火。
+记录主包版本、target、进程、实际 native 模块身份、热更/补充 DLL hash、加载顺序与返回结果。原生崩溃需要匹配同一构建的符号；错误符号可能产生看似合理的栈，随后所有判断都会偏离。
 
-## 先给一句总判断
+先区分正常托管异常、进程退出与 native fault。缺失日志时保留原始 crash/tombstone，不把“没看到托管异常”当作证明异常没发生。
 
-HybridCLR 的排错第一步不是问"它支不支持"，而是问——
+## 五层检查地图
 
-`这次失败发生在把程序集接进来之前、把 metadata 接起来之前、把方法调起来之前，还是跨 ABI 和资源身份链时。`
+| 首个已确认的失败点 | 先核对 | 进一步证据 |
+|---|---|---|
+| DLL 装载或补充 API 失败 | 文件身份、输入模式、依赖与返回码 | 实际装载入口和目标 image |
+| 类型/成员解析失败 | 定义是否保留、程序集是否正确 | stripped DLL、类型签名、解析目标 |
+| 泛型方法无法调用 | native 共享、补充 IL、调用方向 | 目标方法参数及实际方法体来源 |
+| bridge / wrapper 失败 | 方向、签名、生成物与 wrapper 限额 | 对应查表或失败分支 |
+| 资源脚本恢复失败 | 资源版本、程序集登记、装载时机 | 组件类型与生命周期实际调用 |
 
-一旦层次先分对，很多报错其实都没有那么神秘。
+## 装载层：两种入口别混在一起
 
-![5 层诊断决策树](../../images/hybridclr/diagnostic-decision-tree.svg)
+`Assembly.Load(byte[])` 装载热更程序集；`LoadMetadataForAOTAssembly` 给已有 AOT 程序集补同源 image。分别记录它们的调用结果。
 
-*图：报错信号 → 所属层次 → 检查方向。先按这张图归位，再展开排查。*
+补充模式决定输入要求：Consistent 使用目标构建精确对应的裁剪 DLL；SuperSet 允许适配的超集，不限于裁剪文件。不要把“使用了原始 DLL”直接判为错误，也不要只凭程序集同名判为匹配。
 
-## 不要先背报错，先背这 5 层
+固定 runtime 的 [Assembly.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/metadata/Assembly.cpp) 是两个方向的重要入口。重复装载、错误 image、错误依赖，都应以具体分支为证据。
 
-我建议团队内部先统一这张最小地图：
+## 解析与泛型：先看定义，再看实现
 
-1. 装载层  
-   DLL 字节到底有没有被当成正确程序集接进 runtime。  
-   典型信号：`TypeLoadException`（assembly 加载顺序或 stripping）、`LoadImageErrorCode:BAD_IMAGE`。
+出现 `TypeLoadException`、`MissingMethodException` 时，先确认目标定义是否存在于实际使用的程序集。若定义被主包裁剪，补充 metadata 不能作为恢复所有定义的通用办法。
 
-2. metadata 层  
-   runtime 到底能不能找到对应 image、type、method、method body。  
-   典型信号：`MissingMethodException`（MethodBridge 缺失或 AOT 泛型未实例化）、`Method body is null`。
+定义存在而某个封闭泛型无法执行时，继续查：
 
-3. AOT 泛型实例层  
-   runtime 就算看懂了 metadata，AOT 世界里到底有没有那个具体实例的可调用实现。  
-   典型信号：`AOT generic method not instantiated in aot`、`SIGSEGV` 且堆栈含 `hybridclr::` 前缀（AOT 泛型回退无限递归）。
+1. 目标类型参数和方法参数各是什么。
+2. 是否有适用 native 共享实现。
+3. 是否已为**方法定义所在程序集**加载正确的补充 metadata。
+4. 原始 IL 方法体能否取得、转换是否成功。
+5. 这次调用方向是否还要求特定桥接。
 
-4. ABI / bridge 层  
-   interpreter、AOT、native、reverse P/Invoke 之间到底有没有正确桥起来。  
-   典型信号：`NotSupportedException: method call bridge missing`（`MethodBridge.cpp` 未重新生成）、`GetReversePInvokeWrapper fail`。
+`AOT generic method not instantiated` 不能排除补充 metadata 的作用。相关机制见 [泛型篇]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})，具体选择见 [修法决策]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md" >}})。
 
-5. 资源身份链层  
-   Prefab/Scene/AssetBundle 里的脚本引用，最后能不能沿程序集身份链回到真实热更程序集。  
-   典型信号：Inspector 中脚本显示 `Missing (Mono Script)`、`AddComponent` 正常但 Prefab 实例化后组件丢失。
+v9 的方法体读取可从 [Transform.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/Transform.cpp)、[MethodBodyCache.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/metadata/MethodBodyCache.cpp) 追踪。v6.1.0 入口不同，应按 [调用链差异表]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}})处理。
 
-这 5 层背下来之后，后面的报错基本都能先归位。
+## bridge 层：按方向与实际失败分支排查
 
-## 第一层：装载层问题，先看 DLL 是不是根本没被正确接进来
+固定 [InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp) 中有 `GetManaged2NativeMethodPointer`、`GetMethodPointer`、`NotSupportNative2Managed` 等入口。先确定是解释器调 native、native 调解释器、委托调用还是 reverse P/Invoke。
 
-这一层最典型的现场，是：
+`NotSupportNative2Managed` 等失败分支会抛出相应异常；未捕获异常、平台错误和其他损坏又可能影响最终进程表现。因此“缺桥 = SIGABRT/SIGILL”不是通用规律。
 
-- `Assembly.Load` 直接失败
-- `LoadMetadataForAOTAssembly` 返回非 `OK`
-- 日志里出现 `LoadImageErrorCode:*`
-- 或者一开始就拿不到预期程序集和主入口
+检查 Player 编译进去的桥接产物，不能只检查开发机最近生成的文件。原生回调还要核对 delegate 存活、线程接入及停机顺序，见 [线程接入专题]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
 
-### 这层最该盯的错误信号
+## 资源层：检查程序集身份是否闭合
 
-在源码里，这一层最直观的信号有两组。
+AddComponent 成功只能证明那条代码路径；Prefab/AssetBundle 还依赖构建登记、资源身份和实际 DLL 装载时机。
 
-第一组是 `LoadImageErrorCode`，见 `LoadImageErrorCode.cs`：
+从资源记录的类型出发，核对脚本程序集、generated manifest、placeholder 与真实 image。不要看到 Missing Script 就只重跑 metadata 补充，详见 [资源挂载篇]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}})。
 
-- `BAD_IMAGE`
-- `AOT_ASSEMBLY_NOT_FIND`
-- `HOMOLOGOUS_ONLY_SUPPORT_AOT_ASSEMBLY`
-- `HOMOLOGOUS_ASSEMBLY_HAS_LOADED`
-- `INVALID_HOMOLOGOUS_MODE`
+## native crash 里哪些只是线索
 
-第二组是 `Assembly.cpp` 里直接抛出来的异常，比如：
+`SIGSEGV`、重复栈帧与 `Il2CppFullySharedGenericAny` 都不足以唯一确定 AOT 泛型缺失。重复栈可能涉及业务递归、异常回调或展开失真，需要方法身份、状态变化和实际 fault 信息支持。
 
-- `reloading placeholder assembly is not supported!`
-- `InterpreterImage::AllocImageIndex failed`
+“解释器深层出错”也不是 HybridCLR bug 的证明。先缩小可复现样本，核对版本、调用参数、对象生命周期和线程条件，再比较修复版本或提交上游 issue。
 
-### 这层第一轮应该先查什么
-
-如果你看到这类问题，我建议先问 4 个问题：
-
-1. 这是热更 DLL 装载失败，还是 AOT 补充 metadata 装载失败。
-2. 当前拿来补 metadata 的 DLL，是不是 `AssembliesPostIl2CppStrip` 里的裁剪后 AOT DLL，而不是原始编译产物。
-3. 热更 DLL 和 AOT metadata DLL，最后是不是都真的进了最终资源目录。
-4. 当前 `BuildTarget`、`Development Build`、生成链产物，是否和这次运行环境一致。
-
-### 这一层最值得下的断点
-
-- `AppDomain::LoadAssemblyRaw`
-- `MetadataCache::LoadAssemblyFromBytes`
-- `hybridclr::metadata::Assembly::LoadFromBytes`
-- `RuntimeApi::LoadMetadataForAOTAssembly`
-- `Assembly::LoadMetadataForAOTAssembly`
-
-如果第一轮排错只能下两个断点，我会选：
-
-- `Assembly::LoadFromBytes`
-- `Assembly::LoadMetadataForAOTAssembly`
-
-因为这两个入口刚好把"热更程序集装载"和"AOT 补 metadata"完全分开。
-
-## 第二层：metadata 层问题，先看 runtime 到底是不是"看不懂"
-
-这一层的典型现场，通常不是装载直接挂掉，而是：
-
-- transform 期间出错
-- 方法第一次调用时出错
-- 某些类型、字段、方法在 runtime 里找不到
-
-### 这层高频信号
-
-源码里比较有代表性的报错包括：
-
-- `Method body is null. ...`
-- `metadata type not match`
-- `type not find`
-- `not support instruction`
-
-这些错误名字看上去各不相同，但它们有一个共同点：
-
-`问题已经从"文件有没有进来"推进到了"runtime 在解析 image、method body 或 metadata 映射时失败"。`
-
-### 这层最容易误判成什么
-
-最容易被误判成两种东西：
-
-- "是不是 HybridCLR 解释器不支持"
-- "是不是 AOT 泛型实例没保"
-
-但很多时候它其实更早：  
-根因可能只是：
-
-- `LoadMetadataForAOTAssembly` 顺序不对
-- 补充 metadata 用错了 DLL
-- `Consistent / SuperSet` 模式和实际数据不匹配
-- 当前 `GetUnderlyingInterpreterImage` 拿到的根本不是你以为的那份 image
-
-### 这一层第一轮该看哪几个点
-
-我建议按这个顺序看：
-
-1. `MetadataModule::GetUnderlyingInterpreterImage(methodInfo)`  
-   先确认当前 transform 到底在从哪份 image 取 method body。
-
-2. `MethodBodyCache::GetMethodBody(image, token)`  
-   再确认 `token -> MethodBody` 这条链是不是已经断了。
-
-3. `AOTHomologousImage::FindImageByAssembly(...)`  
-   如果这是 AOT 解释兜底路径，再确认目标 AOT assembly 到底有没有挂上同源 image。
-
-### 这一层最值得下的断点
-
-- `MetadataModule::GetUnderlyingInterpreterImage`
-- `MethodBodyCache::GetMethodBody`
-- `HiTransform::Transform`
-- `AOTHomologousImage::FindImageByAssembly`
-
-如果你在 `HiTransform::Transform` 之前就已经发现 `image` 不对，后面通常就不用再往 `Interpreter::Execute` 里钻了。
-
-## 第三层：AOT 泛型实例层，先分清"看得懂"和"调得到"
-
-这一层最典型的报错，几乎已经是 HybridCLR 用户最熟悉的一句了：
-
-`AOT generic method not instantiated in aot`
-
-源码位置就在 `CommonDef.h`。  
-这句报错之所以重要，是因为它把边界说得非常死：
-
-`问题不是 metadata 不可见，而是 runtime 已经需要一个具体可调用指针，但 AOT 世界里根本没有这个实例。`
-
-### 这层不要再问"metadata 补了没"，而要问"实例到底存不存在"
-
-看到这类报错时，我建议第一反应不是去怀疑 `LoadMetadataForAOTAssembly`，而是先问：
-
-- 这个具体泛型实例有没有被保进 AOT 世界
-- `AOTGenericReference` 最近有没有重新生成
-- 这次变更是不是引入了新的泛型值类型、delegate、interface callback 路径
-- 当前问题是不是发生在 interpreter 需要直接拿 `methodPointerCallByInterp` 的那一步
-
-### 这层最值得下的断点
-
-- `RaiseAOTGenericMethodNotInstantiatedException`
-- `InitAndGetInterpreterDirectlyCallMethodPointer`
-- `AOTReferenceGeneratorCommand.GenerateAOTGenericReference`
-
-### 这一层最容易和上一层混掉
-
-很多人会把这层和 metadata 层混在一起。  
-但排障上一定要分开：
-
-- metadata 层失败：更像"它没看懂"
-- AOT 泛型实例层失败：更像"它看懂了，但真去调时发现世界里没有这个实例"
-
-只要把这句话记住，排错路径会短很多。
-
-## 第四层：ABI / bridge 层，先看是不是跨边界时没桥起来
-
-这层的报错一般不会再伪装成普通 metadata 问题。  
-源码里的信号通常更直接：
-
-- `GetReversePInvokeWrapper fail. not find wrapper of method:...`
-- `GetReversePInvokeWrapper fail. exceed max wrapper num...`
-- `NotSupportNative2Managed`
-- `NotSupportAdjustorThunk`
-- `NotSupportManaged2NativeFunctionMethod`
-
-### 这层到底在说明什么
-
-它说明：
-
-`方法本身可能是能解释执行的，但一旦要跨到 delegate、reverse P/Invoke、function pointer、native callback，那套签名桥没有就位。`
-
-所以这层问题本质不是"解释器能不能跑"，而是：
-
-`调用约定、wrapper、bridge 签名到底有没有生成并且和当前构建参数一致。`
-
-### 这层第一轮该查什么
-
-我建议先查 4 件事：
-
-1. `Generate/All` 最近有没有在当前构建参数下重新跑过。
-2. `MethodBridge.cpp` 是否和当前 `Development Build`、目标平台一致。
-3. 如果是 reverse P/Invoke 场景，相关方法是否真的进入了 wrapper 分析范围。
-4. 当前问题是普通 managed 调 AOT，还是 native 回调 managed，这两个方向不要混。
-
-### 这层最值得下的断点
-
-- `MethodBridgeGeneratorCommand.GenerateMethodBridgeAndReversePInvokeWrapper`
-- `InterpreterModule::GetManaged2NativeMethodPointer`
-- `InterpreterModule::GetReversePInvokeWrapper`
-- `InterpreterModule::NotSupportNative2Managed`
-
-### 这层最容易被误判成"业务写法不对"
-
-业务当然可能写错。  
-但如果一看到 delegate/native callback 场景就先改业务，而不先确认 bridge 是否生成正确，通常会多绕很多路。
-
-## 第五层：资源身份链层，先看 Prefab/Scene 挂脚本是不是在"认程序集"这一步就断了
-
-这层经常没有像上面几层那样漂亮的报错字符串。  
-更常见的现场是：
-
-- Prefab/Scene 上挂的热更脚本变成 missing
-- 代码里 `AddComponent` 能工作，但资源实例化不对
-- `Assembly.Load` 明明成功了，资源路径还是不通
-
-### 这层为什么最容易看错
-
-因为它表面上像"程序集明明已经加载了，为什么还不行"。  
-但真正的问题通常不是"Type 拿不到"，而是：
-
-`资源反序列化更早，它依赖的是程序集身份链，而不是你事后能不能反射拿到一个 Type。`
-
-### 这一层第一轮该查什么
-
-我建议按下面这条链查：
-
-1. `FilterHotFixAssemblies`  
-   先确认热更程序集是不是被从主包构建里正确过滤出去了。
-
-2. `PatchScriptingAssemblyList` / `ScriptingAssembliesJsonPatcher`  
-   再确认这些程序集名字是否被补回 `ScriptingAssemblies` 列表。
-
-3. `AssemblyManifest.cpp` / `InitializePlaceHolderAssemblies()`  
-   再确认 runtime 启动时有没有按名单注册 placeholder assembly。
-
-4. `FindPlaceHolderAssembly(nameNoExt)`  
-   最后确认真实热更 DLL 进来时，有没有复用那个 placeholder 外壳。
-
-### 这层最值得下的断点
-
-- `PatchScriptingAssemblyList.PathScriptingAssembilesFile`
-- `Assembly::InitializePlaceHolderAssemblies`
-- `FindPlaceHolderAssembly`
-- `Assembly::Create`
-
-如果这层断了，往解释器和 AOT 泛型里查通常都不会有结果。
-
-## 最稳的排错顺序，不是从源码目录走，而是从现场往回压
-
-如果你问我，真实项目里最稳的诊断顺序是什么，我会建议下面这个压缩版：
-
-1. 先判现场属于哪一层（按下面的入口信号快速归位）  
-   - 装载层 → 日志含 `LoadImageErrorCode` 或 `TypeLoadException`  
-   - metadata 层 → 日志含 `Method body is null` 或 `MissingMethodException`  
-   - AOT 泛型实例层 → 日志含 `AOT generic method not instantiated` 或 `SIGSEGV` + `hybridclr::`  
-   - ABI bridge 层 → 日志含 `GetReversePInvokeWrapper fail` 或 `NotSupportNative2Managed`  
-   - 资源身份链层 → Inspector 脚本 missing，但 `Assembly.Load` 本身成功
-
-2. 先找这一层最短的入口断点  
-   不要一开始就钻大文件。
-
-3. 先确认输入是不是对的  
-   DLL 来源、生成物一致性、加载顺序、模式选择。
-
-4. 只有在上一层被证伪后，才进入下一层  
-   不要一口气同时怀疑 5 条链。
-
-## 移动端崩溃的取日志方式
-
-上面的分层和断点都假设你能看到完整日志。在移动端崩溃时，日志获取本身是第一步：
-
-- **Android**：`adb logcat -s Unity CRASH DEBUG`，过滤出 Unity 引擎日志和 native crash 信息。如果 `logcat` 被截断，可加 `-b crash` 单独拉崩溃缓冲区。
-- **iOS**：在 Xcode 的 Devices & Simulators 窗口拉取崩溃日志。`libil2cpp.so` / framework 地址需要用 `atos` 或 `llvm-symbolizer` 结合 dSYM 符号化，才能看到 `hybridclr::` 相关的真实堆栈。
-
-拿到可读堆栈后，再按上面 5 层定位。
-
-## 最容易浪费时间的 4 种误判
-
-### 误判一：看到 `AOT generic method not instantiated` 就去补 metadata
-
-通常方向不对。  
-这类问题更该先查具体实例有没有进入 AOT 世界。
-
-### 误判二：看到 `Method body is null` 就去改业务方法本身
-
-通常也太晚了。  
-先看 `GetUnderlyingInterpreterImage` 和 `MethodBodyCache`，再看业务。
-
-### 误判三：看到 native callback 报错，就觉得是插件层 bug
-
-不一定。  
-`MethodBridge` / `ReversePInvokeWrapper` 没对上时，症状会非常像插件问题。
-
-### 误判四：看到资源挂脚本失效，就只检查 `Assembly.Load`
-
-方向太窄。  
-资源挂载问题最该先查的是 `ScriptingAssemblies` 和 placeholder identity chain。
-
-## 我最推荐团队统一的 1 句话排障口令
-
-团队里最值得统一的一句口令：
-
-`先判层，再下断点；先证伪上一层，再进入下一层。`
-
-这句话听起来很朴素，但对 HybridCLR 这种 build-time 和 runtime 强耦合的系统，特别值钱。
-
-## 收束
-
-`HybridCLR 的报错并不神秘，真正麻烦的是把装载、metadata、AOT 泛型实例、ABI bridge、资源身份链这些不同层的问题混成了一次"热更新失败"；而诊断的关键，就是先把这几层重新拆开。`
+工具步骤与历史证据边界见 [崩溃定位专题]({{< relref "engine-toolchain/hybridclr-crash-analysis.md" >}})。
 
 ## 系列位置
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}}">HybridCLR 最佳实践｜程序集拆分、加载顺序、裁剪与回归防线</a>
-- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}}">HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT</a>
+工程预防见 [最佳实践]({{< relref "engine-toolchain/hybridclr-best-practice-assembly-loading-strip-and-guardrails.md" >}})，功能稳定后再进入 [性能与预热]({{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}})。
+
+**异常给出调查入口；输入、实际分支和复现结果才支持根因。**

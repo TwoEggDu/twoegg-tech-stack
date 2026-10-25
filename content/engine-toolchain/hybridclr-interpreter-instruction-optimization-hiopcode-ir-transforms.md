@@ -1,7 +1,8 @@
 ---
-title: "HybridCLR 解释器指令优化｜标准优化与高级优化在 HiOpcode 层到底做了什么"
+slug: "hybridclr-解释器指令优化标准优化与高级优化在-hiopcode-层到底做了什么"
+title: "HybridCLR 解释器指令优化｜从社区版 HiOpcode 到商业优化的证据边界"
 date: "2026-04-12"
-description: "从 HiOpcodeEnum 的 1000+ 指令、CIL 栈机到寄存器 IR 转换、社区版 7 种 transform 优化，到 switch dispatch 执行循环、StackObject 帧内存模型、商业版扩展优化，一层一层拆清 HybridCLR 解释器在指令层面做了什么。"
+description: "以固定社区版源码解释 CIL 到 HiOpcode 的转换、指令字节与 StackObject 槽位的区别，再对照商业优化公开说明讨论测量口径。"
 weight: 54
 featured: false
 tags:
@@ -11,348 +12,100 @@ tags:
   - "Interpreter"
   - "Optimization"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "社区 runtime v9.0.1；商业公开文档 9.x（2026-10-25）"
+lastmod: "2026-10-25"
 ---
-> 很多人以为 HybridCLR 的解释器就是逐条翻译 CIL 指令。但实际打开 `Instruction.h` 和 `TransformContext.cpp`，会发现社区版在 transform 阶段已经做了大量指令级优化——而商业版在这之上又叠了好几层。
 
-这是 HybridCLR 系列第 27 篇。
+> 读解释器优化时，先分清原始 CIL、转换后的指令流和指令访问的栈槽，再讨论减少了哪种开销。
 
-前面的性能篇（HCLR-9）已经把成本分成了首调 transform、长期解释执行、跨 ABI 边界三层；DHE 篇（HCLR-11）讲了函数级分流。但这两篇都没有真正下到指令层面去看：
+这是 HybridCLR 系列第 27 篇。[性能篇]({{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}})把成本分成首次转换、持续解释执行与跨边界调用。这篇继续追其中的转换与执行，避免把“做过转换”直接等同于“性能已经接近 AOT”。
 
-`transform 到底对 CIL 做了什么变换？解释器跑的到底是一套什么样的 IR？社区版已有的优化和商业版追加的优化，各自在改什么？`
+> 源码基线：社区 runtime v9.0.1，固定提交 [`83929787581bce6c7219418f62348a10c33582ee`](https://github.com/focus-creative-games/hybridclr/tree/83929787581bce6c7219418f62348a10c33582ee)。商业能力依据 2026-10-25 查阅的官方 9.x 文档；商业实现没有纳入本系列 Player 验证。
 
-这篇就专门回答这些问题。
+## 优化发生在两种不同的表示之间
 
-> 本文源码分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）。如果你使用的版本差异较大，部分文件路径或函数签名可能有变化。
+CIL 用求值栈表达计算。解释器可以逐条模拟这套栈操作，也可以先把方法转换成更适合自身执行的表示。HybridCLR 社区版采用后者：转换阶段分析方法体，选择内部指令、安排临时值的位置，并保存执行所需的数据。
 
-![CIL 到 HiOpcode 优化层次](../../images/hybridclr/interpreter-optimization-layers.svg)
+转换之后，执行循环消费的是 HiOpcode 指令，不是每次重新解析原始 CIL。方法的转换结果可以复用，但求值过程、方法调用和对象操作仍然会在每次执行时发生。
 
-*图：CIL 栈机指令经过社区版 8 种 transform 优化和商业版 4 种追加优化，最终变成高度特化的寄存器式 HiOpcode。*
+这给出两条不同的成本线：
 
-## 社区版的 HiOpcode 是什么样的
+- **转换成本**：解析、类型分析、内部指令与数据的建立。
+- **重复执行成本**：取指、分派、槽位读写以及具体操作。
 
-HybridCLR 的解释器不直接执行 CIL 指令。它在第一次调用某个方法时，先把 CIL 方法体 transform 成一套内部 IR，然后执行这套 IR。这套 IR 的指令集就是 `HiOpcodeEnum`。
+只调用一次的方法也可能付出较多转换成本；不能说转换本身的耗时总是不重要。
 
-打开 `interpreter/Instruction.h`，最先看到的就是这个枚举：
+## 跟读时先区分字节偏移与槽位索引
 
-```cpp
-enum class HiOpcodeEnum : uint16_t
-{
-    None,
-    // ...1000+ entries
-};
-```
+[`Instruction.h`](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Instruction.h)定义内部指令及操作数；[`Interpreter_Execute.cpp`](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Interpreter_Execute.cpp)给出实际解释方式。
 
-这个枚举的条目数远远超过 CIL 的 200 多条指令。原因很直接：CIL 是类型多态的（一个 `add` 处理 i4、i8、f4、f8），而 HiOpcodeEnum 是类型特化的。每种类型组合都有独立的 opcode。
+以 `BinOpVarVarVar_Add_i4` 为例，必须分清下面三种量：
 
-按功能分类，这 1000 多条指令大致可以分成几组：
+| 量 | 单位 | 阅读方式 |
+|---|---|---|
+| `ip` 上操作数字段的位置 | 指令流的字节 | 从这条指令的编码中取出 ret、op1、op2 |
+| ret、op1、op2 | `StackObject` 槽位索引 | 相对 `localVarBase` 选择槽位 |
+| 槽位中的值 | 当前指令确定的类型 | i4 加法按 32 位整数解释相应存储 |
 
-**类型特化算术**：`BinOpVarVarVar_Add_i4`、`BinOpVarVarVar_Add_i8`、`BinOpVarVarVar_Add_f4`、`BinOpVarVarVar_Add_f8`，以及 Sub、Mul、Div 等每个都展开四种类型。
+`localVarBase` 的类型是 `StackObject*`。`localVarBase + 1` 前进一个槽，不是一个字节；当前基线每槽 8 字节。一个大于 8 字节的值可能占多个槽，不能把“一个变量”一概等同于“一槽”。
 
-**类型转换**：100 多条 `ConvertVarVar_*`，覆盖所有源/目标类型组合。
+源文件中读取 `ip + 2` 的字节位置，与之后使用读出的索引进行 `localVarBase + index`，是不同层次的寻址。把它们都称为“字节偏移”，会让读者在调试器里算错地址。
 
-**字段访问**：按字段大小特化为 1/2/4/8/12/16/20/24/28/32 字节的变体，每种再分 load/store、instance/static。
+指令结构使用紧凑布局及显式填充，执行分支按对应编码长度推进 `ip`。各类指令应对照自身结构和执行分支，不能把所有指令都视为同一个长度，也不能从 `#pragma pack(1)` 推出结构自然按 8 字节对齐。
 
-**调用特化**：大约 500 条 `CallCommonNativeInstance_*` 和 `CallCommonNativeStatic_*` 变体，按参数数量和参数类型组合预生成。
+## 社区源码能够确认哪些转换
 
-**内置函数替换**：`Nullable_HasValue`、`NewVector3_3`、`InterlockedCompareExchangeI4` 等，把高频 BCL 方法直接映射成单条指令。
+不需要先背几百个 opcode。先沿一类输入追到对应输出，才能理解特化解决了什么问题。
 
-### 指令编码
+### 类型已知时选择专用操作
 
-所有指令结构体使用 `#pragma pack(push, 1)` 紧凑排列，按 8 字节对齐、8 字节倍数定长编码。这意味着每条指令在内存中占 8、16、24 或 32 字节，解释器可以按固定偏移直接跳转，不需要变长解码。
+CIL 的算术操作需要结合栈类型理解。在转换阶段，HybridCLR 已经掌握相关归约类型，因此可以选择 i4、i8、f4、f8 等对应内部指令。执行时不用重新从 CIL 推导同一份类型信息。
 
-所有指令结构体都继承自 `IRCommon`，而 `IRCommon` 只有一个字段：
+### 栈操作被映射到槽位操作
 
-```cpp
-struct IRCommon
-{
-    HiOpcodeEnum type;
-};
-```
+例如“读取两个局部值并相加”的抽象行为，可以表示成“从两个槽取值，将结果写入目标槽”。转换阶段据此组织操作数和临时存储。
 
-操作数以 `uint16_t` 表示，含义是相对于 `localVarBase` 的字节偏移——这本质上是一种寄存器式寻址，而不是 CIL 的栈式操作。
+这解释了为什么内部表示可以减少显式 push/pop，但不能保证任意 `ldloc; ldloc; add; stloc` 序列都精确变成一条指令。要判断具体方法，仍需检查该方法实际转换结果、值的生存期和控制流。
 
-## CIL 栈机到寄存器 IR 的转换
+### 部分调用具有专门处理
 
-CIL 是一种基于求值栈的指令集。HybridCLR 在 transform 阶段要做的核心工作，就是把栈式操作转换成寄存器式操作。
+[`TransformContext_Instinct.cpp`](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/TransformContext_Instinct.cpp)包含对特定方法的识别。例如源码中有 Nullable、数组访问和部分字符串构造等路径。这里的覆盖是具体签名集合，不能扩写成“全部向量操作都被替换”或“字符串操作完全没有特化”。
 
-这个过程发生在 `TransformContext.cpp` 的 `TransformBodyImpl` 方法中。transform 阶段用一个 `EvalStackVarInfo` 数组来模拟 CIL 求值栈，每个条目记录三样东西：
+字段访问、常见 native 调用和 token 解析也各有转换路径。它们说明解释器会提前安排部分工作，不等于所有调用都省去桥接、所有反射目标都能提前确定。
 
-- `reduceType`：归约后的类型（i4、i8、f4、f8、obj 等）
-- `byteSize`：值的字节大小
-- `locOffset`：在 `localVarBase` 中的字节偏移
+建议的源码跟读顺序是：`TransformContext.cpp` 中识别输入 → `Instruction.h` 中确认输出字段 → `Interpreter_Execute.cpp` 中确认执行语义。带着一个固定方法比背“优化清单”更容易检查实际发生了什么。
 
-方法的栈帧布局被压平为一段连续内存：
+## 帧存储与 GC 是另一条正确性约束
 
-```
-[Arguments | Local Variables | Eval Stack Temporaries]
-```
+槽位布局服务于执行，也影响 GC 如何看到活跃引用。线程自己的 `MachineState` 管理解释帧和执行存储，不能由此推断它管理该线程的全部内存，或对象不能跨线程共享。
 
-所有位置都用 `uint16_t` 相对于 `localVarBase` 的偏移来寻址，上限 65535 个槽位。
+动态根范围、线程退出和引用写入协议见 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})与 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。无论怎样合并指令，只要改变了引用存储路径，就必须维持这些正确性条件。
 
-一个最直观的例子：CIL 的 `ldloc.0; ldloc.1; add` 是 3 条独立指令，需要两次 push 和一次 pop-pop-push。transform 之后变成单条寄存器指令：
+## 商业优化能够确认什么
 
-```cpp
-// BinOpVarVarVar_Add_i4
-{
-    .type = HiOpcodeEnum::BinOpVarVarVar_Add_i4,
-    .ret = offset_a,   // 结果写入的偏移
-    .op1 = offset_b,   // 第一个操作数的偏移
-    .op2 = offset_c    // 第二个操作数的偏移
-}
-```
+[官方标准解释优化说明](https://www.hybridclr.cn/docs/business/basicoptimization)列出指令分发、合并、无用指令消除和特殊内置指令等方向。这足以说明商业版提供额外优化，但没有公开具体 handler 布局或全部算法。
 
-3 条 CIL 指令变成 1 条 HiOpcode 指令，没有栈操作，直接从偏移读、往偏移写。这就是 transform 最基本的增益来源。
+因此，computed goto、threaded dispatch、特定寄存器分配算法只能作为一般解释器技术介绍，不能写成该商业版的实际实现。存在 `EnableTransformOptimization` 开关，也不能证明产品内部一定是在社区转换结果上叠加某个独立 pass。
 
-关键源文件：`TransformContext.cpp`（包含 `TransformBodyImpl` 主逻辑）和 `TransformContext.h`（定义 `EvalStackVarInfo` 等核心数据结构）。
+此外，9.x [旗舰版手册](https://www.hybridclr.cn/docs/business/ultimate/manual)把标准与高级指令优化描述为对单个解释函数互斥的选择；不能把“标准”和“高级”无条件画成顺序叠加。具体产品名称和离线优化工作流要按所用包核对。
 
-## 社区版 transform 已有的 7 种优化
+### 性能数字怎样引用
 
-transform 不是只做栈到寄存器的直译。社区版在 transform 阶段已经内置了一组优化 pass，每一种都有明确的源码入口。
+官方标准优化页的报告使用 OnePlus 9R ArmV8 样本，图表给出的商业版／社区版性能比约为 **2.87～7.35 倍**。这是“性能是原来的多少倍”，不是“在原有性能上再提高280%～735%”。页面不同段落的近似数字也不应拼成统一精确常数。
 
-### 1. 类型特化
+这组数字属于官方测试，不是本实验仓库的测量。不能由它推出任何项目总体加速倍数，也不能说解释器与 AOT 在所有负载中必然差一个数量级。调用边界、内存访问、原生重活占比和优化模式都会改变结果。
 
-CIL 的很多指令是类型多态的。一个 `add` 指令需要在运行时根据操作数类型决定具体行为。transform 阶段通过 `GetEvalStackReduceDataType()` 提前确定操作数的归约类型，然后直接选择对应的类型特化 HiOpcode。
+## 项目里怎样做一个可解释的对照
 
-例如两个 `int` 相加，transform 直接生成 `BinOpVarVarVar_Add_i4`，而不是一个泛化的 `add` 再在执行时判断类型。这把运行时类型分派彻底消除了。
+先固定同一个方法、输入和构建条件，分别记录首次调用与预热后的重复调用。接着检查是否跨 AOT 边界、是否分配对象、是否进入 native 重负载，避免把这些成本全部归因于 dispatch。
 
-### 2. 指令折叠
+若要比较商业优化，应保持设备、Unity patch、商业包、代码生成和优化配置明确一致，并记录实际模式。除了耗时，还要检查返回值、异常和 GC 引用行为，不能以“跑得更快”代替语义等价。
 
-多条 CIL 指令对应的语义如果可以用单条 HiOpcode 表达，transform 会直接折叠。
-
-最典型的场景：CIL 表达 `a = b + c` 需要 `ldloc.0; ldloc.1; add; stloc.2` 共 4 条指令。transform 之后只剩 1 条 `BinOpVarVarVar_Add_i4`，因为寄存器寻址天然包含了 load 和 store 语义。
-
-另一个例子是 Vector3 构造：CIL 需要分别 push 三个分量再调构造函数，transform 可以直接折叠为 `NewVector3_3` 单条指令。
-
-### 3. 窥孔优化
-
-transform 阶段会识别特定的 CIL 指令序列并用更高效的等价指令替换。
-
-一个具体的例子：`box; brtrue` 序列。如果 box 的目标是非 Nullable 的值类型，那它 box 之后的引用一定不为 null，`brtrue` 一定成立。transform 直接把这个序列替换成无条件跳转或整体消除。
-
-### 4. 死分支消除
-
-如果一个前向分支指令的目标偏移量为零——即跳转目标就是紧接着的下一条指令——transform 会跳过这条分支指令的 IR 生成，因为它什么都不做。
-
-### 5. 字段访问特化
-
-字段访问指令按两个维度特化。
-
-第一个维度是偏移范围：字段偏移是否在 `0xFFFF` 以内，决定用紧凑型还是扩展型指令。
-
-第二个维度是字段大小：1/2/4/8/12/16/20/24/28/32 字节各有独立的指令变体。如果字段大小不在这些预设值里，则走通用变长路径。
-
-这样做的好处是：对于常见大小的字段，解释器可以直接用固定大小的 memcpy 或直接赋值，而不需要运行时判断大小。
-
-### 6. 调用特化
-
-这部分逻辑集中在 `TransformContext_CallCommon.cpp`。
-
-transform 通过 `ComputMethodArgHomoType()` 分析被调用方法的参数类型。如果参数数量不超过 4 个，且所有参数属于同一种归约类型（全是 i8 或全是 f8 等），就会选择预生成的 `CallCommonNativeInstance_*` 或 `CallCommonNativeStatic_*` 变体。
-
-这些预生成变体的好处是省去了运行时的参数逐个搬运。对于不满足条件的调用（参数超过 4 个或类型混合），则走通用的 `CallCommon` 路径。
-
-### 7. 内置函数替换
-
-`TransformContext_Instinct.cpp` 中维护了一张 BCL 方法到专用 IR 指令的映射表。当 transform 遇到对这些方法的调用时，直接生成对应的 IR 指令，而不是走通用调用路径。
-
-覆盖的方法包括：
-
-- `Nullable<T>.HasValue` / `Nullable<T>.Value` / `Nullable<T>.GetValueOrDefault()`
-- `Array.GetGenericValueImpl` / `Array.SetGenericValueImpl`
-- `Interlocked.CompareExchange` / `Interlocked.Exchange`（各类型变体）
-- `Vector2` / `Vector3` / `Vector4` 的构造和基本运算
-- `ByReference<T>` 相关操作
-
-这些方法在游戏逻辑中调用频率非常高，单条指令替代函数调用的收益是直接的。
-
-### 8. Token 预解析
-
-所有 CIL 中的 metadata token（类型引用、方法引用、字段引用、字符串字面量等）在 transform 阶段就被解析为运行时指针，存入 `resolvedDatas` 数组。执行时通过数组索引直接取指针，不再需要解析 token。
-
-这严格来说不是指令优化，而是数据优化。但它和指令优化在同一个阶段完成，且对执行性能的影响同样直接。
-
-## 执行循环：switch dispatch 的结构
-
-transform 完成之后，产出的 HiOpcode 流交给 `Interpreter::Execute` 执行。这个函数的主体结构在 `Interpreter_Execute.cpp` 中。
-
-社区版的执行循环是经典的 switch dispatch：
-
-```cpp
-for (;;)
-{
-    switch (*(HiOpcodeEnum*)ip)
-    {
-        case HiOpcodeEnum::BinOpVarVarVar_Add_i4:
-        {
-            uint16_t ret = *(uint16_t*)(ip + 2);
-            uint16_t op1 = *(uint16_t*)(ip + 4);
-            uint16_t op2 = *(uint16_t*)(ip + 6);
-            (*(int32_t*)(localVarBase + ret)) =
-                (*(int32_t*)(localVarBase + op1)) +
-                (*(int32_t*)(localVarBase + op2));
-            ip += 8;
-            continue;
-        }
-        // ...1000+ cases
-    }
-}
-```
-
-几个关键特征：
-
-**没有 computed goto，没有 threaded dispatch。** 社区版就是标准的 switch-case 循环。这意味着每执行一条指令，都要经过一次 switch 跳转表查找。在现代 CPU 上，分支预测对这种大型 switch 的处理效果有限。
-
-**操作数按固定字节偏移读取。** 因为指令是定长 8 字节倍数编码的，所以每个 case 内部直接用 `*(uint16_t*)(ip + N)` 读操作数，不需要变长解码。
-
-**每个 case 显式推进 ip 并 continue。** 没有 fallthrough，每个 case 自己负责把 `ip` 移到下一条指令的起始位置。
-
-**`HiOpcodeEnum::None` 的作用。** 枚举值从 0 开始，而 `None` 占据了 0 号位置。这意味着编译器生成的跳转表不需要做偏移修正（减去枚举起始值），直接用 opcode 值作为索引。官方注释提到这能带来约 5% 的 dispatch 性能改善。
-
-## 商业版在这之上还做了什么
-
-以下内容来自 HybridCLR 官方公开文档，商业版源码不公开，因此这里只基于文档描述和已知 interpreter 优化技术做分析。
-
-### 1. 指令分派优化
-
-社区版用 switch dispatch，每条指令执行完都要跳回 switch 顶部、再经过一次跳转表查找。这是已知的 interpreter 性能瓶颈。
-
-商业版文档提到的 dispatch 优化，大概率是 computed goto（GCC/Clang 的 `&&label` 扩展）或某种形式的 threaded dispatch。核心区别是：执行完一条指令后，直接跳到下一条指令的 handler，省掉中间的跳转表查询。
-
-这在 CPython、Lua、LuaJIT 等解释器中是验证过的标准优化，对紧凑循环的加速效果明显。
-
-### 2. 指令合并
-
-把多条连续的 HiOpcode 合并为单条复合指令。例如 load-add-store 序列如果模式固定，可以合并为一条指令，减少 dispatch 次数。
-
-社区版的指令折叠只处理 CIL 到 HiOpcode 的转换阶段。商业版的指令合并发生在 HiOpcode 层面，是在社区版产出的 IR 之上再做一轮优化。
-
-### 3. 死指令消除
-
-移除结果从未被使用的指令。社区版只做了死分支消除（零偏移跳转），商业版扩展到了更一般的死代码消除——如果某条指令写入的寄存器偏移在后续路径中从未被读取，这条指令可以整体移除。
-
-### 4. 特化指令扩展
-
-在社区版的类型特化和调用特化基础上，继续增加更多特化模式。可能的方向包括：更多参数数量/类型组合的调用变体、更多数据结构的直接操作指令、常见循环模式的专用指令。
-
-### 性能效果
-
-> **数据来源声明**：以下数字均引自 HybridCLR 官方文档（`hybridclr.cn`），属于厂商声称的性能提升，**不是独立 benchmark 验证结果**。社区版源码可以验证前面几节的分析；商业版优化的具体实现不公开，性能数据无法独立复现。
-
-| 指标 | 官方声称 |
-|------|----------|
-| 数值计算性能提升（vs 社区版） | 280% ~ 735% |
-| `typeof` 操作性能提升 | > 1000% |
-| 编译后指令数量减少 | 到社区版的 1/4 ~ 1/2 |
-
-商业版提供 `RuntimeApi.EnableTransformOptimization(false)` 来关闭高级优化。这说明高级优化是作为独立 pass 叠加在社区版 transform 之上的，而不是替换。
-
-## StackObject 和帧内存模型
-
-理解了指令层面做了什么之后，还需要理解这些指令操作的内存模型。
-
-### StackObject
-
-`StackObject` 是解释器的基本存储单元，8 字节大小，定义为一个 union：
-
-```cpp
-union StackObject
-{
-    uint64_t __u64;
-    void*    ptr;
-    int32_t  i32;
-    int64_t  i64;
-    float    f4;
-    double   f8;
-    Il2CppObject* obj;
-    // ...
-};
-```
-
-所有解释器操作都以 `StackObject` 为粒度。前面提到的 `localVarBase` 就是一个 `StackObject` 数组的起始地址，`uint16_t` 偏移量索引的就是这个数组。
-
-### MachineState
-
-每个线程有一个独立的 `MachineState`，通过 `GetCurrentThreadMachineState()` 获取。`MachineState` 管理该线程上解释器的全部内存：
-
-- `_stackBase` / `_stackSize` / `_stackTopIdx`：解释器栈的基址、容量和栈顶
-- `_localPoolBottomIdx`：局部变量池底部
-- `_frameBase` / `_frameTopIdx`：调用帧链的管理
-
-线程亲和性是硬性的：每个线程的 `MachineState` 独立分配、独立管理，解释器的栈数据不会跨线程共享。
-
-### InterpFrame
-
-每次进入一个解释器方法，都会在 `MachineState` 上压一个 `InterpFrame`：
-
-- `method`：当前执行的 `MethodInfo`
-- `stackBasePtr`：当前帧的 `localVarBase` 起始位置
-- `oldStackTop`：进入前的栈顶位置，退出时恢复
-- `ret`：返回值写入的地址
-- `ip`：当前指令指针
-- 异常处理相关字段
-
-### InterpMethodInfo
-
-`InterpMethodInfo` 是 transform 的产出物，每个解释器方法一份，缓存在 `MethodInfo::interpData` 中：
-
-- `codes`：transform 产出的 HiOpcode 指令流
-- `argStackSize`：参数区大小
-- `localStackSize`：局部变量区大小
-- `evalStackSize`：求值栈临时区大小
-- `maxStackSize`：整个方法需要的最大栈空间
-- `exClauses`：异常处理子句
-- `resolvedDatas`：预解析的 metadata 指针数组
-
-### GC 集成
-
-以社区版 v6.1.0 为例，`MachineState::InitEvalStack` 注册状态实例及 `GetGCRootData` 回调，由回调报告 `_stackBase` 到当前 `_stackTopIdx` 对应的活跃区间。预分配容量不等于活跃根范围，退出线程还需要注销与释放。固定源码和生命周期见 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})与 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
-
-## 优化的边界：什么代码模式收益大、什么收益有限
-
-理解了 transform 做什么和不做什么之后，可以对不同代码模式做出判断。
-
-### 高收益场景
-
-**紧凑算术循环。** 循环体内的算术操作会被类型特化、指令折叠充分优化。每条 CIL 算术指令变成单条类型特化 HiOpcode，循环内的 dispatch 开销变成主要瓶颈——这也是商业版 dispatch 优化收益最大的场景。
-
-**向量运算。** `Vector2`、`Vector3`、`Vector4` 的构造和基本运算被内置函数替换成单条指令，跳过了完整的方法调用流程。如果你的热更代码里有大量向量计算，这个优化是直接可见的。
-
-**字段密集访问。** 字段访问被按大小特化到 1~32 字节的固定路径，常见的 4/8/12/16 字节字段读写开销很低。
-
-### 中等收益场景
-
-**方法调用。** `CallCommon` 优化覆盖了参数不超过 4 个且类型同质的场景。超过这个范围的调用走通用路径，参数逐个搬运。调用本身的 MethodBridge 开销不在 transform 优化范围内。
-
-### 低收益场景
-
-**反射操作。** `System.Reflection` 调用不会被 transform 特化，因为反射的目标方法在 transform 时不确定。
-
-**字符串操作。** 字符串方法调用走通用的 `CallCommon` 路径或直接的原生调用，transform 层面没有特殊优化。
-
-**深层虚方法派发链。** 虚方法调用需要在运行时查 vtable，transform 无法提前确定目标方法，因此无法做调用特化。
-
-### 一个关键认知
-
-transform 是一次性成本：每个方法第一次执行时做一次，结果缓存到 `InterpMethodInfo`。但 interpreter 执行开销是逐指令、逐执行的。这意味着：
-
-- 对于只调用一次的方法，transform 优化减少的指令数量直接就是收益
-- 对于高频调用的方法，transform 优化的价值会被放大，因为每次执行都走优化后的 IR
-- transform 本身的耗时不应该是优化决策的主要考量——应该关注的是优化后的 IR 在长期执行中的效率
-
-## 收束
-
-HybridCLR 社区版的解释器不是逐条翻译 CIL 指令的直白实现。它在 transform 阶段做了从栈机到寄存器 IR 的转换，然后在这个基础上叠了类型特化、指令折叠、窥孔优化、死分支消除、字段/调用特化、内置函数替换和 token 预解析这 7 类优化。
-
-商业版在这之上继续做了 dispatch 优化、指令合并、死指令消除和特化扩展，把指令数量压到社区版的 1/4 ~ 1/2，数值计算性能提升数倍。
-
-但无论怎么优化，只要还在 switch dispatch（社区版）或 threaded dispatch（商业版）的解释器框架里，和 AOT native 代码之间就始终存在数量级差距。理解这些优化的价值，不是为了证明"解释器其实不慢"，而是为了知道优化空间的天花板在哪，哪些逻辑适合留在解释器，哪些应该前移到 AOT。
-
----
+理解 HiOpcode 的价值，是知道成本发生在哪一层，并知道哪种证据才能支持对这一层的结论。
 
 ## 系列位置
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}">HybridCLR AOT 泛型回归防线｜怎么把这些坑前移到 Generate、CI 和构建检查里</a>
-- 回到入口：<a href="{{< relref "engine-toolchain/hybridclr-series-index.md" >}}">HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇</a>
-- 相关前文：<a href="{{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}}">HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT</a>
-- 相关前文：<a href="{{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}}">HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute</a>
+- 上一篇：[DHE 函数注入与脏函数传染]({{< relref "engine-toolchain/hybridclr-dhe-function-injection-dirty-contagion.md" >}})
+- 下一篇：[程序集热重载]({{< relref "engine-toolchain/hybridclr-assembly-hot-reload-unload-metadata-reclaim.md" >}})
+- 前置模型：[解释器桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md" >}})
+- 回到入口：[HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})

@@ -11,349 +11,78 @@ tags:
   - "Performance"
   - "Runtime"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
+lastmod: "2026-10-25"
 ---
-> HybridCLR 的性能问题，最容易被一句"解释器比 AOT 慢"带过去；但真正能指导工程决策的，不是这句大而化之的判断，而是先分清你现在付出的成本，到底来自首调 transform、长期解释执行，还是跨 ABI 边界。
 
-这是 HybridCLR 系列第 9 篇。  
-前面几篇已经把主链、工具链、AOT 泛型、资源挂载、best practice 和故障诊断都立住了；这一篇不再补新的系统边界，而是回到一个更工程的问题：
+首开界面卡顿与每帧执行缓慢，可能来自完全不同的成本。前者可能集中在装载、类型初始化与首次转换，后者可能来自解释执行、边界调用或业务算法。先拆成本，才能判断预热是否有用。
 
-`HybridCLR 在项目里怎么用，才能既保住热更灵活性，又不把性能代价放大到不可控？`
+> **阅读基线**：本篇按 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）与 package v9.0.3 核对公开源码。实际 Player 使用本机自定义 Unity；环境与固定提交见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。源码判断与实测范围分别标明。
 
-## 这篇要回答什么
+这是系列第 9 篇，提供测量方法与取舍。现有调用链实验验证了转换结果复用，**尚未提供这套环境的性能基准**；本文不保留没有来源的通用慢速倍数。
 
-这篇主要回答 5 个问题：
+## 分开四类成本
 
-1. HybridCLR 的性能成本，真正来自哪几层，而不是笼统地说"解释器慢"。
-2. `PreJitMethod / PreJitClass` 到底在预热什么，它为什么不等于 native JIT。
-3. 哪些逻辑适合长期留在 interpreter，哪些更应该前移或回到 AOT。
-4. 高频跨 interpreter / AOT / native 边界时，什么才是真正该担心的成本。
-5. `RuntimeOptionId` 这类运行时选项该怎么理解，哪些是调优旋钮，哪些不是"性能魔法开关"。
+| 成本 | 观察方式 | 优化方向 |
+|---|---|---|
+| 首次方法准备 | 新进程中区分查找、类型初始化、Transform 与执行 | 有选择地预热 |
+| 稳态方法执行 | 同一输入与调用次数下重复采样 | 算法、数据组织、执行位置 |
+| 跨边界 | 固定工作量比较集中调用与频繁往返 | 批处理、减少调用次数 |
+| 启动期叠加 | 分段记录 DLL、metadata、资源及业务启动 | 调整时机和并发度 |
 
-## 先给一句总判断
+预热只能前移部分准备工作，不能消除后续解释执行，也不能代替缺失 metadata 或不匹配桥接的修复。
 
-这篇文章的核心判断只有一条：
+## PreJit 真正准备什么
 
-`HybridCLR 的性能治理，不是想办法把所有热更逻辑都"优化成 AOT"，而是先把成本拆层。`  
-`该前移的前移，该避免跨边界的避免跨边界，该留在解释器的留在解释器。`
+固定 [RuntimeApi.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/RuntimeApi.cpp) 的 PreJit 路径会检查方法形态，再通过解释器方法准备链获取内部表示。它不生成 native 机器码。
 
-这件事一旦按层理解，很多策略都会自然很多。
+[InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp) 中的 `GetInterpMethodInfo` 与 `interpData` 是关键观察点。有缓存不等于方法已完成业务调用；同一方法再次执行仍要处理参数、建立现场和返回结果。
 
-![HybridCLR 性能分层图](../../images/hybridclr/performance-layers.svg)
+不能给任意类型或开放泛型直接套用预热。按目标方法实际形态检查返回结果、异常及泛型上下文。类型初始化可能引入额外工作，也应与 Transform 分开记录。
 
-*图：如果不先把成本拆成"首调、稳态、跨边界、启动期聚集"这几层，后面的优化动作很容易打错位置。*
+## 哪些路径值得预热
 
-## 不要把性能问题压扁成一句"解释器慢"
+优先考虑即将出现、范围有限、首调尖峰已经影响体验的入口。对整个程序集无差别预热，可能把大量不会使用的方法转换到启动期，同时增加内存。
 
-如果只用一句"解释器比 AOT 慢"来讲 HybridCLR，工程上几乎没有指导价值。  
-因为项目里真实会感觉到的成本，至少来自 4 层。
+若使用工作线程预热，还需核对该入口允许的线程条件、初始化副作用与 metadata 锁竞争。不要仅因 API 看似纯计算就假定可以任意并发；默认先用可控制的顺序预热建立基线。
 
-### 1. 首次调用成本
+## 缓存与运行时选项分别管什么
 
-也就是第一次真正执行某个解释器方法时，`GetInterpMethodInfo -> HiTransform::Transform` 这条链要不要现场发生。
+package 的 [RuntimeOptionId.cs](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Runtime/RuntimeOptionId.cs) 与 runtime 的 [RuntimeConfig.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/RuntimeConfig.cpp) 可用于核对当前版本选项。
 
-这一层的特点是：
+- 对象槽与帧栈大小影响解释线程的容量，不等于托管 GC 堆大小。
+- `MaxMethodBodyCacheSize` 控制的是**原始 IL MethodBody 缓存**的相应规模阈值，具体淘汰见 [MethodBodyCache.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/metadata/MethodBodyCache.cpp)；它不是全部 `InterpMethodInfo` 转换结果的回收开关。
+- 内联深度与可内联方法体限制影响转换策略，不能仅靠增加数值推定更快。
 
-- 更像尖峰成本
-- 容易集中在启动期、首开 UI、首次进入玩法时暴露
-- 不是长期每帧都重复付出
+修改选项后要在新进程和相同输入下比较，并记录内存和延迟；不要把默认值或单个版本的含义推广到全部版本。
 
-### 2. 长期解释执行成本
+## 怎样设计一组可解释的测量
 
-也就是方法已经拿到 `InterpMethodInfo` 之后，长期跑在 `Interpreter::Execute` 里的成本。
+固定 Editor、源码提交、平台、架构、Development/Release、优化等级、Profiler设置、GC模式、输入规模和调用次数。
 
-这一层的特点是：
+1. **冷路径**：新进程分别记录装载、首次查找、预热与首次业务调用。
+2. **稳态**：先确认目标表示已经准备好，再采样固定工作量。
+3. **边界**：同样数据分别由一次批量调用和多次小调用完成，避免同时改变算法。
+4. **内存**：比较预热前后保留量，并区分托管对象与 native metadata/指令数据。
 
-- 更像常驻成本
-- 会和调用频率、方法复杂度、数据路径相关
-- 不会因为做一次预热就消失
+记录分布和异常样本，而不是只挑一次最快值。原生断点验证路径会扰动时间，因此断点运行与性能采样应分开。
 
-### 3. 跨 ABI 边界成本
+## profiler 中看见 Execute 能说明什么
 
-这一层常被低估。  
-很多时候热点并不在解释器方法体本身，而在：
+原生栈中出现 `Interpreter::Execute` 说明采样链经过解释器，但其上方仍可能正在执行 AOT callee。反过来，没看到该帧也可能来自采样遗漏、符号、内联或展开限制，不能据此断言目标方法一定是 AOT。
 
-- interpreter 调 AOT
-- interpreter 调 native
-- delegate / reverse PInvoke
-- function pointer / `calli`
+把目标方法身份、已知调用链、生成物和采样位置结合起来。需要确定泛型是否走 native 时，可参考 [泛型实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})的断点归因，再单独做无调试器测量。
 
-这些路径除了正确性，还会带来桥接和参数搬运成本。
+## 什么时候改变执行边界
 
-具体来说，每个 `MethodBridge` stub 都要在解释器的 `StackObject` 内存布局和平台原生调用约定之间做参数搬运（例如 ARM64 AAPCS 会把整型参数放进 x0-x7 寄存器，浮点参数放进 d0-d7）。这个 marshaling 成本是每次调用都要付的，不会被摊销。
+若已测到稳定高频循环或大量跨边界开销，考虑把稳定核心放到 AOT、扩大批量接口、减少来回传递。变化频繁且性能满足预算的业务继续解释执行即可。
 
-### 4. 启动期集中爆发成本
+补充 metadata 是有效的常规方案；只有确有性能或内存需求，才进一步保留 native 实例或评估适用的其他能力。
 
-这一层也很常见。  
-即使单个方法的 transform 或解释执行不夸张，但如果你把：
-
-- 补充 metadata
-- 热更程序集加载
-- 首批关键方法的首次执行
-- 资源世界大规模启动
-
-都堆在同一帧，那用户感知到的就不是"解释器慢"，而是明显的启动抖动。
-
-所以这篇后面所有建议，都会围着这 4 层展开。
-
-## `PreJitMethod / PreJitClass` 真正预热的不是 native 代码，而是解释器方法信息
-
-这件事必须先说死，不然后面所有"预热"讨论都会歪。
-
-先看 `Packages/HybridCLR/Runtime/RuntimeApi.cs`：
-
-```csharp
-/// prejit method to avoid the jit cost of first time running
-public static extern bool PreJitMethod(MethodInfo method);
-
-/// prejit all methods of class to avoid the jit cost of first time running
-public static extern bool PreJitClass(Type type);
-```
-
-它自己把这件事叫 `PreJit`。  
-但如果你继续看 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeApi.cpp`，就会发现它真正做的不是把 IL JIT 成 native 代码：
-
-```cpp
-int32_t PreJitMethod0(const MethodInfo* methodInfo)
-{
-    if (!methodInfo->isInterpterImpl)
-    {
-        return false;
-    }
-    ...
-    return interpreter::InterpreterModule::GetInterpMethodInfo(methodInfo) != nullptr;
-}
-```
-
-再往下看 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/interpreter/InterpreterModule.cpp`：
-
-```cpp
-InterpMethodInfo* InterpreterModule::GetInterpMethodInfo(const MethodInfo* methodInfo)
-{
-    if (methodInfo->interpData)
-    {
-        return (InterpMethodInfo*)methodInfo->interpData;
-    }
-    ...
-    InterpMethodInfo* imi = transform::HiTransform::Transform(methodInfo);
-    const_cast<MethodInfo*>(methodInfo)->interpData = imi;
-    return imi;
-}
-```
-
-这就把语义钉死了：
-
-`PreJitMethod / PreJitClass 预热的是解释器方法链，也就是提前触发 transform 并把 InterpMethodInfo 缓存到 method->interpData。`
-
-有一个容易忽略的实现细节：`PreJitMethod` 内部调用 `InterpreterModule::GetInterpMethodInfo`，这个函数会获取 `g_MetadataLock`。如果需要预热的方法数量较多，建议在加载画面期间用单线程顺序调用，避免多线程同时 PreJit 引发锁竞争。
-
-所以它的价值是：
-
-- 避免首调时现场做 transform
-- 把一部分首次执行成本前移到你可控的时机
-
-它没有做的事是：
-
-- 不会把热更方法变回 AOT native 代码
-- 不会消灭长期解释执行成本
-- 不会绕开泛型实例是否存在、bridge 是否匹配这些更深层约束
-
-## `PreJitClass` 和 `PreJitMethod` 不是想调就都能调
-
-这一点源码里也写得很清楚。
-
-`PreJitMethod0` 里会提前拦掉几类情况：
-
-- 不是解释器方法
-- 泛型类型本身还没实例化好
-- 泛型方法本身不满足条件
-- inflated generic context 里还有未实例化类型
-
-也就是说：
-
-`PreJit` 不是"给任何方法加速"的万能按钮，而是"对满足条件的解释器方法，提前完成 transform 和缓存"。`
-
-这也是为什么我不建议把它宣传成"性能修复总开关"。
-
-## 什么时候该用 `PreJit`
-
-我觉得最稳的判断很简单：
-
-`只对"马上就会被用户感觉到的首次调用路径"做预热。`
-
-### 适合 `PreJit` 的场景
-
-- 启动后第一批必进的热更入口
-- 首屏 UI 打开时一定会触发的一组方法
-- 进入主玩法第一帧就会跑的热更逻辑
-- 明确知道首次执行尖峰比长期成本更值得治理的路径
-
-这类场景的共同点是：
-
-- 方法数有限
-- 首调时机可预测
-- 用户对首调抖动敏感
-
-### 不适合 `PreJit` 的场景
-
-- 想对整个大程序集一股脑"全预热"
-- 大量并不一定会执行的方法
-- 泛型和边界复杂、成功率本来就不稳定的整类路径
-- 你其实根本没有首调问题，只是长期每帧热点在解释器里
-
-因为这类做法只是把成本提前堆到启动期，并不会真的减少总成本。
-
-## 真正该前移的，通常不是"所有解释器方法"，而是"首调尖峰"
-
-这是我对 `PreJit` 最核心的工程判断。
-
-很多项目会本能地把"预热"理解成"先做越多越好"。  
-但对 HybridCLR，这个判断通常不成立。
-
-因为如果你把几十上百个方法的 transform 全堆到启动期：
-
-- 首帧可能更稳了
-- 启动整体却变重了
-- 资源、程序集、metadata 也在同一时段竞争
-
-用户最后感知到的，未必更好。
-
-所以更稳的策略是：
-
-`只把用户最容易感知到的那一小段首次调用路径前移，而不是把整个解释器世界都提前初始化。`
-
-## 哪些逻辑适合长期留在 interpreter
-
-这一点其实不需要玄学 benchmark，更多是工程分层判断。
-
-我会优先把下面这些逻辑留在 interpreter：
-
-- 变化频繁的业务逻辑
-- 配置驱动、活动驱动、剧情驱动流程
-- UI 组织和中低频交互
-- 首次调用可控、长期热点不高的功能代码
-- 热修收益明显大于原生性能收益的模块
-
-这些逻辑留在 interpreter，通常是合理交易。  
-因为你买到的是：
-
-- 更强的迭代灵活性
-- 更低的发版摩擦
-- 更自然的 Unity/C# 工作流延续
-
-## 哪些逻辑更应该前移或回到 AOT
-
-我更警惕下面这些场景：
-
-- 高频数值核心循环
-- 长期每帧热点逻辑
-- 大量重型集合运算或复杂算法核心段
-- 高频跨 interpreter / AOT / native 边界调用
-- 强依赖原生性能的底层系统
-
-这类逻辑的问题往往不是"首调慢一下"，而是长期路径一直在付费。  
-这时候最有效的策略通常不是多做 `PreJit`，而是重新放置边界：
-
-- 把稳定核心段留回 AOT
-- 让热更层更多做 orchestration，而不是做底层重活
-- 减少解释器层和 native/AOT 层来回穿梭
-
-## 高频跨边界调用，往往比单纯解释执行更值得先处理
-
-这点很重要。
-
-很多人一提 HybridCLR 性能，就只盯 `Interpreter::Execute`。  
-但真实项目里，先爆掉的未必是方法体本身，而是这种路径：
-
-- 热更逻辑每帧大量调 AOT 方法
-- 热更 delegate 高频回调
-- native 插件频繁回调 managed
-- 复杂值类型参数在 bridge 上来回搬运
-
-这时候即使方法体本身不大，跨边界也会把成本放大。
-
-所以如果你已经确认热点在这类路径上，我更建议先做两件事：
-
-1. 减少来回穿梭次数  
-   尽量把一段逻辑聚在同一侧做完，而不是每步都跨边界。
-
-2. 把边界收粗  
-   一个粗一点的调用，通常比很多碎调用更好治理。
-
-## `RuntimeOptionId` 是调优旋钮，不是性能魔法开关
-
-前面几篇其实很少碰这个话题，但这一篇必须提一下。
-
-在 `Packages/HybridCLR/Runtime/RuntimeOptionId.cs` 和 `HybridCLRData/LocalIl2CppData-WindowsEditor/il2cpp/libil2cpp/hybridclr/RuntimeConfig.cpp` 里，HybridCLR 暴露了一些运行时选项，比如：
-
-- `InterpreterThreadObjectStackSize` — 控制每个线程的解释器对象栈大小（源码层名称 `RuntimeOptionId::InterpreterThreadObjectStackSize`）
-- `InterpreterThreadFrameStackSize` — 控制每个线程的解释器帧栈大小
-- `MaxMethodBodyCacheSize` — 控制 transform 结果缓存上限
-- `MaxMethodInlineDepth` — 控制解释器内联深度
-- `MaxInlineableMethodBodySize` — 控制可被内联的方法体大小上限
-
-这些东西确实能影响运行时行为。  
-但我不建议把它们当成第一选择。
-
-更稳的理解方式是：
-
-- 先解决边界设计问题
-- 再解决首调时机问题
-- 最后才考虑这些旋钮是否值得调
-
-也就是说：
-
-`RuntimeOptionId 更像二阶调优工具，而不是一阶性能策略。`
-
-如果边界本来就放错了，单纯加大缓存、栈大小或 inline 深度，通常只会把问题藏得更深。
-
-## `PreJit` 还有一个容易忽略的工程含义：它会把成本搬到你调用它的地方
-
-这一点说起来很朴素，但很关键。
-
-因为一旦你调用 `PreJitMethod / PreJitClass`，你其实是在做一个很明确的选择：
-
-`把方法第一次真正执行时要付出的 transform 成本，搬到当前时刻付。`
-
-这意味着你最好把它放在这些位置：
-
-- 加载完成后的空档期
-- 进入关键界面前的可控节点
-- 你能接受一次性初始化成本的阶段
-
-而不是：
-
-- 最繁忙的主线程高峰点
-- 和大资源反序列化同时竞争的时刻
-- 你其实并不确定用户会不会走到的路径
-
-这不是代码层复杂问题，只是工程调度问题。  
-但它对最终手感影响很大。
-
-## 我最推荐的 3 条性能策略，不是调参数，而是调结构
-
-如果只保留最有工程价值的三条，我会写成：
-
-1. 先分清是首调尖峰，还是长期热点  
-   首调问题优先考虑 `PreJit` 和调用时机；长期热点优先考虑边界重构。
-
-2. 尽量减少高频跨 ABI 边界  
-   很多时候桥接成本比单纯解释执行更该先处理。
-
-3. 让 AOT 承担稳定底座，让 HotUpdate 承担变化层  
-   真正高频、稳定、强性能敏感的逻辑，不要默认留在 interpreter。
-
-这三条通常比"盲调运行时选项"更有效。
-
-## 补充：怎么确认热点到底在解释器还是 AOT
-
-在做上面的分层判断之前，你需要先确认一个方法到底跑在哪一侧。最直接的方式是用平台原生 profiler（iOS 用 Instruments，Android 用 Perfetto 或 Simpleperf）抓 CPU 采样，然后在调用栈里找 `hybridclr::interpreter::Interpreter::Execute` 这个帧。如果某个函数的调用栈里出现了这个帧并且占比显著，说明它正在走解释器路径；反之则是 AOT 或 native 路径。这一步做完，后面的"该前移还是该留"才有数据依据。
-
-## 收束
-
-HybridCLR 的性能治理，核心不是把解释器"调得像 AOT 一样快"，而是先把成本拆层，再决定哪些首调该前移、哪些热点该回到 AOT、哪些跨边界调用该收缩。
+<!-- DATA-TODO: 增加同环境的冷调用、预热后调用、稳态与跨边界批处理测量，记录构建条件、样本分布、内存与输入规模。 -->
 
 ## 系列位置
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-troubleshooting-diagnose-by-layer.md" >}}">HybridCLR 故障诊断手册｜遇到报错时先判断是哪一层坏了</a>
-- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-full-generic-sharing-why-not-metadata-upgrade.md" >}}">HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版</a>
+正确性排查先看 [诊断篇]({{< relref "engine-toolchain/hybridclr-troubleshooting-diagnose-by-layer.md" >}})，高级方案边界见 [能力选型]({{< relref "engine-toolchain/hybridclr-advanced-capability-selection-community-metadata-fgs-dhe.md" >}})。
+
+**预热解决发生时机，性能优化还需要实际工作量与执行路径的测量。**

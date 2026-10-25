@@ -1,5 +1,6 @@
 ---
 date: "2026-03-23"
+lastmod: "2026-10-25"
 title: "HybridCLR Full Generic Sharing｜为什么它不是补充 metadata 的升级版"
 description: "把 Full Generic Sharing 放回正确位置：它解决的不是 metadata 可见性，而是 generic 代码共享与调用模型。解释为什么它能减少补充 metadata、缩小包体和内存，又为什么会引入泛型函数性能代价和 Unity 版本前提。"
 weight: 39
@@ -11,9 +12,9 @@ tags:
   - "Generics"
   - "Runtime"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "商业公开文档 9.x，查阅于 2026-10-25"
 ---
-> 这篇不写"商业版内幕揭秘"。能确定的部分，只来自公开文档、当前系列已经拆出来的 runtime 边界，以及 `libil2cpp` 公开字段名暴露出的方向；凡是涉及具体内部实现的地方，我都会明确按"高可信推断"来写，而不是把猜测写成事实。
+> 资料范围：商业能力依据 2026-10-25 查阅的 HybridCLR 官方 9.x 文档。本篇区分 Unity 的完全泛型共享、社区版与该代码生成模式的兼容、商业版免补充元数据能力；没有商业版 Player 实测。
 
 这是 HybridCLR 系列第 10 篇，也是第一篇继续往高级能力边界下探的文章。  
 前面那篇边界文已经把一句话先钉死了：
@@ -33,10 +34,10 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 1. 为什么 `Full Generic Sharing` 不是"补 metadata 的更强版本"。
 2. 旧的 generic sharing 为什么总会在一部分 AOT 泛型场景里露出上限。
 3. 补充 metadata 能解决什么，为什么它又解决不了 `Full Generic Sharing` 想解决的那件事。
-4. 如果只按公开资料和现有 runtime 线索推断，`Full Generic Sharing` 大概率改的是哪一层。
+4. Unity FGS、社区版兼容和商业免补充元数据分别处于哪一层。
 5. 它在项目里真正换来了什么，又额外付出了什么代价。
 
-## 收束
+## 先给一个判断
 
 一句话总判断：
 
@@ -45,13 +46,9 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 这两个问题看起来都和 "AOT 泛型跑不起来" 有关，但层级完全不同：
 
 - 补充 metadata 解决的是"看不看得见、解释不解释得动"。
-- `Full Generic Sharing` 解决的是"能不能不再强依赖每个具体泛型实例都提前 AOT 出一份独立 native 实现"。
+- `Full Generic Sharing` 解决的是"对标准共享未覆盖的实例，能不能使用更通用的共享 native 实现"。
 
 只要这条边界不先立住，后面所有判断都会偏。
-
-![FGS vs 补 metadata vs AOTGenericReference](../../images/hybridclr/fgs-vs-metadata-vs-aotref.svg)
-
-*图：三者不是替代关系——AOTGenericReference 发现问题，metadata 补可见性，FGS 改调用模型。*
 
 ## 先把真正的问题立住：AOT 泛型的上限，不只是一份 metadata 文件
 
@@ -166,83 +163,40 @@ HybridCLR 的补充 metadata 技术，价值非常大，但它的层级必须摆
 
 因为它已经不再是"多带一份信息"，而是"换了一种 generic 执行模型"。
 
-### 底层机制：Full Generic Sharing 到底在编译层做了什么
+### 先区分三层能力
 
-Full Generic Sharing 的做法是：在 AOT 编译阶段，为每个泛型方法编译出一份"完全共享"的版本，其中所有类型参数都被当作一个规范的指针大小类型来处理。在 IL2CPP 生成的 C++ 代码里，这类函数的名称会带有 `Il2CppFullySharedGenericAny` 标记。
+| 层次 | 能力 | 不能推出的结论 |
+|---|---|---|
+| Unity IL2CPP | 为不同泛型实参提供完全共享的 AOT 代码形态 | 开启生成选项不代表 HybridCLR 社区版可以省掉补充元数据 |
+| HybridCLR 社区版 | 兼容宿主的代码生成模式；缺失的 AOT 泛型仍可通过补充元数据解释执行 | 兼容 FGS 不等于使用商业版免补元数据路径 |
+| HybridCLR 商业版 | 利用完全共享能力，使相应 AOT 泛型调用不再依赖补充元数据 DLL | 不等于所有调用都无适配成本，也不等于裁剪、反射与 native 边界问题自动消失 |
 
-这不是 HybridCLR 自己发明的机制，而是 Unity 自身的 IL2CPP 能力。Unity 2021 开始提供（需要配合 `Code Generation = Faster (smaller) builds`），Unity 2022 默认开启。
+[官方常见错误](https://www.hybridclr.cn/docs/help/commonerrors)明确提醒：社区版在相关完全泛型共享配置下仍需要补充元数据。因此，不能把社区版某次兼容性更新写成“商业能力已免费开放”。
 
-这也是它和补充 metadata 之间最根本的区别：
+共享代码需要在运行时处理类型布局、复制、返回值与泛型上下文的差异。`Il2CppFullySharedGenericAny` 是识别生成物形态的线索，不能把它解释成“所有实际类型都变成指针大小”；大结构体的真实大小和复制语义仍然要被保持。
 
-- Full Generic Sharing 改变的是 AOT 编译层的泛型分发模型——编译器直接生成一份共享实现。
-- 补充 metadata 只是在运行时增加可查询的元数据信息，不改变泛型代码的编译方式。
+[商业 FGS 文档](https://www.hybridclr.cn/docs/business/fullgenericsharing)当前列出 2022.3.x、6000.x.y 等受支持版本。Unity 2021 的配置说明属于历史版本资料，接入时应查对应版本，不能把“2021 开始支持”当作当前商业包的兼容承诺。
 
-一个在编译期就决定了代码形态，一个在运行时才补信息。这就是为什么它们不在同一层。
+## 从公开能力到项目验收
 
-## 如果只按公开线索推断，它大概率会碰到哪几层
-
-下面这部分，我刻意按"能确定什么"和"高可信推断什么"拆开写。
+接下来把公开契约与项目需要验证的问题分开。
 
 ### 能确定的部分
 
 从官方公开文档里，至少有这几件事是可以确定的：
 
-- `Full Generic Sharing` 是商业版能力，不是社区版主线的一部分。
+- 本文讨论的“免补充元数据”路径是商业能力；Unity FGS 及社区版对相关代码生成形态的兼容要单独看。
 - 它和补充 metadata 是两条不同路线。
 - 它的目标包括简化 workflow、减少补充 metadata dll 依赖、降低包体和内存。
-- 它依赖 Unity 较新的 `IL2CPP` generic sharing 能力，`Unity 2020` 不支持，`Unity 2021` 需要依赖 `Code Generation = Faster (smaller) builds` 这条能力线，`Unity 2022` 则已经默认开启。
+- 它依赖匹配的 Unity / IL2CPP 与商业包；代码生成模式还会影响包体和性能，不能只核对 Unity 大版本。
 
 到这里，其实已经足够支撑"它不只是 metadata 技术"这个结论了。
 
-### 高可信推断一：它一定碰 generic 调用签名本身
+### 从能力目标可以提出哪些检查问题
 
-边界篇里提到的 `MethodInfo.has_full_generic_sharing_signature` 已经把方向暴露得很明显了。
+共享代码要接受不同实参，就需要保证参数布局、返回值和运行时泛型上下文一致；普通调用、反射、虚调用和委托入口也都要能接到合法实现。这些是检查调用模型的方向，不是确认商业版改了哪些字段的源码证据。
 
-只要一个能力开始影响 "method signature 是否属于 full generic sharing 形态"，那它就已经不再是 metadata 存不存在的问题，而是：
-
-- 调用时怎么解释这个方法签名
-- 调用方和被调方如何约定参数布局
-- 共享方法体到底拿什么上下文去区分具体实例
-
-也就是说，它首先碰的是"调用模型"，不是"描述文件"。
-
-### 高可信推断二：它会连带影响 `methodPointer / invoker_method / virtualMethodPointer`
-
-只要 generic 调用不再强依赖"每个闭包实例一份专属 native 实现"，runtime 就必须重新保证几类入口的一致性：
-
-- 反射调用看到的 `invoker_method`
-- 普通直接调用最终落到的 `methodPointer`
-- 虚调用路径依赖的 `virtualMethodPointer`
-
-否则你会出现一种很难接受的裂缝：
-
-- 直调能跑
-- 反射不能跑
-- 虚调用和委托调用又是另一套行为
-
-所以从运行时结构上看，它几乎不可能不碰这几条分发路径。
-
-### 中可信推断三：它会更深地依赖 generic context，而不是每次都依赖具体实例化代码
-
-这条推断的根据也很直接。  
-如果目标真的是"让更多具体实例共用更少的 native 方法体"，那 runtime 就必须把"实例差异"更多地收敛到上下文里，而不是全部收敛到"不同机器码"里。
-
-你可以把它粗略理解成：
-
-- 旧路径更依赖"这个具体实例有没有单独 AOT 出来"
-- 新路径更依赖"这份共享代码能不能带着足够的 generic context 正确解释当前实例"
-
-这也是为什么它天然更像 runtime generic model 的升级，而不是 metadata 补丁。
-
-### 中可信推断四：某些 delegate / marshaling 限制会跟着变化
-
-边界篇里也已经提过，`Full Generic Sharing` 会触到一部分 generic delegate marshaling 限制。
-
-这不奇怪。  
-因为 delegate、reverse P/Invoke、native/managed 边界，本来就是对调用约定最敏感的地方。  
-只要你开始改变 shared generic method 的签名形态，边界层的 wrapper 和适配逻辑就一定会被牵连。
-
-所以这类能力很难是"只改一个开关，别的都不动"。
+实际验收时，可以对同一个泛型方法分别构造直调、反射和委托调用，再覆盖引用类型、基础值类型、含引用字段的结构体。保存返回值、异常与实际执行路径，才有条件讨论覆盖率和性能。不能仅凭 `methodPointer` 或 `has_full_generic_sharing_signature` 这样的字段名推断商业实现。
 
 ## 它换来的到底是什么
 
@@ -261,7 +215,7 @@ Full Generic Sharing 的做法是：在 AOT 编译阶段，为每个泛型方法
 
 ### 收益二：包体和内存压力更小
 
-既然目标就是不再依赖一批额外 metadata dll，包体和内存占用自然会下降。  
+不再携带和加载这批补充 DLL，可以省去对应的下载与 metadata 开销。项目总体包体和内存还受 native 产物及其他运行时状态影响，应通过同条件构建测量。
 这也是为什么官方会把它和"更小包体、更低内存"绑定着讲。
 
 对小游戏、WebGL、iOS 主包大小敏感项目来说，这一点尤其有吸引力。
@@ -281,27 +235,11 @@ Full Generic Sharing 的做法是：在 AOT 编译阶段，为每个泛型方法
 如果只讲收益，这篇就会重新变成宣传文。  
 真正工程化的判断，必须把代价也一起说清楚。
 
-### 代价一：它不是免费午餐，generic function 会有性能折价
+### 共享调用与代码生成模式需要单独测量
 
-官方公开文档已经明确提醒过：  
-`Full Generic Sharing` 会带来 generic function 性能下降。
+[官方 FGS 设置说明](https://www.hybridclr.cn/docs/business/fullgenericsharing)对 `faster(smaller build)` 选项提示了泛型函数性能风险，同时说明 Unity 2022 及以后默认开启完全泛型共享。不能把针对代码生成模式的警告改写成“使用商业免补充元数据能力就一定下降固定比例”。
 
-这其实完全符合前面的判断。  
-既然你不再要求"每个具体实例一份最直接的专属 native 实现"，那运行时就要在：
-
-- 参数适配
-- 上下文传递
-- shared body 分发
-
-这些地方多付出一些成本。
-
-具体来说，共享泛型代码可能需要通过 `ConstrainedCall` 路径做间接分发，而值类型操作在共享实现里可能产生本不必要的装箱。  
-如果同一个泛型方法有具体实例化的 AOT 版本，那份专属实现不会有这些额外开销。  
-FGS 的代价正是用这种运行时折价，换取更广的泛型覆盖面。
-
-所以它的真实语义不是"又全又快还不要钱"，而是：
-
-`用更高的 generic 覆盖率、更轻的 workflow，换取一部分 generic function 的运行时折价。`
+共享调用可能涉及类型信息查询、参数适配或间接调用，具体成本取决于生成模式和代码形态；专属实现也不保证在所有负载中更快。比较时需固定同一输入，区分现有 native 专属／共享实现与补充方法体的解释路径，再测热点耗时、包体和加载成本。
 
 ### 代价二：它强依赖 Unity / IL2CPP 版本能力线
 
@@ -310,13 +248,13 @@ FGS 的代价正是用这种运行时折价，换取更广的泛型覆盖面。
 
 这意味着：
 
-- `Unity 2020` 这条线不用想
-- `Unity 2021` 需要结合代码生成模式看
-- `Unity 2022` 才进入更自然的可用区间
+- 核对商业包明确支持的 Unity patch 与目标平台
+- 核对实际代码生成模式和配套工具链
+- 分别验证功能覆盖、包体、加载成本与热点耗时
 
 所以它不是一个"任何项目都能随手加"的能力，而是和引擎版本绑定得很紧。
 
-### 代价三：它解决的是 generic 覆盖率上限，不是所有泛型问题的总开关
+### 免补充元数据仍需要泛型回归
 
 就算用了 `Full Generic Sharing`，也不等于你可以把下面这些判断全部删掉：
 
@@ -325,7 +263,7 @@ FGS 的代价正是用这种运行时折价，换取更广的泛型覆盖面。
 - native/managed 边界是不是被放大了
 - 某些 delegate / marshaling 场景是不是仍然敏感
 
-也就是说，它解决的是一层很重要的上限问题，但不会替你消灭工程判断。
+免补充元数据改变了实现和工作流，成员裁剪、调用边界与实际性能仍需检查。
 
 ## 项目里什么时候该认真考虑它
 
@@ -345,13 +283,13 @@ FGS 的代价正是用这种运行时折价，换取更广的泛型覆盖面。
 
 那它就不一定是你最先该上的能力。
 
-## 收束
+## 回到工程选择
 
-`Full Generic Sharing` 真正抬高的，不是 metadata 可见性，而是 IL2CPP generic runtime 的共享上限。  
-它把一部分原本只能靠"补 metadata + interpreter"兜底的泛型场景，重新拉回 shared native path。  
-代价是更复杂的 generic 调用模型、对 Unity 版本更强的依赖，以及一部分泛型函数性能折价。
+这里讨论的商业 FGS 利用 Unity 的完全泛型共享机制，让相关 AOT 泛型调用不再依赖补充 DLL。社区版配合补充方法体同样能解决相应执行缺口；两条方案的区别需要从执行路径、产物管理、内存与热点测量中比较。选择时固定支持版本与代码生成配置，不把免补充元数据等同于所有调用更快。
 
 ## 系列位置
 
 - 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}}">HybridCLR 性能与预热策略｜哪些逻辑留在解释器，哪些该前移或回到 AOT</a>
 - 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-dhe-why-not-just-faster-interpreter.md" >}}">HybridCLR DHE｜为什么它不是普通解释执行更快一点</a>
+
+- 回到入口：[HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})

@@ -1,6 +1,6 @@
 # HybridCLR 源码跟读：Player 实验执行计划
 
-日期：2026-10-25。状态：新版隔离实验已完成。保留 v6.1.0 历史源码说明；实际使用 package v9.0.3 / runtime v9.0.1 的原始配套源码，在本机自定义 Unity 中完成 Player 构建、PDB 加载与两次目标调用断点验证。
+日期：2026-10-25。状态：新版隔离实验已完成。当前正文以 v9 为首读基线，以下 v6.1.0 失败和迁移过程为历史记录；实际使用 package v9.0.3 / runtime v9.0.1 的原始配套源码，在本机自定义 Unity 中完成 Player 构建、PDB 加载与两次目标调用断点验证。
 
 本文是执行层，服务于 [HybridCLR 系列计划](./hybridclr-series-plan.md) 和 [IL2CPP 系列计划](./il2cpp-series-plan.md)，不另立篇级目录、不增加正文数量。
 
@@ -151,7 +151,7 @@ Hugo 构建是站点检查，不属于 Unity runtime 验证；Git 推送和 Page
 完成前两篇的同一 Player 样本后，再依次推进：
 
 1. **三栏泛型调用综合实验（已完成）**：同一输入连通 ECMA 签名、IL2CPP 泛型与 HybridCLR 执行；两份 Player、四组独立运行及匹配 PDB 断点完成。详见 [泛型实验执行记录](./runtime-generic-call-experiment-outline.md)，正文 `runtime-generic-call-experiment.md`。
-2. **GC 与线程接入（部分完成）**：对象保留对照与托管 worker 的方法缓存／退出清理调用链已完成；原生线程回调与在途停止正常路径也已完成；原生回调的GC保留和有界分配压力也已完成；对象快照和活跃根区间也已采证；完整动态根路径归因、持续跨片段引用修改及长期压力仍待补。证据见 `hybridclr-thread-attachment-outline.md` 的 Player 补测，以及实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
+2. **GC 与线程接入（部分完成）**：对象保留对照与托管 worker 的方法缓存／退出清理调用链已完成；原生线程回调与在途停止正常路径也已完成；原生回调的GC保留和有界分配压力也已完成；对象快照和活跃根区间也已采证；串行托管worker的跨片段修改也已补；完整动态根路径归因、屏障反事实及长期压力仍待补。证据见 `hybridclr-thread-attachment-outline.md` 的 Player 补测，以及实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
 原生回调与在途停止对应 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)；上面的 a387d28 保留为对象保留与托管线程实验版本。
 
 3. **性能与预热篇**：固定设备、输入和采样方法，分别测首次、预热、稳定执行及跨边界成本。
@@ -169,3 +169,12 @@ Hugo 构建是站点检查，不属于 Unity runtime 验证；Git 推送和 Page
 - 独立Editor分析工程使用官方Memory Profiler1.1.0，21份快照共189组条目数量和缓冲哈希与自有读取器一致。包仅作分析依赖，不修改Player配置。57项Python测试通过。
 - 实验仓库已推送固定提交 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)与同目录三组自有root-events；真实.snap、PDB和原始调用栈仅在忽略目录。449a994仍是前轮保留/压力基线。
 - 三篇正文和三个索引补入实际返回区间与对象快照的证据边界。完整动态根路径归因、持续跨增量片段引用修改、性能、长期压力及其他平台仍待补；正文篇数不变。
+
+## 持续跨增量片段的引用修改与写屏障（2026-10-25）
+
+- 独立projects/incremental-barriers，build_id70a8a176-4eee-43b2-8aa8-a75754ac0bfb；Editor／v9／Windows x64锁不变，GCMode改Manual作为控制变量。旧4861bed与gc-roots回执保留，本轮尚未提交，不借用旧SHA标识。
+- AOT／hot各3个普通Player、各3个匹配PDB的CDB Player全部退出0；连续12帧more=True，MARK_END完成数1→2，修改期间不变；原生GC_gc_no4→5。writer预热后常驻，串行握手；紧凑收尾，图与标记检查在Join前。
+- 字段／引用数组／含引用结构体字段和数组赋值；实际CIL解析、目标槽屏障、dirty前后位、后续目标3页重扫关联。Box标记1／目标0，末尾marker4（返回前）目标0，完成后12目标全1；checksum12078。AOT16／hot24是重载入口次数，非写入或性能比例；每进程仅2次dirty新置0→1。
+- hot每进程6次根查询入口top0／frames0（基线1、目标周期收尾2、周期后／退出清理3），注册注销所有者匹配；scrub后当前worker栈的当前目标精确地址12次均0处。不是所有辅助根缺失证明，也未重新采根回调返回缓冲。
+- 96项Python测试通过。源码、产物、原始日志、CIL和验收工具有哈希绑定；公开结果／自有事件在实验仓库evidence/2026-10-25-incremental-barriers。完整动态根归因、屏障反事实与完整路径、并发／长期／性能及其他平台仍待补。
+- 三篇GC／线程正文、三个索引同步本样本结果，不新增正文篇数，不把实现行为上升为ECMA-335规范要求。后续提交发布时再补本轮固定链接。

@@ -2,7 +2,7 @@
 title: "ECMA-335 基础｜术语约定：runtime、toolchain、metadata、execution engine 的边界"
 slug: "ecma335-terminology-conventions"
 date: "2026-04-14"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 description: "同一个词在不同语境下含义不同。这篇术语约定页按易混淆词对组织，定义 runtime vs toolchain、metadata vs stream vs table、execution engine vs interpreter vs JIT、hot update vs hot reload vs hot fix 等核心术语的精确边界，作为全系列的参照锚点。"
 weight: 9
 featured: false
@@ -151,22 +151,13 @@ HybridCLR 的 [官方模块说明](https://www.hybridclr.cn/docs/basic/sourceins
 
 AOT 路径依赖预先生成的 native 实现；对于运行时才出现的调用，需要确认已有实现或共享代码是否适用。AOT 不意味着无法构造新的泛型类型描述，也不排除同一产品再集成解释器。动态生成方法体与构造泛型类型身份是两件事，见 [泛型语义]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}})。
 
-**JIT**（Just-In-Time Compilation）——运行时按需将 IL 编译为 native code。首次调用有编译开销，后续调用直接执行 native code。
+前面已经区分 JIT 与解释器。放到 AOT 旁边比较，关键是某次调用的实现何时、以什么形式准备好：JIT 可以在运行时生成机器码；解释器执行已有指令或转换后的内部表示，无须为每个新方法生成机器码。两者仍受目标平台、runtime 支持范围与输入信息是否完整的约束。
 
-- CoreCLR 的 RyuJIT
-- Mono Mini JIT
+**混合策略：** 同一运行时可以组合执行策略。HybridCLR 可以复用主包已有的 AOT 实现，也可以解释执行热更方法，以及需要补充原始方法体的 AOT 泛型路径。因此要按具体调用判断，不能把程序集归属直接等同于执行方式；详见 [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})。Mono 也支持 JIT、AOT 与解释器等不同模式和组合，具体取决于配置。
 
-JIT 的核心优势：能处理 AOT 无法预见的代码（运行时首次遇到的泛型组合、反射调用的方法）。代价是需要随 runtime 携带编译器组件。
+CoreCLR 的 Tiered Compilation 则是 **JIT 内部的编译层级**：先较快生成代码，再对适合的方法重新优化。仅有分层 JIT，不能据此称为 AOT 与解释器的混合执行。
 
-**Interpreter**（解释执行）——逐指令模拟执行 IL（或转换后的中间表示），不生成 native code。
-
-- LeanCLR：双层解释器（HL-IL → LL-IL → 执行）
-- HybridCLR：CIL → 内部寄存器指令 → 解释执行
-- Mono interp：IL 解释执行
-
-解释执行不要求为每个新方法生成 native code，但仍受解释器已实现的指令和宿主能力约束。其成本来自指令分派、数据访问和跨边界调用等；预解码、指令转换及优化会改变这些成本。性能比较必须给出版本、平台、工作负载，并区分首次转换与稳定执行，不能给所有解释器套一个统一倍数。
-
-**混合策略：** 现实中多数 runtime 不是纯粹使用一种策略。CoreCLR 有 Tiered Compilation（先快速 JIT，后优化 JIT）。HybridCLR 是 AOT + Interpreter 混合（AOT 部分走 IL2CPP，热更部分走解释器）。Mono 同时支持 JIT、AOT、Interpreter 三种模式。
+比较成本时，需要给出版本、平台和工作负载，并区分首次准备与稳定执行。解释执行的分派、数据访问和跨边界成本，也会随预解码、转换与优化而变化，不能给所有解释器套一个统一倍数。
 
 **约定：** 本系列讨论执行策略时，会明确标注当前语境是哪种模式。不会笼统地说"Mono 的执行方式"——要指明是 JIT 模式、Full AOT 模式还是 Interpreter 模式。
 

@@ -1,5 +1,6 @@
 ---
 date: "2026-03-23"
+lastmod: "2026-10-25"
 title: "HybridCLR 高级能力选型｜社区版主线、补 metadata、Full Generic Sharing、DHE 分别该在什么时候上"
 description: "把四条路线重新压成一个选型问题：社区版主线、补充 metadata、Full Generic Sharing、DHE 分别在解决什么，什么时候该继续加码，什么时候反而该克制。"
 weight: 41
@@ -11,11 +12,14 @@ tags:
   - "Architecture"
   - "Tradeoff"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "商业公开文档 9.x，查阅于 2026-10-25"
 ---
 > 这篇不再补新的底层细节，而是把前面几篇已经拆开的能力重新收回来，变成一个项目里真的能用的选型判断。因为一旦进入 `Full Generic Sharing` 和 `DHE` 这类高级能力，最容易出错的往往不是"不懂原理"，而是"在还没把问题分层之前，就太早上了更重的解"。
 
-这是 HybridCLR 系列第 12 篇，也是当前这一轮最适合收口的一篇。  
+这是 HybridCLR 系列第 12 篇，负责收束社区版与商业能力的选型边界。
+
+> 资料范围：商业能力依据 2026-10-25 查阅的官方 9.x 文档，未做商业版 Player 实测。本文的 FGS 路线专指免补充元数据能力，不能与 Unity 的 FGS 代码生成模式或社区版兼容性混为一谈。
+
 前面我们已经把下面几条线分别拆开了：
 
 - 社区版主线：动态程序集装载、解释执行、MethodBridge、资源挂载身份链
@@ -37,7 +41,7 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 4. 什么情况下应该继续往更高级能力上走，什么情况下反而该停下来。
 5. 如果只想记住一条决策路径，最稳的版本是什么。
 
-## 收束
+## 先给一个判断
 
 HybridCLR 的高级能力选型，不是"哪个更强就上哪个"，而是先判断你现在缺的是哪一层：
 
@@ -48,10 +52,6 @@ HybridCLR 的高级能力选型，不是"哪个更强就上哪个"，而是先�
 
 这四种缺口不是一层事。  
 只要你先把问题分层，选型就会很自然。
-
-![高级能力选型决策](../../images/hybridclr/capability-selection-flowchart.svg)
-
-*图：先判断缺的是哪一层，再决定走哪条路。不要跳过社区版主线直接上高级能力。*
 
 ## 先把四条路线放回正确位置
 
@@ -163,10 +163,10 @@ HybridCLR 的高级能力选型，不是"哪个更强就上哪个"，而是先�
 |---|---|---|---|
 | 社区版主线 | 全平台热更跑通 | `Generate/All` 维护、MethodBridge 桥接表对齐 | 社区版 MIT |
 | 补 metadata | AOT metadata 运行时可见性 | 每个 AOT assembly 多带一份裁剪后 dll；`LoadMetadataForAOTAssembly` 的内存与加载时间 | 社区版 MIT |
-| Full Generic Sharing | generic 覆盖率上限 | 泛型函数调用走共享路径带来的性能折价（完全共享版本经 `Il2CppFullySharedGenericAny` 间接调用）；强依赖 Unity/IL2CPP 版本 | 社区版即可使用（v4.0.0+ 开始支持） |
-| DHE | 已进包 AOT 程序集函数级差分热改 | 必须维护 `dhao` 产物链一致性；加载顺序更严格；不支持 extern 方法变更 | 需要商业许可 |
+| 商业 FGS 免补元数据路径 | 减少 AOT 泛型对补充元数据解释兜底的依赖 | 共享调用与适配成本；依赖匹配的 Unity / IL2CPP 和商业包 | 商业能力 |
+| DHE | 已进包 AOT 程序集函数级差分热改 | DHAO 或 MetaVersion 产物必须与主包配对；有加载顺序及新增 extern 等约束 | 商业能力 |
 
-> 注意：Full Generic Sharing 从 HybridCLR v4.0.0 起在社区版即可使用；DHE 属于商业版能力，需要获取商业许可后才能接入。
+Unity 的完全泛型共享、社区版与其兼容、商业版免补充元数据是三层能力。[官方常见错误](https://www.hybridclr.cn/docs/help/commonerrors)仍要求社区版在相应 FGS 配置下补充元数据；[商业 FGS](https://www.hybridclr.cn/docs/business/fullgenericsharing)才是这里的免补元数据路线。不能因为代码生成选项能打开，就删掉社区版的补充元数据流程。
 
 所以最稳的工程判断不是：
 
@@ -263,12 +263,12 @@ HybridCLR 的高级能力选型，不是"哪个更强就上哪个"，而是先�
 如果是 `FGS`，你至少要看：
 
 - Unity 版本是不是在可用区间
-- 你能不能接受 generic function 的性能折价
+- 实际代码生成模式是什么，同一热点在目标构建中的性能是否达标
 
 如果是 `DHE`，你至少要看：
 
 - 对应 AOT 程序集会不会在热更加载前抢跑
-- 能不能稳定维护 `AOT dll / 最新热更 dll / dhao` 三者一致性
+- 能不能稳定维护 `主包快照 / 最新热更 dll / 对应变化或版本数据` 三者一致性
 - 相关脚本是不是还依赖打进包体资源挂载
 
 只要这条轴不满足，高级能力就不该进入主方案。
@@ -320,7 +320,7 @@ HybridCLR 的高级能力选型，不是"哪个更强就上哪个"，而是先�
 - 改动只占其中一小部分
 - 未改动部分又明确是性能热点
 - 你能严格控制加载顺序
-- 你能把 `dhao` 产物链纳入稳定构建流程
+- 你能把 DHAO / MetaVersion 产物链纳入稳定构建流程
 
 ## 最容易犯的 4 个选型错误
 
@@ -357,3 +357,5 @@ HybridCLR 的高级能力选型，不是"哪个更强就上哪个"，而是先�
 
 - 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-dhe-why-not-just-faster-interpreter.md" >}}">HybridCLR DHE｜为什么它不是普通解释执行更快一点</a>
 - 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-faq-10-most-confused-judgments.md" >}}">HybridCLR 高频误解 FAQ｜10 个最容易混掉的判断</a>
+
+- 回到入口：[HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})

@@ -1,7 +1,7 @@
 ---
 title: "HybridCLR AOT 泛型高频坑型录｜UniTask、LINQ、Dictionary、委托、自定义泛型容器怎么排"
 date: "2026-03-31"
-description: "不再按单个报错拆案例，而是把 HybridCLR AOT 泛型问题按坑型归类：async/UniTask、LINQ、Dictionary/ValueTuple、委托回调、自定义泛型容器各自的典型信号、根因和处理方式。"
+description: "按 async、LINQ、容器和回调选择具体验证入口，区分实际生成形态、泛型方法归属与尚未覆盖的用例。"
 weight: 52
 tags:
   - "HybridCLR"
@@ -11,208 +11,64 @@ tags:
   - "UniTask"
   - "LINQ"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
----
-> 项目里真正拖慢排障的，往往不是"没有思路"，而是每次都把同一类 AOT 泛型坑当成第一次见的新事故。
-
-这是 HybridCLR 系列第 23 篇。
-
-前几篇已经把判断链搭起来了：
-
-- [HCLR-19]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md" >}}) 讲决策入口
-- [HCLR-20]({{< relref "engine-toolchain/hybridclr-sharing-type-judgment-valuetuple-int-string-valuetuple-int-object.md" >}}) 讲共享类型判断
-- [HCLR-21]({{< relref "engine-toolchain/hybridclr-disstripcode-writing-patterns-valuetype-reftype-nestedgeneric-delegate.md" >}}) 讲 DisStripCode 写法
-- [HCLR-22]({{< relref "engine-toolchain/hybridclr-aotgenericreferences-disstripcode-metadata-how-to-work-together.md" >}}) 讲协作关系
-
-这一篇再往前走一步，不按单个案例拆，而是直接按**坑型**归类。
-
-## 这篇要回答什么
-
-这篇主要回答 4 个问题：
-
-1. 真实项目里最常见的 AOT 泛型坑，通常长成哪几类。
-2. 每一类最典型的信号是什么。
-3. 每一类的优先判断顺序是什么。
-4. 每一类到底更偏向补 metadata、补 DisStripCode，还是查裁剪。
-
-## 收束
-
-AOT 泛型问题最稳的排法，不是盯着单条日志猜，而是先判断它属于哪种坑型。坑型一旦分对，后面的共享类型判断、DisStripCode 写法和 metadata 取舍才会稳定。
-
-## 第一类：async / UniTask 型
-
-这一类最典型的特征，是你表面上没写什么泛型容器，但运行时却掉进了非常像"隐式泛型"的路径。
-
-常见信号：
-
-- `AsyncUniTaskMethodBuilder<T>`
-- `AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>`
-- `IlCppFullySharedGenericAny`
-- 解释器 / builder / state machine 反复递归
-
-这一类难点在于：
-
-`你源码里没直接写出那个 AOT 泛型实例，但编译器替你写了。`
-
-所以判断顺序要反过来：
-
-1. 先看是不是 async / builder / state machine 路径
-2. 再看 `AOTGenericReferences` 里有没有对应 builder / source / awaiter 需求
-3. 再决定是补 metadata 恢复运行，还是补 DisStripCode / builder 引用回到 native
-
-这类坑的关键词不是 `Dictionary`、`List`，而是：
-
-`隐藏泛型`
-
-### 根因补充
-
-UniTask 里最常见的 AOT 泛型缺口来源是 `AsyncUniTaskMethodBuilder<T>.Start<TStateMachine>`。每个 `async UniTask<T>` 方法在编译后都会生成一个独立的编译器状态机类型 `<MethodName>d__N`，它就是 `TStateMachine` 的实际类型参数。因为这些状态机类型始终属于热更程序集，IL2CPP 在 AOT 构建时永远不会为它们生成具体实例。
-
-这意味着：即使你在 DisStripCode 里补了 `AsyncUniTaskMethodBuilder<int>`，只要有新的热更 async 方法，就可能产生新的状态机类型缺口。排查时要从 `TStateMachine` 侧入手，而不只盯 `T`。
-
-## 第二类：Dictionary / List / ValueTuple 容器型
-
-这是最容易被肉眼识别出来的一类。
-
-常见信号：
-
-- `Dictionary<K,V>::TryGetValue`
-- `List<T>.ctor`
-- `ValueTuple<...>.ctor`
-- 错误日志里直接出现容器和闭包类型
-
-这一类的难点不是"有没有泛型"，而是：
-
-`你看到的闭包类型，和共享规则下该写进 DisStripCode 的类型，往往不是同一个。`
-
-所以这类坑最稳的排法是：
-
-1. 先判断 `K`、`V`、`T` 哪些位置是值类型
-2. 再翻共享类型
-3. 再决定补的是类型实例化还是方法实例化
-
-这类坑最容易犯的错，是直接照抄日志里的泛型签名。
-
-### 根因补充
-
-`Dictionary<TKey, TValue>` 在 `TKey` 是值类型时尤其容易出问题。原因是 `Dictionary` 内部依赖 `EqualityComparer<TKey>.Default` 来做键比较，而这需要一个针对该值类型的 comparer 具体 AOT 实例。如果 `TKey` 是热更侧定义的枚举或结构体，IL2CPP 不会预生成对应的 `EqualityComparer<TKey>`，运行时就会缺方法。
-
-排查时除了看 `Dictionary` 本身的泛型签名，还要检查 `EqualityComparer<TKey>` 是否有对应实例。
-
-## 第三类：LINQ / 扩展方法型
-
-这一类最容易被低估，因为源码看起来只是：
-
-- `ToList`
-- `Select`
-- `OrderBy`
-- `FirstOrDefault`
-
-但这些调用背后经常会形成：
-
-- 泛型方法实例
-- 迭代器状态机
-- delegate / closure
-
-于是你表面上看到的是一行平平无奇的 LINQ，真正坏掉的可能却是：
-
-- `Enumerable.ToList<T>`
-- `Func<T, TResult>`
-- 某个迭代器状态机的 AOT 泛型路径
-
-这一类更稳的排法是：
-
-1. 不要只看调用行长什么样
-2. 先看最终缺的是容器、delegate 还是扩展方法本身
-3. 再决定是补共享类型、delegate 签名，还是先回 builder / iterator 路径
-
-这类坑常见于"代码很短，但链条很长"。
-
-### 根因补充
-
-`Select`、`Where`、`OrderBy` 等 LINQ 方法内部使用泛型迭代器和委托。每个独立的 lambda 表达式都会让编译器生成一个闭包类（如 `<>c__DisplayClassN`），这个闭包类可能触发新的 AOT 泛型需求。
-
-举例：`.Select(x => x.Name)` 实际上会展开为 `Enumerable.Select<TSource, TResult>` 加上一个 `Func<TSource, TResult>` 委托实例化，再加上闭包类的泛型路径。三层叠加后，只补其中一层往往不够。
-
-## 第四类：委托 / 泛型回调型
-
-这类问题最典型的外观是：
-
-- `Action<T>`
-- `Func<T1,T2>`
-- 泛型事件总线
-- 泛型接口回调
-
-它的难点是：
-
-`表面上你觉得自己只是在传一个回调，但 AOT 世界真正需要的是那组具体签名的实例。`
-
-这类坑最稳的排法是：
-
-1. 先确认缺的是 delegate 签名还是被调方法
-2. 再判断泛型参数哪些落到 `object`，哪些保值类型外壳
-3. 如果跨 ABI 或 native callback，再顺手查 MethodBridge 那一层
-
-它最容易和"普通方法没实例化"混在一起。
-
-## 第五类：自定义泛型容器 / 第三方库型
-
-这是最难一眼看透的一类。
-
-最常见的外观不是 BCL，而是你项目里自己的：
-
-- `MessageBus<T>`
-- `Pool<T>`
-- `Cache<TKey, TValue>`
-- 第三方库的 strongly typed API
-
-这一类的难点在于：
-
-`它没有标准答案，也没有现成案例，必须把它拆回"这个泛型类 / 泛型方法在共享规则下到底落成什么"。`
-
-所以排法反而要更老实：
-
-1. 先确定缺的是类型还是方法
-2. 再按 `HCLR-20` 那套共享类型判断翻译
-3. 再按 `HCLR-21` 的模板写出最小可见引用
-4. 最后回头看 `AOTGenericReferences` 和 metadata 该怎么配合
-
-自定义泛型最忌讳的，不是"不会写"，而是：
-
-`以为它跟 List/Dictionary 没什么区别，结果把共享规则套错层。`
-
-## 给每一类都压一个排障入口
-
-如果只想快速判断，我建议先问下面 5 句：
-
-1. 这是不是 async / builder / state machine 路径？
-2. 这是容器型闭包类型，还是隐藏泛型？
-3. 错在类型实例，还是方法实例？
-4. 这里缺的是 native 实现，还是先缺 metadata？
-5. 这是标准库坑，还是项目自定义泛型坑？
-
-只要这 5 句先问完，你基本就不会再把所有问题都塞进"再补一个 object 看看"这条路里。
-
-## 最后给一张压缩表
-
-| 坑型 | 最典型信号 | 第一优先动作 | 最常见误判 |
-|---|---|---|---|
-| async / UniTask | builder、state machine、`IlCppFullySharedGenericAny` | 先认隐藏泛型路径 | 以为只是 metadata 问题 |
-| 容器 / ValueTuple | `Dictionary`、`List`、`ValueTuple` | 先翻共享类型 | 直接照抄日志闭包类型 |
-| LINQ / 扩展方法 | `ToList`、`Select`、`OrderBy` | 先拆到真实泛型方法 / delegate | 以为 LINQ 本身不算泛型坑 |
-| 委托 / 回调 | `Action<T>`、`Func<T>`、泛型事件 | 先认签名实例 | 只保了被调方法，没保签名 |
-| 自定义泛型容器 | 项目自写 `Pool<T>`、`Cache<K,V>` | 先拆类型 / 方法层 | 套用标准库经验太早 |
-
-## 收束
-
-> AOT 泛型问题真正高效的排法，不是每次都从一条日志重新猜，而是先判断它属于哪种坑型。
-> 坑型分对之后，共享类型、DisStripCode 和 metadata 的处理顺序才会稳定。
-
+hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
+lastmod: "2026-10-25"
 ---
 
-## 系列位置
+AOT 泛型问题常藏在语法糖和容器内部：业务代码只有一次 `await`、`ToList` 或委托调用，实际 IL 却多出若干泛型成员。排查时应从具体调用展开依赖，不能凭框架名字就断言“都是同一种缺失”。
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-aotgenericreferences-disstripcode-metadata-how-to-work-together.md" >}}">HybridCLR AOTGenericReferences、DisStripCode、补 metadata 到底怎么配合</a>
-- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}">HybridCLR AOT 泛型回归防线｜怎么把这些坑前移到 Generate、CI 和构建检查里</a>
-- 相关前文：<a href="{{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}}">HybridCLR 案例续篇｜async 崩溃的真正根因与两种修法</a>
-- 相关前文：<a href="{{< relref "engine-toolchain/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}}">HybridCLR 案例｜Dictionary&lt;ValueTuple, 热更类型&gt; 的 MissingMethodException 与 object 替代法</a>
+> **阅读基线**：本篇按 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）与 package v9.0.3 核对公开源码。实际 Player 使用本机自定义 Unity；环境与固定提交见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。源码判断与实测范围分别标明。
+
+下表用来选择验证入口。修法仍按 [分层决策]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md" >}}) 判断；它不是一份已经逐项通过的兼容性矩阵。
+
+## async / UniTask：定位状态机与泛型方法的归属
+
+如果 async 方法定义在热更程序集，其编译生成的状态机通常也在该程序集；如果定义在 AOT 程序集，归属则不同。状态机是 class 还是 struct，应看实际编译产物和选项，不能只由源码里的 `async` 或单个配置名字推断。
+
+需要展开的调用包括 builder 的 `Start<TStateMachine>`、await 注册和恢复所需的方法。builder 可能来自 AOT UniTask 程序集，状态机参数来自热更程序集，这才是需要检查的交界。
+
+检查顺序是：反编译目标 DLL → 记录状态机类型和方法引用 → 核对 builder 定义所在程序集 → 查 native 与补充元数据。栈上出现 `FullySharedGenericAny` 或反复出现 `MoveNext`，都不足以直接证明缺少实例导致递归。历史证据与待复现项见 [async 案例续篇]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})。
+
+## LINQ 与闭包：先看是不是实际捕获
+
+`Where`、`Select`、`ToList` 等调用可能引入迭代器类型、委托及泛型方法。只测试集合创建，没有枚举延迟序列，可能根本没执行到失败路径。
+
+lambda 也不都创建 `DisplayClass`：
+
+- 不捕获状态的 lambda 可以使用编译器生成的静态或缓存委托，不必为每次调用分配捕获对象。
+- 捕获局部变量时可能生成保存变量的显示类。
+- 只捕获 `this` 与捕获额外局部变量的生成形态也可能不同。
+
+应读本次产物的 IL，而不是把“出现 lambda”统一换算成“出现新的值类型泛型实例”。对延迟执行序列，最小用例要真正枚举，并检查空集合、单元素与正常输入。
+
+## Dictionary / ValueTuple：成员与参数都要完整
+
+`Dictionary<TKey,TValue>` 的构造、`set_Item`、`TryGetValue` 和枚举不是同一个调用。key 的比较与哈希还可能经过默认比较器或自定义比较器；只有真的走到对应分支，才有相关证据。
+
+对 `ValueTuple` key，按参数递归计算共享形态。字段数相同、大小相同都不是共享充分条件；热更引用类型和热更结构体也不能混在同一规则里。
+
+历史 `Dictionary<(int,int),HotClass>.set_Item` 报错见 [字典案例]({{< relref "engine-toolchain/hybridclr-case-dictionary-valuetuple-hotfix-type-missing-method.md" >}})。它保留了诊断线索，但不代表任何 Dictionary 错误都需要修改同一份保留文件。
+
+## 委托与回调：把泛型实现和线程协议分开
+
+委托调用失败可能涉及目标方法、调用签名、生命周期或线程接入。泛型实现补齐后，原生侧保存的委托仍可能因为失去托管持有而不安全；反过来，正确保留委托也不能补回一个缺失的方法实现。
+
+如果回调从原生工作线程进入托管代码，应使用 [线程接入文章]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) 的证据入口，检查注册、退出、停止与 Join。现有原生回调实测只覆盖文章记录的固定样本，不把泛型模板当作线程验收。
+
+## 自定义泛型容器：先找定义在哪个程序集
+
+容器定义在热更程序集，其方法体本身可以由解释器执行；但方法内调用的 AOT 泛型、反射 API 或原生插件仍要分别检查。容器定义在 AOT 程序集，则需要检查成员的 native 实例和补充方法体条件。
+
+例如 `HotCache<T>` 包装 `Dictionary<int,T>`，外层热更方法能执行，不能证明内部所有 Dictionary 成员都已具备实现。沿着实际成员和类型参数继续往下，直到找到发生边界选择的位置。
+
+## 为场景建立可复现入口
+
+| 场景 | 最小用例必须真正执行 | 需保存的身份 |
+|---|---|---|
+| async / UniTask | 未完成 await 的挂起、恢复、结果与异常路径 | 状态机 IL、UniTask 版本、构建选项 |
+| LINQ | 目标操作及实际枚举 | 元素类型、实际调用成员 |
+| Dictionary | 报错成员和比较器路径 | key/value 类型、共享形态 |
+| 委托 / 原生回调 | 注册、调用、停止、Join 和解除持有 | 目标方法、签名、线程与构建身份 |
+| 自定义容器 | 外层入口和内部依赖成员 | 每层定义程序集及具体签名 |
+
+现有调用链、泛型、GC 与线程实验已有固定记录；完整 async/UniTask、LINQ 和资源装载矩阵仍待补。下一篇 [回归检查]({{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}) 说明如何把“待验证”与“已通过”保留为可审计的不同状态。

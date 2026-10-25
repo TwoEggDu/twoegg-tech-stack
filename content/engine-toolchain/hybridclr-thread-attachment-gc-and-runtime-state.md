@@ -7,7 +7,8 @@ weight: 63
 featured: false
 tags: ["Unity", "IL2CPP", "HybridCLR", "Threading", "GC"]
 series: "HybridCLR"
-hybridclr_version: "v6.1.0 (5567f367)"
+hybridclr_version: "runtime v9.0.1 (83929787) / package v9.0.3"
+lastmod: "2026-10-25"
 ---
 
 同一个热更方法，从 Unity 主线程调用正常，换成 SDK 的工作线程回调后却失败。给业务数据加了锁，问题仍然存在；补上线程 attach 后，又发现访问场景对象不对。这里至少跨越了四种不同的边界。
@@ -37,15 +38,15 @@ attach 是把当前 OS 线程接入运行时，不是把它迁移到主线程，
 
 ## 固定版本再读路径
 
-沿用源码起步篇的历史样本，便于对照而非追逐 main：
+沿用源码起步篇与当前实验的固定 v9 组合：
 
 | 仓库 | tag / commit | 本篇重点 |
 |---|---|---|
-| hybridclr | v6.1.0 / `5567f367502d916c6742873d8ed2ab13d0f6900a` | InterpreterModule、Engine、GetInterpMethodInfo |
-| hybridclr_unity | v6.1.0 / `88e20505f87d57cbff5695be5f7baa35d626f619` | 生成 Reverse P/Invoke wrapper 的模板 |
-| [il2cpp_plus](https://github.com/focus-creative-games/il2cpp_plus/tree/ce2e34097e099e458e14192bed96c28bc761392b) | v2022-6.1.0 / `ce2e34097e099e458e14192bed96c28bc761392b` | Thread、ScopedThreadAttacher、GC 接入 |
+| hybridclr | v9.0.1 / `83929787581bce6c7219418f62348a10c33582ee` | InterpreterModule、Engine、GetInterpMethodInfo |
+| hybridclr_unity | v9.0.3 / `6cadd24d101f4cbd00cd80190106f6621132d24d` | 生成 Reverse P/Invoke wrapper 的模板 |
+| [il2cpp_plus](https://github.com/focus-creative-games/il2cpp_plus/tree/ba3a76c9979d14cee404fb5d44301773e0768866) | v2022.3.x-9.0.1 / `ba3a76c9979d14cee404fb5d44301773e0768866` | Thread、ScopedThreadAttacher、GC 接入 |
 
-源码获取和实际 Player 调试环境见起步篇。公开正文只描述 Unity runtime 的行为和文件位置，不转载其 C++ 函数体。
+旧稿 v6.1.0 的阅读信息保留在起步篇的历史对照中；本篇已重新核对 v9 的相同入口。源码获取和实际 Player 调试环境见起步篇。公开正文只描述 Unity runtime 的行为和文件位置，不转载其 C++ 函数体。
 
 ## 托管线程与外部原生线程，起点不同
 
@@ -53,7 +54,7 @@ attach 是把当前 OS 线程接入运行时，不是把它迁移到主线程，
 
 SDK 自己创建的原生线程则可能尚未接入 runtime。它进入托管代码时，需要检查**实际回调入口**是否已经承担登记职责。拿到的地址是合法回调 wrapper，还是直接把某个内部方法入口当成函数指针，差别很大。
 
-在固定的 hybridclr_unity 样本中，[Generator.cs 的 GenerateReversePInvokeWrappers](https://github.com/focus-creative-games/hybridclr_unity/blob/88e20505f87d57cbff5695be5f7baa35d626f619/Editor/MethodBridge/Generator.cs)会在生成的 Reverse P/Invoke wrapper 中使用 `ScopedThreadAttacher`。配套 `libil2cpp/vm/ScopedThreadAttacher.cpp` 的行为是：当前线程未登记时才接入；退出时只清理由这个作用域建立的登记。
+在固定的 hybridclr_unity 样本中，[Generator.cs 的 GenerateReversePInvokeWrappers](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Editor/CodeGen/MethodBridge/Generator.cs)会在生成的 Reverse P/Invoke wrapper 中使用 `ScopedThreadAttacher`。配套 `libil2cpp/vm/ScopedThreadAttacher.cpp` 的行为是：当前线程未登记时才接入；退出时只清理由这个作用域建立的登记。
 
 因此不能写成“所有 native 回调都要在 C# 回调体里手工 attach”，也不能写成“任何函数指针都会自动 attach”。先核对最终生成物和调用栈，确认命中的是这条 wrapper 路径；回调声明、调用约定、生成数量、裁剪和版本配套仍需正确。
 
@@ -74,9 +75,9 @@ SDK 自己创建的原生线程则可能尚未接入 runtime。它进入托管�
 
 配套 `libil2cpp/vm/Thread.cpp` 的 `Thread::Attach` 先检查当前登记，再进入 GC 线程注册和托管线程初始化路径。线程身份、线程静态数据与解释器帧不是同一个数据结构。
 
-进入解释执行时，[InterpreterModule.h](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.h)中的 `GetCurrentThreadMachineState` 从 TLS 取状态，没有才分配 `MachineState`。其解释器栈、帧与异常流存储按需初始化。
+进入解释执行时，[InterpreterModule.h](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.h)中的 `GetCurrentThreadMachineState` 从 TLS 取状态，没有才分配 `MachineState`。其解释器栈、帧与异常流存储按需初始化。
 
-由 [Engine.h](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/Engine.h) 可以看到，解释器栈初始化时注册动态根回调。回调提供 `_stackBase` 到当前 `_stackTopIdx` 对应的活跃范围，而不是把全部预留容量永久当成活跃栈。
+由 [Engine.h](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Engine.h) 可以看到，解释器栈初始化时注册动态根回调。回调提供 `_stackBase` 到当前 `_stackTopIdx` 对应的活跃范围，而不是把全部预留容量永久当成活跃栈。
 
 这带来三个可观察的区别：
 
@@ -84,7 +85,7 @@ SDK 自己创建的原生线程则可能尚未接入 runtime。它进入托管�
 - 返回一个方法会退出相应帧，但不等于立即释放该线程的整个解释器栈容量。
 - 线程池线程长期存在，状态也可能继续存在；是否泄漏要结合线程与清理路径判断。
 
-方法转换结果则是另一类共享数据。[GetInterpMethodInfo](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.cpp)使用 metadata 锁检查／生成缓存，并在发布 `interpData` 前有内存屏障。**方法的已转换指令可以复用，执行中的线程栈不能因此合并。** 这把 runtime 内部锁也不保护你自己的静态字典、事件列表或对象字段。
+方法转换结果则是另一类共享数据。[GetInterpMethodInfo](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp)使用 metadata 锁检查／生成缓存，并在发布 `interpData` 前有内存屏障。**方法的已转换指令可以复用，执行中的线程栈不能因此合并。** 这把 runtime 内部锁也不保护你自己的静态字典、事件列表或对象字段。
 
 ## 退出需要沿原来的所有权返回
 
@@ -171,7 +172,7 @@ public static class ManagedThreadProbe
 
 ### 已完成：两个托管工作线程的 Player 对照
 
-2026-10-25，使用 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 的 `projects/lifetime-threads`，在与 [对象保留实验]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 相同构建中运行独立的 `--threads` 进程。构建 ID 为 `70021d1d-8d18-4bdf-8066-446dd9898b80`，实际环境是本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3 / runtime v9.0.1、配套 il2cpp_plus v2022.3.x-9.0.1，Windows x64 IL2CPP Development。前文 v6.1.0 源码阅读与本节实测版本分别标记。
+2026-10-25，使用 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 的 `projects/lifetime-threads`，在与 [对象保留实验]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 相同构建中运行独立的 `--threads` 进程。构建 ID 为 `70021d1d-8d18-4bdf-8066-446dd9898b80`，实际环境是本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3 / runtime v9.0.1、配套 il2cpp_plus v2022.3.x-9.0.1，Windows x64 IL2CPP Development。本节环境与前文源码基线一致；它是本机自定义 Editor 组合的观察，不代表所有 Unity patch。
 
 实测样本比上面的教学探针多一个 worker 和完成／放行事件。两线程同时存活，worker1 等待 worker0 的两次调用完成后再调用同一个 `LifetimeHot.Samples.Add`；每个 worker 计算结束后都等待统一放行，再退出并 Join。这样可以同时区分线程独有状态与方法共享缓存，避免先销毁再分配造成地址复用的歧义。工作线程不调用 Unity API。
 
@@ -262,13 +263,17 @@ python tools/lifetime_lab.py verify
 
 清理断点说明函数入口和调用顺序，不统计 native 内存释放量，也没有观察 GC 实际扫描的根区间。本轮记录了增量模式，但没有运行增量引用修改压力负载，不能据此确认所有写屏障路径或性能。
 
-### 已完成：回调中的上下文句柄、活跃引用与 GC 压力
+## 扩展验证：回调持有、活跃根与跨片段写入
+
+前三节已经建立线程接入和退出协议。下面按引用的持有方式检查这个协议，完整 GC 数据集中在 IL2CPP GC 篇。
+
+### 回调中的上下文句柄与活跃引用
 
 2026-10-25，同一环境锁新增GC回调工程，build_id `148235df-910b-441f-94b2-b7348eb02d8c`。完整分组、数据和收集口径见 [IL2CPP GC篇的新实验]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，这里聚焦线程与所有权。
 
 这次回调ABI为cdecl `int(IntPtr,int,int)`。handle/stress组用Normal GCHandle保留热更Context，native仅保存句柄token，不保存对象地址，也没有固定对象地址的要求。Context由短寿命托管创建线程产生，创建线程Join后才开始观察；static回调委托只在AOT持有。stack组的token为0，回调中创建的热更Node只通过活跃局部引用继续使用，AOT观察者仅保存短弱引用。
 
-handle、stack、stress各三个独立Player通过。前两组在回调等待期间执行3次显式收集，放行后数据仍正确；压力组完成1024回调、8 MiB payload分配和64槽引用修改，32检查点通过，checksum786944、errors0。压力窗口内128次增量请求均返回false，GC计数差值256；该计数不做单API归因或GC耗时判断。
+handle、stack、stress 各三个独立 Player 通过。前两组在回调等待期间收集三次，放行后数据正确；压力组完成 1024 次回调与对象图校验。该轮的增量请求均返回 false，不能替代下文同一周期持续跨片段的验证。
 
 handle/stack另各有匹配GameAssembly/NativeProbe private PDB的原生记录：
 
@@ -287,11 +292,11 @@ Detach数字仍是两个重载入口组成一条解除登记调用链。stack组
 
 自有样本与证据已固定在提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)：[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)、[自有原生插件](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/native/gc-callbacks/plugin.cpp)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)及[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/results.json)；通过 `tools/gc_callback_lab.py` 的build/run/trace/verify复现。前一轮 `b915632` 不包含新增GC样本。
 
-尚未验证回调异常注入、多原生线程竞争、真实SDK关闭竞争、实际根枚举内容或持续跨片段标记期的引用修改。收集期间本样本对象可用、scope按顺序清理，与写屏障完整性和长期泄漏仍是不同结论。
+本轮未验证回调异常注入、多原生线程竞争、真实 SDK 关闭竞争、实际根枚举内容或持续跨片段标记期的引用修改；后两项的独立后续样本见下文。收集期间本样本对象可用、scope按顺序清理，与写屏障完整性和长期泄漏仍是不同结论。
 
-<!-- DATA-TODO: 继续补异常注入、持续跨片段引用修改、多原生线程竞争及其他平台。 -->
+<!-- DATA-TODO: 继续补原生回调异常注入、多原生线程竞争及其他平台；串行托管worker的跨片段修改见后续实验。 -->
 
-### 已完成：解释帧活跃、空闲与根注销对照
+### 解释帧活跃、空闲与根注销对照
 
 同一固定环境的后续 `gc-roots` 实验（build_id `993e5b9e-1f71-4949-b339-39ff10d359b1`）进一步采到了GC根回调的真实返回值。handle、stack、idle三组各有3个无调试器对照和3个匹配PDB的CDB进程；另有handle/stack各3个独立快照进程，均正常退出。
 
@@ -304,6 +309,18 @@ Detach数字仍是两个重载入口组成一条解除登记调用链。stack组
 21份对象快照另行验证Normal句柄目标及Context→Slots数组路径，Free后强句柄目标消失；快照ManagedStacks条目均为0，没有给出该解释器动态根边。完整矩阵及官方读取器的189组缓冲交叉校验见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})。这支持本样本引用位于报告区间，不证明唯一根来源、全部写屏障或长期无泄漏。
 
 本轮固定提交为 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)和[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)，复现命令为 `tools/gc_roots_lab.py` 与 `tools/check_snapshots_unity.py`；旧 `449a994` 不包含新增根快照工程。
+
+### 常驻托管 worker 的跨增量片段写入
+
+收集周期尚未结束时再创建／登记writer线程，可能让运行时先推进收集；这次探索确实在第一次写入前触发完成，已被拒绝。因此独立 `incremental-barriers` 样本改为**先创建、登记并预热一个常驻托管worker，再启动目标周期**。这不是外部原生线程回调实验。
+
+沿用上述Editor／v9锁和Windows x64配置，GCMode作为控制变量切为Manual。主线程连续12帧分别推进增量片段，确认more=True和MARK_END完成数不变后，通过事件放行worker修改字段、引用数组或含引用结构体；等待writer返回、清理自有native栈后再推进下一帧。收集与writer按握手串行，worker不使用Unity场景API，也不宣称并发首次转换、并发GC或多线程写竞争已验证。
+
+build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb` 中，AOT／hot各3个普通Player与3个匹配PDB的调试Player均退出0。12次修改期间原生GC编号保持4，完成时为5，对象图checksum12078。最终图和标记检查放在Join之前；退出清理引发的后续GC不归入目标周期。写屏障、dirty与重扫的完整分层结果见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})。
+
+每个hot调试进程有一组归属该worker的动态根注册／注销，6次GC查询入口top0／frames0：1次在基线、2次在目标周期收尾、3次在周期后及退出清理；不能把退出清理查询解释为仍在等待下一次任务。目标周期中的两次查询发生在writer返回后的等待阶段。12次scrub后，当前活跃worker栈内均未找到当前候选的对齐精确指针；这不排除寄存器、内部指针、其他目标和其他线程。这里只采了根回调入口状态，真实返回缓冲的独立证据仍属于前轮gc-roots实验。
+
+复现使用实验仓库 `tools/incremental_lab.py`，记录为 `evidence/2026-10-25-incremental-barriers/`；当前尚未提交，本轮不借用旧4861bed充当源码版本。固定依赖、Manual控制和单worker串行握手是结论成立的条件，原生回调竞争、异常退出与其他平台继续单独验证。
 
 ## Unity 主线程与 Web 平台的边界
 

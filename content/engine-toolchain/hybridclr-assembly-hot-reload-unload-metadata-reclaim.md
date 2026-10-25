@@ -1,7 +1,8 @@
 ---
-title: "HybridCLR 程序集热重载｜IL2CPP 为什么不能卸载程序集，热重载版怎么做到的"
+slug: "hybridclr-程序集热重载il2cpp-为什么不能卸载程序集热重载版怎么做到的"
+title: "HybridCLR 程序集热重载｜卸载条件、metadata 复用与状态恢复"
 date: "2026-04-13"
-description: "从 IL2CPP 的全局元数据注册表、静态字段存储、GC 根这几个层面讲清楚为什么标准 IL2CPP 不能卸载程序集，然后对比 .NET CoreCLR 的 AssemblyLoadContext 机制，再沿着热重载版的公开接口和约束条件推导出商业版需要在哪些层面做改造，最后把 GC 配合、类型身份、重加载后的状态恢复和工程边界收进来。"
+description: "区分托管对象回收、native metadata 寿命与程序集卸载，依据官方公开约束解释热重载的退出条件、保留类型信息及重新加载后的状态管理。"
 weight: 59
 featured: false
 tags:
@@ -11,288 +12,95 @@ tags:
   - "Memory"
   - "Architecture"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "社区 runtime v9.0.1；商业公开文档 9.x（2026-10-25）"
+lastmod: "2026-10-25"
 ---
-> 程序集卸载是 IL2CPP 从来没有设计过的事。每一张全局注册表、每一个静态字段、每一条缓存的 MethodInfo 都在向内指引并持有引用——这些结构只增长、不收缩，也不提供任何移除路径。
 
-这是 HybridCLR 系列第 28 篇。
+> 卸载程序集需要让对象、正在执行的代码和运行时缓存共同退出；做完一次 GC 只覆盖其中一部分。
 
-前一篇（HCLR-27）拆了解释器在指令层面的优化，下一篇（HCLR-29）讲代码加密。这篇要回答的问题完全在另一个方向：
+这是 HybridCLR 系列第 28 篇。项目想把一个小游戏或玩法模块换成新版本时，最直接的问题是：旧 DLL 已经不用了，为什么不能像释放资源一样把它卸掉？
 
-`如果一个热更程序集加载后发现有 bug，能不能把它从内存中完全卸掉、换上修好的版本、继续运行？`
+问题在于，加载不仅带来文件字节，还建立了类型、方法、反射、静态存储与执行之间的关系。只有明确谁仍然使用这些关系，才能讨论安全卸载。
 
-在标准 IL2CPP 里，这件事做不到。在 HybridCLR 商业版的"热重载版"（Hotreload Edition）里，它声称做到了——99.9% 的 metadata 内存可以回收。
+> 源码基线：社区 runtime v9.0.1，[`83929787581bce6c7219418f62348a10c33582ee`](https://github.com/focus-creative-games/hybridclr/tree/83929787581bce6c7219418f62348a10c33582ee)。商业约束依据 2026-10-25 查阅的官方 9.x 热重载手册。本文没有商业版卸载实验，也不推断闭源释放算法。
 
-这篇文章先从社区版源码讲清楚"为什么做不到"，再对比 .NET CoreCLR 的 `AssemblyLoadContext`，然后从热重载版的公开接口和约束条件推导出商业版需要改什么，最后把 GC 配合、类型身份和工程边界收进来。
+## 三种寿命不能混在一起
 
-> 本文 IL2CPP 层面的分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）的开源代码。热重载版的实现是商业闭源的，本文不做源码级猜测，只从官方公开文档和 API 约束反推架构需求。
+| 对象 | 谁还可能使用它 | 为什么单次 GC 不够 |
+|---|---|---|
+| 托管对象 | 静态字段、委托、GCHandle、活跃栈等 | 仍可达的对象不能按“模块已退出”自动判死 |
+| native metadata 与转换缓存 | 类型查询、方法入口、泛型、反射包装及引擎缓存 | 它们不都属于托管 GC 堆 |
+| 活跃执行 | 托管线程、协程、异步续体、native 回调 | 删除对象引用不代表代码已返回或回调已停止 |
 
-## IL2CPP 为什么原本不能卸载程序集
+普通社区版的加载路径会建立并注册 `InterpreterImage`，转换结果又会依赖相关类型和方法描述符。可以从固定源码的 [Assembly.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/metadata/Assembly.cpp)、[InterpreterImage.h](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/metadata/InterpreterImage.h)跟读这些关系。
 
-要理解"不能卸载"，得先看清楚一个程序集在加载后到底把数据写进了哪些全局结构。从社区版源码看，至少有以下几层。
+局部对象有析构函数、线程退出能清理状态，都不等于存在可卸载任意程序集的完整协议。业务也不能靠删除某个 image 或把某个注册槽置空来补出这个协议。
 
-### 全局注册表只增长、不收缩
+## .NET 的可卸载上下文提供了什么参照
 
-IL2CPP 的 `MetadataCache` 在初始化阶段分配了一组全局静态数组：
+CoreCLR 的 collectible `AssemblyLoadContext` 把一组程序集放进可协作卸载的上下文。`Unload()` 发起卸载，但完成还要求没有相关活跃调用栈，也没有阻止回收的强引用或 GCHandle。[Microsoft 的卸载说明](https://learn.microsoft.com/en-us/dotnet/standard/assembly/unloadability)专门区分了发起卸载和卸载完成。
 
-```
-static Il2CppClass** s_TypeInfoTable = NULL;
-static Il2CppClass** s_TypeInfoDefinitionTable = NULL;
-static const MethodInfo** s_MethodInfoDefinitionTable = NULL;
-static Il2CppString** s_StringLiteralTable = NULL;
-static const Il2CppGenericMethod** s_GenericMethodTable = NULL;
-static Il2CppImage* s_ImagesTable = NULL;
-static Il2CppAssembly* s_AssembliesTable = NULL;
-```
+这个参照说明“上下文、引用和执行寿命”都需要参与。它不能证明 HybridCLR 热重载版移植了同样的上下文模型，也不能推出其 metadata 必然使用 per-image arena、generation 标记或某套释放顺序。
 
-这些表在 `MetadataCache::Initialize()` 里通过 `IL2CPP_CALLOC` 一次性分配，大小由 metadata header 决定。整个 runtime 生命周期内，这些表只写入、不删除、不缩容。
+## 商业热重载版公开了哪些检查入口
 
-HybridCLR 社区版在这之上叠了自己的注册层。`InterpreterImage` 在 `InitBasic()` 阶段调用 `RegisterImage(this)`，将自身写入一个静态数组：
+[官方热重载手册](https://www.hybridclr.cn/docs/business/reload/manual)提供 `TryUnloadAssembly` 与 `ForceUnloadAssembly`。前者尝试卸载并返回报告；后者即使仍有引用也会移除目标，因此调用方必须理解失败报告和悬挂使用风险，不能把它作为常规重试手段。
 
-```
-static InterpreterImage* s_images[kMaxMetadataImageCount];
-```
+`printObjectReferenceLink` 用于输出非法引用线索。检查结果不是业务已经停止所有 native 入口的替代证明；业务仍须履行产品要求的退出条件。
 
-同样没有对应的 `UnregisterImage` 路径。`Assembly::LoadFromBytes` 最终调用 `il2cpp::vm::MetadataCache::RegisterInterpreterAssembly(ass)` 把程序集注册到 IL2CPP 的全局 assembly 列表里，这条注册也是单向的。
+一个可审阅的业务退出顺序是：
 
-### InterpreterImage 的 metadata 存储没有释放路径
+1. 阻止新任务、事件和 native 回调进入旧模块。
+2. 取消任务并等待旧模块的在途执行结束，完成回调停止／Join 等握手。
+3. 解除委托、事件和 UI 注册，按所有权释放上下文与句柄，清理反射缓存。
+4. 按依赖逆序调用产品的检查与卸载接口，处理失败报告。
+5. 验证旧模块不可再调用、引用与内存变化，再进入新版本。
 
-打开 `InterpreterImage.h`，可以看到这个类持有大量 metadata 容器：
+这是业务协议，不是对商业运行时内部释放顺序的还原。具体线程退出问题见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
 
-```
-std::vector<Il2CppTypeDefinition> _typesDefines;
-std::vector<Il2CppMethodDefinition> _methodDefines;
-std::vector<FieldDetail> _fieldDetails;
-std::vector<ParamDetail> _params;
-std::vector<Il2CppGenericParameter> _genericParams;
-std::vector<Il2CppGenericContainer> _genericContainers;
-std::vector<const Il2CppType*> _types;
-std::vector<Il2CppClass*> _classList;
-std::unordered_map<uint32_t, CustomAttributesInfo> _tokenCustomAttributes;
-```
+## 热重载并不保证每个类型描述符都是新地址
 
-这些容器在 `InitRuntimeMetadatas()` 的多个阶段（`InitTypeDefs_0()`、`InitMethodDefs()`、`InitFieldDefs()` 等）被填充。填充过程是单向的：往 vector 里 push，往 map 里 insert，没有对应的 clear 或 erase 路径。
+同名类型重新加载后，业务必须重新取得并验证可用的类型和反射对象；不能继续使用旧缓存。
 
-更关键的是，`InterpreterImage` 本身没有析构函数做清理。基类 `Image` 有虚析构函数，会释放 `_rawImage` 和 `_pdbImage`，但 `InterpreterImage` 的那些 vector 和 map 虽然会随 C++ 对象析构自动释放内存，前提是有人 `delete` 这个对象——而在社区版的代码路径里，没有任何地方 `delete` 一个已加载的 `InterpreterImage`。
+但不能进一步说“所有 `Il2CppClass*` 一定重新分配”。官方说明，一部分被 Unity 持有的脚本类型和可序列化类型 metadata 会保留，并在后续加载时复用；还有不涉及卸载模块类型的泛型 metadata，例如 `List<int>`，不会随该模块释放。
 
-### Il2CppClass 和 Il2CppMethodInfo 只分配不回收
+因此需要分开看：
 
-metadata 解析过程中产生的运行时结构——`Il2CppClass*`、`Il2CppMethodInfo*`——都通过 `MetadataMallocT<>()` 或 `HYBRIDCLR_METADATA_MALLOC` 分配。这些宏最终调用的是 IL2CPP 的 metadata 内存池，设计目标是进程级生命周期，没有 per-object 的 free。
+- **模块语义和业务状态**：新版本应按约定重新建立，旧对象和回调不能混入。
+- **runtime 内部存储**：部分可释放，部分可能保留或复用，由产品协议管理。
+- **业务缓存有效性**：不能用某个 native 地址恰好相同或不同来判定。
 
-`MetadataPool` 提供了 `GetPooledIl2CppType()` 这样的池化接口，用于 metadata 去重，但同样没有 `Release` 或 `Free` 方法。整个池只有 `Initialize()`，没有 `Cleanup()`。
+官方“多数程序集可回收99%以上 metadata”的表述是其产品资料，不是本项目循环加载、卸载后测得的回收率。它也不是“托管堆、native metadata 与引擎缓存全部归零”的承诺。
 
-### 静态字段存储在类初始化时分配
+## 资源与类型变化有哪些限制
 
-类型信息准备、静态字段存储准备和 `.cctor` 执行需要区分，不能把第一次访问类型等同于静态构造已执行，也不能用 `Il2CppClass::initialized` 一个标志概括所有状态。具体触发语义见 [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。普通加载路径中的类型和静态存储具有较长生命周期，这与可卸载模块需要显式收回所有权的要求不同。
+Unity 的序列化和脚本消息机制会缓存类型相关信息，因此热重载的可变范围小于“任意替换所有资源结构”。官方当前列出的约束包括：
 
-### GC 根持有执行栈引用
+- MonoBehaviour 消息／事件函数不能增删；不能简化为“数量相同即可”，改名替换也可能改变集合。
+- 原来同名脚本类的序列化字段名不能随意改变，字段类型须遵循产品约束。
+- 相关字段若使用可卸载程序集中的自定义类型，需要检查 `Serializable` 等要求；`List<A>` 与 `A[]` 也有明确差异。
+- 不支持相关泛型继承、终结器和 DOTS 等场景，具体适用范围按所用版本核对。
 
-在社区版 v6.1.0 中，`MachineState` 用 native 分配建立解释器栈，并注册 `GetGCRootData` 动态根回调，报告当前活跃的 StackObject 区间。不能把它写成 AllocateFixed 分配，也不能据此把帧中的 native MethodInfo 指针等同于托管 GC 强引用。活跃帧对 metadata 的使用是另一个必须处理的执行寿命问题；详见 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
+这些约束不应靠“类型名一样就可以复用”来规避。官方提供 `HotReloadCompatibilityValidator`，适合作为构建前检查，但运行时的引用与退出验证仍然需要做。
 
-同时 `MachineState` 维护了一个 `std::stack<const Il2CppImage*>`，记录当前正在执行的程序集镜像栈。这些引用在执行期间持续存在。
+## 重新加载后的状态由谁恢复
 
-### transform 缓存绑定到方法
+新的类型使用仍须遵守类型初始化语义。不能把程序集装载完成等同于所有 `.cctor` 已执行，也不能通过业务层重置某个内部标志来重跑初始化。
 
-当解释器第一次调用某个热更方法时，transform 阶段会把 CIL 方法体转换成 `InterpMethodInfo`，包含：
+对于需要延续的状态，应在卸载前导出为宿主可持有的、版本明确的数据，再由新模块导入。单例、事件订阅、对象池、序列化器和异步状态都要分别制定重建规则。状态协议可演进，旧运行时对象和旧方法入口不能直接成为跨卸载边界的存档。
 
-```
-byte* codes;           // 转换后的指令字节码
-uint64_t* resolveDatas; // 解析好的元数据引用数组
-```
+类型初始化的规范边界见 [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。
 
-转换结果中的解析数据会保存类型、方法等 native 描述符的地址或相关数值；这种依赖不应称为托管 GC 强引用。缓存通过 `MethodInfo::interpData` 等路径关联，卸载机制需要同时解决缓存寿命与所依赖 metadata 的寿命。
+## 什么模块更适合做这件事
 
-把这些结构放在一起，需要解决的是跨注册表、类型、静态存储、活跃执行和方法缓存的一致退出。部分结构有局部清理路径，例如线程状态退出，但局部可清理不等于存在任意程序集的安全卸载协议。
+小游戏合集或生命周期清晰的独立玩法，容易定义“进入、停止、导出状态、卸载、重建”的流程。依赖很深、使用大量 native 回调、全局缓存或复杂序列化类型的模块，则需要更完整的退出设计。
 
-## .NET 的 AssemblyLoadContext 做了什么
+模块通过接口通信只能减少耦合，不能单独证明可卸载。接口委托、事件订阅和后台任务仍然可能把旧代码留在系统里。
 
-.NET CoreCLR（.NET Core 3.0+）通过 `AssemblyLoadContext` 提供了程序集卸载能力。它的做法和 IL2CPP 形成鲜明对比，值得简要对比。
-
-CoreCLR 的设计核心是"可收集上下文"（collectible context）：
-
-- 程序集不是加载到全局作用域，而是加载到一个独立的 `AssemblyLoadContext` 实例里
-- 当调用 `AssemblyLoadContext.Unload()` 时，runtime 标记这个上下文为待卸载状态
-- 实际卸载是协作式的：runtime 触发 `Unloading` 事件让业务代码清理资源，然后等待所有对该上下文内类型和对象的强引用被释放
-- 最终由 GC 在下一轮收集时真正回收所有关联内存
-
-这个机制成立的前提是几个关键设计：
-
-**类型的弱引用管理。** CoreCLR 的 JIT 编译器和类型系统知道哪些类型属于哪个 `AssemblyLoadContext`。全局缓存里对可收集类型的引用是弱引用或可清理的条件引用，不会阻止卸载。
-
-**独立的元数据域。** 每个 `AssemblyLoadContext` 有自己的程序集解析逻辑。同名程序集可以存在于不同上下文中，互不干扰。
-
-**GC 集成。** GC 能感知 `AssemblyLoadContext` 的生命周期。当一个上下文被标记为待卸载且所有强引用释放后，GC 可以回收该上下文内所有对象的内存，包括 JIT 编译的 native code。
-
-IL2CPP 没有任何这些基础设施：
-
-- 类型注册是全局的（`s_TypeInfoTable`），没有上下文隔离
-- metadata 引用都是强引用，没有弱引用机制
-- GC（BoehmGC 或 IL2CPP 的增量 GC）不知道"程序集"这个概念，只知道对象
-- 没有 `Unloading` 事件，没有协作式卸载协议
-
-所以 HybridCLR 热重载版要实现程序集卸载，不能简单移植 CoreCLR 的方案，而是要在 IL2CPP 的全局注册模型上做侵入式改造。
-
-## 热重载版需要改什么
-
-以下分析基于热重载版的公开 API（`RuntimeApi.TryUnloadAssembly`、`RuntimeApi.ForceUnloadAssembly`）和官方文档描述的约束条件。商业版源码不公开，这里只从"需要满足的需求"反推"必须做的改造"。
-
-### MetadataCache 注册必须可逆
-
-社区版的 `MetadataCache::RegisterInterpreterAssembly(ass)` 是单向操作。热重载版必须支持反向操作——从全局 assembly 列表中移除指定的程序集，从 image 列表中移除对应的 image。
-
-这意味着 `s_images[]` 数组中对应索引的槽位需要能被置空或标记为已释放，而不是简单的 `s_images[index] = nullptr`（因为其他地方可能还持有这个 index 做查找）。更可能的做法是维护一个版本号或 generation 标记，让持有旧引用的代码能检测到 image 已失效。
-
-### InterpreterImage 必须有完整的析构路径
-
-社区版的 `InterpreterImage` 虽然内部用了 `std::vector`（析构时自动释放内存），但它持有的 `Il2CppClass*`、`Il2CppMethodInfo*` 等通过 metadata 池分配的对象不会被自动回收。
-
-热重载版需要：
-
-- 为 `InterpreterImage` 增加显式的 `Dispose`/`Cleanup` 路径
-- 遍历 `_classList`，释放每个 `Il2CppClass` 及其关联的虚表、接口表、字段信息
-- 遍历 `_methodDefines`，释放每个 `Il2CppMethodInfo` 及其 `interpData`
-- 清理 `_tokenCustomAttributes` 中通过 `GarbageCollector::AllocateFixed()` 分配的 custom attribute 缓存
-- 释放 `_rawImage`（解析后的原始 metadata）
-
-### transform 缓存必须按程序集可清理
-
-每个通过 transform 产生的 `InterpMethodInfo` 持有 `codes` 和 `resolveDatas`。`resolveDatas` 中的每个条目可能指向 `Il2CppClass*`、`MethodInfo*`、字段偏移量等。
-
-卸载一个程序集时，属于该程序集的所有方法的 `InterpMethodInfo` 必须被释放。同时，`MethodInfo` 上的 `interpData` 指针必须被置空，防止悬挂指针。
-
-### MetadataPool 的分配必须支持按域释放
-
-社区版的 `MetadataPool` 是进程级的池分配器，没有 per-image 的释放能力。热重载版可能需要把 metadata 分配改为 per-image arena（区域分配器），这样卸载一个 image 时可以整体释放该 arena，避免逐个对象 free 的复杂度和碎片化问题。
-
-### 官方文档确认了 99% 以上的回收率
-
-热重载版文档明确表示：除了被 Unity 引擎内部持有的 Script 类（`MonoBehaviour`、`ScriptableObject`）以及 `[Serializable]` 类型的 metadata 之外，几乎所有（99.9%）的 metadata 都可以被卸载。并且"多次加载和卸载同一个程序集只会产生一次不释放行为，不会导致泄漏或持续增长"。
-
-这说明热重载版确实实现了上述大部分改造，并且对不可释放的部分做了复用策略——同一个类型名的 Script 类在首次加载时创建的 metadata 会被缓存，后续重载复用同一份缓存，不会重复分配。
-
-## GC 层面的配合
-
-程序集卸载不只是 metadata 层的事。当一个程序集被卸载时，GC 堆上可能还存在该程序集中定义的类型的活跃对象。这些对象怎么处理，是卸载机制最复杂的部分。
-
-### 活跃对象的引用检查
-
-热重载版提供了两个 API，对应两种策略：
-
-`RuntimeApi.TryUnloadAssembly(assembly, printObjectReferenceLink)` 是安全卸载——如果 GC 堆上还存在该程序集中类型的活跃对象，卸载会失败并返回错误报告。设置 `printObjectReferenceLink=true` 会打印引用链，帮助开发者定位哪些对象还在持有引用（但会显著增加卸载时间）。
-
-`RuntimeApi.ForceUnloadAssembly(assembly, ignoreObjectReferenceValidation, printObjectReferenceLink)` 是强制卸载——无论是否还有活跃引用都会执行卸载。官方文档警告这可能导致崩溃，建议只在确认安全或联系技术支持后使用。
-
-### 卸载前必须清理的引用类型
-
-官方文档列出了卸载前必须由业务代码清理的引用：
-
-- **协程和异步操作：** 正在执行的协程或 `async Task` 如果引用了即将卸载的程序集中的方法，必须先停止
-- **委托和事件：** 所有注册到全局事件的委托，如果目标方法在卸载程序集中，必须先反注册
-- **UI 回调：** 按钮点击等 UI 事件绑定到卸载程序集中的方法时，必须先解绑
-- **反射缓存：** `Assembly`、`Type`、`MethodInfo` 等反射对象的引用必须释放
-- **泛型实例：** 泛型类如果类型参数包含卸载程序集中的类型，整个泛型实例也被视为非法引用
-
-### 静态字段的处理
-
-卸载机制需要处理静态存储及其中的引用，包括含引用字段的值类型。如何解除根、释放存储以及管理新加载类型的初始化状态，属于产品实现；不能简化为“值类型直接 free”或“重置 initialized 标志”。重新加载后的类型身份与初始化协议也不能通过业务层手工改内部字段实现。
-
-### 析构器的限制
-
-热重载版文档明确禁止在可卸载程序集中使用析构器（`~XXX()`）。这是一个合理的工程约束——析构器在 GC 的 finalization 线程上异步执行，如果析构器引用了已卸载程序集的 metadata，会导致悬挂指针。禁止析构器比处理析构器的生命周期复杂度低得多。
-
-### 操作顺序
-
-这里能提出的是业务侧需要满足的退出条件，不是经商业源码验证的内部释放顺序：
-
-1. 停止新任务与回调，等待仍在执行旧模块代码的工作完成。
-2. 解除事件与 UI 注册，按所有权释放 native 回调上下文及句柄。
-3. 按所用热重载产品的接口与约束执行检查和卸载，处理失败结果。
-4. 分别验证旧对象引用、在途执行、native 缓存与 metadata 内存的变化。
-
-不能通过“扫描一次 GC 堆”或“做完一次 GC”证明所有 native 入口与缓存都不再引用目标模块。反注册类型、清理转换缓存和释放 metadata 的具体依赖顺序必须由运行时实现保证，不应照着推测清单由业务手动操作。线程与回调退出见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
-
-## 重新加载时的状态恢复
-
-卸载只是前半段。热重载的完整流程是：卸载旧版本 → 加载新版本 → 恢复运行。加载新版本时有几个关键问题。
-
-### 类型身份
-
-卸载再重新加载同名程序集后，`typeof(MyType)` 返回的 `Type` 对象是不是同一个？
-
-从热重载版的约束来看，答案是：逻辑上是同一个类型（相同的程序集名 + 类型名），但 runtime 层面的 `Il2CppClass*` 指针一定是新的。这意味着：
-
-- 在卸载前持有的 `Type` 对象在卸载后失效
-- `typeof(MyType)` 在重新加载后返回的是新的 `Type` 实例
-- 如果业务代码用 `Type` 对象做 key 缓存了什么（比如序列化库的类型映射），缓存会失效
-
-这也是为什么官方文档特别提到：使用了反射 metadata 缓存的库（如 LitJson 等序列化工具）必须在重载后手动清理缓存。
-
-### 序列化资源的重新绑定
-
-Prefab 和 ScriptableObject 上挂载的 `MonoBehaviour` 脚本引用的是类型名（通过 `fileID` 和 `guid` 以及 `m_Script` 引用）。重载后，Unity 引擎需要将这些引用重新解析到新的类型定义上。
-
-热重载版文档对此有严格约束：
-
-- 重载前后，`MonoBehaviour` 和 `ScriptableObject` 的序列化字段名不能改变
-- 事件函数（`Awake`、`OnEnable` 等）的数量不能改变
-- 不能使用泛型继承（`class MyScript : CommonScript<int>`）
-
-这些约束的本质是：Unity 引擎内部对 Script 类的 metadata 做了缓存（比如序列化字段列表、事件函数指针表），热重载版在重载时需要更新这些缓存使其指向新的类型定义。如果字段名或事件函数数量变了，缓存更新的逻辑就无法安全执行。
-
-### 静态构造函数重新执行
-
-重载后，静态构造函数必须重新执行。这意味着所有通过静态构造函数初始化的状态——单例实例、配置缓存、运行时注册表——都会被重置。
-
-对于使用单例模式的代码，这可能是预期行为（新版本的单例用新逻辑），也可能是意外（丢失了运行时累积的状态）。这需要业务层自己做状态持久化和恢复。
-
-### 序列化字段类型的特殊限制
-
-如果一个 `[Serializable]` 类型或 `MonoBehaviour` 的序列化字段类型来自可卸载程序集，官方文档要求使用数组（`A[]`）而不是 `List<A>`。原因是 Unity 引擎内部对 `List<T>` 的序列化 metadata 缓存处理更复杂——它需要缓存 `List<A>` 这个泛型实例的 metadata，如果 `A` 来自一个可卸载的程序集，这个缓存的生命周期管理就会出问题。数组的序列化 metadata 相对简单，可以安全地更新。
-
-## 工程边界
-
-热重载技术在工程层面有明确的适用域和风险域。
-
-### 适合热重载的场景
-
-**小游戏合集。** 这是热重载版的主打场景。每个小游戏是一个独立的程序集，切换游戏时卸载前一个、加载后一个。小游戏程序集通常是自包含的，跨程序集依赖少，卸载后状态清理相对简单。
-
-**UGC/Mod 系统。** 用户生成的 mod 程序集设计时就应该是可插拔的，有明确的加载/卸载生命周期。mod 系统本身提供的 API 层可以做引用隔离，确保 mod 代码不会把引用泄漏到宿主程序的全局状态里。
-
-**独立的玩法模块。** 如果游戏的某个玩法模块（比如活动系统、战斗模式）被封装在独立程序集里，且模块之间通过接口而非具体类型耦合，这样的模块可以安全地热重载。
-
-### 风险较高的场景
-
-**有大量跨程序集类型引用的程序集。** 如果程序集 A 中的类型被程序集 B、C、D 大量引用（作为字段类型、方法参数、泛型参数），卸载 A 前必须先确保 B、C、D 中没有任何活跃对象持有 A 中类型的引用。依赖越深，清理越难。
-
-**在序列化资产中大量使用的类型。** 如果一个类型被用作 Prefab 上的 `MonoBehaviour` 或 `ScriptableObject`，它的 metadata 会被 Unity 引擎内部缓存。虽然热重载版对这类类型做了特殊处理（首次缓存、后续复用），但序列化字段的约束（字段名不能改、事件函数数量不能变）意味着这类类型的热重载灵活性有限。
-
-**有 native 插件绑定的程序集。** 如果程序集中的代码通过 `DllImport` 调用 native 插件，或者通过 `AndroidJavaProxy` 等机制与平台层交互，这些外部系统持有的回调引用在程序集卸载时不一定能被正确清理。官方文档专门提到了 `AndroidJavaRunnableProxy` 的案例——Java GC 和 C# 卸载之间的时序不一致会导致悬挂引用。
-
-**使用了 DOTS 的程序集。** 官方文档明确表示热重载版不兼容 DOTS。DOTS 的 ECS 架构在 native 层缓存了大量类型信息（ComponentType 注册表、Archetype 元数据），这些缓存远超 HybridCLR 的控制范围。
-
-### 依赖卸载顺序
-
-文档要求按照依赖关系的逆序卸载：先卸载依赖方（downstream），再卸载被依赖方（upstream）。如果 Assembly B 依赖 Assembly A，必须先卸载 B，再卸载 A。不能跳过 B 直接卸载 A。
-
-这个约束的本质是：程序集的 metadata 之间存在引用关系（B 中的类型可能继承 A 中的基类，B 中的方法签名可能引用 A 中的类型）。如果先卸载 A，B 中的 metadata 引用就会变成悬挂指针。
-
-## 收束
-
-IL2CPP 不能卸载程序集，不是一个功能缺失，而是一个架构决策的自然结果：全局静态注册表（`s_TypeInfoTable`、`s_AssembliesTable`）、只分配不释放的 metadata 池、单次执行的静态构造函数、没有上下文隔离的类型系统——这些设计选择让 metadata 的生命周期绑定到了进程级别。
-
-.NET CoreCLR 通过 `AssemblyLoadContext` 实现了程序集卸载，但它的实现前提是整个运行时从类型加载、JIT 编译到 GC 都内建了上下文感知能力。IL2CPP 没有这些基础设施。
-
-HybridCLR 热重载版公开了卸载相关能力。注册关系、转换缓存与静态存储寿命都是这类设计需要处理的问题，但不能据此确认其闭源实现采用了哪套数据结构或释放顺序。官方回收比例属于相应版本和条件下的产品声明，不能作为本项目多轮加载／卸载已经通过验收的证据。
-
-但这不是魔法。热重载版的约束条件清楚地划出了边界：不能用析构器、`MonoBehaviour` 序列化字段名不能改、事件函数数量不能变、`List<T>` 要换成数组、DOTS 不兼容、依赖必须逆序卸载。这些约束背后的原因，在社区版源码里都能找到对应的结构性根源。
-
----
+安全热重载依赖完整的退出与重建协议，不能由一次 GC 或一个卸载 API 单独完成。
 
 ## 系列位置
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-interpreter-instruction-optimization-hiopcode-ir-transforms.md" >}}">HybridCLR 解释器指令优化｜标准优化与高级优化在 HiOpcode 层到底做了什么</a>（HCLR-27）
-- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-code-encryption-access-control-policy.md" >}}">HybridCLR 代码加密与访问控制｜DLL 加密怎么与解释器配合，访问控制策略拦在哪一层</a>（HCLR-29）
-- 回到入口：<a href="{{< relref "engine-toolchain/hybridclr-series-index.md" >}}">HybridCLR 系列索引｜先读哪篇，遇到什么问题该回看哪篇</a>
-- 相关前文：<a href="{{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}}">HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute</a>
-- 相关前文：<a href="{{< relref "engine-toolchain/hybridclr-boundaries-and-tradeoffs.md" >}}">HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事</a>
+- 上一篇：[解释器指令优化与证据边界]({{< relref "engine-toolchain/hybridclr-interpreter-instruction-optimization-hiopcode-ir-transforms.md" >}})
+- 下一篇：[代码加固与访问控制]({{< relref "engine-toolchain/hybridclr-code-encryption-access-control-policy.md" >}})
+- 回到入口：[HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})

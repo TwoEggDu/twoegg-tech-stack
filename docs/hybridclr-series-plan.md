@@ -4,12 +4,12 @@
 
 ## 定位与边界
 
-依赖 C++ 公共基础、ECMA-335 前置层和 IL2CPP 实现层，覆盖社区版执行主链、工具链、工程排障与能力选型；商业功能属于公开资料与架构推断研究。共享文章只维护一个正文，不复制到多个系列。
+依赖 C++ 公共基础、ECMA-335 前置层和 IL2CPP 实现层，覆盖社区版执行主链、工具链、工程排障与能力选型；商业功能按公开文档核对契约，未公开实现保留未知。共享文章只维护一个正文，不复制到多个系列。
 
 ## 阅读入口
 
 - 发布索引：`content/engine-toolchain/hybridclr-series-index.md`。
-- 源码跟读准备：`hybridclr-source-reading-start.md`，已写；保留 v6.1.0 源码阅读；v9 配套组合已在本机自定义 Unity 完成 Player 断点验证。
+- 源码跟读准备：`hybridclr-source-reading-start.md`，已写；优先跟读固定 v9 配套组合；v6.1.0 移为历史对照；现有 Player 证据限于本机自定义 Unity。
 - 线程接入专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；与 IL2CPP 共用，源码核对完成，托管工作线程与原生回调正常路径 Player 实验完成；有界GC保留/压力已实测；长期压力与其他平台待补。
 - 泛型调用综合实验：`runtime-generic-call-experiment.md`，已写；与 ECMA-335、IL2CPP 共用，固定自定义 Editor/v9 环境的四组 Player 对照与原生断点验证完成。
 - 数量：30 篇编号正文 + 6 篇前置桥接 + 3 篇专题，共 39 篇，索引另计。
@@ -19,15 +19,15 @@
 
 公共语言目录归 [C++ 公共基础 plan](cpp-foundations-series-plan.md)，已在本系列索引前置区回链。优先 CXX-01～02、05～06、09～10；遇到模板与线程再补 07、11。CLI/托管类型仍由 ECMA-335 解释，不能用 C++ 模板或 RAII 替代。
 
-已有六篇前置/桥接解释机制，源码阅读起步解释版本、构建和第一条调用链；下列补充训练怎样逐句读具体 C++ 和状态变化。
+三项源码专项训练归入已有正文，避免与桥接篇重复开篇：
 
-| 次序 | 专项拟题 / 工作 | 状态与复用 | 完成标准 |
-|---|---|---|---|
-| HCPP-1 | 方法指针、参数槽与返回值怎样组成一次调用 | 待补；复用 Bridge-C 的 ABI 模型 | 公共 CXX-05～06 之后，固定源码/生成物，解释指针类型、槽位访问、参数重建与返回位置；伪代码和实际输出分列 |
-| HCPP-2 | 从 metadata 索引到方法体与解释帧 | 待补；复用 Pre-A/B、Bridge-E、源码阅读起步 | 公共 CXX-06、09 与 CLI 之后，追输入边界、token/index、缓存、指令与帧状态；分别记录首次/再次调用 |
-| HCPP-3 | AOT/解释执行的对象与线程协作 | 待补；复用 Bridge-F 与现有线程/GC 材料 | 公共 CXX-02、09、11 之后，区分 native 容器/RAII 与托管对象规则，按固定版本核对线程/GC 接口和有效访问条件 |
+| 训练目标 | 当前入口 | 尚需的证据 |
+|---|---|---|
+| 方法指针、参数槽与返回值 | Bridge-C；已核对 AAPCS64 参数／返回边界、v9 槽位和桥生成器 | 不同 ABI 的实际生成物与设备观察按需补 |
+| metadata → 方法体 → 解释帧 | Pre-A/B、Bridge-E、源码起步与 HCLR-5 | 现有固定样本已覆盖首次／再次调用；新调用形式须独立验证 |
+| 对象与线程协作 | Bridge-F、线程专题与 IL2CPP GC 篇 | 已有对象、回调、活跃根和串行跨片段样本；完整根归因及并发压力仍未闭合 |
 
-补写顺序 HCPP-1 → 2 → 3，各项先补公共依赖。三项不计入已有 30 篇编号正文、六篇桥接和源码起步；如已有正文能够容纳，就在其内补跟读段落，不为目录数量另造重复文章。版本、Player 和设备验证状态继续逐篇登记。
+公共 C++ 基础解释语言机制，以上正文解释运行时协议。三项不再作为待新增文章计数。
 
 ## 前置与桥接
 
@@ -38,7 +38,7 @@
 | Bridge-C | `hybridclr-bridge-abi-cross-boundary-calling-convention.md` | 已写 |
 | Bridge-D | `hybridclr-bridge-il2cpp-generic-sharing-rules.md` | 已写；与 ECMA-335 共用 |
 | Bridge-E | `hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md` | 已写 |
-| Bridge-F | `hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md` | 已加强；v6.1.0 活跃根、写屏障与 metadata 生命周期 |
+| Bridge-F | `hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md` | 已加强；v9.0.1 活跃根、写屏障与 metadata 生命周期，实验入口按问题汇总 |
 
 ## 编号正文
 
@@ -68,31 +68,33 @@
 | HCLR-22 | `hybridclr-aotgenericreferences-disstripcode-metadata-how-to-work-together.md` | 已写 |
 | HCLR-23 | `hybridclr-aot-generic-pitfall-patterns-unitask-linq-dictionary-delegate-custom-container.md` | 已写 |
 | HCLR-24 | `hybridclr-aot-generic-guardrails-generate-ci-build-checks.md` | 已写 |
-| HCLR-25 | `hybridclr-dhe-internal-dhao-format-diff-algorithm-function-routing.md` | 已写；商业能力选读，待复核证据与版本 |
-| HCLR-26 | `hybridclr-dhe-function-injection-dirty-contagion.md` | 已写；商业能力选读，待复核证据与版本 |
-| HCLR-27 | `hybridclr-interpreter-instruction-optimization-hiopcode-ir-transforms.md` | 已写；商业能力选读，待复核证据与版本 |
-| HCLR-28 | `hybridclr-assembly-hot-reload-unload-metadata-reclaim.md` | 已写；商业能力选读，待复核证据与版本 |
-| HCLR-29 | `hybridclr-code-encryption-access-control-policy.md` | 已写；商业能力选读，待复核证据与版本 |
-| HCLR-30 | `hybridclr-load-acceleration-metadata-memory-incremental-gc.md` | 已写；商业能力选读，待复核证据与版本 |
+| HCLR-25 | `hybridclr-dhe-internal-dhao-format-diff-algorithm-function-routing.md` | 已写；商业能力选读，按官方 9.x 文档核对，未公开实现不作事实断言 |
+| HCLR-26 | `hybridclr-dhe-function-injection-dirty-contagion.md` | 已写；商业能力选读，按官方 9.x 文档核对，未公开实现不作事实断言 |
+| HCLR-27 | `hybridclr-interpreter-instruction-optimization-hiopcode-ir-transforms.md` | 已写；商业能力选读，按官方 9.x 文档核对，未公开实现不作事实断言 |
+| HCLR-28 | `hybridclr-assembly-hot-reload-unload-metadata-reclaim.md` | 已写；商业能力选读，按官方 9.x 文档核对，未公开实现不作事实断言 |
+| HCLR-29 | `hybridclr-code-encryption-access-control-policy.md` | 已写；商业能力选读，按官方 9.x 文档核对，未公开实现不作事实断言 |
+| HCLR-30 | `hybridclr-load-acceleration-metadata-memory-incremental-gc.md` | 已写；商业能力选读，按官方 9.x 文档核对，未公开实现不作事实断言 |
 
 ## 接下来补强
 
-“源码阅读起步 → 调用链篇”的共用 Player 实验及三栏泛型调用综合实验已完成，对象保留与托管线程验证也已完成，原生回调正常路径也已完成；原生回调GC保留与有界压力也已完成；对象快照与实际根区间验证也已完成；接下来补完整动态根路径归因、持续跨片段引用修改和性能测量。顺序见 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，泛型实验单独记录于 `runtime-generic-call-experiment-outline.md`。环境继续使用本机自定义 Unity 2022.3.62f3、package v9.0.3 / runtime v9.0.1 原始配套源码；旧两篇保留 v6.1.0 阅读说明，新增综合实验归本系列、三栏共用。
+主线现统一到 runtime v9.0.1／package v9.0.3，配套关系及固定提交由源码起步篇维护；v6.1.0 只作历史对照。已有对象保留、托管线程、原生回调、活跃根与串行跨片段实验的详细历史记录见下文，当前阅读入口按问题组织，避免把每轮实验进度写进所有正文。
 
-| 工作 | 状态与验收 |
+| 工作 | 当前状态与后续边界 |
 |---|---|
-| 源码阅读起步 | 已补自定义 Editor 身份、v9 固定组合、构建与符号记录、自有样本；不推广为全版本兼容 |
-| GC 与线程接入 | 正文、源码定位、对象保留、托管线程及原生回调正常路径实测已完成；对象快照及实际活跃根区间已验证；完整动态根路径归因、持续跨片段引用修改与长期 native 回调压力待补 |
-| 三栏泛型调用综合实验 | 已写并实测；同一 DLL，显式 AOT seeds × 补充元数据四组对照；P0/M0 的 int/结构体异常、其余成功，原生与内联解释路径均有断点证据 |
-| 性能与预热篇 | 待加强；固定设备、构建配置和采样条件 |
-| 调用链篇 | 已修正 v6.1.0 旧路径，新增 v9 差异表与实测：同一方法 Transform 一次、Execute 两次，返回 5、15 |
-| 商业能力篇 | 待复核；逐条标注公开事实、推断与数据来源 |
+| 规范与基础解释 | ECMA 补强值复制／地址操作及异常过滤顺序；Bridge-C/E 校正 ABI、槽位单位、方法体与转换缓存 |
+| 源码起步与主链 | 固定 v9 源码、生成物和现有 Player 证据对应；历史 v6 放在单独对照段 |
+| AOT 泛型 | HCLR-2 建立身份／实现／执行模型，19 决策、20 共享规则、21 模板、22 工作流、23 场景、24 检查；不再重复铺设同一套定义 |
+| async 历史案例 | 区分堆栈观察、候选原因与尚未闭合的根因；后续用固定样本验证 builder/state machine 与构建配置 |
+| GC 与线程 | 正常接入、保留、根区间与串行跨增量片段样本已完成；完整根归因、屏障反事实、并发／长期压力与其他平台待补 |
+| 调用语义 | 泛型四组对照已完成；下一步按需补 constrained.／装箱、异常展开和类型初始化的跨运行时实测 |
+| 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 和 async／UniTask 的回归样本待补 |
+| 商业能力 | 已按官方文档核对 FGS、DHE、热重载与访问控制契约；商业私有实现及项目收益不作源码或实测结论 |
 
 旧 `hybridclr-structural-diagnosis-and-bridge-articles-plan.md` 保留为历史诊断与补桥执行材料，不再作为当前进度目录。源码起步的提纲与证据见 `hybridclr-source-reading-start-outline.md`。
 
 ## GC 与线程修订（2026-10-25）
 
-Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，HCLR-28 修正 GC 与 native metadata、类型初始化及卸载顺序的混淆，HCLR-30 收紧增量 GC 与商业能力推断。商业篇其余实现与性能表述仍保留待复核状态，本轮不代表全篇完成源码验证。新增专题的提纲、证据与验证边界见 `hybridclr-thread-attachment-outline.md`。
+Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，HCLR-28 修正 GC 与 native metadata、类型初始化及卸载顺序的混淆，HCLR-30 收紧增量 GC 与商业能力推断。这一早期 GC 修订不代表商业篇完成源码验证；后续全系列修订已将商业部分改为公开契约与证据边界，见当前状态表。新增专题的提纲、证据与验证边界见 `hybridclr-thread-attachment-outline.md`。
 
 ## 配套实验仓库同步（2026-10-25）
 
@@ -135,3 +137,16 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 - 独立Editor分析工程使用官方Memory Profiler1.1.0，21份快照共189组条目数量和缓冲哈希与自有读取器一致。包仅作分析依赖，不修改Player配置。57项Python测试通过。
 - 实验仓库已推送固定提交 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)与同目录三组自有root-events；真实.snap、PDB和原始调用栈仅在忽略目录。449a994仍是前轮保留/压力基线。
 - 三篇正文和三个索引补入实际返回区间与对象快照的证据边界。完整动态根路径归因、持续跨增量片段引用修改、性能、长期压力及其他平台仍待补；正文篇数不变。
+
+## 持续跨增量片段的引用修改与写屏障（2026-10-25）
+
+- 独立projects/incremental-barriers，build_id70a8a176-4eee-43b2-8aa8-a75754ac0bfb；Editor／v9／Windows x64锁不变，GCMode改Manual作为控制变量。旧4861bed与gc-roots回执保留，本轮尚未提交，不借用旧SHA标识。
+- AOT／hot各3个普通Player、各3个匹配PDB的CDB Player全部退出0；连续12帧more=True，MARK_END完成数1→2，修改期间不变；原生GC_gc_no4→5。writer预热后常驻，串行握手；紧凑收尾，图与标记检查在Join前。
+- 字段／引用数组／含引用结构体字段和数组赋值；实际CIL解析、目标槽屏障、dirty前后位、后续目标3页重扫关联。Box标记1／目标0，末尾marker4（返回前）目标0，完成后12目标全1；checksum12078。AOT16／hot24是重载入口次数，非写入或性能比例；每进程仅2次dirty新置0→1。
+- hot每进程6次根查询入口top0／frames0（基线1、目标周期收尾2、周期后／退出清理3），注册注销所有者匹配；scrub后当前worker栈的当前目标精确地址12次均0处。不是所有辅助根缺失证明，也未重新采根回调返回缓冲。
+- 96项Python测试通过。源码、产物、原始日志、CIL和验收工具有哈希绑定；公开结果／自有事件在实验仓库evidence/2026-10-25-incremental-barriers。完整动态根归因、屏障反事实与完整路径、并发／长期／性能及其他平台仍待补。
+- 三篇GC／线程正文、三个索引同步本样本结果，不新增正文篇数，不把实现行为上升为ECMA-335规范要求。后续提交发布时再补本轮固定链接。
+
+## 全系列一致性修订（2026-10-25）
+
+本轮正文、版本与导航调整和桌面／文档验证见 [修订记录](./ecma335-hybridclr-revision-20261025.md)。历史实验记录继续保留，不将本轮文稿修订视为新增 Player 验收。

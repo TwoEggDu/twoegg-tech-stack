@@ -2,7 +2,7 @@
 title: "HybridCLR 桥接篇｜IL2CPP GC 模型：BoehmGC、GC root、write barrier 与解释器的关系"
 date: "2026-04-13"
 lastmod: "2026-10-25"
-description: "沿固定 v6.1.0 源码理解解释器活跃栈的动态根、引用写屏障，以及托管对象与 metadata 的不同生命周期。"
+description: "沿固定 v9.0.1 源码理解解释器活跃栈的动态根、引用写屏障，以及托管对象与 metadata 的不同生命周期。"
 weight: 62
 featured: false
 tags:
@@ -12,14 +12,14 @@ tags:
   - "GC"
   - "Memory"
 series: "HybridCLR"
-hybridclr_version: "v6.1.0 (5567f367)"
+hybridclr_version: "runtime v9.0.1 (83929787) / package v9.0.3"
 ---
 
 AOT 代码把对象交给热更方法后，调用线程并没有进入另一座独立的托管堆。解释器继续使用 IL2CPP 的对象体系，却把参数、局部值和执行状态放进自己的数据结构里。GC 要怎样发现这些引用，写入对象字段时又怎样保持跟踪正确？
 
 这是桥接篇 F。收集器、内存指标和终结语义由 [IL2CPP D6]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 与 [ECMA GC 前置]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}})承担；本篇聚焦解释器接入。
 
-> 源码基线：HybridCLR v6.1.0，commit `5567f367502d916c6742873d8ed2ab13d0f6900a`；配套 il2cpp_plus v2022-6.1.0，commit `ce2e34097e099e458e14192bed96c28bc761392b`。以下是静态源码核对，未包含 Player 压力测试；不把这个历史样本当成所有版本的实现。
+> 源码基线：runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`），配套 il2cpp_plus v2022.3.x-9.0.1（`ba3a76c9979d14cee404fb5d44301773e0768866`）。与下文实验使用同一组合，完整环境锁见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。旧稿的 v6.1.0 保留为历史阅读对照，不再与当前实验混用。下文分别标明源码契约和 Player 观察。
 
 ## 共享对象，额外维护执行状态
 
@@ -43,7 +43,7 @@ AOT 代码把对象交给热更方法后，调用线程并没有进入另一座�
 
 ## MachineState 如何提供活跃根
 
-这一版 `MachineState` 定义在 [interpreter/Engine.h](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/Engine.h)。可按下面的路径读，不必先通读解释器全部指令：
+这一版 `MachineState` 定义在 [interpreter/Engine.h](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Engine.h)。可按下面的路径读，不必先通读解释器全部指令：
 
 1. `InterpreterModule::GetCurrentThreadMachineState` 从 TLS 取当前线程状态，没有则创建。它不会提前为所有 OS 线程创建解释器。
 2. `MachineState::InitEvalStack` 分配解释器栈，并把 **MachineState 实例与 GetGCRootData 回调**交给宿主的 `GarbageCollector::RegisterDynamicRoot`。
@@ -62,10 +62,10 @@ AOT 代码把对象交给热更方法后，调用线程并没有进入另一座�
 
 以“已扫描的容器随后获得一个新引用”为例，增量收集的不同片段与业务执行交错时，需要有机制让相关变化被重新考虑。这个例子解释的是协议需求，不是每次漏 barrier 都会立即回收目标的确定性重现步骤。
 
-v6.1.0 可沿两层入口查看：
+v9.0.1 可沿两层入口查看：
 
-- [Interpreter_Execute.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/Interpreter_Execute.cpp)：字段、数组、间接写入和含引用值类型复制等执行分支。
-- [Il2CppCompatibleDef.h](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/Il2CppCompatibleDef.h)：`HYBRIDCLR_SET_WRITE_BARRIER` 的兼容封装及条件。
+- [Interpreter_Execute.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Interpreter_Execute.cpp)：字段、数组、间接写入和含引用值类型复制等执行分支。
+- [Il2CppCompatibleDef.h](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/Il2CppCompatibleDef.h)：`HYBRIDCLR_SET_WRITE_BARRIER` 的兼容封装及条件。
 
 原始 CIL 先被转换成内部指令，再由解释器分派执行。是否选择某个带 barrier 的指令变体，需要同时看转换阶段、类型中是否含引用，以及执行端和宿主的配置；不能仅凭指令名称判断所有路径都已覆盖。
 
@@ -99,36 +99,23 @@ GC 只回答其对象体系中的可达性与回收问题，不会自动证明 n
 | 开启增量后修改引用 | 相同输入下的完整性检查、GC 模式和崩溃证据 | 跑几轮不崩就证明 barrier 完整 |
 | 多轮加载后内存增长 | 托管对象、native metadata、转换缓存分别计数 | 全部增长都来自 GC |
 
-### 已补入的 Player 证据
+## 配套实验：分别验证可达性、根区间和引用修改
 
-2026-10-25，沿用本机自定义 Unity 2022.3.62f3 与固定 HybridCLR v9 配套组合，完成两组独立 Player 对照。它们补充运行观察，不替换前文 v6.1.0 的源码基线。
+下面几轮实验均使用本机自定义 Unity `2022.3.62f3_96770f904ca7`、上述固定 v9 组合与 Windows x64 IL2CPP Development。前三轮使用 GCMode=Enabled，跨片段实验改为 Manual；它们回答的问题不同，不能把结果合并成“GC 已全面验证”。
 
-- [IL2CPP GC 篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})：三个独立进程中，AOT 静态数组／实例委托各保留 16 个热更对象，解除对应引用后，目标弱引用在观察窗口内全部失效。记录 GCMode=Enabled、isIncremental=True。
-- [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：两托管工作线程各执行 Add 两次；原生断点观察到不同且同时存活的 MachineState，共享同一方法缓存，以及各线程退出时的 FREE、析构、动态根注销入口。
+| 要回答的问题 | 已观察到的结果 | 固定记录与边界 |
+|---|---|---|
+| 谁保留热更对象？ | AOT 静态数组／实例委托分别保留 16 个目标；清空相应持有后，弱引用在观察窗口失效 | [对象与托管线程 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)；不测 native 释放量 |
+| 原生回调活跃时引用是否可用？ | Normal GCHandle 保留 Context；无 Context 句柄的活跃回调局部 Node 跨三次收集后仍可校验。压力组每轮 1024 次回调、8 MiB payload 分配，数据检查通过 | [回调 GC `449a994`](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)；128 次增量请求均返回 false，未展示持续跨片段标记过程 |
+| 已分配容量与活跃根区间是否相同？ | 活跃回调实际返回 36 槽／288 字节，包含目标引用；空闲线程仍有 1 MiB backing 栈，但返回 null／0 | [根区间 `4861bed`](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)；不证明唯一根来源或标记器逐字遍历 |
+| 对象快照能否直接显示解释器动态根？ | 21 份快照可见强句柄 → Context → 数组路径；ManagedStacks 均为 0。官方读取器交叉校验 189 组缓冲 | 同上；对象引用路径、原生分配的 root 字段和动态根区间必须分别解释 |
+| 同一增量周期中修改引用会走哪些路径？ | 连续 12 帧 more=True 时写字段、数组与含引用结构体；关联目标槽屏障、dirty 位与后续页重扫，最终图校验通过 | 本地 `evidence/2026-10-25-incremental-barriers/`，尚无固定提交；详见下一段 |
 
-这次看到的是对象存活对照和线程清理调用链，没有采集活跃根扫描区间，也没有通过增量引用压力负载验证所有写屏障路径。对象被收集、状态进入清理和 native 分配量下降，仍须分别举证。本轮自有样本与运行证据对应实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，入口为[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)和[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
+最后一轮 build_id 为 `70a8a176-4eee-43b2-8aa8-a75754ac0bfb`。AOT／hot 各三个普通 Player 与三个 CDB Player，目标周期 GC 编号从 4 到 5，checksum 均为 12078。Box 写入前有标记，候选在 writer 返回前仍未标记；周期完成、Join 之前 12 个目标均有标记。每进程只观察到两次 dirty 从 0 变 1，AOT 16／hot 24 是屏障重载入口命中数，不能换算为写入次数或性能比例。
 
-### 新增：原生回调活跃引用与有界 GC 压力
+该样本先预热常驻托管 worker，再以事件串行交替推进收集和引用修改。目标周期收尾的两次 hot 根查询入口 top／frames 为 0，说明采样时 writer 已返回；本轮没有重新采真实返回缓冲，也没有禁用屏障的反事实。Box 有标记不等于其字段已完成扫描，存活结果不能证明屏障是唯一保留原因。
 
-同一固定v9环境中，新GC回调实验（build_id `148235df-910b-441f-94b2-b7348eb02d8c`）把两种持有路径分开验证：Normal GCHandle保留热更Context；以及不创建Context句柄、仅由活跃热更回调继续使用的局部Node。各三个独立Player在回调等待期间显式收集3次，放行后对象内容正确；退出并解除对应持有后，短弱引用均在本次观察窗口失效。
-
-两组聚焦PDB断点将Full入口定位在回调活跃、状态根注册后、scope退出前；handle的FreeContext在Join后，stack的token为0且没有FreeContext。它支持本样本活跃引用跨收集可用，未通过根快照或GetGCRootData返回区间证明唯一根来源。
-
-另三轮压力Player各完成1024回调、8 MiB payload分配及64槽对象图修改，数据检查通过。128次增量请求均返回false，同时负载窗口内GC.CollectionCount(0)差值256。它没有直接展示同一标记周期跨片段仍在进行的过程，不足以证明所有解释指令的写屏障正确。分配量也不是托管堆峰值、native释放量或性能指标。
-
-详细数据和采样口径见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，句柄、回调与Join的顺序见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮样本与摘要已固定在实验仓库提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，见[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)。
-
-<!-- DATA-TODO: 持续跨片段引用修改、完整动态根路径归因与独立性能仍待补；实际返回区间和对象快照见后续实验。 -->
-
-### 新增：分配容量、报告根区间与对象快照分别取证
-
-后续 `gc-roots` 实验沿用固定自定义Editor／v9组合，build_id `993e5b9e-1f71-4949-b339-39ff10d359b1`。实际GC调用链中，handle与stack三轮各采3次返回，均为stackTop36、288字节，目标引用分别位于偏移24和48／264。空闲托管线程的解释方法已返回，尽管backing栈仍分配131072槽，frameTop／stackTop均为0，三轮各3次真实返回均为null／0。
-
-这把“分配了1 MiB解释器栈”与“当前报告288字节活跃根”分开，也把根的所属线程与执行收集的线程分开。记录包括真实返回缓冲、连续槽位和注册／注销生命周期，不只引用源码公式；仍没有证明唯一根来源或标记器逐字遍历。
-
-另外21份对象快照解析到强句柄目标→Context→64槽数组的路径，Free后热更强句柄目标消失；官方Memory Profiler1.1.0读取器对189组缓冲的数量与哈希交叉校验通过。所有快照ManagedStacks条目为0，未提供解释器动态根边。**对象快照中的可见引用路径、原生分配所有权的root字段和解释器提供的动态根区间，需要分别解释。**
-
-详细矩阵见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，活跃／空闲／退出的顺序见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮已推送实验仓库固定提交 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，可查看[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)；前轮 `449a994` 只作为基线。
+完整数据、采样方法和限制集中在 [IL2CPP GC 篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})；回调、句柄与 Join 的所有权顺序见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。这里的实验支持特定路径和负载，完整动态根归因、屏障路径覆盖、并发／长期压力、性能及其他平台仍需分别验证。
 
 **解释器接入 GC，必须同时维护可见的活跃引用、正确的写入协议和有所有者的 native 状态。**
 

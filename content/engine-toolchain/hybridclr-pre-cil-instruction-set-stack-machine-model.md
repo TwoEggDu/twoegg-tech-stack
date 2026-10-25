@@ -12,7 +12,7 @@ tags:
   - "CIL"
   - "ECMA-335"
 series: "HybridCLR"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 series_order: 14
 primary_series: "ecma335"
 ---
@@ -211,6 +211,64 @@ public class Character
 ```
 
 两个 ldfld 都消费一个接收者，因此示例两次加载 this。CIL 也有 dup 等栈操作；后端还可以消除重复加载，不能由 IL 文本中的次数推导最终访存次数。
+
+## 取值、取地址与复制：struct 修改落在哪里
+
+同样是修改 struct，一个写法只改变副本，另一个会改到原变量或数组元素。读 IL 时先问：**求值栈上是那个值，还是指向存储位置的托管指针？** `ref` 和后面的 `constrained.` 都需要这个区别。
+
+| 指令 | 需要分清的动作 |
+|---|---|
+| ldloc、ldarg | 读取变量槽中的值；如果参数本来是 ref，读取的值就是托管指针 |
+| ldloca、ldarga | 取得局部变量槽、参数槽的地址；不同于读取槽中已有的指针 |
+| ldflda、ldelema | 取得实例字段、数组元素所在位置的托管指针 |
+| ldobj T、stobj T | 从地址读取 T 的值、把 T 的值写入地址所指的位置 |
+| initobj T | 将指定位置初始化为 T 的默认值，不调用实例构造函数 |
+| stelem.ref | 将一个对象引用写入引用数组元素，仍须满足数组类型检查等规则 |
+
+下面是可独立运行的控制台 Program.cs：
+
+```csharp
+using System;
+
+public struct Slot
+{
+    public object Item;
+    public int Count;
+}
+
+public static class Program
+{
+    public static void Copy(ref Slot target, ref Slot source) => target = source;
+    public static void Reset(ref Slot target) => target = default;
+
+    public static void Main()
+    {
+        var first = new Slot { Item = new object(), Count = 1 };
+        Slot second = default;
+        Copy(ref second, ref first);
+        second.Count = 2;
+        Console.WriteLine($"counts: {first.Count}/{second.Count}");
+        Console.WriteLine($"same object: {ReferenceEquals(first.Item, second.Item)}");
+
+        second.Item = new object();
+        Console.WriteLine($"after replace: {ReferenceEquals(first.Item, second.Item)}");
+        Reset(ref second);
+        Console.WriteLine($"after reset: {second.Count}/{second.Item == null}");
+
+        var slots = new Slot[1];
+        Copy(ref slots[0], ref first);
+        Console.WriteLine($"array: {slots[0].Count}/{ReferenceEquals(first.Item, slots[0].Item)}");
+    }
+}
+```
+
+这份样例在下述 Release 编译中的 Copy 指令序列为 `ldarg.0 → ldarg.1 → ldobj Slot → stobj Slot → ret`：两个参数已经是托管指针，读取 source 所指的值，再写入 target 所指的位置。Reset 使用 `initobj Slot`；Main 中传递局部变量与数组元素的位置，分别可以看到 `ldloca.s` 和 `ldelema Slot`。
+
+输出中的 `counts: 1/2` 表明两个 Slot 的值独立；`same object: True` 表明复制引用字段只复制了引用，没有复制其目标。替换 second.Item 后，first.Item 仍指向原对象。数组例子则直接把值写进第 0 个元素的位置。
+
+本机验证：2026-10-25，Windows、.NET SDK 10.0.402、net10.0、Release，从本文提取代码独立编译运行。五行输出依次为 `counts: 1/2`、`same object: True`、`after replace: False`、`after reset: 0/True`、`array: 1/True`；另读取编译后方法体，核对了上述 Copy／Reset 指令及 Main 中的取地址指令。这是桌面 C#／CIL 样例验证，未执行对应 Unity／HybridCLR Player 实验。
+
+这里关注 CIL 的值与位置语义：**含引用 struct 的复制不等于对象图深拷贝，也不能由 stobj 推导运行时可以忽略 GC 协议做裸内存复制。** IL2CPP／HybridCLR 如何维护这些引用，继续看 [GC 契约]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}}) 与 [GC 实现桥接]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
 
 ## 最小验证规则：从同一段 IL 检查类型和栈
 

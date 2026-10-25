@@ -1,7 +1,7 @@
 ---
 date: "2026-03-26"
 title: "HybridCLR 崩溃定位专题｜从 native crash 调用栈读出 HybridCLR 的层次"
-description: "HybridCLR 系列第 15 篇。专注于 HybridCLR 项目的 native crash 分析：hybridclr:: 函数在调用栈里意味着什么，AOT 泛型缺失的崩溃特征，MethodBridge 缺失，metadata 不匹配，以及如何系统性地填写 AOTGenericReferences.cs 来预防这类崩溃。"
+description: "固定构建与符号身份，分层阅读 HybridCLR 原生调用栈，避免把泛型符号、重复帧或崩溃信号直接当作根因。"
 weight: 44
 featured: false
 tags:
@@ -14,320 +14,76 @@ tags:
   - "AOTGeneric"
   - "MethodBridge"
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
----
-> HybridCLR 的 native crash 和普通 IL2CPP 项目的 native crash 看起来很像，但调用栈里多了几类 HybridCLR 特有的函数——学会识别这些函数，就能快速判断这次崩溃属于哪一层。
-
-这是 HybridCLR 系列第 15 篇。
-
-前置阅读：
-- 崩溃分析基础在 [崩溃分析系列第 0 篇]({{< relref "engine-toolchain/crash-analysis-00-what-is-a-crash.md" >}})（信号/调用栈/符号化概念）
-- Android 符号化操作在 [崩溃分析系列第 1 篇]({{< relref "engine-toolchain/crash-analysis-01-android.md" >}})
-- 真实案例在 [HybridCLR 案例诊断篇]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}})
-
-> **iOS 符号化补充**：iOS 崩溃日志使用 `arm64e` 地址，需要做 ASLR slide 调整。使用 `atos` 命令符号化：`atos -arch arm64 -o UnityFramework.framework/UnityFramework -l <load_address> <crash_address>`。其中 `<load_address>` 从崩溃日志的 Binary Images 段获取，`<crash_address>` 是崩溃栈帧里的原始地址。
-
+hybridclr_version: "历史案例版本未完整固定；当前机制另按 v9 配套源码核对"
+lastmod: "2026-10-25"
 ---
 
-## HybridCLR 给调用栈带来的变化
+原生调用栈出现 HybridCLR 函数，说明崩溃链经过相关 runtime，却不说明错误一定来自解释器。这个专题只处理原生现场取证：先证明符号和模块匹配，再解释栈里的层次，最后提出可验证假设。
 
-没有 HybridCLR 的 IL2CPP 项目，调用栈里全是 IL2CPP 生成的 C++ 函数，每帧都直接对应一个 C# 方法的编译结果：
+> **范围**：这是系列第 15 篇的诊断方法修订。历史 Android 案例保留在 [第 14 篇]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}})，它的重复栈不再作为 AOT 泛型缺失的通用因果模板。当前 runtime 机制按固定 v9 源码与对应实验核对。
 
-```
-# 纯 AOT 调用栈（无 HybridCLR）
-#00  SomeGameClass_SomeMethod (SomeGameClass.cpp:123)
-#01  AnotherClass_Update (AnotherClass.cpp:456)
-#02  UnityEngine_MonoBehaviour_Update (...)
-```
+## 一份现场至少要保留什么
 
-加入 HybridCLR 之后，热更代码不再被 AOT 编译——它在解释器里运行。调用栈里因此会出现 HybridCLR 的解释器帧：
+记录进程、线程、设备/系统、架构、主包版本、native 模块标识、热更 DLL 与补充 DLL hash，以及异常前的装载返回码。崩溃日志、symbols/dSYM 与 native 二进制必须属于同一构建。
 
-```
-# 含 HybridCLR 解释器的调用栈
-#00  hybridclr::interpreter::Interpreter::Execute (Interpreter.cpp:2134)
-#01  hybridclr::interpreter::InterpreterInvoke (Interpreter.cpp:2981)
-#02  il2cpp::vm::Runtime::Invoke (...)
-#03  SomeAOTClass_Update (SomeAOTClass.cpp:456)
-```
+Android 可从 logcat 与 tombstone 获取现场；不能只保留过滤后的几条 Unity 日志。iOS 的架构和 Binary Images 以实际 crash 为准，不预设所有日志都是 arm64e。
 
-`Interpreter::Execute` 和 `InterpreterInvoke` 是"热更代码正在被解释执行"的标志——你看不到具体的热更函数名，只能看到解释器。
+符号化基础见 [Android 崩溃分析]({{< relref "engine-toolchain/crash-analysis-01-android.md" >}})及 [通用入口]({{< relref "engine-toolchain/crash-analysis-00-what-is-a-crash.md" >}})。
 
----
+## 原生栈里的三类位置
 
-## HybridCLR 项目调用栈的三层结构
+| 栈上位置 | 能说明什么 | 不能直接说明什么 |
+|---|---|---|
+| 业务 AOT 生成函数、IL2CPP runtime | 当前 native 调用经过这些位置 | 每一帧都一一对应一个 C# 方法 |
+| InterpreterInvoke / Interpreter::Execute | 调用链经过解释器入口或执行器 | 顶层正在执行的全部逻辑都是解释代码 |
+| bridge / wrapper / 泛型生成函数 | 涉及对应边界或生成形态 | 此处必然缺桥或泛型实例 |
 
-符号化后的调用栈从上到下（`#N` 到 `#0`）通常呈现这样的层次：
+优化、内联、符号缺失与展开方式都会影响可见帧。解释器还维护自己的执行现场；native 栈不足以完整还原热更方法调用栈，需要结合目标方法与解释帧信息。
 
-```
-（业务调用层）
-AOT 代码 → il2cpp::vm::Runtime::Invoke
-                ↓
-（HybridCLR 解释器层）
-hybridclr::interpreter::Interpreter::Execute
-hybridclr::interpreter::InterpreterInvoke
-                ↓
-（热更代码或 AOT/热更 交界层）
-AsyncXxxMethodBuilder_Start_TisIl2CppFullySharedGenericAny  ← AOT 泛型
-hybridclr::interpreter::Interpreter::Execute
-...
-```
+## 五类假设怎样验证
 
-识别这三层，是判断崩溃属于哪一层问题的第一步。
+### 重复帧与 async builder
 
----
+重复帧提示递归、重入或展开异常。检查是否同一目标方法和状态机，状态是否推进、continuation 在哪里注册和恢复，并结合 fault address 与栈界判断是否耗尽。
 
-## 常见崩溃模式
+`Il2CppFullySharedGenericAny` 表达一种生成形态，不是“缺实例便死循环”的标志。async 的历史假设与验证缺口见 [案例续篇]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})。
 
-### 模式 1：AOT 泛型缺失 → 死循环 → 栈溢出
+### bridge 或 wrapper 失败
 
-**特征**：
+核对调用方向、ABI、签名、实际 native 生成物以及目标 wrapper。固定 v9 的 `NotSupportNative2Managed` 等路径可以抛异常；最终表现取决于实际失败分支与异常传播，不能简单绑定 SIGABRT/SIGILL。
 
-- `signal 11 (SIGSEGV), Cause: null pointer dereference`（这是栈溢出的常见表现）
-- 帧地址重复
-- 符号化后看到 `TisIl2CppFullySharedGenericAny` 函数名
-- 在 `Interpreter::Execute` 和某个 AOT 泛型函数之间循环
+原生回调还可能涉及 delegate 失效、线程未接入、对象访问时机和停机顺序，这些应与签名问题分开，见 [线程专题]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
 
-**典型调用栈**：
+### 类型或方法异常
 
-```
-#00  AsyncXxxMethodBuilder_AwaitUnsafeOnCompleted_TisIl2CppFullySharedGenericAny_TisIl2CppFullySharedGenericAny
-#01  hybridclr::interpreter::Interpreter::Execute
-#02  hybridclr::interpreter::InterpreterInvoke
-#03  AsyncXxxMethodBuilder_Start_TisIl2CppFullySharedGenericAny
-#04  hybridclr::interpreter::Interpreter::Execute
-#05  hybridclr::interpreter::InterpreterInvoke
-#06  AsyncXxxMethodBuilder_Start_TisIl2CppFullySharedGenericAny    ← 重复
-...
-```
+TypeLoadException 不唯一指向加载顺序。检查程序集身份、定义是否保留、版本与实际解析目标。AOT 泛型无法调用时，native 共享和补充 IL 都要检查；不能只要求填写 AOTGenericReferences。
 
-**根因**：热更代码里用了某个泛型方法（常见于 `async`/`UniTask`/`Task`），该泛型的具体实例没有被 AOT 编译出来。IL2CPP 走全共享泛型（`FullySharedGeneric`）路径，该路径调用解释器，解释器执行的热更代码又触发同一个泛型方法，形成死循环。
+### 启动期 metadata 失败
 
-**定位方法**：
+`global-metadata.dat` 与 native 产物必须配套。文件格式、注册数据与代码之间不兼容可能导致初始化失败或后续错误；有些构建会较早报错，但不能保证所有错配都被立即检测。
 
-1. 看 `TisIl2CppFullySharedGenericAny` 前面的函数名，找出是哪个泛型类型/方法
-2. 在 `AOTGenericReferences.cs` 里搜索该类型的注释
-3. 检查 `RefMethods()` 里是否有对应的实例化代码
+它是主包产物，不应被普通热更 DLL 流程单独替换。这里的 `global-metadata.dat` 与可按条件下发的 AOT 补充 DLL 是两种不同文件，不要笼统说“metadata 都不能热更”。
 
----
+### 解释器深层 fault
 
-### 模式 2：MethodBridge 缺失 → SIGABRT 或 SIGILL
+把问题缩成可复现样本，再核对参数、对象生命周期、线程、unsafe 使用和 runtime 版本。崩溃位置在解释器内，既可能暴露 runtime 问题，也可能是业务或互操作错误传播后的结果。
 
-**特征**：
+升级对照需要固定其他变量；仅“升级后暂时没遇到”还不能证明具体修复点。
 
-- `signal 6 (SIGABRT)` 或 `signal 4 (SIGILL)`
-- 调用栈里出现 `NOT_SUPPORT_BRIDGE` 或 `MethodBridge_NotSupport`
-- 通常在第一次调用某个 delegate 或接口方法时崩溃
+## 两种符号化输入不要混用
 
-**典型调用栈（符号化前）**：
+Android 工具常用模块相对 PC；Apple 工具可结合模块加载地址解析实际地址。先读日志格式再换算，避免把已经处理过的地址再次相减。
 
-```
-#00 pc ...  libil2cpp.so
-#01 pc ...  libil2cpp.so
-```
+例如使用 atos 时，二进制路径、架构、load address 和 crash address 都应取自匹配构建与日志。缺少完整 dSYM 或符号时，应标明无法解析的帧，不凭相似函数名补齐。
 
-**符号化后**：
+## 怎样把调查变成结论
 
-```
-#00  hybridclr::interpreter::MethodBridge_NotSupport (...)
-#01  hybridclr::interpreter::Interpreter::Execute (...)
-```
+按“观察 → 假设 → 单变量对照 → 实际分支 → 修复后回归”组织记录。每一步明确还不能排除什么。
 
-或者直接在 logcat 里看到：
-
-```
-E Unity: NotSupportedException: method call bridge missing: ...MethodSignature...
-```
-
-**根因**：热更代码里有某个方法签名，HybridCLR 没有为它生成 MethodBridge（调用约定适配层）。常见于：
-- 有参数或返回值的 `delegate` 调用
-- 某些泛型委托签名
-- 通过反射调用带特定参数类型的方法
-
-**定位方法**：
-
-1. 看 logcat 里的 `NotSupportedException` 日志（这个错误通常有详细的方法签名）
-2. 在 Unity 里执行 `HybridCLR → Generate → All`，重新生成 `MethodBridgeGenerics` 等文件
-3. 重新打包
-
----
-
-### 模式 3：Assembly 加载顺序错 → TypeLoadException → 提前退出
-
-**特征**：
-
-- 不是 native crash，是托管异常
-- logcat 里有 `E Unity: Exception: System.TypeLoadException`
-- 进程可能继续运行但逻辑已失败，也可能因为异常没被捕获而退出
-
-**典型日志**：
-
-```
-E Unity: Exception: System.TypeLoadException: Could not load type 'Namespace.ClassName' from assembly 'SomeDll'.
-  at LoadAssembly ()
-```
-
-**根因**：`UpdateSetting.asset` 的 `HotUpdateAssemblies` 列表中，某个 DLL 在它依赖的 DLL 之前被加载了。CLR 解析类型引用时，被引用的 DLL 还没进 runtime，只有 AOT 版本（经过 strip，类型可能不存在）。
-
-**定位方法**：
-
-1. 看报错里的类名属于哪个 DLL（`from assembly 'X'`）
-2. 看报错是从哪个 DLL 的加载过程里触发的（stack trace 里的 `LoadAssembly`）
-3. 检查 `HotUpdateAssemblies` 里这两个 DLL 的顺序
-4. 分析依赖图，按从叶到根的顺序排列
-
----
-
-### 模式 4：global-metadata.dat 版本不匹配 → 启动时崩溃
-
-**特征**：
-
-- app 安装后一启动就崩溃，连热更 DLL 加载都没开始
-- logcat 里可能看到：`CRASH: signal 6 (SIGABRT)` 或 IL2CPP metadata 相关日志
-- Unity log 里出现：`Failed to initialize Unity Metadata` 或 IL2CPP 初始化错误
-- 调用栈更像 IL2CPP metadata 初始化阶段，而不是业务方法、`Interpreter::Execute` 或 `IlCppFullySharedGenericAny` 这类运行中痕迹
-
-**典型调用栈**：
-
-```
-E CRASH: signal 6 (SIGABRT)
-E CRASH: backtrace:
-  #00  abort
-  #01  il2cpp::vm::MetadataLoader::LoadMetadataFile (...)
-  #02  il2cpp::vm::GlobalMetadata::Initialize (...)
-  #03  il2cpp::vm::Runtime::Init (...)
-```
-
-**根因**：`global-metadata.dat` 是随包体编译的，和 `libil2cpp.so` 的版本强绑定。如果热更流程错误地替换了 `global-metadata.dat`（例如把下一个版本的 metadata 推给了旧版本的包），IL2CPP 在启动时校验失败，直接 abort。这里常见的是主动 `SIGABRT`，不是随机 `SIGSEGV`，因为 IL2CPP 在 metadata 初始化阶段就已经判定"这份结构不能继续跑了"。
-
-**预防**：`global-metadata.dat` 属于 AOT 层产物，不应该通过热更下发。只有 DLL 可以热更，metadata 不行。
-
-若怀疑 metadata 与原生二进制不配套，先按 [IL2CPP 产物一致性排查]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}}) 核对构建身份与符号；运行时职责分工见 [IL2CPP 运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})。
-
----
-
-### 模式 5：解释器内部崩溃（HybridCLR bug）
-
-**特征**：
-
-- 崩溃点在 `hybridclr::interpreter::Interpreter::Execute` 的深层
-- 没有明显的死循环（帧地址不重复）
-- 崩溃和特定的热更代码逻辑相关（例如特定的语言特性：yield return、unsafe、fixed buffer 等）
-
-**定位方法**：
-
-1. 用二分法缩小触发崩溃的热更代码范围
-2. 查 HybridCLR GitHub Issues 是否有已知 bug
-3. 尝试升级 HybridCLR 版本
-4. 把触发崩溃的代码移到 AOT 层（作为临时规避）
-
----
-
-## AOTGenericReferences.cs 的正确使用流程
-
-这是 AOT 泛型缺失类崩溃的核心预防点。
-
-### 完整流程
-
-```
-1. 写热更代码
-2. HybridCLR → Generate → AOTGenericReferences
-   → 生成 Assets/HybridCLRData/Generated/AOTGenericReferences.cs
-   → 文件里的注释列出了分析到的"需要 AOT 实例化的泛型"
-3. 把注释里的类型引用实现为真实代码（RefMethods 里）
-4. 打 AOT 包
-5. 运行时才有对应的具体泛型实例
-```
-
-### 错误做法 vs 正确做法
-
-**错误**（注释列出了，但 RefMethods 是空的）：
-
-```csharp
-public void RefMethods()
-{
-    // 什么都没写——注释不生成代码
-}
-```
-
-**正确**（注释里列的类型都要有对应的引用代码）：
-
-```csharp
-public void RefMethods()
-{
-    // AsyncUniTaskMethodBuilder<object>
-    Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder<object> _unused1 = default;
-    _ = _unused1;
-
-    // AsyncUniTaskMethodBuilder<int>
-    Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder<int> _unused2 = default;
-    _ = _unused2;
-
-    // IUniTaskSource<object>
-    Cysharp.Threading.Tasks.IUniTaskSource<object> _unused3 = default;
-    _ = _unused3;
-
-    // 对于方法级泛型：
-    // System.Linq.Enumerable.ToList<SomeType>
-    System.Linq.Enumerable.ToList<SomeType>(null);
-}
-```
-
-### 常见遗漏的泛型来源
-
-| 来源 | 典型类型 |
-|------|---------|
-| `async UniTask` | `AsyncUniTaskMethodBuilder<T>`, `IUniTaskSource<T>` |
-| `async Task` | `AsyncTaskMethodBuilder<T>`, `Task<T>` |
-| LINQ | `IEnumerable<T>`, `List<T>`, `Dictionary<K,V>` |
-| 事件系统 | 各种 `Action<T>`, `Func<T,R>` delegate 类型 |
-| 自定义泛型容器 | 项目里自己写的泛型类 |
-
-### 什么时候需要重新 Generate
-
-每次满足以下条件之一，都需要重新执行 `Generate → AOTGenericReferences`：
-
-- 新增了热更代码里使用的泛型类型
-- 修改了泛型方法的参数类型
-- 升级了热更依赖的第三方库（新版本可能用了不同的泛型）
-
----
-
-## 快速判断崩溃属于哪一层
-
-```
-看 logcat 有没有 E Unity 级别的日志
-  ├── 有 TypeLoadException → Assembly 加载顺序问题
-  ├── 有 NotSupportedException → MethodBridge 缺失
-  └── 没有托管层日志，有 CRASH tag → native crash
-
-看 native crash 的 backtrace
-  ├── 帧地址重复 + TisIl2CppFullySharedGenericAny → AOT 泛型缺失 → 死循环
-  ├── MethodBridge_NotSupport → MethodBridge 缺失
-  ├── IL2CPP metadata 初始化相关 → global-metadata.dat 版本不对
-  └── 解释器深层帧，无重复 → 可能是 HybridCLR bug 或热更代码逻辑问题
-```
-
----
-
-## 预防性检查清单
-
-每次打包前：
-
-```
-□ AOTGenericReferences.cs 的 RefMethods() 里有实际代码（不是空函数或只有注释）
-□ HotUpdateAssemblies 的顺序按依赖图从叶到根排列
-□ Generate → All 已执行（MethodBridge、AOTGenericReferences、LinkXml 全部更新）
-□ global-metadata.dat 不在热更下发列表里
-□ 热更 DLL 和 AOT metadata DLL 来自同一次 HybridCLR 编译
-```
-
----
-
-## 收束
-
-HybridCLR 崩溃定位的核心流程：先用 logcat/crash log 判断崩溃类型，再用符号化工具还原函数名，最后根据栈帧判断问题出在哪一层（加载、生成物、AOT 泛型、还是解释器本身）。每次打包前跑一遍预防性检查清单，能挡住大部分"等到真机才爆"的问题。
+AOTGenericReferences 是需求线索，不是 native 代码生成证明。若添加 helper，必须包含正确的方法实例调用并进入 AOT 产物；仅声明 builder 或接口变量不能证明目标方法已保留。可验证模板见 [DisStripCode 手册]({{< relref "engine-toolchain/hybridclr-disstripcode-writing-patterns-valuetype-reftype-nestedgeneric-delegate.md" >}})。
 
 ## 系列位置
 
-- 上一篇：[HybridCLR 真实案例诊断｜从 TypeLoadException 到 async 栈溢出]({{< relref "engine-toolchain/hybridclr-case-typeload-and-async-native-crash.md" >}})
-- 通用崩溃分析基础：[崩溃分析系列入口]({{< relref "engine-toolchain/crash-analysis-00-what-is-a-crash.md" >}})
+一般错误先用 [分层诊断]({{< relref "engine-toolchain/hybridclr-troubleshooting-diagnose-by-layer.md" >}})缩小入口；产物预防继续 [打包工程化]({{< relref "engine-toolchain/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}})。
+
+**符号化恢复位置，单变量对照与实际运行状态才支持根因。**
