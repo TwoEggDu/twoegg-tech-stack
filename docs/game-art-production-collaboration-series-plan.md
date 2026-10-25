@@ -1,7 +1,7 @@
 # 游戏美术生产与客户端协作：系列规划
 
 > 创建：2026-10-25。用户已选择 **12 篇正文 + 1 个系列首页**；用户于同日确认本设计并要求落地；首页与 12 篇章节提纲现已建立。
-> 状态：首页、12 篇章节及前两篇初版正文已推送；其余 10 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。本次补充涵盖工具链规划、01 工具地图和 02 Photoshop 操作方案；具体软件版本实操、素材与运行验证待完成。
+> 状态：首页、12 篇章节及前两篇正文与工具补充已推送；第 03 篇正文已成稿，其余 9 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括 01 工具地图、02 Photoshop 操作方案及 03 Maya 建模到 Unity 接入方案；具体软件实操、素材与运行验证待完成。
 > 本文件是本系列唯一的篇级规划。根 `doc-plan.md` 只保留系列路由；具体开写时再建立单篇执行提纲。
 
 ## 1. 定位、读者与边界
@@ -64,7 +64,7 @@
 
 - 主要面向希望理解美术制作的客户端工程师，以及需要认识上下游工作的美术与 TA。
 - 以实时 3D 游戏为主要语境，先讲通用模型，再落到具体工具和引擎。
-- 首页当前显示：**第 01—02 篇已有正文，其余 10 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
+- 首页当前显示：**第 01—03 篇已有正文，其余 9 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
 
 ### 2.3 页面从上到下的结构
 
@@ -157,7 +157,7 @@ flowchart TD
 | --- | --- | --- |
 | 01 全貌 | Photoshop、3ds Max、Maya 与引擎编辑器的分工；解释数字内容创作工具（DCC）的含义 | 软件、原稿、导出物、引擎资产与运行实例的地图已补；含动画制作/运行驱动及场景构件/地编的区别，未实操 |
 | 02 原画 | 用 Photoshop 示例讲参考整理、图层、轮廓草案、色彩和结构标注；其他绘图软件可按需对照 | 已补 PSD 分层、PNG 参考图导出、目录、建模使用与版本修改方案；实际 PSD、安装版本操作与截图待补 |
-| 03 角色 | 介绍 3ds Max / Maya 的建模、拓扑与 UV 工作；Photoshop 的贴图编辑位置；Substance 作为材质制作候选工具说明 | 简化角色或法杖模型的原稿 → FBX 与纹理导出 → Unity 导入 → 材质引用和模型预览；绑定动作分别接 04—05 |
+| 03 角色 | Maya 2024 为主操作方案，说明 3ds Max 2024 UV 对应入口；Photoshop 做颜色图，Substance 3D Painter 烘焙为可选扩展 | 已写简化法杖原稿 → UV / 颜色图 → FBX / PNG → Unity 6000.0 / URP 17 材质、Prefab 与静态 Play 模式观察；素材与实操待补，绑定动作接 04—05 |
 | 04 绑定 | 以 Maya 或 3ds Max 中的骨架、控制器与蒙皮工具展示制作步骤 | 原始绑定工程 → 变形检查 → 按方案准备和导出骨架/网格 → 引擎检查；区分制作端控制系统与导出数据 |
 | 05 动画 | Maya / 3ds Max 的时间轴、关键帧、曲线、烘焙与动作片段导出 | 待机/施法动作原稿 → 约定范围的导出片段 → Unity 动作导入与预览 → 状态驱动和衔接检查 |
 | 06 场景资产 | 3ds Max / Maya 的模块建模、枢轴和 UV；Photoshop / 材质工具制作贴图 | 墙、门、地面模块及原稿 → 模型与纹理导出 → Unity 材质/模板 → 拼装测试场景 |
@@ -184,7 +184,8 @@ flowchart TD
 
 - 01 已完成工作关系与产物层次，已补工具地图、文件格式及三条传递路径；未执行软件或引擎实验。
 - 02 已完成原画思考与设计交接，已补 Photoshop 分层、画笔、标注、原稿保存、PNG 导出、建模使用和修改回流的操作方案。实际 PSD/PNG 素材、安装版本与实操截图待补；原创 SVG 几何示意不替代软件操作证据。
-- 03—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
+- 03 正文已成稿，解释角色体块、拓扑与表面，再用法杖尺寸、UV、贴图、FBX、Unity 材质与 Prefab 串起操作方案；新增原创原理图。没有实际模型、纹理工程或运行验证。
+- 04—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
 - 后续写作若未实际操作工具，应明确标为操作设计或待验证步骤；不能用本轮规划更新宣称软件或引擎验证完成。
 
 **本轮核对的原始资料**：Adobe [PSD 原稿与 PNG 导出说明](https://helpx.adobe.com/photoshop/desktop/save-and-export/save-files/save-in-png-and-gif-formats.html)、Autodesk [Maya FBX 导出（2024）](https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Interoperability/files/GUID-C64CFD18-517C-47A2-9E5D-489EC5D6480C.htm)及 [3ds Max 游戏 FBX 导出（2022）](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-70DBCE92-4D55-4CD6-A2E9-23E48E571068.htm)。这些资料确认了教学路径可参考的能力范围；旧版本菜单和默认值不能直接写成当前版本保证。
@@ -235,6 +236,8 @@ flowchart TD
 
 ### 03｜角色：从设计稿到模型与材质
 
+**当前状态：** 正文已成稿。主路径为 Maya 2024 → Photoshop 颜色图 → Unity 6000.0 / URP 17，并解释 3ds Max 的对应职责；文档已核对，操作、素材、烘焙及运行实验未执行。
+
 **核心问题：** 一个角色怎样获得合适的外形、表面和后续可用性？
 
 1. 从主视角确认比例、体块、剪影和重点；用初步模型检查设计是否在游戏镜头下成立。
@@ -244,7 +247,7 @@ flowchart TD
 5. 贴图、材质与 Shader 的分工；颜色、粗糙度等表面信息如何在约定光照和色彩设置下预览。
 6. 导出、材质槽、LOD、部件命名和版本交付；初步姿势检查后交给绑定继续验证。
 
-**拟配图/产物：** 同一模型的造型、线框、UV 和表面效果对照；角色交付物目录样例。读者能解释“面数更少”为什么不能独立代表角色可用性。
+**配图/产物：** 已有原创圆杆网格、UV 与引擎引用原理示意，法杖部件参数与交付目录示例；实际造型、线框、UV 和表面效果截图待补。读者能解释“面数更少”为什么不能独立代表角色可用性。
 
 **边界：** 蒙皮权重细节归 04；动作归 05；渲染方程和 Shader 实现通过现有渲染专题延伸。
 
@@ -415,13 +418,13 @@ flowchart TD
 
 ### 6.2 篇级页面与状态
 
-以下页面已建立；第 01—02 篇为正文，其余 10 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
+以下页面已建立；第 01—03 篇为正文，其余 9 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
 
 | 编号 | 章节页面 | 状态 |
 | --- | --- | --- |
 | 01 | [game-art-production-01-overview.md](../content/delivery-engineering/game-art-production-01-overview.md) | 正文与工具地图已写，未作软件与引擎运行验证 |
 | 02 | [game-art-production-02-concept-art.md](../content/delivery-engineering/game-art-production-02-concept-art.md) | 正文与 Photoshop 操作方案已写，素材/版本实操待补 |
-| 03 | [game-art-production-03-character-assets.md](../content/delivery-engineering/game-art-production-03-character-assets.md) | 提纲已建立；正文待写 |
+| 03 | [game-art-production-03-character-assets.md](../content/delivery-engineering/game-art-production-03-character-assets.md) | 正文已写；工具操作方案与原理示意，实操/素材/运行验证待补 |
 | 04 | [game-art-production-04-rigging-skinning.md](../content/delivery-engineering/game-art-production-04-rigging-skinning.md) | 提纲已建立；正文待写 |
 | 05 | [game-art-production-05-animation.md](../content/delivery-engineering/game-art-production-05-animation.md) | 提纲已建立；正文待写 |
 | 06 | [game-art-production-06-environment-assets.md](../content/delivery-engineering/game-art-production-06-environment-assets.md) | 提纲已建立；正文待写 |

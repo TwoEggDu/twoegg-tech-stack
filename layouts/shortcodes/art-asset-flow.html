@@ -1,0 +1,59 @@
+<figure aria-label="圆杆网格、UV 与纹理到游戏对象的原理示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="网格、UV 与引擎引用示意，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 355" role="img" aria-labelledby="asset-flow-title asset-flow-desc" style="display:block;width:100%;min-width:680px;height:auto">
+      <title id="asset-flow-title">同一条握持带，怎样从圆杆表面对应到纹理</title>
+      <desc id="asset-flow-desc">左侧是简化圆杆和纵向 UV 切缝，中间是展开的侧面与单独端盖，橙色握持带对应侧面 UV 的一条横带。右侧表示 FBX 网格、PNG 纹理与材质共同被 Prefab 和场景实例引用。图为原理示意，省略法杖头部，不是实际模型、UV 输出或运行截图。</desc>
+      <g fill="#f3f5f3" stroke="#d1d9d2">
+        <rect x="12" y="12" width="220" height="310" rx="8"/>
+        <rect x="255" y="12" width="260" height="310" rx="8"/>
+        <rect x="538" y="12" width="290" height="310" rx="8"/>
+      </g>
+      <g font-family="system-ui, sans-serif" fill="#304b40" text-anchor="middle">
+        <text x="122" y="42" font-size="18" font-weight="600">① 网格表面</text>
+        <text x="385" y="42" font-size="18" font-weight="600">② UV 与二维颜色</text>
+        <text x="683" y="42" font-size="18" font-weight="600">③ 引擎中的引用</text>
+      </g>
+      <g stroke="#687f6c" stroke-width="2">
+        <path d="M94 87Q122 72 150 87V242Q122 257 94 242Z" fill="#d7c7ac"/>
+        <ellipse cx="122" cy="87" rx="28" ry="8" fill="#ece1cd"/>
+        <path d="M94 148Q122 161 150 148V174Q122 188 94 174Z" fill="#bd6f3e"/>
+        <path d="M106 93V246M122 95V250M138 93V246" fill="none" opacity=".5"/>
+        <path d="M150 90V242" stroke="#a74939" stroke-dasharray="5 4" fill="none"/>
+      </g>
+      <g font-family="system-ui, sans-serif" font-size="14" fill="#435b48" text-anchor="middle">
+        <text x="122" y="274">棕色：杆的颜色</text>
+        <text x="122" y="297">虚线：沿背侧切开</text>
+      </g>
+      <g stroke="#687f6c" stroke-width="1.5">
+        <rect x="280" y="68" width="210" height="205" fill="#fff" stroke-dasharray="4 4"/>
+        <rect x="296" y="85" width="116" height="169" fill="#d7c7ac"/>
+        <path d="M325 85V254M354 85V254M383 85V254" opacity=".4"/>
+        <rect x="296" y="153" width="116" height="28" fill="#bd6f3e"/>
+        <circle cx="451" cy="113" r="19" fill="#ece1cd"/>
+        <circle cx="451" cy="175" r="19" fill="#ece1cd"/>
+      </g>
+      <g font-family="system-ui, sans-serif" font-size="14" fill="#435b48" text-anchor="middle">
+        <text x="385" y="297">侧面展开；端盖另外摆放</text>
+      </g>
+      <g fill="#fff" stroke="#8ba18d" stroke-width="1.5">
+        <rect x="555" y="77" width="113" height="46" rx="5"/>
+        <rect x="696" y="77" width="113" height="46" rx="5"/>
+        <rect x="696" y="150" width="113" height="42" rx="5"/>
+        <rect x="591" y="228" width="182" height="50" rx="5"/>
+      </g>
+      <g stroke="#687f6c" stroke-width="2" fill="none">
+        <path d="M612 123V213H651V228M753 123V150M753 192V213H717V228"/>
+        <path d="M241 156H248M244 152 248 156 244 160M523 156H530M526 152 530 156 526 160"/>
+      </g>
+      <g font-family="system-ui, sans-serif" font-size="14" fill="#304b40" text-anchor="middle">
+        <text x="612" y="105">FBX 网格 / UV</text>
+        <text x="752" y="105">PNG 颜色图</text>
+        <text x="752" y="177">材质 + Shader</text>
+        <text x="682" y="250">Prefab 组装</text>
+        <text x="682" y="269">→ 场景中的实例</text>
+      </g>
+      <text x="420" y="346" font-family="system-ui, sans-serif" font-size="14" fill="#657266" text-anchor="middle">原理示意：省略杖头；图中 UV 不能用作实际绘制模板</text>
+    </svg>
+  </div>
+  <figcaption>网格提供形状与 UV，纹理提供表面输入，材质决定怎样解释；最终还需要引擎组装和观察。此图不代表已制作或验证的资产。</figcaption>
+</figure>
