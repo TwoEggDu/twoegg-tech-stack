@@ -41,6 +41,7 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 
 | 阶段 | 入口 | 读到什么程度再继续 |
 |---|---|---|
+| C++ 公共基础 | [公共专栏]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})，按需读函数指针、内存布局、对象寿命与构建 | 能解释指针/参数访问与原生调用；缺课处按目录补齐，不以目录存在视为掌握 |
 | 规范前置 | [ECMA-335 前置主线]({{< relref "engine-toolchain/ecma335-series-index.md" >}}) | 分清 token、签名、调用、加载和初始化 |
 | 实现底座 | [IL2CPP 索引]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，先读 [运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}}) | 分清 metadata、native code 与 runtime |
 | 动手准备 | [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) | 对齐版本、构建与进程，知道首轮断点看什么 |
@@ -52,6 +53,18 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 只需补某个概念时，可直接读 [签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}}) 或 [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})，不必重新顺读整个前置系列。
 
 源码起步篇固定了 v6.1.0 的源码样本，但 Player 实验尚未实测；旧文的 v6.x 路径与商业篇的其他版本说明不构成一套统一验证基线。跟读时以各篇注明的版本和实际构建为准。
+
+## 公共基础之后，补 HybridCLR 的约定
+
+公共 C++ 说明指针、调用和内存的规则；这里还要把规则对应到方法指针、参数槽、解释帧和运行时状态。CLI 语义与 IL2CPP 实现底座继续沿上表阅读，不能用 C++ 模板或 RAII 替代。
+
+**先读已有材料**：下方 ABI、解释器、泛型共享和 GC 桥接，以及源码阅读起步。**专项待补顺序**：
+
+1. 方法指针、参数槽与返回值的逐句阅读：接公共函数指针/布局课，补一段调用的类型与数据流练习。
+2. metadata 索引、方法体与解释帧的对应阅读：接 CLI、公共字节访问/存储课，补输入边界、缓存和首次/再次调用的状态变化。
+3. AOT/解释执行之间的对象与线程协作：接公共并发课与现有 GC 专题，补项目专用的有效访问条件和验证记录。
+
+这些专项单元仍待整理或补写，不计入已有编号正文与六篇桥接数量。它们训练怎样读具体实现，现有桥接继续解释机制。
 
 ## 前置与桥接
 

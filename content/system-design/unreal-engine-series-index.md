@@ -27,4 +27,6 @@ weight: 6000
 >
 > - [Unreal Mass 深度系列索引｜先立数据导向边界，再看 Processor、LOD 和 Actor 协作]({{< relref "system-design/unreal-mass-series-index.md" >}})
 
+> **进入源码主线之前**：先按 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 补语言与工程规则，再从 [Unreal 阅读入口]({{< relref "reading/unreal-engine.md" >}}) 补 UE 的对象/指针、容器、Delegate、生成与线程约定。专项前置中的待写项已单列；下方目录继续承担架构与系统主线。
+
 {{< series-directory >}}

@@ -10,13 +10,21 @@ topic_key: engine
 
 [阅读建议：从客户端开发走向引擎研发]({{< relref "system-design/engine-programmer-reading-entry.md" >}})
 
+## 共用前置：C++ 公共基础
+
+准备阅读 Piccolo、Unreal、HybridCLR 或 IL2CPP 时，先从 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 建立对象、所有权、调用、内存与构建的共同认识，再进入各路线的专项前置。
+
+入口已经串起四篇可读材料，并列明公共课的待整理与待写内容。各路线会继续补自己的对象协议、宏、容器、构建和运行时约定；运行时路线另需 ECMA-335，图形路线另需渲染基础。
+
 ## 按引擎进入
 
 ### [Piccolo｜沿具体实现理解引擎协作]({{< relref "reading/piccolo-engine.md" >}})
 
 围绕启动流程、一帧执行、资源加载与系统交互，梳理各个模块怎样组成一台能够运行的游戏引擎。
 
-[Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}}) 与 [C++ 智能指针前置]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}}) 已有正文，分别梳理系统协作和对象持有关系；Piccolo 构建与调试实践待验证。
+已有 [Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}})，以及 [智能指针]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})、[继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})、[模板与反射]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}}) 三篇 C++ 前置。[渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}}) 把场景对象、Pass、绘制命令和呈现接成一条链；[启动篇]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 与 [一帧执行篇]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}}) 建立调用地图，[场景对象篇]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}}) 和 [资源类型恢复篇]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}}) 追对象怎样建立，再用 [位置变化篇]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}}) 核对具体数值怎样到达渲染实体，接着在 [Pass 与 Vulkan 提交篇]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}}) 追实例批次、缓冲绑定、命令记录与呈现目标，最后用 [编辑器保存重载篇]({{< relref "engine-toolchain/piccolo-engine-08-editor-save-reload.md" >}}) 核对面板写入、持久字段、关卡文件与运行对象重建。Piccolo 完整构建与调试实践待验证。
+
+[构建与调试基线篇]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}}) 已补齐，并放在启动篇之前阅读：Windows 配置、反射/序列化与 shader 生成已有实测，完整 Debug 编译的第三方兼容阻塞、配置路径和后续符号验收分别记录。
 
 ### [Unreal｜理解核心系统与扩展边界]({{< relref "reading/unreal-engine.md" >}})
 

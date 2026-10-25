@@ -62,6 +62,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 代码质量到工程质量 | [docs/code-quality-to-engineering-quality-series-plan.md](./docs/code-quality-to-engineering-quality-series-plan.md) | 已拆出 | 软件工程与工程质量主线 |
+| C++ 公共基础 | [docs/cpp-foundations-series-plan.md](./docs/cpp-foundations-series-plan.md) | 规划与阅读入口已建立；公共正文待整理/补写 | 复用已有四篇基础材料，按公共知识 → Piccolo / Unreal / HybridCLR / IL2CPP 专项前置 → 源码主线组织；专项状态归各路线 plan |
 | 数据导向运行时 | [docs/data-oriented-runtime-series-plan.md](./docs/data-oriented-runtime-series-plan.md) | 已拆出 | `DOD-00~06` 架构哲学层 |
 | DOTS / Mass / 硬件深挖 | [docs/dots-mass-hardware-deep-series-plan.md](./docs/dots-mass-hardware-deep-series-plan.md) | 已拆出 | 承接数据导向运行时 |
 | 自研 ECS 落地 | [docs/self-built-ecs-implementation-plan.md](./docs/self-built-ecs-implementation-plan.md) | 已拆出 | 偏实现与工程落地 |
@@ -77,7 +78,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 游戏引擎架构地图 | [docs/game-engine-architecture-series-plan.md](./docs/game-engine-architecture-series-plan.md) | 已拆出 | 系列定义层 |
-| Piccolo 源码阅读与调试 | [docs/piccolo-engine-series-plan.md](./docs/piccolo-engine-series-plan.md) | 架构与 C++ 前置已有正文，引擎实践待验证 | 从架构地图按需补前置，再进入构建、启动、一帧、对象、资源与渲染；源码固定版本，分别记录源码、小程序与引擎运行证据 |
+| Piccolo 源码阅读与调试 | [docs/piccolo-engine-series-plan.md](./docs/piccolo-engine-series-plan.md) | 主线 00—08 与四篇前置共 13 篇正文；配置与生成实测通过，完整构建/运行待验证 | 从架构、前置和构建基线进入启动、对象恢复、渲染与编辑器；01 记录实际工具链、生成结果和第三方 Debug 编译阻塞，分别维护源码、构建与运行证据 |
 | UE 全栈工程师成长路线 | [docs/ue-fullstack-expert-series-plan.md](./docs/ue-fullstack-expert-series-plan.md) | 规划已建立，实践待验证 | 从 Unity/C# 经验进入 UE 客户端、权威战斗服、业务后端与交付；只管理贯通路径和新增桥梁，复用 Unreal、技能、服务端、渲染与交付专题；[盘点快照](./docs/ue-fullstack-content-audit.md) |
 | 游戏引擎架构地图执行计划 | [docs/game-engine-architecture-series-execution-plan.md](./docs/game-engine-architecture-series-execution-plan.md) | 执行层已拆出 | 6 周执行顺序与证据需求 |
 | 游戏引擎渲染栈 | [docs/game-engine-rendering-stack-series-plan.md](./docs/game-engine-rendering-stack-series-plan.md) | 已拆出 | 引擎到 GPU 的链路主线 |

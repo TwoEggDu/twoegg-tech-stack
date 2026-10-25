@@ -50,8 +50,9 @@ topic_groups:
       - { title: "运行时横切对比", page: "engine-toolchain/runtime-cross-series-index.md" }
   - id: "foundations"
     title: "计算基础与性能"
-    hint: "CPU、内存、OS I/O、数学与诊断"
+    hint: "C++、CPU、内存、OS I/O、数学与诊断"
     entries:
+      - { title: "C++ 公共基础与四条源码路线", page: "engine-toolchain/cpp-foundations-series-index.md" }
       - { title: "CPU 与内存体系", page: "performance/hardware-cpu-index.md" }
       - { title: "存储、文件系统与 OS I/O", page: "engine-toolchain/storage-io-series-index.md" }
       - { title: "图形数学", page: "rendering/graphics-math-series-index.md" }

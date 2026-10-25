@@ -321,6 +321,7 @@ expired after pin: true
 
 ## 继续阅读
 
+- [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})：接着判断基类接口会调用哪个实现，以及虚析构怎样衔接对象销毁。
 - [Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}})：把这些持有关系放回世界、资源与渲染协作中。
 - [从 C# 到 C++：对象由谁持有，代码怎样变成程序]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})：按需回看值、借用、RAII、移动与编译链接。
 - [Piccolo 阅读入口]({{< relref "reading/piccolo-engine.md" >}})：继续进入构建、启动、一帧和对象恢复。

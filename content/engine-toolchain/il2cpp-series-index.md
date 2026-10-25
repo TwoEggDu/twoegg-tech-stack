@@ -19,7 +19,19 @@ tags: [IL2CPP, Unity, AOT, Index]
 
 ## 前置知识
 
+先按 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 补值与借用、对象/所有权、函数指针、布局/存储与编译链接。公共目录中尚未成稿的单元明确列为待补，不能把几个语法示例当成完整基础。
+
 建议先完成 [ECMA-335 前置主线]({{< relref "engine-toolchain/ecma335-series-index.md" >}})。读 D3 前区分 [类型信息准备与静态初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})，读 D5 前确认 [签名与泛型上下文]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})。
+
+## 公共基础之后，补 IL2CPP 的约定
+
+已有运行时地图与 D2～D6 可作为专项材料。接下来按以下顺序补跟读，均不计入当前 10 篇正文：
+
+1. **C#、IL 与生成代码对应阅读（待整理）**：固定一个构建样本，逐句解释参数、调用入口与返回值；接公共函数指针和构建课。
+2. **metadata、对象与存储边界（待补）**：接公共布局/对象寿命课，分清描述、运行时对象、代码入口与 GC 协作，避免把 C++ 的析构规则直接套到托管对象。
+3. **方法分派与泛型接线（待补）**：接公共模板课和 CLI 调用/泛型知识，对照生成调用与 runtime 表；C++ 模板实例化不能替代托管泛型语义。
+
+先建立产物地图，再在读到对应 D 篇前补专项；不用等待所有高级内容完成才开始第一轮阅读。具体生成代码和布局随版本与平台核对，公开正文遵守源码许可边界。
 
 ## 推荐阅读顺序
 
