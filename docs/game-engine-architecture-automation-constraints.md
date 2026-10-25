@@ -6,7 +6,7 @@
 
 1. 用户当次明确范围和仓库规范。
 2. [系列规划](game-engine-architecture-series-plan.md)：唯一canonical目录与篇级状态。
-3. 当前工作单或单篇记录：[00A装配、共享加载与热重载补强](game-engine-architecture-00a-layers-dependencies-outline.md)；此前记录见[08执行记录](game-engine-architecture-08-outline.md)、[前10篇修订](game-engine-architecture-revision-outline.md)。
+3. 当前工作单或单篇记录：[01、06、07三图补强](game-engine-architecture-visual-supplement-outline.md)；此前记录见[04交接与故障追踪补强](game-engine-architecture-04-outline.md)、[00A装配、共享加载与热重载补强](game-engine-architecture-00a-layers-dependencies-outline.md)、[08执行记录](game-engine-architecture-08-outline.md)、[前10篇修订](game-engine-architecture-revision-outline.md)。
 4. 证据卡：已核对事实、设计推演与未验证范围。
 
 原六周执行计划和00—07初稿提纲只作历史参考。取消固定八段结构、必须写完08才细化、执行记录覆盖canonical等旧规则。

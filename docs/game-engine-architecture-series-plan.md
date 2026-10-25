@@ -13,13 +13,13 @@
 | 导读 | [从玩家输入到屏幕画面](../content/rendering/player-input-and-game-content-to-screen.md) | 已修订：火球连接内容/实例/专业表示/设备；输入非唯一变化来源，GPU可计算，因果不等于同一帧 |
 | 00 | [总论：现代游戏引擎到底该怎么分层](../content/system-design/game-engine-architecture-00-overview.md) | 已修订：六组职责覆盖平台，Core和数据导向横向讨论；职责、依赖、数据和时间分开 |
 | 00A | [引擎怎样分层：职责、依赖与资源服务的边界](../content/system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md) | 已补强装配、共享加载退出与热重载：创建/注册/注入、取消竞态、A/B从v1切换v2、准备失败/完成乱序及旧资源回收；[执行记录](game-engine-architecture-00a-layers-dependencies-outline.md) |
-| 01 | [为什么游戏引擎首先是一套内容生产工具](../content/system-design/game-engine-architecture-01-content-production.md) | 已修订：标题从开发者视角理解；补模板改值、撤销、持久化与预览责任 |
+| 01 | [为什么游戏引擎首先是一套内容生产工具](../content/system-design/game-engine-architecture-01-content-production.md) | 已修订并补图：模板改值前后对照，甲继承、乙覆盖与撤销恢复关系；保留持久化与预览分工 |
 | 02 | [Unity的GameObject和Unreal的Actor，到底差在哪](../content/system-design/game-engine-architecture-02-gameobject-vs-actor.md) | 已修订：Hierarchy是编辑视图；区分对象/组件、Transform父子关系和共享资产 |
 | 03 | [脚本、反射、GC、任务系统，到底站在引擎的哪一层](../content/system-design/game-engine-architecture-03-runtime-foundation.md) | 已修订：JIT/AOT以编译时机定义；分开帧策略、对象回调、任务机制与平台设施 |
-| 04 | [渲染、物理、动画、音频、UI，为什么都像半台小引擎](../content/system-design/game-engine-architecture-04-professional-subsystems.md) | 已修订：用角色落地交接替代功能名录，区分系统内部状态与跨系统契约 |
+| 04 | [渲染、物理、动画、音频、UI，为什么都像半台小引擎](../content/system-design/game-engine-architecture-04-professional-subsystems.md) | 已补强：用落地后仍播放下落动画的设计故障，串起身份、交接证据、定位与修复验证 |
 | 05 | [资源导入、Cook、Build、Package，为什么也是引擎本体](../content/system-design/game-engine-architecture-05-asset-and-delivery.md) | 已修订：随Player与独立内容分支；区分资产身份、对象实例和运行加载 |
-| 06 | [跨平台引擎到底在抽象什么](../content/system-design/game-engine-architecture-06-platform-abstraction.md) | 已修订：运行接口/后端与离线目标描述两条线；能力缺失和降级责任 |
-| 07 | [为什么DOTS和Mass不能只算“一个模块”](../content/system-design/game-engine-architecture-07-dots-and-mass.md) | 已修订：模块交付与架构影响分开；补创作数据、实体批处理和专业表示交接 |
+| 06 | [跨平台引擎到底在抽象什么](../content/system-design/game-engine-architecture-06-platform-abstraction.md) | 已修订并补图：离线构建与运行时适配双通道，区分产物交接、当前设备能力和降级责任 |
+| 07 | [为什么DOTS和Mass不能只算“一个模块”](../content/system-design/game-engine-architecture-07-dots-and-mass.md) | 已修订并补图：制作期与运行期分区，固定模拟身份E42说明批量更新、专业接入与表示切换 |
 | 08 | [用同一组问题读懂两台引擎：对象、模块与工具怎样组织](../content/system-design/game-engine-architecture-08-unity-unreal-same-tasks.md) | 已成稿：Unity2022.3 / UE5.6，对照警戒参数、外观交付与工具隔离；[执行记录](game-engine-architecture-08-outline.md)、[证据卡](game-engine-architecture-08-evidence-card.md)；引擎实验待验证 |
 
 前10篇修订过程与验证结果见[修订工作单](game-engine-architecture-revision-outline.md)，08新增正文与验证见[本次执行记录](game-engine-architecture-08-outline.md)。旧六周执行计划、00—07初稿提纲和旧进度记录只保留历史依据，固定八段结构、先写完08才能细化等旧约束不再指导当前写作。
@@ -40,7 +40,7 @@
 | --- | --- | --- |
 | 内容怎样进入运行时 | 导读 → 00 → 00A | [公共基础GEF-02](../content/engine-toolchain/game-engine-foundations-02-startup-frame-shutdown.md)：启动、帧循环与退出 |
 | 编辑与世界状态怎样连接 | 01 → 02 → 03 | 对象、序列化、编辑器和具体引擎专题 |
-| 多个系统怎样协作 | 00A → 04 → 07 | 数据导向运行时、渲染、动画与物理专题 |
+| 多个系统怎样协作，故障从哪里查起 | 00A → 04交接与故障推演 → 07 | 数据导向运行时、渲染、动画与物理专题 |
 | 内容为何需要加工，平台差异放哪 | 05 → 06 → 00A资源边界 | 资源管线、构建交付、平台专项 |
 | 怎样迁移到另一台引擎 | 02 / 05建立概念 → 08同任务比较 | Unity与Unreal专题；按配置、实例、工具和目标产物分别核对 |
 | 想核对真实实现 | 00/00A建立问题，再进入具体实现 | [Piccolo系列](piccolo-engine-series-plan.md)；不把公共图替代其调用链 |
@@ -65,4 +65,8 @@
 
 资源版本替换已补入00A“资产变了，使用者还要处理自己的派生状态”：A/B共享纹理由v1切到v2，新旧版本并存、候选快照准备、成组发布、失败保留当前版本、使用者变化与v2/v3乱序结果处理均已展开。区分资产身份、内容版本、实例/外观请求代次与替换意图；旧快照、设备工作、其他使用者与缓存分别决定退役资源寿命。
 
-暂不为分层继续增加泛化总论。后续若有具体阅读障碍，再考虑跨系统故障追踪；候选不登记为已有文章。00A当前是设计推演，快照发布、热重载、任务取消与设备回收的实际实现仍需在具体引擎或独立实验中验证，正文仍为11篇。
+跨系统故障追踪已补入04，并从00A增加直达入口：用“角色已落地，画面仍播放下落动画”构造参数误写旧动画实例的故障，区分对象与实例代次、绑定、状态修订、求值和绘制编号；根据接收侧输入寻找最后正确输出和失效交接，并给出状态恢复、旧消息拒绝及五组修复验证条件。执行范围与证据边界见[04补强记录](game-engine-architecture-04-outline.md)和[04证据卡](game-engine-architecture-04-evidence-card.md)。
+
+01、06、07已完成三张解释图补强：01新增模板与覆盖关系的前后对照，06和07将原纯文本链升级为分区图。系列11篇正文共有15张Mermaid图，图中操作、取值关系、产物交接与运行时请求分别说明；不为00、00A和04重复增加总图。设计与验证见[三图补强记录](game-engine-architecture-visual-supplement-outline.md)。08的真实编辑器截图留待实际验证时采集，不以设计图冒充运行证据。
+
+暂不为分层继续增加泛化总论，正文仍为11篇。00A的装配与资源生命周期、04的故障记录和修复验证均为设计推演；快照发布、热重载、任务取消、设备回收和跨系统修复仍需在具体引擎或独立实验中执行验证。

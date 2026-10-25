@@ -537,7 +537,8 @@ World.consume(ticket, targetKey, expectedAppearanceRevision):
 
 - [00：现代游戏引擎到底该怎么分层]({{< relref "system-design/game-engine-architecture-00-overview.md" >}})：按问题覆盖面认识内容生产、世界、执行与专业能力。
 - [02：GameObject 与 Actor 的世界模型]({{< relref "system-design/game-engine-architecture-02-gameobject-vs-actor.md" >}})：继续看对象身份与生命周期如何落地。
-- [03：运行时底座]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}})、[04：专业子系统]({{< relref "system-design/game-engine-architecture-04-professional-subsystems.md" >}})：分别展开通用执行机制与专业内部结构。
+- [03：运行时底座]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}})：展开通用执行机制与调度边界。
+- [04：专业子系统与跨系统故障追踪]({{< relref "system-design/game-engine-architecture-04-professional-subsystems.md" >}}#故障推演角色已落地画面仍播放下落动画)：用“角色已落地，画面仍播放下落动画”追踪对象身份、动画绑定、求值与绘制，区分发送成功、实际消费和画面结果，并设计修复验证。
 - [05：资产与发布]({{< relref "system-design/game-engine-architecture-05-asset-and-delivery.md" >}})、[06：平台抽象]({{< relref "system-design/game-engine-architecture-06-platform-abstraction.md" >}})：继续追制作产物和目标平台的边界。
 - [Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}})：把公共问题落回固定源码，分别检查职责、构建与数据流；本文图不充当 Piccolo 的实际依赖图。
 
