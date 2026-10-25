@@ -20,7 +20,14 @@ series_summary: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件�
 series_intro: "以 YooAsset 3.0.6 为固定源码基线，沿架构、文件系统、加载、清单、下载缓存、生命周期、构建与工程边界组织八篇主线，并提供加载与分包流程导读。"
 series_reading_hint: "单次加载与分包先读相应流程导读；系统阅读再沿架构、文件系统、加载、清单、下载、生命周期与构建深入。"
 yooasset_version: "3.0.6"
-lastmod: "2026-10-23"
+type: "reading-series"
+topic_key: "frameworks"
+reading_parent: "reading/client.md"
+reading_number_by_position: true
+reading_lead: "从资源依赖与分包，沿加载、缓存和生命周期，理解内容怎样交付给游戏。"
+reading_route: ["资源与依赖", "加载与生命周期", "构建与交付"]
+reading_status: "八篇机制专题与两篇流程导读；源码与实测边界见各篇说明。"
+lastmod: "2026-10-25"
 ---
 
 YooAsset 把资源收集、构建、版本清单、内容获取和运行时加载连接起来。要理解这条链路，需要分别判断目录是否有效、内容文件是否就绪、对象是否加载，以及它们的使用期是否结束。
@@ -38,6 +45,8 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 - [AssetBundle 运行时加载链：下载、缓存、依赖、反序列化、Instantiate 与 Unload]({{< relref "engine-toolchain/unity-assetbundle-runtime-loading-chain-download-cache-dependencies-unload.md" >}})
 
 第一次跟踪 `package.LoadAssetAsync` 时，可以先读[LoadAssetAsync 单次加载流程导读]({{< relref "engine-toolchain/unity-yooasset-loadassetasync-single-request-walkthrough.md" >}})，再进入下面的源码专题。
+
+<a id="chapters"></a>
 
 ## 推荐阅读顺序
 

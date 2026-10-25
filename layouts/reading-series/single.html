@@ -7,6 +7,10 @@
 {{ end }}
 {{ if ne (len $indexes) 1 }}{{ errorf "Reading series requires one index: %s" $seriesId }}{{ end }}
 {{ $index := index $indexes 0 }}
+{{ $chapterNumber := int .Params.series_order }}
+{{ if $index.Params.reading_number_by_position }}
+  {{ range $i, $member := $members }}{{ if eq $member.RelPermalink $.RelPermalink }}{{ $chapterNumber = add $i 1 }}{{ end }}{{ end }}
+{{ end }}
 {{ if or (ne $index.Params.series_role "index") (ne $index.Params.series_id $seriesId) }}{{ errorf "Reading index does not match series: %s" $seriesId }}{{ end }}
 <!DOCTYPE html>
 <html lang="{{ site.Language.Lang | default `zh-cn` }}">
@@ -40,8 +44,13 @@
       {{ range first 1 (where site.Data.reading_paths.topics "key" ($index.Params.topic_key | default "delivery")) }}
         {{ partial "reading/link.html" (dict "page" .page "label" .title) }}<span aria-hidden="true">/</span>
       {{ end }}
+      {{ with $index.Params.reading_parent }}
+        {{ $parent := site.GetPage . }}
+        {{ if not $parent }}{{ errorf "Reading parent not found: %s" . }}{{ end }}
+        <a href="{{ $parent.RelPermalink }}">{{ $parent.Title }}</a><span aria-hidden="true">/</span>
+      {{ end }}
       {{ if $isIndex }}<span aria-current="page">{{ .Params.reading_title | default .Params.series_title }}</span>
-      {{ else }}<a href="{{ $index.RelPermalink }}">{{ $index.Params.series_title }}</a><span aria-hidden="true">/</span><span aria-current="page">第 {{ printf "%02d" (int .Params.series_order) }} 篇</span>{{ end }}
+      {{ else }}<a href="{{ $index.RelPermalink }}">{{ $index.Params.series_title }}</a><span aria-hidden="true">/</span><span aria-current="page">第 {{ printf "%02d" $chapterNumber }} 篇</span>{{ end }}
     </nav>
     {{ if $isIndex }}
       <header class="series-cover">
@@ -53,7 +62,11 @@
         </div>
         <aside class="series-cover-note" aria-label="阅读说明">
           <p class="eyebrow">这条路线怎样读</p>
+          {{ with .Params.reading_route }}
+            <p class="series-route">{{ range $i, $step := . }}{{ if $i }}<br><span aria-hidden="true">↓</span><br>{{ end }}{{ $step }}{{ end }}</p>
+          {{ else }}
           <p class="series-route">发布场景<br><span aria-hidden="true">↓</span><br>版本与构建<br><span aria-hidden="true">↓</span><br>玩家更新与上线</p>
+          {{ end }}
           <p class="series-status">{{ .Params.reading_status }}</p>
         </aside>
       </header>

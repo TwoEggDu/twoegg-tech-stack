@@ -4,9 +4,11 @@
 {{ $position := -1 }}
 {{ range $i, $member := $members }}{{ if eq $member.RelPermalink $page.RelPermalink }}{{ $position = $i }}{{ end }}{{ end }}
 {{ if lt $position 0 }}{{ errorf "Article is missing from its reading series: %s" $page.RelPermalink }}{{ end }}
+{{ $chapterNumber := int $page.Params.series_order }}
+{{ if $index.Params.reading_number_by_position }}{{ $chapterNumber = add $position 1 }}{{ end }}
 <article class="reading-article article-reading">
   <header class="reading-article-header">
-    <p class="eyebrow">{{ $index.Params.series_title }} <span aria-hidden="true">·</span> {{ printf "%02d" (int $page.Params.series_order) }} / {{ printf "%02d" (len $members) }}{{ if eq $page.Params.content_stage "outline" }} <span class="reading-stage">章节提纲 · 正文待写</span>{{ end }}</p>
+    <p class="eyebrow">{{ $index.Params.series_title }} <span aria-hidden="true">·</span> {{ printf "%02d" $chapterNumber }} / {{ printf "%02d" (len $members) }}{{ if eq $page.Params.content_stage "outline" }} <span class="reading-stage">章节提纲 · 正文待写</span>{{ end }}</p>
     <h1>{{ $page.Params.reading_title | default $page.Title }}</h1>
     <p class="reading-article-dek">{{ $page.Params.reading_summary | default $page.Description }}</p>
   </header>

@@ -1,6 +1,6 @@
 ---
 date: "2026-10-23"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 title: "YooAsset 分包流程：从一个 Prefab 到共享 Bundle"
 description: "从一个 Prefab 的材质、纹理依赖出发，推演显式分包、目录共享包与两个构建开关，再比较按引用包集合分组的自定义方案及验证方法。"
 slug: "unity-yooasset-bundle-layout-prefab-to-shared-bundle"
@@ -10,6 +10,10 @@ series: "YooAsset 资源管理与交付"
 primary_series: "yooasset"
 series_order: 6.5
 yooasset_version: "3.0.6"
+type: "reading-series"
+topic_key: "frameworks"
+content_stage: "article"
+reading_index: "engine-toolchain/unity-yooasset-series-index.md"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · 后续阅读：[资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}})
