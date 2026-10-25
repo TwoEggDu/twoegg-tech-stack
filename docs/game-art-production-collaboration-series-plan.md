@@ -1,7 +1,7 @@
 # 游戏美术生产与客户端协作：系列规划
 
 > 创建：2026-10-25。用户已选择 **12 篇正文 + 1 个系列首页**；用户于同日确认本设计并要求落地；首页与 12 篇章节提纲现已建立。
-> 状态：首页和 12 篇提纲页已落地本地网站，正文均待写，示例与运行验证均待制作；尚未提交发布。
+> 状态：首页与 12 篇章节已建立并推送；第 01 篇正文已在本地成稿，其余 11 篇仍为提纲。教学工程与运行验证待完成。
 > 本文件是本系列唯一的篇级规划。根 `doc-plan.md` 只保留系列路由；具体开写时再建立单篇执行提纲。
 
 ## 1. 定位、读者与边界
@@ -64,7 +64,7 @@
 
 - 主要面向希望理解美术制作的客户端工程师，以及需要认识上下游工作的美术与 TA。
 - 以实时 3D 游戏为主要语境，先讲通用模型，再落到具体工具和引擎。
-- 首页首次落地时显示：**12 篇已规划，正文待写。** 若建立章节提纲页，改为“12 篇提纲，正文逐篇补充”；正文完成数量以实际页面状态为准。
+- 首页当前显示：**第 01 篇已有正文，其余 11 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
 
 ### 2.3 页面从上到下的结构
 
@@ -156,6 +156,8 @@ flowchart TD
 ## 4. 十二篇的具体内容
 
 ### 01｜全貌：一个美术需求怎样成为游戏内容
+
+**当前状态：** 正文已写。公开岗位资料和 Unity 6000.0 手册已核对；关系图与交接、披风变更为教学解释，未执行 DCC、引擎或设备实验。
 
 **核心问题：** 一项需求怎样经过多个专业，最终形成玩家可以体验的内容？
 
@@ -367,11 +369,11 @@ flowchart TD
 
 ### 6.2 篇级页面与状态
 
-以下页面均已建立提纲，前缀统一为 `game-art-production-`，均位于上述栏目。
+以下页面已建立；第 01 篇为正文，其余 11 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
 
 | 编号 | 章节页面 | 状态 |
 | --- | --- | --- |
-| 01 | [game-art-production-01-overview.md](../content/delivery-engineering/game-art-production-01-overview.md) | 提纲已建立；正文待写 |
+| 01 | [game-art-production-01-overview.md](../content/delivery-engineering/game-art-production-01-overview.md) | 正文已写，本地稿；教学推演，未作引擎运行验证 |
 | 02 | [game-art-production-02-concept-art.md](../content/delivery-engineering/game-art-production-02-concept-art.md) | 提纲已建立；正文待写 |
 | 03 | [game-art-production-03-character-assets.md](../content/delivery-engineering/game-art-production-03-character-assets.md) | 提纲已建立；正文待写 |
 | 04 | [game-art-production-04-rigging-skinning.md](../content/delivery-engineering/game-art-production-04-rigging-skinning.md) | 提纲已建立；正文待写 |
