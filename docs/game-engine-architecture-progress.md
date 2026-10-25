@@ -2,8 +2,8 @@
 
 2026-10-25：篇级状态统一由[系列规划](game-engine-architecture-series-plan.md)维护；本文件保留进度入口，不再复制另一份文章状态表。
 
-- 当前增量：08同任务比较已成稿，串起警戒参数、外观交付与工具隔离；系列共11篇正文，原定主线齐备。
-- 当前执行记录：[08同任务比较](game-engine-architecture-08-outline.md)；前10篇修订另见[修订工作单](game-engine-architecture-revision-outline.md)。
+- 当前增量：00A补强依赖与装配，用资源服务、CPU纹理加载器和世界说明创建、注册、获取与退出；系列仍为11篇正文，原定主线齐备。
+- 当前执行记录：[00A依赖与装配补强](game-engine-architecture-00a-layers-dependencies-outline.md)；此前[08同任务比较](game-engine-architecture-08-outline.md)与[前10篇修订](game-engine-architecture-revision-outline.md)分别保留验证记录。
 - 后续范围：按反馈修订；需要动手时执行08的最小验证。引擎编译、编辑操作与目标打包尚未实测。
 - 原“08首稿完成前不得逐篇细化”要求已由本轮用户授权替代，不再作为推进条件。
 
