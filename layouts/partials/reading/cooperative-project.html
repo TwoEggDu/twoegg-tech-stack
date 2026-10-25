@@ -19,12 +19,12 @@
     <dl><dt>玩家怎样游玩</dt><dd>进入 → 清怪 → 简单结算 → 返回 → 重开</dd><dt>内容怎样制作</dt><dd>配置与资源修改 → 检查预览 → 记录与验证</dd></dl>
   </aside>
 </header>
-<nav class="section-nav" aria-label="本页导航"><a href="#design">共同设计</a><a href="#routes">引擎安排</a><a href="#minimum">最小版本</a><a href="#learning">教学与验证</a><a href="#workflow">工种协作</a><a href="#patterns">设计模式教学</a><a href="#related">相关专栏</a></nav>
+<nav class="section-nav" aria-label="本页导航"><a href="#design">共同设计</a><a href="#routes">引擎安排</a><a href="#minimum">最小版本</a><a href="#ai-candidate">AI 候选</a><a href="#learning">教学与验证</a><a href="#workflow">工种协作</a><a href="#patterns">设计模式教学</a><a href="#related">相关专栏</a></nav>
 <section class="coop-section" id="design" aria-labelledby="coop-design-title">
   <div class="section-heading"><div><p class="eyebrow">先建立共同上下文</p><h2 id="coop-design-title">引擎无关设计</h2></div><span class="coop-status coop-status-ready">总览初稿可读</span></div>
   <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" (printf "%s设计总览" $hub.Title)) }}</h3><p>围绕一次标记与消耗配合，把最小规则、系统职责、工种管线与 T01～T18 教学验证目标连起来。</p><ul class="coop-topics"><li>简单清怪流程</li><li>系统职责与状态归属</li><li>策划与美术独立制作</li><li>逐项教学与验证</li></ul></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" "开始阅读" "class" "text-action" "arrow" true) }}</div>
-  <p class="coop-caption">最小玩法 v0.1 已确认目标选择、技能时序、胜负与奖励；普攻等剩余参数待补齐，游戏尚未实现与验收。</p>
-  <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/minimal-gameplay-rules.md" "label" "最小玩法规则 v0.1") }}</h3><p>自动选敌 · A 标记 5 秒 · B 消耗引爆 · 一次性结算。包含已确认规则、教学对应与 V01～V21 计划验证用例。</p></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/minimal-gameplay-rules.md" "label" "阅读玩法规则" "class" "text-action" "arrow" true) }}</div>
+  <p class="coop-caption">最小玩法 v0.1 已确认普攻、角色与怪物参数、固定关卡、技能时序、胜负与奖励；游戏尚未实现与验收。</p>
+  <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/minimal-gameplay-rules.md" "label" "最小玩法规则 v0.1") }}</h3><p>基础参数与固定出生点 · 自动选敌 · 标记与引爆 · 一次性结算。包含已确认规则、教学对应与 V01～V31 计划验证用例。</p></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/minimal-gameplay-rules.md" "label" "阅读玩法规则" "class" "text-action" "arrow" true) }}</div>
   <p class="coop-caption">规则确认与运行验证分别记录；用例尚未执行。</p>
 </section>
 <section class="coop-section" id="routes" aria-labelledby="coop-routes-title">
@@ -32,10 +32,14 @@
   <div class="coop-routes">{{ range .Params.implementation_routes }}<article class="coop-route"><div class="coop-route-heading"><h3>{{ .name }}</h3><span class="coop-status">{{ .status }}</span></div><p class="coop-route-role">{{ .role }}</p><p>{{ .description }}</p><p class="coop-route-focus">{{ .focus }}</p></article>{{ end }}</div>
   <p class="coop-caption">Unity 的实现与运行证据按阶段补充。Unreal、Piccolo 目前仅作方案讨论，不纳入项目实施与验收；讨论结论注明依据与待验证项。</p>
 </section>
+<section class="coop-section" id="ai-candidate" aria-labelledby="coop-ai-title">
+  <div class="section-heading"><div><p class="eyebrow">沿现有近战怪规则验证</p><h2 id="coop-ai-title">行为树首选候选</h2></div><span class="coop-status">首选候选 · 待验证</span></div>
+  <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/et10-behavior-tree-evaluation.md" "label" "ET10 内置行为树候选评估") }}</h3><p>选型依据 · 同步决策与冷却等待 · 策划制作管线 · BT01～BT10 最小验证。当前未编译或运行该接入方案，尚未采用为正式实现。</p></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/et10-behavior-tree-evaluation.md" "label" "阅读候选评估" "class" "text-action" "arrow" true) }}</div>
+</section>
 <div class="coop-notes coop-prose">{{ .Content }}</div>
 {{ else }}
 <article class="coop-article">
-  <header class="coop-article-header"><p class="eyebrow">{{ $hub.Title }} · 引擎无关设计</p><h1>{{ .Title }}</h1><p class="coop-lead">{{ .Description }}</p><p class="coop-caption">{{ .Params.project_status | default "教学优先 · 设计初稿 · 2026-10-25 · 游戏待实现与验证" }}</p></header>
+  <header class="coop-article-header"><p class="eyebrow">{{ $hub.Title }} · {{ .Params.project_eyebrow | default "引擎无关设计" }}</p><h1>{{ .Title }}</h1><p class="coop-lead">{{ .Description }}</p><p class="coop-caption">{{ .Params.project_status | default "教学优先 · 设计初稿 · 2026-10-25 · 游戏待实现与验证" }}</p></header>
   <details class="coop-mobile-toc"><summary>本篇目录</summary>{{ replace (string .TableOfContents) `id="TableOfContents"` `id="coop-toc-mobile"` | safeHTML }}</details>
   <div class="coop-article-grid"><div class="coop-prose">{{ .Content }}<nav class="coop-return" aria-label="项目导航"><a href="{{ $hub.RelPermalink }}">← 返回{{ $hub.Title }}项目首页</a></nav></div><aside class="coop-toc" aria-label="本篇目录"><p class="eyebrow">本篇目录</p>{{ replace (string .TableOfContents) `id="TableOfContents"` `id="coop-toc-desktop"` | safeHTML }}<a href="{{ $hub.RelPermalink }}">返回项目首页 →</a></aside></div>
 </article>
