@@ -26,7 +26,7 @@ description: "从玩法与内容生产，到研发、验证、发布和线上反
 
 ### 03 策划、美术与程序协作
 
-从[游戏美术生产与客户端协作]({{< relref "delivery-engineering/game-art-production-collaboration-series-index.md" >}})认识原画、角色、绑定、动画、场景、地编、特效、TA 与客户端的工作过程。第 01—05 篇已有正文，其余 7 篇为提纲。
+从[游戏美术生产与客户端协作]({{< relref "delivery-engineering/game-art-production-collaboration-series-index.md" >}})认识原画、角色、绑定、动画、场景、地编、特效、TA 与客户端的工作过程。第 01—06 篇已有正文，其余 6 篇为提纲。
 
 配置、资源、时序和工具接口怎样对齐？从[策划数据管线]({{< relref "system-design/skill-system-27-designer-data-pipeline.md" >}})、[美术交付标准]({{< relref "system-design/skill-system-28-artist-vfx-delivery-standard.md" >}})与[程序基础设施]({{< relref "system-design/skill-system-29-programmer-infrastructure.md" >}})进入。交接需要能消费的产物，也需要失败退回与变更后的重验责任。
 

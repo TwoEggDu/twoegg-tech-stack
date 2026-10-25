@@ -1,7 +1,7 @@
 # 游戏美术生产与客户端协作：系列规划
 
 > 创建：2026-10-25。用户已选择 **12 篇正文 + 1 个系列首页**；用户于同日确认本设计并要求落地；首页与 12 篇章节提纲现已建立。
-> 状态：首页与 12 篇章节已落地；第 01—05 篇正文已成稿，其余 7 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括工具地图、Photoshop 原画、建模到 Unity 接入，以及 Maya / 3ds Max 绑定、蒙皮、动画制作到 Unity 播放、混合和打断的操作方案；具体软件实操、素材与运行验证待完成。
+> 状态：首页与 12 篇章节已落地；第 01—06 篇正文已成稿，其余 6 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括工具地图、Photoshop 原画、建模到 Unity 接入，以及 Maya / 3ds Max 绑定、蒙皮、动画制作到 Unity 播放、混合和打断，以及场景构件建模/UV/贴图到 Unity 材质与拼装的操作方案；具体软件实操、素材与运行验证待完成。
 > 本文件是本系列唯一的篇级规划。根 `doc-plan.md` 只保留系列路由；具体开写时再建立单篇执行提纲。
 
 ## 1. 定位、读者与边界
@@ -64,7 +64,7 @@
 
 - 主要面向希望理解美术制作的客户端工程师，以及需要认识上下游工作的美术与 TA。
 - 以实时 3D 游戏为主要语境，先讲通用模型，再落到具体工具和引擎。
-- 首页当前显示：**第 01—05 篇已有正文，其余 7 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
+- 首页当前显示：**第 01—06 篇已有正文，其余 6 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
 
 ### 2.3 页面从上到下的结构
 
@@ -160,7 +160,7 @@ flowchart TD
 | 03 角色 | Maya 2024 为主操作方案，说明 3ds Max 2024 UV 对应入口；Photoshop 做颜色图，Substance 3D Painter 烘焙为可选扩展 | 已写简化法杖原稿 → UV / 颜色图 → FBX / PNG → Unity 6000.0 / URP 17 材质、Prefab 与静态 Play 模式观察；素材与实操待补，绑定动作接 04—05 |
 | 04 绑定 | 已写 Maya 2024 的关节、Bind Skin、权重绘制、数值检查及控制入口；3ds Max 2024 的 Bones、Skin、包络与 Weight Table | 简化手臂原稿 → 姿势/权重检查 → FBX 骨架、蒙皮及短测试曲线 → Unity Generic / SkinnedMeshRenderer / Animator 与 Play；操作、素材与运行验证待补 |
 | 05 动画 | Maya 2024 / 3ds Max 2024 的时间轴、关键帧、曲线与 FBX 烘焙导出 | 已写 Idle / Cast / Hit 手臂练习 → 动作原稿与导出范围 → Unity 6000.0 Generic、Animator 播放/过渡/打断；另解释全身 Blend Tree、分层、位移及取消，实操待补 |
-| 06 场景资产 | 3ds Max / Maya 的模块建模、枢轴和 UV；Photoshop / 材质工具制作贴图 | 墙、门、地面模块及原稿 → 模型与纹理导出 → Unity 材质/模板 → 拼装测试场景 |
+| 06 场景资产 | Maya 2024 的基本体、枢轴与平面 UV；3ds Max 2024 的 Box/Editable Poly/UVW Map/Unwrap UVW；Photoshop 平铺颜色图 | 已写墙/门框/地板原稿 → FBX/PNG → Unity 6000.0 / URP 17 材质、Prefab、碰撞与坐标试拼；光照 UV/LOD/复用边界已说明，素材与实操待补 |
 | 07 地编 | Unity 场景、地形、光照等编辑工具怎样消费上游资产；Unreal 作为按需对照 | 从导入的模块开始摆放、组织空间，检查碰撞/导航与镜头，保存场景并在运行中走查 |
 | 08 特效 | Photoshop 制作形状贴图与遮罩，Unity 粒子/材质编辑工具组织效果；VFX Graph 等按版本与需求选读 | 素材原稿 → 纹理导出 → 导入设置 → 效果组装 → 挂点播放、取消与回收；不要只讲抽象节奏 |
 | 09 TA | 材质/Shader 编辑工具、DCC 脚本或引擎编辑器工具的不同位置 | 选一个小需求展示原型、参数开放、导出辅助/校验与预览，解释哪个操作由工具自动完成 |
@@ -187,7 +187,8 @@ flowchart TD
 - 03 正文已成稿，解释角色体块、拓扑与表面，再用法杖尺寸、UV、贴图、FBX、Unity 材质与 Prefab 串起操作方案；新增原创原理图。没有实际模型、纹理工程或运行验证。
 - 04 正文已成稿，用简化手臂分别说明 Maya / Max 制作、权重与控制端、导出和 Unity 接入，补骨架变更、装备及修正形变边界；只有原理图与操作方案，未执行软件或运行实验。
 - 05 正文已成稿，串起 Maya / Max 动作制作、FBX、Unity 播放、混合与打断，并区分逻辑取消、动画事件及根运动；原创示意与操作方案已写，实际动作文件、全身素材及运行记录待补。
-- 06—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
+- 06 正文已成稿，沿模块接口、Maya / Max 建模和 UV、Photoshop 平铺贴图、FBX、Unity 材质/Prefab/碰撞与坐标试拼展开；明确平铺颜色 UV 与光照 UV、编辑器尺寸检查与实际通行的区别。实际素材、拼装及运行记录待补。
+- 07—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
 - 后续写作若未实际操作工具，应明确标为操作设计或待验证步骤；不能用本轮规划更新宣称软件或引擎验证完成。
 
 **本轮核对的原始资料**：Adobe [PSD 原稿与 PNG 导出说明](https://helpx.adobe.com/photoshop/desktop/save-and-export/save-files/save-in-png-and-gif-formats.html)、Autodesk [Maya FBX 导出（2024）](https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Interoperability/files/GUID-C64CFD18-517C-47A2-9E5D-489EC5D6480C.htm)及 [3ds Max 游戏 FBX 导出（2022）](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-70DBCE92-4D55-4CD6-A2E9-23E48E571068.htm)。这些资料确认了教学路径可参考的能力范围；旧版本菜单和默认值不能直接写成当前版本保证。
@@ -286,6 +287,8 @@ flowchart TD
 **边界：** 制作端 FK/IK 在 04 解释；运行时状态驱动归 10。完整动画系统算法及战斗状态机另行深入。
 
 ### 06｜场景资产：怎样制作可以组合的环境构件
+
+**当前状态：** 正文已成稿。三种教学构件、原创接口/UV 示意、两套 DCC 操作、Photoshop 平铺颜色图、静态导出与 Unity 配置/试拼均已写；模型、贴图与引擎实操未执行。
 
 **核心问题：** 怎样制作一组能反复组合、并维持视觉一致性的环境资产？
 
@@ -422,7 +425,7 @@ flowchart TD
 
 ### 6.2 篇级页面与状态
 
-以下页面已建立；第 01—05 篇为正文，其余 7 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
+以下页面已建立；第 01—06 篇为正文，其余 6 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
 
 | 编号 | 章节页面 | 状态 |
 | --- | --- | --- |
@@ -431,7 +434,7 @@ flowchart TD
 | 03 | [game-art-production-03-character-assets.md](../content/delivery-engineering/game-art-production-03-character-assets.md) | 正文已写；工具操作方案与原理示意，实操/素材/运行验证待补 |
 | 04 | [game-art-production-04-rigging-skinning.md](../content/delivery-engineering/game-art-production-04-rigging-skinning.md) | 正文已写；Maya / Max → FBX → Unity 操作方案，实操与素材待补 |
 | 05 | [game-art-production-05-animation.md](../content/delivery-engineering/game-art-production-05-animation.md) | 正文已成稿；Maya / Max 制作、导出与 Unity 播放/混合/打断操作方案，实操待补 |
-| 06 | [game-art-production-06-environment-assets.md](../content/delivery-engineering/game-art-production-06-environment-assets.md) | 提纲已建立；正文待写 |
+| 06 | [game-art-production-06-environment-assets.md](../content/delivery-engineering/game-art-production-06-environment-assets.md) | 正文已成稿；Maya / Max 构件建模/UV、Photoshop 贴图与 Unity 材质/拼装方案，实操待补 |
 | 07 | [game-art-production-07-level-art.md](../content/delivery-engineering/game-art-production-07-level-art.md) | 提纲已建立；正文待写 |
 | 08 | [game-art-production-08-vfx.md](../content/delivery-engineering/game-art-production-08-vfx.md) | 提纲已建立；正文待写 |
 | 09 | [game-art-production-09-technical-art.md](../content/delivery-engineering/game-art-production-09-technical-art.md) | 提纲已建立；正文待写 |

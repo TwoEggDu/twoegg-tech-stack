@@ -1,0 +1,51 @@
+<figure aria-label="场景模块、枢轴、庭院试拼与平铺 UV 的原理示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="模块接口、8乘6米试拼和UV密度，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 620" role="img" aria-labelledby="environment-kit-title environment-kit-desc" style="display:block;width:100%;min-width:740px;height:auto">
+      <title id="environment-kit-title">三种构件的摆放接口，与共享石材的取样尺度</title>
+      <desc id="environment-kit-desc">上方是2米直墙、4米门框和2乘2米地板，橙点为本例枢轴。下方左侧是8乘6米试拼俯视图，十二块地板，入口门框外宽4米、净开口2米，箭头指向正Z；右侧表示2乘3米墙面在每周期2米的纹理上使用U跨度1、V跨度1.5。图为原理示意，没有实际模型、UV或通行结果。</desc>
+      <defs><marker id="environment-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker></defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="20" y="30" font-size="19" font-weight="600">先约定几何边界与枢轴，再检查组合</text>
+        <g font-size="16" text-anchor="middle"><text x="90" y="62">直墙：2 × 3 米</text><text x="320" y="62">门框：4 × 3 米</text><text x="605" y="62">地板：2 × 2 米</text></g>
+      </g>
+      <g fill="#dce5d9" stroke="#728977" stroke-width="1.5">
+        <rect x="45" y="80" width="90" height="135"/>
+        <path d="M230 215V80H410V215H365V102.5H275V215Z" fill-rule="evenodd"/>
+        <path d="M520 215H610L650 170H560Z"/>
+      </g>
+      <g fill="#bb8549"><circle cx="45" cy="215" r="5"/><circle cx="230" cy="215" r="5"/><circle cx="520" cy="215" r="5"/></g>
+      <g font-family="system-ui, sans-serif" fill="#435b48" font-size="14">
+        <text x="20" y="244">橙点：墙/门框起点的底部厚度中心；地板顶面起始角</text>
+        <text x="286" y="148">净洞 2 米</text><text x="286" y="172">高 2.5 米</text>
+        <text x="530" y="151">板厚向下 0.2 米</text>
+      </g>
+      <path d="M20 265H820" stroke="#d1d9d2"/>
+      <g font-family="system-ui, sans-serif" fill="#304b40" font-size="18" font-weight="600"><text x="40" y="300">试拼：8 × 6 米（俯视）</text><text x="460" y="300">UV：一个周期覆盖 2 米</text></g>
+      <rect x="55" y="335" width="280" height="210" fill="#f1f4ee" stroke="#a5b7a6"/>
+      <path d="M125 335V545M195 335V545M265 335V545M55 405H335M55 475H335" fill="none" stroke="#c2d0bf" stroke-width="1"/>
+      <path d="M55 545V335H335V545M55 545H160M230 545H335" fill="none" stroke="#728977" stroke-width="7"/>
+      <path d="M160 545H230" stroke="#bb8549" stroke-dasharray="5 4" stroke-width="2"/>
+      <circle cx="125" cy="545" r="5" fill="#bb8549"/>
+      <path d="M195 575V445M29 490V425" stroke="#728977" stroke-width="2" fill="none" marker-end="url(#environment-arrow)"/>
+      <g font-family="system-ui, sans-serif" fill="#435b48" font-size="14">
+        <text x="13" y="411">+Z</text><text x="68" y="363">12 块地板</text>
+        <text x="205" y="509">净开口</text><text x="205" y="529">2 米</text>
+        <text x="55" y="594">橙点：门框实例位于 (2,0,0)</text>
+        <text x="55" y="613">入口虚线为上方横梁，地面通道留空</text>
+      </g>
+      <g stroke="#728977" stroke-width="1.5">
+        <rect x="470" y="335" width="140" height="210" fill="#dce5d9"/>
+        <path d="M470 405H610" stroke="#bb8549" stroke-dasharray="6 4"/>
+        <path d="M470 475H610M540 335V545" stroke="#b7c8b4"/>
+      </g>
+      <g font-family="system-ui, sans-serif" fill="#435b48" font-size="15">
+        <text x="435" y="341">1.5</text><text x="445" y="410">1</text><text x="445" y="550">0</text>
+        <text x="465" y="570">0</text><text x="605" y="570">1</text>
+        <text x="641" y="365">2 × 3 米墙面</text><text x="641" y="394">U 跨 1，V 跨 1.5</text>
+        <text x="641" y="443">1024 像素 / 2 米</text><text x="641" y="472">= 512 像素/米</text>
+        <text x="460" y="602">平铺颜色 UV 可超出 0—1；光照 UV 另行准备</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption>原创原理示意：模块以约定边界组合，表面按统一密度取样。图中门洞和 UV 仅解释教学方案，不代表已制作的资产或已通过的拼装、通行与光照验证。</figcaption>
+</figure>
