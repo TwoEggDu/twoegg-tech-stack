@@ -14,7 +14,7 @@ hybridclr_version: "v6.1.0 (5567f367)"
 
 这篇接在 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) 与 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})之后，解释一条线程怎样进入、执行并退出 IL2CPP／HybridCLR。async 的调度、SynchronizationContext 和取消协议继续看 [Unity 异步运行时系列]({{< relref "engine-toolchain/unity-async-runtime-series-index.md" >}})。
 
-> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程、原生插件回调、在途停止，以及原生回调下GC引用保留与有界分配压力结果；长期与其他设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
+> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程、原生插件回调、在途停止，以及原生回调下GC引用保留、有界分配压力、对象快照与实际活跃根区间结果；长期与其他设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
 
 ## 先把线程问题拆成四层
 
@@ -202,7 +202,7 @@ python tools/lifetime_lab.py verify
 
 这次故意把两线程的目标调用串行化，未验证并发首次转换竞争、线程池复用或原生回调 attach／detach。正常 `System.Threading.Thread` 的成功路径，也不能代替异常中止、宿主关机与设备压力测试。
 
-<!-- DATA-TODO: 后续补活跃根区间、并发首次转换及线程池实验。 -->
+<!-- DATA-TODO: 并发首次转换及线程池仍待补；活跃根区间见后续gc-roots实验。 -->
 
 ## 动手验证二：把原生回调单独做成一组
 
@@ -290,6 +290,20 @@ Detach数字仍是两个重载入口组成一条解除登记调用链。stack组
 尚未验证回调异常注入、多原生线程竞争、真实SDK关闭竞争、实际根枚举内容或持续跨片段标记期的引用修改。收集期间本样本对象可用、scope按顺序清理，与写屏障完整性和长期泄漏仍是不同结论。
 
 <!-- DATA-TODO: 继续补异常注入、持续跨片段引用修改、多原生线程竞争及其他平台。 -->
+
+### 已完成：解释帧活跃、空闲与根注销对照
+
+同一固定环境的后续 `gc-roots` 实验（build_id `993e5b9e-1f71-4949-b339-39ff10d359b1`）进一步采到了GC根回调的真实返回值。handle、stack、idle三组各有3个无调试器对照和3个匹配PDB的CDB进程；另有handle/stack各3个独立快照进程，均正常退出。
+
+- **外部原生线程仍在热更回调中**：解释帧为1，stackTop36，实际报告288字节；Context引用在偏移24，局部Node引用在偏移48和264，均在区间内。每个进程收集3次，结果一致。
+- **托管线程仍存活、解释方法已经返回**：线程先执行热更 `IdleCreate`，返回AOT后等待主线程放行。解释器栈仍已分配、容量131072槽，但frameTop／stackTop为0；3次GC查询均返回null／0。这里区分了“线程存在”“有MachineState”和“有活跃解释帧”。
+- **线程退出**：按对应注册与所有者匹配根注销；采样不越过注销读取已释放状态。对象是否回收、根注销和native内存归还量继续分别判断。
+
+这轮目标地址保存在调试器伪寄存器，没有向Player新增持有目标的句柄。收集线程与根所属工作线程分别记录；不是把“当前执行GC的线程”误认为MachineState所属线程。
+
+21份对象快照另行验证Normal句柄目标及Context→Slots数组路径，Free后强句柄目标消失；快照ManagedStacks条目均为0，没有给出该解释器动态根边。完整矩阵及官方读取器的189组缓冲交叉校验见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})。这支持本样本引用位于报告区间，不证明唯一根来源、全部写屏障或长期无泄漏。
+
+本轮固定提交为 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)和[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)，复现命令为 `tools/gc_roots_lab.py` 与 `tools/check_snapshots_unity.py`；旧 `449a994` 不包含新增根快照工程。
 
 ## Unity 主线程与 Web 平台的边界
 

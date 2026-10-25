@@ -67,7 +67,9 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 
 原生回调下的 [GC引用保留与有界压力]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 也已补入：Normal句柄、无上下文句柄的活跃回调引用，以及1024回调的分配／引用修改三组各运行三个Player。线程所有权见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮固定提交为 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，可查看[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)。
 
-当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；根快照、持续跨片段引用修改、长期压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
+后续 [对象快照与活跃根区间验证]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 也已完成：实际GC查询中，活跃解释帧报告288字节，目标引用位于其中；解释方法返回、线程仍等待时返回空区间。另取21份对象快照，核对Normal句柄的保留路径及Free后的目标变化，并用官方读取器交叉校验。活跃／空闲／退出关系见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮固定提交为 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)；旧 `449a994` 仍为前轮实验基线。
+
+当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；完整动态根路径归因、持续跨片段引用修改、长期压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
 
 ## 公共基础之后，补 HybridCLR 的约定
 
@@ -184,6 +186,6 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 
 本系列已经覆盖机制、源码入口、案例和工程防线。配套实验仓库已提供可构建的隔离工程、复现脚本和固定提交证据；已有调用链、泛型、对象保留与托管线程的固定提交及证据入口；各平台接入与业务资源加载流程仍未覆盖。
 
-基础 Add、三栏泛型调用实验之外，现已补入 [热更对象保留与释放]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) 的 Player 记录。下一步仍是 GC 引用快照、活跃根区间、持续跨片段引用修改与长期压力验证，以及首调、预热、稳定执行和跨边界成本测量。
+基础 Add、三栏泛型调用实验之外，现已补入 [热更对象保留与释放]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) 的 Player 记录。下一步仍是完整动态根路径归因、持续跨片段引用修改与长期压力验证，以及首调、预热、稳定执行和跨边界成本测量。
 
 **先对齐版本和运行现场，再沿主链理解机制，最后按问题回到对应专题。**

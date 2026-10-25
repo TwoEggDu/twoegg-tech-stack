@@ -118,7 +118,7 @@ Unity 2022.3 的[增量 GC 文档](https://docs.unity3d.com/2022.3/Documentation
 
 本轮没有采集 Memory Profiler 根快照、托管堆 used／reserved 或 RSS，也没有测量每次 GC 的耗时。弱引用失效不证明程序集已卸载、native metadata 已释放或内存已经归还 OS。线程状态的另一条生命周期见 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
 
-<!-- DATA-TODO: 继续补对象引用快照、活跃根区间和独立负载下的增量开关性能对照。 -->
+<!-- DATA-TODO: 独立负载下的增量开关性能对照仍待补；对象快照与活跃根区间见后续实验。 -->
 
 ## 已完成：原生回调中的 GC 引用保留与有界压力
 
@@ -146,7 +146,31 @@ handle/stack还各运行一个匹配PDB的CDB进程，验证三次Full入口位�
 
 复现入口为 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 中的 `tools/gc_callback_lab.py`，依次执行 `build --editor <Unity.exe路径>`、`run`、`trace --cdb <x64-cdb.exe路径>`、`verify`。本轮固定提交为 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，包含[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/results.json)。产物和原始日志在忽略目录 `artifacts/gc-callbacks/`；旧 `b915632` 仍只标识前一轮原生回调实验。
 
-<!-- DATA-TODO: 后续补根快照、实际活跃根区间、持续跨片段引用修改和独立性能采样。 -->
+<!-- DATA-TODO: 持续跨片段引用修改和独立性能采样仍待补；快照与实际根区间见下一节。 -->
+
+## 已完成：对象快照与解释器活跃根区间
+
+前一轮看到对象跨收集仍可用，还不能直接回答“运行时向GC报告了哪一段栈”。2026-10-25，在独立 `projects/gc-roots` 中继续验证，build_id `993e5b9e-1f71-4949-b339-39ff10d359b1`，仍使用上述自定义Editor／v9组合、Windows x64 IL2CPP Development、C++ Debug和Minimal stripping。
+
+这次分别运行9个无调试器对照Player、6个快照Player和9个CDB Player，均退出0。快照与原生断点分进程采集，不拼成同一时刻。CDB记录收集器调用 `GetGCRootData` 的入口和真实返回缓冲，调用栈包含 `GC_push_roots`；不只根据字段计算预期长度。
+
+| 对照 | 每个进程的3次实际返回，三进程一致 | 目标引用在区间中的字节偏移 |
+|---|---|---|
+| Normal句柄保留Context | frameTop1、stackTop36、非空base、288字节 | 24 |
+| 无Context句柄的活跃局部Node | frameTop1、stackTop36、非空base、288字节 | 48、264 |
+| 解释方法返回、托管线程仍等待 | backing base仍非空，frameTop0、stackTop0，返回null／0 | 无报告槽位 |
+
+三组的分配容量均为131072槽，`StackObject` 为8字节，即1 MiB分配容量；活跃根回调报告的只是288字节，空闲时则为空。验收器逐项核对返回base、长度、线程、根生命周期和完整槽位序列。目标地址来自自有观察入口，保存在调试器伪寄存器，不另加Normal或Pinned句柄。它证明“该引用出现在GC查询到的区间中”，仍不证明这是唯一根，也没有记录保守标记器逐字访问的过程。
+
+对象快照使用 `Unity.Profiling.Memory.MemoryProfiler.TakeSnapshot`，捕获标志为 `ManagedObjects`。handle组三个进程各取回调前、回调活跃、Join后仍持有、Free后四份快照：前三阶段强句柄表中均有同一 `GcHot.Context`，Tag73、Head为空，并可沿Slots字段找到长度64、元素全空的 `GcHot.Node[]`；Free后该热更强句柄目标消失。弱引用失效仍只作为这次收集窗口中的独立观察，不能通过堆中残留字节判断对象活着。
+
+stack组三个进程各取回调前、活跃、退出后三份快照，均无热更强句柄目标，但活跃回调跨收集后仍能完整检查Node数据。**21份快照的ManagedStacks条目均为0**；该快照与本次解码范围没有给出解释器动态根边。因此，快照强句柄表中没有Node，不意味着Node没有根或已经回收。原生动态根区间由前面的CDB记录单独举证。
+
+为避免只相信自有解析器，另用未修改的Unity官方Memory Profiler1.1.0读取器，在独立Editor分析工程中读取21份快照。9类条目共189组数据缓冲的数量与内容哈希全部一致；该包没有加入Player依赖。类型和字段来自快照描述，原始内存、PDB和完整调用栈保留在本机忽略目录。
+
+复现入口为实验仓库的 `tools/gc_roots_lab.py`（build/run/inspect/trace/verify）及 `tools/check_snapshots_unity.py`，本轮固定提交为 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，包含[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)及[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)；`449a994` 继续作为前轮GC保留／压力基线。线程生命周期对照见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})，模型区分见 [GC桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
+
+<!-- DATA-TODO: 后续补完整动态根路径归因、持续跨增量片段引用修改、长期与性能采样；当前快照和区间记录不能替代。 -->
 
 ## 接到 HybridCLR
 

@@ -118,7 +118,17 @@ GC 只回答其对象体系中的可达性与回收问题，不会自动证明 n
 
 详细数据和采样口径见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，句柄、回调与Join的顺序见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮样本与摘要已固定在实验仓库提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，见[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)。
 
-<!-- DATA-TODO: 补固定环境的实际活跃根区间、对象引用快照和持续跨片段引用修改；本轮有限压力与清理入口不能替代这些记录。 -->
+<!-- DATA-TODO: 持续跨片段引用修改、完整动态根路径归因与独立性能仍待补；实际返回区间和对象快照见后续实验。 -->
+
+### 新增：分配容量、报告根区间与对象快照分别取证
+
+后续 `gc-roots` 实验沿用固定自定义Editor／v9组合，build_id `993e5b9e-1f71-4949-b339-39ff10d359b1`。实际GC调用链中，handle与stack三轮各采3次返回，均为stackTop36、288字节，目标引用分别位于偏移24和48／264。空闲托管线程的解释方法已返回，尽管backing栈仍分配131072槽，frameTop／stackTop均为0，三轮各3次真实返回均为null／0。
+
+这把“分配了1 MiB解释器栈”与“当前报告288字节活跃根”分开，也把根的所属线程与执行收集的线程分开。记录包括真实返回缓冲、连续槽位和注册／注销生命周期，不只引用源码公式；仍没有证明唯一根来源或标记器逐字遍历。
+
+另外21份对象快照解析到强句柄目标→Context→64槽数组的路径，Free后热更强句柄目标消失；官方Memory Profiler1.1.0读取器对189组缓冲的数量与哈希交叉校验通过。所有快照ManagedStacks条目为0，未提供解释器动态根边。**对象快照中的可见引用路径、原生分配所有权的root字段和解释器提供的动态根区间，需要分别解释。**
+
+详细矩阵见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，活跃／空闲／退出的顺序见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮已推送实验仓库固定提交 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，可查看[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)；前轮 `449a994` 只作为基线。
 
 **解释器接入 GC，必须同时维护可见的活跃引用、正确的写入协议和有所有者的 native 状态。**
 

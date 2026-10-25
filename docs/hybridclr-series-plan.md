@@ -77,12 +77,12 @@
 
 ## 接下来补强
 
-“源码阅读起步 → 调用链篇”的共用 Player 实验及三栏泛型调用综合实验已完成，对象保留与托管线程验证也已完成，原生回调正常路径也已完成；原生回调GC保留与有界压力也已完成；接下来补根快照、持续跨片段引用修改和性能测量。顺序见 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，泛型实验单独记录于 `runtime-generic-call-experiment-outline.md`。环境继续使用本机自定义 Unity 2022.3.62f3、package v9.0.3 / runtime v9.0.1 原始配套源码；旧两篇保留 v6.1.0 阅读说明，新增综合实验归本系列、三栏共用。
+“源码阅读起步 → 调用链篇”的共用 Player 实验及三栏泛型调用综合实验已完成，对象保留与托管线程验证也已完成，原生回调正常路径也已完成；原生回调GC保留与有界压力也已完成；对象快照与实际根区间验证也已完成；接下来补完整动态根路径归因、持续跨片段引用修改和性能测量。顺序见 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，泛型实验单独记录于 `runtime-generic-call-experiment-outline.md`。环境继续使用本机自定义 Unity 2022.3.62f3、package v9.0.3 / runtime v9.0.1 原始配套源码；旧两篇保留 v6.1.0 阅读说明，新增综合实验归本系列、三栏共用。
 
 | 工作 | 状态与验收 |
 |---|---|
 | 源码阅读起步 | 已补自定义 Editor 身份、v9 固定组合、构建与符号记录、自有样本；不推广为全版本兼容 |
-| GC 与线程接入 | 正文、源码定位、对象保留、托管线程及原生回调正常路径实测已完成；根快照、持续跨片段引用修改与长期 native 回调压力待补 |
+| GC 与线程接入 | 正文、源码定位、对象保留、托管线程及原生回调正常路径实测已完成；对象快照及实际活跃根区间已验证；完整动态根路径归因、持续跨片段引用修改与长期 native 回调压力待补 |
 | 三栏泛型调用综合实验 | 已写并实测；同一 DLL，显式 AOT seeds × 补充元数据四组对照；P0/M0 的 int/结构体异常、其余成功，原生与内联解释路径均有断点证据 |
 | 性能与预热篇 | 待加强；固定设备、构建配置和采样条件 |
 | 调用链篇 | 已修正 v6.1.0 旧路径，新增 v9 差异表与实测：同一方法 Transform 一次、Execute 两次，返回 5、15 |
@@ -125,3 +125,13 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 - handle/stack分别匹配PDB取证：活跃回调内根注册后、scope退出前各3次Full入口，Join后handle组FreeContext1次，stack0次。stress未逐次原生断点跟踪。没有实际根区间、根快照、唯一根归因、持续跨片段标记引用修改或写屏障完整性结论。
 - 31项Python测试和4项直接编译热更源码的桌面破坏测试通过，后者不作为Player/GC验证。独立审查提出的对象图关系、检查点相位、显式收集计数门槛已修正。
 - 实验仓库已推送固定提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，见[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)；b915632仍为前序原生回调正常路径版本。GC/线程三篇正文及三个索引已回填，不增加正文篇数。
+
+## 对象快照与活跃根区间验证（2026-10-25）
+
+- 独立 `projects/gc-roots`，build_id `993e5b9e-1f71-4949-b339-39ff10d359b1`；环境锁不变，旧gc-callbacks源码与产物回执保留。
+- 最终24个Player进程退出0：handle/stack/idle各3个无快照对照、handle/stack各3个快照进程、三组各3个CDB进程。额外ABI检查仅作调试器布局验证，不算业务通过进程。
+- 实际GC调用栈含GC_push_roots，GetGCRootData入口/返回缓冲成对采样。每组9个返回：活跃handle与stack均36槽/288字节，目标偏移24与48/264；idle线程仍存活且backing容量131072槽，但解释帧/stackTop0，实际返回null/0。根注册/注销完整匹配。
+- 21份ManagedObjects快照：handle四阶段强目标1/1/1/0，同一Context→Slots64槽数组路径可见；stack三阶段无热更强句柄目标。所有ManagedStacks条目0，未提供解释器动态根边，不作唯一根归因。
+- 独立Editor分析工程使用官方Memory Profiler1.1.0，21份快照共189组条目数量和缓冲哈希与自有读取器一致。包仅作分析依赖，不修改Player配置。57项Python测试通过。
+- 实验仓库已推送固定提交 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，入口为[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)与同目录三组自有root-events；真实.snap、PDB和原始调用栈仅在忽略目录。449a994仍是前轮保留/压力基线。
+- 三篇正文和三个索引补入实际返回区间与对象快照的证据边界。完整动态根路径归因、持续跨增量片段引用修改、性能、长期压力及其他平台仍待补；正文篇数不变。
