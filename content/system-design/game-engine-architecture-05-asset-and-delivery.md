@@ -22,6 +22,8 @@ series: "游戏引擎架构地图"
 
 当前这版首稿只使用官方文档证据。`docs/engine-source-roots.md` 里 Unity 和 Unreal 的源码根路径都还不是 `READY`，所以下文里凡是“事实”，都只落在官方资料明确写出来的范围；凡是“判断”，都会明确写成工程判断，而不是伪装成源码结论。
 
+> **公共模型**：[00A：引擎怎样分层——职责、依赖与资源服务的边界]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}})：将离线加工、通用资源服务、专业数据、设备对象与世界实例分别定位。
+
 ## 这篇要回答什么
 
 很多人一提到资源导入、打包、Cook、Package，脑子里先冒出来的都是流程词：

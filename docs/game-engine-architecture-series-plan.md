@@ -1,5 +1,29 @@
 # 游戏引擎架构地图系列规划
 
+> 本文件是本系列唯一 canonical 篇级目录。执行计划、历史进度表与单篇提纲服务于执行，不反向覆盖这里的当前正文状态。
+
+## 当前目录与本轮增量
+
+2026-10-25 核对：已有一篇导读与00—07八篇正文，本轮增加00A原理补篇，共10篇正文；08仍只有提纲和证据卡。正文成稿、官方资料核对、站点验证与引擎运行分别记录。
+
+| 编号 | 正文 / 计划 | 当前状态 |
+| --- | --- | --- |
+| 导读 | [从玩家输入到屏幕画面：游戏内容和运行时是怎么汇合的](../content/rendering/player-input-and-game-content-to-screen.md) | 已有正文，保留原URL、系列与导读顺序 |
+| 00 | [游戏引擎架构地图 00｜总论：现代游戏引擎到底该怎么分层](../content/system-design/game-engine-architecture-00-overview.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 00A | [游戏引擎架构地图 00A｜引擎怎样分层：职责、依赖与资源服务的边界](../content/system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md) | 正文完成；官方资料、Hugo与生成页检查，模型为设计建议 |
+| 01 | [游戏引擎架构地图 01｜为什么游戏引擎首先是一套内容生产工具](../content/system-design/game-engine-architecture-01-content-production.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 02 | [游戏引擎架构地图 02｜Unity 的 GameObject 和 Unreal 的 Actor，到底差在哪](../content/system-design/game-engine-architecture-02-gameobject-vs-actor.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 03 | [游戏引擎架构地图 03｜脚本、反射、GC、任务系统，到底站在引擎的哪一层](../content/system-design/game-engine-architecture-03-runtime-foundation.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 04 | [游戏引擎架构地图 04｜渲染、物理、动画、音频、UI，为什么都像半台小引擎](../content/system-design/game-engine-architecture-04-professional-subsystems.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 05 | [游戏引擎架构地图 05｜资源导入、Cook、Build、Package，为什么也是引擎本体](../content/system-design/game-engine-architecture-05-asset-and-delivery.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 06 | [游戏引擎架构地图 06｜跨平台引擎到底在抽象什么？](../content/system-design/game-engine-architecture-06-platform-abstraction.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 07 | [游戏引擎架构地图 07｜为什么 DOTS 和 Mass 不能只算“一个模块”](../content/system-design/game-engine-architecture-07-dots-and-mass.md) | 已有正文；原文证据边界保留，本轮未逐篇事实审计 |
+| 08 | Unity 和 Unreal，到底是什么气质的引擎 | 仅有提纲与证据卡，暂无正文 |
+
+00A 采用“问题 → 职责模型 → 接口依赖 → 资源边界 → 工程例子与取舍”的原理结构，不要求套用原主线的Unity/Unreal逐项对照。执行与验证见[00A提纲](game-engine-architecture-00a-layers-dependencies-outline.md)。
+
+00的六组内容用于覆盖引擎问题，00A画接口依赖与数据交接，不将两者当作同一种严格分层。新模型是作者建议，公开引擎仅用于核对相近边界，不称为统一行业标准。原主线及08拟题保留，后续正文范围以下文为准。
+
 ## 系列定位
 
 这组文章不写成 `Unity 教程`，也不写成 `Unreal 入门导览`。
@@ -41,7 +65,7 @@
 
 ## 系列结构
 
-建议做成 `1 篇总论 + 8 篇主线 + 若干补篇`。
+规划保留 `1 篇总论 + 8 篇主线 + 若干补篇`；当前正文状态以上表为准，00A是本轮新增补篇。
 
 ### 00｜总论：现代游戏引擎到底该怎么分层
 

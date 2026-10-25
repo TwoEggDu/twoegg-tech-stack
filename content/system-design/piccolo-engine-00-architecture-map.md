@@ -28,6 +28,8 @@ weight: 490
 
 > 源码基线：本文依据 [BoomingTech/Piccolo 的固定提交 `f5053707fed4`][revision]，提交日期为 2024-09-30。图和调用关系来自源码核对；Piccolo 的本机构建、断点观察与图形捕获尚待开展。下文的调试任务是待执行练习。
 
+> **引擎无关的参考模型**：[00A：引擎怎样分层——职责、依赖与资源服务的边界]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}) 进一步解释框架、专业系统和资源服务的边界；本文仍以Piccolo固定源码核对实际关系，不把参考图直接当成它的模块依赖图。
+
 ## 先分清三种架构关系
 
 读引擎时，至少会遇到三种不同的问题。
