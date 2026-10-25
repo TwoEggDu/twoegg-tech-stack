@@ -15,7 +15,7 @@ reading_title: "线上出了 Bug：应该改配置、热更代码，还是重新
 reading_summary: "发现线上问题后，怎样确定修复范围和交付方式？"
 ---
 
-> 贯穿案例：客户端 100 用组合 R17 配套修复数值与技能逻辑；另用特效故障说明资源修复的判断条件。组合定义见[第 04 篇：版本如何绑定]({{< relref "delivery-engineering/unity-game-update-release-04-version-binding.md" >}})。
+> 贯穿案例：客户端 100 用配套的代码与数据补丁修复数值与技能逻辑；另用特效故障说明资源修复的判断条件。组合定义见[第 04 篇：版本如何绑定]({{< relref "delivery-engineering/unity-game-update-release-04-version-binding.md" >}})。
 
 ## 1. 从可复现问题开始
 
@@ -26,7 +26,7 @@ reading_summary: "发现线上问题后，怎样确定修复范围和交付方�
 
 - 讨论数值修正与数据结构变化的区别。
 - 检查旧客户端是否理解新字段、枚举和引用，判断是否涉及服务端同步。
-- 数据修复若依赖新代码，HotCode 与 Data 必须按同一兼容组合发布；本例 Data 21 依赖 HotCode 8，不能单独生效。
+- 数据修复若依赖新代码，HotCode 与 Data 必须按同一兼容组合发布；本例的新配置依赖修复后的技能逻辑，不能单独生效。
 
 ## 3. 业务逻辑错误怎样交付
 
