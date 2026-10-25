@@ -29,15 +29,15 @@ reading_status: "27 篇正文已写，原定主线齐备；完整构建和运行
 
 ## 公共基础之后，补 Piccolo 的约定
 
-公共入口：[C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。先理解值与借用、所有权、虚调用，再按当前系统补容器、模板/宏、回调和编译链接；其中缺课状态见公共目录。
+公共入口：[C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。先理解值与借用、所有权、虚调用，再按当前系统补容器、模板/宏、回调和编译链接；CXX-01～11 公共正文已齐备，项目专项与实际运行状态另记。
 
 现有三篇 Piccolo C++ 文章继续承担专项案例：谁持有关卡与组件、Component/RHI 怎样分派、ReflectionPtr 与生成器怎样接线。已经读过通用规则的读者可直接追这些项目约定，不必再次顺读所有语言解释。
 
-**容器专项已写**：[对象容器修改后，持有者、借用与遍历怎样变化]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})，从编辑器删除路径解释对象表成员资格、局部强持有、组件列表复制与迭代器失效，含独立 C++17 练习。公共容器课尚待成稿，本篇先补必要规则并核对 Piccolo 的约定。
+**容器专项已写**：[对象容器修改后，持有者、借用与遍历怎样变化]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})，从编辑器删除路径解释对象表成员资格、局部强持有、组件列表复制与迭代器失效，含独立 C++17 练习。公共容器规则先读 CXX-04，本篇继续核对 Piccolo 的包装、持有与删除约定。
 
 **回调专项已写**：[窗口与编辑器回调怎样绑定、调用和注销]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})，沿 GLFW、ImGui 和输入管理器核对绑定参数、实际分发、Lambda 捕获与退出清理，明确固定版本尚无按订阅移除接口。
 
-**缓冲与线程专项已写**：[状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})，区分值复制、槽位角色、消费与复用，沿 Jolt 和异步日志找到实际 CPU 线程，再把 GPU 提交与完成单独核对。三项专项正文已齐备，公共课程缺口与实际引擎运行状态分别维护。
+**缓冲与线程专项已写**：[状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})，区分值复制、槽位角色、消费与复用，沿 Jolt 和异步日志找到实际 CPU 线程，再把 GPU 提交与完成单独核对。三项专项正文已齐备，公共课成稿与实际引擎运行状态分别维护。
 
 <a id="chapters"></a>
 

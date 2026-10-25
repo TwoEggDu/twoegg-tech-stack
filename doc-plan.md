@@ -80,7 +80,7 @@
 | 游戏引擎架构地图 | [docs/game-engine-architecture-series-plan.md](./docs/game-engine-architecture-series-plan.md) | 11篇正文，原定主线齐备；引擎实验待验证 | 统一职责/依赖/数据口径，以相同任务比较Unity与Unreal；篇级及验证状态由系列plan维护 |
 | 游戏引擎公共基础 | [docs/game-engine-foundations-series-plan.md](./docs/game-engine-foundations-series-plan.md) | 28 个课程单元；公共正文 1 篇已成稿，2 个选读复用、22 个待补桥、3 个待写；独立示例通过，引擎运行待验证 | 参考 GAMES104，按公共底座 → 系统补充 → Piccolo / Unity / Unreal 分流；原文保留归属，篇级范围、复用、依赖与阅读顺序由本课程 plan 维护 |
 | Piccolo 源码阅读与调试 | [docs/piccolo-engine-series-plan.md](./docs/piccolo-engine-series-plan.md) | 主线与前置共 27 篇正文，原定主线齐备；配置与生成实测通过，完整构建/运行待验证 | 从架构与前置进入对象、输入/物理、相机、骨骼动画与蒙皮、粒子模拟与绘制、Lua/反射桥接、GPU 资源、着色/输出及编辑器；篇级计划、源码、独立验证与运行状态由系列 plan 分别维护 |
-| UE 全栈工程师成长路线 | [docs/ue-fullstack-expert-series-plan.md](./docs/ue-fullstack-expert-series-plan.md) | 规划已建立，实践待验证 | 从 Unity/C# 经验进入 UE 客户端、权威战斗服、业务后端与交付；只管理贯通路径和新增桥梁，复用 Unreal、技能、服务端、渲染与交付专题；[盘点快照](./docs/ue-fullstack-content-audit.md) |
+| UE 全栈工程师成长路线 | [docs/ue-fullstack-expert-series-plan.md](./docs/ue-fullstack-expert-series-plan.md) | 3 篇 UFS 入门与 1 篇 C++ 专项正文已写；UE 实践待验证 | 从 Unity/C# 经验进入 UE 客户端、权威战斗服、业务后端与交付；只管理贯通路径和新增桥梁，复用 Unreal、技能、服务端、渲染与交付专题；[盘点快照](./docs/ue-fullstack-content-audit.md) |
 | 游戏引擎架构地图执行记录 | [docs/game-engine-architecture-00a-layers-dependencies-outline.md](./docs/game-engine-architecture-00a-layers-dependencies-outline.md) | 装配、共享加载与热重载补强记录 | 服务获取、取消竞态、版本切换与旧资源回收；同任务比较、前10篇修订及原6周计划保留为历史材料 |
 | 游戏引擎渲染栈 | [docs/game-engine-rendering-stack-series-plan.md](./docs/game-engine-rendering-stack-series-plan.md) | 围绕引擎无关原理与 Piccolo 实现案例推进 | 通用篇解释模型与取舍，Piccolo 篇核对具体实现；原有科普按需查阅，篇级与证据状态见各系列 plan |
 | 游戏编程模式 | [docs/game-programming-patterns-plan.md](./docs/game-programming-patterns-plan.md) | 已拆出 | 对应旧 `系列七·B` |

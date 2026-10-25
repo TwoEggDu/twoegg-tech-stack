@@ -2,6 +2,7 @@
 title: "Unreal 引擎架构 01｜对象系统：UObject、UClass 与 CDO"
 slug: "ue-01-uobject-system"
 date: "2026-03-28"
+lastmod: "2026-10-25"
 description: "Unreal 的一切托管对象都从 UObject 开始。理解 UObject、UClass 和 CDO 的关系，是读懂引擎源码、理解 GC 和反射的前提。"
 tags:
   - "Unreal"
@@ -16,6 +17,8 @@ weight: 6010
 Unreal 引擎里几乎所有有意义的对象——Actor、Component、Asset、Widget——都继承自 `UObject`。这不是随意的设计，而是 Unreal 整个运行时的基石：GC、反射、序列化、网络复制，全部建立在 UObject 体系之上。
 
 ---
+
+> **对象与持有前置**：先读 [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，分开创建入口、GC 可见持有、弱观察、Outer、业务结束与最终回收。本篇保留原专题定位；2026-10-25 的相关口径按 Epic 5.8 文档修订，未新增 UE 编译或运行验证。
 
 ## UObject 是什么
 
@@ -117,8 +120,8 @@ AMyActor* Actor = GetWorld()->SpawnActor<AMyActor>(
 ```
 
 `NewObject` 和 `SpawnActor` 的区别：
-- `NewObject`：通用，适合任何 UObject 子类，不触发 BeginPlay
-- `SpawnActor`：专门用于 AActor，会触发完整的 Actor 生命周期（BeginPlay 等）
+- `NewObject`：运行时创建一般 UObject；不拿它替代 World 的 Actor 生成流程，一般 UObject 不因此获得 BeginPlay/Tick。
+- `SpawnActor`：用于 World 中的 Actor；具体初始化/BeginPlay 时机还取决于 World 阶段和普通/延迟生成路径。构造默认子对象则使用对应的 `CreateDefaultSubobject` 协议。
 
 ---
 
@@ -143,7 +146,7 @@ BeginDestroy()          ← GC 决定回收时调用，开始异步清理
 IsReadyForFinishDestroy() → true
     │
     ▼
-FinishDestroy()         ← 实际销毁，释放资源
+FinishDestroy()         ← 最后内部清理，之后由引擎完成后续销毁/释放
 ```
 
 Actor 有更丰富的生命周期（BeginPlay / Tick / EndPlay），但底层仍走 UObject 这条链。
@@ -152,7 +155,7 @@ Actor 有更丰富的生命周期（BeginPlay / Tick / EndPlay），但底层仍
 
 ## Outer 与对象层级
 
-每个 UObject 在创建时必须指定一个 **Outer**，Outer 决定该对象在对象树中的位置：
+**Outer** 表达对象的外层归属，参与路径与命名；创建入口可以显式接收 Outer，也可能使用默认值。Package 等最外层情况另有约定，不能把它理解为任意对象都必须由调用者传一个非空父对象：
 
 ```cpp
 // Package 是根节点，直接位于 Package 下的对象在编辑器中可见
@@ -164,13 +167,15 @@ UMyAsset* Asset = NewObject<UMyAsset>(Pkg, TEXT("MyAsset"));
 ```
 
 对象树的重要性：
-- **GC 可达性**：Outer 强引用子对象，子对象不会因为没有其他引用而被回收
-- **序列化**：保存 Package 时会递归保存其下所有对象
-- **路径寻址**：`/Game/Maps/TestMap.TestMap:PersistentLevel.BP_Player_C_0` 这样的路径就是沿 Outer 链拼接的
+- **GC 可达性**：不能由“Token 的 Outer 是 Actor”推出“Actor 无条件强持有 Token”。需要找实际的反射强引用、显式引用登记或其他引擎持有机制；持有者自己也必须可达。
+- **序列化**：Outer/Package 参与归属，但不能仅凭同一外层就承诺其中所有对象都会持久化；实际保存还取决于对象、属性标记和保存流程。
+- **路径寻址**：外层关系参与对象路径，例如关卡、Actor 与组件的路径；路径关系与 GC 强引用分别检查。
+
+默认子对象、Actor 的组件管理和 GC Cluster 可能同时参与持有，不能从一个组件暂时存活推导一般规则。本段修正原来的无条件 Outer 保活表述；[Epic：Object Handling](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-object-handling-in-unreal-engine)说明引用图与组件/Cluster 边界，具体对照见 UCPP-1。
 
 ---
 
-## 完整示例
+## 示例：创建后交给可达的 Character 持有
 
 ```cpp
 // 声明一个 UObject 子类
@@ -190,12 +195,17 @@ public:
     bool CanStack() const { return StackSize > 1; }
 };
 
-// 运行时创建并使用
+// 以下成员声明放在 AMyCharacter 的类体内：
+// UPROPERTY(Transient)
+// TArray<TObjectPtr<UInventoryItem>> Inventory;
+
+// 以下函数定义放在相应 .cpp 中；这是接入现有 Character 的片段。
 void AMyCharacter::AddItem()
 {
     UInventoryItem* Item = NewObject<UInventoryItem>(this);
     Item->ItemName = TEXT("Health Potion");
     Item->StackSize = 5;
+    Inventory.Add(Item);  // 可达 Character 的反射成员维持这条强引用
 
     // 通过 UClass 获取类信息
     UClass* ItemClass = Item->GetClass();

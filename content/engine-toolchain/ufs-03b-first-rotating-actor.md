@@ -218,7 +218,7 @@ BeginPlay 用来观察已经进入游戏阶段的当前实例；本例在这里�
 
 这里 `MeshComponent` 是由引擎创建的默认子对象，又有反射可见成员与 Actor 组件关系。不能只记“有 TObjectPtr 就永远不会被回收”：普通局部/未登记字段不会自动成为 GC 根，持有者本身也必须可达。`Outer` 提供对象归属/路径等关系，**不能单靠 `NewObject(..., Outer)` 推出 Outer 无条件强持有全部子对象**。[Object Pointers](https://dev.epicgames.com/documentation/unreal-engine/object-pointers-in-unreal-engine)
 
-本站旧文 [UObject 系统]({{< relref "system-design/ue-01-uobject-system.md" >}}) 的 Outer 强持有表述已在主计划 R-03 登记，本课不采用它。普通 `std::unique_ptr`、`std::shared_ptr`、UE 通用 `TSharedPtr` 都不用于接管 UObject 的 delete；原生资源仍可使用第一课的 RAII。Actor 的 Destroy 是延迟处理的引擎操作，对象的游戏可用性与最终 GC/内存回收要分开观察。[AActor::Destroy](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/AActor/Destroy)
+对象创建、强弱持有与 Outer 的完整专项桥梁见 [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})；[UObject 系统]({< relref "system-design/ue-01-uobject-system.md" >}) 的无条件 Outer 保活表述已修正，R-03 的工程对照仍待执行。普通 `std::unique_ptr`、`std::shared_ptr`、UE 通用 `TSharedPtr` 都不用于接管 UObject 的 delete；原生资源仍可使用第一课的 RAII。Actor 的 Destroy 是延迟处理的引擎操作，对象的游戏可用性与最终 GC/内存回收要分开观察。[AActor::Destroy](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/AActor/Destroy)
 
 ## 5. 正常编译，再让它在场景里真正可见
 

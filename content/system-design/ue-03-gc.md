@@ -2,7 +2,8 @@
 title: "Unreal 引擎架构 03｜Unreal GC：标记清除、对象生命周期与 TObjectPtr"
 slug: "ue-03-gc"
 date: "2026-03-28"
-description: "Unreal 的 GC 只管 UObject，靠 UPROPERTY 追踪引用链。理解 TObjectPtr、TWeakObjectPtr 和 AddToRoot 的区别，才能写出不崩溃的 Unreal C++ 代码。"
+description: "分清 UObject 的 GC 可达引用、弱观察与显式持有，理解 TObjectPtr、TWeakObjectPtr 和 AddToRoot 的责任，并区分请求收集、业务结束与最终清理。"
+lastmod: "2026-10-25"
 tags:
   - "Unreal"
   - "C++"
@@ -13,7 +14,9 @@ series: "Unreal Engine 架构与系统"
 weight: 6030
 ---
 
-Unreal 引擎有 GC，但它和 C# / Java 的 GC 很不同：**它只管理 UObject 子类，不管理普通 C++ 对象**。更关键的是，GC 的可达性分析依赖 `UPROPERTY` 宏——如果你用裸指针持有一个 UObject，GC 看不见这个引用，会把对象回收掉，留下悬空指针。
+> **对象与持有前置**：先读 [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，分开创建入口、GC 可见持有、弱观察、Outer、业务结束与最终回收。本篇保留原专题定位；2026-10-25 的相关口径按 Epic 5.8 文档修订，未新增 UE 编译或运行验证。
+
+Unreal 的 UObject GC 不替普通 C++ 分配接管释放责任。对 UObject，保存裸地址本身不新增 GC 强引用；如果不存在其他有效持有，目标可能被回收，旧地址也不会因此自动变安全。反射字段是常见引用来源，但不是唯一机制。
 
 ---
 
@@ -36,10 +39,10 @@ UObject 及所有子类               普通 C++ 类（无 UObject 基类）
 
 Unreal GC 使用**标记清除（Mark and Sweep）**算法：
 
-1. **标记阶段**：从根集（GUObjectArray 中标记为 Root 的对象，如 GEngine、GWorld）出发，通过 `UPROPERTY` 引用链递归标记所有可达对象
+1. **标记阶段**：从根集合与引擎登记的引用关系出发，沿 GC 可见引用判断可达性；对象注册表本身不意味着其中每个对象都是根
 2. **清除阶段**：未被标记的 UObject 进入销毁流程
 
-关键点：**只有 `UPROPERTY` 标注的指针才会被 GC 追踪**。
+关键点：**普通裸地址不是强持有；UPROPERTY 是常见入口，也有显式强指针、引用收集等机制**。下面的属性成员示例以宿主可达为前提，UPROPERTY 也不表示能阻止 Actor 被显式 Destroy。
 
 ```cpp
 UCLASS()
@@ -115,7 +118,7 @@ UPROPERTY()
 UStaticMeshComponent* MeshComp;
 ```
 
-`TObjectPtr` 在编辑器模式下提供额外的访问追踪，Release 模式下与裸指针等价。
+这里的强引用条件是可达宿主上的反射字段。未登记的局部/成员 TObjectPtr 不因类型名自动保活；也不把它的所有构建配置和内部表示概括成与裸指针完全等价。当前指针协议见 [Epic：Object Pointers](https://dev.epicgames.com/documentation/unreal-engine/object-pointers-in-unreal-engine?lang=en-US)。
 
 ### TWeakObjectPtr（弱引用，不阻止 GC 回收）
 
@@ -160,30 +163,25 @@ void LoadTexture()
     // 同步加载（会阻塞，谨慎使用）
     UTexture2D* Tex = LazyTexture.LoadSynchronous();
 
-    // 异步加载（推荐）
-    FStreamableManager& Manager = UAssetManager::GetStreamableManager();
-    Manager.RequestAsyncLoad(LazyTexture.ToSoftObjectPath(),
-        FStreamableDelegate::CreateLambda([this]()
-        {
-            UTexture2D* Tex = LazyTexture.Get();
-            // 使用 Tex
-        })
-    );
+
 }
 ```
+
+异步加载还需管理请求、完成回调、捕获对象的有效期和加载后持有，不在这里用裸捕获 this 的片段替代完整协议。容器、Delegate 与回调寿命继续按 UCPP 后续专项补齐。
+
+---
+
+### TStrongObjectPtr 与原生持有者
+
+普通 native 类不能靠随意写一个 UPROPERTY 宏就加入对象引用图；持有单个 UObject 时可使用适合该版本的 TStrongObjectPtr，其他显式引用收集方案按具体接口接入。它解除持有时不会立即 delete UObject，也不保证游戏资格或线程安全。不要将它泛化为 UObject 成员的默认选择，持有环与退出责任仍需检查。
 
 ---
 
 ## GC 触发时机
 
-Unreal GC 不是实时的，它在特定时机才运行：
+收集请求、可达性分析、销毁与清理不是同一个时刻。自动触发、关卡流程、增量/并行设置和实际耗时都要按目标版本与配置核对，不能从“UE5 有 GC”推导一个固定周期或停顿结论。
 
-- **帧间自动触发**：每隔一定帧数，引擎检查是否需要 GC
-- **内存压力触发**：内存使用超过阈值
-- **手动触发**：`GEngine->ForceGarbageCollection(true)`（true = 等待完成）
-- **关卡切换时**：加载新关卡前会强制 GC
-
-GC 运行期间，**GameThread 会暂停**（Stop-the-World），这就是为什么大型场景切换时会有卡顿。UE5 引入了增量 GC 来缓解这个问题。
+`GEngine->ForceGarbageCollection(true)` 的参数是 **bFullPurge**，不是“等待完成”。[UEngine 官方 API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UEngine?lang=en-US)说明它更新收集计时，使收集在下一次合适机会运行；返回时不能作为所有对象已清理的验收点。UCPP-1 将创建、请求和后续观察分成独立动作。
 
 ---
 
@@ -204,13 +202,14 @@ class FMySystem
     }
 };
 
-// ✅ 修复：让 FMySystem 继承 UObject，或把 DataTable 放到某个 Actor/Component 的 UPROPERTY 上
+// 修复方向：可达 UObject 的反射强引用，或 native owner 的显式强持有。
+// 例如 native 类使用 TStrongObjectPtr<UDataTable>，并明确解除持有时机。
 ```
 
 **Bug 2：Lambda 捕获的 UObject 失效**
 ```cpp
 // ❌ 危险：Lambda 持有的裸指针不受 GC 保护
-UMyActor* Actor = ...;
+AMyActor* Actor = ...;
 FTimerHandle Handle;
 GetWorldTimerManager().SetTimer(Handle, [Actor]()
 {
@@ -218,7 +217,7 @@ GetWorldTimerManager().SetTimer(Handle, [Actor]()
 }, 2.f, false);
 
 // ✅ 修复：用 TWeakObjectPtr
-TWeakObjectPtr<UMyActor> WeakActor = Actor;
+TWeakObjectPtr<AMyActor> WeakActor = Actor;
 GetWorldTimerManager().SetTimer(Handle, [WeakActor]()
 {
     if (WeakActor.IsValid())
@@ -240,17 +239,10 @@ TArray<UItemData*> Items;
 
 ## GC 调试工具
 
-```cpp
-// 打印所有 UObject 的内存占用统计
-Obj.DumpAll  // 控制台命令
+调试时分别记录三类证据：
 
-// 查看 GC 是否认为某对象可达
-bool bReachable = !Obj->HasAnyFlags(RF_Unreachable);
+1. **构建与配置**：实际引擎版本、构建身份、GC/Cluster 设置与复现步骤。
+2. **访问与阶段**：弱观察是否有效、是否发生 EndPlay/BeginDestroy；请求收集不作为完成回执。
+3. **引用路径**：用目标版本支持的引用链/对象检查工具寻找实际持有者，排查属性、显式强指针、编辑器与 Cluster 等额外关系。
 
-// 强制 GC 并等待完成（调试用）
-GEngine->ForceGarbageCollection(true);
-
-// 查看引用链（谁在引用这个对象）
-FReferenceChainSearch RefChainSearch(Obj, EReferenceChainSearchMode::Shortest);
-RefChainSearch.PrintResults();
-```
+不要把一个内部状态标志当作长期保活证明，也不要用对象数、分配器容量或进程工作集替代引用路径。UCPP-1 的对照步骤先建立这些观察边界；具体调试工具需在所用 UE 版本实际执行确认。

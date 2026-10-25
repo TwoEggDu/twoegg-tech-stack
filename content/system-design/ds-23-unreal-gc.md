@@ -3,6 +3,7 @@ date: "2026-03-26"
 title: "数据结构与算法 23｜Unreal GC 深度：UObject 体系、智能指针与两阶段销毁"
 description: "Unreal 在 C++ 之上为 UObject 实现了一套完整的 GC 体系，完全绕开语言运行时。这篇讲清楚 UObject 的内存模型、UPROPERTY 引用追踪、智能指针（TSharedPtr/TWeakObjectPtr）的设计意图，以及 BeginDestroy → FinishDestroy 的两阶段销毁流程。"
 slug: "ds-23-unreal-gc"
+lastmod: "2026-10-25"
 weight: 785
 tags:
   - 软件工程
@@ -13,18 +14,20 @@ tags:
 series: "数据结构与算法"
 ---
 
+> **对象与持有前置**：先读 [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，分开创建入口、GC 可见持有、弱观察、Outer、业务结束与最终回收。本篇保留原专题定位；2026-10-25 的相关口径按 Epic 5.8 文档修订，未新增 UE 编译或运行验证。
+
 > 在 C++ 项目里，通常用 RAII（unique_ptr、shared_ptr）管内存。但 Unreal 的 Actor、Component 不用这套——它们由 UObject GC 管理，有自己的生命周期规则。弄不清楚这两套体系的边界，就会写出悬空指针或内存泄漏。
 
 ---
 
 ## 为什么 Unreal 要自己实现 GC
 
-**C++ 没有托管运行时**。`new` 出来的对象必须手动 `delete`，否则泄漏；`delete` 后还用就是 Use-After-Free。
+普通 C++ 动态分配需要明确的释放责任，可以交给 RAII 包装；对象结束后继续访问可能导致未定义行为。UObject 则额外遵守引擎创建、引用和回收协议。
 
-对小型项目，RAII 够用。但 Unreal 面对的是：
+这不是项目大小决定 RAII 能否使用，而是 Unreal 还要维护以下对象系统能力：
 
 ```
-为什么 RAII 管不住 UObject？
+为什么还需要引擎对象管理协议？
 
 1. 编辑器序列化：蓝图和关卡编辑器需要在不同场景间序列化、反序列化整个对象图
    → 需要运行时知道所有 UObject 的存在和引用关系
@@ -48,17 +51,17 @@ series: "数据结构与算法"
 所有继承自 `UObject` 的对象都由 Unreal 的 GC 系统管理：
 
 ```cpp
-// 创建 UObject：必须用 NewObject<T>，不能 new
+// 运行时创建一般 UObject 的常见入口；默认子对象另用相应构造协议
 UMyComponent* comp = NewObject<UMyComponent>(owner, UMyComponent::StaticClass());
 
 // 创建 Actor：必须用 SpawnActor，不能 new
 AEnemy* enemy = GetWorld()->SpawnActor<AEnemy>(AEnemy::StaticClass(), location, rotation);
 
-// 不要这样做（GC 不知道这个对象的存在，会崩溃或泄漏）
+// 不符合 UObject 创建协议；不依赖它一定以哪种编译/运行失败表现
 UMyComponent* comp = new UMyComponent();  // 错误！
 ```
 
-**GObject 数组（GUObjectArray）**：Unreal 维护一个全局的 UObject 注册表，所有通过 `NewObject` 创建的对象都在这里登记。GC 从这里出发遍历所有对象。
+**对象登记与可达性分开**：全局 UObject 登记使引擎知道对象身份，但“登记在册”不等于“是 GC 根”。判断保活仍需从根集合和引擎支持的引用关系出发。
 
 ---
 
@@ -87,8 +90,8 @@ public:
 **标记清除流程**：
 
 ```
-1. GC 从根集合出发（所有被 Root 标记的 UObject、所有 UWorld）
-2. 递归遍历所有 UPROPERTY 引用
+1. GC 从根集合与引擎登记的引用出发
+2. 沿 GC 可见引用关系追踪，反射属性是常见来源
 3. 标记所有可达的 UObject
 4. 未被标记的 UObject → 不可达 → 销毁
 
@@ -100,9 +103,10 @@ public:
 ```
 
 **实际规则**：
-- UObject* 指针成员：**必须加 `UPROPERTY()`**，否则 GC 忽视该引用
-- 非 UObject 的普通 C++ 对象（struct、int、std::vector）：不需要 UPROPERTY（GC 不管）
-- `TArray<UObject*>`：整个数组加一个 `UPROPERTY()` 即可，GC 会遍历数组内的所有元素
+- 长期 UObject 成员引用：通常使用可达宿主上的 `UPROPERTY() TObjectPtr<T>`；宿主不可达时，单独加宏不保证目标继续存活。
+- 不需要保活的观察：使用 TWeakObjectPtr；短期裸指针借用另查有效区间，不要求把所有局部参数都改成属性。
+- native 拥有者：可用 TStrongObjectPtr 或相应显式引用收集机制；UPROPERTY 不是唯一 GC 引用入口。
+- 容器中的 UObject 引用要通过受支持的反射/引用收集路径接入；普通 std::vector 不会自动替其 UObject* 元素建立 GC 强持有。
 
 ---
 
@@ -121,7 +125,7 @@ MySingleton->RemoveFromRoot();
 if (MySingleton->IsRooted()) { ... }
 ```
 
-`GameInstance`、`GameMode`、`GameState` 等由引擎管理的对象，Unreal 内部已经调用了 `AddToRoot` 或等价操作，不需要手动处理。
+引擎对象由各自的 World/框架关系维持，不在未核源码时一概写成“都调用 AddToRoot”。对业务对象，先选择合适持有者和持有方式；显式加根必须有对应解除责任，也不能据此阻止 Actor 的游戏销毁流程。
 
 ---
 
@@ -129,38 +133,17 @@ if (MySingleton->IsRooted()) { ... }
 
 UObject 的销毁不是立即完成的，而是分两个阶段：
 
-```cpp
-class UMyObject : public UObject
-{
-public:
-    // 阶段一：开始销毁
-    // 在这里：释放外部资源（文件句柄、网络连接、GPU 资源）
-    // 不能在这里访问其他 UObject（它们可能也在销毁中）
-    virtual void BeginDestroy() override
-    {
-        // 释放非 UObject 资源
-        if (FileHandle) { FileHandle->Close(); FileHandle = nullptr; }
+这是一条职责链，不是立即释放的时间承诺：
 
-        // 必须调用 Super！
-        Super::BeginDestroy();
-    }
-
-    // 阶段二：真正销毁
-    // 只有当 IsReadyForFinishDestroy() 返回 true 时才会调用
-    // 在这里：执行最终清理，之后对象内存被释放
-    virtual void FinishDestroy() override
-    {
-        Super::FinishDestroy();
-    }
-
-    // 可以在这里等待异步操作完成
-    // 比如：等待 GPU 异步加载完成才允许销毁
-    virtual bool IsReadyForFinishDestroy() override
-    {
-        return !AsyncLoadHandle.IsValid();  // 异步加载完成后才允许销毁
-    }
-};
+```text
+BeginDestroy：开始自身的清理/资源释放协议
+    ↓
+IsReadyForFinishDestroy：按真实完成信号及父类条件判断能否继续
+    ↓
+FinishDestroy：最后的内部清理，之后由引擎完成后续销毁/释放
 ```
+
+重写这些钩子时保留父类协议。不能用“某个异步句柄是否仍有效”替代操作是否真正完成，也不在这里临时开始依赖其他业务 UObject 的交互。主要 Actor 游戏清理应更早放在 EndPlay；独立资源与 GPU 协作按各系统实现。[Epic：Actor Lifecycle](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-actor-lifecycle)
 
 **为什么需要两阶段？**
 
@@ -169,7 +152,7 @@ GPU 资源（RHI）通常在渲染线程上管理。
 当游戏线程决定销毁一个 Mesh Component 时：
   BeginDestroy：通知渲染线程"准备释放这个 Mesh 的 GPU 资源"
   IsReadyForFinishDestroy：等渲染线程确认 GPU 资源已释放
-  FinishDestroy：游戏线程完成对象内存释放
+  FinishDestroy：最后内部清理，随后由引擎完成后续销毁/释放
 
 如果只有一阶段（立即销毁），渲染线程可能还在用 GPU 资源
 而游戏线程已经释放了对应的 CPU 数据 → 渲染崩溃
@@ -188,7 +171,7 @@ Unreal 有两套独立的指针管理：**UObject 体系**（GC 管理）和 **C
 UPROPERTY()
 AEnemy* StrongRef;
 
-// 弱引用（Weak Reference）：GC 不追踪，对象被回收后自动变 null
+// 弱观察：不保活，失效通过 Get/IsValid 等弱指针接口检测
 UPROPERTY()
 TWeakObjectPtr<AEnemy> WeakRef;
 
@@ -207,7 +190,7 @@ TSoftObjectPtr<UTexture2D> LazyTexture;  // 不立即加载，引用资产路径
 
 ### 纯 C++ 对象的智能指针
 
-对于**不继承 UObject** 的纯 C++ 类，用 Unreal 的智能指针（类似 std::shared_ptr，但性能更好）：
+对于**不继承 UObject** 的普通 C++ 对象，可使用 Unreal 的原生智能指针。按所有权和删除器语义选择；没有目标负载测量，不概括为一定比 std::shared_ptr 更快：
 
 ```cpp
 // TSharedPtr：共享所有权（引用计数）
@@ -232,38 +215,29 @@ TUniquePtr<FMyData> Unique = MakeUnique<FMyData>();
 **关键区别**：
 
 ```
-TSharedPtr<T>：用于纯 C++ 的 F-类（FMyData、FHitResult 等）
+TSharedPtr<T>：用于合适的非 UObject 堆对象；F 前缀不意味着必须共享分配
 UPROPERTY() T*：用于 UObject 继承体系（AActor、UComponent 等）
 
 不要对 UObject 用 TSharedPtr！
   UObject 由 GC 管理，生命周期不归引用计数控制
-  TSharedPtr 析构时会 delete，但 GC 也会尝试销毁 → double free 崩溃
+  通用删除器与 UObject 创建/回收协议不匹配；不能依赖一定以哪种崩溃表现
 ```
 
 ---
 
 ## GC 触发时机与性能
 
+收集请求、可达性分析、清理与工作集变化分别观察。自动触发和增量/并行策略随版本、配置与负载变化，不给所有项目写死 60 秒周期或几毫秒开销。
+
+在本篇的调试场景中可以请求：
+
 ```cpp
-// GC 自动触发（默认每 60 秒，或内存压力触发）
-// 可在 DefaultEngine.ini 配置
-[/Script/Engine.GarbageCollectionSettings]
-gc.TimeBetweenPurgingPendingKillObjects=60  // 秒
-
-// 手动触发
-GEngine->ForceGarbageCollection(true);  // 立即强制 GC
-// 或
-CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
-
-// 异步 GC（减少帧时间影响，Unreal 5 改进）
-// GC 的标记阶段在后台线程进行，清除阶段仍需主线程短暂介入
+GEngine->ForceGarbageCollection(true);
 ```
 
-**Unreal GC 的性能特点**：
+这里 `true` 是 **bFullPurge**，不是“同步等待”。[UEngine API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UEngine?lang=en-US)说明它更新计时，使收集在下一次合适机会运行。请求返回后，另行观察弱有效性、销毁阶段及引用链；不要立即据此断言目标或全部原生资源已释放。
 
-- GC 间隔较长（60 秒），每次运行代价相对较高，但不频繁
-- 大型开放世界场景下，UObject 数量可达数万，GC 可能花费几毫秒到十几毫秒
-- `PendingKill`（已标记待销毁但未完成清理的对象）数量影响 GC 时间
+GC 成本需要在实际场景记录对象数、引用图、配置、Trace 与运行环境。本篇未补 UE 性能测量，不能由普通结构体、智能指针类型或“增量”名称推导固定性能收益。
 
 ---
 
@@ -322,7 +296,7 @@ void Update()
 struct FDamageData { float amount; };
 void Update()
 {
-    FDamageData data { .amount = 100 };  // 栈上，零开销
+    FDamageData data { 100 };  // 普通值对象；是否优化与具体构建有关
     ApplyDamage(data);
 }
 ```
@@ -331,9 +305,9 @@ void Update()
 
 ## 小结
 
-- **UObject GC**：标记清除，基于 `UPROPERTY()` 追踪引用图，定期（60s）触发
-- **UPROPERTY 是必须的**：UObject* 成员没有 UPROPERTY，GC 忽视该引用，导致悬空指针
-- **AddToRoot**：防止 GC 回收全局对象；游戏结束时 RemoveFromRoot
-- **两阶段销毁**：BeginDestroy（释放外部资源）→ IsReadyForFinishDestroy（等待异步完成）→ FinishDestroy（最终清理）
+- **UObject GC**：从根与已登记引用关系判断可达性；收集/清理时机与耗时按版本、配置和负载核对
+- **持有与观察分开**：可达宿主的反射强引用、native 显式强持有和弱观察分别选择；Outer 不提供无条件保活保证
+- **AddToRoot**：显式根持有需要与 RemoveFromRoot 配对；解除根不等于立即回收
+- **分阶段清理**：BeginDestroy 发起清理，IsReadyForFinishDestroy 判断真实完成条件，FinishDestroy 完成最后清理；业务结束更早处理
 - **智能指针**：UObject 用 UPROPERTY + TWeakObjectPtr；纯 C++ 对象用 TSharedPtr / TUniquePtr；不要混用
-- **性能**：GC 间隔长但单次代价高；避免大量短命 UObject，频繁创建的数据用普通 C++ struct
+- **性能**：按目标版本和场景测量；不需要 UObject 能力的数据可以考虑普通值对象，但不承诺固定收益

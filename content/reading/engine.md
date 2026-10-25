@@ -14,7 +14,7 @@ topic_key: engine
 
 准备阅读 Piccolo、Unreal、HybridCLR 或 IL2CPP 时，先从 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 建立对象、所有权、调用、内存与构建的共同认识，再进入各路线的专项前置。
 
-入口已经串起四篇可读材料，并列明公共课的待整理与待写内容。各路线会继续补自己的对象协议、宏、容器、构建和运行时约定；运行时路线另需 ECMA-335，图形路线另需渲染基础。
+CXX-01～11 的公共正文已齐备，原有四篇材料继续承担综合练习与项目案例。各路线会继续补自己的对象协议、宏、容器、构建和运行时约定；运行时路线另需 ECMA-335，图形路线另需渲染基础。
 
 ## 按引擎进入
 
@@ -34,7 +34,8 @@ topic_key: engine
 
 从 UObject、反射、序列化与 GC 出发，深入渲染架构、线程模型、Gameplay、网络复制，以及 Mass 的实体组织与调度。
 
-- [架构与系统]({{< relref "system-design/unreal-engine-series-index.md" >}})：连接对象系统、渲染与线程、Blueprint、GAS 和网络复制。
+- [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})：先分清普通对象、UObject 和 Actor 的创建、持有、Outer 与结束协议；正文已写，UE 实验待验证。
+- [架构与系统]({< relref "system-design/unreal-engine-series-index.md" >})：连接对象系统、渲染与线程、Blueprint、GAS 和网络复制。
 - [Mass 深度]({{< relref "system-design/unreal-mass-series-index.md" >}})：理解 Processor、结构变化、LOD，以及 Mass 与 Actor 的协作边界。
 
 ### [Unity｜从开发行为深入引擎机制]({{< relref "reading/unity-engine.md" >}})

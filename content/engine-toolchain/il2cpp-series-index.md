@@ -19,7 +19,7 @@ tags: [IL2CPP, Unity, AOT, Index]
 
 ## 前置知识
 
-先按 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 补值与借用、对象/所有权、函数指针、布局/存储与编译链接。公共目录中尚未成稿的单元明确列为待补，不能把几个语法示例当成完整基础。
+先按 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 补值与借用、对象/所有权、函数指针、布局/存储与编译链接。CXX-01～11 公共正文已齐备；IL2CPP 专项跟读、托管语义与目标工程验证仍分别推进。
 
 建议先完成 [ECMA-335 前置主线]({{< relref "engine-toolchain/ecma335-series-index.md" >}})。读 D3 前区分 [类型信息准备与静态初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})，读 D5 前确认 [签名与泛型上下文]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})。
 

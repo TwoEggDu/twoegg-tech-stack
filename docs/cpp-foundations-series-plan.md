@@ -93,7 +93,7 @@ CXX-11 复用所有权/回调与 Piccolo 交接模型、硬件内存序的问题
 | 路线 | 公共基础优先范围 | 专项前置要补的差异 | Canonical 归属与入口 |
 |---|---|---|---|
 | Piccolo | 01～03、04、07～08、10；回调/缓冲场景补 05～06 | 现有 CPP 三篇保留实现案例；补容器持有/擦除、回调寿命、数据交接与实际线程证据 | [Piccolo plan](piccolo-engine-series-plan.md#公共基础之后的专项前置)、[阅读入口](../content/reading/piccolo-engine.md) |
-| Unreal | 01～05、07～08、10；存储/任务系统前补 06、09、11 | UObject 与普通对象、引擎指针、容器/字符串/模板惯用法、Delegate、UHT/UBT、任务线程约定 | [UE plan](ue-fullstack-expert-series-plan.md#cpp-source-prerequisites)、[阅读入口](../content/reading/unreal-engine.md) |
+| Unreal | 01～05、07～08、10；存储/任务系统前补 06、09、11 | UCPP-1 对象/指针边界已成稿（UE 实验待验证）；后续补容器/字符串/模板、Delegate、UHT/UBT 与任务线程约定 | [UE plan](ue-fullstack-expert-series-plan.md#cpp-source-prerequisites)、[阅读入口](../content/reading/unreal-engine.md) |
 | HybridCLR | 01～02、05～06、09～10；模板/线程按入口补 07、11 | 方法指针、参数槽、解释帧、metadata 索引、AOT/解释调用；CLI/IL2CPP 另作前置 | [HybridCLR plan](hybridclr-series-plan.md#公共基础之后的源码专项前置)、[阅读入口](../content/engine-toolchain/hybridclr-series-index.md) |
 | IL2CPP | 01～03、05～06、09～10；泛型/线程按需补 07、11 | C#→IL→生成代码、托管与原生对象、metadata/代码注册、自建方法分派、泛型语义与 C++ 模板的区别 | [IL2CPP plan](il2cpp-series-plan.md#公共基础之后的源码专项前置)、[阅读入口](../content/engine-toolchain/il2cpp-series-index.md) |
 
@@ -104,14 +104,14 @@ CXX-11 复用所有权/回调与 Piccolo 交接模型、硬件内存序的问题
 | 批次 | 公共课工作 | 紧随其后的专项工作 | 完成判据 |
 |---|---|---|---|
 | 0，已完成 | 建公共索引、canonical plan、四路线回链与缺口表 | 在各 plan 登记专项责任 | 已有链接可达、拟题不做假链接、状态不虚增 |
-| 1，公共课已写 | CXX-01～03、10 已写；已补多文件、静态库与符号练习 | 复用 Piccolo CPP 三篇和 UE 首课，补前后阅读提示；整理 UCPP-1 的对象边界 | 公共规则不依赖引擎；旧文继续承担应用/综合练习 |
+| 1，公共课已写 | CXX-01～03、10 已写；已补多文件、静态库与符号练习 | 复用 Piccolo CPP 三篇和 UE 首课，补前后阅读提示；UCPP-1 对象边界已成稿，UE 构建/GC 对照待验证 | 公共规则不依赖引擎；旧文继续承担应用/综合练习 |
 | 2，公共课已写 | CXX-04～06 已写；已补回调、布局与容器访问 | 补 HCPP-1 参数槽/方法指针、ICPP-1 生成代码跟读、PCPP-1/2 容器与回调 | 独立程序与源码入口能逐句对应，区别各自寿命协议 |
 | 3，公共课已写 | CXX-07～09 已写；已补模板、生成和存储/对象规则 | 补 UCPP-2 → 3 → 4 的容器/模板、Delegate 与 UHT；补 HCPP-2、ICPP-2/3 的 runtime 跟读 | 不混淆模板与托管泛型、编译器分派与 runtime 表、存储与对象 |
 | 4，公共课已写 | CXX-11 已写；既定公共 11 单元齐备 | 再补 UE 任务线程、Piccolo 交接时序、runtime 线程/GC 协作 | 明确发布/消费、所有权与同步；真实线程结论附证据 |
 
 批次 1～4 的公共课已写不代表专项工作全部完成，专项状态仍以对应 plan 为准。
 
-每批优先完成公共知识，再写依赖它的专项桥梁；同一批中的专项项按对应 plan 排序推进，不要求四条路线同时开写。2026-10-25 按用户指定先落地 Piccolo PCPP-1/2/3，必要的容器、回调与交接规则在专项中补桥；项目正文与验证归 Piccolo plan，公共 CXX-01～11 现已成稿，后续项目专项与实际运行继续由各路线计划维护。
+每批优先完成公共知识，再写依赖它的专项桥梁；同一批中的专项项按对应 plan 排序推进，不要求四条路线同时开写。2026-10-25 按用户指定先落地 Piccolo PCPP-1/2/3，必要的容器、回调与交接规则在专项中补桥；项目正文与验证归 Piccolo plan，公共 CXX-01～11 现已成稿，后续项目专项与实际运行继续由各路线计划维护。UCPP-1 已成稿，正文与执行记录由 UE 路线管理，不增加公共 CXX 篇数。
 
 ## 单篇产出与维护
 
