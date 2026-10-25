@@ -1,0 +1,33 @@
+<figure aria-label="施法动作时间线与运行切换示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="动作关键帧、释放标记与状态过渡，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 460" role="img" aria-labelledby="animation-flow-title animation-flow-desc" style="display:block;width:100%;min-width:720px;height:auto">
+      <title id="animation-flow-title">源动作的时间，与游戏中选择动作的规则</title>
+      <desc id="animation-flow-desc">上方是教学施法片段，24帧每秒，源49到73帧，61帧为相对起点0.5秒的释放标记。下方是Idle与Cast间的过渡，以及Any State请求Hit的独立受击入口，Hit结束回到Idle。箭头时长仅为教学参数，图不表示实际运行的权重或事件结果。</desc>
+      <defs><marker id="animation-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker></defs>
+      <rect x="12" y="12" width="816" height="186" rx="8" fill="#f3f6f0" stroke="#a5b7a6"/>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="30" y="42" font-size="19" font-weight="600">源动作：Cast · 24 fps · 1 秒</text>
+        <path d="M65 128H775" stroke="#728977" stroke-width="2"/>
+        <g text-anchor="middle" font-size="16">
+          <text x="65" y="82">起始</text><text x="242" y="82">准备</text><text x="420" y="82">释放</text><text x="598" y="82">余势</text><text x="775" y="82">回落</text>
+          <text x="65" y="157">49 帧</text><text x="242" y="157">55 帧</text><text x="420" y="157">61 帧</text><text x="598" y="157">67 帧</text><text x="775" y="157">73 帧</text>
+          <text x="420" y="181" font-size="14">相对起点 0.5 秒；是设计标记</text>
+        </g>
+      </g>
+      <g fill="#728977"><circle cx="65" cy="128" r="6"/><circle cx="242" cy="128" r="6"/><circle cx="598" cy="128" r="6"/><circle cx="775" cy="128" r="6"/></g>
+      <path d="M420 96L430 114 420 132 410 114Z" fill="#bb8549"/>
+      <g fill="#f0f4ef" stroke="#a5b7a6" stroke-width="1.5">
+        <rect x="30" y="254" width="180" height="64" rx="7"/><rect x="570" y="254" width="240" height="64" rx="7"/>
+        <rect x="285" y="367" width="225" height="64" rx="7"/><rect x="570" y="367" width="240" height="64" rx="7"/>
+      </g>
+      <g stroke="#728977" stroke-width="2" fill="none" marker-end="url(#animation-arrow)">
+        <path d="M211 271H564"/><path d="M570 303H217"/><path d="M570 399H516"/><path d="M285 399H120V324"/>
+      </g>
+      <g font-family="system-ui, sans-serif" fill="#304b40" text-anchor="middle">
+        <g font-size="19" font-weight="600"><text x="120" y="292">Idle</text><text x="690" y="292">Cast</text><text x="397" y="405">Hit</text><text x="690" y="405">Any State</text></g>
+        <g font-size="14"><text x="390" y="252">Cast 请求 · 0.08 秒过渡</text><text x="390" y="329">到退出时点 · 0.12 秒过渡</text><text x="550" y="357">Hit 请求 · 0.05 秒过渡</text><text x="120" y="450">Hit 到退出时点后回 Idle</text><text x="420" y="225">运行选择：可在施法结束前请求受击</text></g>
+      </g>
+    </svg>
+  </div>
+  <figcaption>原创教学示意：上方记录一个片段内部的时点，下方组织运行切换。受击入口来自 Any State；具体播放、过渡与中断设置见正文，图不代表实测结果。</figcaption>
+</figure>
