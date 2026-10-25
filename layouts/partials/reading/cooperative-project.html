@@ -1,0 +1,40 @@
+{{ $hub := site.GetPage "practice/cooperative-dungeon/_index.md" }}
+<nav class="breadcrumb" aria-label="面包屑">
+  {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
+  {{ if not .Params.project_hub }}<a href="{{ $hub.RelPermalink }}">{{ $hub.Title }}</a><span aria-hidden="true">/</span>{{ end }}
+  <span aria-current="page">{{ if .Params.project_hub }}{{ $hub.Title }}{{ else }}引擎无关设计总览{{ end }}</span>
+</nav>
+{{ if .Params.project_hub }}
+<header class="coop-hero">
+  <div>
+    <p class="eyebrow">综合项目实践 · 公开设计</p>
+    <h1>{{ .Title }}</h1>
+    <p class="coop-lead">{{ .Description }}</p>
+    <div class="actions">{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" "阅读设计总览" "class" "button" "arrow" true) }}<a class="text-action" href="#routes">查看实现规划 ↓</a></div>
+    <p class="coop-caption">当前：设计初稿 · Demo 工程保持私有</p>
+  </div>
+  <aside class="coop-premise" aria-label="项目的两条完整流程">
+    <p class="eyebrow">从游玩到制作</p>
+    <h2>同一个项目，两条完整流程</h2>
+    <dl><dt>玩家怎样游玩</dt><dd>组队 → 副本 → 战斗 → 结算 → 再次进入</dd><dt>内容怎样制作</dt><dd>策划配置 → 美术制作 → 程序接入 → 验证与交付</dd></dl>
+  </aside>
+</header>
+<nav class="section-nav" aria-label="本页导航"><a href="#design">共同设计</a><a href="#routes">实现路线</a><a href="#workflow">工种协作</a><a href="#patterns">设计模式教学</a><a href="#related">相关专栏</a></nav>
+<section class="coop-section" id="design" aria-labelledby="coop-design-title">
+  <div class="section-heading"><div><p class="eyebrow">先建立共同上下文</p><h2 id="coop-design-title">引擎无关设计</h2></div><span class="coop-status coop-status-ready">总览初稿可读</span></div>
+  <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" (printf "%s设计总览" $hub.Title)) }}</h3><p>从一次游玩和一项技能的制作出发，连接玩法流程、系统职责、工种管线与设计模式教学。</p><ul class="coop-topics"><li>玩法与玩家流程</li><li>系统职责与状态归属</li><li>策划与美术独立制作</li><li>方案比较与验证</li></ul></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" "开始阅读" "class" "text-action" "arrow" true) }}</div>
+  <p class="coop-caption">本文是设计初稿；具体合作机制、视角与操作仍待细化，完整副本尚未验收。</p>
+</section>
+<section class="coop-section" id="routes" aria-labelledby="coop-routes-title">
+  <div class="section-heading"><div><p class="eyebrow">共同目标，各自落地</p><h2 id="coop-routes-title">三条引擎实现路线</h2></div><p>Unity 推进完整项目，另两条先做关键系统对照。</p></div>
+  <div class="coop-routes">{{ range .Params.implementation_routes }}<article class="coop-route"><div class="coop-route-heading"><h3>{{ .name }}</h3><span class="coop-status">规划中</span></div><p class="coop-route-role">{{ .role }}</p><p>{{ .description }}</p><p class="coop-route-focus">{{ .focus }}</p></article>{{ end }}</div>
+  <p class="coop-caption">实现正文与运行证据将逐步补充；规划状态不代表对应能力已经实现或验证。</p>
+</section>
+<div class="coop-notes coop-prose">{{ .Content }}</div>
+{{ else }}
+<article class="coop-article">
+  <header class="coop-article-header"><p class="eyebrow">{{ $hub.Title }} · 引擎无关设计</p><h1>{{ .Title }}</h1><p class="coop-lead">{{ .Description }}</p><p class="coop-caption">设计初稿 · 2026-10-25 · 完整副本待实现与验证</p></header>
+  <details class="coop-mobile-toc"><summary>本篇目录</summary>{{ replace (string .TableOfContents) `id="TableOfContents"` `id="coop-toc-mobile"` | safeHTML }}</details>
+  <div class="coop-article-grid"><div class="coop-prose">{{ .Content }}<nav class="coop-return" aria-label="项目导航"><a href="{{ $hub.RelPermalink }}">← 返回{{ $hub.Title }}项目首页</a></nav></div><aside class="coop-toc" aria-label="本篇目录"><p class="eyebrow">本篇目录</p>{{ replace (string .TableOfContents) `id="TableOfContents"` `id="coop-toc-desktop"` | safeHTML }}<a href="{{ $hub.RelPermalink }}">返回项目首页 →</a></aside></div>
+</article>
+{{ end }}

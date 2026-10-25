@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
   {{ if .IsHome }}<link rel="stylesheet" href="{{ `css/delivery-home.css` | relURL }}">{{ end }}
   {{ if or .Params.framework_hub .Params.framework_lane }}<link rel="stylesheet" href="{{ `css/framework-reading.css` | relURL }}">{{ end }}
+  {{ if or .IsHome .Params.cooperative_project }}<link rel="stylesheet" href="{{ `css/cooperative-project.css` | relURL }}">{{ end }}
   <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
   <script src="{{ `js/search.js` | relURL }}" defer></script>
 </head>
@@ -29,7 +30,7 @@
   <a class="skip-link" href="#main">跳到主要内容</a>
   {{ partial "site-masthead.html" . }}
   <main id="main" class="wrap" tabindex="-1">
-    {{ if .IsHome }}{{ partial "reading/home.html" . }}{{ else if or .Params.framework_hub .Params.framework_lane }}{{ partial "reading/framework.html" . }}{{ else if .Params.topic_key }}{{ partial "reading/topic.html" . }}{{ else }}{{ partial "reading/guide.html" . }}{{ end }}
+    {{ if .IsHome }}{{ partial "reading/home.html" . }}{{ else if .Params.cooperative_project }}{{ partial "reading/cooperative-project.html" . }}{{ else if or .Params.framework_hub .Params.framework_lane }}{{ partial "reading/framework.html" . }}{{ else if .Params.topic_key }}{{ partial "reading/topic.html" . }}{{ else }}{{ partial "reading/guide.html" . }}{{ end }}
   </main>
   <footer class="footer wrap">
     <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>

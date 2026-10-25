@@ -1,0 +1,14 @@
+{{ $project := site.GetPage "practice/cooperative-dungeon/_index.md" }}
+<section class="variant-section coop-entry" aria-labelledby="coop-entry-title">
+  <div class="coop-entry-copy">
+    <p class="eyebrow">综合项目实践</p>
+    <h2 id="coop-entry-title">{{ $project.Title }}</h2>
+    <p>从两人合作副本出发，串起玩法、框架、内容制作、设计模式与版本交付。</p>
+    {{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/_index.md" "label" "进入项目" "class" "text-action" "arrow" true) }}
+  </div>
+  <div class="coop-entry-route" aria-label="项目阅读结构与状态">
+    <div><span>引擎无关设计</span><span class="coop-status coop-status-ready">总览初稿可读</span></div>
+    <div><span>Unity · Unreal · Piccolo</span><span class="coop-status">实现路线规划中</span></div>
+    <p>公开设计与教学 · Demo 工程私有</p>
+  </div>
+</section>

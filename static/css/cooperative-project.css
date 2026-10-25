@@ -1,0 +1,68 @@
+/* Scoped to the cooperative project and its homepage entry. */
+.reading-site .coop-entry { display:grid; grid-template-columns:1.2fr 1fr; gap:56px; align-items:center; padding:42px 0; }
+.reading-site .coop-entry-copy { border-left:3px solid var(--accent); padding-left:26px; }
+.reading-site .coop-entry-copy h2 { font-size:30px; margin-bottom:12px; }
+.reading-site .coop-entry-copy>p:not(.eyebrow) { max-width:490px; color:var(--muted); font-size:15px; }
+.reading-site .coop-entry-route { background:var(--wash); border:1px solid var(--line); padding:24px 28px; min-width:0; }
+.reading-site .coop-entry-route>div { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:10px 16px; padding:12px 0; font-size:14px; }
+.reading-site .coop-entry-route>div+div { border-top:1px solid var(--line); }
+.reading-site .coop-entry-route>p { color:var(--muted); font-size:12px; margin:14px 0 0; }
+.reading-site .coop-status { display:inline-block; flex-shrink:0; padding:2px 9px; border:1px solid #c8c1b1; background:#f3f0e7; color:#6c5b39; border-radius:3px; font-size:12px; line-height:1.8; white-space:nowrap; }
+.reading-site .coop-status-ready { color:#305e64; border-color:#b4cbca; background:#edf4f1; }
+.reading-site .coop-hero { display:grid; grid-template-columns:1.35fr 1fr; gap:60px; align-items:center; padding:36px 0 42px; }
+.reading-site .coop-hero h1 { margin-top:10px; }
+.reading-site .coop-lead { font-size:17px; color:var(--muted); max-width:700px; }
+.reading-site .coop-caption { color:var(--muted); font-size:12px; margin:18px 0 0; }
+.reading-site .coop-premise { border-left:2px solid var(--line); padding:8px 0 8px 28px; min-width:0; }
+.reading-site .coop-premise h2 { font-size:22px; }
+.reading-site .coop-premise dl { margin:0; font-size:14px; }
+.reading-site .coop-premise dt { color:var(--accent); font-weight:600; margin-top:16px; }
+.reading-site .coop-premise dd { margin:5px 0 0; color:var(--muted); font-size:13px; }
+.reading-site .coop-section { border-top:1px solid var(--line); padding:38px 0; scroll-margin-top:24px; }
+.reading-site .coop-design-entry { display:flex; justify-content:space-between; gap:32px; align-items:center; border-left:3px solid var(--accent); background:var(--wash); padding:24px 28px; }
+.reading-site .coop-design-entry h3 { font-size:23px; }
+.reading-site .coop-design-entry h3 a { color:var(--accent); }
+.reading-site .coop-design-entry p { font-size:14px; max-width:720px; color:var(--muted); }
+.reading-site .coop-design-entry>.text-action { flex-shrink:0; }
+.reading-site .coop-topics { list-style:none; display:flex; flex-wrap:wrap; gap:8px 22px; padding:0; margin:18px 0 0; font-size:12px; color:var(--accent); }
+.reading-site .coop-routes { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+.reading-site .coop-route { border-top:3px solid #8fa4b8; border-bottom:1px solid var(--line); padding:22px 0; min-width:0; }
+.reading-site .coop-route-heading { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
+.reading-site .coop-route-heading h3 { font-size:25px; margin:0; }
+.reading-site .coop-route p { font-size:14px; color:var(--muted); }
+.reading-site .coop-route .coop-route-role { color:var(--ink); font-weight:600; }
+.reading-site .coop-route .coop-route-focus { font-size:12px; padding-top:10px; border-top:1px solid var(--line); }
+.reading-site .coop-notes { padding-bottom:36px; }
+.reading-site .coop-prose { min-width:0; overflow-wrap:anywhere; font-size:15px; }
+.reading-site .coop-prose h2 { font-size:25px; margin:38px 0 18px; padding-top:28px; border-top:1px solid var(--line); scroll-margin-top:24px; }
+.reading-site .coop-prose h3 { margin-top:28px; }
+.reading-site .coop-prose li { margin-bottom:8px; }
+.reading-site .coop-prose a { color:var(--accent); }
+.reading-site .coop-prose table { display:block; width:max-content; max-width:100%; overflow-x:auto; border-collapse:collapse; font-size:13px; margin:22px 0; }
+.reading-site .coop-prose th,.reading-site .coop-prose td { min-width:145px; max-width:380px; border:1px solid var(--line); padding:12px 14px; text-align:left; vertical-align:top; }
+.reading-site .coop-prose th { background:var(--wash); color:var(--ink); font-weight:600; }
+.reading-site .coop-prose blockquote { margin:24px 0; border-left:3px solid #8fa4b8; padding:12px 20px; background:var(--wash); color:var(--muted); }
+.reading-site .coop-prose blockquote p:last-child { margin-bottom:0; }
+.reading-site .coop-article-header { max-width:850px; padding:24px 0 30px; }
+.reading-site .coop-article-header h1 { font-size:clamp(29px,3.2vw,41px); }
+.reading-site .coop-article-grid { display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:58px; padding-bottom:40px; }
+.reading-site .coop-toc { position:sticky; top:24px; align-self:start; max-height:calc(100vh - 48px); overflow-y:auto; border-left:1px solid var(--line); padding-left:20px; font-size:12px; }
+.reading-site .coop-toc ul { list-style:none; padding:0; margin:0; }
+.reading-site .coop-toc li { margin:0 0 10px; }
+.reading-site .coop-toc a { color:var(--muted); text-decoration:none; }
+.reading-site .coop-toc>a { display:block; margin-top:22px; color:var(--accent); }
+.reading-site .coop-mobile-toc { display:none; }
+.reading-site .coop-return { margin-top:36px; padding-top:22px; border-top:1px solid var(--line); font-size:14px; }
+@media(max-width:1000px) { .reading-site .coop-hero { gap:32px; } .reading-site .coop-entry { gap:30px; } .reading-site .coop-article-grid { grid-template-columns:minmax(0,1fr) 190px; gap:28px; } }
+@media(max-width:760px) {
+  .reading-site .coop-entry,.reading-site .coop-hero,.reading-site .coop-routes { grid-template-columns:1fr; gap:26px; }
+  .reading-site .coop-entry { padding:30px 0; } .reading-site .coop-entry-copy { padding-left:18px; } .reading-site .coop-entry-route { padding:16px 20px; }
+  .reading-site .coop-hero { padding-top:22px; } .reading-site .coop-premise { padding-left:20px; } .reading-site .coop-section { padding:28px 0; }
+  .reading-site .coop-design-entry { display:block; padding:22px; } .reading-site .coop-design-entry>.text-action { display:inline-block; margin-top:18px; }
+  .reading-site .coop-route { padding:18px 0; } .reading-site .coop-routes { gap:10px; }
+  .reading-site .coop-article-grid { display:block; } .reading-site .coop-toc { display:none; }
+  .reading-site .coop-mobile-toc { display:block; border-block:1px solid var(--line); padding:14px 0; font-size:14px; }
+  .reading-site .coop-mobile-toc summary { cursor:pointer; color:var(--accent); } .reading-site .coop-mobile-toc a { color:var(--accent); }
+  .reading-site .coop-article-header h1 { font-size:29px; } .reading-site .coop-lead { font-size:15px; }
+  .reading-site .coop-prose h2 { font-size:23px; } .reading-site .coop-prose th,.reading-site .coop-prose td { min-width:135px; padding:10px; }
+}
