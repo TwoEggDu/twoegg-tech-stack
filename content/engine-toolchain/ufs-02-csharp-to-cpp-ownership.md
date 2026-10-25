@@ -25,7 +25,7 @@ weight: 4602
 
 这份综合练习进一步用 `std::unique_ptr<Tracked>` 表达独占释放责任：拥有者结束时调用删除器，`get()` 取得的裸指针只提供访问路径。先分清访问关系，才能继续判断下面的资源由谁释放。
 
-**RAII** 把资源的获取/释放绑定到对象的构造/析构。资源可以是内存，也可以是文件句柄、锁或网络连接。它与 C# `using`/`IDisposable` 的“到边界就释放”思路相近，不等于等待 C# finalizer。正常离开作用域与异常栈展开会调用已构造自动对象的析构；强杀进程不是这种保证的适用场景。[C++ Core Guidelines：资源管理](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-raii)
+**RAII** 让对象承担资源释放责任，与 C# `using`/`IDisposable` 的确定性清理思路相近。作用域退出、构造失败和独占/共享责任的完整解释见 [C++ 公共基础 02：对象与资源由谁结束]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}})；这里保留 `Tracked` 综合练习，把这些规则放到多文件程序和断点中观察。
 
 ## 2. 代码为什么要分头文件和实现文件
 

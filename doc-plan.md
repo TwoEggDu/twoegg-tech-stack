@@ -62,7 +62,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 代码质量到工程质量 | [docs/code-quality-to-engineering-quality-series-plan.md](./docs/code-quality-to-engineering-quality-series-plan.md) | 已拆出 | 软件工程与工程质量主线 |
-| C++ 公共基础 | [docs/cpp-foundations-series-plan.md](./docs/cpp-foundations-series-plan.md) | 1 篇公共正文与阅读入口已写，其余按计划整理/补写 | 复用已有四篇基础材料，按公共知识 → Piccolo / Unreal / HybridCLR / IL2CPP 专项前置 → 源码主线组织；专项状态归各路线 plan |
+| C++ 公共基础 | [docs/cpp-foundations-series-plan.md](./docs/cpp-foundations-series-plan.md) | 2 篇公共正文与阅读入口已写，其余按计划整理/补写 | 复用已有四篇基础材料，按公共知识 → Piccolo / Unreal / HybridCLR / IL2CPP 专项前置 → 源码主线组织；专项状态归各路线 plan |
 | 数据导向运行时 | [docs/data-oriented-runtime-series-plan.md](./docs/data-oriented-runtime-series-plan.md) | 已拆出 | `DOD-00~06` 架构哲学层 |
 | DOTS / Mass / 硬件深挖 | [docs/dots-mass-hardware-deep-series-plan.md](./docs/dots-mass-hardware-deep-series-plan.md) | 已拆出 | 承接数据导向运行时 |
 | 自研 ECS 落地 | [docs/self-built-ecs-implementation-plan.md](./docs/self-built-ecs-implementation-plan.md) | 已拆出 | 偏实现与工程落地 |

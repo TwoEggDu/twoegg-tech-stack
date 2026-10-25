@@ -449,6 +449,6 @@ int main()
 
 资料核对日为 2026-10-25。外部标准链接指向持续维护的工作草案，本文示例限定为 C++17；本机验证不能替代其他编译器、平台和项目版本的验证。
 
-下一篇按规划进入 **CXX-02：对象与资源由谁结束**。正文尚待整理，可以先读现有 [Piccolo 智能指针篇]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}}) 的所有权模型，再回到 [公共专栏目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}}) 查看进度。
+下一篇进入 [CXX-02：对象与资源由谁结束]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}})，沿 RAII、独占/共享拥有和弱观察，继续追踪谁保活、谁最终释放。项目应用可读 [Piccolo 智能指针篇]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})，完整顺序见 [公共专栏目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **先分清复制的是谁、访问的是谁，再确认这条访问能持续多久。**
