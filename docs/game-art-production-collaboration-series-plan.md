@@ -1,7 +1,7 @@
 # 游戏美术生产与客户端协作：系列规划
 
 > 创建：2026-10-25。用户已选择 **12 篇正文 + 1 个系列首页**；用户于同日确认本设计并要求落地；首页与 12 篇章节提纲现已建立。
-> 状态：首页与 12 篇章节已落地；第 01—06 篇正文已成稿，其余 6 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括工具地图、Photoshop 原画、建模到 Unity 接入，以及 Maya / 3ds Max 绑定、蒙皮、动画制作到 Unity 播放、混合和打断，以及场景构件建模/UV/贴图到 Unity 材质与拼装的操作方案；具体软件实操、素材与运行验证待完成。
+> 状态：首页与 12 篇章节已落地；第 01—07 篇正文已成稿，其余 5 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括工具地图、Photoshop 原画、建模到 Unity 接入，以及 Maya / 3ds Max 绑定、蒙皮、动画制作到 Unity 播放、混合和打断，以及场景构件建模/UV/贴图到 Unity 材质与拼装，以及 Unity 庭院搭建、地形/光照、碰撞/导航/镜头走查的操作方案；具体软件实操、素材与运行验证待完成。
 > 本文件是本系列唯一的篇级规划。根 `doc-plan.md` 只保留系列路由；具体开写时再建立单篇执行提纲。
 
 ## 1. 定位、读者与边界
@@ -64,7 +64,7 @@
 
 - 主要面向希望理解美术制作的客户端工程师，以及需要认识上下游工作的美术与 TA。
 - 以实时 3D 游戏为主要语境，先讲通用模型，再落到具体工具和引擎。
-- 首页当前显示：**第 01—06 篇已有正文，其余 6 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
+- 首页当前显示：**第 01—07 篇已有正文，其余 5 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
 
 ### 2.3 页面从上到下的结构
 
@@ -161,7 +161,7 @@ flowchart TD
 | 04 绑定 | 已写 Maya 2024 的关节、Bind Skin、权重绘制、数值检查及控制入口；3ds Max 2024 的 Bones、Skin、包络与 Weight Table | 简化手臂原稿 → 姿势/权重检查 → FBX 骨架、蒙皮及短测试曲线 → Unity Generic / SkinnedMeshRenderer / Animator 与 Play；操作、素材与运行验证待补 |
 | 05 动画 | Maya 2024 / 3ds Max 2024 的时间轴、关键帧、曲线与 FBX 烘焙导出 | 已写 Idle / Cast / Hit 手臂练习 → 动作原稿与导出范围 → Unity 6000.0 Generic、Animator 播放/过渡/打断；另解释全身 Blend Tree、分层、位移及取消，实操待补 |
 | 06 场景资产 | Maya 2024 的基本体、枢轴与平面 UV；3ds Max 2024 的 Box/Editable Poly/UVW Map/Unwrap UVW；Photoshop 平铺颜色图 | 已写墙/门框/地板原稿 → FBX/PNG → Unity 6000.0 / URP 17 材质、Prefab、碰撞与坐标试拼；光照 UV/LOD/复用边界已说明，素材与实操待补 |
-| 07 地编 | Unity 场景、地形、光照等编辑工具怎样消费上游资产；Unreal 作为按需对照 | 从导入的模块开始摆放、组织空间，检查碰撞/导航与镜头，保存场景并在运行中走查 |
+| 07 地编 | Unity 场景、地形、光照等编辑工具怎样消费上游资产；Unreal 作为按需对照 | 从导入的模块开始搭庭院、组织路线/视线，配置 Terrain 与光照，再用 CharacterController、AI Navigation 和 Cinemachine 独立走查并保存依赖 |
 | 08 特效 | Photoshop 制作形状贴图与遮罩，Unity 粒子/材质编辑工具组织效果；VFX Graph 等按版本与需求选读 | 素材原稿 → 纹理导出 → 导入设置 → 效果组装 → 挂点播放、取消与回收；不要只讲抽象节奏 |
 | 09 TA | 材质/Shader 编辑工具、DCC 脚本或引擎编辑器工具的不同位置 | 选一个小需求展示原型、参数开放、导出辅助/校验与预览，解释哪个操作由工具自动完成 |
 | 10 客户端 | Unity 的导入面板、Prefab、动画系统与最小 C# 表现驱动；按需对照 Unreal | 收到模型/纹理/动作 → 配置导入 → 组装模板及引用 → 创建实例 → 用输入/状态驱动动画与特效 → 退出清理 |
@@ -188,7 +188,8 @@ flowchart TD
 - 04 正文已成稿，用简化手臂分别说明 Maya / Max 制作、权重与控制端、导出和 Unity 接入，补骨架变更、装备及修正形变边界；只有原理图与操作方案，未执行软件或运行实验。
 - 05 正文已成稿，串起 Maya / Max 动作制作、FBX、Unity 播放、混合与打断，并区分逻辑取消、动画事件及根运动；原创示意与操作方案已写，实际动作文件、全身素材及运行记录待补。
 - 06 正文已成稿，沿模块接口、Maya / Max 建模和 UV、Photoshop 平铺贴图、FBX、Unity 材质/Prefab/碰撞与坐标试拼展开；明确平铺颜色 UV 与光照 UV、编辑器尺寸检查与实际通行的区别。实际素材、拼装及运行记录待补。
-- 07—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
+- 07 正文已成稿，沿用庭院构件，解释四类空间、灰盒路线与视线、Unity 搭建、外围 Terrain、实时与可选烘焙光照，再给出 CharacterController、AI Navigation 和 Cinemachine 走查方案；原创示意已写，Unity 工程、脚本编译与运行记录待补。
+- 08—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
 - 后续写作若未实际操作工具，应明确标为操作设计或待验证步骤；不能用本轮规划更新宣称软件或引擎验证完成。
 
 **本轮核对的原始资料**：Adobe [PSD 原稿与 PNG 导出说明](https://helpx.adobe.com/photoshop/desktop/save-and-export/save-files/save-in-png-and-gif-formats.html)、Autodesk [Maya FBX 导出（2024）](https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Interoperability/files/GUID-C64CFD18-517C-47A2-9E5D-489EC5D6480C.htm)及 [3ds Max 游戏 FBX 导出（2022）](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-70DBCE92-4D55-4CD6-A2E9-23E48E571068.htm)。这些资料确认了教学路径可参考的能力范围；旧版本菜单和默认值不能直接写成当前版本保证。
@@ -196,7 +197,7 @@ flowchart TD
 **统一教学场景：一名持杖角色进入小型遗迹庭院，对目标释放一次短距离施法技能。** 这是拟制作的教学示例，不是已发生的项目案例。
 
 - 角色线：简化设计稿、可变形模型、基础材质、骨架、待机/移动/施法动作、武器挂点。
-- 场景线：地面、墙、门和少量装饰模块；一段入口、通行区域与目标区域；固定观察摄像机。
+- 场景线：地面、墙、门和少量装饰模块；一段入口、通行区域与目标区域；固定观察摄像机，07 另用临时第三人称镜头走查空间。
 - 表现线：起手提示、施法反馈、目标反馈；效果绑定与结束约定。
 - 集成线：一个最小角色表现对象、一套技能表现配置、可重复执行的预览与验收步骤。
 - 02—08 各自可用局部示例讲清主问题，不要求等整套资产完成后才能写作；11 再进行汇合。
@@ -304,6 +305,8 @@ flowchart TD
 **边界：** 本篇回答“构件怎样制作”；路线、空间节奏和整体场景摆放归 07。程序化生成只说明可选接口。
 
 ### 07｜地编：怎样把资产组织成可玩的空间
+
+**当前状态：** 正文已写，包含 Unity 庭院坐标搭建、路线/视线、Terrain、光照、手动移动与导航探针、Cinemachine 镜头、走查清单和修改回流。素材工程、脚本编译、运行与烘焙尚未执行；原理图不替代运行证据。
 
 **核心问题：** 怎样让关卡中的空间同时支持行走、观察、交互和视觉表达？
 
@@ -425,7 +428,7 @@ flowchart TD
 
 ### 6.2 篇级页面与状态
 
-以下页面已建立；第 01—06 篇为正文，其余 6 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
+以下页面已建立；第 01—07 篇为正文，其余 5 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
 
 | 编号 | 章节页面 | 状态 |
 | --- | --- | --- |
@@ -435,7 +438,7 @@ flowchart TD
 | 04 | [game-art-production-04-rigging-skinning.md](../content/delivery-engineering/game-art-production-04-rigging-skinning.md) | 正文已写；Maya / Max → FBX → Unity 操作方案，实操与素材待补 |
 | 05 | [game-art-production-05-animation.md](../content/delivery-engineering/game-art-production-05-animation.md) | 正文已成稿；Maya / Max 制作、导出与 Unity 播放/混合/打断操作方案，实操待补 |
 | 06 | [game-art-production-06-environment-assets.md](../content/delivery-engineering/game-art-production-06-environment-assets.md) | 正文已成稿；Maya / Max 构件建模/UV、Photoshop 贴图与 Unity 材质/拼装方案，实操待补 |
-| 07 | [game-art-production-07-level-art.md](../content/delivery-engineering/game-art-production-07-level-art.md) | 提纲已建立；正文待写 |
+| 07 | [game-art-production-07-level-art.md](../content/delivery-engineering/game-art-production-07-level-art.md) | 正文已成稿；Unity 庭院/路线/地形/光照与碰撞、导航、镜头走查方案，实操待补 |
 | 08 | [game-art-production-08-vfx.md](../content/delivery-engineering/game-art-production-08-vfx.md) | 提纲已建立；正文待写 |
 | 09 | [game-art-production-09-technical-art.md](../content/delivery-engineering/game-art-production-09-technical-art.md) | 提纲已建立；正文待写 |
 | 10 | [game-art-production-10-client-integration.md](../content/delivery-engineering/game-art-production-10-client-integration.md) | 提纲已建立；正文待写 |

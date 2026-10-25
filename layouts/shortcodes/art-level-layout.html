@@ -1,0 +1,73 @@
+<figure aria-label="庭院路线、视线和四类空间检查的原理示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="庭院俯视与检查层，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 650" role="img" aria-labelledby="level-layout-title level-layout-desc" style="display:block;width:100%;min-width:740px;height:auto">
+      <title id="level-layout-title">从入口绕过屏风，再观察庭院后方目标</title>
+      <desc id="level-layout-desc">左侧是8乘6米庭院的俯视原理图，入口净宽2米，内部屏风位于X3至5、Z2。蓝色箭头从A经B、C到D，代表设计走查路线而非实际导航结果。橙色虚线表示入口到目标的视线被屏风截断，绿色线表示C点的观察关系。右侧分别列出视觉、角色碰撞、导航与镜头检查。本图未生成实际NavMesh，也没有运行或烘焙结果。</desc>
+      <defs>
+        <marker id="level-route-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#467599"/></marker>
+        <marker id="level-z-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#657b68"/></marker>
+      </defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="32" font-size="20" font-weight="600">同一个庭院，分别检查身体、视线、寻路和镜头</text>
+        <text x="22" y="59" font-size="14">平面坐标单位为米；图中路线与视线为设计意图，待实际镜头与运行确认</text>
+      </g>
+      <rect x="44" y="88" width="420" height="450" fill="#e7ecdf" rx="10"/>
+      <rect x="82" y="119" width="336" height="252" fill="#f4f5ef" stroke="#a3b39c"/>
+      <path d="M166 119V371M250 119V371M334 119V371M82 203H418M82 287H418" fill="none" stroke="#d3dccd"/>
+      <path d="M82 371V119H418V371M82 371H208M292 371H418" fill="none" stroke="#728977" stroke-width="9"/>
+      <rect x="208" y="371" width="84" height="84" fill="#f4f5ef" stroke="#a3b39c"/>
+      <path d="M250 371V455M208 371H292" fill="none" stroke="#c0cdb9" stroke-dasharray="4 4"/>
+      <path d="M208 287H292" stroke="#728977" stroke-width="10"/>
+      <rect x="237" y="148" width="26" height="26" fill="#bb8549" stroke="#9c6c36"/>
+      <path d="M250 413V161" stroke="#bb8549" stroke-width="2" stroke-dasharray="5 5"/>
+      <path d="M334 224L263 162" stroke="#65916c" stroke-width="2"/>
+      <path d="M250 413V337L334 329L334 224L250 203" fill="none" stroke="#467599" stroke-width="3" marker-end="url(#level-route-arrow)"/>
+      <g fill="#467599" stroke="#fff" stroke-width="2">
+        <circle cx="250" cy="413" r="7"/><circle cx="334" cy="329" r="7"/><circle cx="334" cy="224" r="7"/><circle cx="250" cy="203" r="7"/>
+      </g>
+      <g font-family="system-ui, sans-serif" fill="#304b40" font-size="15">
+        <text x="268" y="434">A (4,-1)</text><text x="348" y="343">B (6,1)</text>
+        <text x="348" y="217">C</text><text x="192" y="204">D</text>
+        <text x="271" y="157">目标</text><text x="185" y="270">屏风 X=3—5</text>
+        <text x="173" y="394">入口净宽 2 米</text>
+        <text x="91" y="106">后墙 Z=6</text><text x="91" y="477">墙线范围：X=0—8，Z=0—6</text>
+        <text x="91" y="505">外围 Terrain：本轮不纳入导航</text>
+      </g>
+      <path d="M59 350V304" stroke="#657b68" stroke-width="2" marker-end="url(#level-z-arrow)"/>
+      <text x="48" y="291" font-family="system-ui, sans-serif" fill="#435b48" font-size="14">+Z</text>
+      <g font-family="system-ui, sans-serif">
+        <g fill="#f1f4ee" stroke="#c5d0c1">
+          <rect x="490" y="91" width="326" height="91" rx="8"/>
+          <rect x="490" y="194" width="326" height="91" rx="8"/>
+          <rect x="490" y="297" width="326" height="91" rx="8"/>
+          <rect x="490" y="400" width="326" height="112" rx="8"/>
+        </g>
+        <g fill="#304b40" font-size="17" font-weight="600">
+          <text x="508" y="118">视觉：是否看得懂？</text>
+          <text x="508" y="221">碰撞：身体是否走得过？</text>
+          <text x="508" y="324">导航：路径是否可达？</text>
+          <text x="508" y="427">镜头：观察位置够不够？</text>
+        </g>
+        <g fill="#435b48" font-size="14">
+          <text x="508" y="145">A 遮挡 → C 显露 → D 停留</text>
+          <text x="508" y="166">在实际高度、FOV 与宽高比下判断</text>
+          <text x="508" y="248">手动控制器：穿门、贴边、倒退</text>
+          <text x="508" y="269">核对 Collider 与身体尺寸</text>
+          <text x="508" y="351">代理体型 → 收集几何 → Bake</text>
+          <text x="508" y="372">请求成功、路径完整、抵达分别确认</text>
+          <text x="508" y="454">门柱、横梁、屏风端点与背墙</text>
+          <text x="508" y="475">碰撞收近、偏肩与俯仰反复走查</text>
+          <text x="508" y="496">镜头避障不等于渲染遮挡剔除</text>
+        </g>
+      </g>
+      <path d="M22 555H818" stroke="#cdd7c8"/>
+      <g font-family="system-ui, sans-serif" font-size="14">
+        <path d="M35 581H78" stroke="#467599" stroke-width="3"/><text x="89" y="586" fill="#435b48">设计走查路线</text>
+        <path d="M249 581H292" stroke="#bb8549" stroke-width="2" stroke-dasharray="5 5"/><text x="303" y="586" fill="#435b48">被屏风截断的观察线</text>
+        <path d="M553 581H596" stroke="#65916c" stroke-width="2"/><text x="607" y="586" fill="#435b48">绕行后的观察线</text>
+        <text x="25" y="623" fill="#657b68">示意不包含实际寻路结果、摄像机位置、地形高度或光照烘焙数据。</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption style="font-size:.9rem;color:var(--muted-foreground,#66736a);margin-top:.6rem">原创空间关系示意。A→B→C→D 是设计走查路线；直接寻路到 D 不保证经过 B、C，遮挡是否成立也要在实际镜头下确认。</figcaption>
+</figure>
