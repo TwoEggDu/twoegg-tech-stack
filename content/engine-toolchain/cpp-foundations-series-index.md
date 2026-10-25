@@ -19,7 +19,7 @@ series_level: "基础到进阶"
 series_best_for: "能写业务代码，希望逐句解释引擎与运行时中的 C++"
 series_summary: "共用语言与工程基础，按项目补专项前置，再进入具体源码。"
 series_intro: "围绕对象怎样存活、调用怎样发生、内存怎样被访问和代码怎样进入程序，建立跨项目复用的 C++ 阅读能力。"
-series_reading_hint: "先读 CXX-01～03，再用 CXX-10 练习多文件构建与调试，再读 CXX-05～06、04 和 07～08 的回调、布局、容器、模板与生成；下一篇补存储与对象寿命。"
+series_reading_hint: "先读 CXX-01～03，再用 CXX-10 练习多文件构建与调试，再读 CXX-05～06、04 和 07～09 的回调、布局、容器、模板、生成与存储；下一篇补并发与数据交接。"
 tags: ["C++", "源码阅读", "Piccolo", "Unreal", "HybridCLR", "IL2CPP"]
 weight: 490
 ---
@@ -30,11 +30,11 @@ weight: 490
 
 **阅读分三层：公共 C++ 基础 → 各路线专项前置 → 源码主线。** 专项前置会重新说明通用规则在具体项目中怎样使用，并补充该项目特有的知识。
 
-> **当前进度**：公共目录规划了 11 个正文单元，CXX-01～08、10 已写，其余 2 个待写。原有四篇材料继续保留在原系列，承担综合练习和项目案例；复用链接不增加公共正文数量。各篇的小程序、引擎运行和发布状态以正文记录为准。
+> **当前进度**：公共目录规划了 11 个正文单元，CXX-01～10 已写，其余 1 个待写。原有四篇材料继续保留在原系列，承担综合练习和项目案例；复用链接不增加公共正文数量。各篇的小程序、引擎运行和发布状态以正文记录为准。
 
 ## 现在从哪里开始
 
-先读 [CXX-01：一次传参到底复制、借用还是只读访问]({{< relref "engine-toolchain/cpp-foundations-01-values-references-signatures.md" >}})，分清对象与指针变量、const、auto 和借用寿命。再读 [CXX-02：对象与资源由谁结束]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}})，理解 RAII、拥有关系与引用环。接着读 [CXX-03：一次成员调用执行谁]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}})，用独立程序区分重载、覆盖、切片和虚析构。再读 [CXX-10：源文件怎样成为正在调试的程序]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})，沿同一个多文件工程练习编译、链接、静态库与断点。接着读 [CXX-05：行为怎样被保存并稍后调用]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}})，区分函数指针、捕获和取消后的任务副本。再读 [CXX-06：从一段字节读到一个值]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})，核对布局、类型访问和字节解码的前提。接着读 [CXX-04：复制、移动和容器修改以后，哪些访问还有效]({{< relref "engine-toolchain/cpp-foundations-04-move-containers-invalidation.md" >}})，把元素地址、拥有关系、索引和身份分开判断。再读 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}})，沿推导、重载与特化、类型工具和转发核对选择与实例化。接着读 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})，实际区分宏、条件开关、文件生成、链接与启动注册。随后进入下面的综合练习和项目案例，其余公共课继续补齐。
+先读 [CXX-01：一次传参到底复制、借用还是只读访问]({{< relref "engine-toolchain/cpp-foundations-01-values-references-signatures.md" >}})，分清对象与指针变量、const、auto 和借用寿命。再读 [CXX-02：对象与资源由谁结束]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}})，理解 RAII、拥有关系与引用环。接着读 [CXX-03：一次成员调用执行谁]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}})，用独立程序区分重载、覆盖、切片和虚析构。再读 [CXX-10：源文件怎样成为正在调试的程序]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})，沿同一个多文件工程练习编译、链接、静态库与断点。接着读 [CXX-05：行为怎样被保存并稍后调用]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}})，区分函数指针、捕获和取消后的任务副本。再读 [CXX-06：从一段字节读到一个值]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})，核对布局、类型访问和字节解码的前提。接着读 [CXX-04：复制、移动和容器修改以后，哪些访问还有效]({{< relref "engine-toolchain/cpp-foundations-04-move-containers-invalidation.md" >}})，把元素地址、拥有关系、索引和身份分开判断。再读 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}})，沿推导、重载与特化、类型工具和转发核对选择与实例化。接着读 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})，实际区分宏、条件开关、文件生成、链接与启动注册。再读 [CXX-09：有内存为什么还没有对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})，分别追踪存储、对象寿命、资源与访问。随后进入下面的综合练习和项目案例，其余公共课继续补齐。
 
 | 用途 | 已有文章 | 先掌握什么 |
 |---|---|---|
@@ -61,11 +61,11 @@ weight: 490
 | [CXX-06 布局与字节访问]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}}) | 大小、对齐、偏移、指针运算和类型转换怎样连接内存与值 | 已写，含结构观察、表示复制、小端解码及失败边界 |
 | [CXX-07 模板阅读]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}}) | 推导、特化、类型工具和转发怎样选择实现 | 已写，含候选选择、类型检测、转发与显式实例化练习 |
 | [CXX-08 宏与代码生成]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}}) | 一段代码由谁产生，在哪个阶段被使用 | 已写，含宏/条件程序、实际生成、构建依赖与显式注册实验 |
-| CXX-09 存储与对象 | 分配、构造、析构、释放和未定义行为的边界在哪里 | 按补写顺序下一篇待写 |
+| [CXX-09 存储与对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}}) | 分配、构造、析构、释放和未定义行为的边界在哪里 | 已写，含原位构造、异常清理、union 与对齐释放实验 |
 | [CXX-10 编译链接与符号]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}}) | 头文件、翻译单元、库和正在运行的程序怎样对应 | 已写，含三文件工程、失败变体、静态库与 GDB 验证 |
-| CXX-11 并发与数据交接 | 数据交给其他线程后，谁保证寿命、互斥和可见性 | 待写；硬件内存序材料仅作补充 |
+| CXX-11 并发与数据交接 | 数据交给其他线程后，谁保证寿命、互斥和可见性 | 按补写顺序下一篇待写；硬件内存序材料仅作补充 |
 
-前面三课建立共同起点，CXX-10 补齐多文件构建与调试，最小编译练习从第一课即可开始。CXX-04～08 已补移动与容器、回调、布局、模板和生成代码，接着补存储与对象寿命，再补并发；不要求先学完所有高级主题。
+前面三课建立共同起点，CXX-10 补齐多文件构建与调试，最小编译练习从第一课即可开始。CXX-04～09 已补移动与容器、回调、布局、模板、生成代码和存储/对象寿命，接着补并发；不要求先学完所有高级主题。
 
 ## 进入 Piccolo 之前
 
@@ -104,8 +104,8 @@ weight: 490
 
 ## 接下来先补什么
 
-1. CXX-01～08、10 已写，共同起点已包括对象与调用、构建、容器与回调、布局、模板，以及宏与生成代码。
-2. 下一篇补 CXX-09 存储与对象寿命；随后补 CXX-11 并发与数据交接。
+1. CXX-01～10 已写，共同起点已包括对象与调用、构建、容器与回调、布局、模板、生成代码，以及存储与对象寿命。
+2. 下一篇补 CXX-11 并发与数据交接，完成公共目录剩余单元。
 3. 专项逐句跟读继续按各路线推进，衔接 UE 的容器、Delegate 与生成链，以及各 runtime 的对象、执行和线程约定。
 
 现有 [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}})、[解释器基础]({{< relref "engine-toolchain/hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md" >}})、[UE GC]({{< relref "system-design/ds-23-unreal-gc.md" >}}) 和 [硬件多核与内存序]({{< relref "performance/hardware-cpu-f05-multicore-false-sharing.md" >}}) 继续承担自己的专题；公共课补齐进入它们之前的语言基础。

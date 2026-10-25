@@ -222,7 +222,7 @@ int main()
 
 通过不符合类型访问规则的左值读取对象，可能违反语言规则；能按 char、unsigned char 或 std::byte 等规定方式接触对象表示，不等于可以任意按另一对象类型读值。[类型访问规则](https://timsong-cpp.github.io/cppwp/n4659/basic.lval)
 
-因此，即使给一个字符数组加了 alignas(T)，它也只是解决存储对齐这一项，并不自动提供完整的 T 对象寿命证明。原始存储、placement new、union 活跃成员和析构的完整关系，留到 CXX-09；这里先使用已存在的普通对象。
+因此，即使给一个字符数组加了 alignas(T)，它也只是解决存储对齐这一项，并不自动提供完整的 T 对象寿命证明。原始存储、placement new、union 活跃成员和析构的完整关系，见 [CXX-09：有内存为什么还没有对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})；这里保留对已存在普通对象的布局、表示和解码实验。
 
 传统 `(T*)pointer` 这类 C 风格转换又可能组合多种转换能力，阅读时应拆回它究竟改变了类型、资格还是数值；不要只凭“旧代码这么写”认定它安全。
 

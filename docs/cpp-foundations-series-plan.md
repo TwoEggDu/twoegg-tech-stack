@@ -8,7 +8,7 @@
 
 采用两层前置：**公共 C++ 基础 → 各路线专项前置 → 具体源码主线**。公共课使用不依赖引擎的自有小程序，具体路线补自己的对象协议、宏、容器、构建和执行机制。专项前置要重新解释通用规则在该项目中怎样落地，但不再复制整套语言课。
 
-系列规划与阅读入口已建立，现已按补写顺序完成九篇公共正文 CXX-01～08、10。其余目标单元继续按实际状态登记；普通 C++ 实验不新增四条源码路线的工程运行验证结论。
+系列规划与阅读入口已建立，现已按补写顺序完成十篇公共正文 CXX-01～10。其余目标单元继续按实际状态登记；普通 C++ 实验不新增四条源码路线的工程运行验证结论。
 
 ## 边界与归属
 
@@ -26,7 +26,7 @@
 
 ## 状态与复用规则
 
-本系列当前有 **1 个已写索引、11 个公共课目标单元**。其中 9 个已写（CXX-01～08、10）、0 个待整理、2 个待写。原有四篇基础材料仍属于原系列，继续承担综合练习与项目案例；引用它们不会增加公共正文数量。
+本系列当前有 **1 个已写索引、11 个公共课目标单元**。其中 10 个已写（CXX-01～10）、0 个待整理、1 个待写。原有四篇基础材料仍属于原系列，继续承担综合练习与项目案例；引用它们不会增加公共正文数量。
 
 - **已写**：目标正文存在；源码核对、小程序、引擎运行和发布状态继续分别记载。
 - **待整理**：已有主要材料，可先读；仍须抽取通用模型、补齐独立示例与入口，不等于目标公共课已写。
@@ -43,6 +43,8 @@ CXX-04 复用 UFS 的 move/vector 与 Piccolo PCPP-1 的持有/遍历模型，�
 CXX-07 复用 Piccolo 模板篇与 UFS 的类型实参、推导和定义可见性模型，补三个独立程序、一个显式实例化三文件工程、四个编译失败与一个链接失败变体；区分重载/特化、替换/函数体错误、转发与寿命，不把 C++ 模板当托管泛型。
 
 CXX-08 复用 Piccolo 的阶段模型及 UE/HybridCLR/IL2CPP 的产物入口，补宏与条件程序、实际 JSON→C++ 生成器、显式函数表和 CMake 文件依赖。验证全新/增量构建、漏链接/漏注册及清单校验，不把教学生成成功扩展为项目生成器或引擎运行成功。
+
+CXX-09 复用所有权、布局与分配器的分层模型，补原位重建、构造失败清理、union 活跃成员、对齐分配四个正常程序和两个编译失败边界；把存储、对象、资源和访问分别追踪，不运行 UB，不以原生实验替代托管/引擎规则。
 
 公共编号使用 **CXX**，避免与 Piccolo 原有 CPP-01～03 混淆。下表路径是计划目标；没有链接的文件尚不存在，不创建空壳正文。
 
@@ -61,9 +63,9 @@ CXX-08 复用 Piccolo 的阶段模型及 UE/HybridCLR/IL2CPP 的产物入口，�
 | CXX-06 | 从一段字节读到一个值：布局、偏移、对齐与类型转换 | 已写；复用布局/ABI 模型，补三个独立程序、边界输入及两个编译失败练习；验证见 [执行记录](cpp-foundations-06-layout-bytes-casts-outline.md) | CXX-01～02；解释 sizeof/alignof/offsetof、指针运算、void*、cast 与 memcpy 前提；区分对象表示、本机布局和外部格式，不运行非法解引用 | [正文](../content/engine-toolchain/cpp-foundations-06-layout-bytes-casts.md) |
 | CXX-07 | 模板调用怎样选择实现：推导、特化与常见类型工具 | 已写；复用 Piccolo 与 UFS 模板材料，补三个独立程序、三文件显式实例化工程与五个失败边界；验证见 [执行记录](cpp-foundations-07-template-reading-outline.md) | CXX-01、03、04；解释推导、重载/特化、依赖名、decltype/traits、SFINAE、if constexpr、参数包与转发；区分选择、实例化、链接和寿命，不展开完整元编程体系 | [正文](../content/engine-toolchain/cpp-foundations-07-template-reading.md) |
 | CXX-08 | 眼前的代码由谁产生：宏、条件编译、外部生成与运行时注册 | 已写；复用四路线阶段/产物模型，补预处理、实际生成与显式注册、CMake 增量和失败边界；验证见 [执行记录](cpp-foundations-08-macros-code-generation-outline.md) | CXX-03、07；按输入、生产者、配置、消费者和生效时刻追踪；区分生成、链接与注册，不用教学实验代替项目运行 | [正文](../content/engine-toolchain/cpp-foundations-08-macros-code-generation.md) |
-| CXX-09 | 有内存为什么还没有对象：分配、构造、析构与未定义行为 | 按补写顺序下一篇待写；[分配器专题](../content/system-design/ds-19-memory-allocators.md) 只提供策略背景 | CXX-02、06；区分存储与对象寿命，补 placement new、union 活跃成员、别名/对齐约束、释放匹配、异常退出清理；不把未定义行为的某次输出当保证 | `cpp-foundations-09-storage-object-lifetime-ub.md` |
+| CXX-09 | 有内存为什么还没有对象：分配、构造、析构与未定义行为 | 已写；复用 CXX-02/06 与分配器策略模型，补四个正常程序、两个编译失败与合法修复；验证见 [执行记录](cpp-foundations-09-storage-object-lifetime-ub-outline.md) | CXX-02、06；分别追存储/对象/资源/访问，解释 placement new、union、对齐和匹配释放、异常退出；不执行 UB，不推导项目 GC 规则 | [正文](../content/engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md) |
 | CXX-10 | 源文件怎样成为正在调试的程序：翻译单元、链接、库与符号 | 已写；复用 UFS 和构建调试专题，补三文件工程、失败变体、静态库与 GDB；验证见 [执行记录](cpp-foundations-10-build-link-symbols-outline.md) | CXX-01 起可先练；解释声明/定义、ODR、inline/static/extern、库与导出、C ABI 和符号匹配；编译/链接失败与恢复已验证，动态库及四路线工程未实测 | [正文](../content/engine-toolchain/cpp-foundations-10-build-link-symbols.md) |
-| CXX-11 | 数据交给另一个线程后，谁保证它有效且可见 | 待写；[硬件多核篇](../content/performance/hardware-cpu-f05-multicore-false-sharing.md) 已有内存序背景 | CXX-02、04～05；任务/线程、数据竞争、mutex/RAII、atomic、happens-before、发布与消费；区分 volatile、原子性、可见性和对象寿命 | `cpp-foundations-11-concurrency-handoff.md` |
+| CXX-11 | 数据交给另一个线程后，谁保证它有效且可见 | 按补写顺序下一篇待写；[硬件多核篇](../content/performance/hardware-cpu-f05-multicore-false-sharing.md) 已有内存序背景 | CXX-02、04～05；任务/线程、数据竞争、mutex/RAII、atomic、happens-before、发布与消费；区分 volatile、原子性、可见性和对象寿命 | `cpp-foundations-11-concurrency-handoff.md` |
 
 各篇的小程序验证记录以正文和执行记录为准。待整理/待写单元的最低验收是后续要求，不表示实验已经执行。
 
@@ -71,14 +73,14 @@ CXX-08 复用 Piccolo 的阶段模型及 UE/HybridCLR/IL2CPP 的产物入口，�
 
 ### 现在可读的最短路径
 
-[CXX-01 值与访问](../content/engine-toolchain/cpp-foundations-01-values-references-signatures.md) → [CXX-02 生命周期与所有权](../content/engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md) → [CXX-03 类与调用](../content/engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md) → [CXX-10 编译链接与符号](../content/engine-toolchain/cpp-foundations-10-build-link-symbols.md) → [CXX-05 回调与捕获](../content/engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md) → [CXX-06 布局与字节](../content/engine-toolchain/cpp-foundations-06-layout-bytes-casts.md) → [CXX-04 移动与容器](../content/engine-toolchain/cpp-foundations-04-move-containers-invalidation.md) → [CXX-07 模板阅读](../content/engine-toolchain/cpp-foundations-07-template-reading.md) → [CXX-08 宏与生成](../content/engine-toolchain/cpp-foundations-08-macros-code-generation.md)。随后按目标进入 Piccolo 智能指针/类与虚函数项目案例，再读现有模板与反射材料；UFS 首课保留为 UE 路线的综合编译/调试练习。ReflectionPtr、Component、生成器是项目应用，不替代公共规则。需要 MSVC 综合操作或托管调试细节时并行回看 UFS 与构建调试专题。
+[CXX-01 值与访问](../content/engine-toolchain/cpp-foundations-01-values-references-signatures.md) → [CXX-02 生命周期与所有权](../content/engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md) → [CXX-03 类与调用](../content/engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md) → [CXX-10 编译链接与符号](../content/engine-toolchain/cpp-foundations-10-build-link-symbols.md) → [CXX-05 回调与捕获](../content/engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md) → [CXX-06 布局与字节](../content/engine-toolchain/cpp-foundations-06-layout-bytes-casts.md) → [CXX-04 移动与容器](../content/engine-toolchain/cpp-foundations-04-move-containers-invalidation.md) → [CXX-07 模板阅读](../content/engine-toolchain/cpp-foundations-07-template-reading.md) → [CXX-08 宏与生成](../content/engine-toolchain/cpp-foundations-08-macros-code-generation.md) → [CXX-09 存储与对象](../content/engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md)。随后按目标进入 Piccolo 智能指针/类与虚函数项目案例，再读现有模板与反射材料；UFS 首课保留为 UE 路线的综合编译/调试练习。ReflectionPtr、Component、生成器是项目应用，不替代公共规则。需要 MSVC 综合操作或托管调试细节时并行回看 UFS 与构建调试专题。
 
 ### 目标公共路径
 
 1. 入门共同段：CXX-01 → 02 → 03 → 10；CXX-10 的最小编译练习从第一课开始即可使用。
 2. 访问与调用段：CXX-04～06 已写；各篇依赖以 canonical 表为准。
 3. 模板与生成段：CXX-07～08 已写；结合 CXX-10 回看模板定义可见性和生成文件怎样进入构建。
-4. 按系统深入：对象存储/运行时读 CXX-09；异步/跨线程系统读 CXX-11。
+4. 对象存储段：CXX-09 已写；下一篇 CXX-11 衔接异步/跨线程系统。
 
 各路线先完成将要使用的公共知识，再读自己的专项前置。可先阅读已有项目文章，不要求所有十一课写完才允许进入源码；缺课处明确标缺口，不能声称前置已全部满足。
 
@@ -102,10 +104,10 @@ CXX-08 复用 Piccolo 的阶段模型及 UE/HybridCLR/IL2CPP 的产物入口，�
 | 0，已完成 | 建公共索引、canonical plan、四路线回链与缺口表 | 在各 plan 登记专项责任 | 已有链接可达、拟题不做假链接、状态不虚增 |
 | 1，公共课已写 | CXX-01～03、10 已写；已补多文件、静态库与符号练习 | 复用 Piccolo CPP 三篇和 UE 首课，补前后阅读提示；整理 UCPP-1 的对象边界 | 公共规则不依赖引擎；旧文继续承担应用/综合练习 |
 | 2，公共课已写 | CXX-04～06 已写；已补回调、布局与容器访问 | 补 HCPP-1 参数槽/方法指针、ICPP-1 生成代码跟读、PCPP-1/2 容器与回调 | 独立程序与源码入口能逐句对应，区别各自寿命协议 |
-| 3，进行中 | CXX-07～08 已写；下一篇新增 09 | 补 UCPP-2 → 3 → 4 的容器/模板、Delegate 与 UHT；补 HCPP-2、ICPP-2/3 的 runtime 跟读 | 不混淆模板与托管泛型、编译器分派与 runtime 表、存储与对象 |
-| 4 | 新增 CXX-11 | 再补 UE 任务线程、Piccolo 交接时序、runtime 线程/GC 协作 | 明确发布/消费、所有权与同步；真实线程结论附证据 |
+| 3，公共课已写 | CXX-07～09 已写；已补模板、生成和存储/对象规则 | 补 UCPP-2 → 3 → 4 的容器/模板、Delegate 与 UHT；补 HCPP-2、ICPP-2/3 的 runtime 跟读 | 不混淆模板与托管泛型、编译器分派与 runtime 表、存储与对象 |
+| 4，下一批 | 新增 CXX-11 | 再补 UE 任务线程、Piccolo 交接时序、runtime 线程/GC 协作 | 明确发布/消费、所有权与同步；真实线程结论附证据 |
 
-批次 1～2 的公共课已写不代表专项工作全部完成，专项状态仍以对应 plan 为准。
+批次 1～3 的公共课已写不代表专项工作全部完成，专项状态仍以对应 plan 为准。
 
 每批优先完成公共知识，再写依赖它的专项桥梁；同一批中的专项项按对应 plan 排序推进，不要求四条路线同时开写。2026-10-25 按用户指定先落地 Piccolo PCPP-1/2/3，必要的容器、回调与交接规则在专项中补桥；项目正文与验证归 Piccolo plan，公共 CXX-04～06 现已成稿，CXX-11 的完整单元仍待写。
 

@@ -467,7 +467,7 @@ Python 3.12.4 实际执行生成器；同一清单重复生成文本一致，重
 
 CMake 4.3.1/MinGW Makefiles 的全新构建与三种增量情形均通过：无改动不重生成，改清单重生成并得到 jump=13，改脚本注释重生成但输出文本相同。还原后重建运行恢复 jump=12；手动与 CMake 两份正常生成内容相同。没有执行四条引擎路线、跨平台工具链、静态自动注册、链接裁剪、并发/动态库卸载或性能验证。
 
-按补写顺序，下一篇是 **CXX-09：有内存为什么还没有对象**，继续区分存储、构造、析构与未定义行为。完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按补写顺序，下一篇进入 [CXX-09：有内存为什么还没有对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})，继续区分存储、构造、析构与未定义行为。完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **先找到代码的生产者，再证明它怎样进入程序并开始被使用。**
 

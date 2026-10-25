@@ -434,6 +434,8 @@ gdb ./training.exe
 
 UE C++ 仍是 C++，包含普通值、模板、构造析构和资源管理；但是 `UObject` 及其派生对象加入了 UE 的创建、反射和 GC 规则。不要把本例的 `std::make_unique<Tracked>()` 机械改成 `std::make_unique<AActor>()`，也不要用普通 `delete` 或通用共享指针去接管 UObject。
 
+普通 C++ 中的存储分配、placement new、异常退出与匹配释放，见 [CXX-09：有内存为什么还没有对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})。它补语言接缝，本课仍保留普通对象的综合调试练习，UE 对象协议继续在专项中核对。
+
 普通文件句柄和非 UObject 工具对象仍然可以应用 RAII；Actor/组件怎样创建、持有和结束，在 [第三篇的对象边界]({{< relref "engine-toolchain/ufs-03b-first-rotating-actor.md" >}}) 里用实际类解释。你不需要为了开始建工程先读完 GC 源码，但要知道这里不能套用同一套删除策略。
 
 ## 10. 自测、AI 辅助与验证记录
