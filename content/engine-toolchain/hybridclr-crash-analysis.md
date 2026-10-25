@@ -201,7 +201,7 @@ E CRASH: backtrace:
 
 **预防**：`global-metadata.dat` 属于 AOT 层产物，不应该通过热更下发。只有 DLL 可以热更，metadata 不行。
 
-如果你想把 `global-metadata.dat`、`GameAssembly/libil2cpp` 和 HybridCLR 的边界彻底拆开，可以回看 [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}})。
+若怀疑 metadata 与原生二进制不配套，先按 [IL2CPP 产物一致性排查]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}}) 核对构建身份与符号；运行时职责分工见 [IL2CPP 运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})。
 
 ---
 

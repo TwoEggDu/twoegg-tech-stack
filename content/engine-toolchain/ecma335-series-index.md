@@ -53,7 +53,7 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 
 1. 先读 [IL2CPP 实现分析]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，将 DLL 输入、构建产物和 runtime 职责对应起来。
 2. 遇到泛型问题，接着读 [泛型共享桥接篇（原 A7／Bridge-D）]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}}) 和 [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})。共享规则属于实现层，要结合版本理解。
-3. 再进入 [HybridCLR 系列]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})。ABI、解释器 IR、GC 接入、裁剪、async 和工程排障继续在该系列展开。
+3. 准备动手跟源码时，先看 [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})，再进入 [HybridCLR 系列]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})。ABI、解释器 IR、GC 接入、裁剪、async 和工程排障继续在该系列展开。
 
 ## 带着问题按需查阅
 

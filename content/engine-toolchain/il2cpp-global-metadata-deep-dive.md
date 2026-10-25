@@ -1,299 +1,88 @@
 ---
 slug: "il2cpp-global-metadata-deep-dive"
 date: "2026-03-26"
-title: "IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么"
-description: "独立专题。拆清楚 IL2CPP 构建产物的分工：libil2cpp 是什么、GameAssembly 是什么、global-metadata.dat 存什么、IL2CPP 启动时如何校验 metadata 版本、版本不匹配为什么直接 abort 而不是报错，以及这三个文件和 HybridCLR 的关系。"
+lastmod: "2026-10-25"
+title: "IL2CPP 产物一致性排查｜metadata、原生二进制与符号为什么必须配套"
+description: "从启动阶段的 metadata 加载异常出发，核对构建身份、文件完整性和匹配符号，区分格式兼容、产物同源与热更程序集加载。"
 series: "dotnet-runtime-ecosystem"
 weight: 60
 featured: false
-tags:
-  - "IL2CPP"
-  - "Unity"
-  - "NativeCrash"
-  - "global-metadata"
-  - "HybridCLR"
-  - "Symbols"
-  - "Debug"
----
-> 很多人用了 IL2CPP 好几年，但从没想过那个 `global-metadata.dat` 里装的是什么，或者为什么它不能热更。这篇把这个问题彻底拆开。
-
+tags: [IL2CPP, Unity, NativeCrash, HybridCLR, Symbols, Debug]
 ---
 
-## 三个文件的分工
+应用在业务入口之前崩溃，符号化后落在 metadata 初始化附近。此时最重要的不是立即替换某个文件，而是确认：**正在运行的原生二进制、它读取的 metadata，以及你用来解释调用栈的符号，是否属于同一次构建。**
 
-IL2CPP 打包产物里，三类文件承担了不同的职责：
+原来的运行时分工说明统一放在 [IL2CPP 运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})。本篇沿用旧地址，专门处理产物一致性排查；二进制结构另见 [global-metadata.dat 格式、加载与绑定]({{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}})。
 
-```
-Android APK 解压后：
-  lib/arm64-v8a/
-    libil2cpp.so          ← IL2CPP 运行时 + 所有 C# 代码编译结果
-  assets/bin/Data/Managed/Metadata/
-    global-metadata.dat   ← 运行时元数据（名字、类型信息、引用表）
-```
+## 先分清三种配套关系
 
-Windows Standalone：
+| 关系 | 要核对的对象 | 为什么仅看文件名不够 |
+|---|---|---|
+| 格式兼容 | metadata 格式与 runtime 读取逻辑 | 同名文件可以来自不同 Unity 版本或定制工具链 |
+| 构建同源 | metadata 与 AOT 原生代码、注册数据 | 即使格式版本相同，不同构建的类型和方法索引也不能据此认定对应 |
+| 调试匹配 | 正在运行的模块与调试符号 | 使用另一包的符号，可能把地址解释到错误位置 |
 
-```
-  GameAssembly.dll        ← 同 libil2cpp.so，IL2CPP 运行时 + C# 编译结果
-  <GameName>_Data/il2cpp_data/Metadata/
-    global-metadata.dat
-```
+`libil2cpp` 是 runtime 实现，`GameAssembly.dll` 或平台对应库是编译、链接后的载体；不能把它们机械地当成三个独立文件。具体目录和链接形式取决于平台与 Unity 版本，先从实际包体和构建记录定位。
 
-iOS（Xcode 工程）：
+## 先证明产物来自哪里
 
-```
-  GameAssembly.dylib（或静态库）← 同上
-  Data/Managed/Metadata/
-    global-metadata.dat
-```
+排查时保留原包和原始日志，在提取副本上操作。建议记录：
 
-| 文件 | 内容 | 大小特征 |
-|------|------|---------|
-| `libil2cpp.so` / `GameAssembly` | IL2CPP C++ 运行时代码 + C# 代码编译后的机器码 | 通常几十 MB 到上百 MB |
-| `global-metadata.dat` | 符号名称、类型结构、方法表、引用信息（见下文详解） | 几 MB 到十几 MB |
-| `.so` / `.dll` 的 strip 版（包体） | 去掉调试符号的机器码 | 比带符号版小，但仍包含运行时需要的所有代码 |
+1. 包版本、构建编号、代码提交、Unity 完整版本，以及 HybridCLR package 和本地 runtime 版本。
+2. 从实际安装包提取的原生库与 `global-metadata.dat` 的路径、长度、SHA256。
+3. 同次构建归档的对应文件与哈希，以及符号的模块身份。
+4. 设备架构、进程、崩溃时间、完整日志和符号化命令。
 
----
+PowerShell 中可对明确的文件路径计算哈希：
 
-## libil2cpp.so / GameAssembly 里有什么
-
-IL2CPP 把两件事合并进了同一个二进制：
-
-**1. IL2CPP C++ 运行时**
-
-这是 Unity 自己实现的托管运行时，负责：
-- 内存管理（GC）
-- 类型系统（类型加载、转换、instanceof）
-- 线程管理
-- 异常处理（`il2cpp::vm::Exception::*`）
-- 反射 API（`il2cpp::vm::Reflection::*`）
-- P/Invoke 桥接
-
-这部分代码在所有 Unity 项目里几乎相同（同一 Unity 版本），是 Unity 发布的闭源 C++ 库。
-
-**2. C# 代码编译结果**
-
-IL2CPP 把项目里所有 C# 代码转译成 C++，再由平台 C++ 编译器（Clang / MSVC）编译进同一个二进制。
-
-转译后的函数名形如：
-```
-GameManager_Update_m1234567890       // void GameManager.Update()
-Player_TakeDamage_m9876543210_gshared // 泛型 shared 版本
+```powershell
+Get-FileHash -Algorithm SHA256 -LiteralPath 'E:/case/extracted/global-metadata.dat'
+Get-FileHash -Algorithm SHA256 -LiteralPath 'E:/case/extracted/libil2cpp.so'
 ```
 
-这就是为什么符号化后能看到 C# 类名和方法名——它们被编码进了 C++ 函数名里。
+路径只是示例，换成当前包实际提取出的文件。**哈希用于与同次构建的归档比较**，不是将两个不同文件的哈希互相比相等。没有归档时只能确认手上文件的身份，还不能证明它们配套。
 
-**重点**：`libil2cpp.so` 里的代码不依赖 `global-metadata.dat` 里的字符串信息就能运行——代码里直接使用数字索引（token）引用类型和方法，字符串名字只在需要反射、日志、异常消息时才查。
+优先排查增量构建残留、复制脚本选错目录、不同平台产物混用、安装包与符号归档对应错误。若链路中有加密或解密，还需要核验 runtime 实际消费的解密结果，不能拿密文直接按明文文件头判断损坏。
 
----
+## 格式检查能证明多少
 
-## global-metadata.dat 里有什么
+文件头和各段边界可以帮助发现明显损坏或格式不兼容，但它们不是构建身份校验。
 
-`global-metadata.dat` 是一个紧凑的二进制格式文件，它存放的是 IL2CPP 运行时需要的**名字和结构信息**。
+- 文件存在，不代表读到了预期字节，也不代表访问权限与路径正确。
+- 格式版本符合预期，只能支持格式层面的判断，不能证明它和当前 native 代码同源。
+- 格式不兼容时，具体在哪个阶段、以什么方式失败，需要结合实际 Unity runtime 与构建配置确认。
 
-### 文件头（Header）
+因此，不要把“所有版本不匹配都一定通过某个断言触发 SIGABRT”写成跨版本规律，也不要通过改文件头版本号让检查暂时通过。改变版本字段不会同步修复内容布局、索引或与原生注册数据的对应关系。
 
-文件开头是一个固定结构的 Header：
+## 启动崩溃如何缩小范围
 
-```cpp
-// 来自 IL2CPP 源码（UPM 包 com.unity.il2cpp 或 Unity 源码），简化版
-struct Il2CppGlobalMetadataHeader
-{
-    int32_t  sanity;          // 魔术数，固定值，用于快速验证文件合法性
-    int32_t  version;         // metadata 格式版本号
+| 观察到的证据 | 可以提出的假设 | 还需要补什么 |
+|---|---|---|
+| 业务入口之前，在 metadata 加载或初始化附近失败 | 文件读取、格式或构建配套异常 | 完整日志、实际文件、同包符号、构建身份 |
+| 出现 SIGABRT | 某处主动终止或断言失败 | 终止原因和匹配符号；信号本身不能定位 metadata |
+| 出现 SIGSEGV | 非法内存访问 | 有效栈、寄存器、模块身份；不能直接认定 AOT 泛型问题 |
+| 热更 DLL 装载时出现 TypeLoadException 等托管异常 | 程序集依赖、类型解析或加载顺序存在问题 | 完整异常、依赖版本和装载记录 |
 
-    // 以下是各数据段的 offset 和 size（每个段都有一对）
-    int32_t  stringLiteralOffset;
-    int32_t  stringLiteralCount;
-    int32_t  stringLiteralDataOffset;
-    int32_t  stringLiteralDataCount;
-    int32_t  eventsOffset;
-    int32_t  eventsCount;
-    int32_t  propertiesOffset;
-    int32_t  propertiesCount;
-    int32_t  methodsOffset;
-    int32_t  methodsCount;
-    // ... 以及 fields, typeDefinitions, images, assemblies 等
-    // 完整字段随 Unity 版本而略有变化
-};
-```
+没有证据前，不把某个栈形状升级成根因。可以先用同一构建归档的完整产物做隔离对照；替换单个文件后“不再崩溃”也不足以证明其他路径全部兼容。
 
-`sanity` 是一个固定魔术数（IL2CPP 源码里定义为常量），用来快速排除"这根本不是 metadata 文件"的情况。
+## 符号化与 metadata 分别解决什么
 
-`version` 是 **metadata 格式版本号**，这是运行时校验的核心字段。
+常规原生地址符号化依赖对应模块的调试信息。Windows 核对 PDB，Android 核对对应架构与模块的符号文件；`global-metadata.dat` 不能替代它们。Unity 的 [Android symbols 说明](https://docs.unity3d.com/ja/2022.1/Manual/android-symbols.html) 介绍了 IL2CPP 符号的归档位置，实际路径以所用版本和导出方式为准。
 
-### 各数据段
+先得到可信的函数和源位置，再判断它属于文件加载、metadata 初始化、热更装载还是业务执行。具体工具步骤见 [Android 崩溃分析]({{< relref "engine-toolchain/crash-analysis-01-android.md" >}})。本篇不提供伪造的崩溃日志，也不把示意调用链作为已发生事故。
 
-Header 之后是多个数据段，每个段都通过 Header 里的 offset 和 size 定位。主要段：
+## 与 HybridCLR 热更的边界
 
-| 段名 | 内容 |
-|------|------|
-| `stringLiteral` | 代码里的字符串字面量（`"Hello World"` 这类） |
-| `stringLiteralData` | 字符串字面量的实际字节 |
-| `events` | 事件定义（名字、类型） |
-| `properties` | 属性定义 |
-| `methods` | 方法定义（名字、参数信息、返回类型） |
-| `fields` | 字段定义（名字、类型、偏移） |
-| `typeDefinitions` | 类型定义（类名、基类、接口、方法列表起始位置等） |
-| `images` | 程序集（Assembly）的镜像信息 |
-| `assemblies` | 程序集的名字和版本 |
-| `genericContainers` | 泛型容器（泛型类型、泛型方法的参数信息） |
-| `genericParameters` | 泛型参数名（`T`、`TResult` 等） |
-| `customAttributeData` | 自定义 Attribute 数据 |
-| `metadataUsageLists` | 运行时元数据使用清单（反射、泛型实例等） |
+社区版常规热更新装载的是热更 DLL；补充 AOT 元数据走自己的 API 和匹配规则。它们不能被当成单独替换 `global-metadata.dat` 的理由。
 
-一句话概括：**`global-metadata.dat` 存的是 IL2CPP 运行时要用到的所有"名字"和"结构描述"**——机器码里用数字引用的东西，在这里可以查到对应的名字和完整定义。
+主包的原生代码、注册数据与 metadata 应作为配套构建产物管理。若修改了主包 AOT 产物，应重新生成并验证完整主包；若使用其他商业更新能力，则按该能力的产物契约另行验证。
 
----
+补充 AOT DLL 的同源与匹配问题，继续看 [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})；热更调用栈定位继续看 [HybridCLR 崩溃分析]({{< relref "engine-toolchain/hybridclr-crash-analysis.md" >}})。
 
-## IL2CPP 启动时的 metadata 加载与校验
+## 留下可复查的排查记录
 
-IL2CPP 的初始化入口（简化版流程）：
+最终记录应能回答：哪个构建、哪个模块、哪些文件、使用哪份符号、失败在哪一步，以及对照改变了什么。当前文章是排查方法，不附带某次 Player 故障的实测结论。
 
-```
-Unity 引擎启动
-  → il2cpp_init()                          // IL2CPP 对外入口
-    → il2cpp::vm::Runtime::Init()          // 运行时初始化
-      → il2cpp::vm::MetadataCache::Initialize()  // 元数据初始化
-        → MetadataLoader::LoadMetadataFile()     // 读取文件
-          → 验证 Header（sanity + version）
-          → 建立各段的内存映射
-        → 建立类型缓存（TypeInfoArray 等）
-      → RegisterAllStrings()               // 注册字符串字面量
-      → RegisterAllTypes()                 // 注册所有类型
-      → il2cpp::vm::Assembly::Register()  // 注册所有 Assembly
-```
+返回 [IL2CPP 系列索引]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})。
 
-### 版本校验的代码逻辑
-
-`MetadataCache::Initialize()` 里的校验（概念示意，基于 IL2CPP 开源部分）：
-
-```cpp
-static void Initialize()
-{
-    const Il2CppGlobalMetadataHeader* header =
-        (const Il2CppGlobalMetadataHeader*)s_GlobalMetadata;
-
-    // 第一关：magic 校验
-    IL2CPP_ASSERT(header->sanity == kIl2CppGlobalMetadataSanity);
-
-    // 第二关：版本校验
-    IL2CPP_ASSERT(header->version == kIl2CppMetadataVersion);
-
-    // 两者都是编译期常量，编译进 libil2cpp.so 里
-    // metadata 文件里的值必须和这两个常量完全一致
-    // 不一致 → IL2CPP_ASSERT 失败 → abort()
-}
-```
-
-`kIl2CppMetadataVersion` 是一个整数常量（如 Unity 2022.3 里大约是 29），在每次 IL2CPP 格式有变化时递增。`kIl2CppGlobalMetadataSanity` 是一个固定魔术数。
-
-这两个常量在**编译 libil2cpp.so 时**就被烘焙进二进制里了。`global-metadata.dat` 在**打包时**写入同样的值。两者来自同一次 Unity 版本，所以匹配。
-
-### 为什么版本不匹配就直接 abort，而不是报错继续
-
-`IL2CPP_ASSERT` 在 Release 构建里通常实现为 `abort()`（或平台相关的强制终止），而不是抛异常。
-
-这是有意为之的设计，理由有两条：
-
-**1. metadata 版本不匹配意味着"内存布局已经错了"**
-
-`global-metadata.dat` 里的 `typeDefinitions` 段存的是所有类型的字段偏移、方法索引等结构信息。`libil2cpp.so` 里的机器码在访问对象字段时，直接用这些偏移值做指针运算。如果 metadata 格式变了，偏移表的排列方式可能变了，继续运行只会产生更难追查的内存损坏。
-
-**2. 没有降级路径**
-
-不同版本的 metadata 格式可能增删了字段、改变了段结构，IL2CPP 运行时没有实现跨版本兼容逻辑。在这种情况下，提前终止比带着损坏状态继续跑更安全——至少能给出明确的崩溃位置，而不是几秒后在完全无关的地方崩溃。
-
----
-
-## 版本不匹配的崩溃特征
-
-在 Android 上，`global-metadata.dat` 版本不匹配的崩溃发生在**应用启动时**，在 Unity 任何业务代码执行之前：
-
-```
-E CRASH: signal 6 (SIGABRT), code -1 (SI_QUEUE)
-E CRASH: pid: 1234, tid: 1234
-E CRASH: backtrace:
-E CRASH:   #00 pc ...  libc.so (abort+...)
-E CRASH:   #01 pc ...  libil2cpp.so   ← abort 在 il2cpp 里被调用
-E CRASH:   #02 pc ...  libil2cpp.so
-E CRASH:   #03 pc ...  libunity.so
-```
-
-符号化后，`#01` 通常指向 `il2cpp::vm::MetadataCache::Initialize()` 或附近的函数。
-
-**区分于其他启动崩溃**：
-
-| 崩溃类型 | 信号 | 发生时机 | 特征 |
-|---------|------|---------|------|
-| metadata 版本不匹配 | SIGABRT | Unity 初始化阶段，业务代码之前 | abort 在 MetadataCache 附近 |
-| Assembly 加载顺序错 | 无（托管异常） | 热更 DLL 加载阶段 | logcat 有 TypeLoadException |
-| AOT 泛型死循环 | SIGSEGV | 业务逻辑执行中 | 帧地址重复 + FullySharedGeneric |
-
----
-
-## global-metadata.dat 和 HybridCLR 的关系
-
-HybridCLR 的热更代码（DLL）在运行时加载，它有自己的元数据（DLL 里的 PE/CLI 元数据）。但 HybridCLR **不替换也不修改** `global-metadata.dat`。
-
-两者的职责边界：
-
-```
-global-metadata.dat  ─── 描述 AOT 代码里的所有类型和方法
-                               ↑
-                    libil2cpp.so 启动时加载，之后只读
-
-热更 DLL              ─── 描述热更代码里的类型和方法
-                               ↑
-                    HybridCLR 在 Assembly.Load() 时动态解析
-```
-
-所以：
-- 热更新 DLL 的元数据变了 → 只换 DLL 文件，正确
-- `global-metadata.dat` 的元数据变了 → 必须重新打包 APK，不能热更
-
----
-
-## 符号化时 global-metadata.dat 的作用
-
-符号化 crash 时，`llvm-addr2line` 查的是 **libil2cpp.so 里的 DWARF 调试信息**，里面存的是机器码地址到 C++ 函数名的映射——这些函数名已经包含了 C# 类名（因为 IL2CPP 把类名编进了 C++ 函数名里）。
-
-`global-metadata.dat` **不参与**符号化过程。
-
-但有两个工具会用到它：
-
-| 工具 | 用途 |
-|------|------|
-| IL2CPP 逆向工具（如 Il2CppDumper） | 从 `global-metadata.dat` 提取所有类/方法名，恢复被 strip 的符号 |
-| HybridCLR 运行时 | 解析热更 DLL 里对 AOT 类型的引用时，通过 metadata 查 token |
-
----
-
-## 小结
-
-```
-libil2cpp.so / GameAssembly
-  = IL2CPP 运行时 + C# 代码机器码
-  = 能独立执行，但只认 token（数字）
-
-global-metadata.dat
-  = 所有名字 + 类型结构 + 方法信息
-  = 机器码里的 token 在这里查到对应的名字和定义
-  = Header 里有版本号，必须和 libil2cpp.so 里的编译期常量匹配
-
-版本校验
-  = IL2CPP 启动时第一件事
-  = 不匹配 → IL2CPP_ASSERT → abort()
-  = 这是有意设计的 fast-fail，防止带错误状态继续跑
-
-HybridCLR 边界
-  = 热更 DLL 有自己的元数据
-  = global-metadata.dat 属于 AOT 层，不参与热更
-```
-
----
-
-## 延伸阅读
-
-- [HybridCLR 崩溃定位专题]({{< relref "engine-toolchain/hybridclr-crash-analysis.md" >}}) — 包含 metadata 版本不匹配崩溃的识别方法
-- [崩溃分析 Android 篇]({{< relref "engine-toolchain/crash-analysis-01-android.md" >}}) — 如何获取和符号化 Android native crash
+**格式兼容、构建同源、符号匹配是三个独立检查，只有把它们分开，metadata 附近的崩溃才有可靠的解释起点。**

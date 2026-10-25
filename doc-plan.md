@@ -68,8 +68,8 @@
 | 从 C# 到 CLR | [docs/csharp-to-clr-series-plan.md](./docs/csharp-to-clr-series-plan.md) | 已拆出 | 串联 ECMA-335 / CoreCLR / Mono / IL2CPP / HybridCLR / LeanCLR |
 | ECMA-335 前置层 | [docs/ecma335-series-plan.md](./docs/ecma335-series-plan.md) | 已拆出 | 优先服务 IL2CPP / HybridCLR，主线与按需材料分开 |
 | .NET Runtime 生态总图 | [docs/dotnet-runtime-ecosystem-master-plan.md](./docs/dotnet-runtime-ecosystem-master-plan.md) | 已拆出 | 运行时家族总导航 |
-| HybridCLR 结构诊断与补桥 | [docs/hybridclr-structural-diagnosis-and-bridge-articles-plan.md](./docs/hybridclr-structural-diagnosis-and-bridge-articles-plan.md) | 已拆出 | 对应旧 `十九·B` |
-| IL2CPP 运行时地图 | [docs/il2cpp-runtime-map-article-plan.md](./docs/il2cpp-runtime-map-article-plan.md) | 已拆出 | 独立专题已升级为系列 plan |
+| HybridCLR | [docs/hybridclr-series-plan.md](./docs/hybridclr-series-plan.md) | 已拆出 | 源码起步、执行主线、案例与选读；旧补桥材料保留为执行层 |
+| IL2CPP | [docs/il2cpp-series-plan.md](./docs/il2cpp-series-plan.md) | 已拆出 | 运行时地图、核心机制与产物一致性排查 |
 | Unity 异步 / Task / UniTask | [docs/unity-async-runtime-task-to-unitask-series-plan.md](./docs/unity-async-runtime-task-to-unitask-series-plan.md) | 已拆出 | 线程、任务、continuation 主线 |
 
 ### 引擎架构、模式与算法

@@ -76,6 +76,9 @@ public static int Add(int a, int b)
 *图：整条链可以压成 8 步。装载期、初始化期和调用期的边界决定了 transform 发生在第一次调用时。*
 
 ## 先给源码地图
+
+准备调试环境或不知道从哪里开始时，先读 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。该篇固定了 v6.1.0 的源码路径与首次／再次调用观察点；本文较宽泛的 v6.x 描述需与自己的实际版本核对。
+
 > 本文源码分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）。如果你使用的版本差异较大，部分文件路径或函数签名可能有变化。
 
 这篇主要看这些文件：

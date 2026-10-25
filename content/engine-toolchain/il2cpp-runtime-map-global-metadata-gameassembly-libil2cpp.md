@@ -460,6 +460,9 @@ metadata 解决的是"认得出来"，不自动等于"有可执行实现"。
 
 ## 相关阅读
 
+- [IL2CPP 系列索引：从产物地图进入八篇核心机制]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})
+- [产物一致性排查：metadata、原生二进制与符号配套]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}})
+
 - [HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
 - [HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})
 - [Unity 裁剪 01｜Unity 的裁剪到底分几层]({{< relref "engine-toolchain/unity-stripping-01-what-gets-stripped.md" >}})

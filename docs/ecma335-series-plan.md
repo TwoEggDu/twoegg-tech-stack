@@ -75,3 +75,7 @@
 - Hugo 0.157.0 extended 全站构建通过，1348 页、零 ERROR；本轮涉及的 18 个内容页 YAML、代码围栏及 slug 检查通过，19 个文件中 114 个 relref 目标存在。
 - 生成栏目页中的 ECMA 卡片为 16 篇，前三篇为导读、metadata、类型系统；HybridCLR 卡片篇数和前三个入口与修订前一致。泛型代码表示在 HTML 中正确保留。
 - 本轮验证不包含线上部署核验或 Unity／HybridCLR Player 验证。
+
+## 跨系列衔接（2026-10-25）
+
+主线结构保持导读 + 九篇主线。索引新增 HybridCLR 源码阅读起步入口；后续实现层分别由 [IL2CPP 系列计划](./il2cpp-series-plan.md) 和 [HybridCLR 系列计划](./hybridclr-series-plan.md) 管理。贯穿三栏的泛型调用实验仍待写，不计入已完成文章。

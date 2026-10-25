@@ -1,5 +1,5 @@
 ---
-title: "IL2CPP 实现分析索引｜Unity AOT runtime 的 8 篇管线拆解"
+title: "IL2CPP 实现分析索引｜运行时地图、核心机制与产物排查"
 slug: "il2cpp-series-index"
 type: "reading-guide"
 layout: "engine-directory"
@@ -8,19 +8,24 @@ topic_key: "engine"
 reading_title: "IL2CPP 实现分析"
 description: "从 C# 到 native，沿转换器、元数据与运行时理解 Unity AOT 的执行链路。"
 date: "2026-04-15"
+lastmod: "2026-10-25"
 weight: 49
 series: "dotnet-runtime-ecosystem"
 series_id: "il2cpp-index"
 tags: [IL2CPP, Unity, AOT, Index]
 ---
 
-IL2CPP 是 Unity 当前的主力 runtime。这 8 篇从完整管线、转换器、runtime 内部、metadata 格式、泛型代码生成、GC 集成、ECMA-335 覆盖度到代码裁剪，覆盖 IL2CPP 的核心机制。
+本系列按“产物地图 → 八篇核心机制 → 产物排查”组织，共 10 篇正文。先建立 metadata、native code 与 runtime 的分工，再进入 IL2CPP 的构建与执行链路，最后衔接 HybridCLR。
 
 ## 前置知识
 
 建议先完成 [ECMA-335 前置主线]({{< relref "engine-toolchain/ecma335-series-index.md" >}})。读 D3 前区分 [类型信息准备与静态初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})，读 D5 前确认 [签名与泛型上下文]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})。
 
-## 文章列表
+## 推荐阅读顺序
+
+先读 [IL2CPP 运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})，再按 D1～D8 阅读。遇到启动失败或文件混用时，跳到后面的产物排查专题。
+
+## 核心机制
 
 | # | 主题 | 一句话 |
 |---|------|--------|
@@ -35,12 +40,23 @@ IL2CPP 是 Unity 当前的主力 runtime。这 8 篇从完整管线、转换器�
 
 ---
 
-## 前置建议
+## 按问题查阅
 
-这组文章假设读者已经了解 ECMA-335 的基本概念。如果对 CLI Metadata、CIL 指令集或 CLI Type System 还不熟悉，建议先读 [ECMA-335 基础层]({{< relref "engine-toolchain/dotnet-runtime-ecosystem-series-index.md" >}}) 的 A1~A3。
+| 问题 | 阅读入口 |
+|---|---|
+| 分不清 metadata、GameAssembly 与 runtime | [运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}}) |
+| 要理解 metadata 文件结构与绑定 | [D4：格式、加载与绑定]({{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}}) |
+| 启动崩溃，怀疑文件混用或符号不匹配 | [产物一致性排查]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}}) |
+| 泛型方法不能执行 | [D5：泛型代码生成]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md" >}}) → [HybridCLR AOT 泛型专题]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}) |
+| 反射目标被裁剪 | [D8：裁剪与保留规则]({{< relref "engine-toolchain/il2cpp-managed-code-stripping-linker-linkxml.md" >}}) |
 
 ## 延伸阅读
 
 理解 IL2CPP 的限制后，可以接着看 HybridCLR 怎么在 IL2CPP 之上补回解释执行能力：
 
-- [HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) — 37 篇，从 build-time 到 runtime 的完整链路
+- [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})：准备版本、调试工程和第一条调用链。
+- [HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})：从基础机制进入案例与工程防线。
+
+## 接下来补强什么
+
+现有内容覆盖核心机制；贯穿三个专栏的泛型调用实验、固定构建样本与性能测量仍待补充。源码阅读起步已提供操作路线，其 Player 断点结果仍需单独验证。
