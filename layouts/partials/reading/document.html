@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
   {{ if .IsHome }}<link rel="stylesheet" href="{{ `css/delivery-home.css` | relURL }}">{{ end }}
   {{ if or .Params.framework_hub .Params.framework_lane }}<link rel="stylesheet" href="{{ `css/framework-reading.css` | relURL }}">{{ end }}
-  {{ if or .IsHome .Params.cooperative_project }}<link rel="stylesheet" href="{{ `css/cooperative-project.css` | relURL }}">{{ end }}
+  {{ if or .IsHome .Params.cooperative_project }}<link rel="stylesheet" href="{{ `css/cooperative-project.css` | relURL }}?v={{ readFile `static/css/cooperative-project.css` | crypto.SHA256 }}">{{ end }}
   <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
   <script src="{{ `js/search.js` | relURL }}" defer></script>
 </head>

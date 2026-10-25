@@ -58,6 +58,8 @@ implementation_routes:
 
 [ET10 行为树候选评估]({{< relref "practice/cooperative-dungeon/et10-behavior-tree-evaluation.md" >}})已整理选型依据与近战怪设计，当前为“首选候选、待验证”，不代表已采用或已跑通。
 
+[最小接入实验设计]({{< relref "practice/cooperative-dungeon/et10-behavior-tree-minimal-experiment.md" >}})已列出版本目标、9 个同步业务节点、配置导出与 E0～E6 验证步骤。当前待实施、待验证；先完成环境核对，再验证选敌、追击、等待与攻击。
+
 [查看总览中的 T01～T18 逐项教学与验证表]({{< relref "practice/cooperative-dungeon/design-overview.md#3-功能教学目标与验证内容" >}})。以上都是待执行要求，不是已通过的游戏测试。
 
 真实账号、匹配、持久化、多平台、性能和版本更新按需安排专项；上线运营不作为当前前置条件。

@@ -34,6 +34,7 @@
 .reading-site .coop-route .coop-route-focus { font-size:12px; padding-top:10px; border-top:1px solid var(--line); }
 .reading-site .coop-notes { padding-bottom:36px; }
 .reading-site .coop-prose { min-width:0; overflow-wrap:anywhere; font-size:15px; }
+.reading-site .coop-prose pre { max-width:100%; overflow-x:auto; }
 .reading-site .coop-prose h2 { font-size:25px; margin:38px 0 18px; padding-top:28px; border-top:1px solid var(--line); scroll-margin-top:24px; }
 .reading-site .coop-prose h3 { margin-top:28px; }
 .reading-site .coop-prose li { margin-bottom:8px; }
