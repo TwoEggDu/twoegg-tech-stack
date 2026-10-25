@@ -45,6 +45,7 @@
 
 ## 待补强
 
+- 近期先与 HybridCLR 共用 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，完成环境、构建、模块／符号和首次／再次调用记录；本机自定义 Unity 配套 v9 的隔离实验已完成构建、PDB 与方法级断点验收；首次转换、再次复用及两次解释执行均有记录。旧 v6.1.0 失败记录保留，不视为旧版通过。
 - 转换器与 runtime 篇：补固定构建样本的 C#、IL、生成物和运行时对象对应关系。
 - 与 ECMA-335、HybridCLR 共用一个泛型调用综合实验，待写。
 - 当前不声称全系列经过统一 Unity patch 的 Player 验证。

@@ -9,7 +9,7 @@
 ## 阅读入口
 
 - 发布索引：`content/engine-toolchain/hybridclr-series-index.md`。
-- 源码跟读准备：`hybridclr-source-reading-start.md`，已写；固定 v6.1.0 源码，Player 断点验证待补。
+- 源码跟读准备：`hybridclr-source-reading-start.md`，已写；保留 v6.1.0 源码阅读；v9 配套组合已在本机自定义 Unity 完成 Player 断点验证。
 - 线程接入专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；与 IL2CPP 共用，源码核对完成，Player／native 回调实验待补。
 - 数量：30 篇编号正文 + 6 篇前置桥接 + 2 篇专题，共 38 篇，索引另计。
 - 篇级文件均位于 `content/engine-toolchain/`，原 HCLR 编号及 URL 保留。
@@ -76,13 +76,15 @@
 
 ## 接下来补强
 
+近期先做“源码阅读起步 → 调用链篇”的共用 Player 实验，再做三栏泛型调用综合实验、GC／线程验证和性能测量。步骤与验收统一放在 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)。已用本机自定义 Unity 2022.3.62f3 完成新版隔离实验：package v9.0.3 / runtime v9.0.1 原始配套源码构建成功，完整 PDB、同一方法首次转换／再次复用、两次 Execute 与返回值均已记录。两篇保留 v6.1.0 阅读说明并单列 v9 实测，不增加新正文数量。
+
 | 工作 | 状态与验收 |
 |---|---|
-| 源码阅读起步 | 正文与静态源码定位已完成；Unity patch、Player 断点与日志待记录 |
+| 源码阅读起步 | 已补自定义 Editor 身份、v9 固定组合、构建与符号记录、自有样本；不推广为全版本兼容 |
 | GC 与线程接入 | 正文、固定源码定位已完成；桌面实验、Player 根快照与 native 回调验证分别记录 |
 | 三栏泛型调用综合实验 | 待写；同一例子连通规范、AOT 与解释执行 |
 | 性能与预热篇 | 待加强；固定设备、构建配置和采样条件 |
-| 调用链篇 | 待加强；逐断点的输入输出与首次／再次对照，回查旧路径名称 |
+| 调用链篇 | 已修正 v6.1.0 旧路径，新增 v9 差异表与实测：同一方法 Transform 一次、Execute 两次，返回 5、15 |
 | 商业能力篇 | 待复核；逐条标注公开事实、推断与数据来源 |
 
 旧 `hybridclr-structural-diagnosis-and-bridge-articles-plan.md` 保留为历史诊断与补桥执行材料，不再作为当前进度目录。源码起步的提纲与证据见 `hybridclr-source-reading-start-outline.md`。

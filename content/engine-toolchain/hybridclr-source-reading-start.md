@@ -5,7 +5,7 @@ date: "2026-10-25"
 description: "先对齐源码、构建产物与运行进程，再用一个热更方法的两次调用，跟清装载、转换、缓存和解释执行。"
 series: "HybridCLR"
 weight: 29
-hybridclr_version: "v6.1.0 / 5567f367502d916c6742873d8ed2ab13d0f6900a"
+hybridclr_version: "源码阅读 v6.1.0；Player 实测 runtime v9.0.1 / package v9.0.3"
 tags: [Unity, HybridCLR, IL2CPP, SourceCode, Debug]
 ---
 
@@ -15,7 +15,7 @@ tags: [Unity, HybridCLR, IL2CPP, SourceCode, Debug]
 
 > **读这篇之前**：先理解 [IL2CPP 运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})。不熟悉 token 和方法体时，补读 [DLL 与 CLI Metadata]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})；完整前置见 [ECMA-335 索引]({{< relref "engine-toolchain/ecma335-series-index.md" >}})。
 
-> **证据范围**：本文已核对下列固定 commit 的公开源码。调试步骤和实验表是操作方案与预期观察，尚未完成 Unity Player 断点验证；不把源码推导当作设备实测。
+> **证据范围**：v6.1.0 保留为历史源码阅读基线；实际 Player 使用下文锁定的 v9 配套组合，已完成原生断点验证。Editor 是本机自定义版本，结果不代表其他 Unity 发行版、平台或 HybridCLR 版本的兼容性。
 
 ## 先建立三份地图
 
@@ -51,7 +51,7 @@ git -C hybridclr-package-reading rev-parse HEAD
 Get-Content hybridclr-package-reading/Data~/hybridclr_version.json
 ```
 
-如果要实际运行，再填一份实验记录。**本文没有验证某个 Unity 2022.3 patch 与以上组合的运行结果**；应先按所选 package 的兼容说明确认，再记录完整 patch 号：
+如果要实际运行，再填一份实验记录。先按所选 package 的兼容说明确认，再记录完整 patch 号；本文后面的本机实验不能代替你自己的版本验证：
 
 ```text
 Unity 完整版本：待填写（不能只写 2022.3）
@@ -65,6 +65,35 @@ Player 构建编号、原生二进制和 PDB 路径：待填写
 ```
 
 在 [SettingsUtil.cs](https://github.com/focus-creative-games/hybridclr_unity/blob/88e20505f87d57cbff5695be5f7baa35d626f619/Editor/SettingsUtil.cs) 中可以找到该版本的本地 runtime 路径规则：`HybridCLRData/LocalIl2CppData-{Application.platform}/il2cpp`。安装结果可能是复制出来的目录，没有 `.git`；此时保留安装记录、版本文件和源码差异，不要把阅读副本的 SHA 当成实际构建证明。还要在构建日志中确认编译输入确实来自这份目录。
+
+### 本机隔离实验：用另一份明确基线运行
+
+2026-10-25 的实验使用 Unity Hub 手动登记的**本机自定义 Editor**，产品版本为 `2022.3.62f3_96770f904ca7`。目标为 Windows x86_64、IL2CPP、Development、C++ Debug，Script Debugging 关闭。工具环境为本机 Visual Studio Community 18、MSVC 14.51.36231 与 Windows SDK CDB；未覆盖 Editor 安装目录。
+
+最初用 v6.1.0 尝试时，生成器与配套 runtime 的异常辅助接口不匹配；局部适配后虽然构建成功，Player 仍因缺少两个内存池导出停在脚本前。因此保留它作为阅读基线，另开短路径工程使用下面的原始配套源码，不沿用兼容补丁：
+
+| 组件 | 实验版本 | commit |
+|---|---|---|
+| hybridclr_unity | v9.0.3 | `6cadd24d101f4cbd00cd80190106f6621132d24d` |
+| hybridclr | v9.0.1 | `83929787581bce6c7219418f62348a10c33582ee` |
+| il2cpp_plus | v2022.3.x-9.0.1 | `ba3a76c9979d14cee404fb5d44301773e0768866` |
+
+这份映射来自固定 package 的 [hybridclr_version.json](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Data%7E/hybridclr_version.json)。package 版本与 runtime 版本不同是该映射的实际结果。新实验的 840 个配套 libil2cpp 文件、79 个 HybridCLR 非生成文件，与锁定源码逐文件哈希一致；桥接文件等按 GenerateAll 正常生成。
+
+自有 C#、程序集配置和 CDB 命令保存在仓库的 `scripts/hybridclr-reading-probe/`。只把样本放进新实验工程：构建脚本会写入该工程的场景列表与构建设置。它在工程同级寻找 `combined-libil2cpp`，首次安装到项目本地，随后按一致配置生成并构建。v9 的实际 runtime 路径是 `Library/HybridCLR/LocalIl2CppData-WindowsEditor/il2cpp`，不要套用上面 v6 的 `HybridCLRData` 路径。
+
+这轮实际走到的边界如下：
+
+| 验证层 | 实际结果 |
+|---|---|
+| Editor、热更 DLL、GenerateAll | 已完成 |
+| 最终 IL2CPP 构建 | 新版原始配套源码成功构建，Editor 退出码 0 |
+| 模块与符号 | CDB 加载本次 GameAssembly，显示完整 PDB 符号 |
+| Player 脚本入口 | 装载 4608 字节 HotUpdate.dll，输出 PROBE_PASS |
+| Add 两次执行与缓存 | 同一 MethodInfo，Transform 一次、Execute 两次，返回 5、15 |
+| 脱离调试器运行 | 同一构建正常完成，进程退出码 0 |
+
+这次证据支持该固定样本在本机自定义环境中的执行链，不扩展为 GC、线程、性能或移动端结论。详细的首次／再次观测值见 [调用链实战]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}})。
 
 ## 第一轮只读这几个入口
 
@@ -147,7 +176,7 @@ public static class SourceReadingProbe
 
 ## 断点要观察什么
 
-这些是本文 v6.1.0 源码中核对过的入口；行号仅帮助第一次定位，换版本后应重新搜索符号。
+下表是 **v6.1.0 阅读入口**；实际 v9 Player 请用后面的版本对照，不要直接按旧行号下断点。
 
 | 阶段 | 断点 | 观察重点 | 能说明什么 |
 |---|---|---|---|
@@ -156,6 +185,10 @@ public static class SourceReadingProbe
 | 方法准备 | `InterpreterModule::GetInterpMethodInfo`，同文件:588 | `methodInfo`、image 来源、token、`methodBody->ilcodes` | 在正确的 image 中取得目标方法体 |
 | 转换 | `HiTransform::Transform`，Transform.cpp:150 | 输入 body；返回后结果的 `codes`、`codeLength`、参数槽信息 | CIL 已转换成内部表示 |
 | 执行 | `Interpreter::Execute`，Interpreter_Execute.cpp:1645 | `methodInfo`、参数槽；完成建帧后再观察 `ip` 和 `imi` | 目标方法进入内部指令执行 |
+
+本轮 v9.0.1 的对应位置为：`Assembly.cpp:124 / 131`、`InterpreterModule.cpp:409 / 521`、`Transform.cpp:34`、`Interpreter_Execute.cpp:1812`。v9 的 Transform 接收 MethodInfo，并在内部经 `MethodBodyCache` 获取方法体；v6 在上层取 body 再传入 Transform。对应差异已在 [调用链篇]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}}) 单独列出。
+
+本轮采用 CDB 在创建进程时设置延迟符号断点，使用构建输出的 PDB 目录，再放行自动执行的样本。样本中的 `trace-v9.cdb` 记录模块、方法地址、缓存值、参数和栈帧。命令里的寄存器取参只适用于 Windows x64 和本例签名；断点命令用法见 [Microsoft 的 bp/bu/bm 文档](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/bp--bu--bm--set-breakpoint-)。
 
 `Execute` 会被许多方法命中。先核对命名空间、类名、方法名；找到目标 `MethodInfo*` 后，可用调试器条件限制为该地址。不要把启动阶段其他方法的命中当作本例证据，也不要在循环里长期单步所有指令。
 
@@ -172,7 +205,7 @@ public static class SourceReadingProbe
 
 这说明的是**转换结果复用**，不是第二次变成 native JIT。如果首调已有缓存，先找预热、先前调用或其他触发路径。如果第二次再次转换，先核对是否同一进程、同一方法对象和同一泛型实例，不要直接判定缓存失效。
 
-系列旧文有些地方使用 `MethodBodyCache` 概括方法体缓存路径。本文固定的 v6.1.0 入口实际调用 `image->GetMethodBody`，转换结果缓存于 `interpData`；跟读时以当前源码为准。方法体读取缓存与转换结果缓存也不是同一个概念。
+本文固定的 v6.1.0 入口实际调用 `image->GetMethodBody`，转换结果缓存于 `interpData`。[调用链篇]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}}) 已同步到这份基线；方法体读取与转换结果缓存也不是同一个概念。
 
 ## 断点不命中，按证据顺序排
 
@@ -191,12 +224,12 @@ public static class SourceReadingProbe
 
 留下一份小记录即可：版本与构建身份、DLL 哈希、目标方法的调用栈、首次／再次的缓存状态，以及两个返回值。断点截图要带上方法身份，单张 `Execute` 截图不够。
 
-<!-- DATA-TODO: 在固定 Unity patch 的 Windows IL2CPP Player 中执行本例，补版本记录、两次目标调用的断点截图和日志；当前仅核对公开源码。 -->
+本轮已经留下构建日志、DLL / PDB 哈希和 CDB 文本断点记录；没有使用受限源码截图。v6.1.0 表格仍是历史源码预期，Player 实测对应上面锁定的 v9 组合。
 
 完成后按问题继续读：
 
 - 想解释每个模块为何这样分工：[原理拆解]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})。
-- 想追 Unity 侧的反射与方法分派入口：[调用链实战]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}})，注意其版本说明与本文固定基线的区别。
+- 想追 Unity 侧的反射与方法分派入口：[调用链实战]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}})，与本文使用同一固定源码基线。
 - 想解释生成物、bridge 或 AOT 泛型失败：[工具链]({{< relref "engine-toolchain/hybridclr-toolchain-what-generate-buttons-do.md" >}}) → [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}}) → [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})。
 - 想找完整阅读路径：[HybridCLR 索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})。
 

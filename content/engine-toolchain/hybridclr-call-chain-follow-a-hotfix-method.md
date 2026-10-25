@@ -1,485 +1,169 @@
 ---
 date: "2026-03-20"
 title: "HybridCLR 调用链实战｜跟着一个热更方法一路走到 Interpreter::Execute"
-description: "从 Assembly.Load(byte[])、MethodInfo.Invoke、MetadataCache、InterpreterInvoke 到 HiTransform 与 Interpreter::Execute，沿着一条真实调用链把 HybridCLR 再跑一遍。"
+description: "保留 v6.1.0 的源码调用链，并用 v9 配套 Player 的原生断点，验证同一热更方法首次转换、再次复用和两次执行。"
 weight: 34
 featured: false
-tags:
-  - "Unity"
-  - "IL2CPP"
-  - "HybridCLR"
-  - "Runtime"
-  - "SourceCode"
+tags: [Unity, IL2CPP, HybridCLR, Runtime, SourceCode]
 series: "HybridCLR"
-hybridclr_version: "v6.x (main branch, 2024-2025)"
+hybridclr_version: "源码阅读 v6.1.0；Player 实测 runtime v9.0.1 / package v9.0.3"
 ---
-> 如果说前几篇是在拆 HybridCLR 的零件，那这一篇要做的，就是沿着一条真实调用链，把这些零件重新装回一台会跑的机器。
 
-这是 HybridCLR 系列第 5 篇，用一条真实调用链把前面几篇重新串起来。
+热更 DLL 已经加载，反射也取到了方法，调用后返回了正确结果。这些现象能证明业务入口可用，却还没有回答：参数经过了哪个 invoker，什么时候转换方法体，第二次调用又复用了什么？
 
-这里默认前几篇的术语已经建立，所以不再重讲补充 metadata、菜单生成和资源挂载的细节，而只追方法调用主链。
+这篇沿着一个独立的 `HotUpdate.ReadingProbe.Add(int, int)` 回答这些问题。工程准备、版本身份和符号检查放在 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})，这里集中跟状态变化，不依赖业务项目的启动框架。
 
-但只拆零件还不够。  
-真正到读源码时，很多人还是会卡在一个更实际的问题上：
+> **版本与证据范围**：前八跳保留 HybridCLR v6.1.0（`5567f367502d916c6742873d8ed2ab13d0f6900a`）的历史源码分析。后面的 Player 实测使用 runtime v9.0.1、package v9.0.3 与本机自定义 Unity；完整 commit 见起步篇。旧版路径、版本差异和实测表分别标明。
 
-`如果业务代码里真的调用了一个热更方法，它到底是怎么一路走进解释器的？`
+## 先把装载、准备与执行分开
 
-这篇就专门回答这个问题。
+一条调用链里有三种不同的状态变化：
 
-它不是再讲一遍"HybridCLR 原理综述"，而是把一条完整调用链重新走一遍。  
-目标也很明确：
+| 阶段 | 输入 | 产生的状态 | 不能据此推定 |
+|---|---|---|---|
+| 装载 | 热更 DLL 字节 | InterpreterImage 与程序集注册信息 | 所有方法都已转换 |
+| 方法准备 | 方法身份、image、token、方法体 | invoker 和解释执行需要的内部表示 | 已完成本次业务调用 |
+| 执行 | 已准备的方法与本次参数 | 当前栈帧、指令执行和返回值 | 下一次无需执行 |
 
-`让读者可以跟着这篇文章进源码，知道每个关键转折点为什么会发生。`
+同一个方法第一次调用可能需要准备内部表示；第二次仍要处理新参数、建立执行现场并返回结果。我们要证明的是转换结果复用，而不是“第二次不经过解释器”。
 
-## 这篇要回答什么
+## 固定一个能排除业务干扰的入口
 
-这篇主要回答 5 个问题：
-
-1. 业务代码里的 `Assembly.Load(byte[])`，最后是怎么接进 HybridCLR runtime 的。
-2. 一个热更程序集里的方法，什么时候会被标记成"由 interpreter 实现"。
-3. `MethodInfo.Invoke` 最终为什么会掉到 `InterpreterInvoke`，而不是普通 AOT invoker。
-4. `Interpreter::Execute` 在第一次执行前，为什么还要先经过一次 transform。
-5. 这一整条链里，哪些动作发生在装载时，哪些动作是第一次调用时才懒执行的。
-
-## 先固定一个足够真实的入口
-
-为了避免整篇文章飘在抽象层，我们先固定一个真实入口。
-
-在你这个项目里，热更程序集的装载和主逻辑入口调用在 `Assets/GameScripts/AOT/Procedure/ProcedureLoadAssembly.cs` 里。关键点只有两句：
+实验只有两个程序集。AOT 入口读取本次编译的 `HotUpdate.dll`，调用 `Assembly.Load(byte[])`，随后通过反射获取 `HotUpdate.ReadingProbe.Add`。热更程序集中的方法只有整数加法，没有显式静态构造、模块初始化和预热代码。
 
 ```csharp
-var assembly = Assembly.Load(textAsset.bytes);
-entryMethod.Invoke(appType, objects);
+var assembly = Assembly.Load(dllBytes);
+var method = assembly.GetType("HotUpdate.ReadingProbe", true)
+    .GetMethod("Add", BindingFlags.Public | BindingFlags.Static);
+var first = (int)method.Invoke(null, new object[] { 2, 3 });
+var second = (int)method.Invoke(null, new object[] { 7, 8 });
 ```
 
-第一句把热更 DLL 从字节数组加载进当前 `AppDomain`。  
-第二句通过反射调用热更程序集里的入口方法。
+完整样本和加载位置见起步篇。这里复用同一个反射方法对象，只装载一次 DLL，预期结果为 `5` 和 `15`。原生调试时还要核对两次调用的 `MethodInfo*`、类型与签名，不能仅凭同名方法归为同一对象。
 
-如果把这两句再压缩一下，这篇文章真正追的就是这条链：
+## 第一跳：DLL 字节怎样进入 runtime
 
-`Assembly.Load(byte[]) -> 获取 MethodInfo -> Invoke -> invoker_method -> InterpreterInvoke -> HiTransform::Transform -> Interpreter::Execute`
+在配套 `il2cpp_plus` 中，先沿 `icalls/mscorlib/System/AppDomain.cpp` 的 `LoadAssemblyRaw` 找到 `vm/MetadataCache.cpp` 的 `LoadAssemblyFromBytes`，再进入 HybridCLR 的 `metadata/Assembly.cpp`。这些路径用于定位接入点；公开正文不复制 Unity C++ 实现。
 
-后文虽然会经常提 `GameApp.Entrance` 这个项目里的实际入口，但为了讲清主线，你也可以把它脑补成一个最简单的热更方法：
+观察这一跳时先记录 DLL 的构建来源、字节长度和 SHA-256，再核对装载入口收到的长度。这样才能把磁盘文件与本次装载关联起来。仅凭程序集名相同，不能证明装载的是本次生成物。
 
-```csharp
-public static int Add(int a, int b)
-{
-    return a + b;
-}
-```
+## 第二跳：装载后得到什么
 
-因为对于 HybridCLR 来说，复杂业务逻辑不是重点。  
-重点是：这个方法属于热更程序集，因此它不会走普通 AOT 方法那条路。
+固定版本的 [Assembly.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/metadata/Assembly.cpp) 中，`LoadFromBytes` 调用 `Create`，后者创建和加载 `InterpreterImage`，初始化相关 metadata，并构造、注册程序集与 image 信息。
 
-![热更方法调用链 8 步](../../images/hybridclr/call-chain-8-steps.svg)
+断点观察应放在相应对象创建之后：输入长度是否匹配，image 是否属于本次 DLL，程序集名是否为 `HotUpdate`。这一步把 DLL 接入 runtime 的 metadata 体系，为后面的类型、方法和 token 解析建立依据，并不意味着每个方法都已生成内部指令。
 
-*图：整条链可以压成 8 步。装载期、初始化期和调用期的边界决定了 transform 发生在第一次调用时。*
+`LoadFromBytes` 后续还会处理模块初始化。因此“装载期绝不会执行方法”也不成立。本样本去掉模块初始化逻辑，目的是把 `Add` 的第一次触发留在显式反射调用处。
 
-## 先给源码地图
+## 第三跳：方法为什么选中解释器 invoker
 
-准备调试环境或不知道从哪里开始时，先读 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。该篇固定了 v6.1.0 的源码路径与首次／再次调用观察点；本文较宽泛的 v6.x 描述需与自己的实际版本核对。
+接下来沿 `vm/Class.cpp` 的方法初始化入口，观察 `MethodInfo` 的 `invoker_method`。在配套 runtime 中，invoker 选择会区分普通 AOT image 与解释 image；后者继续进入 `MetadataModule`、`InterpreterImage::GetMethodInvoker` 和 `InterpreterModule::GetMethodInvoker`。
 
-> 本文源码分析基于 HybridCLR 社区版 v6.x（main 分支，2024-2025）。如果你使用的版本差异较大，部分文件路径或函数签名可能有变化。
+本例的普通静态加法方法预期绑定 `InterpreterInvoke`。其他方法形态存在不同分支，例如委托相关入口，不要把本例扩展成所有方法的唯一实现。
 
-这篇主要看这些文件：
+这一跳完成的是调用方式的绑定。`invoker_method` 已经可用，与 `interpData` 已经包含转换结果，是两个不同的观察点。
 
-- `Assets/GameScripts/AOT/Procedure/ProcedureLoadAssembly.cs`
-- `libil2cpp/icalls/mscorlib/System/AppDomain.cpp`
-- `libil2cpp/vm/MetadataCache.cpp`
-- `libil2cpp/hybridclr/metadata/Assembly.cpp`
-- `libil2cpp/vm/Class.cpp`
-- `libil2cpp/hybridclr/metadata/MetadataModule.h`
-- `libil2cpp/hybridclr/metadata/InterpreterImage.cpp`
-- `libil2cpp/vm/Runtime.cpp`
-- `libil2cpp/hybridclr/interpreter/InterpreterModule.cpp`
-- `libil2cpp/hybridclr/transform/Transform.cpp`
-- `libil2cpp/hybridclr/metadata/MethodBodyCache.cpp`
-- `libil2cpp/hybridclr/interpreter/Interpreter_Execute.cpp`
+## 第四跳：反射怎样进入已经绑定的 invoker
 
-如果只想跟这一篇断点，这些文件已经足够。
+`MethodInfo.Invoke` 处理参数和返回值，再由 runtime 调用该方法绑定的 invoker。跟踪 `vm/Runtime.cpp` 时，重点核对目标方法身份、传入参数，以及函数指针最终指向哪里。
 
-## 第一跳：`Assembly.Load(byte[])` 怎么接进 HybridCLR
+对本例而言，反射调用把控制权交给 `InterpreterInvoke`。反射查找成功不能替代这个观察；同样的托管反射 API 也可以调用 AOT 方法。
 
-这一跳如果不钉死，后面所有 runtime 讨论都会悬空。
+第一轮不必单步每一层反射内部实现。先确认本次调用确实抵达目标方法的 invoker，再回看中间的参数封送和异常处理。
 
-在托管侧，我们看到的是：
+## 第五跳：InterpreterInvoke 怎样准备参数
 
-```csharp
-var assembly = Assembly.Load(textAsset.bytes);
-```
+在 [InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.cpp) 的 Unity 2021+ 分支中，`InterpreterInvoke` 先检查 `method->interpData`；没有转换结果时调用 `GetInterpMethodInfo`。随后按方法描述准备 `StackObject` 参数槽，把调用参数转换为解释器需要的布局，再调用 `Interpreter::Execute`。
 
-但在 `libil2cpp` 里，真正接这条链的是 `AppDomain::LoadAssemblyRaw`：
+因此实际顺序是“准备方法表示 → 转换参数 → 执行”。在断点中依次看：
 
-```cpp
-const Il2CppAssembly* assembly = il2cpp::vm::MetadataCache::LoadAssemblyFromBytes(
-    il2cpp::vm::Array::GetFirstElementAddress(rawAssembly),
-    il2cpp::vm::Array::GetByteLength(rawAssembly),
-    rawSymbolStoreBytes,
-    rawSymbolStoreLength);
-```
+- 入口的 `method->interpData` 是否为空。
+- `imi->argStackObjectSize` 与参数布局是否对应当前签名。
+- 参数转换后，槽中的两个整数是否为本次输入。
 
-这段代码在 `libil2cpp/icalls/mscorlib/System/AppDomain.cpp`。
+该入口的临时参数区使用 native 栈分配；这不能推出“每一次解释器内部调用都会新增同样的 native 调用层”，也不能据此断言 native 栈一定先溢出。跨边界调用与解释器内部建帧需要分别追踪。
 
-关键点在下一跳。  
-`MetadataCache::LoadAssemblyFromBytes` 并没有走原生 AOT assembly 注册逻辑，而是明确把它交给了 HybridCLR：
+## 第六跳：第一次怎样准备 InterpMethodInfo
 
-```cpp
-Il2CppAssembly* newAssembly = hybridclr::metadata::Assembly::LoadFromBytes(
-    assemblyBytes, length, rawSymbolStoreBytes, rawSymbolStoreLength);
-```
+固定版本的 `InterpreterModule::GetInterpMethodInfo` 从 [第 588 行附近](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/InterpreterModule.cpp#L588) 开始。它先处理 `RuntimeInitClassCCtor`，进入 metadata 锁后再次检查缓存，再选择 image、取得方法体、分配 `InterpMethodInfo` 并调用 Transform，最后经内存屏障发布到 `methodInfo->interpData`。
 
-也就是说，从"字节数组装载程序集"这个入口开始，HybridCLR 就已经接管了这件事。
+这里有三个必须分开的细节：
 
-## 第二跳：`Assembly::LoadFromBytes` 真正做了什么
+1. 类型初始化不能简化成“只做 metadata 布局”；显式静态构造可能引入额外调用。本样本刻意没有这类逻辑。
+2. invoker 的快速缓存检查与锁内再次检查承担不同职责，不能删掉第二次检查来理解并发行为。
+3. `interpData` 保存转换后的方法表示。它不是本次参数或返回值的缓存。
 
-`hybridclr/metadata/Assembly.cpp` 这一段非常关键，因为它决定了热更程序集进入 runtime 后到底长什么样。
+两次调用都应核对方法身份。只看到 `GetInterpMethodInfo` 命中，不能说明命中的是 `Add`；类型初始化和其他热更代码也可能走到这里。
 
-它的外层入口很短：
+## 第七跳：从哪个 image 取方法体，再转换什么
 
-```cpp
-Il2CppAssembly* Assembly::LoadFromBytes(...)
-{
-    Il2CppAssembly* ass = Create(...);
-    RunModuleInitializer(ass->image);
-    return ass;
-}
-```
+本版本在 `GetInterpMethodInfo` 中选择 image 并调用 `image->GetMethodBody(methodInfo->token, tempMethodBody)`。热更方法使用解释 image；AOT 解释路径还涉及同源 image，本例不负责验证后者。
 
-真正的主体在 `Create(...)`：
+拿到方法体后，调用 [HiTransform::Transform](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/transform/Transform.cpp#L150)，传入 image、MethodInfo、方法体和输出对象。Transform 解析、转换 CIL，形成解释器的内部表示。
 
-```cpp
-uint32_t imageId = InterpreterImage::AllocImageIndex((uint32_t)length);
-InterpreterImage* image = new InterpreterImage(imageId);
-err = image->Load(assemblyData, (size_t)length);
-...
-image->InitBasic(image2);
-image->BuildIl2CppAssembly(ass);
-image->BuildIl2CppImage(image2);
-image->InitRuntimeMetadatas();
-il2cpp::vm::MetadataCache::RegisterInterpreterAssembly(ass);
-```
+**旧文的 `MethodBodyCache.cpp` 与 `Transform(methodInfo)` 写法不适用于本文固定的 v6.1.0。** 方法体读取发生在上层；不要拿其他版本的调用片段拼接这条链。方法体本身与转换结果 `InterpMethodInfo` 也不是同一层缓存。
 
-这段代码至少做了 4 件事：
+在这一跳记录 image 来源、token、方法体输入，以及 Transform 返回后的 `codes`、`codeLength`。第二次调用没有进入目标 Transform，只有和同一方法的有效 `interpData` 一起观察，才构成复用证据。
 
-1. 给热更程序集分配一个 `InterpreterImage`。
-2. 读取 DLL 里的 metadata 和 method body。
-3. 把它包装成 `Il2CppAssembly` / `Il2CppImage`，让外部世界仍然通过标准 IL2CPP 结构访问它。
-4. 把这个 assembly 注册回 `MetadataCache`。
+## 第八跳：Execute 执行的是内部指令
 
-这一步最容易被误解成"只是把 DLL 读进内存"。  
-但它真实的语义更接近：
+[Interpreter_Execute.cpp](https://github.com/focus-creative-games/hybridclr/blob/5567f367502d916c6742873d8ed2ab13d0f6900a/hybridclr/interpreter/Interpreter_Execute.cpp#L1645) 中的 `Interpreter::Execute` 为从 native 进入的调用建立执行现场，随后按内部 `HiOpcode` 分派。第一次跟读只需要关注当前方法、参数、建帧后的指令指针和返回位置，不必遍历所有分支。
 
-`把一个新的解释型程序集正式接进 IL2CPP 的 metadata 世界。`
+这里执行的是 Transform 的产物，不是直接拿原始 CIL 字节逐条分派。第二次复用转换结果后仍需进入 Execute，处理 `(7, 8)`，产生新的返回值 `15`。这也不是一次 native JIT 编译。
 
-也正因为这一步已经把热更程序集包装成 `InterpreterImage`，后面 token 查找、method invoker 分派、transform 取 method body 才有了基础。
+## 两次调用怎样形成证据闭环
 
-## 第三跳：方法为什么会被标记成 interpreter 实现
+以下是固定源码下的**预期观察表**。必须在新进程、未预热同一目标方法的条件下采集，不应照抄成实测结果。
 
-程序集被接进来，还不等于方法已经会跑。  
-接下来真正关键的是：`MethodInfo` 在初始化时，runtime 怎么知道这个方法不是普通 AOT 方法。
+| 位置 | 首次调用 | 再次调用 |
+|---|---|---|
+| InterpreterInvoke | 同一 Add；interpData 为空 | 同一 Add；interpData 已有值 |
+| GetInterpMethodInfo | 取目标方法体并准备表示 | invoker 已有缓存时不需进入 |
+| HiTransform::Transform | 目标 Add 命中一次 | 目标 Add 不再命中 |
+| Interpreter::Execute | 参数 2、3 | 参数 7、8 |
+| 返回日志 | 5 | 15 |
 
-这个动作发生在 `libil2cpp/vm/Class.cpp` 的 `Class::SetupMethods` 里。
+推荐按装载、invoker、方法准备、Transform、Execute 顺序下断点。记录目标 `MethodInfo*` 后，用地址条件过滤其他方法。首次已有缓存时先查预热和提前调用；再次转换时先查方法对象、泛型实例和进程身份。
 
-你会看到这样一段：
+只有正确返回值，证明的是样本功能结果；目标断点、缓存值和调用栈才支持这条执行路径。原生断点未绑定时，应先回到起步篇检查模块与 PDB。
 
-```cpp
-newMethod->invoker_method = MetadataCache::GetMethodInvoker(klass->image, methodInfo.token);
-newMethod->isInterpterImpl = hybridclr::interpreter::InterpreterModule::IsImplementsByInterpreter(newMethod);
-```
+## v9 Player 实测：同一方法转换一次、执行两次
 
-这两句要连在一起看。
+2026-10-25，使用本机自定义 Unity `2022.3.62f3_96770f904ca7`，构建 Windows x64、IL2CPP、Development、C++ Debug Player。package v9.0.3 配套 runtime v9.0.1（`83929787581bce6c7219418f62348a10c33582ee`）和 il2cpp_plus v2022.3.x-9.0.1。这个实验没有沿用旧版兼容补丁，构建输入核对与完整版本表见 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。
 
-补一个容易被忽略的细节：`SetupMethods` 通常在 `Class::Init` 路径中被调用，而 `Class::Init` 会先获取一把锁，所以同一个 class 的方法初始化是串行的，不会出现两个线程同时给同一个方法写 invoker 的情况。
+### 先核对与 v6 的路径差异
 
-第一句先根据 `image + token` 去拿 `invoker_method`。  
-第二句再根据这个 `invoker_method` 判断，这个方法是不是 interpreter 实现。
+| 位置 | v6.1.0 阅读基线 | v9.0.1 实验基线 |
+|---|---|---|
+| GetInterpMethodInfo | 处理 RuntimeInitClassCCtor，选择 image 并读取 body | 锁内检查缓存，Class::Init 后调用 Transform |
+| Transform 签名 | 接收 image、MethodInfo、body、输出对象 | 接收 MethodInfo，返回 InterpMethodInfo |
+| 方法体来源 | 上层调用 image->GetMethodBody | Transform 内经 MethodBodyCache 读取 |
+| 转换结果发布 | 写入 methodInfo->interpData | 仍写入 methodInfo->interpData |
 
-真正的分流发生在 `MetadataCache::GetMethodInvoker`：
+因此，`MethodBodyCache` 是新版的真实入口，只是不应写进旧版链路。对应公开源码见 [v9 InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp#L521) 和 [v9 Transform.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/Transform.cpp#L34)。本次缓存结论来自下面的实际断点，不靠两份源码“看起来相似”推定。
 
-```cpp
-if (hybridclr::metadata::IsInterpreterImage(image))
-{
-    return hybridclr::metadata::MetadataModule::GetMethodInvoker(image, token);
-}
-```
+### 本次记录
 
-也就是说：
+CDB 从进程创建时设置断点，`lmv m GameAssembly` 指向本次构建的模块，显示 `private pdb symbols`。被加载的 HotUpdate.dll 长度为 4608 字节，SHA-256 为 `BA0096D4CA773599ED664FD1D47CC2507D7C55F36EF0BD0CF44349EE46A9645C`；最终 AOT 裁剪目录中没有 HotUpdate.dll。
 
-- 如果这是普通 AOT image，就去 `codeGenModule->invokerIndices` 里找原生 invoker
-- 如果这是 `InterpreterImage`，就改走 HybridCLR 自己的 invoker 分发
+| 观测项 | 第一次 | 第二次 |
+|---|---|---|
+| 托管目标 | HotUpdate.ReadingProbe.Add，Int32 Add(Int32, Int32) | 同一反射方法对象 |
+| 原生 MethodInfo 地址 | `0x00000208f01353e8` | `0x00000208f01353e8` |
+| invoker 入口 interpData | null | `0x00000208f0140ac8` |
+| GetInterpMethodInfo / Transform | 目标方法各命中一次 | 目标方法均未再次命中 |
+| Execute 入口 interpData | `0x00000208f0140ac8` | 同一地址 |
+| Execute 参数 | 2、3 | 7、8 |
+| 托管返回日志 | PROBE_FIRST=5 | PROBE_SECOND=15 |
 
-而 `MetadataModule::GetMethodInvoker` 再往下，会落到 `InterpreterImage::GetMethodInvoker(token)`：
+地址只标识本次进程，重启后不能照抄为条件断点。记录中两个 Execute 都携带同一目标方法地址；首调的 Transform 栈上可见 `GetInterpMethodInfo → InterpreterInvoke → Runtime::InvokeWithThrow`，Execute 栈上可见 `InterpreterInvoke → Runtime::InvokeWithThrow`。因此可以把反射入口、准备阶段和两次解释执行关联起来。
 
-```cpp
-const Il2CppMethodDefinition* methodDef = &_methodDefines[methodIndex];
-return hybridclr::interpreter::InterpreterModule::GetMethodInvoker(methodDef);
-```
+最终日志包含 `PROBE_PASS`。同一构建脱离调试器再次启动也返回 5、15，进程退出码为 0；这是普通启动验收，缓存结论仍来自前一次原生跟踪。原始日志、PDB 和 runtime 留在本地，仓库的 `scripts/hybridclr-reading-probe/` 提供自有样本与本次 CDB 命令。
 
-最后，`InterpreterModule::GetMethodInvoker` 会返回 `InterpreterInvoke` 或 `InterpreterDelegateInvoke`。
-
-到这里，这个热更方法的关键身份其实已经确定了：
-
-`它的 invoker 不再指向 AOT invoker，而是指向 HybridCLR 的解释器入口。`
-
-## 第四跳：`MethodInfo.Invoke` 真正调的其实是 `invoker_method`
-
-很多人会在这里误以为"反射调用是另外一套逻辑"。  
-其实在 `libil2cpp` 里，反射最终还是会回到方法自己的 `invoker_method`。
-
-看 `libil2cpp/vm/Runtime.cpp`：
-
-```cpp
-if (method->return_type->type == IL2CPP_TYPE_VOID)
-{
-    method->invoker_method(method->methodPointer, method, obj, params, NULL);
-    return NULL;
-}
-```
-
-也就是说，`MethodInfo.Invoke` 最终并不会神奇地绕过 HybridCLR。  
-它仍然只是：
-
-`准备参数 -> 调 method->invoker_method`
-
-如果这个 `method` 来自 AOT image，`invoker_method` 就是普通 native invoker。  
-如果这个 `method` 来自 `InterpreterImage`，`invoker_method` 就已经是 `InterpreterInvoke` 了。
-
-这也是为什么上一节那条"method 初始化时如何选择 invoker"这么关键。
-
-对这篇文章来说，可以把中间这段压成一句话：
-
-`反射没有发明第二条执行链，它只是走进了方法对象已经绑定好的 invoker。`
-
-如果你跟到这一跳，断点里最值得看的其实不是 `Invoke` 自己，而是 `method->invoker_method` 这个字段最终指向了谁。
-
-- 如果它指向普通 native invoker，这还是 AOT 路径
-- 如果它已经指向 `InterpreterInvoke`，那后面的控制流就已经彻底进入 HybridCLR 主链了
-
-也就是说，这一跳真正的分叉点不在反射层，而在方法初始化阶段写进 `MethodInfo` 的那个函数指针。
-
-## 第五跳：`InterpreterInvoke` 做的第一件事不是执行，而是整理调用现场
-
-真正掉进 HybridCLR 的第一个函数，在 `hybridclr/interpreter/InterpreterModule.cpp`：
-
-```cpp
-static void InterpreterInvoke(Il2CppMethodPointer methodPointer, const MethodInfo* method, void* __this, void** __args, void* __ret)
-{
-    InterpMethodInfo* imi = method->interpData ? (InterpMethodInfo*)method->interpData : InterpreterModule::GetInterpMethodInfo(method);
-    StackObject* args = (StackObject*)alloca(sizeof(StackObject) * imi->argStackObjectSize);
-    ...
-    ConvertInvokeArgs(args + isInstanceMethod, method, argDescs, __args);
-    Interpreter::Execute(method, args, __ret);
-}
-```
-
-这段代码可以直接看出 3 个事实：
-
-1. 第一次执行前，不一定已经有 `InterpMethodInfo`，所以会先走 `GetInterpMethodInfo(method)`。
-2. 反射或普通调用传进来的 `void** __args`，不会直接交给解释器，而是先转换成 HybridCLR 自己的 `StackObject` 参数布局。
-3. 真正的执行入口依然是 `Interpreter::Execute(method, args, __ret)`。
-
-注意这里的 `alloca`：它把 `StackObject` 参数数组分配在 native 调用栈上，分配和释放几乎零成本。但代价是，如果解释器方法层层嵌套调用，每一层都会在 native stack 上分配一段参数缓冲区。调用链足够深时，native stack 会先于托管栈溢出。
-
-也就是说，`InterpreterInvoke` 的职责并不是"解释执行方法体"。  
-它更像一个桥：
-
-`把 IL2CPP 世界里的调用约定，整理成解释器能接的参数布局，然后把控制权交给 Execute。`
-
-如果你自己跟这一段，我建议顺手观察 3 个量：
-
-- `method->interpData`：确认这次是不是第一次执行
-- `imi->argStackObjectSize`：确认解释器到底准备了多大的参数栈布局
-- `__args -> args`：确认托管/反射侧参数是在哪一步被翻译成 `StackObject[]` 的
-
-这三个量一旦看明白，`InterpreterInvoke` 在整条链里的职责就会非常清楚。
-
-## 第六跳：第一次执行时，为什么还要先 `GetInterpMethodInfo`
-
-这一跳决定了这篇文章是不是能把"transform 为什么存在"说实。
-
-`InterpreterInvoke` 里最容易被忽略的一句是：
-
-```cpp
-InterpMethodInfo* imi = method->interpData ? ... : InterpreterModule::GetInterpMethodInfo(method);
-```
-
-它说明 `InterpMethodInfo` 不是在程序集装载时就全部预生成好的。  
-至少在默认路径下，它是按方法第一次被执行时懒生成的。
-
-再看 `GetInterpMethodInfo`：
-
-```cpp
-InterpMethodInfo* imi = transform::HiTransform::Transform(methodInfo);
-const_cast<MethodInfo*>(methodInfo)->interpData = imi;
-return imi;
-```
-
-这里还有一个前置动作容易被跳过：在进入 `Transform` 之前，`GetInterpMethodInfo` 会先调用 `Class::Init(methodInfo->klass)`，确保方法所属类的 runtime 结构已经就绪。如果跳过这一步，transform 过程中访问字段偏移、vtable 等信息就可能拿到未初始化的值。
-
-这一步的意义非常大。  
-它说明 HybridCLR 的执行链不是：
-
-`拿到原始 IL -> 直接逐条解释`
-
-而是：
-
-`拿到 MethodInfo -> 先 transform 成 InterpMethodInfo -> 再执行`
-
-这也是为什么前几篇一直强调 `transform` 不是一个可有可无的中间层。
-
-## 第七跳：`Transform` 先去取 method body，再把它改写成内部指令
-
-`hybridclr/transform/Transform.cpp` 的入口很短，但信息密度很高：
-
-```cpp
-metadata::Image* image = metadata::MetadataModule::GetUnderlyingInterpreterImage(methodInfo);
-metadata::MethodBody* methodBody = metadata::MethodBodyCache::GetMethodBody(image, methodInfo->token);
-TransformContext ctx(image, methodInfo, *methodBody, pool, resolveDatas);
-ctx.TransformBody(0, 0, *result);
-```
-
-这里最关键的是顺序。
-
-### 1. 先决定这次取 method body 应该从哪个 image 上拿
-
-`GetUnderlyingInterpreterImage(methodInfo)` 不是一个装饰性函数。  
-它在决定：
-
-- 如果这是热更方法，就直接从 `InterpreterImage` 上取
-- 如果这是 AOT 方法但走了解释兜底，就从对应的 `AOTHomologousImage` 上取
-
-### 2. 再通过 `MethodBodyCache` 取 `token -> MethodBody`
-
-`MethodBodyCache::GetMethodBody(image, token)` 本质上是一个 `(image, token)` 维度的缓存。
-
-它第一次会调用：
-
-```cpp
-MethodBody* methodBody = image->GetMethodBody(token);
-```
-
-后面再访问同一个方法体，就尽量复用缓存。
-
-这一层的好处非常直接：
-
-- `Transform` 不需要自己反复解析 method body
-- 后续 inlineability 判断也可以复用同一份 method body
-
-### 3. 再进入 `TransformContext`
-
-到这里，HybridCLR 才真正开始把原始 CIL method body 改写成自己的内部表示。
-
-所以这一跳最值得记住的一句话是：
-
-`transform 的输入不是 MethodInfo 本身，而是"MethodInfo 所指向的 method body + runtime 解析结果"。`
-
-跟这一跳时，最好顺便看一下 `image` 的实际类型。
-
-- 如果它是 `InterpreterImage`，你看到的是热更程序集自己的 method body
-- 如果它是 `AOTHomologousImage`，你看到的是 AOT 程序集补回来的那份同源 metadata 视图
-
-这个观察点很值钱，因为它正好把"热更程序集执行"和"AOT 解释兜底"这两条路径在 transform 入口处收束到了一起。
-
-## 第八跳：`Interpreter::Execute` 跑的已经不是原始 IL，而是 HiOpcode
-
-等你真的走到 `hybridclr/interpreter/Interpreter_Execute.cpp`，会看到 `Execute` 的主体是一个巨大的 `switch`。
-
-入口大概长这样：
-
-```cpp
-void Interpreter::Execute(const MethodInfo* methodInfo, StackObject* args, void* ret)
-{
-    ...
-    PREPARE_NEW_FRAME_FROM_NATIVE(methodInfo, args, ret);
-LoopStart:
-    for (;;)
-    {
-        switch (*(HiOpcodeEnum*)ip)
-        {
-            case HiOpcodeEnum::InitLocals_n_2:
-            ...
-```
-
-最重要的不是 `switch` 很大，而是这两个事实：
-
-1. 它先通过 `PREPARE_NEW_FRAME_FROM_NATIVE` 建立 `InterpFrame` 和当前方法的执行现场。
-2. `switch` 分派的已经不是原始 CIL opcode，而是 `HiOpcodeEnum`。
-
-第一点说明解释器并不是"拿着一个 `MethodInfo` 就直接跑"。  
-第二点说明 transform 的产物是真正会被执行的内部指令，而不是原始 IL 字节流。
-
-如果把这一层再压缩一下，可以得到一个很重要的判断：
-
-`HybridCLR 的 interpreter 是在执行 transform 之后的内部 IR，而不是直接解释 ECMA-335 意义上的原始 CIL。`
-
-这也是它和"纯 IL 解释器"非常不一样的地方。
-
-## 把整条链压成 8 步
-
-如果你现在回头看这一篇，其实整条链可以压成下面 8 步：
-
-1. 业务代码通过 `Assembly.Load(byte[])` 把热更程序集送进 `AppDomain::LoadAssemblyRaw`。
-2. `MetadataCache::LoadAssemblyFromBytes` 把装载转交给 `hybridclr::metadata::Assembly::LoadFromBytes`。
-3. `Assembly::Create` 为这个 DLL 构造 `InterpreterImage`，并注册成解释型程序集。
-4. `Class::SetupMethods` 为这个 image 里的方法绑定 `invoker_method`，最终指向 `InterpreterInvoke`。
-5. 业务代码调用 `MethodInfo.Invoke`，`vm::Runtime::InvokeWithThrow` 最终执行 `method->invoker_method(...)`。
-6. `InterpreterInvoke` 把参数转换成 `StackObject[]`，并在第一次调用时通过 `GetInterpMethodInfo` 触发 transform。
-7. `HiTransform::Transform` 从 `MethodBodyCache` 取 method body，再产出 `InterpMethodInfo`。
-8. `Interpreter::Execute` 进入 `HiOpcode` 分派循环，真正把这个热更方法跑起来。
-
-这 8 步里，最值得注意的边界是：
-
-- 第 1 到 3 步是装载期
-- 第 4 步是方法初始化期
-- 第 5 到 8 步是真正调用期
-- transform 通常发生在第一次调用时，而不是程序集加载时
-
-## 这一条链里，最容易看错的 4 个地方
-
-### 误解一：`Assembly.Load(byte[])` 之后，方法就已经"编译好了"
-
-不对。  
-装载阶段解决的是"程序集如何进入 runtime metadata 世界"，不是"每个方法都已经变成可执行的 `InterpMethodInfo`"。
-
-### 误解二：反射调用会绕开 HybridCLR 的解释链
-
-也不对。  
-`MethodInfo.Invoke` 最终还是走 `method->invoker_method`，而这个 invoker 在热更方法上已经被绑定成 `InterpreterInvoke`。
-
-### 误解三：`Interpreter::Execute` 直接解释原始 IL
-
-不对。  
-它执行的是 transform 后的 `HiOpcode`，不是原始 CIL 字节流。
-
-### 误解四：transform 是 build-time 发生的
-
-也不对。  
-至少从这条默认执行链来看，transform 是典型的 lazy path：方法第一次真正被执行时才触发。
-
-## 断点建议
-
-如果你准备自己进工程跟这一条链，最值得下断点的位置是：
-
-- `ProcedureLoadAssembly.LoadAssetSuccess`
-- `AppDomain::LoadAssemblyRaw`
-- `MetadataCache::LoadAssemblyFromBytes`
-- `hybridclr::metadata::Assembly::Create`
-- `Class::SetupMethods`
-- `Runtime::InvokeWithThrow`
-- `InterpreterInvoke`
-- `InterpreterModule::GetInterpMethodInfo`
-- `HiTransform::Transform`
-- `Interpreter::Execute`
-
-只跟这一条线，不去扩展 `TransformContext.cpp` 的所有细节，基本就已经能把 HybridCLR 的"方法调用主链"立住。
-
-## 收束
-
-`HybridCLR 让热更方法跑起来，不是靠 Assembly.Load 之后直接解释 DLL，而是先把程序集注册成 InterpreterImage，再把方法绑定到解释器 invoker，第一次调用时懒生成 InterpMethodInfo，最后由 Execute 去跑 transform 之后的内部指令。`
-
-这条链如果你能在源码里自己走通，前面几篇关于 runtime、AOT 泛型、工具链、MonoBehaviour 的讨论，基本就都能落回具体代码了。
+这组记录验证了当前样本的转换结果复用。它没有测量速度，不证明所有方法形态、AOT 泛型、GC、线程接入或移动端行为；v6.1.0 也没有因为这次 v9 成功而获得 Player 验收。
 
 ## 系列位置
 
-- 上一篇：<a href="{{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}}">HybridCLR MonoBehaviour 与资源挂载链路｜为什么资源上挂着热更脚本也能正确实例化</a>
-- 下一篇：<a href="{{< relref "engine-toolchain/hybridclr-boundaries-and-tradeoffs.md" >}}">HybridCLR 的边界与 trade-off｜不要把补充 metadata、AOT 泛型、MethodBridge、MonoBehaviour、DHE 混成一件事</a>
+准备环境从 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) 进入；要解释跨边界参数约定，继续 [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}})；区分解释执行、补充元数据和其他能力时，回到 [边界与 trade-off]({{< relref "engine-toolchain/hybridclr-boundaries-and-tradeoffs.md" >}})。
+
+**这条链的关键，是把程序集身份、方法准备和本次执行分别核对，再用同一方法的两次调用证明转换结果如何复用。**
