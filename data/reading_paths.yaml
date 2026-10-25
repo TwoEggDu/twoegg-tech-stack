@@ -64,7 +64,7 @@ topics:
       - { page: "delivery-engineering/delivery-version-management-04-environments-and-flags.md" }
     entries:
       - { label: "生产管线实践", page: "engineering-journey/production-pipeline-overview.md" }
-      - { label: "美术生产与客户端协作", page: "delivery-engineering/game-art-production-collaboration-series-index.md", value: "认识美术各岗位的制作过程、交付物和客户端接入；第 01—03 篇已有正文，其余 9 篇为提纲。" }
+      - { label: "美术生产与客户端协作", page: "delivery-engineering/game-art-production-collaboration-series-index.md", value: "认识美术各岗位的制作过程、交付物和客户端接入；第 01—04 篇已有正文，其余 8 篇为提纲。" }
       - { label: "Unity 游戏更新与发布", page: "delivery-engineering/unity-game-update-release-series-index.md", value: "从首次整包、线上修复与新内容上线，进入版本绑定、构建范围、强更热更和发布回退。七篇章节当前均为提纲，正文待写。" }
       - { label: "CI/CD 流水线", page: "delivery-engineering/delivery-cicd-pipeline-series-index.md" }
       - { label: "资源管线", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }

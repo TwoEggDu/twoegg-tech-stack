@@ -11,7 +11,7 @@ hero_title: "交付不是发布。从代码到产品稳定运行在用户设备�
 
 ## 选择阅读入口
 
-- **[从美术制作与客户端协作开始]({{< relref "delivery-engineering/game-art-production-collaboration-series-index.md" >}})**：沿原画、角色、绑定、动画、场景资产、地编、特效和 TA，认识制作、接入与联合验收。第 01—03 篇已有正文，其余 9 篇为提纲。
+- **[从美术制作与客户端协作开始]({{< relref "delivery-engineering/game-art-production-collaboration-series-index.md" >}})**：沿原画、角色、绑定、动画、场景资产、地编、特效和 TA，认识制作、接入与联合验收。第 01—04 篇已有正文，其余 8 篇为提纲。
 
 - **[从一次游戏更新开始]({{< relref "delivery-engineering/unity-game-update-release-series-index.md" >}})**：用首次整包、线上修复、新英雄与活动串联版本绑定、构建范围、强更、热更与发布回退。首页与七篇章节提纲已建立，正文待写。
 

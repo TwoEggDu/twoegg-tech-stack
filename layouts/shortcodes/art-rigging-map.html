@@ -1,0 +1,70 @@
+<figure aria-label="绑定制作、导出与游戏蒙皮的关系示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="控制器、骨架、蒙皮和导出关系，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 480" role="img" aria-labelledby="rigging-map-title rigging-map-desc" style="display:block;width:100%;min-width:700px;height:auto">
+      <title id="rigging-map-title">制作控制与运行蒙皮之间，需要明确输出哪些数据</title>
+      <desc id="rigging-map-desc">制作端控制器通过约束或求解驱动变形骨架，网格通过权重与绑定基准随骨架变化。选择所需网格、骨架、蒙皮信息和已求值动画曲线输出到 FBX，Unity 中由 Animator 驱动骨架，由 Skinned Mesh Renderer 表达蒙皮网格。底部色条只示意上臂影响的权重分布，不是实际工具权重截图。</desc>
+      <defs>
+        <marker id="rigging-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker>
+      </defs>
+      <g fill="#f0f4ef" stroke="#a5b7a6" stroke-width="1.5">
+        <rect x="12" y="35" width="222" height="76" rx="7"/>
+        <rect x="306" y="35" width="222" height="76" rx="7"/>
+        <rect x="600" y="35" width="228" height="76" rx="7"/>
+        <rect x="12" y="161" width="816" height="72" rx="7"/>
+        <rect x="12" y="283" width="222" height="72" rx="7"/>
+        <rect x="306" y="283" width="222" height="72" rx="7"/>
+        <rect x="600" y="283" width="228" height="72" rx="7"/>
+      </g>
+      <g stroke="#728977" stroke-width="2" fill="none" marker-end="url(#rigging-arrow)">
+        <path d="M235 73H300"/>
+        <path d="M529 73H594"/>
+        <path d="M417 112V155"/>
+        <path d="M714 112V155"/>
+        <path d="M123 234V277"/>
+        <path d="M714 234V277"/>
+        <path d="M235 319H300"/>
+        <path d="M529 319H594"/>
+      </g>
+      <g font-family="system-ui, sans-serif" fill="#304b40" text-anchor="middle">
+        <g font-size="18" font-weight="600">
+          <text x="123" y="65">制作端控制器</text>
+          <text x="417" y="65">变形骨架</text>
+          <text x="714" y="65">蒙皮网格</text>
+          <text x="420" y="190">FBX：明确选择输出</text>
+          <text x="123" y="313">Animator</text>
+          <text x="417" y="313">骨架变换</text>
+          <text x="714" y="313">SkinnedMeshRenderer</text>
+        </g>
+        <g font-size="14">
+          <text x="123" y="90">曲线 / 辅助物 / 约束 / IK</text>
+          <text x="417" y="90">关节层级与变换</text>
+          <text x="714" y="90">权重与绑定基准</text>
+          <text x="266" y="24">驱动</text>
+          <text x="563" y="24">形变关系</text>
+          <text x="420" y="215">网格 + 骨架 + 蒙皮信息 + 已求值的测试动画曲线</text>
+          <text x="123" y="337">在 Unity 中采样动作片段</text>
+          <text x="417" y="337">按运行状态更新姿势</text>
+          <text x="714" y="337">使用导入的网格与蒙皮数据</text>
+          <text x="185" y="262">导入动作</text>
+          <text x="650" y="262">导入几何与蒙皮</text>
+        </g>
+      </g>
+      <text x="16" y="390" font-family="system-ui, sans-serif" font-size="15" fill="#304b40">示例：只显示 shoulder_r 的权重（横向为初始 X 位置，厘米）</text>
+      <g stroke="#98aa9c">
+        <rect x="16" y="405" width="110" height="34" fill="#315b45"/>
+        <rect x="132" y="405" width="110" height="34" fill="#557d60"/>
+        <rect x="248" y="405" width="110" height="34" fill="#8ca88c"/>
+        <rect x="364" y="405" width="110" height="34" fill="#c1d2b8"/>
+        <rect x="480" y="405" width="110" height="34" fill="#f3f7ef"/>
+        <rect x="596" y="405" width="110" height="34" fill="#f3f7ef"/>
+        <rect x="712" y="405" width="110" height="34" fill="#f3f7ef"/>
+      </g>
+      <g font-family="system-ui, sans-serif" font-size="15" text-anchor="middle">
+        <g fill="#fff"><text x="71" y="428">1</text><text x="187" y="428">0.75</text></g>
+        <g fill="#304b40"><text x="303" y="428">0.5</text><text x="419" y="428">0.25</text><text x="535" y="428">0</text><text x="651" y="428">0</text><text x="767" y="428">0</text></g>
+        <g fill="#607367"><text x="71" y="462">0—20</text><text x="187" y="462">25</text><text x="303" y="462">30</text><text x="419" y="462">35</text><text x="535" y="462">40—50</text><text x="651" y="462">55</text><text x="767" y="462">60</text></g>
+      </g>
+    </svg>
+  </div>
+  <figcaption>原创原理示意：制作控制系统与引擎动画系统通过明确的输出数据衔接。下方色条只表达一个影响的示例值，不能替代实际权重、姿势与运行检查。</figcaption>
+</figure>
