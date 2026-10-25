@@ -106,6 +106,51 @@ Epic 的[职业方向介绍](https://www.epicgames.com/site/earlycareers/career-
 
 例如，施法特效挡住目标，可能涉及视觉层次、镜头和玩法信息。需要先确定玩家必须看清什么，再讨论改哪一层。最后发现问题的人通常掌握了重要现象，完整决策还需要其他专业的判断。
 
+## Photoshop、Maya、3ds Max 和引擎分别做哪一段
+
+认识岗位以后，再看这些工作发生在哪里。**数字内容创作工具**（Digital Content Creation，DCC）用于制作和编辑内容；引擎编辑器接收这些内容，把它们组织到游戏中。一个岗位可能使用多种工具，同一种工具也可以服务多个岗位。
+
+本系列将沿下面的工具分工展开。表中的文件名是教学命名示例，目前没有对应的完整素材工程。
+
+<div role="region" aria-label="制作工具、源文件与下游使用对照，可横向查看" tabindex="0" style="overflow-x:auto">
+
+| 工作 | 制作工具与主要操作 | 可编辑原稿与传递物 | 下一步怎样使用 |
+| --- | --- | --- | --- |
+| 原画设计 | Photoshop：草案、配色、结构说明 | `researcher_design.psd` → 评审与结构参考 PNG | 建模者据此制作形体，绑定与动画确认可动关系 |
+| 角色及场景构件 | Maya 或 3ds Max：建模、拓扑、UV | Maya 的 `.ma` / `.mb` 或 3ds Max 的 `.max` → 按约定导出 FBX；纹理单独管理 | 引擎导入网格，关联材质，再组装角色或场景模块 |
+| 绑定与动画 | Maya 或 3ds Max：骨架、蒙皮、关键帧和曲线 | 保留制作工程；按方案导出骨架、蒙皮与动作数据 | 引擎设置动作片段、动画混合与状态驱动 |
+| 表面与特效素材 | Photoshop 及选用的材质工具：颜色、纹理、遮罩 | 分层原稿 → 按用途导出纹理 | 材质或特效引用纹理，解释其颜色或数据含义 |
+| 地编与环境组织 | Unity：场景摆放、地形、光照 | 场景、Prefab、材质及其引用 | 在游戏镜头与移动路线中检查通行、遮挡和氛围 |
+| 特效组装与客户端接入 | Unity 粒子、材质、Animator 与代码等 | 效果模板、动画配置与表现驱动 | 根据运行状态创建、播放、打断和结束表现 |
+
+</div>
+
+表中的原稿扩展名可对照 Autodesk 的 [Maya 场景保存选项](https://help.autodesk.com/cloudhelp/2022/ENU/Maya-Basics/files/GUID-049E009D-34FE-4767-B9B2-047FFB3142E8.htm)与 [3ds Max 原生场景格式](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Reference/files/GUID-88DE2443-6869-4820-973A-10E7695B6DE6.htm)。原稿保留制作内容，导出物按下游需要准备，两者的职责不同。
+
+### 动画在制作软件中做，游戏中的切换还要继续接
+
+动画师可以在 Maya 或 3ds Max 中，先摆出抬杖、蓄力、释放和收势的关键姿势，再调整中间运动与节奏。动作导出之后，Unity 中还要配置片段与衔接，由客户端根据输入和角色状态驱动播放。
+
+因此，“施法动作在 Maya 中能播放”与“玩家在游戏中能施法”是两个检查目标。前者主要看动作本身，后者还要看目标、时点、位移、打断与特效配合。[第 04 篇绑定]({{< relref "delivery-engineering/game-art-production-04-rigging-skinning.md" >}})、[第 05 篇动画]({{< relref "delivery-engineering/game-art-production-05-animation.md" >}})和[第 10 篇接入]({{< relref "delivery-engineering/game-art-production-10-client-integration.md" >}})分别展开这几段。
+
+这里使用 FBX 作为交换格式示例，不承诺制作端的全部控制系统都能原样进入引擎。Autodesk 的 [Maya 2024 导出选项](https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Basics/files/GUID-FE8DBEAA-C2DD-43B3-9933-4BA4CDDEAA89.htm)说明了将不受支持的约束烘焙成动画曲线的用途；[3ds Max 2022 Game Exporter](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-70DBCE92-4D55-4CD6-A2E9-23E48E571068.htm)则提供模型和动作片段的导出入口。这些版本资料用于解释职责，实际导出参数将在相应章节固定版本后核对。
+
+### 场景构件先制作，完整空间再到引擎里组织
+
+以庭院为例，可以在 3ds Max 或 Maya 中制作一段墙、一扇门和一块地面，处理尺度、枢轴及 UV；再制作或组织相应纹理。进入 Unity 后，地编使用这些构件搭建庭院，调整地形、摆放、灯光与氛围，并与关卡和客户端一起检查通行与镜头。
+
+这就是[第 06 篇场景资产]({{< relref "delivery-engineering/game-art-production-06-environment-assets.md" >}})与[第 07 篇地编]({{< relref "delivery-engineering/game-art-production-07-level-art.md" >}})分开的原因：前一篇讲构件怎样做，后一篇讲怎样组成可玩的空间。两者仍会反复反馈，例如拼接暴露了枢轴问题，就需要回到制作工具修正。
+
+Maya 与 3ds Max 都可以参与建模和动画。本系列每个案例选择一套主操作工具，另说明另一套的对应位置；不要求同一资产在两套软件里重复制作。
+
+### 用三条文件路径记住工具之间的关系
+
+- **设计参考**：`PSD 原稿 → 参考 PNG → 建模与制作判断`。原画中的角色形象，还要经过三维制作。
+- **模型与动作**：`DCC 原稿 → FBX 等导出物 → 引擎资产 → Prefab / 场景 → 运行实例`。导出后仍有导入、组装和驱动。
+- **纹理与遮罩**：`分层原稿 → 纹理导出物 → 引擎导入设置 → 材质 / 特效引用 → 运行表现`。图片的具体用途决定怎样导入和使用。
+
+原稿与导出物可以放在不同目录，只要能追溯对应关系。改披片形状，要回到设计与建模原稿；改施法节奏，要回到动画工程；只改场景中门的位置，则可能只需编辑场景。先定位改动属于哪一层，再决定重新导出、导入和检查哪些内容。
+
 ## 交接之前，分清自己手里的产物
 
 同一个“角色文件”，在不同语境里可能指不同东西。这里把它分成六层，便于讨论各层已经解决的问题：

@@ -32,6 +32,16 @@ reading_groups: [{"title": "从需求到视觉方案", "intro": "先认识各岗
 
 [从第 01 篇开始]({{< relref "delivery-engineering/game-art-production-01-overview.md" >}}) · [查看 12 篇目录](#chapters) · [按问题查找](#questions)
 
+## 从制作工具走到游戏 {#tools}
+
+本系列也将介绍 Photoshop、3ds Max、Maya 等工具在各工种中的用途，沿小资产的实际文件追踪制作、保存原稿、导出、引擎导入、组装和运行。每个例子选定主操作工具，其他工具说明对应职责；具体版本与操作会在相应正文中展开。
+
+- **原画与纹理**：在[第 02 篇原画]({{< relref "delivery-engineering/game-art-production-02-concept-art.md" >}})和[第 03 篇角色]({{< relref "delivery-engineering/game-art-production-03-character-assets.md" >}})区分 Photoshop 设计稿、可编辑原稿和实际进入材质的纹理；图片导出之后怎样被下游使用也要讲清。
+- **模型与动作**：在角色、绑定、动画和场景资产章节，介绍 3ds Max / Maya 怎样制作与导出，再追到引擎中预览和检查。
+- **组装与运行**：在[第 10 篇客户端接入]({{< relref "delivery-engineering/game-art-production-10-client-integration.md" >}})连接导入资产、材质、动作、模板和运行实例，[第 11 篇综合示例]({{< relref "delivery-engineering/game-art-production-11-integrated-example.md" >}})串起全过程与修改回流。
+
+**工具链内容正在补齐**：第 01 篇已加入软件分工与文件流转，第 02 篇已加入 Photoshop 分层制作、PSD 保存、PNG 导出及建模交接步骤；其余章节的提纲已加入工具与文件传递安排。当前操作步骤已核对官方资料，具体版本实操、PSD 素材、操作截图与引擎实验仍待完成。
+
 ## 内容怎样汇合 {#workflow}
 
 角色与场景沿不同支线制作，最终与特效一起进入游戏表现。TA、客户端及验证工作从早期参与；下图表示内容关系，实际制作会反复迭代。
