@@ -110,6 +110,13 @@ MassEntityConfig 资产可以声明 Traits，并生成实体模板；Processor �
 
 组件组合发生变化时，还会影响实体所属的 Archetype。官方描述了通过 MassCommandBuffer 请求组合变更、在当前处理批次结束时集中执行的方式。这与直接改某个位置数值不同，也说明批量访问必须配合结构变更协议。
 
+用前面E42的原创模型区分两种修改：假设移动查询只要求实体具有“位置”和“速度”两类数据，不按位置数值过滤。
+
+- **把E42的位置改成新坐标**：数据值改变，组件组合不变，它仍满足这组查询条件。
+- **移除E42的速度组件**：组件组合改变，它不再满足这组查询条件；若在遍历期间提出这类修改，本例先记录请求，在约定的结构变更阶段应用，再让后续查询读取新集合。
+
+这里选择了延后应用的设计协议，不意味着每台引擎都在同一帧阶段处理。若查询还按数值过滤，普通字段更新也可能改变筛选结果；应先写清查询条件，再判断改变的是数值、组件组合还是两者。
+
 ### 表示变化可以独立于模拟组织
 
 MassGameplay 将表示、生成、LOD 等能力接在 MassEntity 之上。其 Representation 子系统可以按配置采用不同精度的 Actor、ISM（实例化静态网格）或无表示，并协调表示之间的转换。[MassGameplay 的表示与 LOD](https://dev.epicgames.com/documentation/en-us/unreal-engine/overview-of-mass-gameplay-in-unreal-engine?application_version=5.6)

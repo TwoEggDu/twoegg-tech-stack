@@ -36,3 +36,7 @@
 - 未做：Unity / Unreal 启动、模板编辑实验、Undo/Redo 回放、保存恢复、源码调用链和性能验证。
 - 站点构建与生成页校验由本轮主任务统一记录，本卡不预先宣称通过。
 - 本卡未改变系列目录状态；篇级路由由 canonical series plan 维护。
+
+## 2026-10-25阅读修订增量
+
+正文将Package Manager与Plugin的分发/模块介绍压缩为08对应小节的链接，保持编辑、覆盖、撤销、保存与预览主线。上表中的Package Manager和Working with Plugins作为此前修订的资料记录保留，已不再是当前正文直接引用；当前正文保留实例覆盖、SerializedObject与Blueprint三处官方来源。本轮未增加引擎事实或重新进行外部资料核验，文档验证见[阅读修订记录](game-engine-architecture-reading-refinement-outline.md)。

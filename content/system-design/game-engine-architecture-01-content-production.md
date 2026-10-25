@@ -110,19 +110,15 @@ Unity 的 Prefab 为可复用对象提供模板关系。对本文最关键的事
 
 这个入口并不会替团队完成所有业务规则。字段是否合法、修改后是否需要重建专业表示、是否允许将预览结果写回资产，仍须由对应协议处理。自定义工具需要接上这些协议，不能把“Inspector 已经显示新值”当成撤销、保存与运行消费都已完成。
 
-Unity 的 Package Manager 则管理另一种边界：包可以承载编辑器工具、运行时库、资产或项目模板，并通过窗口、API 和 manifest 等入口管理。[Unity 2022.3：Package Manager](https://docs.unity3d.com/2022.3/Documentation/Manual/Packages.html)
-
-由此可以作一个工程判断：**包是交付和依赖管理单位，内容生产是职责，二者不能直接画等号。** 一个包里可能同时有导入器和运行组件，但两者进入的构建目标、使用的数据和生命周期仍然不同。
-
 ## Unreal：对象类型的制作与运行实例的使用
 
 Unreal 的 Blueprint 能从 C++ 类或其他 Blueprint 类继续扩展，组织组件、变量、事件和逻辑；其 Construction Script 可以根据参数构造 Actor 实例。这说明 Blueprint 同时涉及对象结构的制作与行为定义。[Unreal Engine 5.6：Blueprints Technical Guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/technical-guide-for-blueprints-visual-scripting-in-unreal-engine?application_version=5.6)
 
 因此，它与 Prefab 有可比较的生产职责，但不能把二者理解成完全相同的模板系统。讨论前面的角色例子时，应分别追问：哪些内容属于类型定义，哪些属于实例设置，构造逻辑何时执行，哪些预览变化允许保存。具体覆盖、撤销与重建规则要沿各自实现继续查，不能把本例协议直接当作 Unreal 的实现说明。
 
-Unreal 的 Plugin 可以为编辑器增加菜单、工具和工作模式，也可以按项目启停。它把特定的制作能力接入团队环境，但“插件被启用”本身不会证明它里面的每个模块都应该进入游戏发行目标。[Unreal Engine 5.6：Working with Plugins](https://dev.epicgames.com/documentation/en-us/unreal-engine/working-with-plugins-in-unreal-engine?application_version=5.6)
-
 两台引擎在这里值得比较的，是制作过程如何与对象、资产和扩展契约连接。编辑窗口数量、工具所在文件夹、某项能力是否随主程序安装，都不足以单独说明架构边界。
+
+制作工具和运行代码如何按包、程序集或模块组织，并隔离发行目标，见[08的检查按钮与模块边界例子]({{< relref "system-design/game-engine-architecture-08-unity-unreal-same-tasks.md" >}}#再加一个检查按钮模块边界就具体了)。
 
 ## 把制作工具从运行时中拿走，哪些能力仍要留下
 

@@ -57,3 +57,7 @@
 - 表示交接：`content/engine-toolchain/data-oriented-runtime-06-why-simulation-and-representation-usually-cannot-fully-merge.md`。
 
 本卡服务于当前正文证据与版本维护；系列状态以 canonical `docs/game-engine-architecture-series-plan.md` 为准。
+
+## 2026-10-25阅读修订增量
+
+在结构变更说明后增加E42原创模型：查询只要求位置和速度组件，且不按位置数值过滤；修改位置与移除速度组件分别说明值变化和组合变化。延后应用是本例设计协议，不声称所有引擎使用相同阶段；带数值过滤的查询另作限定。本轮未新增引擎实现事实，文档验证见[阅读修订记录](game-engine-architecture-reading-refinement-outline.md)。

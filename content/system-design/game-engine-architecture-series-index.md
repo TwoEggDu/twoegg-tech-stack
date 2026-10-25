@@ -24,9 +24,11 @@ series_level: "入门到进阶"
 series_best_for: "当你想把内容生产、运行时、专业子系统和跨平台抽象放回同一张引擎分层地图里"
 series_summary: "用职责、接口与数据交接认识引擎，再用模板编辑、角色状态和内容交付追清各部分怎样协作。"
 series_intro: '从一个具体变化进入引擎，找出谁持有状态、谁提供接口、谁消费结果和谁负责清理。先用00建立职责地图，再用00A区分接口依赖与资源边界，随后结合Unity、Unreal等公开资料解释具体选择。'
-series_reading_hint: '第一次读可从火球导读进入00和00A；有具体问题时按问题跳读。职责分类和阅读顺序都不代表引擎的严格运行流水线。'
+series_reading_hint: '第一次读从火球导读进入00和00A的职责、装配与资源边界，再读01—08；共享取消与热重载可第二遍深入。有具体问题时按表跳读，阅读顺序不代表严格运行流水线。'
 ---
 第一次接触这个主题，可以从[火球导读]({{< relref "rendering/player-input-and-game-content-to-screen.md" >}})认识内容、实例和画面的关系，再读[00职责地图]({{< relref "system-design/game-engine-architecture-00-overview.md" >}})与[00A接口依赖和资源边界]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}})。这些图是阅读与设计的参考模型，不把某一种目录组织当作行业标准。
+
+00A可以分两遍读：首次掌握职责图、接口归属、启动/退出装配与资源就绪边界，再进入01—08；需要处理异步生命周期时，回读共享请求的取消与释放，然后进入热重载。这样先建立单版本的持有规则，再理解多版本替换。
 
 ## 按问题阅读
 
@@ -34,6 +36,9 @@ series_reading_hint: '第一次读可从火球导读进入00和00A；有具体�
 | --- | --- |
 | 修改内容怎样进入世界 | [01内容生产]({{< relref "system-design/game-engine-architecture-01-content-production.md" >}})的模板改值 → [02对象世界]({{< relref "system-design/game-engine-architecture-02-gameobject-vs-actor.md" >}})的角色、组件与共享资产 |
 | 系统怎样执行和交接结果 | [03运行机制]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}})的动画任务 → [04专业系统]({{< relref "system-design/game-engine-architecture-04-professional-subsystems.md" >}})的角色落地 |
+| 对象已经删除，加载还在继续，结果由谁收尾 | [00A共享请求与使用者退出]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}#使用者退出与最后释放)：分清取消票据、共享任务结束与最后释放 |
+| 热重载后，谁切换使用者，旧资源何时释放 | [00A资源版本替换]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}#资产变了使用者还要处理自己的派生状态)：新旧并存、失败、完成乱序与回收 |
+| 角色状态正确，画面为什么仍错误 | [04跨系统故障追踪]({{< relref "system-design/game-engine-architecture-04-professional-subsystems.md" >}}#故障推演角色已落地画面仍播放下落动画)：从接收侧证据找到失效交接 |
 | 资源怎样交付，平台差异放哪里 | [05资产与交付]({{< relref "system-design/game-engine-architecture-05-asset-and-delivery.md" >}})的产物分支 → [06平台适配]({{< relref "system-design/game-engine-architecture-06-platform-abstraction.md" >}})的能力和降级 |
 | 批量数据处理会改变哪些设计 | [07 DOTS与Mass]({{< relref "system-design/game-engine-architecture-07-dots-and-mass.md" >}})的创作数据、实体更新和专业表示 |
 | 怎样把同一项需求放进两台引擎 | [08同任务比较]({{< relref "system-design/game-engine-architecture-08-unity-unreal-same-tasks.md" >}})：用警戒参数、外观交付和工具隔离对照Unity与Unreal |
