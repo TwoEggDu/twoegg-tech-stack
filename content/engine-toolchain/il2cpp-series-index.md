@@ -56,16 +56,17 @@ tags: [IL2CPP, Unity, AOT, Index]
 
 D5 之后可读 [泛型调用综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})：同一个 `Echo<T>` 从 CLI 签名追到 AOT 符号与运行时分派，比较显式实例引用和补充元数据。已在本机自定义 Unity、固定 v9 组合完成两份 Player、四组独立运行与原生断点验证；不推广为全平台结果。
 
-D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：串起托管线程、原生回调 wrapper、解释器 TLS、GC 根与退出清理。正文归 HybridCLR，只维护一份；其中 Player 与原生插件实验仍待实测。
+D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：串起托管线程、原生回调 wrapper、解释器 TLS、GC 根与退出清理。正文归 HybridCLR，只维护一份；其中托管工作线程已补固定 v9 环境的 Player 返回值、缓存与清理调用链记录；原生插件实验仍待实测。
 
 ## 配套实验仓库
 
-读完 D5 后，用 P0/P1 两份工程对照显式实例引用、主包产物和原生调用路径。三个专栏共用公开仓库 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；当前文章对应 [固定提交 `e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)。
+读完 D5 后，用 P0/P1 两份工程对照显式实例引用、主包产物和原生调用路径。三个专栏共用公开仓库 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；调用链与泛型实验对应 [固定提交 `e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)。
 
 - [复现说明与固定环境](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/README.md)：包含 Add、generic-p0、generic-p1 三个隔离工程，先 checkout 到对应提交再运行。
 - [本次实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)：构建标识、结果摘要、DLL 哈希与 CLI 签名输出。
+- 对象保留与托管工作线程：[固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，可查看[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)。
 
-当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player；GC、线程、性能和其他平台仍按各专题的验证状态阅读。
+当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；根快照、原生回调、性能和其他平台继续按专题的待验证项阅读。
 
 ## 按问题查阅
 
@@ -88,4 +89,4 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 ## 接下来补强什么
 
-源码阅读起步和三栏泛型调用实验已完成固定环境的 Player 断点验证。后续继续补 GC／线程的 Player 与原生回调证据，以及固定采样条件的性能测量；当前两项实验不代表全系列已经经过统一版本验收。
+源码阅读起步、三栏泛型调用、对象保留对照和托管工作线程已完成各自固定环境的 Player 验证。后续补 GC 引用快照、活跃根区间、原生回调与固定采样条件的性能测量；已有结果不代表全系列经过统一版本验收。

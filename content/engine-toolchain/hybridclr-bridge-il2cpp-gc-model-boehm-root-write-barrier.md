@@ -99,7 +99,16 @@ GC 只回答其对象体系中的可达性与回收问题，不会自动证明 n
 | 开启增量后修改引用 | 相同输入下的完整性检查、GC 模式和崩溃证据 | 跑几轮不崩就证明 barrier 完整 |
 | 多轮加载后内存增长 | 托管对象、native metadata、转换缓存分别计数 | 全部增长都来自 GC |
 
-<!-- DATA-TODO: 在固定 Unity patch 的 Player 中补活跃根区间与线程清理断点，记录增量 GC 开关、调用负载及对象引用快照。 -->
+### 已补入的 Player 证据
+
+2026-10-25，沿用本机自定义 Unity 2022.3.62f3 与固定 HybridCLR v9 配套组合，完成两组独立 Player 对照。它们补充运行观察，不替换前文 v6.1.0 的源码基线。
+
+- [IL2CPP GC 篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})：三个独立进程中，AOT 静态数组／实例委托各保留 16 个热更对象，解除对应引用后，目标弱引用在观察窗口内全部失效。记录 GCMode=Enabled、isIncremental=True。
+- [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：两托管工作线程各执行 Add 两次；原生断点观察到不同且同时存活的 MachineState，共享同一方法缓存，以及各线程退出时的 FREE、析构、动态根注销入口。
+
+这次看到的是对象存活对照和线程清理调用链，没有采集活跃根扫描区间，也没有通过增量引用压力负载验证所有写屏障路径。对象被收集、状态进入清理和 native 分配量下降，仍须分别举证。本轮自有样本与运行证据对应实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，入口为[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)和[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
+
+<!-- DATA-TODO: 补固定环境的活跃根区间、对象引用快照和增量引用修改压力；本轮清理入口断点不能替代这些记录。 -->
 
 **解释器接入 GC，必须同时维护可见的活跃引用、正确的写入协议和有所有者的 native 状态。**
 

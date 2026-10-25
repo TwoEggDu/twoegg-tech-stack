@@ -20,7 +20,7 @@ series_id: "il2cpp"
 
 这是 IL2CPP 核心机制 D6。前置是 [对象布局、GC 契约与终结语义]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}})；解释器的根和写屏障落地放在 [HybridCLR GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
 
-> 版本边界：Unity 行为以 2022.3 文档为基线；HybridCLR 接入以社区版 v6.1.0 及配套 il2cpp_plus v2022-6.1.0 为源码样本。下文 Player 实验是验证方案，未宣称已在该组合上实测。
+> 版本边界：Unity 行为以 2022.3 文档为基线；HybridCLR 接入以社区版 v6.1.0 及配套 il2cpp_plus v2022-6.1.0 为源码样本。文末新增的 Player 实测使用本机自定义 Unity 2022.3.62f3 与 v9 配套组合；它不构成 v6.1.0 的实测结果。
 
 ## 先拆开四个时刻
 
@@ -96,7 +96,29 @@ Unity 2022.3 的[增量 GC 文档](https://docs.unity3d.com/2022.3/Documentation
 
 测试 GC 模式性能时，应单独重建两份相同业务负载的 Player，比较分配、GC 采样和帧时间分布；不要把上面为观察生命周期而强制收集的运行当成帧耗时基准。
 
-<!-- DATA-TODO: 固定 Unity 2022.3 patch、HybridCLR v6.1.0 配套源码与目标设备，补 AOT 持有热更对象的引用快照、退出记录及增量开关对照。 -->
+### 已完成：热更对象的保留与释放对照
+
+2026-10-25，在 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 新增独立 `projects/lifetime-threads` 工程。环境沿用已验证组合：本机自定义 Unity `2022.3.62f3_96770f904ca7`、HybridCLR package v9.0.3 / runtime v9.0.1、il2cpp_plus v2022.3.x-9.0.1；Windows x64、IL2CPP Development、C++ Debug、Minimal stripping。依赖提交仍由根目录 `lab-lock.json` 固定。
+
+这轮把 AOT 的持有者与热更对象分开：`RetentionHub` 保存静态数组、事件式委托列表与短弱引用，`LifetimeHot.Target` 位于动态加载的 HotUpdate.dll，不含终结器。构建后确认 HotUpdate 没有编入 AOT 程序集或代码注册。三个组各创建 16 个对象：无强引用、静态数组持有、实例委托订阅持有。
+
+创建工作在短寿命托管线程中完成，等待该线程退出后再观察，避免创建线程的活跃栈继续保留对象。每阶段跨帧执行三次 `GC.Collect()` / `GC.WaitForPendingFinalizers()`，再读取 `WeakReference.IsAlive`。运行日志记录 `GCMode=Enabled`、`isIncremental=True`。无调试器启动三个独立 Player，结果完全一致，均正常退出：
+
+| 观察阶段 | 无强引用组 | 静态数组组 | 事件订阅组 |
+|---|---:|---:|---:|
+| held：尚未解除持有 | 0 / 16 | 16 / 16 | 16 / 16 |
+| static-cleared：清空静态数组 | 0 / 16 | 0 / 16 | 16 / 16 |
+| all-cleared：再清空委托列表 | 0 / 16 | 0 / 16 | 0 / 16 |
+
+表中是弱引用仍存活的目标数。委托列表由这个封闭样本独占，因此可整体清空；业务代码应解除自己拥有的订阅，不能借此清掉其他模块的订阅。本轮不触发事件，也不靠终结器计数。
+
+这组对照支持一个具体结论：AOT 静态数组和实例委托能保留本样本的热更对象，解除它们后，目标弱引用在本次观察窗口内失效。校验器要求持有组不能提前丢失，却允许已解除组暂时仍有存活对象并如实记录；它不会把“每次必须立即归零”写成运行时保证。
+
+复现时在实验仓库依次执行 `python tools/lifetime_lab.py build --editor <Unity.exe路径>`、`python tools/lifetime_lab.py run`。构建、运行记录写入独立的 `artifacts/lifetime/`，构建前后和运行前均检查源码清单与哈希。本次构建 ID 为 `70021d1d-8d18-4bdf-8066-446dd9898b80`；对应实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)：[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)、[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)。复现本轮时先 checkout 到该提交；旧基线 `e0220099` 继续用于此前调用链与泛型实验。
+
+本轮没有采集 Memory Profiler 根快照、托管堆 used／reserved 或 RSS，也没有测量每次 GC 的耗时。弱引用失效不证明程序集已卸载、native metadata 已释放或内存已经归还 OS。线程状态的另一条生命周期见 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
+
+<!-- DATA-TODO: 继续补对象引用快照、活跃根区间和独立负载下的增量开关性能对照。 -->
 
 ## 接到 HybridCLR
 

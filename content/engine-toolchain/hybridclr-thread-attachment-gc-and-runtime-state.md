@@ -14,7 +14,7 @@ hybridclr_version: "v6.1.0 (5567f367)"
 
 这篇接在 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) 与 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})之后，解释一条线程怎样进入、执行并退出 IL2CPP／HybridCLR。async 的调度、SynchronizationContext 和取消协议继续看 [Unity 异步运行时系列]({{< relref "engine-toolchain/unity-async-runtime-series-index.md" >}})。
 
-> 本篇核对了固定源码中的接入与清理路径。最小托管实验只做桌面编译／运行验证；真实 IL2CPP Player、原生插件回调与设备压力测试尚待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
+> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程结果；原生插件回调与设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
 
 ## 先把线程问题拆成四层
 
@@ -169,7 +169,40 @@ public static class ManagedThreadProbe
 
 桌面核验记录：2026-10-25，Windows、.NET SDK 10.0.402、Release。从本文提取 HotWorker 与 ManagedThreadProbe，在同一控制台程序集内运行，得到 `caller=2, worker=4, results=5,15`。这只验证示例的编译、工作线程调用与结果交接，不验证 AOT／热更程序集分界、wrapper 或上述 Player 断点。
 
-<!-- DATA-TODO: 补固定 Unity patch 的 Player 构建身份、worker 线程日志、两次 Execute 的 MachineState 地址、转换缓存及退出清理断点。 -->
+### 已完成：两个托管工作线程的 Player 对照
+
+2026-10-25，使用 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 的 `projects/lifetime-threads`，在与 [对象保留实验]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 相同构建中运行独立的 `--threads` 进程。构建 ID 为 `70021d1d-8d18-4bdf-8066-446dd9898b80`，实际环境是本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3 / runtime v9.0.1、配套 il2cpp_plus v2022.3.x-9.0.1，Windows x64 IL2CPP Development。前文 v6.1.0 源码阅读与本节实测版本分别标记。
+
+实测样本比上面的教学探针多一个 worker 和完成／放行事件。两线程同时存活，worker1 等待 worker0 的两次调用完成后再调用同一个 `LifetimeHot.Samples.Add`；每个 worker 计算结束后都等待统一放行，再退出并 Join。这样可以同时区分线程独有状态与方法共享缓存，避免先销毁再分配造成地址复用的歧义。工作线程不调用 Unity API。
+
+三个无调试器的独立 Player 中，两线程各自返回 `5,15`，`Join=True`，其 managed ID、OS ID 均彼此不同且不同于主线程；进程退出码均为 0。之后另启一个 CDB 进程，使用该构建的完整 PDB，核对热更 DLL、`InterpreterInvoke` 调用栈与下面的断点记录：
+
+| 观察项 | 实际记录 |
+|---|---|
+| 主线程 | managed=1，OS=137848 |
+| worker0 | managed=5，OS=141284；MachineState=`00000172054163b0` |
+| worker1 | managed=6，OS=149628；MachineState=`0000017205416580` |
+| 目标 MethodInfo | 四次 Execute 均为 `00000170f0145930`，方法名 Add，参数各为 `(2,3)`、`(7,8)` |
+| 方法转换与缓存 | worker0 首次 Execute 前 Transform 1 次；四次 `interpData` 均为非空 `00000171d04dd208` |
+| 每个 worker 的状态 | 创建 1 次、动态根注册入口 1 次，第二次调用之前没有销毁／重新创建 |
+| 每个 worker 的退出 | 在该线程命中 FREE → 析构 → 动态根注销入口，各 1 次；state/root 地址对应 |
+
+两份状态均创建后才出现首次销毁。断点证据支持本样本中**线程各有状态、方法转换结果被复用**，并观察到了正常退出时的清理调用链。这里的 Execute 是函数入口断点；首次状态创建发生在入口命中之后，符合函数内部按需获取 TLS 的顺序。
+
+调试器线程号以十六进制输出，验收器转成十进制后与 Player 日志关联；所有地址只在这一个调试进程内有意义。清理断点证明入口被调用，未统计释放了多少 native 内存，也没有捕获 `GetGCRootData` 的实际扫描区间。主线程及其他 runtime 线程的记录不计入两个目标 worker 的生命周期。
+
+复现时在对象实验的 build / run 后执行：
+
+```powershell
+python tools/lifetime_lab.py trace --cdb <x64-cdb.exe路径>
+python tools/lifetime_lab.py verify
+```
+
+验收器要求同一构建、匹配文件哈希、完整 Player 结果、四次目标执行、共享缓存、不同且生命周期重叠的状态，以及对应的清理顺序。本轮对应 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，复现前先 checkout 到该提交；可核对[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)、[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)与[原生事件摘要](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/native-events.txt)。原始日志与 PDB 留在本地忽略目录。
+
+这次故意把两线程的目标调用串行化，未验证并发首次转换竞争、线程池复用或原生回调 attach／detach。正常 `System.Threading.Thread` 的成功路径，也不能代替异常中止、宿主关机与设备压力测试。
+
+<!-- DATA-TODO: 后续补活跃根区间、并发首次转换及线程池实验。 -->
 
 ## 动手验证二：把原生回调单独做成一组
 
