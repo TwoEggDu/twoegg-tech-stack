@@ -1,6 +1,6 @@
 # IL2CPP 系列计划
 
-更新：2026-10-25。本文是该系列唯一的 canonical 篇级目录。目录含 10 篇正文，索引另计。
+更新：2026-10-25。本文是该系列唯一的 canonical 篇级目录。目录含 10 篇正文，另引用 1 篇归属 HybridCLR 的共享线程专题，索引另计。
 
 ## 定位与边界
 
@@ -18,10 +18,12 @@
 | D3 | `il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md` | 已写；核心机制 |
 | D4 | `il2cpp-global-metadata-dat-format-loading-binding.md` | 已写；核心机制 |
 | D5 | `il2cpp-generic-code-generation-sharing-instantiation.md` | 已写；核心机制 |
-| D6 | `il2cpp-gc-integration-boehm-wbarrier-finalization.md` | 已写；核心机制 |
+| D6 | `il2cpp-gc-integration-boehm-wbarrier-finalization.md` | 已加强；内存分类、根与写入协议、Player 生命周期验证方案 |
 | D7 | `il2cpp-ecma335-coverage-supported-unsupported.md` | 已写；核心机制 |
 | D8 | `il2cpp-managed-code-stripping-linker-linkxml.md` | 已写；核心机制 |
 | 按需排查 | `il2cpp-global-metadata-deep-dive.md` | 已重整；构建同源、格式兼容、符号匹配，保留旧 URL |
+
+共享专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；D3、D6 后阅读，固定源码核对完成，Player／原生回调验证待补。
 
 发布索引：`il2cpp-series-index.md`。推荐从导读进入 D1～D8，排障专题按需阅读；之后接 HybridCLR 源码阅读起步。
 
@@ -36,3 +38,7 @@
 - 当前不声称全系列经过统一 Unity patch 的 Player 验证。
 
 旧 `il2cpp-runtime-map-article-plan.md` 是导读单篇的历史执行材料，不承担本系列进度管理。
+
+## GC 与线程修订（2026-10-25）
+
+修正 AOT 必然使用保守 GC、增量等同并发／无停顿等过强结论；D3 区分 WebGL 托管与原生线程能力。D6 的观察方案区分托管存活、堆容量、runtime native 内存与引擎资源。线程篇提纲与证据见 `hybridclr-thread-attachment-outline.md`。

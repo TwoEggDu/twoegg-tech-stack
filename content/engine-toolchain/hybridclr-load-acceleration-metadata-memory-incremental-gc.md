@@ -1,7 +1,8 @@
 ---
 title: "HybridCLR 加载加速、metadata 内存优化与 Incremental GC 适配｜商业版在运行时资源消耗上做了什么"
 date: "2026-04-13"
-description: "从社区版 Assembly::Load 的完整调用链拆起，定位 metadata 解析和类型注册两个主要耗时阶段；再把 InterpreterImage 在内存中持有的全量数据结构摊开，对照商业版给出的 4.7x→2.9x 优化数据讲清楚 metadata 内存的构成与削减方向；最后沿着 v4.0.0 引入 Incremental GC 支持的时间线，讲明白 write barrier 指令是怎么从无到有补进解释器的。三件事指向同一个工程目标：降低运行时资源消耗。"
+lastmod: "2026-10-25"
+description: "从社区版 Assembly::Load 的完整调用链拆起，定位 metadata 解析和类型注册两个主要耗时阶段；再把 InterpreterImage 在内存中持有的全量数据结构摊开，对照商业版给出的 4.7x→2.9x 优化数据讲清楚 metadata 内存的构成与削减方向；最后用固定源码说明增量 GC 的引用写入协议与验证边界。三件事指向同一个工程目标：降低运行时资源消耗。"
 weight: 57
 featured: false
 tags:
@@ -13,7 +14,7 @@ tags:
 series: "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
-> 加载加速、metadata 内存优化、Incremental GC 适配——这三个特性看起来分属不同的技术领域，但它们的工程目标一致：降低热更代码在运行时的资源消耗。加载加速缩短启动阻塞时间，metadata 内存优化给资产留出更多空间，Incremental GC 适配消除 GC 造成的帧间卡顿。
+> 加载加速、metadata 内存优化、Incremental GC 适配——这三个特性看起来分属不同的技术领域，但它们的工程目标一致：降低热更代码在运行时的资源消耗。加载加速缩短启动阻塞时间，metadata 内存优化给资产留出更多空间，Incremental GC 适配帮助分摊收集工作，实际帧时间收益仍需测量。
 
 这是 HybridCLR 系列第 30 篇。
 
@@ -222,91 +223,25 @@ HashMap<type, index> _type2Indexs                // 类型查找哈希表
 
 官方文档特别提到，在 WebGL 平台（包括微信小游戏），商业版通过更快更小的构建选项可以额外减少 50-100MB+ 的内存，包体缩小幅度约为 AOT DLL 总大小的 1-2 倍。这个优化超出了 metadata 内存本身的范畴，涉及到构建管线层面的变化。
 
-## Incremental GC：社区版的适配历程
+## Incremental GC：先核对版本与写入协议
 
-这一节的叙述需要先修正一个容易产生的误解：社区版并非不支持 Incremental GC。实际上，社区版从 **v4.0.0**（2023-08-28）开始就支持 Incremental GC。此前的版本（v4.0.0 之前）需要在 Unity PlayerSettings 中手动关闭"Use Incremental GC"选项。
+社区版已提供增量 GC 适配，不能因为商业介绍中出现 Incremental GC，就反推社区版不支持。本节固定到 HybridCLR v6.1.0（`5567f367`）与配套 il2cpp_plus v2022-6.1.0；不再把不同年代的修复日志拼成当前版本已经完整验证的保证。
 
-但 v4.0.0 的初始实现并不完善。从 RELEASELOG 可以看到一条持续的修复链：
+Unity 的增量收集把工作拆成多个片段，应用在片段之间会修改对象关系。它不等于收集工作必然与业务在不同线程上并行，也不保证消除停顿。行为基线见 [Unity 2022.3 增量 GC 文档](https://docs.unity3d.com/2022.3/Documentation/Manual/performance-incremental-garbage-collection.html)。
 
-- **v4.0.1**（2023-08-28）：修复 Unity 2020 下开启 Incremental GC 的编译错误
-- **v4.0.2**（2023-08-29）：修复 `LdobjVarVar_ref` 指令中与 Incremental GC 相关的严重 bug
-- **v4.0.5**（2023-09-25）：修复某些 store 操作未正确设置 write barrier 的问题
-- **v6.6.0**（2024-08-12）：修复 `SetMdArrElementVarVar_ref` 的 write barrier 问题
-- **v7.3.0**（2024-12-31）：修复 custom attribute 字段的 write barrier 处理
+### 解释器需要维护哪些写入
 
-这条修复链从 2023 年 8 月一直延续到 2024 年底，说明 Incremental GC 适配不是一次性完成的工程，而是一个持续发现和修补边界情况的过程。
+GC 必须知道相关引用关系的变化。解释器执行字段、数组、间接写入以及含引用值类型的复制时，都需要遵守宿主的跟踪协议。v6.1.0 的 `Interpreter_Execute.cpp` 中可查到带 WriteBarrier 的执行分支，兼容封装位于 `Il2CppCompatibleDef.h`；具体启用条件和类型判断要连同转换阶段一起阅读。
 
-### Incremental GC 对解释器的技术要求
+`MachineState::InitEvalStack` 注册的是动态根回调；`GetGCRootData` 报告当前活跃栈区间，不是整个预分配容量。因此不能再用“GC 永远扫描全部解释器栈”推导任意栈写入都无需处理，更不能把这个结论延伸到堆对象写入。完整路径与固定源码链接见 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
 
-要理解为什么适配需要这么长时间，需要先理解 Incremental GC 对 native 代码的要求。
+历史版本曾修复具体引用写入路径，不代表其他版本或商业优化路径已通过同一套测试。升级时应核对实际 release note、配套源码和生成物，再用本项目包含引用字段、数组及跨边界调用的负载验证。
 
-Unity 使用的 Boehm GC 在增量模式下，把 GC 工作分散到多个帧内执行。为了保证在 GC 标记阶段和应用程序并发修改对象图时不遗漏存活对象，需要一个核心机制：**write barrier**。
+### 商业能力能推断到哪里
 
-Write barrier 的规则：每当 native 代码（包括 IL2CPP 生成的代码和 HybridCLR 解释器）向一个堆上对象的引用字段写入新的对象引用时，必须通知 GC。如果不通知，GC 可能在标记阶段已经扫描过该对象之后，解释器修改了它的某个引用字段指向另一个对象，但 GC 不知道这次修改，于是认为那个被引用的对象不可达，将其回收——导致野指针和崩溃。
+若某个优化增加或改写了引用存储路径，它仍须满足同样的 GC 契约。这是正确性要求，不是已经看过商业源码的证据。公开信息不足时，不推测商业版一定用了精确根扫描，也不宣称其 barrier 覆盖比社区版完整。
 
-对于 IL2CPP AOT 编译的代码，codegen 会在所有引用字段的赋值语句后自动插入 write barrier 调用。但 HybridCLR 解释器是手写的 C++ switch-case 循环，每种涉及引用写入的指令都需要手动添加 write barrier。
-
-### StackObject 与 write barrier 的关系
-
-HybridCLR 解释器的核心数据结构 `StackObject`（定义在 `interpreter/InterpreterDefs.h`）是一个 8 字节的 union：
-
-```cpp
-union StackObject
-{
-    int64_t i64;
-    double f64;
-    void* ptr;
-    Il2CppObject* obj;
-    Il2CppString* str;
-    // ... 更多类型成员
-};
-```
-
-当解释器在栈帧（`localVarBase`）上存储一个对象引用时，它写入的是 `StackObject.obj`。这个操作本身不需要 write barrier——因为栈帧内存通过 `MachineState` 注册为 GC root（`GarbageCollector::RegisterDynamicRoot`），GC 会保守地扫描整个栈区域。
-
-但问题出在另一类操作：当解释器执行 `stfld`（存储实例字段）或 `stobj`（存储引用类型对象）时，目标地址不是栈帧，而是堆上某个对象的字段。这时如果不插入 write barrier，GC 就可能遗漏。
-
-### 社区版的 write barrier 指令
-
-打开 `interpreter/Instruction.h`，可以看到社区版已经定义了一整组带 write barrier 的指令变体：
-
-- `StfldVarVar_WriteBarrier_n_2` / `StfldVarVar_WriteBarrier_n_4`：实例字段赋值 + write barrier
-- `StsfldVarVar_WriteBarrier_n_2` / `StsfldVarVar_WriteBarrier_n_4`：静态字段赋值 + write barrier
-- `StthreadlocalVarVar_WriteBarrier_n_2` / `StthreadlocalVarVar_WriteBarrier_n_4`：线程局部变量赋值 + write barrier
-- `CpobjVarVar_WriteBarrier_n_2` / `CpobjVarVar_WriteBarrier_n_4`：对象复制 + write barrier
-- `InitobjVar_WriteBarrier_n_2` / `InitobjVar_WriteBarrier_n_4`：对象初始化 + write barrier
-- `SetArrayElementVarVar_WriteBarrier_n` / `SetMdArrElementVarVar_WriteBarrier_n`：数组元素赋值 + write barrier
-
-在 `Interpreter_Execute.cpp` 中，这些指令的实现会在数据写入后调用 `HYBRIDCLR_SET_WRITE_BARRIER` 宏。例如 `StindVarVar_ref` 指令：
-
-```
-写入引用到目标地址
-HYBRIDCLR_SET_WRITE_BARRIER((void**)目标地址)
-```
-
-多维数组的写入通过 `SetMdArrayElementWriteBarrier` 函数处理，先执行 `CopyBySize` 把值写入数组元素位置，然后对目标地址调用 `HYBRIDCLR_SET_WRITE_BARRIER`。对于包含引用的值类型（`klass->has_references`），nullable 类型的初始化也会触发 write barrier。
-
-### Transform 阶段的决策
-
-Write barrier 版本的指令不是无条件使用的。在 transform 阶段，HybridCLR 会检查目标类型是否包含托管引用（`has_references`）。只有当类型包含引用字段时，才会生成 `WriteBarrier` 变体的指令；纯值类型的字段操作使用不带 barrier 的版本，避免不必要的 barrier 开销。
-
-这就是为什么修复链会持续那么长时间：每一种涉及引用写入的指令路径都需要被覆盖到，包括不太常见的多维数组赋值、custom attribute 构造中的字段赋值、indirect store 等。遗漏任何一条路径，都可能在开启 Incremental GC 的情况下产生间歇性崩溃——这类 bug 极难复现和定位，因为它依赖于 GC 恰好在标记阶段和写入操作之间调度。
-
-## Incremental GC 适配：商业版的差异化
-
-从前面的分析可以看到，社区版从 v4.0.0 起就支持 Incremental GC，并在后续版本中持续修复 write barrier 遗漏。那么商业版在这一点上的差异化是什么？
-
-商业版的商业介绍页面将 Incremental GC 列为商业特性之一。结合商业版同时提供的标准解释优化和高级解释优化（HCLR-27 中讨论过），一个合理的推断是：
-
-**商业版的指令优化引入了新的指令变体，这些新变体也需要对应的 write barrier 版本。** 社区版只有基础指令集的 write barrier 覆盖；商业版在指令合并、特化替换等优化之后，产生了社区版不存在的指令路径，这些路径同样需要 write barrier 处理。
-
-此外，商业版可能在以下方面有更完善的实现：
-
-- 离线指令优化（Offline Instruction Optimization）产生的预编译指令序列中正确处理 write barrier
-- DHE 模式下 AOT 和解释器混合执行时的 write barrier 一致性
-- 更精确的 GC root 注册——把 `MachineState` 的栈区域从保守扫描改为精确扫描，减少 GC 的扫描范围
-
-这些都是基于架构逻辑的推断。核心事实是：社区版的 Incremental GC 支持经历了从无到有、从有到稳的过程，而商业版在此基础上需要处理更多指令路径的兼容性。
+加载加速、metadata 压缩和增量 GC 解决不同问题。metadata 等 native 内存不会因为一次托管收集自动释放；线程的解释器状态还要看 [线程接入与退出清理]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。采购或选型应分别验证加载、内存和帧时间收益。
 
 ## 三者的工程影响
 
@@ -332,11 +267,13 @@ Write barrier 版本的指令不是无条件使用的。在 transform 阶段，H
 
 ### Incremental GC 的帧间影响
 
-非增量 GC 在触发时会暂停所有线程完成一次完整的标记-清除。对于一个有 200MB 托管堆的项目，一次 full GC 可能导致 20-50ms 的帧间卡顿——在 30fps 的目标下，这就是丢 1-2 帧。
+不能仅凭“200MB 托管堆”推算一次 GC 的毫秒数，也不能承诺开启增量后每帧只占固定预算。存活对象图、引用修改、分配速率、设备、GC 设置和采样方法都会影响结果。
 
-开启 Incremental GC 后，GC 工作被分散到多帧，每帧只做一小段标记工作。单帧的 GC 开销通常可以控制在 1-3ms，不会造成可感知的卡顿。代价是 GC 的总耗时会略微增加（因为 write barrier 本身有开销），并且堆内存的峰值可能更高（因为回收被延后了）。
+同一设备上构建两份业务输入一致、GC 配置不同的 Player，记录实际模式、分配速率、GC 采样、帧时间分布及内存峰值。把首次加载／转换和稳定执行分开，再解释增量是否改善了目标场景。AOT 与解释执行共享收集体系，但两种负载的分配与引用修改模式未必相同，不能直接推定收益完全一致。
 
-对于 HybridCLR 热更代码，Incremental GC 的收益和 AOT 代码完全一样——因为从 GC 的视角看，解释器执行产生的对象和 AOT 执行产生的对象没有任何区别，都在同一个托管堆上。
+更完整的内存分类和生命周期对照，见 [IL2CPP GC 集成]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})。
+
+<!-- DATA-TODO: 补固定设备、Unity patch、HybridCLR 版本和同输入增量开关对照；不得把强制 GC 的生命周期实验当作帧时间基准。 -->
 
 ## 收束
 
@@ -344,7 +281,7 @@ Write barrier 版本的指令不是无条件使用的。在 transform 阶段，H
 
 Metadata 内存优化从两个方向推进：完全泛型共享消除了补充元数据的内存开销（从 4x DLL 大小降到 0），热更 assembly 的 metadata 内存从 4.7x 压到 2.9x（39% 降幅）。两者叠加，一个典型项目可以省出 10-20MB 的 native 内存。
 
-Incremental GC 适配是一个从 v4.0.0 开始、持续修复到 v7.3.0 的长线工程。技术上的核心工作是在解释器的每一条涉及堆上引用写入的指令路径中正确插入 write barrier 调用。社区版已经完成了基础指令集的覆盖，商业版在此基础上处理优化指令带来的额外路径。
+Incremental GC 适配要求解释器满足宿主的引用追踪协议。固定源码能够确认具体接入路径；完整性、稳定性与帧时间收益仍需目标 Player 的验证，不能由功能存在或商业介绍直接推出。
 
 三个优化的共同特征：它们都不改变 HybridCLR 的功能边界，不影响热更代码的行为正确性，而是在正确性之上削减运行时资源消耗。对于内存受限平台和帧率敏感场景，这些优化的工程价值是可量化的。
 

@@ -10,6 +10,8 @@
 
 - 发布索引：`content/engine-toolchain/hybridclr-series-index.md`。
 - 源码跟读准备：`hybridclr-source-reading-start.md`，已写；固定 v6.1.0 源码，Player 断点验证待补。
+- 线程接入专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；与 IL2CPP 共用，源码核对完成，Player／native 回调实验待补。
+- 数量：30 篇编号正文 + 6 篇前置桥接 + 2 篇专题，共 38 篇，索引另计。
 - 篇级文件均位于 `content/engine-toolchain/`，原 HCLR 编号及 URL 保留。
 
 ## 前置与桥接
@@ -21,7 +23,7 @@
 | Bridge-C | `hybridclr-bridge-abi-cross-boundary-calling-convention.md` | 已写 |
 | Bridge-D | `hybridclr-bridge-il2cpp-generic-sharing-rules.md` | 已写；与 ECMA-335 共用 |
 | Bridge-E | `hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md` | 已写 |
-| Bridge-F | `hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md` | 已写 |
+| Bridge-F | `hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md` | 已加强；v6.1.0 活跃根、写屏障与 metadata 生命周期 |
 
 ## 编号正文
 
@@ -63,9 +65,14 @@
 | 工作 | 状态与验收 |
 |---|---|
 | 源码阅读起步 | 正文与静态源码定位已完成；Unity patch、Player 断点与日志待记录 |
+| GC 与线程接入 | 正文、固定源码定位已完成；桌面实验、Player 根快照与 native 回调验证分别记录 |
 | 三栏泛型调用综合实验 | 待写；同一例子连通规范、AOT 与解释执行 |
 | 性能与预热篇 | 待加强；固定设备、构建配置和采样条件 |
 | 调用链篇 | 待加强；逐断点的输入输出与首次／再次对照，回查旧路径名称 |
 | 商业能力篇 | 待复核；逐条标注公开事实、推断与数据来源 |
 
 旧 `hybridclr-structural-diagnosis-and-bridge-articles-plan.md` 保留为历史诊断与补桥执行材料，不再作为当前进度目录。源码起步的提纲与证据见 `hybridclr-source-reading-start-outline.md`。
+
+## GC 与线程修订（2026-10-25）
+
+Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，HCLR-28 修正 GC 与 native metadata、类型初始化及卸载顺序的混淆，HCLR-30 收紧增量 GC 与商业能力推断。商业篇其余实现与性能表述仍保留待复核状态，本轮不代表全篇完成源码验证。新增专题的提纲、证据与验证边界见 `hybridclr-thread-attachment-outline.md`。

@@ -7,7 +7,7 @@ reading_kind: "runtime-index"
 topic_key: "engine"
 reading_title: "ECMA-335：读懂 IL2CPP 与 HybridCLR"
 date: "2026-04-15"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 description: "从 DLL、类型和签名，到 CIL、调用、程序集加载、静态初始化和反射，建立理解 IL2CPP 与 HybridCLR 的规范基础。"
 weight: 8
 series: "dotnet-runtime-ecosystem"
@@ -60,6 +60,8 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 | 场景 | 入口 |
 |---|---|
 | SDK、原生插件、托管与 native 互调 | [P/Invoke 与 Marshaling（原 A10）]({{< relref "engine-toolchain/ecma335-pinvoke-native-interop-marshaling-spec.md" >}}) → [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}}) |
+| 对象无法回收、事件与容器保留 | [GC 主线与生命周期实验]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}}) → [IL2CPP GC 与内存观察]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) |
+| 原生线程回调热更代码、解释器线程状态与 GC | [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})，属于实现专题，不改变规范主线 |
 | 多线程可见性、volatile 和屏障 | [线程内存模型（原 A12）]({{< relref "engine-toolchain/ecma335-threading-memory-model-volatile-barriers.md" >}}) |
 | 分析 DLL、损坏文件或 coded index | [PE／CLI 文件格式附录（原 A13）]({{< relref "engine-toolchain/ecma335-cli-file-format-pe-cli-header.md" >}})；基础定位路径已并入第 1 篇 |
 | IL 重写、unsafe 或验证工具报错 | [IL 验证附录（原 A8）]({{< relref "engine-toolchain/ecma335-cli-verification-il-type-safety.md" >}})；最小规则已并入第 4 篇 |

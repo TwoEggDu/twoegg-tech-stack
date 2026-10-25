@@ -15,7 +15,7 @@ series_id: "il2cpp-index"
 tags: [IL2CPP, Unity, AOT, Index]
 ---
 
-本系列按“产物地图 → 八篇核心机制 → 产物排查”组织，共 10 篇正文。先建立 metadata、native code 与 runtime 的分工，再进入 IL2CPP 的构建与执行链路，最后衔接 HybridCLR。
+本系列按“产物地图 → 八篇核心机制 → 产物排查”组织，共 10 篇正文，另与 HybridCLR 共用一篇线程接入专题。先建立 metadata、native code 与 runtime 的分工，再进入 IL2CPP 的构建与执行链路，最后衔接 HybridCLR。
 
 ## 前置知识
 
@@ -34,11 +34,15 @@ tags: [IL2CPP, Unity, AOT, Index]
 | D3 | [libil2cpp runtime：MetadataCache、Class、Runtime 三层结构]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md" >}}) | 运行时的类型初始化和方法分派入口 |
 | D4 | [global-metadata.dat：格式、加载与 runtime 的绑定]({{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}}) | metadata 文件的二进制布局和运行时查找路径 |
 | D5 | [泛型代码生成：共享、特化与 Full Generic Sharing]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md" >}}) | 引用类型共享 + 值类型特化的代码膨胀控制策略 |
-| D6 | [GC 集成：BoehmGC 的接入层、write barrier 与 finalization]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 保守式 GC 在 AOT 环境下的集成方式 |
+| D6 | [GC 集成：BoehmGC 的接入层、write barrier 与 finalization]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 根、写入协议、终结与托管／native 内存增长的区分 |
 | D7 | [ECMA-335 覆盖度：哪些支持、哪些不支持、为什么]({{< relref "engine-toolchain/il2cpp-ecma335-coverage-supported-unsupported.md" >}}) | Reflection.Emit、动态程序集等缺失特性的技术原因 |
 | D8 | [Managed Code Stripping：裁剪策略与 link.xml]({{< relref "engine-toolchain/il2cpp-managed-code-stripping-linker-linkxml.md" >}}) | UnityLinker 的裁剪级别和保留规则 |
 
 ---
+
+## 共享运行时专题
+
+D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：串起托管线程、原生回调 wrapper、解释器 TLS、GC 根与退出清理。正文归 HybridCLR，只维护一份；其中 Player 与原生插件实验仍待实测。
 
 ## 按问题查阅
 
@@ -47,6 +51,8 @@ tags: [IL2CPP, Unity, AOT, Index]
 | 分不清 metadata、GameAssembly 与 runtime | [运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}}) |
 | 要理解 metadata 文件结构与绑定 | [D4：格式、加载与绑定]({{< relref "engine-toolchain/il2cpp-global-metadata-dat-format-loading-binding.md" >}}) |
 | 启动崩溃，怀疑文件混用或符号不匹配 | [产物一致性排查]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}}) |
+| GC 后内存不下降，或退出后对象仍存活 | [D6：内存分类与生命周期对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) → [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}}) |
+| SDK 线程回调热更方法、线程退出后状态未释放 | [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) |
 | 泛型方法不能执行 | [D5：泛型代码生成]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md" >}}) → [HybridCLR AOT 泛型专题]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}}) |
 | 反射目标被裁剪 | [D8：裁剪与保留规则]({{< relref "engine-toolchain/il2cpp-managed-code-stripping-linker-linkxml.md" >}}) |
 

@@ -83,13 +83,11 @@ metadata 解析过程中产生的运行时结构——`Il2CppClass*`、`Il2CppMe
 
 ### 静态字段存储在类初始化时分配
 
-当一个类型第一次被访问时，IL2CPP 调用 `Runtime::ClassInit()` 触发类型初始化。这个过程会为类的静态字段分配存储空间。在标准 IL2CPP 里，静态字段存储一旦分配就不会释放，因为类型本身不会被卸载。
-
-静态构造函数（`.cctor`）只执行一次。IL2CPP 用 `Il2CppClass::initialized` 标记来保证这一点。没有"反初始化"机制。
+类型信息准备、静态字段存储准备和 `.cctor` 执行需要区分，不能把第一次访问类型等同于静态构造已执行，也不能用 `Il2CppClass::initialized` 一个标志概括所有状态。具体触发语义见 [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。普通加载路径中的类型和静态存储具有较长生命周期，这与可卸载模块需要显式收回所有权的要求不同。
 
 ### GC 根持有执行栈引用
 
-`MachineState` 通过 `GarbageCollector::AllocateFixed()` 分配执行栈，并通过 `RegisterDynamicRoot(this, GetGCRootData)` 将栈注册为 GC 根。这意味着执行栈上任何指向 metadata 结构的引用——`InterpFrame` 里的 `const MethodInfo* method`、栈上的对象引用——都被 GC 根持有。
+在社区版 v6.1.0 中，`MachineState` 用 native 分配建立解释器栈，并注册 `GetGCRootData` 动态根回调，报告当前活跃的 StackObject 区间。不能把它写成 AllocateFixed 分配，也不能据此把帧中的 native MethodInfo 指针等同于托管 GC 强引用。活跃帧对 metadata 的使用是另一个必须处理的执行寿命问题；详见 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
 
 同时 `MachineState` 维护了一个 `std::stack<const Il2CppImage*>`，记录当前正在执行的程序集镜像栈。这些引用在执行期间持续存在。
 
@@ -102,9 +100,9 @@ byte* codes;           // 转换后的指令字节码
 uint64_t* resolveDatas; // 解析好的元数据引用数组
 ```
 
-`resolveDatas` 持有对 `Il2CppClass*`、`MethodInfo*`、字段偏移等 metadata 的强引用。这些数据挂在 `MethodInfo` 的 `interpData` 指针上，只要 `MethodInfo` 存在就不会被释放。
+转换结果中的解析数据会保存类型、方法等 native 描述符的地址或相关数值；这种依赖不应称为托管 GC 强引用。缓存通过 `MethodInfo::interpData` 等路径关联，卸载机制需要同时解决缓存寿命与所依赖 metadata 的寿命。
 
-把上面这些加起来：全局注册表 + InterpreterImage 的 metadata 容器 + 分配后不回收的 Il2CppClass/MethodInfo + 静态字段存储 + GC 根 + transform 缓存。每一层都在单向持有引用，没有任何一层提供反向清理路径。这就是标准 IL2CPP 不能卸载程序集的结构性原因。
+把这些结构放在一起，需要解决的是跨注册表、类型、静态存储、活跃执行和方法缓存的一致退出。部分结构有局部清理路径，例如线程状态退出，但局部可清理不等于存在任意程序集的安全卸载协议。
 
 ## .NET 的 AssemblyLoadContext 做了什么
 
@@ -196,9 +194,7 @@ IL2CPP 没有任何这些基础设施：
 
 ### 静态字段的处理
 
-类型的静态字段存储必须在卸载时释放。对于值类型静态字段，直接释放存储即可。对于引用类型静态字段，需要先将其置空（断开对 GC 堆对象的引用），然后释放存储本身。
-
-静态构造函数的执行记录（`Il2CppClass::initialized` 标记）必须重置，这样重新加载同名程序集时，静态构造函数才能再次执行。
+卸载机制需要处理静态存储及其中的引用，包括含引用字段的值类型。如何解除根、释放存储以及管理新加载类型的初始化状态，属于产品实现；不能简化为“值类型直接 free”或“重置 initialized 标志”。重新加载后的类型身份与初始化协议也不能通过业务层手工改内部字段实现。
 
 ### 析构器的限制
 
@@ -206,14 +202,14 @@ IL2CPP 没有任何这些基础设施：
 
 ### 操作顺序
 
-综合上述约束，卸载一个程序集的操作顺序应该是：
+这里能提出的是业务侧需要满足的退出条件，不是经商业源码验证的内部释放顺序：
 
-1. 检查引用：扫描 GC 堆，确认没有活跃对象的类型定义在目标程序集中
-2. 清理静态字段：置空所有引用类型静态字段，释放静态存储
-3. 清理 transform 缓存：释放该程序集所有方法的 `InterpMethodInfo`
-4. 反注册类型：从全局 `Il2CppClass` 表和类型缓存中移除该程序集的类型
-5. 反注册 metadata：从 `MetadataCache` 和 `InterpreterImage` 注册表中移除
-6. 释放 metadata 内存：释放 `InterpreterImage` 及其持有的所有 metadata 结构
+1. 停止新任务与回调，等待仍在执行旧模块代码的工作完成。
+2. 解除事件与 UI 注册，按所有权释放 native 回调上下文及句柄。
+3. 按所用热重载产品的接口与约束执行检查和卸载，处理失败结果。
+4. 分别验证旧对象引用、在途执行、native 缓存与 metadata 内存的变化。
+
+不能通过“扫描一次 GC 堆”或“做完一次 GC”证明所有 native 入口与缓存都不再引用目标模块。反注册类型、清理转换缓存和释放 metadata 的具体依赖顺序必须由运行时实现保证，不应照着推测清单由业务手动操作。线程与回调退出见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
 
 ## 重新加载时的状态恢复
 
@@ -287,7 +283,7 @@ IL2CPP 不能卸载程序集，不是一个功能缺失，而是一个架构决�
 
 .NET CoreCLR 通过 `AssemblyLoadContext` 实现了程序集卸载，但它的实现前提是整个运行时从类型加载、JIT 编译到 GC 都内建了上下文感知能力。IL2CPP 没有这些基础设施。
 
-HybridCLR 热重载版在商业闭源层面解决了这个问题，从公开的 API 和约束条件可以推断出它至少需要做到：MetadataCache 注册可逆、InterpreterImage 可析构、transform 缓存按程序集可清理、静态字段存储可释放。官方文档声称的 99.9% metadata 回收率和"多次加载卸载不会泄漏"的保证，说明这些改造已经落地。
+HybridCLR 热重载版公开了卸载相关能力。注册关系、转换缓存与静态存储寿命都是这类设计需要处理的问题，但不能据此确认其闭源实现采用了哪套数据结构或释放顺序。官方回收比例属于相应版本和条件下的产品声明，不能作为本项目多轮加载／卸载已经通过验收的证据。
 
 但这不是魔法。热重载版的约束条件清楚地划出了边界：不能用析构器、`MonoBehaviour` 序列化字段名不能改、事件函数数量不能变、`List<T>` 要换成数组、DOTS 不兼容、依赖必须逆序卸载。这些约束背后的原因，在社区版源码里都能找到对应的结构性根源。
 

@@ -35,7 +35,7 @@ lastmod: "2026-10-25"
 
 HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 IL2CPP。这个专栏帮助你先分清问题在哪一层，再找到应读的机制、源码入口或工程案例。
 
-目前有 **30 篇编号正文、6 篇前置与桥接，以及 1 篇源码阅读起步**，索引另计。其中两篇前置和泛型共享桥接与 ECMA-335 共用正文，不重复计算为新增文章。商业能力属于选读研究，不能替代社区版主链的学习与验证。
+目前有 **30 篇编号正文、6 篇前置与桥接，以及源码阅读起步、线程接入 2 篇专题（共 38 篇）**，索引另计。其中两篇前置和泛型共享桥接与 ECMA-335 共用正文，不重复计算为新增文章。商业能力属于选读研究，不能替代社区版主链的学习与验证。
 
 ## 推荐阅读顺序
 
@@ -45,6 +45,7 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 | 实现底座 | [IL2CPP 索引]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，先读 [运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}}) | 分清 metadata、native code 与 runtime |
 | 动手准备 | [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) | 对齐版本、构建与进程，知道首轮断点看什么 |
 | 基础主线 | HCLR-1～5，穿插泛型共享和 ABI 桥接 | 能描述一段热更方法如何被装载、转换与执行 |
+| 线程与 GC | GC 桥接篇 → [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | 分清 runtime 登记、活跃根、业务同步和主线程限制 |
 | 工程收束 | HCLR-6～9 | 能划分边界、按层排障并识别性能成本 |
 | 按需深入 | 下方案例、泛型手册与商业能力 | 按自己的问题选读，不必把所有文章当成前置 |
 
@@ -64,6 +65,15 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 | [HybridCLR 桥接篇｜IL2CPP GC 模型：BoehmGC、GC root、write barrier 与解释器的关系]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}}) | GC、热重载及内存专题前 |
 
 如果对 asmdef、Roslyn 和 Player 脚本编译不熟悉，可先补 [Unity 脚本编译管线]({{< relref "engine-toolchain/unity-script-compilation-pipeline-series-index.md" >}})，它是外部公共前置。
+
+## 源码跟读与线程专题
+
+| 入口 | 读完要能回答 |
+|---|---|
+| [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) | 怎样对齐版本、构建与首轮调用断点？ |
+| [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | 谁接入线程、谁持有解释器状态和根、谁负责退出？ |
+
+线程专题与 IL2CPP 共用，放在源码起步和 GC 桥接之后。托管探针的桌面运行不等于 Player 或原生回调验证。
 
 ## 基础主线与工程收束
 
@@ -136,6 +146,8 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 | 热更 MonoBehaviour 挂载失败 | [HCLR-4]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md" >}}) → [HCLR-8]({{< relref "engine-toolchain/hybridclr-troubleshooting-diagnose-by-layer.md" >}}) |
 | native crash 或启动失败 | [HCLR-15]({{< relref "engine-toolchain/hybridclr-crash-analysis.md" >}})；文件混用另看 [IL2CPP 产物一致性排查]({{< relref "engine-toolchain/il2cpp-global-metadata-deep-dive.md" >}}) |
 | Generate 与最终打包不一致 | [HCLR-16]({{< relref "engine-toolchain/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}}) → [HCLR-24]({{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}) |
+| GC 后热更对象仍存活，或 native 内存增长 | [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})；容器与事件实验见 [ECMA GC 前置]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}}) |
+| SDK 回调、工作线程调用或退出清理异常 | [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；async 调度另看 [Unity 异步运行时]({{< relref "engine-toolchain/unity-async-runtime-series-index.md" >}}) |
 | 首调卡顿或跨边界调用过多 | [HCLR-9]({{< relref "engine-toolchain/hybridclr-performance-and-prejit-strategy.md" >}})；需要补设备测量来支持最终判断 |
 | 是否要用 FGS、DHE 或热重载 | 先 [HCLR-6]({{< relref "engine-toolchain/hybridclr-boundaries-and-tradeoffs.md" >}})、12，再选择商业专题 |
 
@@ -143,6 +155,6 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 
 本系列已经覆盖机制、源码入口、案例和工程防线。源码起步篇提供了最小调用实验的准备与观察方法，但仍不是完整接入教程或经过各平台验证的 demo 工程。
 
-下一步需要补的是：固定 Unity patch 的 Player 断点记录、同一个泛型调用贯穿 ECMA-335／IL2CPP／HybridCLR 的综合实验，以及首调、预热、稳定执行与跨边界调用的性能测量。它们未完成前，不把主题覆盖等同于验证闭环。
+下一步需要补的是：固定 Unity patch 的 Player 断点记录、GC 引用快照与原生线程回调验证、同一个泛型调用贯穿 ECMA-335／IL2CPP／HybridCLR 的综合实验，以及首调、预热、稳定执行与跨边界调用的性能测量。它们未完成前，不把主题覆盖等同于验证闭环。
 
 **先对齐版本和运行现场，再沿主链理解机制，最后按问题回到对应专题。**

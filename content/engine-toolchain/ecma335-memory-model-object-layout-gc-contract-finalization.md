@@ -2,7 +2,7 @@
 title: "ECMA-335 基础｜对象布局、GC 契约与终结语义"
 slug: "ecma335-memory-model-object-layout-gc-contract-finalization"
 date: "2026-04-14"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 description: "从值存储、对象引用和可达性出发，理解 IL2CPP 与 HybridCLR 必须共同维护的布局、GC 根、写屏障与资源释放边界。"
 weight: 15
 featured: false
@@ -102,6 +102,65 @@ NoInlining 用于减少桌面实验中内联和局部变量活跃期对观察的
 
 这个模型对应一个常见热更问题：AOT 静态注册表留下旧热更对象或委托。先解除注册、移除容器引用，再检查对象和 metadata 的各自生命周期；“业务已经不用它”并不等于 GC 已经看不到它。强制 GC 仅用于此处实验，不是线上清理策略。
 
+### 动手验证：事件退订为什么属于生命周期
+
+容器不是唯一的保留者。长期存在的发布者持有实例方法委托时，订阅者也可能被保留。下面是另一个独立控制台 Program.cs；同样用 Release、独立进程、无调试器运行：
+
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+
+public static class Program
+{
+    private static event Action Tick = delegate { };
+
+    private sealed class Subscriber
+    {
+        private int count;
+        public void OnTick() { count++; }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference Subscribe()
+    {
+        var subscriber = new Subscriber();
+        Tick += subscriber.OnTick;
+        Tick();
+        return new WeakReference(subscriber);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void Unsubscribe(WeakReference weak)
+    {
+        var subscriber = weak.Target as Subscriber;
+        if (subscriber != null) Tick -= subscriber.OnTick;
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static bool CollectAndRead(WeakReference weak)
+    {
+        GC.Collect();
+        return weak.IsAlive;
+    }
+
+    public static void Main()
+    {
+        WeakReference weak = Subscribe();
+        Console.WriteLine($"subscribed: {CollectAndRead(weak)}");
+        Unsubscribe(weak);
+        Console.WriteLine($"unsubscribed: {CollectAndRead(weak)}");
+    }
+}
+```
+
+第一条保留链是“静态事件 → 委托 → Subscriber 实例”。退订 helper 返回后，它获取的临时强引用也离开该调用，随后才观察弱引用。桌面示例的预期输出是 `subscribed: True`、`unsubscribed: False`；其回收时机仍不能直接推广到 Unity 的保守扫描环境。
+
+本机验证：2026-10-25，Windows、.NET SDK 10.0.402、Release、独立进程无调试器，从本文提取两个 Program 示例运行。容器实验输出 True／False，事件实验输出 `subscribed: True`／`unsubscribed: False`。未执行 Unity Player 回收实验。
+
+Microsoft 的[事件订阅与退订说明](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events)也强调发布者对订阅者的保留关系。实际项目应由订阅的所有者显式退订，而不是照搬实验中通过 WeakReference 找回目标的手法。lambda 退订应保留原委托，不能重新写一个看起来相同的 lambda 就假定移除了原订阅。
+
+对象之间互相引用本身不等于泄漏，关键是它们是否仍能从根到达。热更退出时还要停止新回调并等待在途工作；清空事件不能撤销已经开始执行的那次调用。线程与回调寿命见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
+
 ## 解释执行必须加入同一套引用管理
 
 AOT 代码、解释器帧和 native 互操作可能同时持有托管引用。解释器不能只保存一个看起来像地址的值，就假定 GC 一定能看到它。
@@ -127,7 +186,7 @@ native 保存托管对象地址时，需要分别回答：
 - native 保存的是临时指针，还是需要跨调用持有的句柄？
 - 谁负责释放句柄或原生资源？
 
-“当前 GC 不移动对象”不能替代生命周期管理，也不保证换版本或换运行时后仍成立。普通 GCHandle 用于保持引用，固定地址的要求还要区分 pinned 等具体机制；可用类型和 marshaling 规则继续看 [原生互操作分支]({{< relref "engine-toolchain/ecma335-pinvoke-native-interop-marshaling-spec.md" >}})。
+“当前 GC 不移动对象”不能替代生命周期管理，也不保证换版本或换运行时后仍成立。GCHandle 要区分类型：Normal 保持强引用，Weak 允许目标回收，Pinned 额外涉及固定地址；句柄的整数表示不是可以任意解引用的对象地址。可用类型和 marshaling 规则继续看 [原生互操作分支]({{< relref "engine-toolchain/ecma335-pinvoke-native-interop-marshaling-spec.md" >}})。
 
 ## Finalizer 与 Dispose 解决不同问题
 
@@ -152,7 +211,7 @@ Microsoft 的 [终结器说明](https://learn.microsoft.com/en-us/dotnet/csharp/
 | GC 是否完成相关回收 | 目标 runtime 的 GC 事件与内存快照 |
 | native 资源是否释放 | 资源自身的句柄、计数或释放日志 |
 
-热更重载后内存增长，可能来自旧引用仍存活、解释器或 metadata 缓存、native 资源未释放等不同来源。只观察进程内存总量，不足以区分这些原因。
+热更重载后内存增长，可能来自旧引用仍存活、解释器或 metadata 缓存、native 资源未释放等不同来源。只观察进程内存总量，不足以区分这些原因。托管存活量、堆保留容量、runtime native 内存和引擎资源的分类与 Player 对照步骤，见 [IL2CPP GC 篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})。
 
 规范入口：[ECMA-335](https://ecma-international.org/publications-and-standards/standards/ecma-335/) Partition I 的存储与内存管理语义；算法与布局实现继续看 [IL2CPP GC 专题]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})。
 

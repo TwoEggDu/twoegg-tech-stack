@@ -1,6 +1,6 @@
 # ECMA-335 系列计划：IL2CPP 与 HybridCLR 前置层
 
-更新：2026-10-23。本文是 ECMA-335 系列唯一的 canonical 篇级目录；生态总规划仅保留模块路由。
+更新：2026-10-25。本文是 ECMA-335 系列唯一的 canonical 篇级目录；生态总规划仅保留模块路由。
 
 ## 定位与边界
 
@@ -22,7 +22,7 @@
 | 5 | `ecma335-execution-model-calling-convention-exception-handling.md` | 原 A4，补强 constrained. 与装箱 |
 | 6 | `ecma335-assembly-model-identity-versioning-loading.md` | 原 A5，收拢到身份、依赖、加载 |
 | 7 | `ecma335-type-loading-and-initialization.md` | 新增，已写 |
-| 8 | `ecma335-memory-model-object-layout-gc-contract-finalization.md` | 原 A6，收拢到布局、GC 与终结契约；已补静态容器实验 |
+| 8 | `ecma335-memory-model-object-layout-gc-contract-finalization.md` | 原 A6，收拢到布局、GC 与终结契约；已补静态容器与事件退订实验，链接实现层内存分类 |
 | 9 | `ecma335-custom-attributes-reflection-encoding.md` | 原 A9，改为反射可见性与可调用性主线 |
 
 ## 分支与旧文迁移
@@ -79,3 +79,7 @@
 ## 跨系列衔接（2026-10-25）
 
 主线结构保持导读 + 九篇主线。索引新增 HybridCLR 源码阅读起步入口；后续实现层分别由 [IL2CPP 系列计划](./il2cpp-series-plan.md) 和 [HybridCLR 系列计划](./hybridclr-series-plan.md) 管理。贯穿三栏的泛型调用实验仍待写，不计入已完成文章。
+
+## GC 与线程衔接（2026-10-25）
+
+GC 前置增加事件／实例委托保留与退订实验，区分 Normal、Weak、Pinned 句柄；索引与并发分支接入共享的 IL2CPP／HybridCLR 线程专题。主线仍为导读 + 九篇，未把运行时线程登记当成 ECMA 内存模型内容。桌面实验结果与 Player 待验证项分别记录。

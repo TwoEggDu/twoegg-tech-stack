@@ -2,7 +2,7 @@
 title: "IL2CPP 实现分析｜libil2cpp runtime：MetadataCache、Class、Runtime 三层结构"
 slug: "il2cpp-libil2cpp-runtime-metadatacache-class-runtime"
 date: "2026-04-14"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 description: "拆解 libil2cpp 运行时的内部三层结构：MetadataCache 全局类型注册表、Il2CppClass 惰性初始化、Runtime 初始化序列。覆盖 Il2CppObject 对象头设计、BoehmGC 集成、icall 注册机制、线程模型，以及 HybridCLR 的嵌入点。"
 weight: 52
 featured: false
@@ -359,7 +359,7 @@ libil2cpp 的线程支持分两层：`os::Thread` 提供平台无关的线程原
 |------|---------|
 | Windows | `CreateThread` / `WaitForSingleObject` |
 | POSIX (Android/iOS/Linux) | `pthread_create` / `pthread_join` |
-| WebGL | 不支持多线程 |
+| WebGL | 依版本与构建选项区分托管线程和原生 C/C++ 线程，不能一概而论 |
 
 它提供了统一的 `Create`、`Join`、`Sleep`、`GetCurrentThread` 接口，上层代码不需要直接处理平台差异。
 
@@ -367,9 +367,15 @@ libil2cpp 的线程支持分两层：`os::Thread` 提供平台无关的线程原
 
 `il2cpp::vm::Monitor` 实现了 C# 的 `Monitor.Enter` / `Monitor.Exit`（即 `lock` 语句的底层机制）。每个 `Il2CppObject` 对象头中的 `monitor` 字段在首次 lock 时被初始化为一个 `MonitorData` 结构，包含互斥锁和条件变量。
 
-`il2cpp::os::Interlocked` 封装了原子操作——`CompareExchange`、`Increment`、`Decrement`、`Exchange`。这些映射到平台特定的原子指令（x86 的 `lock cmpxchg`、ARM 的 `ldrex/strex`）。
+`il2cpp::os::Interlocked` 封装了原子操作——`CompareExchange`、`Increment`、`Decrement`、`Exchange`。这些由平台原子原语实现；具体指令序列受架构、编译器和目标选项影响，不应固定为某一组 ARM 或 x86 指令。
 
 C# 中 `System.Threading.Thread`、`System.Threading.Monitor`、`System.Threading.Interlocked` 的方法调用，最终通过 icall 机制落到 libil2cpp 的这些实现上。
+
+### 接入与平台边界
+
+托管线程、SDK 创建的原生线程和 Unity 主线程约束需要分开。runtime 登记解决线程身份及 GC 接入，不能让任意 Unity API 自动变成后台线程安全。实际 wrapper 是否已登记、谁负责退出以及解释器 TLS 怎样清理，见 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
+
+[Unity 2023.2 WebGL 限制](https://docs.unity3d.com/2023.2/Documentation/Manual/webgl-technical-overview.html)明确区分 C# 多线程限制与有条件的 C/C++ 多线程支持。不要把原生线程开关当成托管 Thread 可用的证明；其他版本和小游戏宿主须单独核对。
 
 ## HybridCLR 怎么嵌入 libil2cpp
 

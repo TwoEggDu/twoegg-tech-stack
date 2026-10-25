@@ -306,7 +306,7 @@ union StackObject
 
 ### GC 集成
 
-`MachineState` 在初始化时通过 `RegisterDynamicRoot()` 把 `_stackBase` 注册为 GC root。这意味着 GC 可以扫描解释器栈上的所有 managed 引用，和 AOT 方法的栈帧一样参与垃圾回收。
+以社区版 v6.1.0 为例，`MachineState::InitEvalStack` 注册状态实例及 `GetGCRootData` 回调，由回调报告 `_stackBase` 到当前 `_stackTopIdx` 对应的活跃区间。预分配容量不等于活跃根范围，退出线程还需要注销与释放。固定源码和生命周期见 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})与 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
 
 ## 优化的边界：什么代码模式收益大、什么收益有限
 

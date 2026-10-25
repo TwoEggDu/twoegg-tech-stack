@@ -99,6 +99,10 @@ AOT 编译路径和解释路径都需要保留受支持的 volatile、同步与�
 
 **先证明共享状态的同步关系，再选择指令和优化；某台机器暂时跑得通只是测试观察。**
 
+## 接到运行时实现
+
+volatile、Interlocked 和 lock 解决的是同步语义。原生线程是否向 runtime 登记、解释器 TLS 与 GC 根怎样创建和清理，继续看 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；这些机制不能互相替代。
+
 ## 返回主线
 
 - [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})
