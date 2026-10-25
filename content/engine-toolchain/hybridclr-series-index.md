@@ -55,6 +55,8 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 
 第一轮源码阅读统一使用 runtime v9.0.1／package v9.0.3，固定提交与调试入口见源码起步篇；v6.1.0 仅作明确标注的历史对照。现有 Player 证据限于本机自定义 Editor 的固定组合。商业资料另外注明文档版本与未验证部分，不与社区源码混用。
 
+配图按问题放在对应正文：先用[整体架构图]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md#runtime-architecture" >}})定位组件，再用[首次／再次调用时序]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md#first-repeat-call" >}})跟执行。构建与排障可直接查[产物依赖图]({{< relref "engine-toolchain/hybridclr-toolchain-what-generate-buttons-do.md#build-artifacts" >}})、[修法决策图]({{< relref "engine-toolchain/hybridclr-fix-decision-disstrip-linkxml-metadata.md#fix-decision-map" >}})；生命周期问题对应[活跃根区间]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md#active-root-range" >}})、[线程接入所有权]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md#callback-attachment" >}})和[回调退出清理时序]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md#callback-shutdown" >}})。
+
 ## 前置与桥接
 
 | 入口 | 适合插入的位置 |

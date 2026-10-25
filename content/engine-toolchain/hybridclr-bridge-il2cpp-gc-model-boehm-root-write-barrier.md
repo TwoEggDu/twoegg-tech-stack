@@ -52,6 +52,30 @@ AOT 代码把对象交给热更方法后，调用线程并没有进入另一座�
 
 这里注册的不是“永远扫描整个预分配栈容量”的固定区间。容量、活跃范围和是否已经释放是三个量。进入和退出解释器帧会影响活跃范围，而线程存活期间可以继续保留已分配容量。
 
+### 图解：容量、活跃区间与释放 {#active-root-range}
+
+下图概括固定 v9.0.1 的源码契约，只画已分配解释器栈的几种状态；区间长度随执行变化，不代表每次调用都使用相同数量的槽位。
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 16, "rankSpacing": 28, "padding": 8}, "themeVariables": {"fontSize": "16px"}}}%%
+flowchart TD
+    subgraph Active[" "]
+        direction TB
+        Capacity[已分配的 native 栈容量]
+        Range[当前活跃区间<br/>起点：_stackBase<br/>长度：_stackTopIdx<br/>× sizeof StackObject]
+        Reserve[其余预留空间<br/>不在本次报告区间内]
+        Capacity ~~~ Range
+        Range ~~~ Reserve
+    end
+    style Capacity fill:transparent,stroke:none
+    Range -->|根查询| Report[GetGCRootData<br/>向宿主报告当前区间]
+    Active -->|活跃范围退至空| Idle[空闲状态：容量仍保留<br/>根查询返回 null / 0]
+    Idle -->|MachineState 析构| Unregister[先注销动态根]
+    Unregister --> Release[再释放栈的 native 内存]
+```
+
+图中的空闲状态可以重新进入解释执行；方法返回只影响相应帧，不自动触发最下方的析构清理。报告区间包含目标引用，也不等于已经证明该区间是目标的唯一根来源。
+
 宿主端在配套 `libil2cpp/gc/BoehmGC.cpp` 的动态根集合中保存回调，在根枚举时取得区间并交给收集器。`RegisterDynamicRoot` 是这套宿主集成接口的名字，不应写成 Boehm 原生提供了一个同名 `GC_register_dynamic_root` API。
 
 这也说明为什么随意把托管指针存到 native 内存里并不充分：关键在于该区域是否被正确枚举、引用是否仍在有效范围、所在线程是否正确接入。线程创建与退出的完整链路见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。

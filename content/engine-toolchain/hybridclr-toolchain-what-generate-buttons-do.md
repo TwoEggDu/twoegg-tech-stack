@@ -47,6 +47,33 @@ v9.0.3 [PrebuildCommand.cs](https://github.com/focus-creative-games/hybridclr_un
 
 省略占位步骤的旧代码不能当作可复制的 v9 实现。升级时重新核对顺序与参数，不长期维护脱离官方入口的手抄函数。
 
+### 生成步骤与产物消费方 {#build-artifacts}
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 16, "rankSpacing": 28, "padding": 8, "subGraphTitleMargin": {"top": 8, "bottom": 20}}}}%%
+flowchart TB
+    Inputs["固定版本与构建配置"]
+    subgraph Generate["package v9.0.3：GenerateAll"]
+        Check["检查本地 runtime 已安装"]
+        Compile["编译热更 DLL<br/>供分析与运行时装载"]
+        DefLink["生成 Il2CppDef 与 link.xml"]
+        Empty["生成空 bridge / wrapper"]
+        Strip["中间构建<br/>取得裁剪 AOT DLL"]
+        Bridge["分析 DLL<br/>生成正式 bridge / wrapper"]
+        Refs["生成泛型需求清单<br/>供补充与保留策略审查"]
+        Check --> Compile --> DefLink --> Empty --> Strip --> Bridge --> Refs
+    end
+    Inputs --> Check
+    Refs -->|总入口返回后| Final["最终 Player 构建"]
+    Inputs -.->|同一配置| Final
+    DefLink -.->|适配信息与保留规则| Final
+    Bridge -.->|编译桥接 C++| Final
+    Strip -.->|补充候选| Snapshot["核对并归档主包 AOT 快照<br/>供运行时补充方法体"]
+    Final -.->|最终裁剪产物| Snapshot
+```
+
+实线是固定版本的生成顺序及后续构建，虚线标出产物被谁消费；最终 Player Build 不属于 GenerateAll 内部步骤。中间裁剪 DLL 要与最终主包核对，泛型清单也需要审查，不能直接当作 native 实例生成证明。
+
 ## Installer 与构建选择
 
 [InstallerController.cs](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Editor/Installer/InstallerController.cs) 准备配套 runtime，并结合 Editor 自带工具形成项目本地 il2cpp。[CheckSettings.cs](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Editor/BuildProcessors/CheckSettings.cs) 处理相关构建设置与 `UNITY_IL2CPP_PATH`。

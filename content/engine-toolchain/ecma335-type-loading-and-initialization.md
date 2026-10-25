@@ -2,6 +2,7 @@
 title: "ECMA-335 基础｜类型加载与初始化：.cctor、beforefieldinit 与泛型静态字段"
 slug: "ecma335-type-loading-and-initialization"
 date: "2026-10-23"
+lastmod: "2026-10-25"
 description: "区分程序集加载、类型准备、CLI 类型初始化与业务初始化，通过静态构造、泛型静态字段和失败实验理解 IL2CPP、HybridCLR 的首次访问边界。"
 weight: 23
 series: "dotnet-runtime-ecosystem"
@@ -71,6 +72,32 @@ public sealed class Registry
 C# 显式声明静态构造函数时，编译器不会给该类型添加 beforefieldinit。仅有静态字段初始化时，编译器通常采用宽松语义。参见 Microsoft 的 [CA1810 说明](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1810)。
 
 这里“允许更早”很重要。如果某次测试在调用一个空静态方法前就打印了初始化日志，它只能证明该次运行选择了这个时机，不能证明所有运行时都必须如此。
+
+### 初始化职责与触发窗口 {#initialization-window}
+
+图中先把不同职责分开，再用下文的两个静态类说明 CLI 初始化时机。职责卡片之间没有调用箭头；下半部分仅画首次使用、初始化正常完成的示例，不代替上表对其他类型类别的规则。
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 20, "rankSpacing": 28, "padding": 8, "subGraphTitleMargin": {"top": 8, "bottom": 20}}}}%%
+flowchart TB
+    subgraph Responsibilities["分别确认的职责：不表示固定加载顺序"]
+        Assembly["程序集加载：输入进入可解析范围"]
+        Type["类型准备：身份、布局与成员信息"]
+        Business["业务初始化：配置、服务与预热完成"]
+        Assembly ~~~ Type
+        Type ~~~ Business
+    end
+    subgraph Initialization["CLI 类型初始化：建立静态状态"]
+        Flag{"类型带 beforefieldinit？"}
+        Flag -->|是：Relaxed| Relaxed["初始化允许更早发生<br/>单独调用 Ping 不必触发"]
+        Relaxed --> Field["首次读取 Value 时<br/>必须已完成初始化"]
+        Flag -->|否：Precise| Precise["本例首次调用 Ping<br/>触发类型初始化"]
+        Precise --> Body["完成字段初始化与 .cctor<br/>再进入 Ping 方法体"]
+    end
+    Business ~~~ Flag
+```
+
+`Relaxed` 这条路径表达允许的时机范围，不规定初始化日志必须出现在 `Ping` 前还是后；CLI 静态状态已经建立，也不能推出业务初始化已经完成。
 
 ## 动手验证：比较标志和触发点
 

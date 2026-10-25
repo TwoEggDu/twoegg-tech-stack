@@ -114,6 +114,40 @@ v9 的 [HiTransform::Transform](https://github.com/focus-creative-games/hybridcl
 
 ## 两次调用怎样形成证据闭环
 
+### 首次与再次调用的时序 {#first-repeat-call}
+
+```mermaid
+%%{init: {"sequence": {"useMaxWidth": false, "actorMargin": 16, "width": 105, "noteMargin": 8, "messageMargin": 18, "diagramMarginX": 8, "diagramMarginY": 8, "actorFontSize": 16, "messageFontSize": 16, "noteFontSize": 16}}}%%
+sequenceDiagram
+    participant Caller as 反射入口
+    participant Invoker as 调用器
+    participant Prepare as 准备与转换
+    participant Body as 方法体缓存
+    participant Exec as 解释执行
+    Note over Caller,Exec: 首调：同一进程，同一个未预热 Add
+    Caller->>Invoker: 首次 Add(2, 3)
+    Invoker->>Invoker: interpData 为空
+    Invoker->>Prepare: 准备方法表示
+    Prepare->>Prepare: 取 metadata 锁<br/>再次检查缓存
+    Prepare->>Prepare: Class::Init<br/>然后 Transform
+    Prepare->>Body: 按 image + token
+    Body-->>Prepare: MethodBody
+    Prepare->>Prepare: 转换内部指令<br/>发布 interpData
+    Prepare-->>Invoker: InterpMethodInfo
+    Invoker->>Invoker: 转换本次参数槽
+    Invoker->>Exec: Execute，参数 2、3
+    Exec-->>Invoker: 5
+    Invoker-->>Caller: 返回 5
+    Note over Caller,Exec: 次调：复用方法表示，仍执行新参数
+    Caller->>Invoker: 再次 Add(7, 8)
+    Invoker->>Invoker: 复用 interpData<br/>转换新参数槽
+    Invoker->>Exec: Execute，参数 7、8
+    Exec-->>Invoker: 15
+    Invoker-->>Caller: 返回 15
+```
+
+调用器是 `InterpreterInvoke`；图中将 `GetInterpMethodInfo` 与其内部 Transform 合为一条参与线，仅表示本文静态 Add 的正常反射路径。`MethodBodyCache` 的原始方法体与 `interpData` 的转换结果是两层数据，`Class::Init` 也不能据此等同于执行 C# 静态构造。
+
 以下是固定源码下的**预期观察表**。必须在新进程、未预热同一目标方法的条件下采集，不应照抄成实测结果。
 
 | 位置 | 首次调用 | 再次调用 |

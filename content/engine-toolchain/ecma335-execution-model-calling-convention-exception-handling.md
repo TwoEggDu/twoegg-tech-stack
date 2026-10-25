@@ -24,7 +24,27 @@ series_order: 15
 
 前面已经建立类型、签名和 CIL 栈模型。这篇讨论调用时如何消费参数、决定目标，并在异常发生后转移控制权。类型信息准备可能惰性发生，不能假定所有工作都在程序集加载时完成。
 
-{{< figure src="/images/runtime-ecosystem/ecma335-two-pass-exception-handling.svg" caption="两遍而不是一遍：Pass 1 不修改栈，只查找；Pass 2 才真正展开栈。filter clause 在 Pass 1 中执行。" >}}
+### 异常的查找与展开 {#exception-two-pass}
+
+先用后文已验证的 filter 示例看清两阶段：查找阶段尚未展开原调用栈，但可以执行 filter 中的用户代码。下图画的是 filter 接受异常、清理正常完成并进入目标 handler 的路径。
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 20, "rankSpacing": 28, "padding": 8, "subGraphTitleMargin": {"top": 8, "bottom": 20}}}}%%
+flowchart TB
+    subgraph Search["第一遍：查找目标 handler"]
+        Throw["内层抛出异常"] --> Find["沿异常处理区域与调用栈查找<br/>检查 catch 匹配或执行 filter"]
+        Find --> Filter["本例 filter：cleaned=False<br/>返回 true，接受异常"]
+        Filter --> Target["确定匹配的 handler<br/>尚未展开原调用栈"]
+    end
+    subgraph Unwind["第二遍：向目标展开并执行清理"]
+        Start["从抛出点向目标 handler 展开"]
+        Start --> Cleanup["展开过程中执行途经 finally／fault<br/>本例 inner finally：cleaned=True"]
+        Cleanup --> Handler["进入目标 handler<br/>本例 catch：cleaned=True"]
+    end
+    Target --> Start
+```
+
+filter 返回 false 时继续查找；没有匹配 handler 时则涉及未处理异常策略，不能从这条成功匹配路径推导所有 finally 都一定执行。图中的日志与状态对应后文桌面 .NET 示例，未替代跨 AOT／解释器的 Player 验证。
 
 ## 为什么要讲执行模型
 

@@ -190,6 +190,8 @@ v9 的 Transform 接收 MethodInfo，并在内部经 MethodBodyCache 取得方�
 
 ### 首次调用与再次调用的差别
 
+先对照[调用链篇的首次／再次调用时序图]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md#first-repeat-call" >}})，再用下面的断点观察表逐项验证。图限定本文同一进程、同一静态 Add 方法的反射调用路径。
+
 在本基线的 [GetInterpMethodInfo 实现](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp#L521) 中，先检查 `interpData`，未准备时调用 Transform 并关联结果。方法体读取在该转换链内部完成；反射 invoker 也会检查解释信息缓存。
 
 | 观察点 | 第一次调用的预期 | 同进程第二次调用的预期 |

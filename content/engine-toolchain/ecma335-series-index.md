@@ -49,6 +49,8 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 
 原 A0～A13 标号仅作为旧文对应关系保留，不再代表必读顺序。旧文章地址继续有效。
 
+需要先看图建立关系时，可从[跨模块签名关系图]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md#signature-reference-map" >}})、[类型初始化职责与触发窗口]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#initialization-window" >}})和[异常处理两阶段图]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md#exception-two-pass" >}})进入，再对照各篇的代码与观察结果。
+
 ## 进入 IL2CPP 与 HybridCLR
 
 1. 先读 [IL2CPP 实现分析]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，将 DLL 输入、构建产物和 runtime 职责对应起来。

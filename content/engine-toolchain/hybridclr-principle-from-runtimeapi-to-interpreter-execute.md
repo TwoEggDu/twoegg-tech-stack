@@ -33,6 +33,39 @@ IL2CPP 把构建期可见的托管代码转成 C++，再编译成 native 产物�
 
 热更方法、AOT 泛型解释实现、普通 AOT 方法可能汇入相同的设施，但来源和路径需要逐个辨认。
 
+### 构建与运行的职责图 {#runtime-architecture}
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 16, "rankSpacing": 28, "padding": 8, "subGraphTitleMargin": {"top": 8, "bottom": 20}}}}%%
+flowchart TB
+    subgraph Build["构建期：配套产物"]
+        Hot["热更 DLL"]
+        Aot["主包对应的<br/>补充 AOT DLL"]
+        Player["native 主包<br/>代码、runtime 与桥接"]
+    end
+    subgraph Run["运行期：同一 Player"]
+        LoadHot["热更程序集装载<br/>建立解释 image"]
+        LoadAot["补充 AOT 元数据<br/>登记同源 image"]
+        Prepare["按需准备方法<br/>IL → 内部指令与缓存"]
+        Execute["解释执行<br/>参数、帧与返回值"]
+        Bridge["跨边界调用设施<br/>按方向与签名适配"]
+        Native["已有 native 实现"]
+        Services["共用运行时设施<br/>类型、对象、异常、GC"]
+        LoadHot -->|方法体| Prepare
+        LoadAot -->|符合条件的方法体| Prepare
+        Prepare --> Execute
+        Execute <--> Bridge
+        Bridge <--> Native
+        Execute -.->|依赖| Services
+        Native -.->|依赖| Services
+    end
+    Hot --> LoadHot
+    Aot --> LoadAot
+    Player -.->|承载运行时| Services
+```
+
+这是职责与数据来源图；两种装载入口各有用途，程序集登记后仍按实际需求准备方法。补充方法体不生成 native 代码，首次与再次调用的具体先后见[调用链时序图]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md#first-repeat-call" >}})。
+
 ## 两种装载入口分别负责什么
 
 `Assembly.Load(byte[])` 用于加载热更程序集。沿配套 IL2CPP 的 `AppDomain::LoadAssemblyRaw`、`MetadataCache::LoadAssemblyFromBytes` 可以进入 HybridCLR 的 `Assembly::LoadFromBytes`。公开正文保留 Unity 接入点名称与路径，不复制其 C++ 实现。

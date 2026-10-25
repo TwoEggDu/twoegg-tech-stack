@@ -58,6 +58,37 @@ SDK 自己创建的原生线程则可能尚未接入 runtime。它进入托管�
 
 因此不能写成“所有 native 回调都要在 C# 回调体里手工 attach”，也不能写成“任何函数指针都会自动 attach”。先核对最终生成物和调用栈，确认命中的是这条 wrapper 路径；回调声明、调用约定、生成数量、裁剪和版本配套仍需正确。
 
+### 图解：回调入口的登记所有权 {#callback-attachment}
+
+下图对应固定 v9 组合的 wrapper 与宿主清理契约，后文 registered／raw 样本分别观察了这两条路径。参与者表示调用边界，整次回调同步运行在同一个 OS 线程上，不是切换到 Unity 主线程。
+
+```mermaid
+%%{init: {"sequence": {"useMaxWidth": false, "width": 110, "actorMargin": 20, "messageMargin": 24, "actorFontSize": 16, "messageFontSize": 16, "noteFontSize": 16}, "themeVariables": {"fontSize": "16px"}}}%%
+sequenceDiagram
+    participant T as 调用线程
+    participant W as 回调 wrapper
+    participant R as runtime 与<br/>解释器状态
+    T->>W: 进入回调入口
+    W->>R: 查询当前线程登记
+    alt registered：已经登记
+        Note over W,R: 本作用域不拥有登记
+        W->>R: 执行热更方法<br/>按需取得 MachineState
+        R-->>W: 退出相应解释帧
+        W-->>T: 返回，保留原登记
+        Note over W,R: 原登记所有者负责退出清理
+    else raw：尚未登记
+        W->>R: Attach<br/>本作用域拥有登记
+        W->>R: 执行热更方法<br/>按需建立状态与动态根
+        R-->>W: 退出相应解释帧
+        W->>R: Detach 自有登记
+        R->>R: 清理 MachineState<br/>先注销根，再释放存储
+        R-->>W: 清理完成
+        W-->>T: 返回原生调用方
+    end
+```
+
+raw 线程下次回调时会重新检查登记；同一个 OS 线程号不保证沿用上次的托管登记或 MachineState。图中省略了线程静态数据等其他宿主清理步骤，方法转换缓存也不属于这里的线程状态。
+
 如果集成层确实负责直接接入，原则可以写成下面的**所有权伪代码**，它不是可直接编译的插件实现：
 
 ```text
@@ -95,7 +126,7 @@ SDK 自己创建的原生线程则可能尚未接入 runtime。它进入托管�
 
 尤其要注意 wrapper 的作用域：一个原先未登记的 SDK 线程，如果每次回调都由 wrapper 临时接入并退出，就可能在每次调用后清理状态；长期由集成层持有登记的线程则有不同的复用范围。不要看到相同 OS 线程号就断言 MachineState 必须一直是同一个。
 
-建议把停机协议设计为：停止产生新回调 → 等待在途回调结束 → 解除回调注册并释放持有的委托／句柄 → 完成由本层拥有的线程登记清理。具体顺序还受 SDK 的注销与等待契约约束。`GC.Collect()` 无法代替其中的等待与所有权交接。
+停机协议需要先按 SDK 契约阻止新回调并等待在途回调结束，确认 native 不再使用相关对象后，才能释放委托／句柄。注销入口与等待的先后由 SDK 契约决定。线程登记则由所属线程及其所有者清理：wrapper 临时取得的登记在回调返回前释放，长期登记沿所有者的退出路径处理，不能统一安排成释放句柄后再 Detach。`GC.Collect()` 无法代替其中的等待与所有权交接。
 
 ## 动手验证一：从托管工作线程进入热更方法
 
@@ -289,6 +320,41 @@ handle/stack另各有匹配GameAssembly/NativeProbe private PDB的原生记录�
 Detach数字仍是两个重载入口组成一条解除登记调用链。stack组没有上下文句柄可释放；不能用handle组的成功替代stack的结果，也不把它们的聚焦断点当成1024次压力负载的逐次调用链记录。
 
 每组在最后一个回调关卡请求stop，`Join(0)`应尚未完成，放行后才允许原生线程退出。成功Join之后，handle/stress才Free Context，最后释放回调委托；失败等待时继续保留根引用，避免native仍可能回调时提前释放。九个进程中，解除对应持有后弱引用均在三轮显式收集窗口内失效；这是观察值，释放后仍存活也会被验收器记录。
+
+### 图解：停止回调后再释放持有 {#callback-shutdown}
+
+成功路径来自本轮样本的在途停止记录；失败分支表示样本的清理策略，不表示已经完成真实 SDK 关闭竞争的故障注入验证。
+
+```mermaid
+%%{init: {"sequence": {"useMaxWidth": false, "width": 110, "actorMargin": 20, "messageMargin": 24, "actorFontSize": 16, "messageFontSize": 16, "noteFontSize": 16}, "themeVariables": {"fontSize": "16px"}}}%%
+sequenceDiagram
+    participant M as 主线程<br/>AOT 持有者
+    participant N as 原生 worker
+    participant H as 热更回调
+    N->>H: 进入最后一个回调
+    Note over H: 等待放行
+    M->>N: 请求 stop<br/>不再开始新回调
+    M->>N: Join(0)
+    N-->>M: 未完成：回调仍在途
+    M->>H: 放行在途回调
+    M->>N: 等待 Join（有超时）
+    alt 在时限内完成退出
+        H-->>N: 回调返回<br/>完成作用域清理
+        N->>N: 退出工作线程
+        N-->>M: Join 成功
+        opt handle / stress 组
+            M->>M: Free Context
+        end
+        Note over M: stack 组无句柄<br/>无需 Free
+        M->>M: 释放回调委托<br/>的 AOT 强引用
+    else 未确认线程结束
+        N-->>M: Join 超时或失败
+        M->>M: 保留句柄与委托
+        Note over M,N: 超时不等于停止<br/>不能提前释放
+    end
+```
+
+成功 Join 证明的是本样本工作线程已经结束；随后解除强持有，不等于对象立即被收集。实际 SDK 还需按它的注销与等待契约确认回调已经停止，不能照搬一个同名 `Join` 就跳过该确认。
 
 自有样本与证据已固定在提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)：[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)、[自有原生插件](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/native/gc-callbacks/plugin.cpp)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)及[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/results.json)；通过 `tools/gc_callback_lab.py` 的build/run/trace/verify复现。前一轮 `b915632` 不包含新增GC样本。
 

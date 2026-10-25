@@ -2,6 +2,7 @@
 title: "ECMA-335 基础｜签名与引用解析：一个泛型调用如何找到目标方法"
 slug: "ecma335-signatures-and-reference-resolution"
 date: "2026-10-23"
+lastmod: "2026-10-25"
 description: "用一个跨 DLL 泛型调用串起模块作用域、MemberRef、TypeSpec、MethodSpec、签名与泛型上下文，区分解析成功和拥有可执行实现。"
 weight: 22
 series: "dotnet-runtime-ecosystem"
@@ -114,17 +115,26 @@ ret
 
 本例在 .NET SDK 10.0.402 的 Release 编译中使用 call：接收者刚由 newobj 产生，编译器可以采用直接实例调用。其他写法可能生成 callvirt；调用指令的选择不改变本篇要观察的引用关系。最后这次调用的操作数指向 HotEntry 模块的一个 MethodSpec：
 
-```text
-HotEntry 模块中的调用操作数
-  → MethodSpec
-      Method → MemberRef：Echo
-                 Parent → TypeSpec：Box<int>
-                 Signature → 实例泛型方法，返回 !!0，参数 !0、!!0
-      Instantiation → 方法实参 [string]
+### 跨模块的签名与引用关系 {#signature-reference-map}
 
-类型上下文 [int] + 方法上下文 [string]
-  → 这次调用的参数为 int、string，返回 string
+下面画的是本例产物中的记录关系。实线表示记录引用或参数绑定，虚线表示跨模块绑定及后续需要另行确认的执行能力，不代表运行时固定按箭头顺序查表。
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 20, "rankSpacing": 30}}}%%
+flowchart TB
+    Call["HotEntry：call 操作数"] --> Spec["MethodSpec"]
+    Spec -->|Method| Member["MemberRef：Echo<br/>返回 !!0，参数 !0、!!0"]
+    Spec -->|Instantiation| MethodArgs["方法实参：string"]
+    Member -->|Parent| TypeSpec["TypeSpec：Box&lt;int&gt;<br/>类型实参：int"]
+    TypeSpec -.->|按作用域绑定| Definition["Shared 模块中的定义<br/>TypeDef：Box&lt;T&gt;<br/>MethodDef：Echo&lt;U&gt;"]
+    Member -.->|按成员签名绑定| Definition
+    TypeSpec --> Bound["完整目标：Box&lt;int&gt;.Echo&lt;string&gt;<br/>参数 int、string；返回 string"]
+    MethodArgs --> Bound
+    Definition --> Bound
+    Bound -.->|另行确认| Execution["约束、访问权限与执行路径<br/>可用的 native 实现或解释执行支持"]
 ```
+
+跨模块绑定还要结合 TypeRef 与 AssemblyRef 表达的类型引用和解析作用域，详见前文表格；图中合并了这些记录。这条引用链只描述本例，完整目标身份仍不等于一个已确认可调用的 native 地址。
 
 本例 MethodSpec 的实例化签名 payload 是 `0A 01 0E`：GENERICINST 方法实例化标记、一个方法实参、STRING。不要把这里的 0x0A 与 metadata 表号混淆，它们出现在不同编码位置。
 

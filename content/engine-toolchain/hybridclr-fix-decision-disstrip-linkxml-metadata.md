@@ -68,6 +68,37 @@ lastmod: "2026-10-25"
 3. 若没有 native 实现，检查定义所在程序集的补充元数据是否匹配并已加载。它可能直接提供正确的解释路径。
 4. 若需要 native 性能，再评估共享形态的显式调用，并重新构建验证；不是看到报错就自动要求重发主包。
 
+### 按缺失层选择修法 {#fix-decision-map}
+
+```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 16, "rankSpacing": 28, "padding": 8}}}%%
+flowchart TB
+    Identity["核对 Player、签名与 DLL 身份"]
+    Definition{"定义与成员保留？"}
+    Preserve["调整定义与成员保留<br/>重建主包后重新核对"]
+    Native{"有适用 native 实现？"}
+    NativeCall["核对 native 目标<br/>与 invoker、桥接、参数"]
+    Metadata{"满足解释条件？"}
+    Supply["核对同源 DLL 与加载结果<br/>修正补充输入，或<br/>评估显式 AOT 调用"]
+    InterpCall["核对解释目标<br/>与 invoker、桥接、参数"]
+    Verify{"Player 复测通过？"}
+    Evidence["保留新异常与调用栈<br/>按失败层继续定位"]
+    Performance["功能通过后再测性能<br/>判断是否保留 native 实例"]
+    Identity --> Definition
+    Definition -->|缺定义或成员| Preserve
+    Definition -->|存在| Native
+    Native -->|有| NativeCall
+    Native -->|无| Metadata
+    Metadata -->|不满足| Supply
+    Metadata -->|满足| InterpCall
+    NativeCall --> Verify
+    InterpCall --> Verify
+    Verify -->|未通过| Evidence
+    Verify -->|通过| Performance
+```
+
+定义与成员以最终裁剪 DLL 为准，适用 native 实现包括可共享实现；解释条件则要核对方法体是否匹配、是否加载成功及目标方法是否受支持。每个分支都需要证据，修改输入后从主包身份重新核对，不能由补充数据或 native 实现存在直接推定调用成功。
+
 [泛型综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) 已用固定环境对照缺失、补充 metadata 与显式 AOT 实例。这个证据支持上述分层模型，不能代替对所有容器、平台和性能的验收。
 
 ## 修复后的交付标准
