@@ -451,4 +451,4 @@ g++ -std=c++17 -O0 -g -Wall -Wextra -Wpedantic raii.cpp -o raii.exe
 
 本篇没有完成四个引擎或运行时的构建、调试、GC 观测、图形资源释放、跨线程压力测试及性能测量。语言规则依据 C++ 工作草案与 Core Guidelines 核对，例子限定在 C++17；不把编译器的某次输出扩展成所有平台的实现保证。
 
-下一篇按规划进入 **CXX-03：一次成员调用执行谁**，继续解释类、继承、重载、覆盖、切片与虚析构。正文尚待整理，可以先读已有的 [Piccolo 类、继承与虚函数前置]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})。完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+下一篇进入 [CXX-03：一次成员调用执行谁]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}})，从静态接口和对象来源追踪重载、覆盖、切片与虚析构。项目应用继续读 [Piccolo 类、继承与虚函数前置]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})，完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。

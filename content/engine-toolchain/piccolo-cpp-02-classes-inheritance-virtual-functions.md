@@ -26,7 +26,7 @@ weight: 496
 
 上一篇讨论谁让对象活着。这一篇接着问：**对象仍然活着时，通过基类访问它，到底会调用谁？通过基类释放它，又会怎样结束？** 先建立最小模型，再沿 Piccolo 的组件和 RHI 两条路径阅读，最后用独立程序核对语言行为。
 
-> **读这篇之前**：建议先读 [智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})。本篇会继续使用“拥有对象”和“借用对象”的区别，但不要求已经构建 Piccolo。
+> **读这篇之前**：静态/动态类型、重载、覆盖、切片和虚析构的逐步解释已整理到 [CXX-03：一次成员调用执行谁]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}})。初学者先完成公共课，再回到本篇的模型速查和 Component / RHI 项目路径；Piccolo 的持有关系见 [智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})。本篇不要求已经构建 Piccolo。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。引擎实现关系来自源码核对；独立程序验证 C++17 语言行为。Piccolo 本身的构建、运行与断点观察尚未开展。
 
