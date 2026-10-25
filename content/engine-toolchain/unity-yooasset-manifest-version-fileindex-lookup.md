@@ -1,6 +1,6 @@
 ---
 date: "2026-04-13"
-lastmod: "2026-10-21"
+lastmod: "2026-10-25"
 title: "YooAsset Manifest 的三种边界：定位索引、内容身份与完整性验证"
 description: "以 YooAsset 3.0.6 固定源码拆开清单的数据结构、location 索引、两种依赖集合，以及版本、Hash、Unity CRC、文件 CRC 和大小的真实职责。"
 slug: "unity-yooasset-manifest-version-fileindex-lookup"
@@ -16,6 +16,11 @@ series: "YooAsset 资源管理与交付"
 primary_series: "yooasset"
 series_order: 4
 yooasset_version: "3.0.6"
+type: "reading-series"
+topic_key: "frameworks"
+content_stage: "article"
+reading_index: "engine-toolchain/unity-yooasset-series-index.md"
+reading_directory_title: "Manifest、内容身份与完整性"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})

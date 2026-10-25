@@ -1,15 +1,21 @@
 {{ $members := partial "reading/series-members.html" .Page }}
+{{ $numbers := dict }}
+{{ range $i, $member := $members }}{{ $numbers = merge $numbers (dict $member.RelPermalink (add $i 1)) }}{{ end }}
+{{ $byPosition := .Page.Params.reading_number_by_position }}
 <div class="reading-chapter-groups">
 {{ range .Page.Params.reading_groups }}
   {{ $group := . }}
   {{ $pages := where (where $members "Params.series_order" "ge" $group.first) "Params.series_order" "le" $group.last }}
   <section class="reading-chapter-group" aria-labelledby="reading-group-{{ $group.first }}">
     <div class="reading-chapter-group-heading"><h3 id="reading-group-{{ $group.first }}">{{ $group.title }}</h3><p>{{ $group.intro }}</p></div>
-    <ol class="reading-chapters" start="{{ $group.first }}">
+    {{ $start := int $group.first }}
+    {{ if and $byPosition (gt (len $pages) 0) }}{{ $start = index $numbers (index $pages 0).RelPermalink }}{{ end }}
+    <ol class="reading-chapters" start="{{ $start }}">
       {{ range $pages }}
+      {{ $number := int .Params.series_order }}{{ if $byPosition }}{{ $number = index $numbers .RelPermalink }}{{ end }}
       <li>
-        <span class="reading-chapter-number" aria-hidden="true">{{ printf "%02d" (int .Params.series_order) }}</span>
-        <div><h4><a href="{{ .RelPermalink }}">{{ .Params.reading_title | default .Title }} <span aria-hidden="true">→</span></a></h4><p>{{ .Params.reading_summary | default .Description }}</p></div>
+        <span class="reading-chapter-number" aria-hidden="true">{{ printf "%02d" $number }}</span>
+        <div><h4><a href="{{ .RelPermalink }}">{{ .Params.reading_directory_title | default .Params.reading_title | default .Title }} <span aria-hidden="true">→</span></a></h4><p>{{ .Params.reading_summary | default .Description }}</p></div>
         <span class="reading-chapter-state">{{ if eq .Params.content_stage "outline" }}提纲{{ else }}正文{{ end }}</span>
       </li>
       {{ end }}

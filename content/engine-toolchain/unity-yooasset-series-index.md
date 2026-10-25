@@ -24,7 +24,20 @@ type: "reading-series"
 topic_key: "frameworks"
 reading_parent: "reading/client.md"
 reading_number_by_position: true
-reading_lead: "从资源依赖与分包，沿加载、缓存和生命周期，理解内容怎样交付给游戏。"
+reading_lead: "从一个资源请求，理解加载与交付。"
+reading_groups:
+  - title: "建立资源模型"
+    intro: "先分清 Package、文件系统与运行模式，再进入具体请求。"
+    first: 1
+    last: 2
+  - title: "追踪加载与生命周期"
+    intro: "沿一次请求，连接对象、依赖、清单、下载缓存和释放。"
+    first: 2.5
+    last: 6
+  - title: "理解分包与构建"
+    intro: "从一个 Prefab 进入共享 Bundle，再判断构建产物与项目职责。"
+    first: 6.5
+    last: 8
 reading_route: ["资源与依赖", "加载与生命周期", "构建与交付"]
 reading_status: "八篇机制专题与两篇流程导读；源码与实测边界见各篇说明。"
 lastmod: "2026-10-25"
@@ -33,6 +46,57 @@ lastmod: "2026-10-25"
 YooAsset 把资源收集、构建、版本清单、内容获取和运行时加载连接起来。要理解这条链路，需要分别判断目录是否有效、内容文件是否就绪、对象是否加载，以及它们的使用期是否结束。
 
 本系列以 **YooAsset 3.0.6** 为主线，源码固定到提交 `3b4cfb36cc2e81b9558ab74d65fee2cf2eac2804`。先建立模块职责和资源状态的整体认识，再沿具体链路深入。
+
+<a id="chapters"></a>
+
+## 推荐阅读顺序
+
+{{< reading-series-chapters >}}
+
+首次系统阅读按上面的顺序推进。处理打包问题时，先读[分包流程导读]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}})，再进入构建篇；处理内存和对象失效时，可以先读生命周期篇，再回查加载与依赖。
+
+## 按当前问题回查
+
+
+- **一次 LoadAssetAsync 请求从发起到完成经过哪些步骤？**
+
+  [LoadAssetAsync 单次加载流程导读]({{< relref "engine-toolchain/unity-yooasset-loadassetasync-single-request-walkthrough.md" >}})
+
+- **初始化成功，为什么还不能加载资源？**
+
+  [整体架构与初始化]({{< relref "engine-toolchain/unity-yooasset-architecture-package-initialization.md" >}})
+
+- **同一份资源在编辑器、安装包和 Web 中由哪里提供？**
+
+  [文件系统与运行模式]({{< relref "engine-toolchain/unity-yooasset-filesystems-playmodes.md" >}})
+
+- **两个请求是否重复加载，Bundle 就绪后还要等什么？**
+
+  [运行时加载与请求复用]({{< relref "engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md" >}})
+
+- **版本号、清单 Hash、Bundle 身份与 CRC 各管什么？**
+
+  [Manifest、内容身份与完整性]({{< relref "engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md" >}})
+
+- **下载是否续传，缓存何时被检查，零下载量代表什么？**
+
+  [下载调度与磁盘缓存]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}})
+
+- **Release 之后资源为何仍在，实例应由谁持有？**
+
+  [资源生命周期与卸载]({{< relref "engine-toolchain/unity-yooasset-handle-lifetime-unload.md" >}})
+
+- **一个 Prefab 的依赖如何分包，目录与两个开关怎样决定共享包？**
+
+  [分包流程导读]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}})
+
+- **完整版本目录是否意味着所有 Bundle 都重新构建？**
+
+  [资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}})
+
+- **已有调试工具能看到什么，灰度和发布又由谁负责？**
+
+  [框架能力与项目职责]({{< relref "engine-toolchain/unity-yooasset-boundaries-what-projects-must-build.md" >}})
 
 ## 前置阅读：Unity 资产与 AssetBundle
 
@@ -46,39 +110,6 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 
 第一次跟踪 `package.LoadAssetAsync` 时，可以先读[LoadAssetAsync 单次加载流程导读]({{< relref "engine-toolchain/unity-yooasset-loadassetasync-single-request-walkthrough.md" >}})，再进入下面的源码专题。
 
-<a id="chapters"></a>
-
-## 推荐阅读顺序
-
-| 顺序 | 文章 | 核心问题 |
-|---|---|---|
-| 1 | [整体架构与初始化]({{< relref "engine-toolchain/unity-yooasset-architecture-package-initialization.md" >}}) | Package、清单、文件、对象如何协作；初始化之后还需要哪些条件。 |
-| 2 | [文件系统与运行模式]({{< relref "engine-toolchain/unity-yooasset-filesystems-playmodes.md" >}}) | 理解文件系统组合、Bundle 路由、主文件系统与 BundleCache。 |
-| 3 | [运行时加载与请求复用]({{< relref "engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) | 追踪 Provider 和 Loader 的复用、依赖等待与对象提取。 |
-| 4 | [Manifest、内容身份与完整性]({{< relref "engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md" >}}) | 拆开定位索引、资源与 Bundle 依赖、清单和文件的验证职责。 |
-| 5 | [下载调度与磁盘缓存]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) | 核对下载集合、续传条件、缓存提交和启动校验。 |
-| 6 | [资源生命周期与卸载]({{< relref "engine-toolchain/unity-yooasset-handle-lifetime-unload.md" >}}) | 明确实例、Handle、Provider、Loader 和文件缓存各自的持有期。 |
-| 导读 | [分包流程：从一个 Prefab 到共享 Bundle]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}}) | 推演专属依赖、目录共享包、两个开关与引用包集合分组的自定义边界。 |
-| 7 | [资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}}) | 分清收集规划、构建缓存复用、完整版本产物与差异交付。 |
-| 8 | [框架能力与项目职责]({{< relref "engine-toolchain/unity-yooasset-boundaries-what-projects-must-build.md" >}}) | 把工具、发布选择、灰度、CI 和长期监控按契约分开。 |
-
-首次系统阅读按上面的顺序推进。处理打包问题时，先读[分包流程导读]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}})，再进入构建篇；处理内存和对象失效时，可以先读生命周期篇，再回查加载与依赖。
-
-## 按当前问题回查
-
-| 现象或问题 | 阅读入口 |
-|---|---|
-| 一次 LoadAssetAsync 请求从发起到完成经过哪些步骤？ | [LoadAssetAsync 单次加载流程导读]({{< relref "engine-toolchain/unity-yooasset-loadassetasync-single-request-walkthrough.md" >}}) |
-| 初始化成功，为什么还不能加载资源？ | [整体架构与初始化]({{< relref "engine-toolchain/unity-yooasset-architecture-package-initialization.md" >}}) |
-| 同一份资源在编辑器、安装包和 Web 中由哪里提供？ | [文件系统与运行模式]({{< relref "engine-toolchain/unity-yooasset-filesystems-playmodes.md" >}}) |
-| 两个请求是否重复加载，Bundle 就绪后还要等什么？ | [运行时加载与请求复用]({{< relref "engine-toolchain/unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded.md" >}}) |
-| 版本号、清单 Hash、Bundle 身份与 CRC 各管什么？ | [Manifest、内容身份与完整性]({{< relref "engine-toolchain/unity-yooasset-manifest-version-fileindex-lookup.md" >}}) |
-| 下载是否续传，缓存何时被检查，零下载量代表什么？ | [下载调度与磁盘缓存]({{< relref "engine-toolchain/unity-yooasset-downloader-cache-system-resume-verify.md" >}}) |
-| Release 之后资源为何仍在，实例应由谁持有？ | [资源生命周期与卸载]({{< relref "engine-toolchain/unity-yooasset-handle-lifetime-unload.md" >}}) |
-| 一个 Prefab 的依赖如何分包，目录与两个开关怎样决定共享包？ | [分包流程导读]({{< relref "engine-toolchain/unity-yooasset-bundle-layout-prefab-to-shared-bundle.md" >}}) |
-| 完整版本目录是否意味着所有 Bundle 都重新构建？ | [资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}}) |
-| 已有调试工具能看到什么，灰度和发布又由谁负责？ | [框架能力与项目职责]({{< relref "engine-toolchain/unity-yooasset-boundaries-what-projects-must-build.md" >}}) |
-
 ## 怎样阅读源码与验证步骤
 
 八篇主线中的源码链接指向同一个固定提交。代码路径、默认值、操作次序和条件分支属于源码核对结论；文中的动手验证给出了条件、操作和预期观察，当前尚未附上 Unity 构建、设备、网络或性能实测回执。
@@ -89,11 +120,18 @@ YooAsset 把资源收集、构建、版本清单、内容获取和运行时加�
 
 以下链接保留了早期针对 2.x 组织的案例，其旧 API 和机制判断尚需按各自基线重新审校。3.0.6 的默认值与调用方式以本页八篇主线为准。
 
-| 案例 | 可以从哪个问题进入 |
-|---|---|
-| [下载中断与恢复]({{< relref "problem-solving/addressables-yooasset-download-interruption-resume-recovery.md" >}}) | 续传、重试与最终验证需要哪些条件。 |
-| [清单与 Bundle 不一致]({{< relref "problem-solving/addressables-yooasset-half-update-catalog-manifest-bundle-mismatch.md" >}}) | 清单已经激活与目标内容已经就绪之间的区别。 |
-| [线上版本回滚]({{< relref "problem-solving/addressables-yooasset-online-rollback-paths-and-costs.md" >}}) | 版本选择、文件保留和缓存清理如何影响恢复。 |
+
+- **[下载中断与恢复]({{< relref "problem-solving/addressables-yooasset-download-interruption-resume-recovery.md" >}})**
+
+  续传、重试与最终验证需要哪些条件。
+
+- **[清单与 Bundle 不一致]({{< relref "problem-solving/addressables-yooasset-half-update-catalog-manifest-bundle-mismatch.md" >}})**
+
+  清单已经激活与目标内容已经就绪之间的区别。
+
+- **[线上版本回滚]({{< relref "problem-solving/addressables-yooasset-online-rollback-paths-and-costs.md" >}})**
+
+  版本选择、文件保留和缓存清理如何影响恢复。
 
 ## 完整更新与发布流程
 

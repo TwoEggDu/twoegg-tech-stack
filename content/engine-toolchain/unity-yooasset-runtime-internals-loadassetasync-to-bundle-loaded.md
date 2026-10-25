@@ -1,6 +1,6 @@
 ---
 date: "2026-04-13"
-lastmod: "2026-10-21"
+lastmod: "2026-10-25"
 title: "YooAsset 运行时加载链：请求如何复用，以及 bundle 就绪以后还要等什么"
 description: "以 YooAsset 3.0.6 固定源码拆解 ResourceManager、Provider、LoadBundleOperation 与 AssetHandle，说明请求合并、依赖等待和对象提取的真实边界。"
 slug: "unity-yooasset-runtime-internals-loadassetasync-to-bundle-loaded"
@@ -16,6 +16,11 @@ series: "YooAsset 资源管理与交付"
 primary_series: "yooasset"
 series_order: 3
 yooasset_version: "3.0.6"
+type: "reading-series"
+topic_key: "frameworks"
+content_stage: "article"
+reading_index: "engine-toolchain/unity-yooasset-series-index.md"
+reading_directory_title: "运行时加载与请求复用"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})

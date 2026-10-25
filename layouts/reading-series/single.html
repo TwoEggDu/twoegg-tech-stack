@@ -31,13 +31,13 @@
   <meta name="twitter:description" content="{{ .Description }}">
   <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
   <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
-  <link rel="stylesheet" href="{{ `css/series-reading.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/series-reading.css` | relURL }}?v={{ readFile "static/css/series-reading.css" | md5 }}">
   <script src="{{ `js/site.js` | relURL }}" defer></script>
   <script src="{{ `js/search.js` | relURL }}" defer></script>
 </head>
-<body class="reading-site {{ if $isIndex }}page-series{{ else }}page-article{{ end }}">
+<body class="reading-site series-{{ $seriesId }} {{ if $isIndex }}page-series{{ else }}page-article{{ end }}">
   <a class="skip-link" href="#main">跳到主要内容</a>
-  <div class="wrap">{{ partial "site-masthead.html" . }}</div>
+  {{ if eq $seriesId "yooasset" }}{{ partial "site-masthead.html" . }}{{ else }}<div class="wrap">{{ partial "site-masthead.html" . }}</div>{{ end }}
   <main id="main" class="wrap" tabindex="-1">
     <nav class="breadcrumb" aria-label="面包屑">
       {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>

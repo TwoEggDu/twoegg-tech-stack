@@ -9,6 +9,12 @@ series: "YooAsset 资源管理与交付"
 primary_series: "yooasset"
 series_order: 2
 yooasset_version: "3.0.6"
+type: "reading-series"
+topic_key: "frameworks"
+content_stage: "article"
+reading_index: "engine-toolchain/unity-yooasset-series-index.md"
+reading_directory_title: "文件系统与运行模式"
+lastmod: "2026-10-25"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [整体架构与初始化]({{< relref "engine-toolchain/unity-yooasset-architecture-package-initialization.md" >}})

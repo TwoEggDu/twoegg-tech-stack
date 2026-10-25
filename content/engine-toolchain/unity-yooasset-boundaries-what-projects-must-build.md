@@ -1,6 +1,6 @@
 ---
 date: "2026-04-13"
-lastmod: "2026-10-21"
+lastmod: "2026-10-25"
 title: "YooAsset 3.0.6 的能力边界：从现成工具到项目发布契约"
 description: "依据 3.0.6 源码核对 Collector、Builder、Reporter、Debugger 与 Samples 的实际能力，再拆分版本选择、灰度、发布、持久监控和兼容性验证应由项目承担的契约。"
 slug: "unity-yooasset-boundaries-what-projects-must-build"
@@ -16,6 +16,11 @@ series: "YooAsset 资源管理与交付"
 primary_series: "yooasset"
 series_order: 8
 yooasset_version: "3.0.6"
+type: "reading-series"
+topic_key: "frameworks"
+content_stage: "article"
+reading_index: "engine-toolchain/unity-yooasset-series-index.md"
+reading_directory_title: "框架能力与项目职责"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})

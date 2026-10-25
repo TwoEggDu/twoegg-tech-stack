@@ -118,3 +118,21 @@
   .reading-site .reading-pagination strong { font-size:13px; }
 }
 @media(prefers-reduced-motion:reduce) { .page-series,.page-article { scroll-behavior:auto; } }
+
+/* YooAsset follows the framework landing pages; other series keep their defaults. */
+.reading-site.series-yooasset .series-cover { padding:12px 0 32px; align-items:start; }
+.reading-site.series-yooasset .series-cover h1 { font-weight:600; font-size:clamp(32px,3.6vw,46px); letter-spacing:.035em; }
+.reading-site.series-yooasset .series-lead { font:inherit; font-size:20px; color:var(--ink); }
+.reading-site.series-yooasset .series-copy .reading-prose > h2 { font-size:22px; }
+.reading-site.series-yooasset .series-copy > .reading-prose > p:first-child { color:var(--muted); font-size:15px; }
+.reading-site.series-yooasset .reading-chapter-group { grid-template-columns:220px minmax(0,1fr); gap:42px; }
+.reading-site.series-yooasset .reading-chapter-group-heading h3 { font-size:20px; }
+.reading-site.series-yooasset .reading-chapters h4 { font-size:20px; }
+@media(max-width:1000px) {
+  .reading-site.series-yooasset .reading-chapter-group { grid-template-columns:170px minmax(0,1fr); gap:28px; }
+}
+@media(max-width:760px) {
+  .reading-site.series-yooasset .series-cover h1 { font-size:31px; }
+  .reading-site.series-yooasset .series-lead { font-size:18px; }
+  .reading-site.series-yooasset .reading-chapters h4 { font-size:17px; }
+}

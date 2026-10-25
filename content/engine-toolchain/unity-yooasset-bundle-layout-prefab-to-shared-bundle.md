@@ -14,6 +14,7 @@ type: "reading-series"
 topic_key: "frameworks"
 content_stage: "article"
 reading_index: "engine-toolchain/unity-yooasset-series-index.md"
+reading_directory_title: "分包流程：从一个 Prefab 到共享 Bundle"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · 后续阅读：[资源收集、构建与产物]({{< relref "engine-toolchain/unity-yooasset-build-time-collector-to-bundle-output.md" >}})

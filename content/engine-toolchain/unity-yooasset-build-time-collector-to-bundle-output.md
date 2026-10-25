@@ -1,6 +1,6 @@
 ---
 date: "2026-04-13"
-lastmod: "2026-10-23"
+lastmod: "2026-10-25"
 title: "YooAsset 3.0.6 构建链路：收集规划、缓存复用与完整版本产物"
 description: "从 Collector 规则和共享依赖规划追到 SBP 任务、构建检查、清单与报告，区分构建缓存复用、完整版本输出、CDN 差异上传和客户端下载，并给出可复现的产物对照实验。"
 slug: "unity-yooasset-build-time-collector-to-bundle-output"
@@ -16,6 +16,11 @@ series: "YooAsset 资源管理与交付"
 primary_series: "yooasset"
 series_order: 7
 yooasset_version: "3.0.6"
+type: "reading-series"
+topic_key: "frameworks"
+content_stage: "article"
+reading_index: "engine-toolchain/unity-yooasset-series-index.md"
+reading_directory_title: "资源收集、构建与产物"
 ---
 
 > 专题首页：[YooAsset 资源管理与交付]({{< relref "engine-toolchain/unity-yooasset-series-index.md" >}}) · [两个系统的对比与选型]({{< relref "engine-toolchain/unity-addressables-yooasset-comparison-series-index.md" >}})
