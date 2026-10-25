@@ -2,7 +2,7 @@
 <nav class="breadcrumb" aria-label="面包屑">
   {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
   {{ if not .Params.project_hub }}<a href="{{ $hub.RelPermalink }}">{{ $hub.Title }}</a><span aria-hidden="true">/</span>{{ end }}
-  <span aria-current="page">{{ if .Params.project_hub }}{{ $hub.Title }}{{ else }}引擎无关设计总览{{ end }}</span>
+  <span aria-current="page">{{ if .Params.project_hub }}{{ $hub.Title }}{{ else }}{{ .Params.project_breadcrumb | default "引擎无关设计总览" }}{{ end }}</span>
 </nav>
 {{ if .Params.project_hub }}
 <header class="coop-hero">
@@ -11,7 +11,7 @@
     <h1>{{ .Title }}</h1>
     <p class="coop-lead">{{ .Description }}</p>
     <div class="actions">{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" "阅读设计总览" "class" "button" "arrow" true) }}<a class="text-action" href="#routes">查看引擎安排 ↓</a></div>
-    <p class="coop-caption">当前：设计初稿 · Demo 工程保持私有</p>
+    <p class="coop-caption">当前：v0.1 规则已确认 · 游戏待实现 · Demo 工程保持私有</p>
   </div>
   <aside class="coop-premise" aria-label="项目的两条完整流程">
     <p class="eyebrow">一个小过程，反复学习</p>
@@ -23,7 +23,9 @@
 <section class="coop-section" id="design" aria-labelledby="coop-design-title">
   <div class="section-heading"><div><p class="eyebrow">先建立共同上下文</p><h2 id="coop-design-title">引擎无关设计</h2></div><span class="coop-status coop-status-ready">总览初稿可读</span></div>
   <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" (printf "%s设计总览" $hub.Title)) }}</h3><p>围绕一次标记与消耗配合，把最小规则、系统职责、工种管线与 T01～T18 教学验证目标连起来。</p><ul class="coop-topics"><li>简单清怪流程</li><li>系统职责与状态归属</li><li>策划与美术独立制作</li><li>逐项教学与验证</li></ul></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/design-overview.md" "label" "开始阅读" "class" "text-action" "arrow" true) }}</div>
-  <p class="coop-caption">已确定斜俯视、简单操作与标记—消耗配合；具体参数仍待细化，最小教学版本尚未实现与验收。</p>
+  <p class="coop-caption">最小玩法 v0.1 已确认目标选择、技能时序、胜负与奖励；普攻等剩余参数待补齐，游戏尚未实现与验收。</p>
+  <div class="coop-design-entry"><div><h3>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/minimal-gameplay-rules.md" "label" "最小玩法规则 v0.1") }}</h3><p>自动选敌 · A 标记 5 秒 · B 消耗引爆 · 一次性结算。包含已确认规则、教学对应与 V01～V21 计划验证用例。</p></div>{{ partial "reading/link.html" (dict "page" "practice/cooperative-dungeon/minimal-gameplay-rules.md" "label" "阅读玩法规则" "class" "text-action" "arrow" true) }}</div>
+  <p class="coop-caption">规则确认与运行验证分别记录；用例尚未执行。</p>
 </section>
 <section class="coop-section" id="routes" aria-labelledby="coop-routes-title">
   <div class="section-heading"><div><p class="eyebrow">Unity 落地，其他引擎讨论</p><h2 id="coop-routes-title">引擎落地与方案讨论</h2></div><p>项目采用 Unity 实际开发；Unreal、Piccolo 只讨论对应方案与机制。</p></div>
@@ -33,7 +35,7 @@
 <div class="coop-notes coop-prose">{{ .Content }}</div>
 {{ else }}
 <article class="coop-article">
-  <header class="coop-article-header"><p class="eyebrow">{{ $hub.Title }} · 引擎无关设计</p><h1>{{ .Title }}</h1><p class="coop-lead">{{ .Description }}</p><p class="coop-caption">教学优先 · 设计初稿 · 2026-10-25 · 游戏待实现与验证</p></header>
+  <header class="coop-article-header"><p class="eyebrow">{{ $hub.Title }} · 引擎无关设计</p><h1>{{ .Title }}</h1><p class="coop-lead">{{ .Description }}</p><p class="coop-caption">{{ .Params.project_status | default "教学优先 · 设计初稿 · 2026-10-25 · 游戏待实现与验证" }}</p></header>
   <details class="coop-mobile-toc"><summary>本篇目录</summary>{{ replace (string .TableOfContents) `id="TableOfContents"` `id="coop-toc-mobile"` | safeHTML }}</details>
   <div class="coop-article-grid"><div class="coop-prose">{{ .Content }}<nav class="coop-return" aria-label="项目导航"><a href="{{ $hub.RelPermalink }}">← 返回{{ $hub.Title }}项目首页</a></nav></div><aside class="coop-toc" aria-label="本篇目录"><p class="eyebrow">本篇目录</p>{{ replace (string .TableOfContents) `id="TableOfContents"` `id="coop-toc-desktop"` | safeHTML }}<a href="{{ $hub.RelPermalink }}">返回项目首页 →</a></aside></div>
 </article>
