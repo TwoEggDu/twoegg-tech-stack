@@ -14,7 +14,7 @@ hybridclr_version: "v6.1.0 (5567f367)"
 
 这篇接在 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) 与 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})之后，解释一条线程怎样进入、执行并退出 IL2CPP／HybridCLR。async 的调度、SynchronizationContext 和取消协议继续看 [Unity 异步运行时系列]({{< relref "engine-toolchain/unity-async-runtime-series-index.md" >}})。
 
-> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程结果；原生插件回调与设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
+> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程、原生插件回调和在途停止结果；设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
 
 ## 先把线程问题拆成四层
 
@@ -220,7 +220,49 @@ python tools/lifetime_lab.py verify
 
 这组测试不需要故意绕开 wrapper 或漏登记来制造崩溃；正常路径的身份、所有权和清理记录已经能回答接入是否符合预期。压力运行未崩只能增加信心，不能替代所有引用写入路径的正确性分析。
 
-<!-- DATA-TODO: 在目标平台实现最小 native 插件，保留 wrapper 生成物、回调 ABI、线程退出记录及增量 GC 压测条件。 -->
+### 已完成：原生线程回调与在途停止
+
+2026-10-25，沿用同一份 `lab-lock.json`，在 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 新增 `projects/native-callbacks`。环境仍是本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3 / runtime v9.0.1、配套 il2cpp_plus v2022.3.x-9.0.1，Windows x64 IL2CPP Development、C++ Debug、Minimal stripping；日志记录 GCMode=Enabled、isIncremental=True。本次 build_id 为 `65d3ddb9-3bb0-4ce9-99b9-59f4ff1cc82b`。
+
+自有 `native/native-callbacks/plugin.cpp` 通过 Win32 `CreateThread` 模拟 SDK 线程。回调 ABI 为 cdecl `int(int,int)`，仅传整数；AOT 启动层持有委托，热更静态 `CallbackHot.NativeEntry.Call` 完成加法并记录线程身份，异常在回调边界转换为错误返回与失败计数。回调不调用 Unity API，HotUpdate.dll 不进入 AOT 代码注册。这个封闭样本只支持一个受控任务，不充当通用 SDK 接入库。
+
+固定 package 的 [wrapper 生成器](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Editor/CodeGen/MethodBridge/Generator.cs) 根据 `MonoPInvokeCallback` 为该方法生成签名 `Bi4i4i4` 的 `__ReversePInvokeMethod_0`。实际跟踪的是“插件 → wrapper → N2M 桥 → Interpreter::Execute”，并关联传给插件的函数指针与 wrapper 入口地址。
+
+普通运行分两组，各启动三个独立、无调试器 Player，均退出 0：
+
+| 对照 | 运行结果 |
+|---|---|
+| registered：托管 Thread 调用插件，再同步回调热更代码 | 返回 5、15；回调 managed ID 与原托管线程一致，返回插件后身份仍保留；worker Join 成功 |
+| raw：插件创建原生线程并重复回调 | 返回 5、15、23；同一 OS ID 下，三次回调的 managed ID 分别为 5、6、7 |
+| raw 的第三次回调仍在途时停止 | 回调先进入 Hold；主线程请求 stop，Join(0) 返回未完成；放行后 Join 成功，最终次数为 3，没有第四次回调 |
+| 委托寿命 | 等对应线程 Join 成功后才清空 AOT 强引用；native 也在等待线程结束后清空函数指针 |
+
+之后两组各另启一个 CDB 进程。GameAssembly 与自有 NativeProbe 均加载本构建匹配的 private PDB，实际记录如下：
+
+| 观察项 | registered | raw |
+|---|---|---|
+| 目标 OS ID | 152068 | 119432 |
+| 回调 managed ID | 5、5 | 5、6、7 |
+| ScopedThreadAttacher 的 owned 字段 | 两次均为 0 | 三次各为非零 |
+| 目标线程命中 Attach 入口 | 0 次 | 3 次 |
+| 回调期间命中 Detach 重载入口 | 0 次 | 6 次，即每次回调经过两个重载入口 |
+| MachineState 创建／根注销入口 | 各 1 次，正常托管 worker 退出时清理 | 各 3 次，每次回调返回插件前清理 |
+| 目标方法 Transform | 1 次 | 1 次 |
+| Execute 入口的 interpData | 首次明确为空，第二次非空 | 首次明确为空，后两次地址相同且非空 |
+
+**原生线程号相同，不代表跨回调保留同一托管登记或解释器状态。** 在这个固定版本与入口下，registered 的 wrapper 没有取得登记所有权，回调返回时继续保留线程状态；raw 则在每次回调里临时接入，并在返回插件前沿 Detach、FREE、析构、动态根注销入口清理。这里的 6 次 Detach 是 3 条调用链里的两个重载入口，不能算成 6 次独立解除登记。
+
+方法缓存与线程状态也分开：首次 Execute 入口尚无缓存，随后命中一次 Transform，后续回调复用方法缓存。raw 的三次状态创建没有导致目标方法重复转换。地址只在各自进程内有意义；本次不同状态地址不能推出以后永不复用地址。
+
+在途停止的原生事件顺序为“第三次回调进入 → 主线程 stop → 第三次回调返回 → 原生线程结束 → 主线程 Join 完成”。配合 Player 的 `joinedBefore=False` 与 Join 后释放记录，可核对正常退出协议。等待均有超时；失败清理会请求 stop、放行并等待线程，等待失败时保留委托根引用直到进程结束。异常注入、强杀线程及真实 SDK 的关闭竞争尚未覆盖。
+
+在实验仓库执行 `python tools/callback_lab.py build --editor <Unity.exe路径>`、`run`，再执行 `trace --cdb <x64-cdb.exe路径>` 与 `verify`。四个子命令都使用同一个 `tools/callback_lab.py`，输出独立放在 `artifacts/callbacks/`。验收器同时检查构建、源码／产物／日志哈希、返回值、wrapper 地址、登记所有权、状态／根清理、方法转换以及停止与释放顺序；字段缺失不能冒充明确空值。
+
+本轮对应实验仓库 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb)。复现前先 checkout 到该提交，可查看[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/b9156325820312f4d290c4af8158f76a3a6f9beb/projects/native-callbacks)、[自有原生插件](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/native/native-callbacks/plugin.cpp)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/results.json)；[registered 事件](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/registered-native-events.txt)和[raw 事件](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/raw-native-events.txt)提供脱敏断点摘要。旧 `a387d28` 继续标识对象保留与托管线程实验。
+
+清理断点说明函数入口和调用顺序，不统计 native 内存释放量，也没有观察 GC 实际扫描的根区间。本轮记录了增量模式，但没有运行增量引用修改压力负载，不能据此确认所有写屏障路径或性能。
+
+<!-- DATA-TODO: 继续补上下文 GCHandle、回调异常注入、GC 引用压力、多原生线程竞争及其他目标平台。 -->
 
 ## Unity 主线程与 Web 平台的边界
 

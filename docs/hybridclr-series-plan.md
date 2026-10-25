@@ -10,7 +10,7 @@
 
 - 发布索引：`content/engine-toolchain/hybridclr-series-index.md`。
 - 源码跟读准备：`hybridclr-source-reading-start.md`，已写；保留 v6.1.0 源码阅读；v9 配套组合已在本机自定义 Unity 完成 Player 断点验证。
-- 线程接入专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；与 IL2CPP 共用，源码核对完成，托管工作线程 Player 实验完成；native 回调待补。
+- 线程接入专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；与 IL2CPP 共用，源码核对完成，托管工作线程与原生回调正常路径 Player 实验完成；GC 压力与其他平台待补。
 - 泛型调用综合实验：`runtime-generic-call-experiment.md`，已写；与 ECMA-335、IL2CPP 共用，固定自定义 Editor/v9 环境的四组 Player 对照与原生断点验证完成。
 - 数量：30 篇编号正文 + 6 篇前置桥接 + 3 篇专题，共 39 篇，索引另计。
 - 篇级文件均位于 `content/engine-toolchain/`，原 HCLR 编号及 URL 保留。
@@ -77,12 +77,12 @@
 
 ## 接下来补强
 
-“源码阅读起步 → 调用链篇”的共用 Player 实验及三栏泛型调用综合实验已完成，对象保留与托管线程验证也已完成，接下来补根快照、native 回调与性能测量。顺序见 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，泛型实验单独记录于 `runtime-generic-call-experiment-outline.md`。环境继续使用本机自定义 Unity 2022.3.62f3、package v9.0.3 / runtime v9.0.1 原始配套源码；旧两篇保留 v6.1.0 阅读说明，新增综合实验归本系列、三栏共用。
+“源码阅读起步 → 调用链篇”的共用 Player 实验及三栏泛型调用综合实验已完成，对象保留与托管线程验证也已完成，原生回调正常路径也已完成；接下来补根快照、回调压力与性能测量。顺序见 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，泛型实验单独记录于 `runtime-generic-call-experiment-outline.md`。环境继续使用本机自定义 Unity 2022.3.62f3、package v9.0.3 / runtime v9.0.1 原始配套源码；旧两篇保留 v6.1.0 阅读说明，新增综合实验归本系列、三栏共用。
 
 | 工作 | 状态与验收 |
 |---|---|
 | 源码阅读起步 | 已补自定义 Editor 身份、v9 固定组合、构建与符号记录、自有样本；不推广为全版本兼容 |
-| GC 与线程接入 | 正文、源码定位、对象保留与托管线程 Player 实测已完成；根快照与 native 回调待补 |
+| GC 与线程接入 | 正文、源码定位、对象保留、托管线程及原生回调正常路径实测已完成；根快照与 native 回调压力待补 |
 | 三栏泛型调用综合实验 | 已写并实测；同一 DLL，显式 AOT seeds × 补充元数据四组对照；P0/M0 的 int/结构体异常、其余成功，原生与内联解释路径均有断点证据 |
 | 性能与预热篇 | 待加强；固定设备、构建配置和采样条件 |
 | 调用链篇 | 已修正 v6.1.0 旧路径，新增 v9 差异表与实测：同一方法 Transform 一次、Execute 两次，返回 5、15 |
@@ -107,3 +107,11 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 - GC 每组 16 个目标：held 为 0/16/16，清空静态数组后 0/0/16，清空事件列表后 0/0/0；三轮一致。GCMode=Enabled、isIncremental=True。这里是弱引用观测，不是根快照或内存容量测量。
 - 两个托管 worker 各返回 5/15 并 Join；两份 MachineState 生命周期重叠；同一 Add 四次 Execute、一轮 Transform、相同非空 interpData；各 worker 的 FREE、析构、动态根注销入口完整匹配。并发首次转换、native 回调、活跃根区间与性能均未验收。
 - 结果回填 IL2CPP D6、HybridCLR Bridge-F 和共享线程篇；三个索引更新验证状态。实验仓库已推送 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)均使用固定地址；旧 e0220099 保留为调用链／泛型实验的版本。
+
+## 原生回调 Player 实测（2026-10-25）
+
+- 用户已授权继续原生插件闭环。新增实验仓库 projects/native-callbacks 与自有 native/native-callbacks/plugin.cpp；原有环境锁不变，build_id=65d3ddb9-3bb0-4ce9-99b9-59f4ff1cc82b。
+- registered/raw 各三个独立 Player 退出0；两组再分别用匹配 GameAssembly/NativeProbe private PDB 取证。registered 两次5/15，raw 三次5/15/23。
+- registered wrapper 的 owned=0，复用1个状态；raw 每次scope拥有登记，3次Attach、6个Detach重载入口、3轮状态/根清理。同一原生OS ID出现managed ID 5/6/7。两组目标方法分别只Transform 1次，首次Execute缓存明确为空，后续复用。
+- raw 在第三次回调Hold时stop，Join(0)未完成；放行后回调结束/线程退出/Join，最后释放委托，无第四次回调。只验收正常单任务路径；GC压力、多原生线程竞争、上下文GCHandle、异常注入、强杀和其他平台未覆盖。
+- 实验仓库已推送 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb)，[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/results.json)使用固定地址；a387d28仍是前序对象保留/托管线程基线。线程正文及三个索引同步状态，不新增正文篇数。

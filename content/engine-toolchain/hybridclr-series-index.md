@@ -63,7 +63,9 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 - [本次实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)：构建标识、结果摘要、DLL 哈希与 CLI 签名输出。
 - 对象保留与托管工作线程：[固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，可查看[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)。
 
-当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；根快照、原生回调、性能和其他平台继续按专题的待验证项阅读。
+原生插件回调与在途停止也已补入 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：对照已登记线程与插件新建线程，核对 wrapper、临时接入／清理和 Join 后释放。本轮对应 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb)，入口为[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/b9156325820312f4d290c4af8158f76a3a6f9beb/projects/native-callbacks)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/results.json)。
+
+当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；根快照、GC 引用压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
 
 ## 公共基础之后，补 HybridCLR 的约定
 
@@ -98,7 +100,7 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 | [泛型调用综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) | 为什么同一 `Echo<T>` 的 string、int、结构体调用会走不同路径？补元数据改变了什么？ |
 | [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | 谁接入线程、谁持有解释器状态和根、谁负责退出？ |
 
-泛型综合实验已在固定 v9 配套组合、本机自定义 Editor 下完成两份 Player 与四组运行，包含原生共享实现和补充方法体后内联解释的证据。线程专题与 IL2CPP 共用，放在源码起步和 GC 桥接之后；其托管探针桌面运行不等于 Player 或原生回调验证。
+泛型综合实验已在固定 v9 配套组合、本机自定义 Editor 下完成两份 Player 与四组运行，包含原生共享实现和补充方法体后内联解释的证据。线程专题与 IL2CPP 共用，放在源码起步和 GC 桥接之后；已补托管线程与原生插件回调的 Player 结果，桌面探针保留为早期示例验证。
 
 ## 基础主线与工程收束
 
@@ -180,6 +182,6 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 
 本系列已经覆盖机制、源码入口、案例和工程防线。配套实验仓库已提供可构建的隔离工程、复现脚本和固定提交证据；已有调用链、泛型、对象保留与托管线程的固定提交及证据入口；各平台接入与业务资源加载流程仍未覆盖。
 
-基础 Add、三栏泛型调用实验之外，现已补入 [热更对象保留与释放]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) 的 Player 记录。下一步仍是 GC 引用快照、活跃根区间与原生线程回调验证，以及首调、预热、稳定执行和跨边界成本测量。
+基础 Add、三栏泛型调用实验之外，现已补入 [热更对象保留与释放]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) 的 Player 记录。下一步仍是 GC 引用快照、活跃根区间与原生回调压力验证，以及首调、预热、稳定执行和跨边界成本测量。
 
 **先对齐版本和运行现场，再沿主链理解机制，最后按问题回到对应专题。**

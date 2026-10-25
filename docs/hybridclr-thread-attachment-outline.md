@@ -36,7 +36,7 @@
 ## 本轮验证记录
 
 - Windows，.NET SDK 10.0.402，Release，独立进程：从正文提取容器、事件退订和线程探针代码，编译运行成功。容器输出 `retained: True`／`after clear: False`；事件输出 `subscribed: True`／`unsubscribed: False`；线程探针输出 `caller=2, worker=4, results=5,15`。
-- 线程桌面测试把 HotWorker 与探针编译在同一控制台程序集，只验证 C# 示例，不验证热更分界或 wrapper。当时未执行 Player／原生插件；本轮 Player 补测另列于下，原生插件仍待补。
+- 线程桌面测试把 HotWorker 与探针编译在同一控制台程序集，只验证 C# 示例，不验证热更分界或 wrapper。当时未执行 Player／原生插件；后续托管线程与原生插件 Player 补测分别列于下。
 - Hugo 0.157.0 extended 最终构建成功，1358 页、零 ERROR。整站页数包含共享工作区中其他文章，不代表本轮新增数量。
 - 本轮 12 个内容页的 YAML、围栏及 177 个 relref 检查通过；已有页面的 slug／生成 URL 所依据的标题保持不变。
 - 生成的 64 个运行时正文／索引页共 3510 个本地链接及锚点检查通过；三个索引均能进入新线程篇，新篇采用既有 runtime 正文布局。
@@ -51,3 +51,13 @@
 - 结果回填 IL2CPP D6、HybridCLR Bridge-F 和共享线程篇；三个索引更新验证状态。实验仓库已推送 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/results.json)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)均使用固定地址；旧 e0220099 保留为调用链／泛型实验的版本。
 
 本轮文章验收：Hugo 0.157.0 extended 构建成功，1379 页、零 ERROR；页数包含共享工作区其他文章。3 篇正文与 3 个索引生成页的 328 个站内链接／锚点通过；新增实测段经独立复核，与实验摘要数字、版本和限制一致。后续按用户授权补固定提交链接并进行文章交付；线上可见状态仍以 Pages 部署为准。
+
+## 原生回调 Player 实测（2026-10-25）
+
+- 用户已授权继续原生插件闭环。新增实验仓库 projects/native-callbacks 与自有 native/native-callbacks/plugin.cpp；原有环境锁不变，build_id=65d3ddb9-3bb0-4ce9-99b9-59f4ff1cc82b。
+- registered/raw 各三个独立 Player 退出0；两组再分别用匹配 GameAssembly/NativeProbe private PDB 取证。registered 两次5/15，raw 三次5/15/23。
+- registered wrapper 的 owned=0，复用1个状态；raw 每次scope拥有登记，3次Attach、6个Detach重载入口、3轮状态/根清理。同一原生OS ID出现managed ID 5/6/7。两组目标方法分别只Transform 1次，首次Execute缓存明确为空，后续复用。
+- raw 在第三次回调Hold时stop，Join(0)未完成；放行后回调结束/线程退出/Join，最后释放委托，无第四次回调。只验收正常单任务路径；GC压力、多原生线程竞争、上下文GCHandle、异常注入、强杀和其他平台未覆盖。
+- 实验仓库已推送 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb)，[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/results.json)使用固定地址；a387d28仍是前序对象保留/托管线程基线。线程正文及三个索引同步状态，不新增正文篇数。
+
+本轮验收：独立复核代码、真实日志与新增正文，未发现阻断问题；解析器两项漏检已补负例并修复，22 项测试通过。Hugo 0.157.0 extended 构建 1397 页、零 ERROR（共享工作区总量）；线程正文与三个索引的 245 个站内链接／锚点检查通过。后续按用户授权补固定实验链接并交付文章；线上状态以 Pages 部署为准。
