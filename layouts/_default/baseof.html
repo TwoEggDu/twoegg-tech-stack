@@ -1,3 +1,7 @@
+{{ $runtimeContext := partial "reading/runtime-context.html" . }}
+{{ if $runtimeContext }}
+{{ partial "reading/runtime-document.html" (dict "page" . "context" $runtimeContext) }}
+{{ else }}
 <!DOCTYPE html>
 <html lang="{{ site.Language.Lang | default `zh-cn` }}">
   <head>
@@ -61,3 +65,4 @@
     </div>
   </body>
 </html>
+{{ end }}

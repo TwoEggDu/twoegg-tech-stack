@@ -2,6 +2,7 @@
 title: "ECMA-335 基础｜术语约定：runtime、toolchain、metadata、execution engine 的边界"
 slug: "ecma335-terminology-conventions"
 date: "2026-04-14"
+lastmod: "2026-10-23"
 description: "同一个词在不同语境下含义不同。这篇术语约定页按易混淆词对组织，定义 runtime vs toolchain、metadata vs stream vs table、execution engine vs interpreter vs JIT、hot update vs hot reload vs hot fix 等核心术语的精确边界，作为全系列的参照锚点。"
 weight: 9
 featured: false
@@ -12,6 +13,8 @@ tags:
   - "Convention"
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 10
 ---
 
 > 如果一个系列的不同文章里，同一个词指代了不同的东西，读者建立的心智模型就会在某一篇突然崩塌。术语约定不是学术洁癖，而是文章能被串联阅读的前提。
@@ -20,7 +23,7 @@ series_id: "ecma335"
 
 ## 为什么需要术语约定
 
-这个系列覆盖 5 个 CLR 实现（CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR），横跨规范层、实现层、工程层。同一个词在不同层次里可能指代完全不同的东西。
+本前置系列主要服务于 IL2CPP 与 HybridCLR；生态总图另有 CoreCLR、Mono、LeanCLR 等实现专题。同一个词在规范层、实现层和工程层可能指代不同的东西，进入具体实现前要先确定它所在的层次。
 
 最典型的例子是"IL2CPP"。它可以指：
 
@@ -39,7 +42,7 @@ series_id: "ecma335"
 - CoreCLR：`coreclr.dll` / `libcoreclr.so` + `clrjit.dll`
 - Mono：`libmonosgen-2.0.so` / `mono-2.0-sgen.dll`
 - IL2CPP：`libil2cpp`（编译进 `GameAssembly.dll` / `libil2cpp.so`）
-- HybridCLR：在 IL2CPP runtime 上叠加的解释器模块
+- HybridCLR：对 IL2CPP runtime 的扩展，包含动态元数据注册、指令转换与解释执行等模块
 - LeanCLR：`leanclr` 单库（编译为 `.a` / `.so` / `.wasm`）
 
 **Toolchain**（工具链）——构建时运行的工具。把源码变成目标格式后就退出，不参与运行时执行。
@@ -80,7 +83,7 @@ series_id: "ecma335"
 - Field 表：每行描述一个字段定义，一些工具称为 FieldDef
 - MemberRef 表：成员引用；跨程序集引用是常见用途，也用于构造泛型类型上的成员等情况
 
-**约定：** 本系列中"metadata"无修饰时指整体概念。需要区分物理层和逻辑层时，会明确使用"stream"或"table"。Pre-A（ECMA-A1）已经用 ildasm 示例展示了这三层的对应关系。
+**约定：** 本系列中"metadata"无修饰时指整体概念。需要区分物理层和逻辑层时，会明确使用"stream"或"table"。[DLL 与 CLI Metadata]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})用一个加法方法连接文件位置、表项、签名和方法体。
 
 ## Execution Engine vs Interpreter vs JIT
 
@@ -89,41 +92,43 @@ series_id: "ecma335"
 **Interpreter**（解释器）——逐条读取 IL 指令（或转换后的中间指令），在软件层面模拟执行的方式。不生成 native code。
 
 - LeanCLR 的双解释器：HL-IL 指令先 transform 为 LL-IL 指令，由低层解释器执行
-- HybridCLR 的解释器：直接解释 IL 指令
+- HybridCLR 的解释器：先将 CIL 转成内部寄存器指令，再解释执行转换结果
 - Mono 的 mint/interp：Mono 内置的解释器模式
 
-**JIT**（Just-In-Time Compiler）——在方法首次被调用时，将 IL 编译为 native code，后续调用直接执行 native code。
+**JIT**（Just-In-Time Compiler）——运行时按需将方法编译为 native code。首次调用常是触发点，分层编译还可能重新编译热点方法。
 
 - CoreCLR 的 RyuJIT
 - Mono 的 Mini JIT
 
 **约定：** "execution engine"在本系列中只作为泛称使用，不暗示任何具体策略。讨论具体实现时会直接说"解释器"或"JIT"。
 
+HybridCLR 的 [官方模块说明](https://www.hybridclr.cn/docs/basic/sourceinspect)区分了 transform 与 interpreter。转换会准备后续执行需要的内部表示，因此首次调用成本和重复执行成本应分开观察；不能把它描述成每次都直接调度原始 CIL。
+
 ## Hot Update vs Hot Reload vs Hot Fix
 
-这三个术语在中文社区中混用严重，但它们在技术层面指向不同的机制。
+这三个术语的使用场景有交叉，不能只靠名字推断内部机制。本系列分别说明交付目的、运行中应用修改的能力，以及具体实现方式。
 
 **Hot Update**（热更新）——运行时加载新的代码逻辑，不需要重新发布客户端。这是一个通用概念，不绑定特定技术方案。实现热更新的路径有多种：
 
-- **C# 热更**：HybridCLR 通过 `Assembly.Load` 把新 DLL 加载为 `InterpreterImage`，注册到 IL2CPP 的 `MetadataCache`。热更类型走解释器执行（CIL → HiOpcode transform → 解释执行），AOT 类型仍走原生路径。两者通过 `invoker_method` 分流，不是"覆盖"。
+- **C# 热更**：HybridCLR 通过 `Assembly.Load` 加载热更 DLL，将其类型和方法接入宿主运行时。需要解释执行的方法经过 CIL → 内部指令转换；调用也可能进入已有 AOT 实现。执行路径应按具体方法和调用方式判断，不能按“类型属于哪个 DLL”或只凭 `invoker_method` 一个字段概括。详见 [调用主链]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})。
 - **Lua 热更**：xLua / ToLua 通过 Lua VM 执行新逻辑，C# 侧提供绑定层。
 - **ILRuntime**：独立的 IL 解释器，不依赖 IL2CPP runtime。
 - **LeanCLR**：独立 CLR，运行时加载 .NET DLL 直接解释执行。
 
-**Hot Reload**（热重载）——卸载旧程序集并重新加载新版本。和 hot update 的关键区别：旧代码的 metadata 和内存会被回收，不只是新增。两种实现路径：
+**Hot Reload**（热重载）——在程序运行期间应用代码或资源修改，尽量保留当前运行状态的能力。这个名称本身不保证旧程序集被卸载，也不保证旧对象或 metadata 内存被回收。需要继续区分具体机制：
 
-- **HybridCLR 商业版（热重载版）**：通过 `TryUnloadAssembly` / `ForceUnloadAssembly` 卸载 `InterpreterImage`，回收 99.9% metadata 内存，再重新加载。不依赖 `AssemblyLoadContext`。
-- **.NET 6+ Hot Reload**（`dotnet watch`）：通过 EnC（Edit and Continue）机制，用 delta metadata 修改已加载的程序集，不卸载不重加载。严格来说属于"增量更新"而非"重载"。
+- **程序集卸载与重新加载**：需要处理旧引用、对象和静态状态，再装入新版本。HybridCLR 相关产品能力见 [程序集卸载专题]({{< relref "engine-toolchain/hybridclr-assembly-hot-reload-unload-metadata-reclaim.md" >}})；可卸载范围和内存回收量须绑定版本与测试条件。
+- **.NET Hot Reload**：对受支持的修改应用增量更新，不以卸载整个程序集为前提。`dotnet watch` 遇到无法热应用的修改时还可能要求重启，见 [Microsoft 官方说明](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-watch#hot-reload)。
 
-**Hot Fix**（热修复）——描述的是使用场景，不是独立的技术机制。用 hot update 或 hot reload 的能力修复线上 bug。HybridCLR 旗舰版的 "Hotfix" 功能本质上是 DHE（差分混合执行）的一个应用场景。
+**Hot Fix**（热修复）——描述修复问题的场景，不是独立的执行机制。项目可以利用热更新、增量更新等能力修复线上 bug；具体产品名中的 Hotfix 还需查对应功能定义。
 
-**约定：** 本系列中"热更新"专指技术机制层面的 hot update，不用它来指 hot fix 场景。讨论 HybridCLR 商业版的程序集卸载能力时用"热重载"。
+**约定：** 讲部署新逻辑时用“热更新”，讲修复目的时用“热修复”；涉及状态保留和回收时，明确写“增量更新”或“程序集卸载重载”，不从 Hot Reload 的名字推导回收保证。
 
 ## Assembly vs Module vs Image
 
-**Assembly**（程序集）——部署、版本管理和安全性的基本单元。一个 assembly 有自己的名称、版本号、文化信息和公钥标记（strong name）。ECMA-335 Partition II 6.1 定义了 assembly 的身份模型。
+**Assembly**（程序集）——常见的部署和版本管理单元，manifest 描述其名称、版本、文化信息等身份信息；强命名程序集还带有公钥相关信息。ECMA-335 Partition II 6.1 定义了 assembly 的身份模型，具体绑定与信任检查由宿主策略决定。
 
-**Module**（模块）——assembly 的物理组成部分。ECMA-335 允许一个 assembly 包含多个 module（multi-module assembly），但实际工程中几乎所有 assembly 都是单 module 的——一个 `.dll` 文件 = 一个 assembly = 一个 module。
+**Module**（模块）——持有 metadata 表、token 和方法体的单元。ECMA-335 允许多模块程序集；Unity 常见的托管 DLL 是单模块程序集，但不能把这个工程习惯写成所有 `.dll` 文件都满足的等式。
 
 **Image**——runtime 加载后的内存表示。不同 runtime 用不同的数据结构：
 
@@ -132,7 +137,7 @@ series_id: "ecma335"
 - IL2CPP：`Il2CppImage`（运行时从 `global-metadata.dat` 构建）
 - LeanCLR：`CliImage`（从 PE 文件最小化解析构建）
 
-**约定：** 说"程序集"时指 ECMA-335 规范层面的逻辑概念。说"image"时指 runtime 内部的加载后表示。不会把两者混用。"模块"在本系列中很少单独出现，因为 multi-module assembly 在实际工程中几乎绝迹。
+**约定：** 说“程序集”时指逻辑身份与部署单元，说“image”时指对应 runtime 的内部表示。解析 token 时必须说明所属模块；即使两个程序集都是单模块，也不能跨模块比较 token 数字来判断成员相同。
 
 ## AOT vs JIT vs Interpreter
 
@@ -141,10 +146,10 @@ series_id: "ecma335"
 **AOT**（Ahead-Of-Time Compilation）——在构建时将 IL 编译为 native code。运行时不再需要编译步骤，直接执行预编译的 native code。
 
 - IL2CPP：IL → C++ → native（通过 C++ 编译器）
-- Mono Full AOT：IL → native（通过 LLVM 后端）
+- Mono Full AOT：IL → native，具体代码生成后端取决于配置
 - .NET Native AOT：IL → native（通过 ILC + RyuJIT AOT 模式）
 
-AOT 的核心约束：构建时必须能看到所有需要执行的代码。运行时不能生成新代码。这导致反射 `Emit`、动态泛型实例化等能力受限。
+AOT 路径依赖预先生成的 native 实现；对于运行时才出现的调用，需要确认已有实现或共享代码是否适用。AOT 不意味着无法构造新的泛型类型描述，也不排除同一产品再集成解释器。动态生成方法体与构造泛型类型身份是两件事，见 [泛型语义]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}})。
 
 **JIT**（Just-In-Time Compilation）——运行时按需将 IL 编译为 native code。首次调用有编译开销，后续调用直接执行 native code。
 
@@ -156,57 +161,27 @@ JIT 的核心优势：能处理 AOT 无法预见的代码（运行时首次遇�
 **Interpreter**（解释执行）——逐指令模拟执行 IL（或转换后的中间表示），不生成 native code。
 
 - LeanCLR：双层解释器（HL-IL → LL-IL → 执行）
-- HybridCLR：IL 直接解释执行
+- HybridCLR：CIL → 内部寄存器指令 → 解释执行
 - Mono interp：IL 解释执行
 
-解释器的核心优势：零 native code 生成，完全灵活。代价是执行速度比 native code 慢 10-100 倍。
+解释执行不要求为每个新方法生成 native code，但仍受解释器已实现的指令和宿主能力约束。其成本来自指令分派、数据访问和跨边界调用等；预解码、指令转换及优化会改变这些成本。性能比较必须给出版本、平台、工作负载，并区分首次转换与稳定执行，不能给所有解释器套一个统一倍数。
 
 **混合策略：** 现实中多数 runtime 不是纯粹使用一种策略。CoreCLR 有 Tiered Compilation（先快速 JIT，后优化 JIT）。HybridCLR 是 AOT + Interpreter 混合（AOT 部分走 IL2CPP，热更部分走解释器）。Mono 同时支持 JIT、AOT、Interpreter 三种模式。
 
 **约定：** 本系列讨论执行策略时，会明确标注当前语境是哪种模式。不会笼统地说"Mono 的执行方式"——要指明是 JIT 模式、Full AOT 模式还是 Interpreter 模式。
 
-## 贯穿全系列的参考类约定
+## 示例怎样贯穿主线
 
-Pre-A（ECMA-A1）定义了一组参考类，后续所有 runtime 模块的文章都用这组类型来展示实现差异：
+各篇用最小例子突出当前机制，不要求把所有示例类合并成一个项目。跨篇比较时，先核对完整定义，不只比较类名：
 
-```csharp
-public interface IHittable
-{
-    void TakeDamage(int amount);
-}
+| 示例 | 用途 | 接续位置 |
+|---|---|---|
+| MathHelper.Add | 连接方法签名、方法体与求值栈 | DLL／metadata 篇 → CIL 篇 |
+| `Box<T>.Echo<U>` | 区分类型实参与方法实参 | 类型篇 → 签名解析篇 |
+| Counter.Reset | 对比装箱副本与原变量位置 | 调用与异常篇 |
+| `Cache<T>` | 区分共享代码与独立静态状态 | 类型初始化篇 → 泛型共享桥接 |
 
-public class Unit : IHittable
-{
-    public int hp;
-    public virtual void TakeDamage(int amount) { hp -= amount; }
-}
-
-public class Player : Unit
-{
-    public List<Item> inventory = new();
-    public override void TakeDamage(int amount) { /* 带护甲计算 */ }
-    public T GetItem<T>(int index) where T : Item { return (T)inventory[index]; }
-}
-
-public class Item
-{
-    public string name;
-    public int weight;
-}
-```
-
-这组类型覆盖的 CLI 概念：
-
-| 概念 | 对应元素 | 涉及的 runtime 实现维度 |
-|------|---------|------------------------|
-| 接口 | `IHittable` | 接口分派（vtable / itable） |
-| 继承 | `Unit → Player` | 虚方法覆盖、方法解析 |
-| 泛型方法 | `GetItem<T>` | 泛型实例化、共享与特化 |
-| 值类型字段 | `hp: int`, `weight: int` | 内存布局、字段偏移 |
-| 引用类型字段 | `inventory`, `name` | GC 引用追踪、对象头 |
-| 约束 | `where T : Item` | 约束检查、泛型代码生成 |
-
-**约定：** 当文章需要一个具体的类型示例来说明某个 runtime 机制时，优先使用这组参考类。如果讨论的机制不适合用这组类型（比如值类型的特定布局问题），会在文中说明为什么另选示例。
+旧文中可能出现 Unit、Player 等其他类型；除非正文明确复用同一份代码，不把同名示例当成同一个类型。实验记录也应区分桌面 .NET、IL2CPP Player 和 HybridCLR 热更路径。
 
 ## 系列位置
 

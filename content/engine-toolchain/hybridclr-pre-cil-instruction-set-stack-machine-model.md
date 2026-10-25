@@ -13,7 +13,8 @@ tags:
   - "ECMA-335"
 series: "HybridCLR"
 lastmod: "2026-10-23"
-series_order: -1
+series_order: 14
+primary_series: "ecma335"
 ---
 一个方法只有几行 C#，IL 中却包含多次加载、存储和跳转。这些指令在描述什么，为什么 IL2CPP 能把它们编译成 native，HybridCLR 又能把它们转换后解释执行？
 
@@ -21,7 +22,7 @@ series_order: -1
 
 ## CIL 是栈机
 
-CIL（Common Intermediate Language）是 .NET 运行时的中间语言。C# 编译器（Roslyn）把源代码编译成 CIL，存储在 DLL 的方法体中。运行时（CLR 或 IL2CPP）再把 CIL 转成目标平台的机器码或解释执行。
+CIL（Common Intermediate Language）是 CLI 定义的中间语言。C# 编译器（Roslyn）把源代码编译成 CIL，存储在 DLL 的方法体中。后续可以由 JIT 在运行时编译，由 IL2CPP 在构建期经 C++ 转成 native 代码，或由 HybridCLR 等解释器转换后执行；这些步骤发生的时机不同。
 
 CIL 的执行模型是栈机（stack machine），而不是寄存器机。算术指令通常消费隐式求值栈；加载、存储等指令仍可通过索引或 token 指定参数、局部变量和字段。这个抽象栈不要求实现真的逐条进行内存 push/pop。
 
@@ -44,7 +45,7 @@ CIL 的执行模型是栈机（stack machine），而不是寄存器机。算术
 └──────────────────────────────────────────┘
 ```
 
-关键特征：CIL 指令不指定操作数的来源位置。`add` 这条指令没有"从第 3 号寄存器取值"的概念——它固定从求值栈顶弹出两个值、相加、把结果压回栈顶。"谁把值放到栈顶的"由前面的 load 指令决定。
+以 `add` 为例，它没有“从第 3 号寄存器取值”的操作数，而是消费求值栈顶的两个值，把结果压回栈顶。值由前面的加载等指令准备；ldarg、ldloc、ldfld 自身则会明确指定参数槽、局部变量槽或字段。
 
 ## 核心指令逐类介绍
 

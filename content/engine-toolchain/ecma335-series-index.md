@@ -1,12 +1,18 @@
 ---
 title: "ECMA-335 基础层｜读懂 IL2CPP 与 HybridCLR 的前置主线"
 slug: "ecma335-series-index"
+type: "reading-guide"
+layout: "engine-directory"
+reading_kind: "runtime-index"
+topic_key: "engine"
+reading_title: "ECMA-335：读懂 IL2CPP 与 HybridCLR"
 date: "2026-04-15"
 lastmod: "2026-10-23"
 description: "从 DLL、类型和签名，到 CIL、调用、程序集加载、静态初始化和反射，建立理解 IL2CPP 与 HybridCLR 的规范基础。"
 weight: 8
 series: "dotnet-runtime-ecosystem"
-series_id: "ecma335-index"
+series_id: "ecma335"
+series_title: "ECMA-335 前置主线"
 series_role: "index"
 series_order: 0
 series_entry: true

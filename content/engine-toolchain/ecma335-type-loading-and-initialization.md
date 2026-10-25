@@ -7,6 +7,8 @@ weight: 23
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "Initialization", "Generics"]
+primary_series: "ecma335"
+series_order: 17
 ---
 
 > **读这篇之前**：先读 [程序集身份、引用与加载]({{< relref "engine-toolchain/ecma335-assembly-model-identity-versioning-loading.md" >}})。本文讨论 CLI 类型初始化，Unity 的 Awake、OnEnable 等组件回调属于另一套生命周期。

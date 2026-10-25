@@ -1,3 +1,5 @@
+{{- $isRuntimeIndex := eq .Params.reading_kind "runtime-index" -}}
+{{- $displayTitle := .Params.reading_title | default .Title -}}
 <!DOCTYPE html>
 <html lang="{{ site.Language.Lang | default `zh-cn` }}">
 <head>
@@ -18,24 +20,32 @@
   <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
   <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
   <link rel="stylesheet" href="{{ `css/engine-directory.css` | relURL }}">
+  {{ if $isRuntimeIndex }}
+  <link rel="stylesheet" href="{{ `css/runtime-directory.css` | relURL }}">
+  <script src="{{ `js/site.js` | relURL }}" defer></script>
+  {{ end }}
   <script src="{{ `js/search.js` | relURL }}" defer></script>
 </head>
-<body class="reading-site page-engine-directory">
+<body class="reading-site page-engine-directory{{ if $isRuntimeIndex }} page-runtime-directory{{ end }}">
   <a class="skip-link" href="#main">跳到主要内容</a>
   {{ partial "site-masthead.html" . }}
   <main id="main" class="wrap" tabindex="-1">
     <nav class="breadcrumb" aria-label="面包屑">
       {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
-      {{ if .Params.engine_name }}{{ partial "reading/link.html" (dict "page" "reading/engine.md" "label" "引擎研发") }}<span aria-hidden="true">/</span>{{ end }}
-      <span aria-current="page">{{ .Title }}</span>
+      {{ if or .Params.engine_name $isRuntimeIndex }}{{ partial "reading/link.html" (dict "page" "reading/engine.md" "label" "引擎研发") }}<span aria-hidden="true">/</span>{{ end }}
+      <span aria-current="page">{{ $displayTitle }}</span>
     </nav>
     <header class="topic-heading">
-      <p class="eyebrow">{{ if .Params.engine_name }}引擎专题{{ else }}技术主题{{ end }}{{ with .Params.reading_status }} · {{ . }}{{ end }}</p>
-      <h1>{{ .Title }}</h1><p>{{ .Description }}</p>
+      <p class="eyebrow">{{ if $isRuntimeIndex }}专栏索引 · 语言运行时{{ else if .Params.engine_name }}引擎专题{{ else }}技术主题{{ end }}{{ with .Params.reading_status }} · {{ . }}{{ end }}</p>
+      <h1>{{ $displayTitle }}</h1><p>{{ .Description }}</p>
     </header>
-    <nav class="engine-switch" aria-label="引擎阅读入口">
+    <nav class="engine-switch" aria-label="{{ if $isRuntimeIndex }}运行时专栏{{ else }}引擎阅读入口{{ end }}">
       {{ $current := .RelPermalink }}
-      {{ range (slice (dict "page" "reading/engine.md" "label" "引擎研发总览") (dict "page" "reading/piccolo-engine.md" "label" "Piccolo") (dict "page" "reading/unreal-engine.md" "label" "Unreal") (dict "page" "reading/unity-engine.md" "label" "Unity")) }}
+      {{ $entries := slice (dict "page" "reading/engine.md" "label" "引擎研发总览") (dict "page" "reading/piccolo-engine.md" "label" "Piccolo") (dict "page" "reading/unreal-engine.md" "label" "Unreal") (dict "page" "reading/unity-engine.md" "label" "Unity") }}
+      {{ if $isRuntimeIndex }}
+        {{ $entries = slice (dict "page" "engine-toolchain/ecma335-series-index.md" "label" "ECMA-335") (dict "page" "engine-toolchain/il2cpp-series-index.md" "label" "IL2CPP") (dict "page" "engine-toolchain/hybridclr-series-index.md" "label" "HybridCLR") }}
+      {{ end }}
+      {{ range $entries }}
         {{ $target := site.GetPage .page }}
         {{ if and $target (eq $target.RelPermalink $current) }}<span aria-current="page">{{ .label }}</span>{{ else }}{{ partial "reading/link.html" . }}{{ end }}
       {{ end }}
@@ -46,7 +56,7 @@
         {{ .TableOfContents }}
         <p class="small-note">按正在研究的系统或遇到的问题直接跳读。</p>
       </aside>
-      <article class="engine-content" aria-label="{{ .Title }}内容导航">{{ .Content }}</article>
+      <article class="engine-content{{ if $isRuntimeIndex }} article-reading{{ end }}" aria-label="{{ $displayTitle }}内容导航">{{ if $isRuntimeIndex }}<div class="article-body">{{ .Content }}</div>{{ else }}{{ .Content }}{{ end }}</article>
     </div>
   </main>
   <footer class="footer wrap">

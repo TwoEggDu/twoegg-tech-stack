@@ -13,6 +13,8 @@ tags:
   - "ExceptionHandling"
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 15
 ---
 
 > 一个方法被调用时，runtime 到底做了几件事——查 vtable、准备参数、建栈帧、处理异常——每个 runtime 实现不同，但规范层的契约是同一份。

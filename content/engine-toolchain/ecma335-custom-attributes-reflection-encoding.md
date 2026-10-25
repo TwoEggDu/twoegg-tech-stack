@@ -9,6 +9,8 @@ featured: false
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "CustomAttribute", "Reflection"]
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 19
 ---
 
 序列化框架、注册器或消息分发系统常先扫描类型上的特性，再据此构造对象或调用方法。在编辑器中能工作，换到 IL2CPP Player 或热更代码后失败，不能只用“反射不支持”概括。

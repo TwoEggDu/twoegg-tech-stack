@@ -8,6 +8,8 @@ weight: 16
 tags: ["ECMA-335", "CIL", "Verification"]
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 43
 ---
 
 > **阅读位置**：原 A8 已退出必读顺序。求值栈、控制流合并和返回类型的基础检查，已合并到 [CIL 主线]({{< relref "engine-toolchain/hybridclr-pre-cil-instruction-set-stack-machine-model.md" >}})。本文用于 IL weaving、混淆、unsafe 或验证工具报错时查阅。

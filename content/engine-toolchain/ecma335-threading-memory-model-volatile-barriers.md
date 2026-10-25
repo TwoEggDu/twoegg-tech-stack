@@ -8,6 +8,8 @@ weight: 20
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "Threading", "MemoryModel"]
+primary_series: "ecma335"
+series_order: 41
 ---
 
 > **阅读位置**：原 A12 改为并发进阶分支。它不阻塞 metadata、泛型和解释执行主线；遇到跨线程共享状态时再读。GC 写屏障与本文的线程内存屏障不同，前者见 [GC 契约]({{< relref "engine-toolchain/ecma335-memory-model-object-layout-gc-contract-finalization.md" >}})。

@@ -8,6 +8,8 @@ weight: 21
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 tags: ["ECMA-335", "Metadata", "FileFormat", "PE"]
+primary_series: "ecma335"
+series_order: 42
 ---
 
 > **阅读位置**：原 A13 改为查阅附录，不再作为系列完结篇。PE → CLI → metadata → 方法体的入门路径已经并入 [DLL 与 CLI Metadata]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}})。本文用于手工核对字节与解析器边界。

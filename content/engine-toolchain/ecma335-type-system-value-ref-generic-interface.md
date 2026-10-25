@@ -9,6 +9,8 @@ featured: false
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "TypeSystem", "Generics"]
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 12
 ---
 
 把一个 class 改成 struct，可能同时改变赋值结果、装箱行为、泛型代码生成和跨边界传参。原因不是某个 runtime 对 struct “支持较差”，而是程序要求的语义已经改变。
@@ -68,7 +70,7 @@ Point copy = (Point)boxed;   // copy.X 为 1
 
 本例把 Point 的值复制到装箱对象中。随后修改 p 不会修改那个副本。CIL 中 `box`、`unbox` 与 `unbox.any` 的职责不同：unbox 取得指向装箱值的托管指针，unbox.any 对普通值类型取出相应的值。
 
-因此“struct 没有对象头”只适用于未装箱的值存储，不能概括装箱后的形态。Nullable<T> 的装箱另有专门规则，不能用这一个 Point 例子推导所有细节。
+因此“struct 没有对象头”只适用于未装箱的值存储，不能概括装箱后的形态。`Nullable<T>` 的装箱另有专门规则，不能用这一个 Point 例子推导所有细节。
 
 ## 泛型：定义、开放类型与封闭类型
 
@@ -80,8 +82,8 @@ Point copy = (Point)boxed;   // copy.X 为 1
 
 | 层次 | 例子 | 应确认的事实 |
 |---|---|---|
-| 定义 | List<T>、Box<T>.Echo<U> | 类型／方法参数及成员定义 |
-| 构造后的类型或方法身份 | List<int>、Box<int>.Echo<string> | 类型实参与方法实参、约束、布局 |
+| 定义 | `List<T>`、`Box<T>.Echo<U>` | 类型／方法参数及成员定义 |
+| 构造后的类型或方法身份 | `List<int>`、`Box<int>.Echo<string>` | 类型实参与方法实参、约束、布局 |
 | 可执行实现 | 某个具体调用使用的 native 代码或解释路径 | AOT 产物、共享策略或可解释的方法体是否可用 |
 
 不能写成“IL2CPP 运行时只能查表，所以任何新类型信息都不能构造”。也不能写成“只要反射能获得封闭类型，它的方法就一定可以调用”。HybridCLR 官方的 [AOT 泛型说明](https://www.hybridclr.cn/docs/basic/aotgeneric)专门区分了类型元数据与方法实现的可用性。

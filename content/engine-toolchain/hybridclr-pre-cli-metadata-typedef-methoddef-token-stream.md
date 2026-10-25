@@ -8,7 +8,8 @@ weight: 10
 featured: false
 tags: ["Unity", "IL2CPP", "HybridCLR", "ECMA-335", "Metadata"]
 series: "HybridCLR"
-series_order: -2
+series_order: 11
+primary_series: "ecma335"
 ---
 
 热更 DLL、用来补充 AOT 元数据的 DLL、IL2CPP 构建输入，都可能是托管程序集。但文件同为 DLL，不意味着它们在流水线中承担同一职责。想判断缺了什么，首先要知道文件里实际存了什么。

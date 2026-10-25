@@ -1,0 +1,19 @@
+/* Runtime indexes share the engine directory's typography and navigation. */
+.page-runtime-directory .engine-outline > nav > ul > li > ul { display: none; }
+.page-runtime-directory .engine-outline { max-height: calc(100vh - 48px); overflow-y: auto; }
+.page-runtime-directory .article-body > p { color: var(--muted); font-size: 15px; overflow-wrap: anywhere; }
+.page-runtime-directory .article-body > :first-child { margin-top: 0; }
+.page-runtime-directory .article-body ol { padding-left: 1.6em; }
+.page-runtime-directory .article-table { max-width: 100%; overflow-x: auto; margin: 24px 0; }
+.page-runtime-directory .article-table:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.page-runtime-directory .article-body table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px; line-height: 1.85; }
+.page-runtime-directory .article-body th,
+.page-runtime-directory .article-body td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.page-runtime-directory .article-body th { background: var(--wash); font-weight: 600; }
+.page-runtime-directory .article-body table[data-columns="3"] th:first-child { width: 64px; white-space: nowrap; }
+@media (max-width: 760px) {
+  .page-runtime-directory .engine-outline { max-height: none; overflow: visible; }
+  .page-runtime-directory .article-body table { font-size: 14px; }
+  .page-runtime-directory .article-body th,
+  .page-runtime-directory .article-body td { padding: 12px; }
+}

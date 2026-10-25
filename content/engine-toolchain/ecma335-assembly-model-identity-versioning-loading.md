@@ -9,6 +9,8 @@ featured: false
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "Assembly"]
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 16
 ---
 
 两个文件都叫 Game.dll，是否可以互换？热更 DLL 加载成功，为什么里面某个类型仍然解析失败？这些问题要求我们把文件名、程序集身份、依赖引用和运行时状态分开。

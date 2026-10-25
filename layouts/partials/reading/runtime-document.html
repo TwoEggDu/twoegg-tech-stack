@@ -1,0 +1,73 @@
+{{ $page := .page }}
+{{ $index := .context.index }}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default `zh-cn` }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ $page.Title }} | {{ site.Title }}</title>
+  {{ $description := $page.Description | default ($page.Summary | plainify | truncate 140) }}
+  <meta name="description" content="{{ $description }}">
+  <link rel="canonical" href="{{ $page.Permalink }}">
+  <meta property="og:title" content="{{ $page.Title }}">
+  <meta property="og:description" content="{{ $description }}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{{ $page.Permalink }}">
+  <meta property="og:site_name" content="{{ site.Title }}">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ $page.Title }}">
+  <meta name="twitter:description" content="{{ $description }}">
+  <link rel="stylesheet" href="{{ `css/reading.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/site-masthead.css` | relURL }}">
+  <link rel="stylesheet" href="{{ `css/series-reading.css` | relURL }}">
+  <script src="{{ `js/site.js` | relURL }}" defer></script>
+  <script src="{{ `js/search.js` | relURL }}" defer></script>
+</head>
+<body class="reading-site page-article page-runtime-article">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="wrap">{{ partial "site-masthead.html" $page }}</div>
+  <main id="main" class="wrap" tabindex="-1">
+    <nav class="breadcrumb" aria-label="面包屑">
+      {{ partial "reading/link.html" (dict "page" "/" "label" "首页") }}<span aria-hidden="true">/</span>
+      {{ partial "reading/link.html" (dict "page" "reading/engine.md" "label" "引擎研发") }}<span aria-hidden="true">/</span>
+      <a href="{{ $index.RelPermalink }}">{{ .context.title }}</a><span aria-hidden="true">/</span>
+      <span aria-current="page">正文</span>
+    </nav>
+    <article class="reading-article article-reading">
+      <header class="reading-article-header">
+        <p class="eyebrow">{{ .context.title }}</p>
+        <h1>{{ $page.Title }}</h1>
+        {{ with $page.Description }}<p class="reading-article-dek">{{ . }}</p>{{ end }}
+      </header>
+      <details class="reading-toc-mobile">
+        <summary>本篇目录 <span aria-hidden="true">＋</span></summary>
+        {{ replace (string $page.TableOfContents) `id="TableOfContents"` `id="reading-toc-mobile"` | safeHTML }}
+      </details>
+      <div class="reading-article-grid">
+        <div class="reading-article-main">
+          <div class="article-body reading-prose">{{ $page.Content }}</div>
+          <nav class="reading-pagination" aria-label="专栏导航">
+            <a href="{{ $index.RelPermalink }}"><span>← 返回专栏索引</span><strong>{{ .context.title }}</strong></a>
+          </nav>
+        </div>
+        <aside class="reading-article-aside" aria-labelledby="reading-toc-title">
+          <div class="reading-article-aside-inner">
+            <p id="reading-toc-title" class="eyebrow">本篇目录</p>
+            {{ replace (string $page.TableOfContents) `id="TableOfContents"` `id="reading-toc-desktop"` | safeHTML }}
+            <a class="reading-series-back" href="{{ $index.RelPermalink }}">返回专栏索引 →</a>
+          </div>
+        </aside>
+      </div>
+    </article>
+  </main>
+  <footer class="footer wrap">
+    <p>TwoEgg Tech Stack <span>· 游戏开发中的问题、机制与实践</span></p>
+    <nav aria-label="更多阅读入口">
+      {{ partial "reading/link.html" (dict "page" "technical-topics.md" "label" "完整技术目录") }}
+      {{ partial "reading/link.html" (dict "page" "game-development.md" "label" "研发地图") }}
+      {{ partial "reading/link.html" (dict "page" "about.md" "label" "关于作者") }}
+    </nav>
+  </footer>
+</body>
+</html>

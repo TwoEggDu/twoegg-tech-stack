@@ -9,6 +9,8 @@ featured: false
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "GC"]
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
+primary_series: "ecma335"
+series_order: 18
 ---
 
 一段热更代码把对象放进容器，稍后 AOT 代码继续使用它。无论其中有多少次解释器与 native 调用切换，这个对象都必须保持正确的类型、引用关系和生命周期。
@@ -51,6 +53,54 @@ GC 要保留仍可从根集合到达的对象。常见根来源包括静态状�
 这条链上的 Item 即使没有单独的局部变量引用，也可能仍然存活。反过来，一个局部变量的源码作用域还没有结束，并不能单独保证它一直作为 GC 根存活；优化后的活跃区间需要结合运行时语义理解。
 
 对象变得不可达，也不等于立刻回收。GC 的调度、保守扫描造成的额外保留、终结处理等都可能影响实际时机。因此“清空引用后内存没有马上下降”不能直接作为泄漏证据。
+
+### 动手验证：静态容器怎样留下一个对象
+
+下面用普通托管对象观察引用链。把代码保存到 .NET 控制台项目的 Program.cs，以 Release 配置独立运行，不附加调试器：
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+public static class Program
+{
+    private static readonly List<object> Roots = new List<object>();
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference CreateAndRetain()
+    {
+        object item = new object();
+        Roots.Add(item);
+        return new WeakReference(item);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static bool CollectAndRead(WeakReference weak)
+    {
+        GC.Collect();
+        return weak.IsAlive;
+    }
+
+    public static void Main()
+    {
+        WeakReference weak = CreateAndRetain();
+        Console.WriteLine($"retained: {CollectAndRead(weak)}");
+        Roots.Clear();
+        Console.WriteLine($"after clear: {CollectAndRead(weak)}");
+    }
+}
+```
+
+创建对象的 helper 返回后，局部变量 item 已离开该调用；对象仍可沿“静态字段 Roots → List 的元素 → item”到达。WeakReference 自身不把目标变成强引用，第一次收集后仍存活的原因是容器。
+
+Clear 移除容器元素中的强引用后，目标才有机会被回收；List 对象本身和它的容量可以继续保留。预期在这份桌面示例中看到 `retained: True`、`after clear: False`，但不能把第二行推广成所有运行时在任何环境中调用一次 GC.Collect 就必定得到的结果。
+
+本机验证：2026-10-23，Windows、.NET SDK 10.0.402、Release、独立进程无调试器，直接从本文提取代码，输出依次为 `retained: True`、`after clear: False`。这是桌面 .NET 的观察，未代替 IL2CPP／HybridCLR Player 验证。
+
+NoInlining 用于减少桌面实验中内联和局部变量活跃期对观察的干扰，不是跨运行时的生命周期保证。本例无终结器，也不测进程内存是否归还给操作系统。改成 Unity／HybridCLR 实验时，应分别记录后端、架构和调试器状态；保守扫描或额外根可能继续保留目标，需要检查实际引用链。
+
+这个模型对应一个常见热更问题：AOT 静态注册表留下旧热更对象或委托。先解除注册、移除容器引用，再检查对象和 metadata 的各自生命周期；“业务已经不用它”并不等于 GC 已经看不到它。强制 GC 仅用于此处实验，不是线上清理策略。
 
 ## 解释执行必须加入同一套引用管理
 

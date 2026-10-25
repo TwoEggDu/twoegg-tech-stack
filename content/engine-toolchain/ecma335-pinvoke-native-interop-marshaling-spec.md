@@ -7,6 +7,8 @@ weight: 18
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "PInvoke", "Interop"]
+primary_series: "ecma335"
+series_order: 40
 ---
 
 > **阅读位置**：原 A10 保留为原生互操作分支。先完成 [调用与异常主线]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md" >}})，在接入 SDK、原生插件或回调时阅读本文。

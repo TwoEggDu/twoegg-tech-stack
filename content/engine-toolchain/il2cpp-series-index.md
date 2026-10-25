@@ -1,6 +1,12 @@
 ---
 title: "IL2CPP 实现分析索引｜Unity AOT runtime 的 8 篇管线拆解"
 slug: "il2cpp-series-index"
+type: "reading-guide"
+layout: "engine-directory"
+reading_kind: "runtime-index"
+topic_key: "engine"
+reading_title: "IL2CPP 实现分析"
+description: "从 C# 到 native，沿转换器、元数据与运行时理解 Unity AOT 的执行链路。"
 date: "2026-04-15"
 weight: 49
 series: "dotnet-runtime-ecosystem"

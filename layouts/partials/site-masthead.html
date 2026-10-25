@@ -7,6 +7,7 @@
   {{ if in (slice "技能系统深度" "游戏编程设计模式") .Params.series }}{{ $topic = "frameworks" }}{{ end }}
   {{ if eq .Params.series "游戏引擎架构地图" }}{{ $topic = "engine" }}{{ end }}
 {{ end }}
+{{ with partial "reading/runtime-context.html" . }}{{ $topic = "engine" }}{{ end }}
 <header class="unified-header{{ if or (eq .Type "reading-guide") (eq (.Params.series_id | default .Params.primary_series) "yooasset") }} wrap{{ else if .IsHome }} wrap{{ end }}">
   <a class="unified-brand" href="{{ site.Home.RelPermalink }}" aria-label="TwoEgg Tech Stack 首页">TwoEgg<span>Tech Stack</span></a>
   <nav class="unified-nav" aria-label="站点导航">

@@ -2,6 +2,7 @@
 title: "IL2CPP 实现分析｜libil2cpp runtime：MetadataCache、Class、Runtime 三层结构"
 slug: "il2cpp-libil2cpp-runtime-metadatacache-class-runtime"
 date: "2026-04-14"
+lastmod: "2026-10-23"
 description: "拆解 libil2cpp 运行时的内部三层结构：MetadataCache 全局类型注册表、Il2CppClass 惰性初始化、Runtime 初始化序列。覆盖 Il2CppObject 对象头设计、BoehmGC 集成、icall 注册机制、线程模型，以及 HybridCLR 的嵌入点。"
 weight: 52
 featured: false
@@ -56,55 +57,43 @@ libil2cpp 的源码位于 Unity 安装目录下 `Editor/Data/il2cpp/libil2cpp/`�
 
 **源码位置：** `il2cpp/vm/MetadataCache.cpp`
 
-MetadataCache 是 libil2cpp 的全局注册中心。所有类型定义、方法定义、程序集信息在运行时的查找，最终都落到这里。
+MetadataCache 及相关 metadata 模块负责注册、解析和缓存类型、方法与程序集信息。内部职责会随 Unity 版本调整；这里先看输入数据、代码注册和运行时缓存之间的关系，不把某个版本的数组名当成稳定接口。
 
-### 核心静态数组
+### 描述、代码注册与运行时缓存
 
-MetadataCache 内部维护了一组静态数组，每个数组对应 metadata 的一个维度：
+| 来源 | 提供什么 | 不能直接等同于什么 |
+|---|---|---|
+| global-metadata.dat | 转换后的类型、成员、字符串等描述 | 原始 CLI 表流或全部 native 函数地址 |
+| 生成代码及其注册数据 | 构建产物中的方法实现与相应关联信息 | 某个 DLL 的完整 IL 方法体集合 |
+| 运行时解析与缓存 | 已准备的类型／方法描述、泛型实例等 | 构建时已完整创建的全部运行时对象 |
 
-```cpp
-// 按 TypeDefinitionIndex 索引的类型信息表
-static Il2CppClass** s_TypeInfoTable;
-// 按 TypeDefinitionIndex 索引的类型定义映像表
-static Il2CppClass** s_TypeInfoDefinitionTable;
-// 所有已加载程序集的列表
-static Il2CppAssembly** s_AssembliesTable;
-// 泛型类实例缓存
-static Il2CppMetadataGenericClassMap s_GenericClassTable;
-// 方法指针表——il2cpp.exe 生成的所有方法指针
-static const Il2CppMethodPointer* s_MethodPointers;
+因此，不能说所有方法指针都从 global-metadata.dat 读出，也不能由“存在查找表”推出每次查询都只是一次固定数组访问。解析过程可能需要泛型上下文与惰性准备；成功后可以复用缓存。
+
+### 原始 token、转换后索引与运行时对象
+
+CLI 表 token 只在所属模块内定位一条记录。它不是跨 DLL 的全局编号，也不能单独表示一个封闭泛型方法的完整身份。Microsoft 的 [MetadataToken 说明](https://learn.microsoft.com/en-us/dotnet/api/system.reflection.memberinfo.metadatatoken)同样要求结合 Module 理解它。
+
+| 层次 | 例子 | 使用时需要什么上下文 |
+|---|---|---|
+| 原 DLL 的 CLI token | 0x02000003、0x06000001 | 所属模块、对应构建产物，必要时带泛型实参 |
+| IL2CPP 转换后的索引 | TypeDefinitionIndex 等 | 对应 Unity 版本、metadata 格式及该次构建的注册关系 |
+| 运行时描述对象 | Il2CppClass、MethodInfo | 解析结果、泛型上下文、初始化与执行状态 |
+
+例如 `GetTypeInfoFromTypeDefinitionIndex` 的参数名说明它接收类型定义索引，不能把原 DLL 的 `0x02000003` 原样传入。某些记录可以保留原始 token，用于关联或诊断；这也不意味着 token 与所有内部索引采用同一种编码。
+
+```text
+构建输入：模块 + CLI 引用／定义 + 泛型上下文
+  → 裁剪与转换：生成该构建自己的 metadata 和代码关联
+  → 运行时：按相应引用解析、必要时准备类型／方法并缓存
 ```
 
-这些数组在 `MetadataCache::Initialize()` 时从 `global-metadata.dat` 加载并建立索引。之后的所有查询操作——按 token 查类型、按名字查方法、按索引查程序集——都是直接数组索引或哈希表查找，不需要再碰 metadata 文件。
+这张图说明身份转换，不代表每次调用都要完整重走一次链路。直接 native 调用可能已经由构建期绑定；反射、泛型和接口分派需要的信息也不同。CLI 一侧的完整例子见 [签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}})。
 
-### 按 token 查找
+### 缓存寿命与程序集卸载
 
-ECMA-335 规范中每个类型和方法都有唯一的 metadata token。libil2cpp 沿用了这套编址体系。转换后的 C++ 代码中，类型引用和方法引用最终落到 token 上，MetadataCache 根据 token 从静态数组中取出对应的 `Il2CppClass*` 或 `MethodInfo*`。
+普通 IL2CPP 项目不能把“再加载一份同名 DLL”当作替换类型和回收旧缓存的通用办法。不过，AOT 也不意味着运行时绝不能构造泛型类型描述；类型信息可用和方法实现可用仍需分开判断。
 
-```cpp
-// 按 token 查找类型（简化示意）
-Il2CppClass* MetadataCache::GetTypeInfoFromTypeDefinitionIndex(
-    TypeDefinitionIndex index)
-{
-    // 先检查缓存
-    if (s_TypeInfoTable[index])
-        return s_TypeInfoTable[index];
-    // 首次访问：从 metadata 构建 Il2CppClass 并缓存
-    Il2CppClass* klass = FromTypeDefinition(index);
-    s_TypeInfoTable[index] = klass;
-    return klass;
-}
-```
-
-首次查找时构建 `Il2CppClass`，后续直接返回缓存。这就是惰性初始化（lazy initialization）的入口。
-
-### 只增不减的设计
-
-MetadataCache 的静态数组在整个进程生命周期中只增不减。一旦一个 `Il2CppClass` 被构建并写入 `s_TypeInfoTable`，它就永远不会被释放或替换。
-
-这个设计对原生 IL2CPP 来说是合理的——AOT 环境下所有类型在构建时已经确定，运行时不会产生新类型，自然不需要清理旧类型。
-
-但对 HybridCLR 的热重载（assembly hot reload）而言，这成了一个结构性障碍。热重载意味着旧版本的程序集需要卸载、新版本需要重新加载，对应的 `Il2CppClass` 需要被替换。MetadataCache 的只增不减设计不支持这种操作。HybridCLR 的 DHE（Differential Hybrid Execution）模块在这一层做了额外的适配——但这属于 HybridCLR 的架构问题，不在本篇展开。
+程序集卸载需要同时处理旧对象、引用、类型信息和执行入口。HybridCLR 的相关产品能力见 [程序集卸载专题]({{< relref "engine-toolchain/hybridclr-assembly-hot-reload-unload-metadata-reclaim.md" >}})，不能把它与 DHE 差分混合执行直接视为同一个机制。
 
 ## Il2CppClass：运行时类型描述符
 
@@ -152,6 +141,8 @@ typedef struct Il2CppClass {
 ### Class::Init 惰性初始化
 
 `Il2CppClass` 不是在 runtime 启动时全部初始化的，而是在首次被使用时才完成初始化。这就是 `Class::Init` 的核心逻辑。
+
+这里讨论的是类型描述的准备，不等同于执行用户的 `.cctor`。静态字段存储已经分配，也不证明静态初始化表达式已经执行；触发条件与失败语义见 [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。
 
 ```cpp
 // 简化示意
@@ -406,9 +397,9 @@ Runtime::Init()
 
 ### 方法分派的变化
 
-原生 IL2CPP 中，每个 `MethodInfo` 的 `methodPointer` 字段在构建时就已经绑定到 AOT 编译出的函数指针上。调用一个方法就是直接跳转到那个地址。
+已有 AOT 实现可以通过相应方法入口执行；但不能从“拿到了 MethodInfo”推断所有泛型实例化都已有可调用的 native 方法。直接调用、反射调用和虚分派的入口组织也不完全相同。
 
-HybridCLR 嵌入后，热更方法的 `methodPointer` 被设置为一个桥接函数。这个桥接函数把调用转发给 `Interpreter::Execute`，由解释器从 metadata 中取出方法的 IL 字节码，走解释执行路径。
+HybridCLR 为需要解释执行的方法接入相应调用路径。原始 CIL 方法体先转换为内部寄存器指令，再由解释器执行；已准备的转换结果可以复用。跨 AOT／解释边界时还需要匹配参数和返回值表示，不能把所有调用都概括为某一个字段的固定跳转。转换与执行的职责见 [HybridCLR 官方模块说明](https://www.hybridclr.cn/docs/basic/sourceinspect)。
 
 这是 HybridCLR 系列 D1 篇详细拆解的内容，这里只点出嵌入位置和机制。核心认知是：HybridCLR 没有替换 libil2cpp，而是在 libil2cpp 已有的框架内注入了解释执行路径。
 
@@ -416,7 +407,7 @@ HybridCLR 嵌入后，热更方法的 `methodPointer` 被设置为一个桥接�
 
 libil2cpp 的内部结构可以归纳为三个核心层次：
 
-**MetadataCache——数据层。** 从 `global-metadata.dat` 加载类型和方法信息，建立以 token 为索引的静态数组。所有运行时类型查询的最终落点。只增不减的设计让 AOT 场景下查询效率极高，但也为热重载带来了结构性障碍。
+**MetadataCache 及相关模块——数据层。** 连接转换后的 metadata、代码注册数据与运行时缓存。原始 CLI token、转换后的索引和运行时对象是不同层次；泛型解析与缓存寿命需要另外确认。
 
 **Il2CppClass——类型层。** 每个托管类型在运行时的完整描述符，包含字段布局、vtable、接口列表、静态字段内存。通过 `Class::Init` 惰性初始化——首次使用时递归构建，避免启动时一次性加载全部类型。
 

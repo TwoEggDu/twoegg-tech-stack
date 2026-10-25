@@ -8,6 +8,8 @@ weight: 19
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 tags: ["ECMA-335", "StrongName", "CAS", "History"]
+primary_series: "ecma335"
+series_order: 44
 ---
 
 > **阅读位置**：本文保留原 A11 地址，已移出必读目录。理解 IL2CPP 和 HybridCLR 时，先读 [程序集身份、引用与加载]({{< relref "engine-toolchain/ecma335-assembly-model-identity-versioning-loading.md" >}})，需要维护旧 .NET 代码时再回看这里。

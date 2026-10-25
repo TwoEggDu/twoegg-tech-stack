@@ -7,6 +7,8 @@ weight: 22
 series: "dotnet-runtime-ecosystem"
 series_id: "ecma335"
 tags: ["ECMA-335", "IL2CPP", "HybridCLR", "Metadata", "Generics"]
+primary_series: "ecma335"
+series_order: 13
 ---
 
 > **读这篇之前**：先读 [DLL 与 metadata]({{< relref "engine-toolchain/hybridclr-pre-cli-metadata-typedef-methoddef-token-stream.md" >}}) 和 [类型系统]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}})。本篇的 IL 只用于观察引用关系，逐条执行留到下一篇。
@@ -53,8 +55,8 @@ public static class Entry
 |---|---|
 | TypeDef、MethodDef | 在 Shared 模块中定义 Box 和 Echo；MethodDef 关联方法签名与方法体 |
 | AssemblyRef、TypeRef | 在 HotEntry 中描述对 Shared 程序集及 Box 类型的引用 |
-| TypeSpec | 用类型签名表达 Box<int> 这样的构造类型 |
-| MemberRef | 在 Box<int> 这个声明类型上下文中引用 Echo，并记录成员签名 |
+| TypeSpec | 用类型签名表达 `Box<int>` 这样的构造类型 |
+| MemberRef | 在 `Box<int>` 这个声明类型上下文中引用 Echo，并记录成员签名 |
 | MethodSpec | 在所引用的泛型方法上绑定方法实参 string |
 
 这不是六张表的固定串行查询算法，而是解释本例所需的信息关系。不同编译器可以选择合法的不同编码，运行时也可以提前解析或缓存。
@@ -149,12 +151,109 @@ metadata 表内还使用 **coded index**：例如 MemberRef 的 Parent 可以引
 ## 动手验证：看真实记录，不固定 token
 
 1. 建立 Shared 类库与 HotEntry 类库，将上述代码分别放入，给 HotEntry 添加对 Shared 的项目引用。
-2. 用同一套 SDK 编译两个项目；打开 HotEntry.dll，在 ILSpy／ildasm 中查看 Entry.Run 的 IL 和调用目标。
+2. 用同一套 SDK 的 Release 配置编译两个项目；打开 HotEntry.dll，在 ILSpy／ildasm 中查看 Entry.Run 的 IL 和调用目标。
 3. 用支持 metadata 表视图的工具检查该操作数：它属于哪个模块，是否为 MethodSpec，Method 列指向哪里，MemberRef 的 Parent 是否为 TypeSpec。
 4. 对照 Echo 的签名 blob 与 MethodSpec 的实例化 blob。也可用 .NET 的 `PEReader`、`MetadataReader`、`GetMethodSpecification`、`GetMemberReference` 和 `GetBlobBytes` 读取原始数据。
 5. 把调用改成 `Box<long>.Echo<string>`，再改成 `Box<int>.Echo<int>`，观察类型实参与方法实参分别改变哪一处记录。
 
 本机验证：2026-10-23，.NET SDK 10.0.402，Release，两个类库。Echo 的签名 payload 为 `3001021E0013001E00`，MethodSpec payload 为 `0A010E`，对应 MemberRef 的 Parent 为 TypeSpec。行号随编译产物变化。此实验检查编译产物的描述关系，不证明对应调用已经通过 IL2CPP 或 HybridCLR 真机运行。
+
+### 可直接运行的 metadata 读取程序
+
+在一个空目录中，用 .NET 10 SDK 建立三个项目；这里的桌面工具只读 DLL，不需要把目标程序集加载进执行环境：
+
+```powershell
+dotnet new classlib -n Shared -f net10.0
+dotnet new classlib -n HotEntry -f net10.0
+dotnet new console -n Reader -f net10.0
+dotnet add HotEntry/HotEntry.csproj reference Shared/Shared.csproj
+```
+
+把前文两段代码分别保存为 `Shared/Box.cs` 和 `HotEntry/Entry.cs`，再用下面代码替换 `Reader/Program.cs`。所用 API 随该目标框架提供，无须额外安装 metadata 包。
+
+```csharp
+using System;
+using System.IO;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
+
+if (args.Length != 1)
+    throw new ArgumentException("Usage: Reader <HotEntry.dll>");
+
+using var file = File.OpenRead(args[0]);
+using var pe = new PEReader(file);
+var md = pe.GetMetadataReader();
+Console.WriteLine($"Module: {md.GetString(md.GetModuleDefinition().Name)}");
+string Hex(BlobHandle blob) => Convert.ToHexString(md.GetBlobBytes(blob));
+
+int found = 0;
+for (int row = 1; row <= md.GetTableRowCount(TableIndex.MethodSpec); row++)
+{
+    var handle = MetadataTokens.MethodSpecificationHandle(row);
+    var spec = md.GetMethodSpecification(handle);
+    if (spec.Method.Kind != HandleKind.MemberReference) continue;
+    var member = md.GetMemberReference((MemberReferenceHandle)spec.Method);
+    if (md.GetString(member.Name) != "Echo") continue;
+
+    found++;
+    Console.WriteLine($"MethodSpec token: 0x{MetadataTokens.GetToken(handle):X8}");
+    Console.WriteLine($"MethodSpec args: {Hex(spec.Signature)}");
+    Console.WriteLine($"MemberRef signature: {Hex(member.Signature)}");
+    Console.WriteLine($"MemberRef.Parent: {member.Parent.Kind}");
+    if (member.Parent.Kind != HandleKind.TypeSpecification)
+        throw new InvalidDataException("This sample expects a TypeSpec parent.");
+
+    var type = md.GetTypeSpecification((TypeSpecificationHandle)member.Parent);
+    Console.WriteLine($"TypeSpec bytes: {Hex(type.Signature)}");
+    var blob = md.GetBlobReader(type.Signature);
+    if (blob.ReadByte() != 0x15 || blob.ReadByte() != 0x12)
+        throw new InvalidDataException("Expected GENERICINST CLASS.");
+    int coded = blob.ReadCompressedInteger();
+    if ((coded & 3) != 1)
+        throw new InvalidDataException("This sample expects a TypeRef.");
+    var reference = md.GetTypeReference(MetadataTokens.TypeReferenceHandle(coded >> 2));
+    Console.WriteLine($"Type definition ref: {md.GetString(reference.Namespace)}.{md.GetString(reference.Name)}");
+    Console.WriteLine($"Type argument count: {blob.ReadCompressedInteger()}");
+    Console.WriteLine($"Type argument bytes: {Convert.ToHexString(blob.ReadBytes(blob.RemainingBytes))}");
+}
+if (found == 0) throw new InvalidDataException("No Echo MethodSpec found.");
+```
+
+编译目标库并读取它：
+
+```powershell
+dotnet build HotEntry/HotEntry.csproj -c Release
+dotnet run --project Reader/Reader.csproj -c Release -- HotEntry/bin/Release/net10.0/HotEntry.dll
+```
+
+对原始示例，关键输出应为：
+
+```text
+Module: HotEntry.dll
+MethodSpec args: 0A010E
+MemberRef signature: 3001021E0013001E00
+MemberRef.Parent: TypeSpecification
+Type definition ref: Shared.Box`1
+Type argument count: 1
+Type argument bytes: 08
+```
+
+程序还打印本次产物的 token 和完整 TypeSpec，以上摘录刻意不固定这两个数值。TypeSpec 中的 `15 12` 表示构造泛型引用类型，随后是压缩的 TypeDefOrRefEncoded：低两位 tag 为 1 时引用 TypeRef，其余位是行号；后面才是实参数量与类型编码。不能假定中间的引用永远只有一个字节。
+
+每次修改后重新 build，再运行 Reader，比较两个独立位置：
+
+| Entry.Run 中的调用 | Type argument bytes | MethodSpec args |
+|---|---|---|
+| `Box<int>.Echo<string>(7, "ok")` | 08（I4） | 0A010E（string） |
+| `Box<long>.Echo<string>(7L, "ok")` | 0A（I8） | 0A010E（string） |
+| `Box<int>.Echo<int>(7, 8)` | 08（I4） | 0A0108（int） |
+
+第三种调用把 Run 的返回类型同时改为 int。三种情况的 MemberRef 方法签名仍描述 `!0` 与 `!!0`；变化的是两组实参。0x0A 在不同位置分别表示 I8 或方法实例化标记，必须按当前签名语法解释。
+
+本机复核：2026-10-23，Windows、.NET SDK 10.0.402、Release，直接从本文提取读取程序与示例源码。三组 payload 均与表格一致，调用结果分别为 ok、ok、8；TypeSpec 中引用行号的编码在变体中发生了变化，所以没有把它写成固定输出。
+
+这段工具专门识别本例的 Echo 引用，不是完整签名解析器，也没有反汇编 IL。它枚举的 MethodSpec 是否正被 Entry.Run 使用，仍通过 IL 视图中的调用操作数确认。数组、指针、嵌套签名等扩展解析可使用 MetadataReader 的签名解码 API，不能直接复用这里对 `GENERICINST CLASS` 的样例假设。
 
 ## 放到 IL2CPP 与 HybridCLR 中看
 

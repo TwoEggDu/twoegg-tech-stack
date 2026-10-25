@@ -1,0 +1,17 @@
+{{- $context := dict -}}
+{{- if and .IsPage .File (eq .Section "engine-toolchain") -}}
+  {{- $indexPath := "" -}}
+  {{- if eq .Params.primary_series "ecma335" -}}
+    {{- $indexPath = "engine-toolchain/ecma335-series-index.md" -}}
+  {{- else if eq .Params.series "HybridCLR" -}}
+    {{- $indexPath = "engine-toolchain/hybridclr-series-index.md" -}}
+  {{- else if strings.HasPrefix .File.ContentBaseName "il2cpp-" -}}
+    {{- $indexPath = "engine-toolchain/il2cpp-series-index.md" -}}
+  {{- end -}}
+  {{- if and $indexPath (ne .Params.reading_kind "runtime-index") -}}
+    {{- with site.GetPage $indexPath -}}
+      {{- $context = dict "index" . "title" (.Params.reading_title | default .Title) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $context -}}
