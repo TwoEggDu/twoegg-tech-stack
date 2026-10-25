@@ -27,7 +27,7 @@ weight: 497
 
 这篇从这些问题进入 Piccolo。我们沿两条线阅读：一条从组件查询走到类型参数与名字比较；另一条从字段声明走到代码生成，再接到运行时注册与序列化。
 
-> **读这篇之前**：先用 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}}) 掌握推导、重载/特化、类型工具与实例化。下面保留必要的阶段速查，重点解释 Piccolo 的查询、生成和注册协议。建议同时读 [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})，理解基类指针、派生对象和虚调用；持有与释放约定可回看 [智能指针篇]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})。
+> **读这篇之前**：先用 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}}) 掌握推导、重载/特化、类型工具与实例化，再用 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}}) 复做预处理、外部生成、链接与注册的公共实验。下面保留必要的阶段速查，重点解释 Piccolo 的查询、生成和注册协议。建议同时读 [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})，理解基类指针、派生对象和虚调用；持有与释放约定可回看 [智能指针篇]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。源码事实来自固定版本核对，生成代码示意来自模板推导。本篇不运行 PiccoloParser 或 Piccolo；独立教学程序只验证文中使用的 C++17 机制。
 

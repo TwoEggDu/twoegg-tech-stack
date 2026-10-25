@@ -448,7 +448,7 @@ HybridCLR 与 IL2CPP 先接 [从泛型语义到 IL2CPP 代码共享]({{< relref 
 
 遇到长报错，先圈出“调用点 → 推导出的类型 → 被移除或选中的候选 → 最先不成立的表达式”。这通常比从标准库报错栈最上层逐行猜名字更有效，但不意味着每条模板错误都能用 SFINAE 修复。
 
-按补写顺序，下一篇整理 **CXX-08：眼前的代码由谁产生**，继续分清宏、条件编译、外部生成与运行时注册。完整路径见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按补写顺序，下一篇进入 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})，继续分清宏、条件编译、外部生成与运行时注册。完整路径见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **读模板调用，先还原类型和选择，再追定义与寿命。**
 

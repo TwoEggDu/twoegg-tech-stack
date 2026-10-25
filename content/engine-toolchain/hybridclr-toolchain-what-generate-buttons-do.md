@@ -12,6 +12,8 @@ tags:
 series: "HybridCLR"
 hybridclr_version: "v6.x (main branch, 2024-2025)"
 ---
+
+> **公共前置**：先用 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}}) 分清宏、外部生成、编译链接与运行时注册。本文保留原有版本的工具链材料，具体菜单、输入程序集与产物按项目版本核对；公共示例通过不代表 HybridCLR 生成或 Player 验证通过。
 > HybridCLR 菜单不是一组"方便操作"的按钮，而是在为改造后的 IL2CPP runtime 逐项准备输入：本地 `libil2cpp`、热更 DLL、防裁剪信息、裁剪后的 AOT 快照、桥接代码，以及泛型风险清单。
 
 这是 HybridCLR 系列第 3 篇，回到 build-time 侧解释 runtime 主链为什么能成立。

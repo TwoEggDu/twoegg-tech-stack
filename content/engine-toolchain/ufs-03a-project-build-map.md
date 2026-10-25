@@ -15,6 +15,8 @@ weight: 4603
 
 这是 **UFS-03 子课 A**，对应 M0-T01/T03/T05，并给 T06 的符号和 T08 的重复构建准备身份信息。前置是 [普通 C++ 的编译、链接和所有权练习]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})。不需要先理解整个 Gameplay Framework，也不要求 Linux DS、GAS 或大型样例。
 
+生成与编译的公共分层可先读 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})，用独立工程区分输入、生成文件、链接与启动注册；这里继续核对 UBT/UHT、模块和目标平台的具体约定。
+
 > 版本边界：安装目标是用户选定的 **UE 5.8.2**，不表示已经安装或验证。2026-09-22 查阅的 Epic 页面标题显示 **Unreal Engine 5.8 Documentation**；没有据此声称核实了 5.8.2 patch 的全部差异。本课未在 UE 中创建工程、编译或打包，步骤与预期供实际执行时验证。
 
 ## 1. 开始前，先记录一套真实环境

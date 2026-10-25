@@ -15,6 +15,8 @@ series: "dotnet-runtime-ecosystem"
 series_id: "il2cpp"
 ---
 
+> **公共前置**：生成代码、平台编译与运行时接线的共同模型，见 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})。先用独立工程验证生产与消费关系，再读本文的转换器专题；教学函数表不是 IL2CPP 的实际注册格式，也不增加 Unity 构建或运行验证结论。
+
 > il2cpp.exe 不是编译器——它是一个 source-to-source 转换器，把 .NET IL 翻译成等价的 C++ 代码，然后交给平台编译器做真正的编译。
 
 这是 .NET Runtime 生态全景系列 IL2CPP 模块第 2 篇，承接 D1 架构总览中 Stage 3 的展开。
