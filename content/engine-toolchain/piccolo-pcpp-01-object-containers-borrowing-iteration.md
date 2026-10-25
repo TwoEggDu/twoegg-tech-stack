@@ -26,7 +26,7 @@ weight: 498
 
 这些问题需要分开追踪：**对象是否仍属于关卡、谁还持有对象，以及当前的访问路径是否仍然有效。** 容器变化可能只影响其中一项，也可能同时影响几项。
 
-> **读这篇之前**：建议先看 [智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})，认识强持有与弱观察；`ReflectionPtr` 的名字和类型协议见 [模板、宏与反射代码生成]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})。公共知识目录见 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。本文就地补充必要的容器规则，再落到 Piccolo 的具体约定。
+> **读这篇之前**：建议先看 [CXX-04：复制、移动与容器失效]({{< relref "engine-toolchain/cpp-foundations-04-move-containers-invalidation.md" >}}) 和 [智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})，区分元素、目标与强弱持有；`ReflectionPtr` 的名字和类型协议见 [模板、宏与反射代码生成]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})。下面保留容器规则速查，重点核对 Piccolo 的具体持有、删除和遍历协议。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本文的引擎行为来自源码核对；末尾独立 C++17 程序只验证语言与容器机制。Piccolo 实际删除、运行和断点观察仍待验证。
 

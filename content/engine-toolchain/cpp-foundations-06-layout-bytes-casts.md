@@ -384,6 +384,6 @@ if ($LASTEXITCODE -ne 0) { throw 'run failed' }
 
 本篇没有执行未对齐解引用、非法类型访问、越界或失效对象调用，也不包含四条项目路线的实际构建、跨平台布局/ABI、GPU 布局、性能测量和完整文件格式验证。
 
-按补写顺序，下一篇是 **CXX-04：复制、移动和容器修改以后，哪些访问还有效**，继续区分对象地址、索引与身份，以及扩容、擦除后的借用失效。完整目录见 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按补写顺序，下一篇进入 [CXX-04：复制、移动和容器修改以后，哪些访问还有效]({{< relref "engine-toolchain/cpp-foundations-04-move-containers-invalidation.md" >}})，继续区分对象地址、索引与身份，以及扩容、擦除后的借用失效。完整目录见 [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **先证明访问对象的前提，再按对应的表示规则把字节解释成值。**

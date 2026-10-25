@@ -323,6 +323,8 @@ dtor local
 
 ## 5. 移动和容器：地址不是承诺
 
+复制/移动构造与赋值、值类别、noexcept 和容器失效的完整公共模型，见 [CXX-04：复制、移动和容器修改以后，哪些访问还有效]({{< relref "engine-toolchain/cpp-foundations-04-move-containers-invalidation.md" >}})。这里保留综合程序中的独占拥有者转移与强制 vector 扩容，继续把访问变化接到断点和资源责任上。
+
 `std::move(owner)` 本身做的是类型转换，让后续重载有机会选择移动操作；实际转移发生在 `unique_ptr` 的移动构造中。这次只是移动拥有者，`Tracked` 对象没有被重新构造。`unique_ptr` 的这类移动构造保证来源变空；不能把该结果推广成“所有 moved-from 对象都为空”。标准库类型通常保证有效但状态未指定，除非该类型另外给出更强保证；自定义类型要读自己的契约。[unique_ptr 移动构造契约](https://eel.is/c++draft/unique.ptr.single.ctor)
 
 本例刻意禁用 `Tracked` 的复制构造与复制赋值，避免误复制一个被当成独立资源的对象；移动 `unique_ptr<Tracked>` 并不要求移动 `Tracked`。`Score` 则是普通可复制值。它们解决的问题不同，不能用一句“C++ 赋值都是深拷贝”概括。
