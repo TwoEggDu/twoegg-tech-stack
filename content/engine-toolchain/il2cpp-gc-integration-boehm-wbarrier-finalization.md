@@ -120,6 +120,34 @@ Unity 2022.3 的[增量 GC 文档](https://docs.unity3d.com/2022.3/Documentation
 
 <!-- DATA-TODO: 继续补对象引用快照、活跃根区间和独立负载下的增量开关性能对照。 -->
 
+## 已完成：原生回调中的 GC 引用保留与有界压力
+
+2026-10-25，在同一份环境锁上新增 `projects/gc-callbacks`，build_id 为 `148235df-910b-441f-94b2-b7348eb02d8c`。仍使用本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3 / runtime v9.0.1、配套 il2cpp_plus v2022.3.x-9.0.1，Windows x64 IL2CPP Development、C++ Debug、Minimal stripping；GCMode=Enabled、isIncremental=True。
+
+这次把“显式句柄保留”与“回调活跃局部引用”分组，防止强句柄掩盖活跃引用的问题：
+
+| 组别 | 持有与观察方法 | 三个独立 Player 的共同结果 |
+|---|---|---|
+| handle | 热更 Context 由短寿命托管线程创建，Normal GCHandle 保留；native 保存不透明 token；第二次回调等待时收集3次 | 返回74/75、checksum149；启动前、回调中及Join后尚未Free时存活；Free后弱引用在本次窗口失效 |
+| stack | 不创建Context句柄；热更回调内新建Node，仅以局部变量继续使用，AOT只记录短弱引用；等待时收集3次 | 回调返回257；放行后完整检查256字节内容，Join后弱引用在本次窗口失效 |
+| stress | Normal句柄保留Context；1024次回调，每次32节点、每节点256字节payload，修改64槽对象图及Head/Next | count1024、checksum786944、errors0；32个检查点均存活；停止/Join/Free后弱引用失效 |
+
+共九个无调试器独立进程，均正常退出。stack组没有借用Normal句柄保留目标，但这仍是活跃回调跨收集的数据完整性对照，没有采集根快照来证明唯一保留来源。`GC.KeepAlive` 放在放行后的使用末尾，明确探针需要的局部引用生命周期。释放后的弱引用检查是三轮显式收集内的观察；验收器允许仍有存活对象并如实记录。
+
+压力组分配的payload总计 **8,388,608字节（8 MiB）**，不含对象头、数组头和互操作开销，不等于峰值堆大小。槽位在第二次回调起应全部非空；校验每槽预期Id、payload、最新Head身份、Head.Next及其他Next已清空，防止“旧对象内容没坏”掩盖丢引用或陈旧引用。
+
+压力组每32次回调停在检查点，主线程分四帧请求 `CollectIncremental(1_000_000)`，放行后再继续分配和修改引用：总计32检查点、128请求。负载窗口内不调用显式Full；开始前和Join后的完整收集用于生命周期检查，另行计数。
+
+三轮结果均为：128次请求返回false，负载开始到Join后的 **`GC.CollectionCount(0)` 差值为256**。这个窗口包含Unity自动收集及显式增量请求的影响，不能将差值分摊给单个API，也不能写成256次完整Full GC。[Unity API文档](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Scripting.GarbageCollector.CollectIncremental.html)说明false表示返回时没有剩余工作；本次同时确认isIncremental=True，因此不能把false解读成“没有发生GC”。
+
+本轮未直接观察到同一标记周期跨多帧仍有剩余工作的过程。对象校验、分配负载和收集计数支持这个有界样本的结果，不能外推为所有写屏障路径正确、长期无泄漏或GC耗时达标。
+
+handle/stack还各运行一个匹配PDB的CDB进程，验证三次Full入口位于目标回调中、MachineState根注册之后和scope退出之前。handle的FreeContext入口在原生Join之后，stack的token为0且没有FreeContext调用。详细所有权与停止顺序见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。断点没有测量native释放量或实际根扫描区间；stress的1024次负载没有逐次原生断点跟踪。
+
+复现入口为 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 中的 `tools/gc_callback_lab.py`，依次执行 `build --editor <Unity.exe路径>`、`run`、`trace --cdb <x64-cdb.exe路径>`、`verify`。本轮固定提交为 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，包含[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/results.json)。产物和原始日志在忽略目录 `artifacts/gc-callbacks/`；旧 `b915632` 仍只标识前一轮原生回调实验。
+
+<!-- DATA-TODO: 后续补根快照、实际活跃根区间、持续跨片段引用修改和独立性能采样。 -->
+
 ## 接到 HybridCLR
 
 解释执行共享 IL2CPP 的托管对象体系，但解释器自己的 native 状态需要额外接入。GC 桥接篇继续解释活跃解释器栈如何被枚举、引用写入如何通知宿主；线程接入篇解释线程退出如何清理这些状态。程序集 metadata 的释放则是另一层能力，不能由一次 GC 完成来推定。

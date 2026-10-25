@@ -14,7 +14,7 @@ hybridclr_version: "v6.1.0 (5567f367)"
 
 这篇接在 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) 与 [GC 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})之后，解释一条线程怎样进入、执行并退出 IL2CPP／HybridCLR。async 的调度、SynchronizationContext 和取消协议继续看 [Unity 异步运行时系列]({{< relref "engine-toolchain/unity-async-runtime-series-index.md" >}})。
 
-> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程、原生插件回调和在途停止结果；设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
+> 本篇核对了固定源码中的接入与清理路径。保留早期桌面编译／运行记录，并新增固定 v9 组合的真实 IL2CPP Player 托管工作线程、原生插件回调、在途停止，以及原生回调下GC引用保留与有界分配压力结果；长期与其他设备压力测试仍待补充。源码版本并不等同于一套已经验证的 Unity patch 和平台组合。
 
 ## 先把线程问题拆成四层
 
@@ -262,7 +262,34 @@ python tools/lifetime_lab.py verify
 
 清理断点说明函数入口和调用顺序，不统计 native 内存释放量，也没有观察 GC 实际扫描的根区间。本轮记录了增量模式，但没有运行增量引用修改压力负载，不能据此确认所有写屏障路径或性能。
 
-<!-- DATA-TODO: 继续补上下文 GCHandle、回调异常注入、GC 引用压力、多原生线程竞争及其他目标平台。 -->
+### 已完成：回调中的上下文句柄、活跃引用与 GC 压力
+
+2026-10-25，同一环境锁新增GC回调工程，build_id `148235df-910b-441f-94b2-b7348eb02d8c`。完整分组、数据和收集口径见 [IL2CPP GC篇的新实验]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，这里聚焦线程与所有权。
+
+这次回调ABI为cdecl `int(IntPtr,int,int)`。handle/stress组用Normal GCHandle保留热更Context，native仅保存句柄token，不保存对象地址，也没有固定对象地址的要求。Context由短寿命托管创建线程产生，创建线程Join后才开始观察；static回调委托只在AOT持有。stack组的token为0，回调中创建的热更Node只通过活跃局部引用继续使用，AOT观察者仅保存短弱引用。
+
+handle、stack、stress各三个独立Player通过。前两组在回调等待期间执行3次显式收集，放行后数据仍正确；压力组完成1024回调、8 MiB payload分配和64槽引用修改，32检查点通过，checksum786944、errors0。压力窗口内128次增量请求均返回false，GC计数差值256；该计数不做单API归因或GC耗时判断。
+
+handle/stack另各有匹配GameAssembly/NativeProbe private PDB的原生记录：
+
+| 观察项 | handle | stack |
+|---|---:|---:|
+| 目标OS线程 | 154732 | 100240 |
+| 原生回调数 | 2 | 1 |
+| Attach入口／Detach重载入口 | 2／4 | 1／2 |
+| 状态和动态根清理链 | 2 | 1 |
+| 目标回调活跃、根注册后、scope退出前的Full入口 | 3 | 3 |
+| Join后FreeContext入口 | 1 | 0 |
+
+Detach数字仍是两个重载入口组成一条解除登记调用链。stack组没有上下文句柄可释放；不能用handle组的成功替代stack的结果，也不把它们的聚焦断点当成1024次压力负载的逐次调用链记录。
+
+每组在最后一个回调关卡请求stop，`Join(0)`应尚未完成，放行后才允许原生线程退出。成功Join之后，handle/stress才Free Context，最后释放回调委托；失败等待时继续保留根引用，避免native仍可能回调时提前释放。九个进程中，解除对应持有后弱引用均在三轮显式收集窗口内失效；这是观察值，释放后仍存活也会被验收器记录。
+
+自有样本与证据已固定在提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)：[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)、[自有原生插件](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/native/gc-callbacks/plugin.cpp)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)及[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/results.json)；通过 `tools/gc_callback_lab.py` 的build/run/trace/verify复现。前一轮 `b915632` 不包含新增GC样本。
+
+尚未验证回调异常注入、多原生线程竞争、真实SDK关闭竞争、实际根枚举内容或持续跨片段标记期的引用修改。收集期间本样本对象可用、scope按顺序清理，与写屏障完整性和长期泄漏仍是不同结论。
+
+<!-- DATA-TODO: 继续补异常注入、持续跨片段引用修改、多原生线程竞争及其他平台。 -->
 
 ## Unity 主线程与 Web 平台的边界
 

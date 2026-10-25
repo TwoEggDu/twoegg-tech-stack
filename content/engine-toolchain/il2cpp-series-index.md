@@ -56,7 +56,7 @@ tags: [IL2CPP, Unity, AOT, Index]
 
 D5 之后可读 [泛型调用综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})：同一个 `Echo<T>` 从 CLI 签名追到 AOT 符号与运行时分派，比较显式实例引用和补充元数据。已在本机自定义 Unity、固定 v9 组合完成两份 Player、四组独立运行与原生断点验证；不推广为全平台结果。
 
-D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：串起托管线程、原生回调 wrapper、解释器 TLS、GC 根与退出清理。正文归 HybridCLR，只维护一份；其中托管工作线程已补固定 v9 环境的 Player 返回值、缓存与清理调用链记录；原生插件单线程回调与在途停止也已实测；GC 压力和其他平台仍待补。
+D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：串起托管线程、原生回调 wrapper、解释器 TLS、GC 根与退出清理。正文归 HybridCLR，只维护一份；其中托管工作线程已补固定 v9 环境的 Player 返回值、缓存与清理调用链记录；原生插件单线程回调与在途停止也已实测；长期GC压力、持续跨片段引用修改和其他平台仍待补。
 
 ## 配套实验仓库
 
@@ -68,7 +68,9 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 原生插件回调与在途停止也已补入 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})：对照已登记线程与插件新建线程，核对 wrapper、临时接入／清理和 Join 后释放。本轮对应 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb)，入口为[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/b9156325820312f4d290c4af8158f76a3a6f9beb/projects/native-callbacks)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)与[完整结果与哈希](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/results.json)。
 
-当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；根快照、GC 引用压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
+原生回调下的 [GC引用保留与有界压力]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 也已补入：Normal句柄、无上下文句柄的活跃回调引用，以及1024回调的分配／引用修改三组各运行三个Player。线程所有权见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮固定提交为 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，可查看[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)。
+
+当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；根快照、持续跨片段引用修改、长期压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
 
 ## 按问题查阅
 
@@ -91,4 +93,4 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 ## 接下来补强什么
 
-源码阅读起步、三栏泛型调用、对象保留对照和托管工作线程已完成各自固定环境的 Player 验证。后续补 GC 引用快照、活跃根区间、原生回调压力与固定采样条件的性能测量；已有结果不代表全系列经过统一版本验收。
+源码阅读起步、三栏泛型调用、对象保留对照和托管工作线程已完成各自固定环境的 Player 验证。后续补 GC 引用快照、活跃根区间、长期原生回调压力与固定采样条件的性能测量；已有结果不代表全系列经过统一版本验收。

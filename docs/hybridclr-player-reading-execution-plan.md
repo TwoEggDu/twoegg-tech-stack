@@ -151,9 +151,11 @@ Hugo 构建是站点检查，不属于 Unity runtime 验证；Git 推送和 Page
 完成前两篇的同一 Player 样本后，再依次推进：
 
 1. **三栏泛型调用综合实验（已完成）**：同一输入连通 ECMA 签名、IL2CPP 泛型与 HybridCLR 执行；两份 Player、四组独立运行及匹配 PDB 断点完成。详见 [泛型实验执行记录](./runtime-generic-call-experiment-outline.md)，正文 `runtime-generic-call-experiment.md`。
-2. **GC 与线程接入（部分完成）**：对象保留对照与托管 worker 的方法缓存／退出清理调用链已完成；原生线程回调与在途停止正常路径也已完成；引用快照、活跃根区间及 native 回调压力仍待补。证据见 `hybridclr-thread-attachment-outline.md` 的 Player 补测，以及实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
+2. **GC 与线程接入（部分完成）**：对象保留对照与托管 worker 的方法缓存／退出清理调用链已完成；原生线程回调与在途停止正常路径也已完成；原生回调的GC保留和有界分配压力也已完成；引用快照、活跃根区间、持续跨片段引用修改及长期压力仍待补。证据见 `hybridclr-thread-attachment-outline.md` 的 Player 补测，以及实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
 原生回调与在途停止对应 [固定提交 `b915632`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b9156325820312f4d290c4af8158f76a3a6f9beb) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b9156325820312f4d290c4af8158f76a3a6f9beb/evidence/2026-10-25-native-callbacks/README.md)；上面的 a387d28 保留为对象保留与托管线程实验版本。
 
 3. **性能与预热篇**：固定设备、输入和采样方法，分别测首次、预热、稳定执行及跨边界成本。
 
 商业能力篇继续保留待复核状态。上述工作是否完成以各系列计划和具体实验记录为准，不由本执行计划存在来推定。
+
+本轮GC回调实验记录：见实验仓库固定提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4) 的[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)，构建148235df-910b-441f-94b2-b7348eb02d8c；三栏计划和线程outline分别登记现状。

@@ -108,7 +108,17 @@ GC 只回答其对象体系中的可达性与回收问题，不会自动证明 n
 
 这次看到的是对象存活对照和线程清理调用链，没有采集活跃根扫描区间，也没有通过增量引用压力负载验证所有写屏障路径。对象被收集、状态进入清理和 native 分配量下降，仍须分别举证。本轮自有样本与运行证据对应实验仓库 [固定提交 `a387d28`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/a387d2807f4251fce0e5fc24e8d1debddb4ca79d)，入口为[样本工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/projects/lifetime-threads)和[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)。
 
-<!-- DATA-TODO: 补固定环境的活跃根区间、对象引用快照和增量引用修改压力；本轮清理入口断点不能替代这些记录。 -->
+### 新增：原生回调活跃引用与有界 GC 压力
+
+同一固定v9环境中，新GC回调实验（build_id `148235df-910b-441f-94b2-b7348eb02d8c`）把两种持有路径分开验证：Normal GCHandle保留热更Context；以及不创建Context句柄、仅由活跃热更回调继续使用的局部Node。各三个独立Player在回调等待期间显式收集3次，放行后对象内容正确；退出并解除对应持有后，短弱引用均在本次观察窗口失效。
+
+两组聚焦PDB断点将Full入口定位在回调活跃、状态根注册后、scope退出前；handle的FreeContext在Join后，stack的token为0且没有FreeContext。它支持本样本活跃引用跨收集可用，未通过根快照或GetGCRootData返回区间证明唯一根来源。
+
+另三轮压力Player各完成1024回调、8 MiB payload分配及64槽对象图修改，数据检查通过。128次增量请求均返回false，同时负载窗口内GC.CollectionCount(0)差值256。它没有直接展示同一标记周期跨片段仍在进行的过程，不足以证明所有解释指令的写屏障正确。分配量也不是托管堆峰值、native释放量或性能指标。
+
+详细数据和采样口径见 [IL2CPP GC篇]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})，句柄、回调与Join的顺序见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。本轮样本与摘要已固定在实验仓库提交 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，见[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)与[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)。
+
+<!-- DATA-TODO: 补固定环境的实际活跃根区间、对象引用快照和持续跨片段引用修改；本轮有限压力与清理入口不能替代这些记录。 -->
 
 **解释器接入 GC，必须同时维护可见的活跃引用、正确的写入协议和有所有者的 native 状态。**
 
