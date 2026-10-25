@@ -349,7 +349,7 @@ BeginDestroy、IsReadyForFinishDestroy、FinishDestroy 属于后续销毁协议�
 - [Unreal GC 深入阅读]({{< relref "system-design/ds-23-unreal-gc.md" >}})：原生资源、显式引用与分阶段清理。
 - [旋转 Actor]({{< relref "engine-toolchain/ufs-03b-first-rotating-actor.md" >}})：把对象、默认组件和运行阶段放回一个可见行为。
 
-下一项是 UCPP-2“容器、字符串与模板惯用法的阅读”，仍待补写；从 [Unreal 阅读入口]({{< relref "reading/unreal-engine.md" >}}) 查看状态，不生成待写正文的假链接。
+下一项 [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}}) 已成稿（UE 实验待验证），继续分清容器元素、借用、业务身份与文本角色。Delegate、生成链和任务线程等后续状态见 [Unreal 阅读入口]({{< relref "reading/unreal-engine.md" >}})。
 
 ## 9. 本篇验证到了哪里
 

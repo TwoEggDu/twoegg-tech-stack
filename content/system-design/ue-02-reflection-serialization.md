@@ -37,6 +37,8 @@ UHT 在 C++ 编译之前运行，扫描所有带有这些宏的头文件，为�
 
 ## FProperty 体系
 
+下方示意中的 TArray 与按 FName 查询，分别涉及元素/借用有效性和名字比较语义。先读 [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})，再回到属性类型、偏移和调用资格；这里的容器图不作为固定版本 UClass 的完整内部布局。
+
 每个 `UPROPERTY` 标注的成员变量，在运行时都对应一个 `FProperty` 对象，存储在该类的 `UClass` 里：
 
 ```

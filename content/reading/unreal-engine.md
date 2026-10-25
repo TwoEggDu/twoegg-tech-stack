@@ -23,19 +23,20 @@ engine_name: "unreal"
 
 - [C++ 公共基础]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})：先补值与借用、所有权、虚调用，再按需要补容器、回调、模板与编译链接；CXX-01～11 的公共正文已齐备，UE 专项与工程验证继续分别推进。
 - [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})：衔接创建、指针、保活、Outer 与业务结束；含完整自有 UE 对照样例，**UE 编译/运行与 GC 观察待验证**。
+- [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})：读懂 TArray/TMap、名字与显示文字，以及移动/转发边界；UE 编译与运行待验证。
 - [从 C# 到 C++：所有权与编译链接]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})：通过普通 C++ 练习理解值、借用、RAII、unique_ptr，并区分编译、链接与运行错误。
 - [UE 工程地图]({{< relref "engine-toolchain/ufs-03a-project-build-map.md" >}})：认识 .uproject、模块、Target、UHT，以及 Build／Cook／Stage／Package。**工程实践待验证：UE 工程创建、编译与打包仍需实际执行确认。**
 - [第一个旋转 Actor]({{< relref "engine-toolchain/ufs-03b-first-rotating-actor.md" >}})：连接 C++、组件、反射、蓝图默认值与关卡实例。**工程实践待验证：UE 编译、运行、断点与独立包行为仍需实际确认。**
 - [模块系统与构建工具]({{< relref "system-design/ue-07-module-system.md" >}})：理解 UBT、.Build.cs 与模块依赖，建立拆分代码和开发插件的工程视角。
 
-第一次进入 UE C++，可以按“公共 C++ 基础 → UE 工程地图 → 旋转 Actor → UCPP-1 对象与持有边界 → 对象/反射/GC”阅读，再回看模块系统。公共入口复用上面的普通 C++ 首课，不需要把同一练习做两遍。
+第一次进入 UE C++，可以按“公共 C++ 基础 → UE 工程地图 → 旋转 Actor → UCPP-1 对象与持有边界 → UCPP-2 容器/名字/转发 → 对象/反射/GC”阅读，再回看模块系统。公共入口复用上面的普通 C++ 首课，不需要把同一练习做两遍。
 
 ## 公共基础之后，补 UE 的约定
 
 现有工程地图、Actor 和下方对象专题可先用来衔接。后续专项前置按以下顺序补齐，逐项解释 UE 在普通 C++ 之外增加了什么：
 
 1. **对象与指针边界（已写，UE 实验待验证）**：[UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，分开普通对象、UObject 与 Actor 的创建、GC 可见持有、弱观察、Outer 与结束协议。
-2. **容器与模板惯用法（待写）**：TArray/TMap、字符串与名字类型、MoveTemp/Forward 等写法怎样回到值类别、容器有效性与模板规则；具体行为按目标版本核对。
+2. **容器与模板惯用法（已写，UE 实验待验证）**：[UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})，把 TArray/TMap 的查询、修改与访问有效性接到 FString/FName/FText、MoveTemp/Forward；含完整自有两文件样例及两个待验证的编译失败变体。
 3. **Delegate 与 Lambda（待写）**：绑定、捕获、弱引用、解绑和延迟执行怎样约束访问对象的寿命。
 4. **UHT/UBT（待补桥）**：复用工程地图、模块和反射专题，补生成文件的生产、消费与模块接线。
 5. **任务线程（待补桥）**：复用线程专题，补任务捕获、对象访问和跨线程数据交接练习。

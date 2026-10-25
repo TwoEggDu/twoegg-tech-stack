@@ -85,7 +85,8 @@ weight: 490
 
 - 已有 [UE 工程地图]({{< relref "engine-toolchain/ufs-03a-project-build-map.md" >}})、[旋转 Actor]({{< relref "engine-toolchain/ufs-03b-first-rotating-actor.md" >}})、对象/反射与 GC 专题，可以衔接最小工程和 UObject 生命周期。
 - **对象专项已写**：[UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，复用已有 Actor、对象和 GC 材料，补 Outer/强持有/弱观察与结束协议；完整自有 UE 样例及步骤已写，UE 编译、运行与 GC 对照待验证。
-- **后续专项**：TArray/TMap 等容器与模板惯用法、Delegate 与 Lambda 的绑定/取消、UHT/UBT 接线，以及任务线程中的数据寿命。
+- **容器与模板专项已写**：[UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})，复用 CXX-04/07，核对引擎容器的访问失效、文本角色及 MoveTemp/Forward 约定；UE 编译和运行待验证。
+- **后续专项**：Delegate 与 Lambda 的绑定/取消、UHT/UBT 接线，以及任务线程中的数据寿命。
 
 重点是重新确认该项目怎样创建、保存和结束对象，不能仅按名字把引擎类型与标准库类型一一替换。
 

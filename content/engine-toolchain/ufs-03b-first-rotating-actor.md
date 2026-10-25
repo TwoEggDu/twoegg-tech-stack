@@ -197,7 +197,7 @@ void ARotatingActor::SetRotationSpeed(float NewDegreesPerSecond)
 
 `EditAnywhere` 与蓝图读写是两组维度。我们不把速度限制为正数，因为稍后要验证零速与反向旋转。`WindowSeconds` 等普通成员没有反射宏，它们仍然是正常 C++ 状态，只是不出现在属性编辑界面。[Property Specifiers](https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-uproperties)、[UFunctions](https://dev.epicgames.com/documentation/unreal-engine/ufunctions-in-unreal-engine)
 
-代码所需类型只读到够用：`FString` 保存本次运行字符串；`TEXT` 创建 TCHAR 字面量，`*FString` 给 `%s` 提供字符指针。`FName` 适合引擎标识，`FText` 适合需要本地化的用户文字，不必为了日志全换成 FText。`FVector` 表达位置/向量，`FRotator` 表达欧拉角；`TArray<T>` 是 UE 容器，动态增容同样需要考虑元素地址失效。本例无需为了练类型额外造容器。
+代码所需类型只读到够用：`FString` 保存本次运行字符串；`TEXT` 创建 TCHAR 字面量，`*FString` 给 `%s` 提供字符指针。`FName` 适合引擎标识，`FText` 适合需要本地化的用户文字，不必为了日志全换成 FText。`FVector` 表达位置/向量，`FRotator` 表达欧拉角；`TArray<T>` 是 UE 容器，动态增容同样需要考虑元素地址失效。本例无需为了练类型额外造容器。进一步的容器访问有效性、名字与显示文本、MoveTemp/Forward 见 [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})；它的两文件普通 C++ 样例可从本课 BeginPlay 调用，UE 编译/运行仍待验证。
 
 ### 构造、CDO、BeginPlay 与 Tick
 
@@ -218,7 +218,7 @@ BeginPlay 用来观察已经进入游戏阶段的当前实例；本例在这里�
 
 这里 `MeshComponent` 是由引擎创建的默认子对象，又有反射可见成员与 Actor 组件关系。不能只记“有 TObjectPtr 就永远不会被回收”：普通局部/未登记字段不会自动成为 GC 根，持有者本身也必须可达。`Outer` 提供对象归属/路径等关系，**不能单靠 `NewObject(..., Outer)` 推出 Outer 无条件强持有全部子对象**。[Object Pointers](https://dev.epicgames.com/documentation/unreal-engine/object-pointers-in-unreal-engine)
 
-对象创建、强弱持有与 Outer 的完整专项桥梁见 [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})；[UObject 系统]({< relref "system-design/ue-01-uobject-system.md" >}) 的无条件 Outer 保活表述已修正，R-03 的工程对照仍待执行。普通 `std::unique_ptr`、`std::shared_ptr`、UE 通用 `TSharedPtr` 都不用于接管 UObject 的 delete；原生资源仍可使用第一课的 RAII。Actor 的 Destroy 是延迟处理的引擎操作，对象的游戏可用性与最终 GC/内存回收要分开观察。[AActor::Destroy](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/AActor/Destroy)
+对象创建、强弱持有与 Outer 的完整专项桥梁见 [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})；[UObject 系统]({{< relref "system-design/ue-01-uobject-system.md" >}}) 的无条件 Outer 保活表述已修正，R-03 的工程对照仍待执行。普通 `std::unique_ptr`、`std::shared_ptr`、UE 通用 `TSharedPtr` 都不用于接管 UObject 的 delete；原生资源仍可使用第一课的 RAII。Actor 的 Destroy 是延迟处理的引擎操作，对象的游戏可用性与最终 GC/内存回收要分开观察。[AActor::Destroy](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/AActor/Destroy)
 
 ## 5. 正常编译，再让它在场景里真正可见
 

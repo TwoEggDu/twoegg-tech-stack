@@ -442,7 +442,7 @@ explicit-instantiation=14
 
 Piccolo 可回到 [模板、宏与反射篇]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})：`tryGetComponent` 的类型参数与运行时名字各有来源，`loadAsset` 则能从输出对象推导类型。本文复用这些已有项目证据，没有重新执行生成器。
 
-UE 继续走 [Unreal 阅读入口]({{< relref "reading/unreal-engine.md" >}}) 与 [UFS 综合练习]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})。本课只建立公共判断方法，UE 的容器、模板惯用法和 Delegate 专项仍按路线计划补齐。
+UE 的容器类型、参数包与 Forward 已接 [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})（UE 实验待验证）；公共推导/转发规则不变，具体包装和诊断按引擎契约核对。Delegate 与其他后续专项继续走 [Unreal 阅读入口]({{< relref "reading/unreal-engine.md" >}})，综合调试可复用 [UFS 首课]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})。
 
 HybridCLR 与 IL2CPP 先接 [从泛型语义到 IL2CPP 代码共享]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}})，再按需进入 [HybridCLR 入口]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) 和 [IL2CPP 入口]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})。C++ 模板的显式实例化练习没有验证 AOT 泛型保留、补充元数据或代码共享；相同的尖括号语法不能作为相同执行机制的证据。
 

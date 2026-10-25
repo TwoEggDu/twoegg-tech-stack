@@ -484,7 +484,7 @@ last-owner=destroyed
 | 路线 | 接下来核对什么 |
 | --- | --- |
 | Piccolo | 在 [对象容器、借用与遍历]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}}) 继续追对象表、局部 shared_ptr 和 ReflectionPtr 组件包装；保留项目中谁删除组件、谁处理渲染移除的具体协议。 |
-| Unreal | 从 [Unreal 阅读入口]({{< relref "reading/unreal-engine.md" >}}) 核对 TArray/TMap、引擎指针和 UObject 的实际约定；标准库失效表不能直接替代引擎容器的文档与源码。 |
+| Unreal | 在 [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}}) 核对 TArray/TMap 的查询、修改和访问有效性，以及 MoveTemp 的额外限制；引擎对象寿命继续按 UE 专项判断。标准库失效表不能直接替代引擎容器契约；UE 实验状态见专项正文。 |
 | HybridCLR | 从 [源码起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) 追参数槽、解释帧、metadata 索引与原生保存位置；C++ 容器元素变化与 runtime 对托管对象、metadata 的寿命规则分别判断。 |
 | IL2CPP | 从 [运行时产物地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}}) 区分生成代码中的原生值、托管对象、句柄和注册表；不能把 std::move 当成 GC 搬迁或托管引用更新。 |
 

@@ -35,7 +35,8 @@ CXX-01～11 的公共正文已齐备，原有四篇材料继续承担综合练�
 从 UObject、反射、序列化与 GC 出发，深入渲染架构、线程模型、Gameplay、网络复制，以及 Mass 的实体组织与调度。
 
 - [UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})：先分清普通对象、UObject 和 Actor 的创建、持有、Outer 与结束协议；正文已写，UE 实验待验证。
-- [架构与系统]({< relref "system-design/unreal-engine-series-index.md" >})：连接对象系统、渲染与线程、Blueprint、GAS 和网络复制。
+- [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})：接公共容器与模板课，核对 UE 的查询、修改、名字/显示与转发约定；UE 实验待验证。
+- [架构与系统]({{< relref "system-design/unreal-engine-series-index.md" >}})：连接对象系统、渲染与线程、Blueprint、GAS 和网络复制。
 - [Mass 深度]({{< relref "system-design/unreal-mass-series-index.md" >}})：理解 Processor、结构变化、LOD，以及 Mass 与 Actor 的协作边界。
 
 ### [Unity｜从开发行为深入引擎机制]({{< relref "reading/unity-engine.md" >}})

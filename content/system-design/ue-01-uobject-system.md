@@ -175,6 +175,8 @@ UMyAsset* Asset = NewObject<UMyAsset>(Pkg, TEXT("MyAsset"));
 
 ---
 
+数组元素、字符串角色与复制语义继续见 [UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})。下方 Inventory 保存对象指针包装，复制数组不会复制出整套 UInventoryItem 对象；ItemName 目前作为原始字符串，若承担稳定标识或可本地化界面文本，应按用途另选 FName/FText。
+
 ## 示例：创建后交给可达的 Character 持有
 
 ```cpp
