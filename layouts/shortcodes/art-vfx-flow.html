@@ -1,0 +1,75 @@
+<figure aria-label="特效素材、组装、空间与时间的原理示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="三段效果与接入时间线，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 690" role="img" aria-labelledby="vfx-flow-title vfx-flow-desc" style="display:block;width:100%;min-width:740px;height:auto">
+      <title id="vfx-flow-title">两张素材，三段效果，两种空间与独立结束判断</title>
+      <desc id="vfx-flow-desc">上方显示Photoshop透明圆点和圆环经PNG、Unity粒子材质与Prefab进入运行实例。中间三栏分别是随杖尖移动的本地空间蓄光、留在释放位置的世界空间碎光、留在预览目标处的世界空间反馈。下方独立预览时间线在0秒开始蓄光，0.5秒触发释放与目标反馈，随后按粒子是否仍存活清理。示意没有真实素材、游戏命中、播放或设备验证结果。</desc>
+      <defs>
+        <marker id="vfx-flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker>
+        <radialGradient id="vfx-flow-soft"><stop offset="0" stop-color="#71a9b9" stop-opacity=".9"/><stop offset="1" stop-color="#71a9b9" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="31" font-size="20" font-weight="600">先定义要传达的信息，再制作与组合</text>
+        <g fill="#f0f4ed" stroke="#c6d0c1">
+          <rect x="22" y="52" width="170" height="76" rx="8"/>
+          <rect x="224" y="52" width="170" height="76" rx="8"/>
+          <rect x="426" y="52" width="170" height="76" rx="8"/>
+          <rect x="628" y="52" width="190" height="76" rx="8"/>
+        </g>
+        <g font-size="16" font-weight="600" text-anchor="middle">
+          <text x="107" y="80">Photoshop PSD</text><text x="309" y="80">RGBA PNG</text>
+          <text x="511" y="80">材质 + 粒子 Prefab</text><text x="723" y="80">运行实例</text>
+        </g>
+        <g font-size="14" text-anchor="middle" fill="#526b58">
+          <text x="107" y="106">柔光圆点 / 空心圆环</text><text x="309" y="106">颜色与透明度</text>
+          <text x="511" y="106">引用、生成、运动、消失</text><text x="723" y="106">位置、时点、取消、清理</text>
+        </g>
+      </g>
+      <g stroke="#728977" stroke-width="2" marker-end="url(#vfx-flow-arrow)">
+        <path d="M196 90H218"/><path d="M398 90H420"/><path d="M600 90H622"/>
+      </g>
+      <g font-family="system-ui, sans-serif">
+        <g fill="#f1f4ee" stroke="#c6d0c1">
+          <rect x="22" y="152" width="250" height="226" rx="10"/>
+          <rect x="295" y="152" width="250" height="226" rx="10"/>
+          <rect x="568" y="152" width="250" height="226" rx="10"/>
+        </g>
+        <g fill="#304b40" font-size="18" font-weight="600">
+          <text x="40" y="184">蓄光 Charge</text><text x="313" y="184">释放 Release</text><text x="586" y="184">目标反馈 Impact</text>
+        </g>
+        <circle cx="147" cy="243" r="45" fill="url(#vfx-flow-soft)"/>
+        <path d="M117 284L147 238" stroke="#9a805f" stroke-width="7" stroke-linecap="round"/>
+        <g fill="#71a9b9"><circle cx="420" cy="241" r="7"/><circle cx="391" cy="218" r="4"/><circle cx="451" cy="210" r="4"/><circle cx="457" cy="260" r="4"/><circle cx="395" cy="272" r="3"/><circle cx="423" cy="206" r="3"/></g>
+        <g stroke="#71a9b9" stroke-width="2" opacity=".65"><path d="M409 231L397 221M431 229L446 214M432 249L452 258M411 251L399 267"/></g>
+        <rect x="673" y="211" width="42" height="73" fill="#dce5d9" stroke="#a4b59e"/>
+        <circle cx="694" cy="245" r="38" fill="none" stroke="#bd9258" stroke-width="5"/>
+        <g fill="#bd9258"><circle cx="649" cy="219" r="3"/><circle cx="738" cy="221" r="3"/><circle cx="743" cy="271" r="3"/><circle cx="655" cy="277" r="3"/></g>
+        <g fill="#435b48" font-size="14">
+          <text x="40" y="312">跟随杖尖 + Local 模拟</text><text x="40" y="337">已出生粒子继续随挂点移动</text><text x="40" y="361">柔光：准备阶段</text>
+          <text x="313" y="312">独立世界实例 + World 模拟</text><text x="313" y="337">读取释放瞬间的位置</text><text x="313" y="361">碎光：强调释放时点</text>
+          <text x="586" y="312">指定预览点 + World 模拟</text><text x="586" y="337">圆环为主体，碎光为辅助</text><text x="586" y="361">本例预览不表示实际命中</text>
+        </g>
+      </g>
+      <path d="M22 400H818" stroke="#cdd7c8"/>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="432" font-size="18" font-weight="600">独立预览时钟（秒）；动画路径改由释放标记触发</text>
+        <text x="22" y="455" font-size="14" fill="#526b58">同一次播放只用一个释放来源；不是完整战斗或伤害时间线</text>
+        <path d="M150 484H790" stroke="#b5c3ae"/>
+        <path d="M150 478V491M417 478V491M737 478V491" stroke="#728977"/>
+        <g font-size="14" text-anchor="middle"><text x="150" y="473">0</text><text x="417" y="473">0.5</text><text x="737" y="473">1.1</text></g>
+        <text x="30" y="516" font-size="15">Charge</text><text x="30" y="551" font-size="15">Release</text><text x="30" y="586" font-size="15">Impact</text>
+        <rect x="150" y="500" width="240" height="22" fill="#a5c3c7" rx="5"/>
+        <rect x="417" y="535" width="187" height="22" fill="#71a9b9" rx="5"/>
+        <rect x="417" y="570" width="320" height="22" fill="#ceb18b" rx="5"/>
+        <path d="M417 492V603" stroke="#9b805c" stroke-dasharray="4 4"/>
+        <g font-size="14" fill="#526b58">
+          <text x="158" y="516">名义寿命 0.45 秒</text>
+          <text x="425" y="551">碎光 0.35 秒</text>
+          <text x="425" y="586">主圆环 0.6 秒；包含子系统一起检查</text>
+          <text x="22" y="635">自然结束：不再产生且无存活粒子 → 清理实例；Duration 不等于整组存活时长。</text>
+          <text x="22" y="663">取消：停止旧计时 + 清理本轮实例；正式游戏中哪些效果继续保留，需要另外约定。</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <figcaption style="font-size:.9rem;color:var(--muted-foreground,#66736a);margin-top:.6rem">原创原理图，图中的圆点和圆环不是 Photoshop 导出素材。时间条为本文参数的名义生命区间，实际播放、事件与清理时间待 Unity 验证。</figcaption>
+</figure>

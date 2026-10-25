@@ -2,7 +2,7 @@
 title: "游戏美术生产与客户端协作"
 slug: "game-art-production-collaboration-series-index"
 date: "2026-10-25"
-description: "沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端，认识美术内容从设计到验收的过程；第 01—07 篇已有正文，其余 5 篇为提纲。"
+description: "沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端，认识美术内容从设计到验收的过程；第 01—08 篇已有正文，其余 4 篇为提纲。"
 weight: 80
 featured: false
 draft: false
@@ -17,14 +17,14 @@ series_entry: true
 series_audience: ["客户端工程师", "美术与技术美术", "内容与工具链维护者"]
 series_level: "入门到进阶"
 series_best_for: "希望理解美术制作过程、看懂交付物并参与客户端联调。"
-series_summary: "通过十二篇章节连接美术制作、交付与运行时表现；第 01—07 篇已有正文，其余 5 篇为提纲。"
+series_summary: "通过十二篇章节连接美术制作、交付与运行时表现；第 01—08 篇已有正文，其余 4 篇为提纲。"
 series_intro: "原画建立视觉方案，角色与场景美术制作资产，绑定和动画让角色运动，地编组织空间，特效表达动作与反馈，TA 和客户端共同支持内容接入与迭代。"
 series_reading_hint: "先读全貌，再沿角色或场景支线进入；已有交接问题时按问题跳转。"
 type: "reading-series"
 topic_key: "delivery"
 reading_lead: "从一张设计稿，到游戏里能行动、能交互的角色与场景。"
 reading_route: ["理解需求与制作", "连接资产与运行表现", "联合验收与修改"]
-reading_status: "第 01—07 篇已有正文，其余 5 篇为提纲。"
+reading_status: "第 01—08 篇已有正文，其余 4 篇为提纲。"
 reading_groups: [{"title": "从需求到视觉方案", "intro": "先认识各岗位的工作关系，再理解设计信息怎样交给后续制作。", "first": 1, "last": 2}, {"title": "让角色成形与运动", "intro": "沿模型、绑定与动画，理解外形、形变和动作怎样连接。", "first": 3, "last": 5}, {"title": "搭建场景与动态反馈", "intro": "制作可组合的场景资产，组织空间，并让特效传达动作与状态。", "first": 6, "last": 8}, {"title": "集成、协作与验收", "intro": "理解 TA 和客户端的工作，用统一示例汇合产物并检查结果。", "first": 9, "last": 12}]
 ---
 
@@ -40,7 +40,7 @@ reading_groups: [{"title": "从需求到视觉方案", "intro": "先认识各岗
 - **模型与动作**：在角色、绑定、动画和场景资产章节，介绍 3ds Max / Maya 怎样制作与导出，再追到引擎中预览和检查。
 - **组装与运行**：在[第 10 篇客户端接入]({{< relref "delivery-engineering/game-art-production-10-client-integration.md" >}})连接导入资产、材质、动作、模板和运行实例，[第 11 篇综合示例]({{< relref "delivery-engineering/game-art-production-11-integrated-example.md" >}})串起全过程与修改回流。
 
-**工具链内容正在补齐**：第 01 篇介绍软件分工与文件流转，第 02 篇展开 Photoshop 分层制作与参考图交付，第 03 篇用法杖串起建模、UV、贴图及 Unity 静态资产接入，第 04 篇分别介绍 Maya 与 3ds Max 的建骨、蒙皮与权重，再接 FBX 和 Unity 变形检查；第 05 篇沿待机、施法、受击，讲 Maya / Max 关键帧、曲线与烘焙导出，以及 Unity 播放、混合、打断和时点；第 06 篇用墙、门框和地板，介绍 Maya / Max 建模、枢轴、UV、Photoshop 平铺贴图，再接 Unity 材质、Prefab、碰撞与拼装检查；第 07 篇继续用庭院讲 Unity 模块搭建、路线与视线、Terrain、光照，以及 CharacterController、NavMesh 和 Cinemachine 的独立走查。其余章节的提纲已加入工具与文件传递安排。当前操作方案已核对官方资料，软件实操、素材工程、操作截图与引擎实验仍待完成。
+**工具链内容正在补齐**：第 01 篇介绍软件分工与文件流转，第 02 篇展开 Photoshop 分层制作与参考图交付，第 03 篇用法杖串起建模、UV、贴图及 Unity 静态资产接入，第 04 篇分别介绍 Maya 与 3ds Max 的建骨、蒙皮与权重，再接 FBX 和 Unity 变形检查；第 05 篇沿待机、施法、受击，讲 Maya / Max 关键帧、曲线与烘焙导出，以及 Unity 播放、混合、打断和时点；第 06 篇用墙、门框和地板，介绍 Maya / Max 建模、枢轴、UV、Photoshop 平铺贴图，再接 Unity 材质、Prefab、碰撞与拼装检查；第 07 篇继续用庭院讲 Unity 模块搭建、路线与视线、Terrain、光照，以及 CharacterController、NavMesh 和 Cinemachine 的独立走查；第 08 篇从 Photoshop RGBA 素材到 Unity 粒子、材质、三段效果 Prefab，再接挂点、动画事件、取消与结束。其余章节的提纲已加入工具与文件传递安排。当前操作方案已核对官方资料，软件实操、素材工程、操作截图与引擎实验仍待完成。
 
 ## 内容怎样汇合 {#workflow}
 
