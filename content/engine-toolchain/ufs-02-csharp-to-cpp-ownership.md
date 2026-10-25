@@ -349,6 +349,8 @@ dtor local
 
 `Twice<int>(7)` 先把模板参数 `T` 换成 `int`，再看函数体是否支持 `+`。`std::vector<int>` 是元素为 int 的容器，`std::unique_ptr<Tracked>` 是以 Tracked 为目标类型的拥有者。模板与 C# 泛型有语法相似处，但不是 CLR 泛型运行模型；这里先做到能读“参数类型、约束来自哪些运算、返回什么”。
 
+推导、函数重载与特化、类型工具和转发的完整公共解释，见 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}})。其中的显式实例化练习也能接回本课的头文件与链接判断；这里保留 Twice 与综合工程，继续练习实际断点和资源责任。
+
 ## 7. 故意制造两类失败，留下根因而不只留下报错
 
 ### 7.1 有声明、缺定义：链接失败

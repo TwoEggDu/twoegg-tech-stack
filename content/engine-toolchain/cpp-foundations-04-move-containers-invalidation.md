@@ -530,6 +530,6 @@ if ($LASTEXITCODE -ne 0) { throw 'run failed' }
 
 本篇不包含四条路线的实际引擎构建/断点、异常回滚、分配失败、性能测量、并发修改或 GC 行为验证。没有读取失效指针或使用失效迭代器，也没有以来源对象“看起来为空”推导一般移动保证。
 
-按补写顺序，下一篇整理 **CXX-07：模板调用怎样选择实现**，继续讲推导、特化与常见类型工具。此前可先回看 [Piccolo 模板、宏与反射材料]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})，完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按补写顺序，下一篇进入 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}})，继续讲推导、特化与常见类型工具。项目应用可回看 [Piccolo 模板、宏与反射材料]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})，完整顺序见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **操作之后，重新确认访问是否有效，再确认它是否仍然代表你要找的对象。**
