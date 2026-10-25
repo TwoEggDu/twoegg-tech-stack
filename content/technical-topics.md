@@ -93,6 +93,7 @@ topic_groups:
     title: "交付与线上运营"
     hint: "内容、构建、CI、发布与反馈"
     entries:
+      - { title: "美术生产与客户端协作", page: "delivery-engineering/game-art-production-collaboration-series-index.md" }
       - { title: "交付总论", page: "delivery-engineering/delivery-overview-series-index.md" }
       - { title: "工程基础", page: "delivery-engineering/delivery-engineering-foundation-series-index.md" }
       - { title: "内容生产与配置", page: "delivery-engineering/delivery-content-pipeline-series-index.md" }

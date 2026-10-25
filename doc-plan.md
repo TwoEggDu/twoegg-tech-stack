@@ -124,6 +124,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
+| 游戏美术生产与客户端协作 | [docs/game-art-production-collaboration-series-plan.md](./docs/game-art-production-collaboration-series-plan.md) | 首页及 12 篇章节提纲已建立；正文待写，本地落地待发布 | 沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端接入组织，综合示例与联合验收收束 |
 | Unity 游戏更新与发布 | [docs/unity-game-update-release-series-plan.md](./docs/unity-game-update-release-series-plan.md) | 首页与七篇提纲已建立，正文待写 | 从首次整包、线上修复与内容更新串联版本绑定、构建、强更热更和发布回退；由 YooAsset 首页交叉进入 |
 | 长线运营工程专栏 | [docs/live-ops-engineering-column-plan.md](./docs/live-ops-engineering-column-plan.md) | 已拆出 | 产品生命周期视角 |
 | 质量护栏 / Quality Guardrails | [docs/quality-guardrails-series-plan.md](./docs/quality-guardrails-series-plan.md) | 已拆出 | 质量门、验证与回归 |
@@ -156,7 +157,7 @@
 | 系列六：AI 与游戏逻辑 | 暂存归档 |
 | 系列七·A / 七·C：软件工程基础、通用数据结构与算法 | 暂存归档 |
 | 系列九：UI / UX 系统 | 暂存归档 |
-| 系列十：美术协作桥梁 | 暂存归档 |
+| 系列十：美术协作桥梁 | 岗位制作与客户端协作主线已进入[新系列规划](./docs/game-art-production-collaboration-series-plan.md)；其余工具专项候选保留归档 |
 | 系列十一：Unreal 架构 / GAS / 网络 / 编辑器扩展 | 暂存归档 |
 | 系列十二：Unity 网络 | 暂存归档 |
 | 系列十五 / 十五·B：本地化与 Accessibility | 暂存归档 |
@@ -174,7 +175,7 @@
 
 - 第一优先级：`系列二（Unity 渲染）`、`系列二·A（URP 深度）`、`系列四·F（Shader 变体工程）`
 - 第二优先级：`系列十一（Unreal 主线）`、`系列十七（CI / CD）`、`系列十六（安全）`
-- 第三优先级：`系列零（历史总论）`、`系列九（UI / UX）`、`系列十（美术协作桥梁）`
+- 第三优先级：`系列零（历史总论）`、`系列九（UI / UX）`、`系列十（美术协作桥梁剩余专项；岗位制作与协作主线已独立规划）`
 
 这样拆分的原则是：
 
