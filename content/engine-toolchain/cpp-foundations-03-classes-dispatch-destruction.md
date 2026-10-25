@@ -442,6 +442,6 @@ g++ -std=c++17 -O0 -g -Wall -Wextra -Wpedantic lookup_dispatch.cpp -o lookup_dis
 
 资料依据为 C++17 工作草案 N4659，核对日期为 2026-10-25。独立程序不包含四个引擎或运行时的实际构建、断点观察、跨平台验证与性能测试；项目结论继续以各路线的源码基线和验证记录为准。
 
-按当前补写顺序，下一步整理 **CXX-10：源文件怎样成为正在调试的程序**，先补声明、定义、翻译单元、链接与符号。正文尚待整理，可以先做 [UFS 综合编译与调试练习]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})，完整知识顺序和缺口见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按当前补写顺序，下一步进入 [CXX-10：源文件怎样成为正在调试的程序]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})，用同一个三文件工程练习声明、定义、翻译单元、链接、静态库与断点。完整知识顺序和缺口见 [C++ 公共基础目录]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **先确定调用处选中的声明，再沿对象来源和当前阶段找到真正执行的实现。**

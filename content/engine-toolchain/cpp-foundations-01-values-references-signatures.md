@@ -354,7 +354,7 @@ if ($LASTEXITCODE -ne 0) { throw 'compile or link failed' }
 if ($LASTEXITCODE -ne 0) { throw 'run failed' }
 ```
 
-这条 `g++` 命令调用编译和链接步骤，成功后运行本次生成的程序。不要在构建失败后继续运行遗留的旧 exe；也不要加 `-DNDEBUG`，否则 `assert` 检查会被关闭。头文件、翻译单元、目标文件与链接的完整练习继续见 [UFS 首课]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}})，后续公共 CXX-10 再统一展开。
+这条 `g++` 命令调用编译和链接步骤，成功后运行本次生成的程序。不要在构建失败后继续运行遗留的旧 exe；也不要加 `-DNDEBUG`，否则 `assert` 检查会被关闭。头文件、翻译单元、目标文件、库与符号的公共规则和完整练习，继续读 [CXX-10：源文件怎样成为正在调试的程序]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})；[UFS 首课]({{< relref "engine-toolchain/ufs-02-csharp-to-cpp-ownership.md" >}}) 保留 UE 路线的综合编译与调试练习。
 
 先预测，再对照这十行输出：
 

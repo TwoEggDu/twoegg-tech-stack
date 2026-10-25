@@ -30,6 +30,8 @@ series_order: 2.5
 
 如果这个问题不先补出来，后面再看 Unity 里的 `Script Debugging`、`Development Build`、`Debug.isDebugBuild` 和 `Deep Profile`，很容易继续把不同层的能力混成一个词。
 
+想先把原生符号与源码映射实际走一遍，可以做 [CXX-10 的多文件工程与 GDB 练习]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})，核对目标文件、实际 exe、源码路径、调用栈与参数。这里继续解释调试的分层，以及托管运行时增加的协作要求。
+
 ## 这篇要回答什么？
 
 这篇只回答五个问题：
