@@ -2,7 +2,7 @@
 title: "游戏美术生产与客户端协作"
 slug: "game-art-production-collaboration-series-index"
 date: "2026-10-25"
-description: "沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端，认识美术内容从设计到验收的过程；第 01 篇已有正文，其余 11 篇为提纲。"
+description: "沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端，认识美术内容从设计到验收的过程；第 01—02 篇已有正文，其余 10 篇为提纲。"
 weight: 80
 featured: false
 draft: false
@@ -17,14 +17,14 @@ series_entry: true
 series_audience: ["客户端工程师", "美术与技术美术", "内容与工具链维护者"]
 series_level: "入门到进阶"
 series_best_for: "希望理解美术制作过程、看懂交付物并参与客户端联调。"
-series_summary: "通过十二篇章节连接美术制作、交付与运行时表现；第 01 篇已有正文，其余 11 篇为提纲。"
+series_summary: "通过十二篇章节连接美术制作、交付与运行时表现；第 01—02 篇已有正文，其余 10 篇为提纲。"
 series_intro: "原画建立视觉方案，角色与场景美术制作资产，绑定和动画让角色运动，地编组织空间，特效表达动作与反馈，TA 和客户端共同支持内容接入与迭代。"
 series_reading_hint: "先读全貌，再沿角色或场景支线进入；已有交接问题时按问题跳转。"
 type: "reading-series"
 topic_key: "delivery"
 reading_lead: "从一张设计稿，到游戏里能行动、能交互的角色与场景。"
 reading_route: ["理解需求与制作", "连接资产与运行表现", "联合验收与修改"]
-reading_status: "第 01 篇已有正文，其余 11 篇为提纲。"
+reading_status: "第 01—02 篇已有正文，其余 10 篇为提纲。"
 reading_groups: [{"title": "从需求到视觉方案", "intro": "先认识各岗位的工作关系，再理解设计信息怎样交给后续制作。", "first": 1, "last": 2}, {"title": "让角色成形与运动", "intro": "沿模型、绑定与动画，理解外形、形变和动作怎样连接。", "first": 3, "last": 5}, {"title": "搭建场景与动态反馈", "intro": "制作可组合的场景资产，组织空间，并让特效传达动作与状态。", "first": 6, "last": 8}, {"title": "集成、协作与验收", "intro": "理解 TA 和客户端的工作，用统一示例汇合产物并检查结果。", "first": 9, "last": 12}]
 ---
 

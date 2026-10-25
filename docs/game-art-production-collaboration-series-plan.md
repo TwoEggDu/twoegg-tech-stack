@@ -1,7 +1,7 @@
 # 游戏美术生产与客户端协作：系列规划
 
 > 创建：2026-10-25。用户已选择 **12 篇正文 + 1 个系列首页**；用户于同日确认本设计并要求落地；首页与 12 篇章节提纲现已建立。
-> 状态：首页与 12 篇章节已建立并推送；第 01 篇正文已在本地成稿，其余 11 篇仍为提纲。教学工程与运行验证待完成。
+> 状态：首页与 12 篇章节已建立并推送；第 01 篇正文已推送，第 02 篇正文已在本地成稿，其余 10 篇仍为提纲。教学工程与运行验证待完成。
 > 本文件是本系列唯一的篇级规划。根 `doc-plan.md` 只保留系列路由；具体开写时再建立单篇执行提纲。
 
 ## 1. 定位、读者与边界
@@ -64,7 +64,7 @@
 
 - 主要面向希望理解美术制作的客户端工程师，以及需要认识上下游工作的美术与 TA。
 - 以实时 3D 游戏为主要语境，先讲通用模型，再落到具体工具和引擎。
-- 首页当前显示：**第 01 篇已有正文，其余 11 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
+- 首页当前显示：**第 01—02 篇已有正文，其余 10 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
 
 ### 2.3 页面从上到下的结构
 
@@ -173,6 +173,8 @@ flowchart TD
 **边界：** 本篇建立地图；制作方法分别进入 02—08，流程门禁深入阅读已有交付专题。
 
 ### 02｜原画：怎样把视觉想法变成可制作的设计
+
+**当前状态：** 正文已写，含原创轮廓与庭院几何示意；参考公开原画资料，未执行灰模、DCC 或引擎验证。
 
 **核心问题：** 下游需要哪些设计信息，才能持续制作而不是反复猜测？
 
@@ -369,12 +371,12 @@ flowchart TD
 
 ### 6.2 篇级页面与状态
 
-以下页面已建立；第 01 篇为正文，其余 11 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
+以下页面已建立；第 01—02 篇为正文，其余 10 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
 
 | 编号 | 章节页面 | 状态 |
 | --- | --- | --- |
-| 01 | [game-art-production-01-overview.md](../content/delivery-engineering/game-art-production-01-overview.md) | 正文已写，本地稿；教学推演，未作引擎运行验证 |
-| 02 | [game-art-production-02-concept-art.md](../content/delivery-engineering/game-art-production-02-concept-art.md) | 提纲已建立；正文待写 |
+| 01 | [game-art-production-01-overview.md](../content/delivery-engineering/game-art-production-01-overview.md) | 正文已写并推送；教学推演，未作引擎运行验证 |
+| 02 | [game-art-production-02-concept-art.md](../content/delivery-engineering/game-art-production-02-concept-art.md) | 正文已写，本地稿；示意与教学推演，未作引擎验证 |
 | 03 | [game-art-production-03-character-assets.md](../content/delivery-engineering/game-art-production-03-character-assets.md) | 提纲已建立；正文待写 |
 | 04 | [game-art-production-04-rigging-skinning.md](../content/delivery-engineering/game-art-production-04-rigging-skinning.md) | 提纲已建立；正文待写 |
 | 05 | [game-art-production-05-animation.md](../content/delivery-engineering/game-art-production-05-animation.md) | 提纲已建立；正文待写 |

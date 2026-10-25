@@ -1,0 +1,63 @@
+{{ $kind := .Get "kind" }}
+{{ if eq $kind "character" }}
+<figure aria-label="三个持杖角色的轮廓方向教学示意">
+  <div role="region" aria-label="轮廓方向比较，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 350" role="img" aria-labelledby="concept-character-title concept-character-desc" style="display:block;width:100%;min-width:620px;height:auto">
+      <title id="concept-character-title">宽肩短杖、窄身高杖与宽披风弯杖</title>
+      <desc id="concept-character-desc">三个几何剪影比较肩部、身体、披风与法杖的外轮廓。教学示例暂选 B 方向继续细化，不代表经过游戏镜头测试的最终方案。</desc>
+      <rect x="275" y="16" width="230" height="315" rx="8" fill="#edf2ed" stroke="#9cae9e"/>
+      <g fill="#2f4c41">
+        <g transform="translate(55 0)">
+          <circle cx="85" cy="73" r="20"/><path d="M35 110 70 96H100L135 110 122 170 110 248H60L48 170Z"/>
+          <path d="M57 237H77V270H49ZM92 237H110L120 270H92Z"/>
+          <path d="M120 124 153 151 148 165 113 150Z"/>
+          <rect x="150" y="137" width="8" height="134"/><path d="M139 132 154 109 169 132 154 145Z"/>
+        </g>
+        <g transform="translate(310 0)">
+          <circle cx="68" cy="73" r="19"/><path d="M46 105 68 96 91 105 101 248H35Z"/>
+          <path d="M45 235H60V270H37ZM76 235H92L100 270H76Z"/>
+          <path d="M87 124 127 151 122 165 83 148Z"/>
+          <rect x="127" y="70" width="7" height="201"/><path d="M116 59 130 32 144 59 130 78Z"/>
+        </g>
+        <g transform="translate(560 0)">
+          <circle cx="65" cy="73" r="20"/><path d="M39 105 65 96 92 105 126 248H4Z"/>
+          <path d="M40 235H58V270H32ZM75 235H94L102 270H75Z"/>
+          <path d="M85 124 132 151 127 166 80 148Z"/>
+          <path d="M132 270V87Q132 43 163 43Q185 43 178 67L168 63Q172 53 162 53Q142 53 142 87V270Z"/>
+        </g>
+      </g>
+      <g fill="#2f4c41" font-family="system-ui, sans-serif" font-size="17" text-anchor="middle">
+        <text x="150" y="301">A · 宽肩 / 短杖</text><text x="390" y="301">B · 窄身 / 高杖</text><text x="640" y="301">C · 宽披风 / 弯杖</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption>原创几何示意：比较轮廓方向，B 仅是本文继续讨论的候选，不是已验证的设计稿。</figcaption>
+</figure>
+{{ else if eq $kind "courtyard" }}
+<figure aria-label="遗迹庭院空间与构件的教学示意">
+  <div role="region" aria-label="庭院平面关系，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" role="img" aria-labelledby="concept-courtyard-title concept-courtyard-desc" style="display:block;width:100%;min-width:620px;height:auto">
+      <title id="concept-courtyard-title">入口、通行区域、目标区与背景建筑的关系</title>
+      <desc id="concept-courtyard-desc">矩形庭院的底部留出入口，中央为待讨论的通行区域，上部为目标区与背景建筑。右侧列出墙段、柱与地面等构件。图中没有确定尺寸或验证路线。</desc>
+      <g stroke="#879d8b" stroke-width="2" fill="#f1f4ed">
+        <path d="M225 350H60V45H535V350H370" fill="none" stroke-width="14"/>
+        <rect x="135" y="75" width="325" height="55" rx="4"/>
+        <rect x="210" y="155" width="175" height="65" rx="8" fill="#dce8dc"/>
+        <rect x="105" y="175" width="40" height="65"/><rect x="450" y="175" width="40" height="65"/>
+        <rect x="600" y="90" width="115" height="30"/>
+        <rect x="642" y="165" width="30" height="65"/>
+        <rect x="605" y="285" width="105" height="40"/>
+      </g>
+      <path d="M295 345V230" stroke="#728c78" stroke-dasharray="7 5" stroke-width="2"/>
+      <g font-family="system-ui, sans-serif" font-size="17" text-anchor="middle" fill="#2f4c41">
+        <text x="298" y="110">背景建筑</text><text x="298" y="194">目标区</text>
+        <text x="295" y="282">通行区域</text><text x="295" y="377">入口</text>
+        <text x="657" y="70">候选构件</text><text x="657" y="145">墙段</text><text x="657" y="255">柱</text><text x="657" y="353">地面</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption>原创平面关系示意：把空间和构件拿出来讨论；尺寸、可达性、视线与镜头均待后续验证。</figcaption>
+</figure>
+{{ else }}
+  {{ errorf "Unknown art-concept-sketch kind: %s" $kind }}
+{{ end }}
