@@ -78,6 +78,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 游戏引擎架构地图 | [docs/game-engine-architecture-series-plan.md](./docs/game-engine-architecture-series-plan.md) | 已拆出 | 系列定义层 |
+| 游戏引擎公共基础 | [docs/game-engine-foundations-series-plan.md](./docs/game-engine-foundations-series-plan.md) | 28 个课程单元已规划；2 个选读复用、23 个待补桥、3 个待写，课程验收待开展 | 参考 GAMES104，按公共底座 → 系统补充 → Piccolo / Unity / Unreal 分流；原文保留归属，篇级范围、复用、依赖与阅读顺序由本课程 plan 维护 |
 | Piccolo 源码阅读与调试 | [docs/piccolo-engine-series-plan.md](./docs/piccolo-engine-series-plan.md) | 主线 00—08 与四篇前置共 13 篇正文；配置与生成实测通过，完整构建/运行待验证 | 从架构、前置和构建基线进入启动、对象恢复、渲染与编辑器；01 记录实际工具链、生成结果和第三方 Debug 编译阻塞，分别维护源码、构建与运行证据 |
 | UE 全栈工程师成长路线 | [docs/ue-fullstack-expert-series-plan.md](./docs/ue-fullstack-expert-series-plan.md) | 规划已建立，实践待验证 | 从 Unity/C# 经验进入 UE 客户端、权威战斗服、业务后端与交付；只管理贯通路径和新增桥梁，复用 Unreal、技能、服务端、渲染与交付专题；[盘点快照](./docs/ue-fullstack-content-audit.md) |
 | 游戏引擎架构地图执行计划 | [docs/game-engine-architecture-series-execution-plan.md](./docs/game-engine-architecture-series-execution-plan.md) | 执行层已拆出 | 6 周执行顺序与证据需求 |
