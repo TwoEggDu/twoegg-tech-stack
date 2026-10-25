@@ -50,7 +50,7 @@ topic_key: engine
 
 理解引擎的整体分层，以及对象规模、数据布局和执行成本怎样影响系统设计。
 
-- [游戏引擎架构地图]({{< relref "system-design/game-engine-architecture-series-index.md" >}})：把内容生产、世界模型、运行时基础、专业子系统、资产与发布放回同一张地图。
+- [游戏引擎架构地图]({{< relref "system-design/game-engine-architecture-series-index.md" >}})：从模板编辑、角色状态与内容交付认识职责和交接；索引可按问题跳读，职责表不代表运行顺序。
 - [00A：引擎怎样分层——职责、依赖与资源服务的边界]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}})：用引擎无关模型辨认框架、专业系统、Core、平台与资源服务；把接口依赖、数据流和生命周期分开。
 - [数据导向运行时]({{< relref "engine-toolchain/data-oriented-runtime-series-index.md" >}})：沿数据布局、结构变化、调度和表示层边界，理解 DOTS、Mass 与自研 ECS 的共同问题。
 - [数据导向实战案例]({{< relref "system-design/dod-case-series-index.md" >}})：通过 RTS 单位管理、弹幕与混合架构，讨论适用范围。

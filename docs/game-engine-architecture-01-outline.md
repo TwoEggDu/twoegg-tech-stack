@@ -1,5 +1,7 @@
 # 游戏引擎架构地图 01｜详细提纲：为什么游戏引擎首先是一套内容生产工具
 
+> 历史初稿提纲：2026-10-25修订后，当前范围以[系列规划](game-engine-architecture-series-plan.md)和[修订工作单](game-engine-architecture-revision-outline.md)为准。以下固定结构与旧结论保留作历史参考，不再作为正文要求。
+
 ## 本提纲用途
 
 - 对应文章：`01`

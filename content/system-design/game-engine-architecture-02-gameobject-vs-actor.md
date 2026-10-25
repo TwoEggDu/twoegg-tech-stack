@@ -15,391 +15,115 @@ tags:
 series: "游戏引擎架构地图"
 ---
 
-> 这篇只回答一个问题：`Unity 和 Unreal 默认怎么组织“世界里的对象”，以及这种差异为什么会影响后续架构。`  
-> 它不展开 GC、反射、任务系统、DOTS / Mass、网络复制和平台抽象，只先把默认对象世界这层压清楚。
+场景里有两个外观相同的角色：甲由玩家控制，乙由 AI 控制。它们共用一份网格和动画资产，位置、血量和当前动作却不同。玩家换人时，我们希望控制关系转移，而不是把角色、输入和世界状态一起拆掉重建。
 
-先说明这篇的证据边界。
+这个例子比“GameObject 是否等于 Actor”更能暴露问题。理解对象世界，需要分清**世界成员、组件组合、空间关系、控制关系和共享资产**；这些关系有时连接同一批对象，却不是同一种关系。
 
-当前这版首稿只使用官方文档证据。`docs/engine-source-roots.md` 里 Unity 和 Unreal 的源码根路径都还不是 `READY`，所以下文里凡是“事实”，都只落在官方资料明确写出来的范围；凡是“判断”，都会明确写成工程判断，而不是伪装成源码结论。
+> **范围与依据**：本文先给引擎无关模型，再用 Unity 2022.3 与 Unreal Engine 5.6 官方资料映射。结构图是自有教学例子，未进行源码或运行验证。本文讨论的世界组织职责不等于统一编译层级，也不决定所有对象的更新、线程或销毁顺序；接口依赖的读法见 [00A]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}})。
 
-## 这篇要回答什么
+## 先问清楚对象之间是哪一种关系
 
-很多人第一次比较 Unity 和 Unreal 时，最容易问的一句话是：
+一个角色进入场景以后，通常要回答下面的问题：
 
-`GameObject 和 Actor 到底是不是一回事？`
+| 关系 | 在角色例子中的含义 | 不应自动推出的结论 |
+| --- | --- | --- |
+| 世界成员关系 | 甲属于当前活动世界或场景 | 磁盘上的模板也是一个活动角色 |
+| 组件组合关系 | 甲有移动、动画和显示能力 | 每个组件都拥有独立线程 |
+| 空间父子关系 | 武器位置跟随角色的某个节点 | 被挂接对象的业务寿命一定完全相同 |
+| 控制关系 | 玩家或 AI 向甲发送意图 | 输入来源必须存放在角色身体内部 |
+| 资产引用关系 | 甲、乙使用同一网格和动画 | 两者共享当前位置、血量或动画播放进度 |
 
-这句话的问题，不是完全错，而是太快跳到了类名对照。
+这些关系的实现可以是对象指针、句柄、标识表，也可以是 ECS 查询。世界模型首先需要给出稳定的身份与操作规则：对象怎样进入世界、系统怎样找到它、何时允许修改，以及离开世界后旧引用怎样失效。
 
-因为只盯着两个名词，你会自动漏掉更关键的几层背景：
+组件组合解决能力如何分配；游戏框架则进一步规定角色之间如何合作。例如，移动组件可以接受方向和速度，而“这个方向来自玩家还是 AI”可以由另一段控制逻辑决定。通用组件机制与默认玩法分工因此是两个比较维度。
 
-- 这些对象先被放进什么样的世界容器里
-- 它们靠什么方式挂接能力
-- 它们怎样进入运行状态
-- 默认 gameplay 框架是不是已经被提前写进对象世界
+## 教学例子：两个角色怎样共享内容、保持独立状态
 
-所以这篇真正要回答的问题不是：
+下面是一种设计。箭头上的文字标明关系；它们不表示函数调用、更新先后或 C++ 继承。
 
-`GameObject 能不能和 Actor 一一翻译。`
+```mermaid
+flowchart TB
+    World["活动世界"] -->|包含| A["角色甲：身份与实例状态"]
+    World -->|包含| B["角色乙：身份与实例状态"]
+    Player["玩家控制逻辑"] -->|发送意图| A
+    AI["AI 控制逻辑"] -->|发送意图| B
+    A -->|组合| MoveA["甲的移动组件"]
+    A -->|组合| PoseA["甲的动画状态"]
+    A -->|组合| VisualA["甲的显示组件"]
+    B -->|组合| VisualB["乙的显示组件"]
+    VisualA -->|引用| Mesh["共享网格资产"]
+    VisualB -->|引用| Mesh
+```
 
-而是：
+图中只画了乙的一部分组件，避免重复。甲的移动组件保存本次移动所需状态，动画组件保存当前片段和播放位置；共享网格保存可复用内容。两个角色可以使用相同资产，同时处在不同位置、播放不同动作。
 
-`两台引擎默认如何组织“世界里的对象”，以及这种差异为什么会影响后续架构。`
+如果甲被删除，框架先结束甲参与世界活动的资格，并安排它的组件和专业表示退出。乙仍然使用网格时，共享资产不能因为甲离开就立即销毁；即使没有角色使用，缓存与设备任务也可能继续持有它。具体资源边界见 [00A 的资源服务讨论]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}})。
 
-这个问题值得单独拆出来，是因为后面很多更具体的讨论都会依赖它。
+如果玩家改为控制乙，本例只改变“控制逻辑→角色”的关系。是否还要转移镜头、输入上下文或 UI，由应用规则决定，不应从一次控制关系切换推断所有对象的寿命都相同。
 
-比如：
+再加一把武器时，要另外决定它是角色内部组件、子对象，还是可独立存在的世界对象。空间上跟随角色，无法单独回答丢弃武器后谁继续持有它。由此也能看出，画一棵对象树还不足以说明全部生命周期。
 
-- 为什么 Unreal 会天然多出 `Pawn / Controller / GameMode / GameState`
-- 为什么 Unity 更容易被描述成 `Scene -> GameObject -> Component`
-- 为什么两边都支持组件化，却仍然不能说“本质一样”
+## Unity：场景成员与 Transform 层级分开理解
 
-如果这一层一开始就被压成术语表，后面关于运行时、数据导向扩展、复制和平台抽象的讨论就会一直串题。
+Unity 的 GameObject 是组件容器，功能由挂接的组件表达；每个 GameObject 带有 Transform。角色能力可以通过移动脚本、动画、碰撞和显示组件组合起来。[Unity 2022.3：GameObject](https://docs.unity3d.com/2022.3/Documentation/Manual/class-GameObject.html)
 
-## 这一层负责什么
+从世界模型看，可以先这样拆：
 
-先看这层到底在回答什么。
+```text
+Scene：包含场景中的 GameObject
+GameObject：挂接各类 Component
+Transform：表达位置、旋转、缩放及父子关系
+MonoBehaviour：提供用户脚本组件的回调入口
+```
 
-我更愿意把“世界模型层”理解成下面五个问题的组合：
+这里没有把 Hierarchy 窗口放进运行时对象链。Hierarchy 是显示和操作场景对象的编辑器视图；父子关系通过 Transform 建立。窗口还可以同时显示多个 Scene，因此不能把“窗口里的整棵树”直接视为一个独立运行时世界容器。[Unity 2022.3：Hierarchy 中的对象与父子关系](https://docs.unity3d.com/2022.3/Documentation/Manual/Hierarchy.html)
 
-1. 世界入口是什么。
-2. 世界里允许存在哪些基础对象。
-3. 对象靠什么方式组合能力。
-4. 对象怎样进入运行状态。
-5. 默认 gameplay 框架是否已经嵌进对象世界。
+把前面的例子映射到 Unity，可以让角色根 GameObject 挂移动脚本，外观子对象负责模型显示，独立的控制代码把意图交给移动逻辑。这个结构是项目设计，不是 Unity 要求所有角色必须采用的固定模板。
 
-如果先把两边压成一张最小对照表，它更接近这样：
+它的优势在于可以从通用组件组合开始；相应地，团队需要明确玩家、身体、控制来源和比赛规则之间的关系。如果这些职责最初都写在一个 MonoBehaviour 中，后续“切换控制角色”可能就会同时触发输入、相机和角色状态的修改。问题来自项目契约的耦合，不能仅凭类名归因于组件化模型。
 
-| 对照维度 | Unity 默认入口 | Unreal 默认入口 | 这层真正要分清什么 |
-| --- | --- | --- | --- |
-| 世界容器 | Scene / Hierarchy | World / Level | 世界先由什么单位承载 |
-| 基础对象 | GameObject | Actor | 世界里“对象”默认长成什么 |
-| 组合方式 | Component / MonoBehaviour | Component | 行为和能力怎样挂到对象上 |
-| 运行入口 | MonoBehaviour 生命周期 | Actor lifecycle / BeginPlay | 对象怎样进入运行状态 |
-| 默认框架 | 不先显式给出一组玩法角色类型 | Pawn / Controller / GameMode / GameState | gameplay 框架是不是默认就写进世界结构里 |
+### 生命周期给出阶段保证，不给出任意对象间的总顺序
 
-从官方文档能直接成立的事实是：
+Unity 通过 `Awake`、`OnEnable`、`Start` 等回调暴露对象初始化和启用阶段。需要保留条件：`OnEnable` 要求对象处于活动状态且行为启用；同一对象的 `Awake` 在它的 `OnEnable` 之前。场景初始对象的阶段关系，也不能原样套到运行时任意创建的对象上。[Unity 2022.3：事件函数执行顺序](https://docs.unity3d.com/2022.3/Documentation/Manual/ExecutionOrder.html)
 
-- Unity 官方确实把 Scene、Hierarchy、GameObject、Component、MonoBehaviour 讲成一条默认对象组织链。
-- Unreal 官方确实把 World、Level、Actor、Component、Actor lifecycle、GameFramework 讲成一套显式结构。
+例如，甲在自己的 `OnEnable` 中访问乙，不能仅因为两者同属一个 Scene，就假定乙已完成所有初始化。跨对象依赖应通过明确的装配、就绪条件或阶段协议表达。Transform 的父子关系同样不保证父子脚本的同名更新函数按树顺序执行。
 
-基于这些事实，我在这篇里先给出的判断是：
+## Unreal：World、Actor 与玩法框架分别提供什么
 
-`世界模型层不是“对象系统”这个泛词，而是回答“世界靠什么被组织起来”的一整层。`
+Unreal 显式区分 World、Level 与 Actor：World 组织 Levels 并涉及流式加载和动态 Actor 创建；Actor 是可放入 Level 的对象。组件为 Actor 提供能力，而 Pawn、Controller、GameMode、GameState 又进一步提供玩法分工。[Unreal Engine 5.6：术语与对象框架](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-terminology?application_version=5.6)
 
-也就是说，这一层关心的不是某个类有没有某个接口，而是：
+这里最值得保留的差别，是 Unreal 为“谁控制身体、谁管理规则、谁承载共享游戏状态”提供了内建角色：
 
-- 对象先站在什么容器里
-- 行为先挂在什么节点上
-- 运行入口从哪里暴露出来
-- 引擎有没有默认给你一套玩法角色脚手架
+- Pawn 表达可被控制的游戏化身，Controller 与其建立控制关系。
+- GameMode 表达游戏规则；具体项目继续定义规则内容。
+- GameState 承载需要向客户端同步的游戏状态；它并不代替每个角色自己的状态。
 
-## 这一层不负责什么
+在前面的换人例子中，Pawn 与 Controller 的分工给出一个现成的检查入口。实际项目仍要定义镜头、输入与角色能力切换时的行为；存在框架类，不代表这些产品规则会自动齐备。
 
-边界先压清，不然后面一定会滑坡。
+这也不意味着所有 Actor 都是 Pawn。关卡道具或环境对象可以有完全不同的用途；“世界里可存在的对象”和“可被控制的角色”必须保留各自范围。
 
-这篇明确不做下面几件事：
+### 创建路径与结束使用都要沿生命周期解释
 
-- 不把 `Scene / World`、`GameObject / Actor` 写成字典式一一映射
-- 不解释 `GC`、`Reflection`、`IL2CPP`、`Blueprint VM`、`Task Graph` 的内部机制
-- 不展开 `DOTS / Mass` 怎样改写默认对象世界
-- 不把 `网络复制`、`所有权`、`状态同步` 的实现细节写透
-- 不做 “Unity 更简单” 或 “Unreal 更高级” 的产品判断
-- 不写任何创建 Actor、创建 GameObject、挂组件、点编辑器按钮的教程
+Unreal 的 Actor Lifecycle 文档区分从磁盘加载、编辑器中复制到游玩世界、动态生成等路径，并列出相应初始化阶段；这些路径不能压成一个对所有场景都成立的构造函数顺序。文档也区分 EndPlay 与后续垃圾回收等阶段。[Unreal Engine 5.6：Actor Lifecycle](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-actor-lifecycle?application_version=5.6)
 
-为什么必须克制？
+这给对象阅读提供了一个实用问题：我们现在追的是“内存里有了一个对象”，还是“对象已经加入可运行世界”，抑或“对象已结束参与但内存尚未回收”？若混成同一时刻，就很难解释清理回调、旧引用以及延迟释放。
 
-因为只要把运行时底座、数据导向扩展、网络和平台细节一起揉进来，这篇就会从“世界模型文章”直接塌成百科。
+Unity 同样有创建、启用、停止使用和内存回收之间的区别。真正要比较的是两边分别暴露了哪些契约，以及项目代码依赖了哪项保证，而不是用回调数量判断哪一方的生命周期更完整。
 
-而这篇真正要站住的，只是一个更基础的问题：
+## 怎样比较两种默认对象世界
 
-`默认对象世界到底是怎么被组织起来的。`
+| 要解决的问题 | Unity 的常见落点 | Unreal 的常见落点 |
+| --- | --- | --- |
+| 对象属于哪里 | Scene 与场景对象 | World、Level 与 Actor |
+| 怎样组合能力 | GameObject 上的组件 | Actor 上的组件 |
+| 怎样表达空间关系 | Transform 父子关系 | 场景组件及其挂接关系 |
+| 谁组织玩家与身体的关系 | 项目建立控制契约 | 可从 Controller / Pawn 分工继续扩展 |
+| 怎样进入和退出运行 | 对象与组件的生命周期协议 | Actor 与组件的世界接入协议 |
 
-## Unity 怎么做
+表格比较职责，不构成逐项替换清单。两边都能建立复杂游戏框架，区别之一在于哪些角色关系由引擎直接命名、哪些需要项目选择。即使使用同一台引擎，不同项目也可能采用不同的控制与状态组织方式。
 
-先看 Unity 官方文档给出的默认对象链。
+读陌生对象代码时，可以带着角色例子检查三个动作：**生成一个角色、转移它的控制来源、删除它**。每个动作都写下世界身份、组件关系、共享资产和专业表示分别发生了什么。这样得到的模型，比一张 GameObject/Actor 词汇对照表更能支持后续调试。
 
-### Scene 是 Unity 默认对象世界的入口
+[01：内容生产]({{< relref "system-design/game-engine-architecture-01-content-production.md" >}}) 解释角色描述如何制作；[03：运行时底座]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}}) 接着解释对象和执行机制。以后读 [07：DOTS 与 Mass]({{< relref "system-design/game-engine-architecture-07-dots-and-mass.md" >}})，再检查身份、存储和更新方式怎样改变。
 
-从 Unity 手册里能直接看到，`Scene` 被描述为承载游戏环境和菜单的单位；Hierarchy 窗口则用来显示和管理场景中的每个 `GameObject`。
-
-这意味着，Unity 官方默认先给你的世界入口，更接近：
-
-`Scene -> Hierarchy -> GameObject hierarchy`
-
-这里能直接成立的事实是：
-
-- Scene 是一个独立的场景单位。
-- Hierarchy 会显示并组织当前场景里的对象。
-- Transform 会保存位置、旋转、缩放和 parent-child 关系，从而形成对象层级。
-
-基于这些事实，我的判断是：
-
-`Unity 默认先把“世界”理解成一个场景中的对象层级，而不是先给出一组 gameplay 角色分工。`
-
-### GameObject 是基础对象节点，但它本身更像容器
-
-Unity 官方对 `GameObject` 的描述非常直接。
-
-它可以代表角色、道具、场景物件，但它本身主要是 `Components` 的容器。每个 GameObject 都一定带有 `Transform`，这一点不能被移除。
-
-这组事实很重要，因为它说明 Unity 的默认对象节点天然带着两层含义：
-
-- 它先是一个“在场景里占位置”的对象节点
-- 然后才是一个“可继续挂接能力”的容器
-
-所以更接近事实的说法不是：
-
-`Unity 里先有一组预定义的玩法角色。`
-
-而是：
-
-`Unity 里先有对象节点，再靠组件去拼对象的能力。`
-
-### Component 和 MonoBehaviour 共同构成默认行为挂接方式
-
-从 Unity 官方 API 还能直接看到：
-
-- `Component` 永远附着在某个 `GameObject` 上
-- `MonoBehaviour` 始终作为 GameObject 的一个 Component 存在
-
-这两句看起来很基础，但它们刚好定义了 Unity 默认对象世界的行为挂接方式。
-
-也就是说，Unity 默认不是先把“玩家角色”“控制器”“规则管理者”这些玩法角色写进对象结构，而是先给一个通用对象节点，再用：
-
-- 组件
-- 脚本组件
-- Transform hierarchy
-
-把对象逐步拼出来。
-
-基于这些事实，我在这里的判断是：
-
-`Unity 的默认对象模型更接近“对象节点 + 组件组合 + 脚本组件”的组织方式。`
-
-### MonoBehaviour 生命周期是默认对象世界进入运行状态的主要暴露面
-
-Unity 官方文档把 `Awake`、`OnEnable`、`Start`、`Update` 这些事件顺序写得很明确。
-
-这意味着，Unity 默认对象世界怎样“活起来”，主要是通过挂在对象上的脚本生命周期暴露出来的。
-
-能直接落下的事实包括：
-
-- `Awake` 会先于 `Start`
-- `OnEnable` 会在对象启用或实例创建后调用
-- 场景对象的脚本事件顺序有明确的官方定义
-
-基于这些事实，我的判断是：
-
-`Unity 默认对象世界的运行入口，主要暴露为附着在对象上的脚本生命周期，而不是先通过一组玩法框架角色来分工。`
-
-把这一节收成一句话，就是：
-
-`Unity 默认对象世界更像“场景里的组件化对象层级”，核心问题是对象节点怎样靠组件和脚本组件被组织与驱动。`
-
-这还不是 `DOTS`，也不是在讲 `GC` 或脚本后端。
-
-## Unreal 怎么做
-
-再看 Unreal 官方文档给出的默认对象链。
-
-### World / Level 是 Unreal 显式写出来的世界容器
-
-从 Unreal 官方术语文档里能直接看到：
-
-- `Level` 被定义为 gameplay area，并保存成独立的 `.umap`
-- `World` 被定义为容纳所有 Levels 的容器，并负责 level streaming 与动态 Actor 的 spawning
-
-这和 Unity 的差异，不只是换了两个名词，而是世界容器本身被讲得更显式。
-
-能直接成立的事实是：
-
-- Unreal 先明确区分世界容器和放进容器里的对象
-- World / Level 不是一个模糊背景，而是默认对象世界的正式入口
-
-基于这些事实，我的判断是：
-
-`Unreal 对“世界容器”讲得比 Unity 更显式，先有 World / Level，再谈能放进去的对象。`
-
-### Actor 是世界中的对象，但它从一开始就嵌进了更强的世界语义
-
-Unreal 官方把 `Actor` 定义为可以放进 level 的对象，并明确说明 Actor 可以在 gameplay 中被创建和销毁。
-
-更重要的是，官方还把 `Actor Lifecycle` 单独写成一份完整文档，把 load、spawn、initialize、BeginPlay 这些路径展开说明。
-
-这说明一件事：
-
-`Actor` 在 Unreal 里不是一个孤立的“对象容器名词”，它默认站在更完整的 world / level / lifecycle 管线里。
-
-所以我在这里愿意先下的判断是：
-
-`Actor 不是 GameObject 的简单换名，因为它从一开始就挂在更显式的世界容器和运行入口之下。`
-
-### Component 依附 Actor，但 Unreal 的默认对象世界不止于“Actor + Component”
-
-Unreal 官方同样说明 `Component` 不能独立存在，必须附着在 `Actor` 上。
-
-看到这里，很容易产生一个误解：
-
-`那不就是和 Unity 一样，也是对象加组件吗？`
-
-这句话只说对了一半。
-
-对的部分在于：
-
-- 两边都允许把能力挂到对象上
-
-不够的部分在于：
-
-- Unreal 官方把组件关系放进了更强的 Actor 生命周期与世界接入流程里
-- `PreInitializeComponents`、`InitializeComponent`、`PostInitializeComponents`、`BeginPlay` 这些阶段说明，它不是一个单纯的通用容器模型
-
-所以更稳妥的判断是：
-
-`Unreal 也有组合式对象，但它把这种组合放进了更明确的世界接入和生命周期管线，而不只是一个通用组件容器模型。`
-
-### Pawn / Controller / GameMode / GameState 把默认 gameplay framework 提前写进对象世界
-
-这一点是 Unreal 和 Unity 最不该被压平的地方。
-
-从 Unreal 官方文档能直接看到：
-
-- `Pawn` 是 `Actor` 的子类，可以被 `possess`
-- `PlayerController` 负责接收玩家输入，并常常 possess 一个 Pawn 或 Character
-- `GameMode` 负责游戏规则
-- `GameState` 负责保存并同步给客户端的游戏状态
-
-这组事实意味着，Unreal 默认对象世界不只是在说：
-
-`世界里有很多对象。`
-
-它还在更早的位置就写进了：
-
-- 谁代表玩家或 AI 的身体
-- 谁接输入
-- 谁管理规则
-- 谁承载共享状态
-
-基于这些事实，我的判断是：
-
-`Unreal 默认对象世界从一开始就不只是“对象集合”，而是“世界容器 + Actor 对象 + 组件组合 + gameplay framework”的框架化组织。`
-
-把这一节收成一句话，就是：
-
-`Unreal 默认对象世界更像一套带脚手架的世界框架，而不是只有对象节点和组件关系。`
-
-这还不是在讲网络复制实现，也不是在讲反射、GC、Blueprint VM 的底层机制。
-
-## 为什么不是表面 API 差异
-
-把前面两节再压一次，至少能先分出三个层面的差异。
-
-### 第一层差异：世界入口不同
-
-Unity 默认更接近：
-
-`Scene -> Hierarchy -> GameObject`
-
-Unreal 默认更接近：
-
-`World -> Level -> Actor`
-
-这不是单纯的词不同，而是对象先被放进什么样的世界容器不同。
-
-### 第二层差异：运行入口不同
-
-Unity 默认更强调挂在对象上的 `MonoBehaviour` 生命周期。
-
-Unreal 默认更强调 `Actor lifecycle` 与 `BeginPlay` 这类世界接入路径。
-
-这意味着，两边对象怎样进入运行状态，主暴露面并不一样。
-
-### 第三层差异：默认 gameplay 脚手架不同
-
-Unity 默认不会先显式给出 `Pawn / Controller / GameMode / GameState` 这组类型。
-
-Unreal 则把这些 gameplay framework 角色明确写进官方体系。
-
-这就是为什么我不愿意把结论写成：
-
-`GameObject 和 Actor 本质一样，只是命名习惯不同。`
-
-更稳的说法是：
-
-`GameObject 和 Actor 都能承载组件，但两边真正不同的是对象如何被放进世界、怎样进入运行、是否已经预留默认玩法框架。`
-
-## 常见误解
-
-### 误解一：Actor 就是 GameObject 的换皮
-
-这句话太粗。
-
-它忽略了 Unreal 同时显式给出 `World / Level`、`Actor lifecycle` 和 `gameplay framework` 这套结构。  
-如果只看“都能挂组件”，就会把真正的世界组织差异抹掉。
-
-### 误解二：Unity 没有 gameplay framework，所以它只是对象和组件的堆叠
-
-这也不准确。
-
-这篇只是在说：Unity 官方默认入口没有像 Unreal 那样先显式摆出 `Pawn / Controller / GameMode / GameState` 这组框架角色。  
-这不等于 Unity 上层不能组织出自己的 gameplay framework。
-
-### 误解三：Scene 就等于 World，GameObject 就等于 Actor
-
-这些名词站在不同组织层级，不能直接做字典映射。
-
-更准确的做法是先问：
-
-- 它是世界容器，还是对象节点
-- 它是组合单位，还是运行入口
-- 它是不是默认框架的一部分
-
-### 误解四：两边都有 Component，所以默认对象世界本质一样
-
-组件相似，不等于世界容器、生命周期入口和默认玩法脚手架相同。
-
-真正需要分清的是：
-
-`组件是挂在什么世界组织方式上的。`
-
-### 误解五：这一篇应该顺手把复制、GC、DOTS、Mass 一起讲完
-
-不应该。
-
-这些问题分别属于后面的文章：
-
-- `03` 处理运行时底座
-- `07` 处理数据导向扩展
-
-如果这一篇把所有话题一起抢写，它就不再是世界模型文章了。
-
-## 我的结论
-
-先重申这篇能直接成立的事实。
-
-- Unity 官方文档支持一条默认对象组织链：`Scene -> GameObject -> Component / MonoBehaviour -> Transform hierarchy`
-- Unreal 官方文档支持一条更显式的默认对象组织链：`World -> Level -> Actor -> Component + Gameplay Framework`
-- 当前本地源码路径还没有任何 `READY` 标记，因此这篇不能声称自己做了源码级验证
-
-基于这些事实，我在这篇里愿意先给出的工程判断是：
-
-`Unity 的默认对象世界更接近“场景里的组件化对象层级”；Unreal 的默认对象世界更接近“世界容器 + Actor 对象 + 组件组合 + gameplay framework”的框架化组织。`
-
-因此，`GameObject` 和 `Actor` 不能只在名词层面对照。
-
-两边真正的差异，更接近：
-
-- 默认从什么容器进入世界
-- 行为主要挂在什么地方
-- 对象怎样进入运行状态
-- gameplay 框架是不是默认就被写进对象世界
-
-也正因为如此，这篇最值得记住的一句话不是：
-
-`Actor 比 GameObject 更高级。`
-
-而是：
-
-`它们分别挂在两套不同的默认对象世界里，所以后面连带长出来的运行时结构、玩法脚手架和工程习惯也会不同。`
-
-下一篇 `03` 会继续回答：这些对象世界背后的脚本、反射、GC、任务系统，到底站在引擎的哪一层。  
-到 `07` 时，再回头看 `DOTS / Mass` 怎样改写默认对象世界，就会更容易看出它们为什么不是普通模块。
+**对象世界的差别，要从容器、关系、状态归属与生命周期契约中读出来，类名只是进入这些问题的入口。**

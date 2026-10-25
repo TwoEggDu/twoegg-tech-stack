@@ -68,4 +68,4 @@
 - 两份Mermaid源码：第一图7个职责节点、10条接口依赖边，静态遍历无环，并核对禁止的平台/Core向上依赖；第二图9条数据交接边。只检查本文声明的图，不代表任何引擎真实依赖图无环。
 - 生成页包含两份language-mermaid代码块，引用原共享site.js；该脚本按code.language-mermaid查找并调用Mermaid初始化/渲染。没有新增图形依赖；未做浏览器目视、Mermaid实际解析或SVG渲染验收。
 - 新文章与提纲的空白、结尾换行和冲突标记检查通过；相关tracked文件的git diff --check通过。未暂存、提交或推送，未改无关文件。
-- 正文SHA-256：`409a4600a1bc90799f3b6c0330bb03ec876d20f2c84592f97f9e3df52981cb0d`。
+- 上述验证对应初次发布版本，正文SHA-256：`409a4600a1bc90799f3b6c0330bb03ec876d20f2c84592f97f9e3df52981cb0d`。同日后续系列修订调整了00/00A衔接与GEF-02入口，当前验证见[修订工作单](game-engine-architecture-revision-outline.md)，不得将此旧散列当作当前正文。

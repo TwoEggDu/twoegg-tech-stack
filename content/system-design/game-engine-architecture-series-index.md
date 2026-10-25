@@ -22,11 +22,22 @@ series_audience:
   - "技术负责人"
 series_level: "入门到进阶"
 series_best_for: "当你想把内容生产、运行时、专业子系统和跨平台抽象放回同一张引擎分层地图里"
-series_summary: "把游戏引擎从内容生产、运行时基础、专业子系统到平台抽象接成一张总地图。"
-series_intro: '这组文章不是介绍"引擎有哪些模块"，而是先回答现代游戏引擎到底该怎么分层，哪些系统是内容生产工具，哪些是运行时基础设施，哪些是专业子系统，哪些又属于平台抽象。它更像一套认知地图，而不是模块清单。'
-series_reading_hint: '第一次读建议先看00总论，再读00A的职责、接口依赖与资源边界，随后按内容生产、世界模型、运行时基础、专业子系统和平台抽象深入。'
+series_summary: "用职责、接口与数据交接认识引擎，再用模板编辑、角色状态和内容交付追清各部分怎样协作。"
+series_intro: '从一个具体变化进入引擎，找出谁持有状态、谁提供接口、谁消费结果和谁负责清理。先用00建立职责地图，再用00A区分接口依赖与资源边界，随后结合Unity、Unreal等公开资料解释具体选择。'
+series_reading_hint: '第一次读可从火球导读进入00和00A；有具体问题时按问题跳读。职责分类和阅读顺序都不代表引擎的严格运行流水线。'
 ---
-[00A：引擎怎样分层——职责、依赖与资源服务的边界]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}) 是本系列的引擎无关原理补篇：用两张不同语义的图，分别解释接口依赖与资源数据交接。它提出一套阅读和设计的参考模型，不把任何一种目录组织当作行业标准。
+第一次接触这个主题，可以从[火球导读]({{< relref "rendering/player-input-and-game-content-to-screen.md" >}})认识内容、实例和画面的关系，再读[00职责地图]({{< relref "system-design/game-engine-architecture-00-overview.md" >}})与[00A接口依赖和资源边界]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}})。这些图是阅读与设计的参考模型，不把某一种目录组织当作行业标准。
+
+## 按问题阅读
+
+| 当前想弄清什么 | 入口与例子 |
+| --- | --- |
+| 修改内容怎样进入世界 | [01内容生产]({{< relref "system-design/game-engine-architecture-01-content-production.md" >}})的模板改值 → [02对象世界]({{< relref "system-design/game-engine-architecture-02-gameobject-vs-actor.md" >}})的角色、组件与共享资产 |
+| 系统怎样执行和交接结果 | [03运行机制]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}})的动画任务 → [04专业系统]({{< relref "system-design/game-engine-architecture-04-professional-subsystems.md" >}})的角色落地 |
+| 资源怎样交付，平台差异放哪里 | [05资产与交付]({{< relref "system-design/game-engine-architecture-05-asset-and-delivery.md" >}})的产物分支 → [06平台适配]({{< relref "system-design/game-engine-architecture-06-platform-abstraction.md" >}})的能力和降级 |
+| 批量数据处理会改变哪些设计 | [07 DOTS与Mass]({{< relref "system-design/game-engine-architecture-07-dots-and-mass.md" >}})的创作数据、实体更新和专业表示 |
+
+需要时间与生命周期模型时，接[GEF-02：启动、帧循环与退出]({{< relref "engine-toolchain/game-engine-foundations-02-startup-frame-shutdown.md" >}})；需要追真实代码时，进入[Piccolo系列]({{< relref "reading/piccolo-engine.md" >}})。两者分别补公共原理与具体实现，不把概念图当作某台引擎的调用链。
 
 {{< series-directory >}}
 

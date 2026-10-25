@@ -1,5 +1,7 @@
 # 游戏引擎架构地图系列执行计划
 
+> 历史六周计划：2026-10-25已有正文修订后，当前篇级状态以[系列规划](game-engine-architecture-series-plan.md)为准，执行与验证见[修订工作单](game-engine-architecture-revision-outline.md)。以下首稿顺序和固定结构只保留历史参考，不再指挥当前写作。
+
 ## 这份计划解决什么
 
 上一版规划已经回答了“这组文章写什么”。
