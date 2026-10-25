@@ -329,6 +329,8 @@ expired after last owner=true
 
 还要保留一条内存边界：目标已经析构，不等于与共享管理有关的所有存储都已回收。弱引用仍需要管理信息来判断能否提升；`make_shared` 的实现还可能将对象与管理信息放在同一块分配中，使那块分配保留到弱引用不再需要它为止。这不代表目标仍可访问，也不是本例测出的分配次数或回收时点。[make_shared 创建规则](https://eel.is/c++draft/util.smartptr.shared.create)
 
+如果拥有者被捕获进回调，还要追它保存和复制到了哪里。[CXX-05：行为怎样被保存并稍后调用]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}}) 用独立程序对比 this、强/弱捕获及取消订阅后仍然存在的任务副本，继续应用这里的保活模型。
+
 ## 5. 强引用环：每个对象都在等待别人先放手
 
 共享拥有还有一个结构问题。假设 A 的成员强持有 B，B 的成员又强持有 A。外部拥有者全部退出后，A 和 B 的强持有计数仍然不为零；双方都等不到“最后一份强持有结束”。

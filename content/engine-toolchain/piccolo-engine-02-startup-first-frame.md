@@ -10,14 +10,14 @@ tags:
   - "源码阅读"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 6
+series_order: 9
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "从启动走到第一帧：初始化、世界加载与退出怎样衔接"
 reading_summary: "从真实入口出发，辨认基础设施、世界加载、首帧推进与退出清理之间的依赖。"
 reading_index: "reading/piccolo-engine.md"
-weight: 500
+weight: 503
 ---
 
 接手一台陌生引擎，找到 `main()` 通常不难。困难在于：哪些函数只是把系统建起来，哪些函数才把场景变成对象，第一帧又从哪里开始？如果启动后没有看到预期场景，应该先查路径、对象加载，还是渲染？

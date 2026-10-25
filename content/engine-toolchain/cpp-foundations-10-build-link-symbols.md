@@ -391,6 +391,6 @@ gdb .\build\frame-demo.exe
 
 本篇不包含四个引擎/运行时的工程构建、MSVC GUI 操作、动态库加载、跨语言调用、跨平台 ABI 或性能测试。实际工具链命令和故障诊断属于这次实验，语言规则和项目验证需要分别阅读。
 
-按当前补写顺序，下一篇是 **CXX-05：行为怎样被保存并稍后调用**，继续讲函数指针、Lambda、捕获与回调寿命；完整知识目录见 [C++ 公共基础入口]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
+按当前补写顺序，下一篇进入 [CXX-05：行为怎样被保存并稍后调用]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}})，继续讲函数指针、Lambda、捕获与回调寿命；完整知识目录见 [C++ 公共基础入口]({{< relref "engine-toolchain/cpp-foundations-series-index.md" >}})。
 
 **先确认代码进入了哪份产物，再用匹配的调试信息解释它正在怎样执行。**

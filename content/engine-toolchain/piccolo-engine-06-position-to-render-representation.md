@@ -10,14 +10,14 @@ tags:
   - "数据追踪"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 10
+series_order: 13
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "改一个位置，怎样沿逻辑数据追到渲染表示"
 reading_summary: "固定一个对象、一次写入和一个 part，追清位置何时成为当前值、何时交接，以及怎样更新相应渲染实体。"
 reading_index: "reading/piccolo-engine.md"
-weight: 504
+weight: 507
 ---
 
 给一个对象改了位置，怎样证明渲染系统也收到了这个变化？只看到 setter 被调用，或者看到 Transform 的某个字段已经变化，还不足以回答这个问题。中间可能隔着当前与下一份缓冲、脏描述、交接条件，以及另一套用于绘制的对象表示。
@@ -29,6 +29,8 @@ weight: 504
 > **读这篇之前**：建议读过 [03 一帧执行]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})、[04 场景对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})。[05 资源与类型恢复]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}}) 说明初始字段怎样进入组件；[渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}}) 提供后续 Pass 与呈现的完整地图。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 06。以下是依据真实资源与源码建立的条件推导，不是已执行的场景修改、断点快照或画面验收。本次未构建、运行 Piccolo，也未进行图形捕获。
+
+> 两种缓冲的角色、描述复制与可见节点借用，以及跨线程所需的额外协议，见 [状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})。
 
 ## 先固定对象、改动与观察终点
 
@@ -308,6 +310,11 @@ for (auto& entity : m_render_scene->m_render_entities)
 
 ## 继续阅读
 
+- [10：刚体与碰撞查询怎样参与角色运动]({{< relref "engine-toolchain/piccolo-engine-10-rigidbody-collision-character-motion.md" >}})：将同一份 Transform 接到刚体姿态和缩放重建，区分渲染更新与物理清理时点。
+- [09：从一次按键到角色位移]({{< relref "engine-toolchain/piccolo-engine-09-input-motor-character-movement.md" >}})：将位置写入接到输入命令、Motor 与控制器，并按实际组件顺序核对 current/next 与渲染描述。
+- [18：编辑器怎样拾取、创建和删除场景对象]({{< relref "engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md" >}})：沿 instance ID 反查逻辑对象，再核对创建和删除怎样改变两端状态，以及多部件删除的实际范围。
+- [15：网格与纹理怎样从文件成为 GPU 资源]({{< relref "engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md" >}})：核对只改实例矩阵时为何命中既有资源，以及首次创建时的解码、上传与寿命边界。
+- [11：相机怎样跟随角色，并把视角交给渲染系统]({{< relref "engine-toolchain/piccolo-engine-11-camera-follow-render-view.md" >}})：与本篇的模型矩阵 M 对照，追角色状态怎样成为观察矩阵 V，以及投影 P 怎样更新。
 - [一帧怎样推进]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})：回看系统顺序、交换就绪条件与线程边界。
 - [场景文件怎样成为世界中的对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})：回看 Wall_1 的组件来源与运行身份。
 - [从场景对象到一帧画面]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}})：继续理解可见节点之后的 Pass、绘制与呈现。

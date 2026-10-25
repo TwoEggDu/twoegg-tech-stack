@@ -10,14 +10,14 @@ tags:
   - "序列化"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 9
+series_order: 12
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "资源、类型信息与序列化怎样共同恢复对象"
 reading_summary: "区分按已知类型读字段与按类型名构造对象，追清生成代码、运行时注册和资源恢复之间的连接。"
 reading_index: "reading/piccolo-engine.md"
-weight: 503
+weight: 506
 ---
 
 上一章已经把一面墙从关卡记录追到了 GObject 和组件列表，但还留着一个关键问题：文件里只有字符串和数字，引擎怎样知道应该构造 TransformComponent，又怎样把 position 写进正确的 C++ 字段？
@@ -293,6 +293,8 @@ static Json write(const Reflection::ReflectionPtr<T>& instance)
 这样读完之后，资源、反射和序列化就不再只是三个目录名，而是一条能逐步核对的路径：调用者确定资源结构，生成代码读写字段，多态位置用注册表选择具体类型，业务层再把恢复出的状态接成可运行的对象。
 
 ## 继续阅读
+
+- [14 Lua 脚本、组件与反射调用]({{< relref "engine-toolchain/piccolo-engine-14-lua-component-reflection.md" >}})：沿运行时字段路径与无参方法，核对同一套元信息怎样服务脚本。
 
 - [改一个位置，怎样沿逻辑数据追到渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}})：从已恢复的 Wall_1 出发，追踪变换缓冲、脏描述与渲染实体中的具体值。
 - [场景文件怎样成为世界中的对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})：回看实例、定义合并与组件接线。

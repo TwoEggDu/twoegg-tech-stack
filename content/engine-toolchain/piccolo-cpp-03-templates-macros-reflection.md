@@ -460,6 +460,10 @@ g++ -std=c++17 -E -P meta_bridge.cpp -o meta_bridge.ii
 
 ## 继续阅读
 
+- [14：Lua 脚本怎样读写组件并调用引擎方法]({{< relref "engine-toolchain/piccolo-engine-14-lua-component-reflection.md" >}})：沿默认 Player 的三个绑定，观察字段名、类型元组和方法访问器怎样服务脚本，并核对生命周期与业务消费边界。
+
+- [对象容器修改后，持有者、借用与遍历怎样变化]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})：继续区分容器中的包装、所指对象与遍历有效性。
+
 - [读懂渲染管线：从场景对象到一帧画面]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}})：用这些 C++ 阅读基础继续追踪渲染表示、Pass、绘制与呈现。
 - [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})：回看基类接口、具体对象与覆盖实现。
 - [智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})：区分指针包装、保活关系与显式删除。

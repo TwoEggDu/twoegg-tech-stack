@@ -10,14 +10,14 @@ tags:
   - "图形基础"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 4
+series_order: 7
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "读懂渲染管线：从场景对象到一帧画面"
 reading_summary: "把场景状态、CPU 组织的绘制工作、GPU 产生的图像与最终呈现接成一条链。"
 reading_index: "reading/piccolo-engine.md"
-weight: 498
+weight: 501
 ---
 
 在场景里移动一个物体，屏幕上的物体也跟着移动，看起来像是坐标变化直接改变了画面。但对于引擎，改坐标只是起点：它还要把状态交给渲染系统，决定哪些内容值得绘制，准备资源和命令，让 GPU 计算图像，最后把图像交给呈现系统。
@@ -110,6 +110,8 @@ logic_swap_data.addDirtyGameObject(GameObjectDesc {m_parent_object.lock()->getID
 
 `processSwapData()` 检查资源是否已经加载，必要时读取网格和材质数据，并通过 [RenderResource][render-resource] 取得或创建图形资源。后续收到位置变化时，不应据此推断每次都重新从磁盘加载网格、上传所有纹理。
 
+具体缓存粒度、CPU 载荷、暂存上传与设备绑定，见 [15：网格与纹理怎样从文件成为 GPU 资源]({{< relref "engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md" >}})。该篇还区分材质缓存与独立纹理缓存，以及对象删除与共享资源释放。
+
 这一步解释了为什么“世界里有对象”还不足以让它出现在画面中：它需要有有效的渲染表示和可用资源，然后才能进入后面的筛选与绘制。
 
 ## 第三步：按相机和光源生成可见列表
@@ -128,6 +130,8 @@ m_render_pipeline->preparePassData(m_render_resource);
 这几行分别处理变化、准备命令上下文、更新每帧数据、计算可见节点，再准备各 Pass 数据。`prepareContext()` 不能单凭名字就读成“已经画完了一帧”。
 
 [RenderScene::updateVisibleObjectsMainCamera()][render-scene] 计算相机的投影与观察矩阵，构造视锥，对变换后的实体包围盒做相交测试，通过后建立 `RenderMeshNode`，关联模型矩阵、网格与材质资源。
+
+这些相机数据怎样从角色跟随产生，见 [11：相机怎样跟随角色，并把视角交给渲染系统]({{< relref "engine-toolchain/piccolo-engine-11-camera-follow-render-view.md" >}})。该篇分别追视点计算、描述交接、视图来源与 FOV 生效条件，再回到这里的筛选和顶点变换。
 
 **视锥可以先理解为相机观察的空间范围。** 包围盒测试用于粗筛：完全在范围外的内容不必进入这份主相机列表。但通过测试不表示对象的每一部分都在屏幕内，更不表示它一定贡献最终可见像素。它还可能被其他物体挡住，在后续裁剪、深度测试或其他条件下不留下结果。
 
@@ -181,6 +185,8 @@ flowchart TD
 [MainCameraPass::setupRenderPass()][main-pass] 定义 G-buffer、深度、颜色处理中间附件与交换链附件；合成 UI 子阶段的输出附件指向交换链图像，其最终布局采用 `PRESENT_SRC_KHR`。
 
 Shader 中也能看到这个交接：[mesh_gbuffer.frag][gbuffer-frag] 把材质与法线相关数据编码到三个 G-buffer 输出；[deferred_lighting.frag][lighting-frag] 则通过 `subpassInput` 与 `subpassLoad()` 读取 G-buffer 和深度，再进行后续计算。
+
+表面属性怎样与光源、阴影和环境照明共同形成场景颜色，见 [16：材质、光照与阴影怎样共同决定表面颜色]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})。该篇沿默认延迟路径区分已消费字段、方向光可见性和各项光照贡献，不把材质字段存在等同于功能已经生效。
 
 阅读“读上一阶段的图像”时，不要自动认定存在一次把整张图复制到新纹理的操作。图像如何成为附件、怎样被后续阶段读取，以及必要的布局与同步关系，要结合具体 API 组织判断。
 
@@ -285,6 +291,9 @@ gl_Position = proj_view_matrix * vec4(out_world_position, 1.0f);
 这篇建立完整地图。后续“改一个位置”的案例会沿某个对象逐值追踪；Pass 与 Vulkan 深挖再展开局部资源、依赖和提交细节。实际调试与图形捕获留到工程实践时补充。
 
 ## 继续阅读
+
+- [17：场景颜色怎样经过后处理成为最终画面]({{< relref "engine-toolchain/piccolo-engine-17-post-processing-final-frame.md" >}})：补齐浮点场景颜色之后的曲线、FXAA、UI 与交换链输出，核对 LUT 当前透传和附件复用。
+- [从 GLSL 到 GPU：用 Piccolo 串起渲染引擎、API 与系统]({{< relref "rendering/piccolo-rendering-02-shader-api-driver-gpu.md" >}})：继续追着色程序的编译产物、数据接口，以及命令离开引擎后的驱动与系统职责；包含独立 Shader 编译验证。
 
 - [从启动走到第一帧：初始化、世界加载与退出怎样衔接]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}})：把渲染链接回程序入口，核对默认世界何时加载、首帧由谁推进以及怎样退出。
 - [Piccolo 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}})：把渲染放回世界、资源与编辑器的协作关系。

@@ -10,14 +10,14 @@ tags:
   - "场景恢复"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 12
+series_order: 15
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "编辑器怎样修改、保存并恢复场景状态"
 reading_summary: "从反射面板写入一路追到关卡文件和对象重建，分清内容字段、运行缓冲、实例覆盖和保存结果。"
 reading_index: "reading/piccolo-engine.md"
-weight: 506
+weight: 509
 ---
 
 在编辑器里移动一面墙，看到画面变化，按下保存，再重新加载场景。这组操作看起来很自然，却跨过了几套不同的数据：面板正在编辑的字段、逻辑更新正在读取的值、渲染系统收到的表示，以及文件里真正留下的描述。
@@ -26,7 +26,7 @@ weight: 506
 
 本篇继续使用 Wall_1。前面几篇说明它怎样被建立、修改和绘制；这里把编辑器操作接入这条链，再检查保存结果究竟覆盖哪些内容。
 
-> **读这篇之前**：建议读过 [04 场景对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})、[05 资源与类型恢复]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}}) 和 [06 位置变化与渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}})。[07 Pass 与 Vulkan 提交]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}}) 说明 UI 位于渲染调用链的哪里。
+> **读这篇之前**：建议读过 [04 场景对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})、[05 资源与类型恢复]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}}) 和 [06 位置变化与渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}})。[07 Pass 与 Vulkan 提交]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}}) 说明 UI 位于渲染调用链的哪里；属性面板中的 Lambda 与窗口输入接线见 [窗口与编辑器回调怎样绑定、调用和注销]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 08，内容来自源码、资源和生成模板核对。文中的状态表与保存结果为条件推导；未构建、运行 Piccolo，未执行场景编辑、文件保存或重载，也未运行解析器生成代码。
 
@@ -340,6 +340,10 @@ flowchart TD
 
 ## 继续阅读
 
+- [14 Lua 脚本、组件与反射调用]({{< relref "engine-toolchain/piccolo-engine-14-lua-component-reflection.md" >}})：区分脚本直接赋值、业务 setter、运行时 VM 状态与显式保存。
+
+- [09：从一次按键到角色位移]({{< relref "engine-toolchain/piccolo-engine-09-input-motor-character-movement.md" >}})：从游戏模式的命令与 setter 入口继续追位置变化，对照编辑器写入与运行更新。
+- [18：编辑器怎样拾取、创建和删除场景对象]({{< relref "engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md" >}})：先追像素 ID、逻辑实例与删除交接，再用本篇验证编辑结果是否持久化；含未命中映射与多部件清理的源码边界。
 - [场景文件怎样成为世界中的对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})：回看实例组件为何优先，以及 postLoad 怎样完成接线。
 - [资源、类型信息与序列化怎样共同恢复对象]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}})：回看字段选择、组件类型和生成读写代码的分工。
 - [改一个位置，怎样沿逻辑数据追到渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}})：对照 setter 的路径，继续追变化怎样进入渲染描述。

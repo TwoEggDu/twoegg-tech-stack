@@ -10,14 +10,14 @@ tags:
   - "序列化"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 8
+series_order: 11
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "场景文件怎样成为世界中的对象与组件"
 reading_summary: "从默认关卡的一面墙出发，读懂实例数据、对象定义和组件接线怎样组成运行对象。"
 reading_index: "reading/piccolo-engine.md"
-weight: 502
+weight: 505
 ---
 
 场景文件里写着一面墙的名字、位置和模型路径，运行时却需要一个能被查找、更新、绘制和参与碰撞的对象。这两者之间到底发生了什么？
@@ -26,7 +26,7 @@ weight: 502
 
 这篇沿 Piccolo 默认场景中的 `Wall_1` 走一次，把文件引用、对象组装和运行时接线连起来。我们要找的是：**每份数据在哪里变成对象，对象何时获得身份，以及组件怎样接入它依赖的系统。**
 
-> **读这篇之前**：[从启动走到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 说明默认世界何时加载，[一帧怎样推进]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}}) 说明加载后怎样更新。遇到类型名、反射指针或生成代码，可按需回看 [模板、宏与反射代码生成]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})。
+> **读这篇之前**：[从启动走到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 说明默认世界何时加载，[一帧怎样推进]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}}) 说明加载后怎样更新。容器复制、擦除与借用有效性可回看 [对象容器修改后，持有者、借用与遍历怎样变化]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})。遇到类型名、反射指针或生成代码，可按需回看 [模板、宏与反射代码生成]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 04；依据实际资源、源码与生成模板做静态追踪，未构建或运行 Piccolo，也未执行其解析器生成和断点验证。文中的对象数量是文件记录或规则推导，不是运行统计。
 

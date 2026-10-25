@@ -10,14 +10,14 @@ tags:
   - "线程模型"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 7
+series_order: 10
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "一帧怎样推进：调用顺序、状态交接与线程怎样核对"
 reading_summary: "沿一次循环追状态的生产、交接与消费，再分层核对主调用链、物理任务和 GPU 工作。"
 reading_index: "reading/piccolo-engine.md"
-weight: 501
+weight: 504
 ---
 
 世界已经加载，窗口也显示出来了，接下来该怎样读这台引擎？最直接的入口是一帧：输入在哪里进入，谁更新对象，渲染读到的是哪次变化，窗口事件又在什么时候处理？
@@ -29,6 +29,10 @@ weight: 501
 > **读这篇之前**：建议先读 [从启动走到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}})，确认当前执行的是编辑器循环。[渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}}) 已展开场景、Pass 和呈现，本篇重点看它们在一帧中怎样接起来。
 >
 > 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 03，网页位置按已完成文章的阅读顺序排列。以下以编辑器入口、世界已加载且相关调用正常返回的循环为主；首次世界加载见上一篇。尚未构建或运行 Piccolo，图表与案例都是源码推导，没有实测线程时间线或输入延迟。
+
+> 缓冲中的值与借用、发布/复用条件及 Jolt/日志的实际线程入口，见 [状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})。
+
+> 窗口事件怎样转接到输入管理器、回调捕获与注销边界，见 [窗口与编辑器回调怎样绑定、调用和注销]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})。
 
 ## 读一帧，先分别回答三个问题
 
@@ -303,6 +307,8 @@ CPU 线程与 GPU 执行又是不同维度。[VulkanRHI][vulkan-rhi] 的主渲�
 
 ## 继续阅读
 
+- [10：刚体与碰撞查询怎样参与角色运动]({{< relref "engine-toolchain/piccolo-engine-10-rigidbody-collision-character-motion.md" >}})：分别核对组件查询、固定每 tick 步进与 Update 后删除，不由线程池名称推断整段异步执行。
+- [09：从一次按键到角色位移]({{< relref "engine-toolchain/piccolo-engine-09-input-motor-character-movement.md" >}})：用真实输入、Motor、Transform 和 Character 消费点检验本篇逐帧地图。
 - [场景文件怎样成为世界中的对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})：从默认关卡的一面墙继续追实例、定义合并与组件运行状态的建立。
 - [从启动走到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}})：回看当前循环从哪里进入，世界何时首次加载，退出怎样衔接。
 - [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})：从组件接口和 RHI 接口继续追实际实现。

@@ -23,6 +23,8 @@ hybridclr_version: "v6.x (main branch, 2024-2025)"
 
 这篇文章专门回答这个问题。
 
+> **C++ 公共前置**：对象布局、偏移、对齐、void*、类型转换与字节复制的语言前提，先读 [CXX-06：从一段字节读到一个值]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})。本篇继续负责平台 ABI 与解释器参数表示之间的桥接；独立教学结构的本机输出不能替代具体平台和版本的约定。
+
 ## 这篇要回答什么
 
 这篇主要回答 5 个问题：

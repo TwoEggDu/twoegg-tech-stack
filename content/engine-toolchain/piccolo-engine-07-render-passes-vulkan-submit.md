@@ -10,14 +10,14 @@ tags:
   - "源码阅读"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 11
+series_order: 14
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "从渲染场景进入 Pass 与 Vulkan 提交"
 reading_summary: "沿同一个实例，从可见节点追到 GBuffer 批次与 shader 数据，再分清命令记录、队列提交和呈现请求。"
 reading_index: "reading/piccolo-engine.md"
-weight: 505
+weight: 508
 ---
 
 上一篇已经确认：一次位置变化能够沿逻辑描述，更新到对应渲染实体的模型矩阵。接下来的问题是，这份矩阵怎样参与绘制？如果实体里的值正确，画面却没有出现预期变化，应该继续去哪里找证据？
@@ -325,6 +325,17 @@ sequenceDiagram
 <!-- DATA-TODO: 完成 Piccolo 构建基线后，记录固定 SHA、工具链、deferred 分支、Wall_1 的实际实例身份与批次槽位、S/J、VkResult；补对应 GBuffer draw 的输入矩阵、附件和最终合成捕获。未取得运行证据前保留条件推导措辞。 -->
 
 ## 继续阅读
+
+- [13 粒子发射器与 GPU 模拟]({{< relref "engine-toolchain/piccolo-engine-13-particle-emitter-gpu-simulation.md" >}})：沿计算调度、计数回读和后续 billboard Draw，核对 GPU 粒子与本篇提交的衔接。
+
+- [12：一段动画怎样成为骨骼姿态与网格蒙皮]({{< relref "engine-toolchain/piccolo-engine-12-animation-skeleton-mesh-skinning.md" >}})：把本篇实例缓冲与 dynamic offset 接到关节矩阵、绑定索引和蒙皮 Shader。
+- [17：场景颜色怎样经过后处理成为最终画面]({{< relref "engine-toolchain/piccolo-engine-17-post-processing-final-frame.md" >}})：逐项展开后处理 subpass 的输入输出、FXAA 开关两路附件、UI 选色与呈现边界。
+- [16：材质、光照与阴影怎样共同决定表面颜色]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})：展开本篇 G-buffer、光源阴影与延迟光照之间的具体数据含义，输出止于浮点场景颜色。
+- [15：网格与纹理怎样从文件成为 GPU 资源]({{< relref "engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md" >}})：补齐本篇绑定的顶点、索引缓冲和材质图像的来源，区分资源上传与每帧绘制提交。
+- [11：相机怎样跟随角色，并把视角交给渲染系统]({{< relref "engine-toolchain/piccolo-engine-11-camera-follow-render-view.md" >}})：补齐本篇 P、V 和相机世界位置的生产端，核对第三人称计算与渲染端消费。
+- [状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})：区分 CPU 描述清理、Jolt/日志线程完成与 GPU 帧资源复用。
+
+- [从 GLSL 到 GPU：用 Piccolo 串起渲染引擎、API 与系统]({{< relref "rendering/piccolo-rendering-02-shader-api-driver-gpu.md" >}})：补齐 module 的来源、资源接口与矩阵布局，并区分 Vulkan、Loader、驱动、OS 和硬件的证据边界。
 
 - [改一个位置，怎样沿逻辑数据追到渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}})：回看 M 的来源，以及逻辑对象和渲染实例怎样对应。
 - [一帧怎样推进]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})：回看交接顺序，以及为什么 CPU 调用链不能直接证明线程或 GPU 时间线。

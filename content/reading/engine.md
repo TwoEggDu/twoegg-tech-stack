@@ -26,6 +26,10 @@ topic_key: engine
 
 [构建与调试基线篇]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}}) 已补齐，并放在启动篇之前阅读：Windows 配置、反射/序列化与 shader 生成已有实测，完整 Debug 编译的第三方兼容阻塞、配置路径和后续符号验收分别记录。
 
+三个专项 [对象容器、借用与遍历]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})、[窗口与编辑器回调]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}}) 和 [状态缓冲与线程边界]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}}) 已接在 C++ 前置之后，用对象删除、事件分发与状态交接解释借用、捕获寿命及同步边界，均含独立小程序。
+
+[09：从按键到角色位移]({{< relref "engine-toolchain/piccolo-engine-09-input-motor-character-movement.md" >}}) 已补齐命令、运动、控制器与位置缓冲的交接，再由 [11：相机跟随与渲染视图]({{< relref "engine-toolchain/piccolo-engine-11-camera-follow-render-view.md" >}})、[15：网格与纹理的 GPU 资源]({{< relref "engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md" >}})、[16：材质、光照与阴影]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})、[17：后处理与最终画面]({{< relref "engine-toolchain/piccolo-engine-17-post-processing-final-frame.md" >}}) 接起相机数据、共享资源、场景颜色和后处理输出。[18：编辑器拾取、创建与删除]({{< relref "engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md" >}}) 再沿像素 ID 找回对象，追创建与删除怎样到达逻辑和渲染两端。各篇说明源码、独立数值/资源及 Shader 编译证据，实际输入、编辑器与 GPU 运行仍待验证。[10 刚体与碰撞查询]({{< relref "engine-toolchain/piccolo-engine-10-rigidbody-collision-character-motion.md" >}}) 已接在 09 后，追场景障碍、查询形状与物理步进；[12 动画、骨骼与蒙皮]({{< relref "engine-toolchain/piccolo-engine-12-animation-skeleton-mesh-skinning.md" >}}) 已补齐局部变形路径；[13 粒子发射器与 GPU 模拟]({{< relref "engine-toolchain/piccolo-engine-13-particle-emitter-gpu-simulation.md" >}}) 已补齐槽位复用、计算调度、计数回读与后续绘制，[14 Lua 脚本、组件与反射调用]({{< relref "engine-toolchain/piccolo-engine-14-lua-component-reflection.md" >}}) 已补齐脚本、字段与方法桥接，原定主线正文齐备；完整引擎、角色和 GPU 运行仍待验证。
+
 ### [Unreal｜理解核心系统与扩展边界]({{< relref "reading/unreal-engine.md" >}})
 
 从 UObject、反射、序列化与 GC 出发，深入渲染架构、线程模型、Gameplay、网络复制，以及 Mass 的实体组织与调度。

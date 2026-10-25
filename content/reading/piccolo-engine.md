@@ -1,6 +1,6 @@
 ---
 title: "Piccolo"
-description: "从架构地图与前置知识进入启动、对象恢复、渲染提交和编辑器保存重载，沿实际代码学习读懂并调试一台具体引擎。"
+description: "从架构地图与前置知识进入启动、对象恢复、相机、渲染提交和编辑器保存重载，沿实际代码学习读懂并调试一台具体引擎。"
 url: "/reading/engine/piccolo/"
 layout: "engine-directory"
 reading_kind: "engine"
@@ -9,14 +9,14 @@ engine_name: "piccolo"
 series_id: "piccolo-engine"
 series_role: "index"
 series_title: "Piccolo 源码阅读与调试"
-reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和运行待验证"
+reading_status: "27 篇正文已写，原定主线齐备；完整构建和运行待验证"
 ---
 
-> **已有内容与待写内容**
+> **正文进度与验证状态**
 >
-> 主线 00—08 与四篇前置共 13 篇正文齐备，覆盖架构、构建基线、启动、对象恢复、渲染提交与编辑器保存重载。01 已实际完成 Windows 配置、反射/序列化和 shader 生成；完整 Debug 编辑器编译仍被第三方兼容问题阻塞。实际启动、保存/重载、断点观察与图形捕获尚未完成，各篇分别说明源码推导和运行证据范围。
+> 主线 00—18、五篇前置与渲染补充、三篇 C++ 专项共 27 篇正文已写，覆盖架构、构建基线、启动、对象恢复、输入运动、相机、GPU 资源、表面着色、后处理输出与编辑器操作/保存重载。01 已实际完成 Windows 配置、反射/序列化和 shader 生成；09 含原输入/运动/控制器函数及数学实现的独立条件检查；10 含原形状转换/步进/更新函数的记录适配与几何检查；12 含原骨骼/数学的独立资源桥接与 Shader 编译；13 含原类型布局/字节、独立池状态检查及五份 Shader 编译，实际 GPU 粒子待验证；14 含随附 Lua/sol2 与原桥接/反射的独立桩宿主检查，实际引擎脚本与角色运行待验证；GFX-02 核对程序产物与系统边界；11/15 含独立数学与实际资源检查；16/17 含相关 Shader 编译和条件数值检查；18 含拾取 Shader 编译及原 ID/删除/坐标函数的条件检查。完整 Debug 编辑器编译仍被第三方兼容问题阻塞。实际启动、输入运动、相机跟随、GPU 上传/着色/后处理、拾取/创建/删除、保存/重载、断点与图形捕获尚未完成，各篇分别说明源码推导和运行证据范围。
 >
-> 下方其余 Piccolo 篇目仍为**待写建议拟题**；前置和对照链接继续指向已有公共专题或其他引擎文章。
+> 原定 00—18 主线正文现已齐备；文章成稿不等于完整运行验收。前置和对照链接继续指向已有公共专题或其他引擎文章。
 
 **官方材料**
 
@@ -31,7 +31,11 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 
 现有三篇 Piccolo C++ 文章继续承担专项案例：谁持有关卡与组件、Component/RHI 怎样分派、ReflectionPtr 与生成器怎样接线。已经读过通用规则的读者可直接追这些项目约定，不必再次顺读所有语言解释。
 
-**专项待补顺序**：先补对象容器修改、擦除与借用失效，再补窗口/编辑器回调的绑定和注销，最后补状态缓冲交接与实际线程边界。前两项接公共容器/回调课；最后一项接公共并发课，不凭双缓冲或类名推断多线程。它们目前是补写方向，不计入已有 13 篇正文。
+**容器专项已写**：[对象容器修改后，持有者、借用与遍历怎样变化]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})，从编辑器删除路径解释对象表成员资格、局部强持有、组件列表复制与迭代器失效，含独立 C++17 练习。公共容器课尚待成稿，本篇先补必要规则并核对 Piccolo 的约定。
+
+**回调专项已写**：[窗口与编辑器回调怎样绑定、调用和注销]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})，沿 GLFW、ImGui 和输入管理器核对绑定参数、实际分发、Lambda 捕获与退出清理，明确固定版本尚无按订阅移除接口。
+
+**缓冲与线程专项已写**：[状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})，区分值复制、槽位角色、消费与复用，沿 Jolt 和异步日志找到实际 CPU 线程，再把 GPU 提交与完成单独核对。三项专项正文已齐备，公共课程缺口与实际引擎运行状态分别维护。
 
 <a id="chapters"></a>
 
@@ -65,6 +69,7 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 
 **已有前置阅读**
 
+- [状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})：用发布、消费与复用协议读状态缓冲，区分主调用链、物理/日志 worker 和 GPU 工作。
 - [引擎运行时底座]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}})：理解执行模型、任务、对象元信息等机制在引擎中的位置。
 - [CPU 与内存体系]({{< relref "performance/hardware-cpu-index.md" >}})：研究数据布局、缓存和并行成本时查阅。
 
@@ -79,6 +84,7 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 
 **已有前置阅读**
 
+- [对象容器修改后，持有者、借用与遍历怎样变化]({{< relref "engine-toolchain/piccolo-pcpp-01-object-containers-borrowing-iteration.md" >}})：区分 map 擦除、对象保活与组件包装复制；源码与独立程序的验证范围见正文。
 - [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})：先从 Component 接口追到具体组件的更新与析构。
 - [模板、宏与反射代码生成]({{< relref "engine-toolchain/piccolo-cpp-03-templates-macros-reflection.md" >}})：拆开组件查询宏、模板返回类型和名字匹配协议。
 
@@ -93,6 +99,7 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 **已有专篇**
 
 - [资源、类型信息与序列化怎样共同恢复对象]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}})：沿 Wall_1 的实例 Transform，连起已知类型字段读取、运行时类注册与具体组件构造，并区分写出、兼容和业务接线边界；源码与模板已核对，实际生成与运行待验证。
+- [14：Lua 脚本怎样读写组件并调用引擎方法]({{< relref "engine-toolchain/piccolo-engine-14-lua-component-reflection.md" >}})：沿默认 Player 文本、每组件执行状态和三个绑定追字段/方法，核对类型、弱引用和业务消费；独立桩宿主通过，完整引擎运行待验证。
 
 **已有前置与对照阅读**
 
@@ -107,10 +114,17 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 **已有专篇**
 
 - [从渲染场景进入 Pass 与 Vulkan 提交]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}})：沿 Wall_1 的可见节点、材质/网格分组和实例矩阵，核对 GBuffer 绘制、命令记录、提交同步与呈现目标；源码与接口语义已核对，运行及图形捕获待验证。
+- [11：相机怎样跟随角色，并把视角交给渲染系统]({{< relref "engine-toolchain/piccolo-engine-11-camera-follow-render-view.md" >}})：从第三人称视点与目标追到相机交接、视图来源、FOV 更新、主相机筛选与顶点输入；含独立数值检查，实际跟随与断点待验证。
+- [15：网格与纹理怎样从文件成为 GPU 资源]({{< relref "engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md" >}})：沿 Wall 与 gold 材质追 CPU 载荷、缓存身份、暂存上传、Image/mip 和绘制绑定；含实际资源的独立 CPU 检查，GPU 上传与采样待验证。
+- [16：材质、光照与阴影怎样共同决定表面颜色]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})：沿 G-buffer、BRDF、方向光阴影与环境贡献追到场景颜色，核对实际字段消费；Shader 编译和条件数值检查通过，GPU 画面待验证。
+- [17：场景颜色怎样经过后处理成为最终画面]({{< relref "engine-toolchain/piccolo-engine-17-post-processing-final-frame.md" >}})：追 tone mapping、LUT 透传、FXAA 分支、UI 选色与交换链输出，核对附件复用和颜色约定；Shader 编译及条件检查通过，GPU/UI 与显示待验证。
+- [12：一段动画怎样成为骨骼姿态与网格蒙皮]({{< relref "engine-toolchain/piccolo-engine-12-animation-skeleton-mesh-skinning.md" >}})：追采样、层级姿态、逆绑定修正和关节矩阵到顶点；核对 clip0/dirty/编号约定，原骨骼数值与 Shader 编译通过，实际动画/GPU 待验证。
+- [13：粒子发射器怎样进入 GPU 模拟与绘制]({{< relref "engine-toolchain/piccolo-engine-13-particle-emitter-gpu-simulation.md" >}})：追发射请求、槽位复用、双存活表、三个计算阶段和后续 billboard 绘制；布局/状态与 Shader 编译通过，GPU 运行待验证。
 
 **已有前置专篇**
 
 - [读懂渲染管线：从场景对象到一帧画面]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}})：结合 Piccolo 的渲染表示、可见性、Pass、Draw Call 与 Vulkan 呈现，建立完整链路；区分源码推导与运行证据。
+- [从 GLSL 到 GPU：用 Piccolo 串起渲染引擎、API 与系统]({{< relref "rendering/piccolo-rendering-02-shader-api-driver-gpu.md" >}})：追踪编译产物、pipeline、资源绑定与矩阵布局，接到 Loader、驱动、OS 和呈现；含两个 Shader 的实际编译与字节核对，GPU 运行待验证。
 
 **已有前置阅读**
 
@@ -119,7 +133,11 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 - [图形 API 基础]({{< relref "rendering/graphics-api-series-index.md" >}})：理解命令、资源与平台后端的抽象。
 - [图形数学]({{< relref "rendering/graphics-math-series-index.md" >}})：补充空间变换、可见性与几何判断。
 
-先用前置专篇建立完整链路，再在 07 中追踪一个实例怎样进入 GBuffer 绘制与提交；实际断点和图形捕获待完成构建基线后开展。
+渲染主线围绕 **引擎无关的原理与 Piccolo 的具体实现** 组织。可以先读 GFX-01 建立完整链路，再用 GFX-02 分清语言、API 和系统边界，沿 06—07 追踪具体实例怎样进入 GBuffer 绘制与提交。实际断点和图形捕获待完成构建基线后开展。
+
+通用篇解释程序与资源接口、Pass 依赖、资源生命周期和提交完成条件，可独立阅读；Piccolo 篇沿实际代码说明这些问题怎样落地。阅读时分别辨认通用约束、API/平台前提与 Piccolo 的实现选择，相关基础按需查阅。
+
+先读 [09：从一次按键到角色位移]({{< relref "engine-toolchain/piccolo-engine-09-input-motor-character-movement.md" >}})，追输入、速度/方向、控制器目标及 Transform/Character 时序，再进入 **11 相机 → 15 GPU 资源 → 16 材质、光照与阴影 → 17 后处理输出**。这是学习顺序；实际绘制中相机、几何资源与表面数据会汇合，资源也会跨帧复用。[10 刚体与碰撞查询]({{< relref "engine-toolchain/piccolo-engine-10-rigidbody-collision-character-motion.md" >}}) 已补齐 Static 创建、胶囊查询、形状更新与模拟步进的关系；随后可用下方 18 回到编辑器对象操作。
 
 ## 编辑器、调试与最小改动验证
 
@@ -128,9 +146,11 @@ reading_status: "13 篇正文齐备；配置与生成已实测，完整构建和
 **已有专篇**
 
 - [编辑器怎样修改、保存并恢复场景状态]({{< relref "engine-toolchain/piccolo-engine-08-editor-save-reload.md" >}})：沿 Wall_1 区分反射面板与 setter 写入，追踪保存字段、实例组件覆盖和重载重建，并核对关卡元数据遗漏与运行身份变化；源码已核对，实际保存/重载待验证。
+- [18：编辑器怎样拾取、创建和删除场景对象]({{< relref "engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md" >}})：沿整数 ID 图回读、资源定义实例化与删除描述追踪对象变化，核对未命中 ID、蒙皮拾取和多部件清理的边界；Shader/CPU 条件检查通过，实际编辑器操作与 GPU 回读待验证。
 
 **已有前置阅读**
 
+- [窗口与编辑器回调怎样绑定、调用和注销]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})：从窗口事件与属性面板两类调用，区分注册、捕获寿命、实际分发和退出边界。
 - [为什么引擎首先是一套内容生产工具]({{< relref "system-design/game-engine-architecture-01-content-production.md" >}})：理解编辑器工作流怎样影响引擎结构。
 - [RenderDoc 阅读入口]({{< relref "rendering/renderdoc-reading-entry.md" >}})：补充图形捕获与读图方法，Piccolo 的具体接入步骤仍待补充。
 

@@ -10,14 +10,14 @@ tags:
   - "Visual Studio"
 series: "Piccolo 源码阅读与调试"
 primary_series: "piccolo-engine"
-series_order: 5
+series_order: 8
 type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "建立构建与调试基线"
 reading_summary: "把源码提交、工具链、生成文件、构建产物与配置路径连起来，区分本机实测结果和后续符号、断点验收。"
 reading_index: "reading/piccolo-engine.md"
-weight: 499
+weight: 502
 ---
 
 阅读引擎源码之前，最好先回答一个问题：调试器将要运行的程序，究竟对应哪一份源码、哪次生成结果，以及哪组配置和资源？
