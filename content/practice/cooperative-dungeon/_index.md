@@ -9,17 +9,20 @@ cooperative_project: true
 project_hub: true
 implementation_routes:
   - name: "Unity"
-    role: "最小教学主线"
+    status: "实现规划中"
+    role: "实际落地 · 最小教学实现"
     description: "先在 Editor 跑通内容制作与最小双人流程；资源、代码更新和多平台按教学问题逐项实验。"
     focus: "ET · Luban · YooAsset · HybridCLR · UGUI"
   - name: "Unreal"
-    role: "关键系统对照"
-    description: "围绕共同规则与验收场景，研究对象组织、技能、内容制作和生命周期，再逐步扩展。"
-    focus: "技术选型与实现正文待补充"
+    status: "方案讨论"
+    role: "落地方案与机制对照"
+    description: "围绕 Unity 的实际案例，讨论对象组织、技能、内容制作和生命周期的不同实现思路。"
+    focus: "讨论材料待补充 · 不纳入项目实施计划"
   - name: "Piccolo"
-    role: "机制研究与最小实现"
-    description: "先核对已有机制与能力缺口，再选择关键系统完成最小实验，记录扩展与验证边界。"
-    focus: "能力盘点与实现正文待补充"
+    status: "方案讨论"
+    role: "落地方案与能力分析"
+    description: "结合已有机制与能力缺口，讨论共同设计可能怎样表达，以及需要补充哪些能力。"
+    focus: "讨论材料待补充 · 不纳入项目实施计划"
 ---
 
 <a id="minimum"></a>
@@ -83,7 +86,7 @@ implementation_routes:
 - [GamePlay]({{< relref "reading/gameplay.md" >}})：合作体验、战斗、敌人、关卡与奖励。
 - [全栈框架]({{< relref "reading/frameworks.md" >}})：客户端、服务端、配置、同步与数据。
 - [工程与交付]({{< relref "reading/delivery.md" >}})：工种协作、构建、版本、更新与恢复。
-- [引擎研发]({{< relref "reading/engine.md" >}})：进入 Unity、Unreal、Piccolo 的机制与实现研究。
+- [引擎研发]({{< relref "reading/engine.md" >}})：围绕 Unity 落地研究机制，并讨论 Unreal、Piccolo 中的对应方案。
 - [性能优化]({{< relref "reading/performance.md" >}})：从运行负载与目标设备建立预算、测量和取舍。
 
 设计和独立教学材料公开，Demo 工程保持私有。设计初稿、实现进度与运行验证分别记录；已有机制文章不能替代本项目的实际验收。

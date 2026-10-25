@@ -16,6 +16,7 @@
 | --- | --- |
 | 游戏方向 | 一张斜俯视场地，两名角色，一种怪物，一种测试奖励；先完成最小教学版本 |
 | 技术组成 | Unity、UGUI、ET、Luban、YooAsset、HybridCLR |
+| 引擎分工 | Unity 实际落地并承担项目验收；Unreal、Piccolo 仅讨论对应方案与机制，不纳入项目实施计划 |
 | 首阶段 | Unity Editor 先完成单项制作预览，再验证最小双人流程 |
 | 平台方向 | 从设计之初考虑 Windows、Android、iOS 和小游戏；平台交付属于按需专项，不是最小版前置条件 |
 | 策划自主能力 | 独立配置技能、怪物、关卡和奖励，修改后在 Editor 验证 |
@@ -232,7 +233,7 @@ Windows、Android、iOS 和小游戏仍进入平台边界设计，输入、存�
 | HybridCLR／C# 运行时 | 新技能能力的代码变更、AOT 与热更配套 | 代码加载、依赖、兼容及失败案例，向下连接元数据和执行机制 | [HybridCLR 规划](hybridclr-series-plan.md)、[机制衔接规划](hybridclr-structural-diagnosis-and-bridge-articles-plan.md)；平台能力另验 |
 | 工程与交付／生产管线 | 从各工种提交到检查、构建、版本与平台发布 | 制作约定、候选制品、版本组合、更新与恢复的完整案例 | [生产管线实践](../content/engineering-journey/production-pipeline-overview.md)、[更新与发布规划](unity-game-update-release-series-plan.md) |
 | 渲染与性能 | 两人战斗的场景、角色、技能和 UGUI 叠加 | 预算、资源规格、运行测量、瓶颈与视觉取舍 | [性能规划](game-performance-series-plan.md)、[性能入口](../content/reading/performance.md)；渲染方案和设备基线待定 |
-| 引擎研发 | 加载、序列化、执行、对象生命周期和渲染中的实际问题 | 源码路线和最小实验，注明引擎／版本边界 | [引擎入口](../content/reading/engine.md)；Unreal／Piccolo 作为机制对照与独立实验，不作为本项目运行依赖 |
+| 引擎研发 | 加载、序列化、执行、对象生命周期和渲染中的实际问题 | 源码路线和最小实验，注明引擎／版本边界 | [引擎入口](../content/reading/engine.md)；Unity 承担项目实现；Unreal／Piccolo 仅作方案讨论与机制对照，不安排对应项目开发或验收 |
 | 长线运营／问题解决 | 内容开放、玩家问题、故障定位和修复回归 | 版本上下文、诊断记录、数据恢复和复盘 | 运营专题随真实需求补齐，避免用模拟演练编造线上事故与运营效果 |
 
 ### 12.1 用共同变更串联文章
