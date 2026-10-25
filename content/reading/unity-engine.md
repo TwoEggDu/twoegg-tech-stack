@@ -10,6 +10,8 @@ engine_name: "unity"
 
 按正在研究的系统或遇到的问题选择专题。各篇涉及的 Unity、Package 与工具版本，以正文说明为准。
 
+想把已有Unity经验迁移到另一台引擎，可以读[用同一组问题读懂Unity与Unreal]({{< relref "system-design/game-engine-architecture-08-unity-unreal-same-tasks.md" >}})：从同一个可编辑参数和一套角色外观出发，对照配置、保存、模块与交付。
+
 ## 资产系统与序列化
 
 理解源文件怎样经过导入成为资产，引用关系怎样保存，以及 Scene、Prefab 和序列化数据怎样恢复为运行时对象。

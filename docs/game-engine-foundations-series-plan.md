@@ -76,7 +76,7 @@
 ### GEF-01｜一台游戏引擎怎样把内容、逻辑和硬件连接起来
 
 - **讲什么与边界**：编辑器、运行时、游戏逻辑、专业系统、资产构建和平台的职责；用实时性与资源预算解释协作要求。止于整体地图。
-- **建设与复用**：选读复用／已可选读。[架构总论](../content/system-design/game-engine-architecture-00-overview.md)提供职责地图，[00A职责、依赖与资源边界](../content/system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md)补接口依赖、资源服务/实例/设备对象的边界，[内容生产](../content/system-design/game-engine-architecture-01-content-production.md)用模板修改连接工具与预览。2026-10-25架构系列10篇已有正文完成一轮技术表述、例子与结构修订，职责分类不代表运行顺序；范围与验证见[修订记录](game-engine-architecture-revision-outline.md)。
+- **建设与复用**：选读复用／已可选读。[架构总论](../content/system-design/game-engine-architecture-00-overview.md)提供职责地图，[00A职责、依赖与资源边界](../content/system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md)补接口依赖、资源服务/实例/设备对象的边界，[内容生产](../content/system-design/game-engine-architecture-01-content-production.md)用模板修改连接工具与预览。2026-10-25前10篇完成一轮修订，新增[08同任务比较](../content/system-design/game-engine-architecture-08-unity-unreal-same-tasks.md)，系列共11篇正文；08以警戒参数和外观交付对照Unity与Unreal。职责分类不代表运行顺序，引擎实验仍待验证；范围与检查见[修订记录](game-engine-architecture-revision-outline.md)和[08执行记录](game-engine-architecture-08-outline.md)。
 - **待补**：课程导读中的术语表、三条学习路线和预算提示；00A是架构专题的选读补篇，不等于本单元或整个公共课程验收通过，不另写一份架构大全，也不把原图某一种分层当唯一标准。
 - **前置与验收**：有游戏开发经验，无 GEF 前置。为“角色换装”标出内容制作、资产、世界对象、动画和渲染各自的责任。
 - **后续接入**：三引擎路线的整体入口；Piccolo 架构地图、Unity 系统专题、Unreal 架构与系统。

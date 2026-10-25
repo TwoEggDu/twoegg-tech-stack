@@ -52,6 +52,8 @@ engine_name: "unreal"
 
 来自 Unity 的读者，也可以先看[GameObject 与 Actor 的区别]({{< relref "system-design/game-engine-architecture-02-gameobject-vs-actor.md" >}})，建立两种对象世界的对应关系。
 
+接着用[同一组问题比较Unity与Unreal]({{< relref "system-design/game-engine-architecture-08-unity-unreal-same-tasks.md" >}})，沿警戒参数、外观交付和工具隔离追出实际接点，分清Prefab、Blueprint Class与组件模板的语义。
+
 ## 渲染、线程与世界流送
 
 沿一帧画面的生成和大世界内容的加载，理解渲染抽象、跨线程协作与世界组织方式。

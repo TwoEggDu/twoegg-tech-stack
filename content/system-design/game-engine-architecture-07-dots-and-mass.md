@@ -133,4 +133,6 @@ MassGameplay 将表示、生成、LOD 等能力接在 MassEntity 之上。其 Re
 
 继续阅读时，可以先回到 [00A]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}) 核对图中每根箭头的含义，再进入 [数据导向运行时系列]({{< relref "engine-toolchain/data-oriented-runtime-series-index.md" >}}) 深入布局、结构变化和调度；涉及实体与表现对象交接时，接着看 [表示层边界]({{< relref "engine-toolchain/data-oriented-runtime-06-why-simulation-and-representation-usually-cannot-fully-merge.md" >}})。
 
+下一篇[08：用同一组问题读懂两台引擎]({{< relref "system-design/game-engine-architecture-08-unity-unreal-same-tasks.md" >}})把这套方法用于警戒参数和外观交付，继续区分对象状态、模块边界与工具协议。
+
 **理解 DOTS 与 Mass，要追它们怎样连接创作数据、实体状态、批量执行和专业表示；包、插件与模块是实现这些连接的组织形式。**

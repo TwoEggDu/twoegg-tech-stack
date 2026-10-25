@@ -36,6 +36,7 @@ series_reading_hint: '第一次读可从火球导读进入00和00A；有具体�
 | 系统怎样执行和交接结果 | [03运行机制]({{< relref "system-design/game-engine-architecture-03-runtime-foundation.md" >}})的动画任务 → [04专业系统]({{< relref "system-design/game-engine-architecture-04-professional-subsystems.md" >}})的角色落地 |
 | 资源怎样交付，平台差异放哪里 | [05资产与交付]({{< relref "system-design/game-engine-architecture-05-asset-and-delivery.md" >}})的产物分支 → [06平台适配]({{< relref "system-design/game-engine-architecture-06-platform-abstraction.md" >}})的能力和降级 |
 | 批量数据处理会改变哪些设计 | [07 DOTS与Mass]({{< relref "system-design/game-engine-architecture-07-dots-and-mass.md" >}})的创作数据、实体更新和专业表示 |
+| 怎样把同一项需求放进两台引擎 | [08同任务比较]({{< relref "system-design/game-engine-architecture-08-unity-unreal-same-tasks.md" >}})：用警戒参数、外观交付和工具隔离对照Unity与Unreal |
 
 需要时间与生命周期模型时，接[GEF-02：启动、帧循环与退出]({{< relref "engine-toolchain/game-engine-foundations-02-startup-frame-shutdown.md" >}})；需要追真实代码时，进入[Piccolo系列]({{< relref "reading/piccolo-engine.md" >}})。两者分别补公共原理与具体实现，不把概念图当作某台引擎的调用链。
 
