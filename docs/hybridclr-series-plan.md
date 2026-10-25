@@ -11,7 +11,8 @@
 - 发布索引：`content/engine-toolchain/hybridclr-series-index.md`。
 - 源码跟读准备：`hybridclr-source-reading-start.md`，已写；保留 v6.1.0 源码阅读；v9 配套组合已在本机自定义 Unity 完成 Player 断点验证。
 - 线程接入专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；与 IL2CPP 共用，源码核对完成，Player／native 回调实验待补。
-- 数量：30 篇编号正文 + 6 篇前置桥接 + 2 篇专题，共 38 篇，索引另计。
+- 泛型调用综合实验：`runtime-generic-call-experiment.md`，已写；与 ECMA-335、IL2CPP 共用，固定自定义 Editor/v9 环境的四组 Player 对照与原生断点验证完成。
+- 数量：30 篇编号正文 + 6 篇前置桥接 + 3 篇专题，共 39 篇，索引另计。
 - 篇级文件均位于 `content/engine-toolchain/`，原 HCLR 编号及 URL 保留。
 
 ## 公共基础之后的源码专项前置
@@ -76,13 +77,13 @@
 
 ## 接下来补强
 
-近期先做“源码阅读起步 → 调用链篇”的共用 Player 实验，再做三栏泛型调用综合实验、GC／线程验证和性能测量。步骤与验收统一放在 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)。已用本机自定义 Unity 2022.3.62f3 完成新版隔离实验：package v9.0.3 / runtime v9.0.1 原始配套源码构建成功，完整 PDB、同一方法首次转换／再次复用、两次 Execute 与返回值均已记录。两篇保留 v6.1.0 阅读说明并单列 v9 实测，不增加新正文数量。
+“源码阅读起步 → 调用链篇”的共用 Player 实验及三栏泛型调用综合实验已完成，接下来补 GC／线程验证和性能测量。顺序见 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，泛型实验单独记录于 `runtime-generic-call-experiment-outline.md`。环境继续使用本机自定义 Unity 2022.3.62f3、package v9.0.3 / runtime v9.0.1 原始配套源码；旧两篇保留 v6.1.0 阅读说明，新增综合实验归本系列、三栏共用。
 
 | 工作 | 状态与验收 |
 |---|---|
 | 源码阅读起步 | 已补自定义 Editor 身份、v9 固定组合、构建与符号记录、自有样本；不推广为全版本兼容 |
 | GC 与线程接入 | 正文、固定源码定位已完成；桌面实验、Player 根快照与 native 回调验证分别记录 |
-| 三栏泛型调用综合实验 | 待写；同一例子连通规范、AOT 与解释执行 |
+| 三栏泛型调用综合实验 | 已写并实测；同一 DLL，显式 AOT seeds × 补充元数据四组对照；P0/M0 的 int/结构体异常、其余成功，原生与内联解释路径均有断点证据 |
 | 性能与预热篇 | 待加强；固定设备、构建配置和采样条件 |
 | 调用链篇 | 已修正 v6.1.0 旧路径，新增 v9 差异表与实测：同一方法 Transform 一次、Execute 两次，返回 5、15 |
 | 商业能力篇 | 待复核；逐条标注公开事实、推断与数据来源 |
@@ -92,3 +93,9 @@
 ## GC 与线程修订（2026-10-25）
 
 Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，HCLR-28 修正 GC 与 native metadata、类型初始化及卸载顺序的混淆，HCLR-30 收紧增量 GC 与商业能力推断。商业篇其余实现与性能表述仍保留待复核状态，本轮不代表全篇完成源码验证。新增专题的提纲、证据与验证边界见 `hybridclr-thread-attachment-outline.md`。
+
+## 配套实验仓库同步（2026-10-25）
+
+公开仓库：[hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；文章固定提交 [`e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)（`e0220099d293f7a1a4601ee9931b49a10dd519f9`）。三个专栏索引同步复现与证据入口，源码阅读起步、调用链实战和泛型综合实验共用该仓；不新增正文或改变主线篇数。
+
+新仓库三份 Player 已重新构建，Add 与四组泛型普通运行、原生断点均符合预期，公开证据见 [本次记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)。正文区分原始隔离实验与新仓库构建的哈希、进程地址；自定义 Editor 与平台限制不变。本节记录文章与索引的同步内容；线上可见状态以 Pages 部署结果为准。

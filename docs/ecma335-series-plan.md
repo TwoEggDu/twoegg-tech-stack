@@ -78,8 +78,14 @@
 
 ## 跨系列衔接（2026-10-25）
 
-主线结构保持导读 + 九篇主线。索引新增 HybridCLR 源码阅读起步入口；后续实现层分别由 [IL2CPP 系列计划](./il2cpp-series-plan.md) 和 [HybridCLR 系列计划](./hybridclr-series-plan.md) 管理。贯穿三栏的泛型调用实验仍待写，不计入已完成文章。
+主线结构保持导读 + 九篇主线。索引新增 HybridCLR 源码阅读起步入口；后续实现层分别由 [IL2CPP 系列计划](./il2cpp-series-plan.md) 和 [HybridCLR 系列计划](./hybridclr-series-plan.md) 管理。共享案例 `runtime-generic-call-experiment.md` 已写并完成固定环境 Player 验证：实际 call → MemberRef／MethodSpec → AOT 产物 → 原生或补充方法体的解释路径。三栏引用同一正文，不增加规范必读篇数。执行与证据见 `runtime-generic-call-experiment-outline.md`。
 
 ## GC 与线程衔接（2026-10-25）
 
 GC 前置增加事件／实例委托保留与退订实验，区分 Normal、Weak、Pinned 句柄；索引与并发分支接入共享的 IL2CPP／HybridCLR 线程专题。主线仍为导读 + 九篇，未把运行时线程登记当成 ECMA 内存模型内容。桌面实验结果与 Player 待验证项分别记录。
+
+## 配套实验仓库同步（2026-10-25）
+
+公开仓库：[hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；文章固定提交 [`e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)（`e0220099d293f7a1a4601ee9931b49a10dd519f9`）。三个专栏索引同步复现与证据入口，源码阅读起步、调用链实战和泛型综合实验共用该仓；不新增正文或改变主线篇数。
+
+新仓库三份 Player 已重新构建，Add 与四组泛型普通运行、原生断点均符合预期，公开证据见 [本次记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)。正文区分原始隔离实验与新仓库构建的哈希、进程地址；自定义 Editor 与平台限制不变。本节记录文章与索引的同步内容；线上可见状态以 Pages 部署结果为准。

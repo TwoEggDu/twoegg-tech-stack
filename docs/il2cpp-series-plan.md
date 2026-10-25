@@ -37,6 +37,8 @@
 
 共享专题：`hybridclr-thread-attachment-gc-and-runtime-state.md`，已写；D3、D6 后阅读，固定源码核对完成，Player／原生回调验证待补。
 
+共享案例：`runtime-generic-call-experiment.md`，已写；D5 后阅读，与 ECMA-335、HybridCLR 共用。固定自定义 Editor/v9 环境的两份 Player、四组运行与原生断点已验证，记录显式实例带来的原生产物变化及补元数据后的不同执行路径。
+
 发布索引：`il2cpp-series-index.md`。推荐从导读进入 D1～D8，排障专题按需阅读；之后接 HybridCLR 源码阅读起步。
 
 ## 去重决策
@@ -47,7 +49,7 @@
 
 - 近期先与 HybridCLR 共用 [Player 源码跟读执行计划](./hybridclr-player-reading-execution-plan.md)，完成环境、构建、模块／符号和首次／再次调用记录；本机自定义 Unity 配套 v9 的隔离实验已完成构建、PDB 与方法级断点验收；首次转换、再次复用及两次解释执行均有记录。旧 v6.1.0 失败记录保留，不视为旧版通过。
 - 转换器与 runtime 篇：补固定构建样本的 C#、IL、生成物和运行时对象对应关系。
-- 与 ECMA-335、HybridCLR 共用一个泛型调用综合实验，待写。
+- 三栏泛型调用综合实验已完成，执行与证据见 `runtime-generic-call-experiment-outline.md`；不将功能结果推广为性能或其他平台验收。
 - 当前不声称全系列经过统一 Unity patch 的 Player 验证。
 
 旧 `il2cpp-runtime-map-article-plan.md` 是导读单篇的历史执行材料，不承担本系列进度管理。
@@ -55,3 +57,9 @@
 ## GC 与线程修订（2026-10-25）
 
 修正 AOT 必然使用保守 GC、增量等同并发／无停顿等过强结论；D3 区分 WebGL 托管与原生线程能力。D6 的观察方案区分托管存活、堆容量、runtime native 内存与引擎资源。线程篇提纲与证据见 `hybridclr-thread-attachment-outline.md`。
+
+## 配套实验仓库同步（2026-10-25）
+
+公开仓库：[hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；文章固定提交 [`e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)（`e0220099d293f7a1a4601ee9931b49a10dd519f9`）。三个专栏索引同步复现与证据入口，源码阅读起步、调用链实战和泛型综合实验共用该仓；不新增正文或改变主线篇数。
+
+新仓库三份 Player 已重新构建，Add 与四组泛型普通运行、原生断点均符合预期，公开证据见 [本次记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)。正文区分原始隔离实验与新仓库构建的哈希、进程地址；自定义 Editor 与平台限制不变。本节记录文章与索引的同步内容；线上可见状态以 Pages 部署结果为准。

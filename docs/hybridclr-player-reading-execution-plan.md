@@ -150,7 +150,7 @@ Hugo 构建是站点检查，不属于 Unity runtime 验证；Git 推送和 Page
 
 完成前两篇的同一 Player 样本后，再依次推进：
 
-1. **三栏泛型调用综合实验**：同一输入连通 ECMA 签名、IL2CPP 泛型与 HybridCLR 执行。
+1. **三栏泛型调用综合实验（已完成）**：同一输入连通 ECMA 签名、IL2CPP 泛型与 HybridCLR 执行；两份 Player、四组独立运行及匹配 PDB 断点完成。详见 [泛型实验执行记录](./runtime-generic-call-experiment-outline.md)，正文 `runtime-generic-call-experiment.md`。
 2. **GC 与线程接入**：复用环境补引用快照、线程清理与 native 回调证据。
 3. **性能与预热篇**：固定设备、输入和采样方法，分别测首次、预热、稳定执行及跨边界成本。
 

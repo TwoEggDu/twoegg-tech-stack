@@ -142,7 +142,7 @@ var second = (int)method.Invoke(null, new object[] { 7, 8 });
 
 因此，`MethodBodyCache` 是新版的真实入口，只是不应写进旧版链路。对应公开源码见 [v9 InterpreterModule.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/InterpreterModule.cpp#L521) 和 [v9 Transform.cpp](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/transform/Transform.cpp#L34)。本次缓存结论来自下面的实际断点，不靠两份源码“看起来相似”推定。
 
-### 本次记录
+### 首次隔离实验记录
 
 CDB 从进程创建时设置断点，`lmv m GameAssembly` 指向本次构建的模块，显示 `private pdb symbols`。被加载的 HotUpdate.dll 长度为 4608 字节，SHA-256 为 `BA0096D4CA773599ED664FD1D47CC2507D7C55F36EF0BD0CF44349EE46A9645C`；最终 AOT 裁剪目录中没有 HotUpdate.dll。
 
@@ -158,7 +158,13 @@ CDB 从进程创建时设置断点，`lmv m GameAssembly` 指向本次构建的�
 
 地址只标识本次进程，重启后不能照抄为条件断点。记录中两个 Execute 都携带同一目标方法地址；首调的 Transform 栈上可见 `GetInterpMethodInfo → InterpreterInvoke → Runtime::InvokeWithThrow`，Execute 栈上可见 `InterpreterInvoke → Runtime::InvokeWithThrow`。因此可以把反射入口、准备阶段和两次解释执行关联起来。
 
-最终日志包含 `PROBE_PASS`。同一构建脱离调试器再次启动也返回 5、15，进程退出码为 0；这是普通启动验收，缓存结论仍来自前一次原生跟踪。原始日志、PDB 和 runtime 留在本地，仓库的 `scripts/hybridclr-reading-probe/` 提供自有样本与本次 CDB 命令。
+最终日志包含 `PROBE_PASS`。同一构建脱离调试器再次启动也返回 5、15，进程退出码为 0；这是普通启动验收，缓存结论仍来自前一次原生跟踪。原始日志、PDB 和 runtime 留在本地。
+
+### 公开实验仓库的复跑记录
+
+样本现维护在 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)，固定提交为 [`e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)（完整 SHA：`e0220099d293f7a1a4601ee9931b49a10dd519f9`）。[Add 工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/e0220099d293f7a1a4601ee9931b49a10dd519f9/projects/call-chain) 与 [CDB 指令](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/debugger/call-chain-v9.cdb) 可按 [README](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/README.md) 复现。
+
+新仓库重新构建后，[公开摘要](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/call-chain.json) 再次确认装载 1 次、invoker 2 次、Transform 1 次、Execute 2 次，同一方法与缓存返回 5、15。构建标识为 `136f3c65-0c8b-4944-a838-39a5f4024e27`，热更 DLL SHA-256 为 `3A0BE651942B13C706EC2369D6F9CE5F6174858672C75863796B643C2C3A3E98`。这是另一份构建和进程，不能套用上表原始记录中的地址与 DLL 哈希。
 
 这组记录验证了当前样本的转换结果复用。它没有测量速度，不证明所有方法形态、AOT 泛型、GC、线程接入或移动端行为；v6.1.0 也没有因为这次 v9 成功而获得 Player 验收。
 

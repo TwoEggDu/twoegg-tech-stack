@@ -54,6 +54,16 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 1. 先读 [IL2CPP 实现分析]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，将 DLL 输入、构建产物和 runtime 职责对应起来。
 2. 遇到泛型问题，接着读 [泛型共享桥接篇（原 A7／Bridge-D）]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}}) 和 [AOT 泛型与补充元数据]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})。共享规则属于实现层，要结合版本理解。
 3. 准备动手跟源码时，先看 [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})，再进入 [HybridCLR 系列]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})。ABI、解释器 IR、GC 接入、裁剪、async 和工程排障继续在该系列展开。
+4. 完成签名、调用和泛型前置后，做 [泛型调用综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})：用同一个 `Echo<T>` 对照实际 call／MethodSpec、AOT 产物和 Player 执行路径。该案例已在本机自定义 Unity 与固定 v9 组合实测，三栏共用一篇，不改变导读 + 九篇规范主线。
+
+## 配套实验仓库
+
+完成签名、调用与泛型前置后，对照实际 DLL 的 MethodSpec 和签名输出，再看对应 Player 结果。三个专栏共用公开仓库 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；当前文章对应 [固定提交 `e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)。
+
+- [复现说明与固定环境](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/README.md)：包含 Add、generic-p0、generic-p1 三个隔离工程，先 checkout 到对应提交再运行。
+- [本次实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)：构建标识、结果摘要、DLL 哈希与 CLI 签名输出。
+
+当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player；GC、线程、性能和其他平台仍按各专题的验证状态阅读。
 
 ## 带着问题按需查阅
 

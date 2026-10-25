@@ -80,7 +80,11 @@ Player 构建编号、原生二进制和 PDB 路径：待填写
 
 这份映射来自固定 package 的 [hybridclr_version.json](https://github.com/focus-creative-games/hybridclr_unity/blob/6cadd24d101f4cbd00cd80190106f6621132d24d/Data%7E/hybridclr_version.json)。package 版本与 runtime 版本不同是该映射的实际结果。新实验的 840 个配套 libil2cpp 文件、79 个 HybridCLR 非生成文件，与锁定源码逐文件哈希一致；桥接文件等按 GenerateAll 正常生成。
 
-自有 C#、程序集配置和 CDB 命令保存在仓库的 `scripts/hybridclr-reading-probe/`。只把样本放进新实验工程：构建脚本会写入该工程的场景列表与构建设置。它在工程同级寻找 `combined-libil2cpp`，首次安装到项目本地，随后按一致配置生成并构建。v9 的实际 runtime 路径是 `Library/HybridCLR/LocalIl2CppData-WindowsEditor/il2cpp`，不要套用上面 v6 的 `HybridCLRData` 路径。
+自有 C#、程序集配置和 CDB 命令现维护在公开仓库 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)，本文使用 [固定提交 `e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)（完整 SHA：`e0220099d293f7a1a4601ee9931b49a10dd519f9`）。最小 Add 工程位于 [projects/call-chain](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/e0220099d293f7a1a4601ee9931b49a10dd519f9/projects/call-chain)，准备、构建和调试步骤见该提交的 [README](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/README.md)。克隆后先 checkout 到这个提交，再执行准备与构建命令。
+
+`tools/prepare.py` 将锁定依赖准备到实验仓库的 `.local/combined-libil2cpp`；`tools/lab.py build` 核对实际 Editor 身份，并构建三个隔离样本。构建器只写各自工程的场景列表、构建设置与本地 runtime。v9 的实际 runtime 路径是 `Library/HybridCLR/LocalIl2CppData-WindowsEditor/il2cpp`，不要套用上面 v6 的 `HybridCLRData` 路径。
+
+从新仓库重新构建后，Add 的返回值、首次转换和再次复用均已复核；公开记录见 [call-chain.json](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/call-chain.json)，对应构建 `136f3c65-0c8b-4944-a838-39a5f4024e27`。该记录与下文的历史源码阅读基线分开保存。
 
 这轮实际走到的边界如下：
 

@@ -35,7 +35,7 @@ lastmod: "2026-10-25"
 
 HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 IL2CPP。这个专栏帮助你先分清问题在哪一层，再找到应读的机制、源码入口或工程案例。
 
-目前有 **30 篇编号正文、6 篇前置与桥接，以及源码阅读起步、线程接入 2 篇专题（共 38 篇）**，索引另计。其中两篇前置和泛型共享桥接与 ECMA-335 共用正文，不重复计算为新增文章。商业能力属于选读研究，不能替代社区版主链的学习与验证。
+目前有 **30 篇编号正文、6 篇前置与桥接，以及源码阅读起步、线程接入、泛型调用综合实验 3 篇专题（共 39 篇）**，索引另计。其中两篇前置和泛型共享桥接与 ECMA-335 共用正文；综合实验由 ECMA-335、IL2CPP 和 HybridCLR 三栏共用一篇。商业能力属于选读研究，不能替代社区版主链的学习与验证。
 
 ## 推荐阅读顺序
 
@@ -46,6 +46,7 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 | 实现底座 | [IL2CPP 索引]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})，先读 [运行时地图]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}}) | 分清 metadata、native code 与 runtime |
 | 动手准备 | [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) | 对齐版本、构建与进程，知道首轮断点看什么 |
 | 基础主线 | HCLR-1～5，穿插泛型共享和 ABI 桥接 | 能描述一段热更方法如何被装载、转换与执行 |
+| 三栏综合实验 | [泛型调用：签名 → AOT → 执行]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) | 用同一调用区分目标身份、原生实现、补充方法体与解释器内联 |
 | 线程与 GC | GC 桥接篇 → [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | 分清 runtime 登记、活跃根、业务同步和主线程限制 |
 | 工程收束 | HCLR-6～9 | 能划分边界、按层排障并识别性能成本 |
 | 按需深入 | 下方案例、泛型手册与商业能力 | 按自己的问题选读，不必把所有文章当成前置 |
@@ -53,6 +54,15 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 只需补某个概念时，可直接读 [签名与引用解析]({{< relref "engine-toolchain/ecma335-signatures-and-reference-resolution.md" >}}) 或 [类型加载与初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})，不必重新顺读整个前置系列。
 
 源码起步篇保留 v6.1.0 的历史阅读样本；起步与调用链篇已另用固定的 v9 配套组合，在本机自定义 Unity 2022.3.62f3 完成 Player 原生断点实验。两条版本基线分别标明，不代表全系列或其他平台都已验证。
+
+## 配套实验仓库
+
+先跑 Add 的首次转换与再次调用，再跑泛型四组对照，观察补充方法体、内联与缓存。三个专栏共用公开仓库 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab)；当前文章对应 [固定提交 `e0220099`](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/e0220099d293f7a1a4601ee9931b49a10dd519f9)。
+
+- [复现说明与固定环境](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/README.md)：包含 Add、generic-p0、generic-p1 三个隔离工程，先 checkout 到对应提交再运行。
+- [本次实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/README.md)：构建标识、结果摘要、DLL 哈希与 CLI 签名输出。
+
+当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player；GC、线程、性能和其他平台仍按各专题的验证状态阅读。
 
 ## 公共基础之后，补 HybridCLR 的约定
 
@@ -79,14 +89,15 @@ HybridCLR 把构建准备、动态装载、方法转换和解释执行连接到 
 
 如果对 asmdef、Roslyn 和 Player 脚本编译不熟悉，可先补 [Unity 脚本编译管线]({{< relref "engine-toolchain/unity-script-compilation-pipeline-series-index.md" >}})，它是外部公共前置。
 
-## 源码跟读与线程专题
+## 源码跟读与运行时实验
 
 | 入口 | 读完要能回答 |
 |---|---|
 | [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}}) | 怎样对齐版本、构建与首轮调用断点？ |
+| [泛型调用综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) | 为什么同一 `Echo<T>` 的 string、int、结构体调用会走不同路径？补元数据改变了什么？ |
 | [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}}) | 谁接入线程、谁持有解释器状态和根、谁负责退出？ |
 
-线程专题与 IL2CPP 共用，放在源码起步和 GC 桥接之后。托管探针的桌面运行不等于 Player 或原生回调验证。
+泛型综合实验已在固定 v9 配套组合、本机自定义 Editor 下完成两份 Player 与四组运行，包含原生共享实现和补充方法体后内联解释的证据。线程专题与 IL2CPP 共用，放在源码起步和 GC 桥接之后；其托管探针桌面运行不等于 Player 或原生回调验证。
 
 ## 基础主线与工程收束
 
@@ -166,8 +177,8 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 
 ## 当前边界与待补强
 
-本系列已经覆盖机制、源码入口、案例和工程防线。源码起步篇提供了最小调用实验的准备与观察方法，但仍不是完整接入教程或经过各平台验证的 demo 工程。
+本系列已经覆盖机制、源码入口、案例和工程防线。配套实验仓库已提供可构建的隔离工程、复现脚本和固定提交证据；它服务于调用链与泛型实验，尚未覆盖各平台接入与业务资源加载流程。
 
-基础 Add 样本的 Player 断点记录已补齐。下一步是同一个泛型调用贯穿 ECMA-335／IL2CPP／HybridCLR 的综合实验、GC 引用快照与原生线程回调验证，以及首调、预热、稳定执行与跨边界调用的性能测量。基础样本通过不代表这些专题也已验证。
+基础 Add 样本和贯穿 ECMA-335／IL2CPP／HybridCLR 的泛型调用综合实验均已补齐 Player 断点记录。下一步是 GC 引用快照与原生线程回调验证，以及首调、预热、稳定执行与跨边界调用的性能测量。两个功能样本通过不代表这些专题也已验证。
 
 **先对齐版本和运行现场，再沿主链理解机制，最后按问题回到对应专题。**
