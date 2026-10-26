@@ -233,7 +233,15 @@ Relaxed 的结果也不能改写成“带 beforefieldinit 的类型必在首次�
 
 为继续观察第二次访问，额外提供无内部 catch 的 AccessFailed；由同一个 AOT 驱动逐次反射调用并捕获。这里的 TargetInvocationException 是反射边界包装，内层才是类型初始化失败和原始业务异常。这个路径验证了两侧构造体均未因第二次访问重跑，却不消除原来内部捕获路径的差异。
 
-当前只确认该自定义版本中的可复现现象。异常捕获差异的准确根因、普通方法抛出对照、其他构建和版本仍待验证；没有修改上游 runtime，也没有将外层捕获包装成修复方案。
+上轮只确认了该自定义版本中的现象；后续独立异常传播实验已补齐普通抛出对照、现场定位与单点反事实，见下一小节。其他构建和版本仍未验收，外层捕获不是修复方案。
+
+### 后续补证：逃逸发生在方法上下文切换窗口 {#initializer-escape-cause}
+
+上轮记录保留为原始固定版本的观察。后续独立异常实验已将根因定位到：在新解释帧建立之前，活动 `imi` 已提前换成被调方法，.cctor 失败后却仍拿调用方的帧与指令位置查被调方的异常表。原始 RunFailed 的只读现场为活动 EH0／调用方 EH1；新样本为0／3，转换后偏移仍位于调用方保护区间。
+
+用临时变量保存准备结果、仅在初始化成功后切换活动 imi 的隔离反事实，保持自有 DLL 与准备顺序不变，恢复了内部 catch 和 finally。两版96个普通进程与8个native取证还区分了普通抛出、手工同类型异常和短方法内联路径。原始版本并未因此自动升级或修复；具体证据、补丁范围与复现入口见[异常传播实测]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}})。
+
+本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。
 
 ### 转换缓存就绪，不等于目标方法体执行过
 

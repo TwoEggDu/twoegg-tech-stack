@@ -233,9 +233,11 @@ v9 的 Transform 接收 MethodInfo，并在内部经 MethodBodyCache 取得方�
 
 两个 native 对照都观察到 **Ping 先转换，随后执行 .cctor**。strict 的 Ping 方法体出现两次；failed 没有 Ping 方法体事件，退出前缓存却已非空。因此不能从“Transform 过一次／interpData 非空”反推“静态构造成功”或“目标方法执行过”。解释器内部调用也不一定再次进入原生 Execute 函数，函数入口计数与托管调用次数须分开。
 
-复现入口是 `tools/init_lab.py`，本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，见[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/46ac71c74cd068bc177d653dd143b7bb9dc482bd/projects/type-initialization)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。`74da063` 仍为上一轮资源实验。异常捕获差异只在本机自定义 Editor／固定 v9／Windows x64 上复现，精确根因和其他平台仍待补。
+复现入口是 `tools/init_lab.py`，本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，见[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/46ac71c74cd068bc177d653dd143b7bb9dc482bd/projects/type-initialization)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。`74da063` 仍为上一轮资源实验。后续[异常传播实验]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}})已在同环境用原生上下文与单点反事实定位提前切换imi的问题；原始固定版本证据保留，其他平台仍未验收。
 
-其余训练按实际问题推进：constrained.／装箱需要对应 CIL 与对象身份，跨 AOT／解释器异常传播需要普通抛出与 finally 对照，并发／长期压力需要单独的调度、时长和停止协议。这些不会成为第一轮阅读的统一门槛。
+本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。
+
+其余训练按实际问题推进：constrained.／装箱需要对应 CIL 与对象身份，本轮已补跨 AOT／解释器普通抛出与 finally 对照；filter／嵌套展开的完整覆盖仍需独立验证，并发／长期压力需要单独的调度、时长和停止协议。这些不会成为第一轮阅读的统一门槛。
 
 ## 历史 v6.1.0 对照
 

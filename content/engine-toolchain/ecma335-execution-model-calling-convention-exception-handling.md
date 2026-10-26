@@ -2,7 +2,7 @@
 title: "ECMA-335 基础｜CLI Execution Model：方法调用约定、虚分派、异常处理模型"
 slug: "ecma335-execution-model-calling-convention-exception-handling"
 date: "2026-04-14"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 description: "从 call、callvirt、constrained.、装箱与异常处理理解托管调用语义，再衔接 IL2CPP 与 HybridCLR 的跨边界实现。"
 weight: 13
 featured: false
@@ -284,6 +284,14 @@ AOT 调用方
 这张图表达职责，不指定当前版本必须经过哪个内部函数。具体 bridge、invoker、帧布局与异常实现放到 [ABI 桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}}) 和 [HybridCLR 调用主链]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})。
 
 不要从“解释器没有直接使用每个方法的 native 栈帧”推导“异常一定更快”，也不要从某个 IL2CPP 平台的实现推导所有平台的 EH 机制。性能和支持范围需要版本、平台与实测条件。
+
+## 实现验证：初始化异常也需要正确的调用方上下文 {#exception-flow-contract}
+
+2026-10-26 的[跨 AOT／解释器实测]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}})把普通抛出、手工 TypeInitializationException 与 .cctor 失败分开。固定自定义 Editor／v9／Windows x64 基线在一种不可内联的热更内部初始化调用上，当前帧和指令位置仍属调用方，活动方法信息却已切到被调方，导致查错 EH 表，连 finally 也被跳过。
+
+相同自有 DLL 的隔离单点反事实延后活动方法信息赋值后，这个对照恢复 catch／finally，其他调用方向保持原结果。两版共96个普通进程、8个native取证。这是当前实现的样本级缺陷定位，不改变 ECMA-335 契约；源码有 try/catch 或某条跨边界调用能返回，都不能替代对实际异常搜索与清理路径的验证。
+
+完整过程和指令坐标区别集中在上面的实现篇，本篇继续负责规范语义。本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。
 
 ## 动手验证
 

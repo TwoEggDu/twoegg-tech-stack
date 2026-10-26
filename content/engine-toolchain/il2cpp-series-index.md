@@ -84,6 +84,10 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 [类型初始化与首次调用]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#type-initialization-player" >}}) 补入最终AOT/hot DLL标志与自有CIL、四组问题及失败捕获边界对照。30个普通Player中27完成、3个热更内部catch异常逃逸，另有2个native取证进程；Ping缓存已准备不等于方法体已执行。[runtime篇]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#type-initialization-runtime" >}})说明职责区别，[源码起步篇]({{< relref "engine-toolchain/hybridclr-source-reading-start.md#type-initialization-first-call" >}})说明证据分层。本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。
 
+## 共享异常传播实验
+
+[跨 AOT／解释器异常传播]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}}) 用相同自有DLL比较原始运行时与新工程内的单点反事实。两版96普通Player、8个native进程：活动imi提前切换导致查错EH表，原始3个内部catch/finally缺失对照在延后赋值后恢复，其他方向与抛出对照保持原结果。[类型初始化篇]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#initializer-escape-cause" >}})同步后续证据；本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。不表示上游或其他平台已修复。
+
 ## 按问题查阅
 
 | 问题 | 阅读入口 |

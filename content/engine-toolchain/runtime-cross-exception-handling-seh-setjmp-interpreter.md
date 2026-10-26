@@ -2,6 +2,7 @@
 title: "横切对比｜异常处理：两遍扫描 vs setjmp/longjmp vs 解释器展开"
 slug: "runtime-cross-exception-handling-seh-setjmp-interpreter"
 date: "2026-04-14"
+lastmod: "2026-10-26"
 description: "同一份 ECMA-335 异常处理契约（catch / filter / finally / fault 四种 clause），在 CoreCLR、Mono、IL2CPP、HybridCLR、LeanCLR 五个 runtime 里走出五种完全不同的实现路线：OS SEH 两遍扫描、setjmp/longjmp 单遍扫描、C++ exception、解释器内部展开。从异常机制、try 开销、throw 开销、filter 支持、栈展开方式到嵌套异常处理，逐维度横切对比五种异常处理实现的设计 trade-off。"
 weight: 85
 featured: false
@@ -17,7 +18,7 @@ series: "dotnet-runtime-ecosystem"
 series_id: "runtime-cross"
 ---
 
-> try 块应该是零成本的——ECMA-335 规范只说"如果异常发生，去这个 handler 执行"，没有要求你在进入 try 时做任何事。但在 setjmp/longjmp 实现里，每次进入 try 都要调用 setjmp 保存上下文。异常处理不是一个独立的语言特性问题，它是 JIT、AOT、解释器三种执行策略在"如何控制栈帧"这个核心能力上的直接分野。
+> 异常处理既要满足 catch／filter／finally／fault 的语义，也要接上实际执行栈。规范不要求每次进入 try 都注册 handler；具体成本取决于实现、平台与调用路径。异常处理不是一个独立的语言特性问题，它是 JIT、AOT、解释器三种执行策略在"如何控制栈帧"这个核心能力上的直接分野。
 
 这是 .NET Runtime 生态全景系列的横切对比篇第 6 篇（CROSS-G6）。
 
@@ -197,50 +198,77 @@ IL2CPP 的异常处理本质上是单遍扫描——C++ exception 机制本身�
 
 IL2CPP 对 finally 的处理比较独特：il2cpp.exe 在转译时把 finally 块的代码内联到所有可能的出口路径——正常退出路径内联一份，每个异常退出路径也内联一份。这避免了运行时动态调用 finally 的开销，但增加了生成的 C++ 代码体积。
 
-## HybridCLR — 解释器内部的 ExceptionFlowInfo 展开
+## HybridCLR：解释器帧查表与 native 异常边界
 
-HybridCLR 的异常处理完全在解释器内部完成，不走 OS 的异常机制。
+解释器管理自己的 InterpFrame、转换后指令与异常处理表，可以在这些逻辑帧之间寻找 catch、执行清理和继续展开。跨 AOT 调用、运行时辅助函数和解释器出口仍会进入 native 异常机制；不能写成“所有异常完全不经过 OS／C++ 展开”。本轮 Windows x64 固定构建实际观察到了 C++ 的 Il2CppExceptionWrapper 捕获。
 
-### 解释器掌控全部栈帧
+### 当前方法上下文必须一致
 
-HybridCLR 的解释器维护自己的执行栈——每个被解释的方法在解释器的栈上有一个 InterpFrame。当解释器内部发生异常时，不需要和 OS 的栈展开机制交互，因为所有被解释的栈帧都在解释器的控制之下。
+`frame` 表示当前解释帧，`imi` 指向当前解释方法的转换信息；`ip`／`ipBase` 确定转换后指令偏移。异常搜索必须用同一方法的指令位置和 EH 表。只知道逻辑调用链里存在某个 catch，还不能证明现场搜索到了它。
 
-这是解释器做异常处理的根本优势：**解释器看得见自己管理的所有栈帧，可以直接遍历、展开、恢复，不需要依赖任何外部机制。**
+固定 runtime v9.0.1 的 `Interpreter_Execute.cpp` 中，ExceptionFlowInfo 保存异常和抛出位置，搜索逻辑读取 `imi->exClauseCount` 与 `imi->exClauses`；需要退出解释帧时，再恢复调用方的帧与方法上下文。它与 native 边界的异常路径共同工作。[固定公开源码](https://github.com/focus-creative-games/hybridclr/blob/83929787581bce6c7219418f62348a10c33582ee/hybridclr/interpreter/Interpreter_Execute.cpp)
 
-### ExceptionFlowInfo 机制
+### 表驱动不等于跨边界零成本
 
-HybridCLR 用 ExceptionFlowInfo 结构来管理异常传播：
+try 的保护区间可以用静态表表达，不必为每次进入 try 主动注册 handler。类型初始化、桥接、native 展开、异常对象和堆栈构建仍有各自的路径与成本。本文没有同负载跨 runtime 性能数据，不据源码结构断言 throw 更快，也不保留原先无测量依据的倍数。
 
-1. 解释器在执行某条指令时检测到异常（比如 null 解引用、显式 throw）
-2. 构造 ExceptionFlowInfo，记录异常对象和抛出位置
-3. 在当前方法的 EH table 中搜索匹配的 handler——按 try 块范围和类型匹配
-4. 如果找到 catch，把 IP（instruction pointer）跳转到 catch handler 的位置，继续解释执行
-5. 如果当前方法没有匹配的 handler，退出当前 InterpFrame，在调用方的 InterpFrame 中继续搜索
-6. 搜索过程中遇到 finally 子句就先执行 finally，然后继续向外搜索
+### 实测：.cctor 异常为什么跳过内部 catch {#exception-flow-player}
 
-### try 是零成本的
+2026-10-26 在 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 新增 `projects/exception-flow`，追查[类型初始化实验]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#type-initialization-player" >}})中三次稳定复现的异常逃逸。环境仍是本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3／runtime v9.0.1、Windows x64 Development／IL2CPP C++ Debug／Minimal stripping。
 
-在 HybridCLR 的解释器中，进入 try 块不需要任何额外操作。try 块的范围信息在 transform 阶段已经从 IL metadata 提取到方法的 EH table 中。解释器正常执行时完全不碰 EH table——只有异常发生时才查询。
+先分清抛出位置、调用方向和调用方式。AOT／热更场景使用同一份自有代码，仅命名空间与来源标签不同；AOT 进入热更用缓存委托，反射只用于建立委托，不把其包装异常混进被测调用。普通方法抛 `InvalidOperationException`、手工抛 `TypeInitializationException`、失败 .cctor 的可内联短 void 调用及明确不可内联的含分支 int 调用分别成组。含分支与返回类型同时不同，不能把结果单独归因于“返回 int”。
 
-这一点和 CoreCLR 的 table-based 方案在哲学上一致：正常路径零开销，异常路径查表。区别在于 CoreCLR 查的是 JIT 生成的 native code 级别的表，HybridCLR 查的是解释器 transform 后的指令级别的表。
+| 调用方向／场景 | 原始固定运行时 | 隔离反事实 |
+|---|---|---|
+| AOT → AOT，四种抛出形状 | 每组 3 个进程，两次访问均捕获，finally 各一次 | 相同 |
+| 热更 → AOT，四种形状 | 每组 3 个进程，两次均捕获，finally 各一次 | 相同 |
+| AOT → 热更，四种形状，经缓存委托 | 每组 3 个进程，两次均捕获，finally 各一次 | 相同 |
+| 热更 → 热更，普通抛出／手工 TypeInitializationException／短 void 初始化 | 每组 3 个进程，两次均捕获，finally 各一次 | 相同 |
+| 热更 → 热更，不可内联的失败初始化调用 | 3 个进程，两次都逃逸，内部 catch 与 finally 均未执行 | 3 个进程，两次均捕获，finally 各一次 |
 
-### throw 比 native 快
+每版 48 个普通进程，两版共 96 个；驱动均退出 0 表示采集完成，是否捕获由事件独立判定。基线为 45 个处理成功、3 个逃逸对照，反事实为 48 个处理成功。两侧失败类型的 .cctor 都只执行一次，第二次访问继续报告已有初始化失败。
 
-一个反直觉的事实：解释器内部的 throw 比 native 的 throw 更轻量。原因是解释器不需要做 OS 级别的栈展开。
+### 先证明输入和坐标，再检查查表对象
 
-CoreCLR 的 throw 需要通过 SEH/libunwind 遍历 native 栈帧，每一帧需要解析 DWARF 展开信息或 SEH 展开数据。HybridCLR 的 throw 只需要在解释器自己的 InterpFrame 链表上遍历——这是纯用户态的链表遍历，不涉及 OS 调用。
+基线 build_id `0628a07c-8e75-40ed-bb91-c295c40414c7`；反事实为 `c811dcee-5771-4a89-86f9-ed53d862be1d`。两版 43 个输入、最终裁剪 AOT DLL、随包热更 DLL、4 份生成代码文件均逐字节相同。各 227 个产物有哈希绑定，919 个运行时输入中仅指定的公开 HybridCLR 文件不同。
 
-当然，这个"throw 更快"的优势被解释器本身的执行速度劣势所抵消——如果方法体本身就慢 10 倍以上，throw 快 2-3 倍在整体性能上没有实际意义。
+最终两个自有 DLL 的 CIL 都把 `Failed.PingRet` 的 call 放在偏移 87、typed catch 保护区间 `[17,96)` 内；外层 finally 保护区间为 `[17,144)`。三轮匹配 PDB 的原生取证分别在每版采到 6 次异常现场：
 
-### 解释器到 AOT 的边界
+| 现场状态 | 原始运行时 | 隔离反事实 |
+|---|---|---|
+| 当前帧和指令基址 | 都属于调用方 RunOwn | 相同 |
+| 转换后抛出偏移 | 304，在 typed catch `[48,328)` 和 finally `[48,448)` 内 | 相同 |
+| 活动 imi | 等于已准备的 PingRet 缓存，与调用方缓存不同 | 仍等于调用方缓存 |
+| 活动 EH 条数／调用方 EH 条数 | 0／3 | 3／3 |
+| PingRet 转换缓存 | 已准备 | 同样已准备 |
 
-当异常从 HybridCLR 解释器内部抛出，但 handler 在 AOT 代码中时（或反过来），需要跨越解释器和 native code 的边界。HybridCLR 在解释器的入口和出口设置了桥接——从解释器抛出的异常在桥接点转换为 C++ exception（或 IL2CPP 的异常机制），让 AOT 侧的异常处理能接管。
+**CIL 的 87 与转换后指令的 304 是不同坐标系，不能直接比较。** 本轮分别核对了各自的保护区间；问题发生在“用哪份 EH 表”，不是把这两个偏移混为一谈，也不是源码忘了把 call 放进 try。
 
-这个桥接是 HybridCLR 异常处理中最复杂的部分。纯解释器内部的异常处理很简单，跨边界的异常传播需要确保两套机制无缝衔接。
+### 根因与最小反事实
+
+原来的建帧宏先将 `imi` 改为被调方法的转换信息，再执行其类型初始化，最后才进入新帧并更新指令上下文。若 .cctor 在中途失败，`frame` 和 `ip`／`ipBase` 仍属调用方，`imi` 却已经属被调方。native catch 随后用这个不一致的组合查表：本例被调 PingRet 没有 EH 子句，于是调用方的 catch 与 finally 都被跳过。
+
+这解释了为什么普通方法抛出或手工抛同一种异常可以捕获：它们实际进入方法体后，再按退出解释帧的路径恢复调用方上下文；失败 .cctor 则出现在新帧尚未建立的窗口内。
+
+反事实只改新工程 Library 中的 `PREPARE_NEW_FRAME_FROM_INTERPRETER`：先把被调方法准备结果保存在 `nextImi` 临时变量，类型初始化成功后再赋给活动 `imi`。**仍在初始化前准备方法缓存**，不同时改变准备顺序、异常类型、调用方代码或 DLL。对应公开最小差异位于 `patches/exception-flow-delay-active-imi.patch`。发生异常时，调用方上下文得以保留，原先三轮逃逸对照的内部 catch 和 finally 都恢复执行。
+
+这是对当前固定版本与样本路径的因果验证；原始上游仓库、共享 prepared runtime、旧工程及旧回执均保留。隔离变体不是官方版本更新，也没有把单一路径的结果扩展成所有平台／filter／嵌套展开路径的完整验收。
+
+### 为什么短 void 对照没有暴露问题
+
+每版另取一个匹配 PDB 的短 void 控制进程。两次访问都实际停在 `InitClassStaticCtor` 指令，转换后偏移 248，活动缓存始终属于调用方。这条内联路径在原调用方上下文里处理初始化，没有经过本例提前切换 imi 的建帧窗口。
+
+固定版本的内联判断应结合 `MethodBodyCache`、`TransformContext` 和实际转换指令核对，不能只看 C# 写了 NoInlining。本轮含分支方法用于明确排除内联，不把返回类型当作唯一控制变量。
+
+### 复现入口与记录
+
+依次使用 `tools/eh_lab.py build/run/trace --variant baseline`，再执行 `--variant counterfactual` 的同组命令；`tools/eh_inline.py`采短 void 控制，最后 `verify`、`export`。普通运行 96 个、native 取证 8 个，共 104 份公开自有事件；原始日志、PDB、Player 和生成的 Unity C++ 留在忽略目录。
+
+本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。复现使用[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/f5ba510382e170ac06d2fd7033db363e6c58f62e/projects/exception-flow)；前轮 `46ac71c` 不包含本轮工程或反事实补丁。旧原始 RunFailed 的只读复核也看到活动 EH0／调用方 EH1、偏移 88 位于转换后 `[88,136)`，与新样本定位一致；原始证据不被反事实结果改写。
 
 ## LeanCLR — 解释器内部的 RtInterpExceptionClause 展开
 
-LeanCLR 的异常处理和 HybridCLR 在设计哲学上一致——都是解释器内部展开，不依赖 OS 机制。但 LeanCLR 是独立实现，有自己的数据结构和流程。
+LeanCLR 用自己的解释器异常数据结构组织逻辑帧内的处理。它可以与 HybridCLR 对照 EH 表和帧恢复方式，但不能由此推出两者都不存在 native 边界。
 
 ### RtInterpExceptionClause
 
@@ -268,55 +296,29 @@ LeanCLR 解释器执行时的异常处理流程：
 
 **指令集层面。** HybridCLR 的 ExceptionFlowInfo 工作在 HybridCLR transform 后的指令集上，LeanCLR 的 RtInterpExceptionClause 工作在 LL-IL 指令集上。两者的指令偏移、栈布局、帧结构都不同。
 
-**边界问题。** HybridCLR 需要处理解释器和 IL2CPP AOT 代码之间的异常传播边界。LeanCLR 是纯解释器——所有代码都在解释器内部执行，不存在解释器/native 边界问题。这让 LeanCLR 的异常处理比 HybridCLR 更简单。
+**边界问题。** HybridCLR 需要处理解释器和 IL2CPP AOT／运行时辅助函数之间的异常传播。本篇对 LeanCLR 只讨论解释帧内部；宿主调用和原生接口的异常责任应按其版本另行核对，不从“纯解释器”名称推出没有边界问题。
 
-**GC 安全点。** CoreCLR 的异常处理需要在栈展开过程中维护 GC 安全性——展开过程中可能触发 GC，需要确保所有引用仍然可达。LeanCLR 的 GC 接口是 stub 状态，不需要在异常处理路径中考虑 GC 安全问题。
+**GC 安全点。** 异常展开与 GC 的协作需要保证仍然活跃的引用可见，不能从某版 GC 接口尚未完成就推出清理路径无需考虑引用安全。本轮没有验证 LeanCLR 的 GC／异常协作。
 
 ## 五方对比表
 
 | 维度 | CoreCLR | Mono | IL2CPP | HybridCLR | LeanCLR |
 |------|---------|------|--------|-----------|---------|
-| 异常机制 | OS SEH (Win) / libunwind (Linux) | setjmp/longjmp (AOT) / C++ exception (JIT) | C++ exception / setjmp/longjmp | 解释器内部 ExceptionFlowInfo | 解释器内部 RtInterpExceptionClause |
-| try 开销 | 零成本（表驱动） | JIT 零成本 / AOT setjmp 有开销 | C++ exception 零成本 / setjmp 有开销 | 零成本（表驱动） | 零成本（表驱动） |
-| throw 开销 | 高（OS 栈展开 + 栈跟踪构建） | 中（longjmp）/ 高（C++ throw） | 中-高（C++ throw / longjmp） | 低（用户态链表遍历） | 低（用户态链表遍历） |
-| 扫描模式 | 两遍扫描 | 取决于模式 | 单遍扫描 | 单遍（解释器内部） | 单遍（解释器内部） |
-| filter 支持 | 完整（两遍扫描保证） | JIT 完整 / AOT 受限 | 受限（catch 内模拟） | 完整（解释器可控） | 完整（解释器可控） |
-| 栈展开方式 | DWARF / SEH 展开 | DWARF / longjmp | C++ unwind / longjmp | InterpFrame 链表遍历 | 帧链表遍历 |
+| 异常机制 | OS SEH (Win) / libunwind (Linux) | setjmp/longjmp (AOT) / C++ exception (JIT) | C++ exception / setjmp/longjmp | 解释器表驱动＋native边界 | 解释器内部 RtInterpExceptionClause |
+| try 开销 | 零成本（表驱动） | JIT 零成本 / AOT setjmp 有开销 | C++ exception 零成本 / setjmp 有开销 | 表驱动保护区间；边界成本另计 | 零成本（表驱动） |
+| throw 开销 | 高（OS 栈展开 + 栈跟踪构建） | 中（longjmp）/ 高（C++ throw） | 中-高（C++ throw / longjmp） | 路径相关，本文未测 | 低（用户态链表遍历） |
+| 扫描模式 | 两遍扫描 | 取决于模式 | 单遍扫描 | 按解释器EH表／native边界分别分析 | 单遍（解释器内部） |
+| filter 支持 | 完整（两遍扫描保证） | JIT 完整 / AOT 受限 | 受限（catch 内模拟） | 有filter指令与路径；本轮未验收完整语义 | 完整（解释器可控） |
+| 栈展开方式 | DWARF / SEH 展开 | DWARF / longjmp | C++ unwind / longjmp | 解释帧恢复＋边界native展开 | 帧链表遍历 |
 | nested exception | OS 机制原生支持 | 链表管理 | C++ 嵌套 throw | ExceptionFlowInfo 嵌套 | clause 数组嵌套搜索 |
-| 性能影响 | try 零成本，throw 昂贵 | AOT try 有开销，throw 中等 | 平台依赖 | try 零成本，throw 轻量 | try 零成本，throw 轻量 |
+| 性能影响 | try 零成本，throw 昂贵 | AOT try 有开销，throw 中等 | 平台依赖 | 表驱动；实际成本待同负载测量 | try 零成本，throw 轻量 |
 | **源码锚点** | `src/coreclr/vm/exceptionhandling.cpp` | `mono/mini/mini-exceptions.c` | `il2cpp/vm/Exception.cpp` | `hybridclr/interpreter/Interpreter_Execute.cpp` | `src/runtime/interp/interpreter.cpp` |
 
-## 为什么解释器的异常处理比 JIT 简单
+## 逻辑帧可控，边界上下文仍需一致
 
-五个 runtime 的异常处理实现复杂度差异巨大。CoreCLR 的异常处理是整个 runtime 中最复杂的子系统之一，而 HybridCLR 和 LeanCLR 的异常处理相对简洁。这不是因为解释器偷了懒，而是因为解释器和 JIT/AOT 在"栈帧控制权"上有根本性差异。
+解释器拥有自己的逻辑帧和指令表，使局部异常搜索可以直接操作这些结构；JIT／AOT 的 native 帧还需要遵守目标 ABI 与展开协议。两者都必须把异常位置、方法身份和清理责任保持一致。
 
-### JIT/AOT：栈帧属于 OS
-
-JIT 和 AOT 编译器生成的是 native code，运行在 OS 管理的调用栈上。每个方法调用产生一个 native 栈帧，由 CPU 的 call/ret 指令和 OS 的栈管理机制控制。
-
-当异常发生时，runtime 需要"逆向操作" OS 的栈——遍历 native 栈帧、解析展开信息、恢复寄存器状态、执行清理代码。这个过程必须和 OS 合作，因为栈帧的布局和管理权在 OS 和编译器手中。
-
-CoreCLR 在 Windows 上用 SEH，在 Linux 上用 libunwind + DWARF——两种方案都是在 OS/ABI 层面的标准化栈展开协议上构建的。这些协议本身就很复杂（DWARF 展开信息的编码格式、SEH 的多级分发机制），CoreCLR 还需要在这些协议上叠加 .NET 特有的语义（两遍扫描、filter、GC 安全）。
-
-### 解释器：栈帧属于自己
-
-解释器的执行栈是自己管理的数据结构——一个 InterpFrame 链表或数组。每个方法调用创建一个 InterpFrame，记录局部变量、求值栈、当前 IP。这些帧完全在用户态内存中，由解释器代码直接操作。
-
-当异常发生时，解释器直接遍历自己的 InterpFrame 链表，查 EH table，跳转 IP——整个过程是纯粹的应用层逻辑，不涉及 OS 调用、ABI 约定、展开信息解析。
-
-这就是为什么 HybridCLR 和 LeanCLR 的异常处理实现可以比 CoreCLR 简单一个数量级。它们不需要和 OS 的栈展开机制交互，不需要解析 DWARF 或 SEH 数据，不需要处理 native code 和 managed code 之间的栈帧交错。
-
-### 代价：性能
-
-解释器在异常处理上的简单性是有代价的。解释器管理的栈帧意味着所有方法调用都通过解释器的 dispatch loop——方法调用本身就比 native call 慢很多。虽然 throw 路径更轻量，但正常的方法调用和执行已经慢了 10-100 倍。
-
-此外，解释器的异常处理只覆盖解释器内部的代码。HybridCLR 需要处理解释器和 AOT 代码之间的异常边界，这个边界处理的复杂度并不低于 JIT 的异常处理。LeanCLR 因为是纯解释器，没有这个边界问题——但也因此没有 native code 的性能。
-
-### 一个有趣的对称性
-
-JIT/AOT 的 trade-off 是：try 零成本，throw 昂贵（因为需要 OS 级栈展开）。解释器的 trade-off 是：try 零成本，throw 轻量（因为栈帧在自己手里），但整体执行本身就慢。
-
-两种方案都在优化正常路径、接受异常路径的开销——只不过"正常路径"的含义不同。JIT/AOT 的正常路径已经是 native 速度，异常路径偶尔的高开销可以接受。解释器的正常路径本身就慢，但至少异常路径不会雪上加霜。
+本轮缺陷恰好出现在解释器调用运行时辅助函数、而新解释帧尚未建立的窗口。能够遍历自己的帧，不等于跨边界状态天然正确；表驱动也不能推出 throw 的固定性能优势。比较实现时应同时查看正常进入、初始化中途失败、异常返回和清理路径。
 
 ## 收束
 
@@ -325,10 +327,10 @@ JIT/AOT 的 trade-off 是：try 零成本，throw 昂贵（因为需要 OS 级�
 - CoreCLR 的栈帧由 OS 管理，异常处理必须和 OS 的栈展开机制深度集成，复杂但 try 零成本
 - Mono 在 JIT 模式下和 CoreCLR 类似，在 AOT 模式下退回 setjmp/longjmp，用 try 的运行时开销换取实现的可移植性
 - IL2CPP 把异常处理映射到 C++ 层面，利用 C++ 编译器已有的异常机制，但受限于 C++ exception 的语义边界
-- HybridCLR 在解释器内部用 ExceptionFlowInfo 完成异常处理，简洁高效，但需要处理解释器和 AOT 的边界
-- LeanCLR 在解释器内部用 RtInterpExceptionClause 完成异常处理，纯解释器架构让实现最简单，没有跨边界问题
+- HybridCLR 用解释帧 EH 表搜索，同时维护跨 AOT／运行时辅助函数的 native 边界及一致的方法上下文
+- LeanCLR 的解释帧内部用 RtInterpExceptionClause 组织处理，宿主与原生接口边界需按版本另行核对
 
-异常处理不是一个孤立的语言特性问题。它是 runtime 执行策略的直接后果——你选择了 JIT、AOT 还是解释器，就同时选择了栈帧管理模型，也就决定了异常处理的实现路线。理解了这个约束结构，就理解了为什么 CoreCLR 需要和 SEH/libunwind 深度集成，也理解了为什么解释器的异常处理可以如此简洁。
+异常处理不是一个孤立的语言特性问题。它是 runtime 执行策略的直接后果——你选择了 JIT、AOT 还是解释器，就同时选择了栈帧管理模型，也就决定了异常处理的实现路线。理解了这个约束结构，就理解了为什么 CoreCLR 需要和 SEH/libunwind 深度集成，也能理解为什么解释器的逻辑帧处理与 native 边界必须分别核对。
 
 ## 系列位置
 

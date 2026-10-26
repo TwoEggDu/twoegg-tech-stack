@@ -86,7 +86,7 @@
 | AOT 泛型 | HCLR-2 建立身份／实现／执行模型，19 决策、20 共享规则、21 模板、22 工作流、23 场景、24 检查；不再重复铺设同一套定义 |
 | async 历史案例 | 区分堆栈观察、候选原因与尚未闭合的根因；后续用固定样本验证 builder/state machine 与构建配置 |
 | GC 与线程 | 正常接入、保留、根区间与串行跨增量片段样本已完成；完整根归因、屏障反事实、并发／长期压力与其他平台待补 |
-| 调用语义 | 泛型与类型初始化对照已完成采证；热更初始化异常的内部catch差异保留，后续补异常传播根因与 constrained.／装箱 |
+| 调用语义 | 泛型与类型初始化对照已完成采证；热更初始化异常的内部catch根因已由同DLL单点反事实定位；constrained.／装箱及其他异常路径按需补证 |
 | 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 固定样本已完成；async／UniTask 回归和设备性能仍待补 |
 | 商业能力 | 已按官方文档核对 FGS、DHE、热重载与访问控制契约；商业私有实现及项目收益不作源码或实测结论 |
 
@@ -172,3 +172,11 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 严格初始化/泛型静态状态与失败不重跑由实际事件记录；beforefieldinit只记录一种允许时机。失败call在两侧try[29,47)内，热更内部捕获差异保留，精确根因未定。native记录显示Ping先转换，再执行.cctor；失败时Ping缓存非空而方法体未执行。
 
 结果回填既有类型初始化、源码起步、IL2CPP runtime三篇，不新增正文；三个索引复用入口。本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，已推送并核验远端；[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)均锁定该提交。74da063仍为前轮资源版本；文稿与索引随本次文档提交交付，Pages另行验收。无并发、循环初始化、其他平台或性能结论。执行记录见[类型初始化实验](./hybridclr-type-initialization-outline.md)。
+
+## 跨 AOT／解释器异常传播与初始化逃逸定位（2026-10-26）
+
+独立projects/exception-flow，固定自定义Editor/v9/Windows x64。原始基线0628a07c与隔离反事实c811dcee：43输入、自有最终AOT/hot DLL与4份生成代码完全相同，各227产物；919运行时输入仅公开Interpreter_Execute.cpp一个宏变化。临时nextImi保留方法准备顺序，初始化成功后才切换活动imi；共享运行时和旧实验不改。
+
+两版各48个普通Player，原始45处理成功/3hh-cctor-ret两次均逃逸且finally0，反事实48处理成功且每次finally1。另每版3个关键native进程及1个内联控制，共8个。原始6个关键现场活动imi=被调PingRet、EH0，caller EH3；偏移304位于caller[48,328)，反事实保持caller imi/EH3；被调缓存两版都准备。短void实际命中InitClassStaticCtor、活动上下文保持caller。
+
+异常处理篇集中解释根因与坐标，类型初始化篇回填后续证据，源起步/runtime篇同步状态，三个索引复用同一入口。普通抛出/手工TypeInitializationException与其他方向对照未变，不把返回类型单独当因果变量。本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。实验已推送并核验远端；46ac71c仍是前轮类型初始化版本。文稿随本次文档提交交付，Pages另行验收。范围不含并发、性能、其他版本或完整filter/嵌套异常语义。执行记录见[异常传播实验](./hybridclr-exception-flow-outline.md)。
