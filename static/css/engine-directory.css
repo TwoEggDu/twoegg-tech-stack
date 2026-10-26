@@ -9,6 +9,8 @@
 .page-engine-directory .engine-content blockquote p:last-child { margin-bottom:0; }
 .page-engine-directory .engine-content > ul + p { margin-top:18px; }
 .page-engine-directory .engine-content hr { border:0; border-top:1px solid var(--line); margin-block:32px; }
+.page-engine-directory .engine-content .piccolo-home-actions { margin:0 0 20px; }
+.page-engine-directory .engine-content .piccolo-home-actions .button { color:var(--paper); text-decoration:none; }
 @media(max-width:760px) {
   .page-engine-directory .engine-switch { gap:8px 18px; font-size:14px; }
   .page-engine-directory .engine-outline > nav > ul > li > ul { display:none; }
