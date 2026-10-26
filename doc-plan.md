@@ -124,7 +124,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
-| 游戏交付 Agent 研究 | [docs/game-delivery-agent-series-plan.md](./docs/game-delivery-agent-series-plan.md) | 1 篇正文、7 篇提纲 | 已接入工程与交付入口；比较固定流程与按需模型判断；新增服务未实现，实验未执行；首批提纲线上已核验，本轮正文线上更新待核验 |
+| 游戏交付 Agent 研究 | [docs/game-delivery-agent-series-plan.md](./docs/game-delivery-agent-series-plan.md) | 2 篇正文、6 篇提纲 | 已接入工程与交付入口；研究流程、模型分工与修正复检记录；服务未实现，实验未执行；第 01 篇线上已核验，第 02 篇及本轮同步的线上部署待核验 |
 | 游戏美术生产与客户端协作 | [docs/game-art-production-collaboration-series-plan.md](./docs/game-art-production-collaboration-series-plan.md) | 12 篇正文已成稿，软件实操与素材待补 | 沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端接入组织，综合示例与联合验收收束 |
 | Unity 游戏更新与发布 | [docs/unity-game-update-release-series-plan.md](./docs/unity-game-update-release-series-plan.md) | 首页与七篇提纲已建立，正文待写 | 从首次整包、线上修复与内容更新串联版本绑定、构建、强更热更和发布回退；由 YooAsset 首页交叉进入 |
 | 长线运营工程专栏 | [docs/live-ops-engineering-column-plan.md](./docs/live-ops-engineering-column-plan.md) | 已拆出 | 产品生命周期视角 |

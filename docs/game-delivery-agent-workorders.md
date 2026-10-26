@@ -1,6 +1,6 @@
 ## 编辑工作单
 
-**选题：** [提交检查已经自动化，为什么修正仍要人盯？](../content/delivery-engineering/game-delivery-agent-01-why-checks-need-follow-through.md)（正文已写，线上更新待核验；方案未实现，实验未执行）
+**选题：** [提交检查已经自动化，为什么修正仍要人盯？](../content/delivery-engineering/game-delivery-agent-01-why-checks-need-follow-through.md)（正文线上已核验；方案未实现，实验未执行）
 **系列 / 子系列：** 游戏交付 Agent 研究 / 一期：Missing 闭环 / DGA-01；篇级结构与状态以 [canonical plan](game-delivery-agent-series-plan.md) 为准。
 
 ---
@@ -16,7 +16,7 @@
 | 相邻文章 | 重叠风险点 | 本篇处理方式 |
 | --- | --- | --- |
 | 前置：[本地资源完整，为什么手机包里仍然缺内容？](../content/engineering-journey/production-resource-completeness.md) | 重讲机器人、MissingFind、依赖提交的实现历程及历史效果 | 只摘要现有输入输出和已确认能力，链接原文；新服务与状态管理明确为设计研究 |
-| 后一篇：DGA-02《一次报错怎样追到复检：版本、问题与修正记录》（提纲已建，正文待写） | 提前展开 CheckRun、Finding、RepairAttempt 的全部字段、状态机和关联策略 | 本篇只指出需要关联什么、为什么；完整对象模型归 02 |
+| 后一篇：DGA-02《一次报错怎样追到复检：版本、问题与修正记录》（正文已写，线上更新待核验） | 提前展开 CheckRun、Finding、RepairAttempt 的全部字段、状态机和关联策略 | 本篇只指出需要关联什么、为什么；完整对象模型归 02 |
 | 交叉：Agent Engineering 10《State Machine 与 Workflow》 | 重复固定流程和 Agent Decision Point 的通用定义 | 以 Missing 中具体动作说明分工，原理链接已有课程，不重讲运行时实现 |
 | 交叉：DGA-05《何时值得调用模型》、DGA-08《对照验证》（均为提纲，正文待写） | 首篇提前给出完整介入策略或宣称模型增益 | 只提出研究问题和初步边界，策略细化与结果比较留给后文 |
 
@@ -62,7 +62,7 @@
 
 ### 7. 文末导读建议
 
-- **下一步应读：** [DGA-02《一次报错怎样追到复检：版本、问题与修正记录》](../content/delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md)——把本篇提出的交接信息变成可维护记录；当前为提纲，正文待写。
+- **下一步应读：** [DGA-02《一次报错怎样追到复检：版本、问题与修正记录》](../content/delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md)——把本篇提出的交接信息变成可维护记录；正文已写，记录方案未实现，实验未执行。
 - **扩展阅读：** [资源完整性实践](../content/engineering-journey/production-resource-completeness.md)——了解已有三个工具的形成过程与历史证据边界。
 - **扩展阅读：** [Agent Engineering 10：State Machine 与 Workflow](../content/ai-empowerment/agent-engineering-10-state-machine-workflow.md)——按需补充确定性流程与模型判断点的通用机制。
 
@@ -74,3 +74,16 @@
 - 设计产物：四类交接信息、普通漏交流程表、流程断点分类、调查转折示意、职责图与分工表。普通路径和例外路径均明确为未执行的设计示例。
 - 表述约束：固定流程可包含人工确认；Missing 不等于漏交；无新增依赖不等于无场景修改；模型选择是请求，工具回执和复检证据决定后续状态；内容意图由负责人确认。
 - 本轮没有新增 Agent 实现、工具实验或模型实验，也没有效率、正确率和生产收益数据。正文已写不改变这些验证状态。
+
+## DGA-02 编辑与成稿记录（2026-10-26）
+
+**选题：** [一次报错怎样追到复检：版本、问题与修正记录](../content/delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md)（正文已写，线上更新待核验；记录方案未实现，实验未执行）。
+
+- **类型与唯一职责：** 原理篇；把第 01 篇的四类交接信息变成 CheckRun、Finding、RepairAttempt 的关系，回答实际提交怎样获得对应的复检证据。
+- **既有提纲与本轮结构：** 按三类对象、实际输入、问题身份、修正关联、Missing 时间线、有效复检、正常状态与后续契约展开。03 继续负责实际工具映射，07 负责乱序、重复、重启和恢复，不在本篇展开全部机制。
+- **历史依据：** 资源完整性实践已记录依赖提交、提交后再检查及无新增提醒的解释边界；本文不声称历史工具已具备三类记录或自动关联能力。
+- **机制依据：** Apache Subversion FAQ 的仓库级 revision 说明、SVN Book 的混合版本说明；用于解释输入记录需求，不推定当前项目版本与具体命令可用性。
+- **示例约定：** 所有标识和结果均为构造数据。C100/r420 发现 F1，A10 准备修正；C101 是本地预检，真实提交指向示意 r421；C102 读取旧输入，C103 报告不完整，C104 才满足约定输入与目标覆盖。均未运行。
+- **设计产物：** 三类对象表、输入与结果语义表、修正记录表、时间线、关系图、四项证据核对与有范围的设计回执。
+- **高风险边界：** 请求关联不证明输入相符；本地预检不证明共享版本；revision 较大不证明包含所需变更；未报告异常不证明覆盖目标；版本通过不证明单次修正的独立因果贡献。
+- **文稿与工程状态：** DGA-01～02 正文已写，其他 6 篇为提纲。输入采集、对象匹配、存储、提交核对与状态关联均未实施或验证。本轮按用户授权交付，线上部署待核验。
