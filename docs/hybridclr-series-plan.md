@@ -86,7 +86,7 @@
 | AOT 泛型 | HCLR-2 建立身份／实现／执行模型，19 决策、20 共享规则、21 模板、22 工作流、23 场景、24 检查；不再重复铺设同一套定义 |
 | async 历史案例 | 区分堆栈观察、候选原因与尚未闭合的根因；后续用固定样本验证 builder/state machine 与构建配置 |
 | GC 与线程 | 正常接入、保留、根区间与串行跨增量片段样本已完成；完整根归因、屏障反事实、并发／长期压力与其他平台待补 |
-| 调用语义 | 泛型四组对照已完成；下一步按需补 constrained.／装箱、异常展开和类型初始化的跨运行时实测 |
+| 调用语义 | 泛型与类型初始化对照已完成采证；热更初始化异常的内部catch差异保留，后续补异常传播根因与 constrained.／装箱 |
 | 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 固定样本已完成；async／UniTask 回归和设备性能仍待补 |
 | 商业能力 | 已按官方文档核对 FGS、DHE、热重载与访问控制契约；商业私有实现及项目收益不作源码或实测结论 |
 
@@ -157,10 +157,18 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 
 ## 本轮专项复用与最小缺口（2026-10-25）
 
-公共入口已纠正为现有三组训练，不新增HCPP。只读复核lab公开边界408文件、96验收器测试、既有输入hash和六份跨片段日志通过；不增加Player运行次数。下一最小问题是现有入口未含显式`.cctor`时无法回答的类型初始化顺序，输入与采证边界登记于源码起步/线程outline；尚未新建或执行该Player实验，其他候选按实际跟读需要推进。
+公共入口已纠正为现有三组训练，不新增HCPP。只读复核lab公开边界408文件、96验收器测试、既有输入hash和六份跨片段日志通过；不增加Player运行次数。当时定位的显式`.cctor`缺口已由2026-10-26独立类型初始化实验补证，实际结果与异常边界见本文末记录；其他候选按实际跟读需要推进。
 
 ## Prefab／AssetBundle 资源挂载实测（2026-10-26）
 
 共享实验 `projects/resource-mounting` 已完成固定自定义 Editor／v9／Windows x64 Player 验证：code、bundle、late、unregistered、resources 五组各三个新进程。正向字段/子引用/生命周期通过；负向在资源读取阶段即缺组件，清单缺项组仍能加载DLL并调用静态方法。只改复制Player启动清单的单变量对照与主包Resources的独立资产对照分别说明，不推广为平台/版本演进或性能验收。
 
 正文回填 HCLR-4；三栏引用同一篇。实验数据、哈希与边界见实验仓库 `evidence/2026-10-26-resource-mounting/` 和本仓 [资源挂载执行记录](./hybridclr-resource-mounting-outline.md)。本轮实验固定提交为 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/74da063e0fe2a4cbac894acfa77d3b0df4074356)，已推送并核验远端；[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/results.json)均锁定该提交。文稿与索引随本次文档提交交付，Pages 在推送后另行验收。
+
+## 类型初始化与首次调用实测（2026-10-26）
+
+独立projects/type-initialization，固定自定义Editor/v9/Windows x64锁不变。build_id5b177115-e8ae-4e58-8808-2a0bc54b092a，43输入/227产物哈希绑定。四组问题加失败外层捕获对照，共30普通Player（27完成/3热更内部catch异常逃逸差异）与2独立native取证。两份场景仅命名空间不同；最终AOT/hot DLL的标志、.cctor与自有CIL已读取，热更排除AOT。
+
+严格初始化/泛型静态状态与失败不重跑由实际事件记录；beforefieldinit只记录一种允许时机。失败call在两侧try[29,47)内，热更内部捕获差异保留，精确根因未定。native记录显示Ping先转换，再执行.cctor；失败时Ping缓存非空而方法体未执行。
+
+结果回填既有类型初始化、源码起步、IL2CPP runtime三篇，不新增正文；三个索引复用入口。本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，已推送并核验远端；[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)均锁定该提交。74da063仍为前轮资源版本；文稿与索引随本次文档提交交付，Pages另行验收。无并发、循环初始化、其他平台或性能结论。执行记录见[类型初始化实验](./hybridclr-type-initialization-outline.md)。

@@ -2,7 +2,7 @@
 title: "ECMA-335 基础｜类型加载与初始化：.cctor、beforefieldinit 与泛型静态字段"
 slug: "ecma335-type-loading-and-initialization"
 date: "2026-10-23"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 description: "区分程序集加载、类型准备、CLI 类型初始化与业务初始化，通过静态构造、泛型静态字段和失败实验理解 IL2CPP、HybridCLR 的首次访问边界。"
 weight: 23
 series: "dotnet-runtime-ecosystem"
@@ -143,7 +143,7 @@ public static class Program
 2. Precise 的字段初始化和静态构造体在其 Ping 方法体执行前完成。
 3. Relaxed 的初始化必须赶在读取 Value 之前完成；不要断言它一定发生在 Ping 之前或之后。
 
-本机验证：2026-10-23，.NET SDK 10.0.402，Release。标志输出为 True、False；Precise 的初始化早于其 Ping 方法体，Relaxed 在本次运行中晚于 Ping、早于 Value 读取。后面两个实验得到独立的 7／9，以及一次 Broken attempt、两次初始化异常。这是本次桌面 .NET 的观察；编辑器、IL2CPP Player 和 HybridCLR 热更代码仍需分别验证，不能把 Relaxed 的这次日志顺序当成规范要求。
+本机验证：2026-10-23，.NET SDK 10.0.402，Release。标志输出为 True、False；Precise 的初始化早于其 Ping 方法体，Relaxed 在本次运行中晚于 Ping、早于 Value 读取。后面两个实验得到独立的 7／9，以及一次 Broken attempt、两次初始化异常。这是当时桌面 .NET 的观察；下文另列本轮 AOT／热更 Player 的独立输入与结果，Editor 行为仍未验收。不能把 Relaxed 的任一次日志顺序当成规范要求。
 
 ## 泛型共享代码，不等于共享静态字段
 
@@ -204,6 +204,48 @@ for (int i = 0; i < 2; i++)
 因此网络请求、可重试下载、等待异步任务等业务动作，不适合依赖 .cctor 来调度。更稳的做法是显式的初始化入口，自己表达未开始、进行中、完成和失败状态。静态构造适合建立局部且确定的类型不变量。
 
 还有一个边界：循环初始化、初始化中的递归访问，以及多线程互相等待，可能暴露尚未完成的静态状态或形成死锁风险。“运行时通常保证一次初始化”不是任意初始化代码都安全的证明。
+
+## Player 实测：类型初始化与首次调用 {#type-initialization-player}
+
+前面的控制台示例验证语言层面的观察方法。2026-10-26 又在 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 新建 `projects/type-initialization`，把同一份自有场景分别编进 AOT 和 HotUpdate；两份场景源码仅命名空间不同。外部通过反射进入 Cases，场景内直接调用目标静态方法。AOT 程序集随 Player 启动加载，热更程序集由本例显式 Assembly.Load，两者的程序集装载路径并不相同。
+
+本轮仍是本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3／runtime v9.0.1、Windows x64 Development／IL2CPP C++ Debug／Minimal stripping。build_id 为 `5b177115-e8ae-4e58-8808-2a0bc54b092a`；43 个输入与 227 个产物有哈希绑定。最终裁剪后的 Probe.AOT.dll 与随包 HotUpdate.dll 的只读元数据结果一致：Strict、`Cache<T>`、Failed 不带 beforefieldinit，Relaxed 带该标志，四种目标类型都有 .cctor；热更 DLL 未进入 AOT 编译产物。
+
+### 四组问题，加一条失败捕获边界对照
+
+每个路径各运行三个独立进程。四组基础问题中的失败组增加外层捕获路径，共 30 个普通 Player：27 个完成并退出 0；3 个热更内部捕获对照退出 2，作为实际差异保留，不能写成全部语义通过。
+
+| 场景 | AOT 观察 | 热更观察 |
+|---|---|---|
+| 显式 .cctor：Strict | 首次调用标记后，字段初始化与构造体先于 Ping 方法体；第二次不重跑。两次返回 7，字段为 41 | 三轮相同 |
+| beforefieldinit：Relaxed | 本例在首次调用标记后、Ping 方法体前完成一次字段初始化；读取字段为 41 | 三轮相同；这只是规范允许的一种时机 |
+| 泛型静态字段 | `Cache<int>` 依次返回 42、43；`Cache<string>` 返回 82、83；两个封闭类型各初始化一次 | 三轮相同 |
+| 失败：场景内部 catch | 两次捕获 TypeInitializationException，内部为 InvalidOperationException；构造体执行一次 | 首次初始化异常逃逸到外层反射调用边界；本路径没有到达第二次访问 |
+| 失败：共用 AOT 外层 catch | 两次独立反射调用都得到 TargetInvocationException → TypeInitializationException → InvalidOperationException；构造体执行一次 | 三轮相同，第二次没有重跑构造体 |
+
+本例在加载程序集、解析入口、读取目标类型标志时没有记录到 Strict 的初始化事件。显式 .cctor 的第一次方法调用才接上字段初始化、构造体和方法体事件。这说明这些步骤需要分别观测，不能拿“GetType 成功”代替静态状态就绪。
+
+Relaxed 的结果也不能改写成“带 beforefieldinit 的类型必在首次静态方法前初始化”。[ECMA-335 第六版 §I.8.9.5](https://ecma-international.org/wp-content/uploads/ECMA-335_6th_edition_june_2012.pdf)规定的是触发语义范围，本轮只采到了当前实现与输入下的一种合法顺序。
+
+### 失败差异必须保留到捕获边界
+
+原始失败场景把 `Failed.Ping()` 放在自己的 `try/catch (TypeInitializationException)` 内。最终两个 DLL 的自有 CIL 都显示：call 位于偏移 30，受保护区间为 `[29,47)`，catch 类型确为 System.TypeInitializationException。因此不能把热更侧的差异解释成“源码忘了把调用放进 try”。
+
+为继续观察第二次访问，额外提供无内部 catch 的 AccessFailed；由同一个 AOT 驱动逐次反射调用并捕获。这里的 TargetInvocationException 是反射边界包装，内层才是类型初始化失败和原始业务异常。这个路径验证了两侧构造体均未因第二次访问重跑，却不消除原来内部捕获路径的差异。
+
+当前只确认该自定义版本中的可复现现象。异常捕获差异的准确根因、普通方法抛出对照、其他构建和版本仍待验证；没有修改上游 runtime，也没有将外层捕获包装成修复方案。
+
+### 转换缓存就绪，不等于目标方法体执行过
+
+同一 Player 另跑两个匹配 PDB 的 native 取证进程，分别观察热更 strict 与 failed 路径。两者都先准备 Ping 的转换缓存，再进入 .cctor；.cctor 的调用栈含 Runtime::ClassInit，转换一次、Execute 函数入口一次。退出前检查同一个 Ping MethodInfo，其 interpData 已非空。
+
+但 strict 的自有 Ping 方法体事件为两次，failed 为零次。**一个方法可以已经转换并缓存，却因类型初始化失败而没有进入方法体。** 此处原生 Execute 函数入口计数也不能当成解释器内部调用次数；需要同时看转换身份、缓存和自有方法体事件。
+
+### 复现和证据边界
+
+依次使用 `tools/init_lab.py build --editor <Unity.exe>`、`run`、`trace --cdb <x64 cdb.exe>`、`verify`、`export`。本轮本地记录为 `evidence/2026-10-26-type-initialization/README.md`、results.json 与 32 份自有事件文件；其中 30 份属于普通运行，2 份属于独立 native 取证。原始日志、Player 和 PDB 留在忽略目录。
+
+本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，可查看[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/46ac71c74cd068bc177d653dd143b7bb9dc482bd/projects/type-initialization)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。复现请先检出该提交；前轮 `74da063` 只包含资源实验。这里只验证单线程输入，不覆盖初始化锁竞争、循环初始化、性能、其他平台或所有异常展开路径。[源码起步篇]({{< relref "engine-toolchain/hybridclr-source-reading-start.md#type-initialization-first-call" >}})解释如何把首次调用的证据分层，[IL2CPP runtime 篇]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#type-initialization-runtime" >}})补充类型准备与 .cctor 的区别。
 
 ## 回到热更新启动流程
 

@@ -80,6 +80,10 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 [Prefab／AssetBundle 资源挂载对照]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md#resource-mounting-player" >}}) 已在固定自定义 Editor／v9／Windows x64 完成 code、bundle、late、unregistered、resources 五组各三个Player。区分DLL可执行、启动清单登记、组件字段/引用恢复与生命周期；实验记录为 `evidence/2026-10-26-resource-mounting/`，本轮固定提交为 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/74da063e0fe2a4cbac894acfa77d3b0df4074356)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/results.json)。它是实现层样本，不表示全平台或字段版本兼容性已验收。
 
+## 共享类型初始化实验
+
+[类型初始化与首次调用]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#type-initialization-player" >}}) 补入最终AOT/hot DLL标志与自有CIL、四组问题及失败捕获边界对照。30个普通Player中27完成、3个热更内部catch异常逃逸，另有2个native取证进程；Ping缓存已准备不等于方法体已执行。[runtime篇]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#type-initialization-runtime" >}})说明职责区别，[源码起步篇]({{< relref "engine-toolchain/hybridclr-source-reading-start.md#type-initialization-first-call" >}})说明证据分层。本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。
+
 ## 按问题查阅
 
 | 问题 | 阅读入口 |

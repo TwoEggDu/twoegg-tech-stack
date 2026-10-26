@@ -7,7 +7,7 @@ series: "HybridCLR"
 weight: 29
 hybridclr_version: "源码与实验 runtime v9.0.1 / package v9.0.3；v6.1.0 历史对照"
 tags: [Unity, HybridCLR, IL2CPP, SourceCode, Debug]
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 打开源码后，搜索到了 `Interpreter::Execute`，也下了断点，但运行项目时一次都没有停下来。此时最容易做的事是继续往调用者里找；更应该先确认的是：**当前进程是否真的使用了你正在看的那份 runtime。**
@@ -218,16 +218,24 @@ v9 的 Transform 接收 MethodInfo，并在内部经 MethodBodyCache 取得方�
 
 加载异常先留完整异常类型与内部异常，再进入 [按层排障手册]({{< relref "engine-toolchain/hybridclr-troubleshooting-diagnose-by-layer.md" >}})。不要同时修改版本、加载顺序和补 metadata 配置，否则很难解释是哪一步改变了结果。
 
-## 现有训练之后，先补哪个最小缺口
+## 首次调用补证：初始化、转换和方法体分别观察 {#type-initialization-first-call}
 
-2026-10-25的公共基础调整再次只读复核原实验仓：源码输入hash在lifetime-threads/gc-roots/incremental-barriers三组分别29/30/30份全部匹配当前公开结果；既有六份跨片段普通运行日志经原parse_player重新解析通过。408份公开文件边界检查与96项Python验收器测试通过。这是证据/校验器复核，没有重新启动Player，不增加设备、平台或性能覆盖。
+早先 Add 首调实验只证明自身的转换与缓存行为，其入口没有显式 .cctor。2026-10-26 已增加独立 `projects/type-initialization`，沿用当前固定环境；同一份自有场景分别编成 AOT／热更代码，按显式初始化、beforefieldinit、泛型静态字段与失败初始化分组。详细结果集中在[类型初始化篇的 Player 实测]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#type-initialization-player" >}})，避免在每篇复述完整矩阵。
 
-已有首调/再调、保留/解除、原生回调、活跃根及串行跨片段路径不再重复做成HCPP新篇。当前候选缺口分开处理：其他ABI需要目标平台产物；constrained./装箱需要对应CIL和对象身份；异常展开需要明确允许的异常/清理边界；类型初始化需要`.cctor`输入和首调前后顺序；并发/长期压力需要独立调度/持续时间与停止协议。
+本轮 build_id `5b177115-e8ae-4e58-8808-2a0bc54b092a`，30 个普通进程与 2 个独立 native 取证进程。27 个普通进程完成；3 个热更内部 catch 对照出现初始化异常逃逸，未到第二次访问，单独记录为差异。共用 AOT 外层捕获的补充路径则在两侧都记录到两次异常、一次构造体执行。
 
-本轮选择**类型初始化先于目标方法执行的顺序**作为下一项最小补证问题：当前八组HotUpdate入口没有显式类型静态构造，不能由Add的Transform一次推断`.cctor`执行或类型初始化锁行为。最小输入只增加一个带显式静态构造的自有类型，并由AOT记录器区分“初始化开始/结束、两次目标方法入口、返回”；固定单线程正常路径，不顺带引入初始化异常/并发。
+| 证据 | 能确认什么 |
+|---|---|
+| 最终 AOT／hot DLL 的标志、.cctor CIL 和异常区间 | 输入确有目标语义；不是拿 Editor DLL 或源码直觉代替随包程序集 |
+| 加载、解析、首次调用、初始化体、方法体与返回事件 | 分开记录类型可解析、静态状态建立和方法体实际执行 |
+| .cctor 的匹配 PDB 调用栈 | 本轮实际经 Runtime::ClassInit 进入初始化器 |
+| Ping 的 Transform 与结束时同一 MethodInfo 的 interpData | 确认目标已转换并缓存；仍须独立检查方法体是否执行 |
 
-验收必须在原lab独立新build_id下保存实际CIL的`.cctor`、初始化触发调用栈、首次/再次方法身份和返回。显式静态构造与beforefieldinit语义先读[类型初始化前置]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md" >}})。当前仅完成缺口定位与旧证据核对，没有写入外部实验工程，也没有把桌面检查算成这个Player实验通过；其余候选不设为所有读者的入门门槛。
+两个 native 对照都观察到 **Ping 先转换，随后执行 .cctor**。strict 的 Ping 方法体出现两次；failed 没有 Ping 方法体事件，退出前缓存却已非空。因此不能从“Transform 过一次／interpData 非空”反推“静态构造成功”或“目标方法执行过”。解释器内部调用也不一定再次进入原生 Execute 函数，函数入口计数与托管调用次数须分开。
 
+复现入口是 `tools/init_lab.py`，本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，见[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/46ac71c74cd068bc177d653dd143b7bb9dc482bd/projects/type-initialization)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。`74da063` 仍为上一轮资源实验。异常捕获差异只在本机自定义 Editor／固定 v9／Windows x64 上复现，精确根因和其他平台仍待补。
+
+其余训练按实际问题推进：constrained.／装箱需要对应 CIL 与对象身份，跨 AOT／解释器异常传播需要普通抛出与 finally 对照，并发／长期压力需要单独的调度、时长和停止协议。这些不会成为第一轮阅读的统一门槛。
 
 ## 历史 v6.1.0 对照
 

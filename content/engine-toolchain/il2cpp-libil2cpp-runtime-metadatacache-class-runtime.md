@@ -2,7 +2,7 @@
 title: "IL2CPP 实现分析｜libil2cpp runtime：MetadataCache、Class、Runtime 三层结构"
 slug: "il2cpp-libil2cpp-runtime-metadatacache-class-runtime"
 date: "2026-04-14"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 description: "拆解 libil2cpp 运行时的内部三层结构：MetadataCache 全局类型注册表、Il2CppClass 惰性初始化、Runtime 初始化序列。覆盖 Il2CppObject 对象头设计、BoehmGC 集成、icall 注册机制、线程模型，以及 HybridCLR 的嵌入点。"
 weight: 52
 featured: false
@@ -177,6 +177,24 @@ bool Class::Init(Il2CppClass* klass)
 初始化是递归的——初始化一个类之前，先确保基类已经初始化完毕。这保证了 vtable 的 slot 继承和字段偏移计算的正确性。
 
 惰性初始化的意义在于避免启动时一次性加载所有类型信息。一个项目可能有上万个类型，但一次运行只会用到其中一部分。按需初始化让启动速度和内存占用都保持在合理范围。
+
+## Player 对照：类型准备与 .cctor 不能互相代证 {#type-initialization-runtime}
+
+上面的 Class 类型信息准备、Runtime 整体启动，与 CLI 的用户 .cctor 是不同职责。不能只看到 Class::Init 的名字，就认定用户静态构造已经执行；也不能把 Runtime::Init 与某个类型的 Runtime::ClassInit 混为一谈。
+
+2026-10-26 的独立 `projects/type-initialization` 使用本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3／runtime v9.0.1 和 Windows x64 Development IL2CPP Debug。build_id `5b177115-e8ae-4e58-8808-2a0bc54b092a`。AOT／hot 场景仅命名空间不同，最终 DLL 的标志与自有 CIL 已读取核对；HotUpdate 未进入 AOT 代码注册。
+
+[完整矩阵见类型初始化篇]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#type-initialization-player" >}})。显式 .cctor 和两个封闭泛型的静态状态在两侧符合样本预期；beforefieldinit 在本例都早于 Ping 方法体完成初始化，这是一种允许的顺序。30 个普通进程中 27 个完成、3 个热更内部捕获路径异常逃逸，不能称为全部行为一致。共用 AOT 外层捕获的额外路径在两侧均确认第二次访问没有重跑失败构造体。
+
+两份独立 native 记录进一步把阶段拆开：Ping 转换在前，.cctor 经 Runtime::ClassInit 执行在后；初始化成功后，strict 才记录到两次 Ping 方法体事件。failed 虽没有方法体事件，结束时相同 Ping MethodInfo 的 interpData 仍非空。由此可见：
+
+| 已观察状态 | 仍需另证的事实 |
+|---|---|
+| 类型身份和方法可解析 | 用户静态状态是否已建立 |
+| 方法已转换、缓存可用 | 类型初始化是否成功、方法体是否真正执行 |
+| 一次方法返回成功 | 其他封闭泛型的静态状态、业务依赖和其他异常路径是否就绪 |
+
+本轮保留热更 catch 差异，不修改运行时或猜测根因。最终两个 DLL 都把失败 call 放在 catch 保护区间内，因此后续应围绕类型初始化异常与调用边界设计对照。复现工具为 `tools/init_lab.py`，本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，见[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/46ac71c74cd068bc177d653dd143b7bb9dc482bd/projects/type-initialization)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)；前轮 `74da063` 不是本轮版本。此结果不包含初始化锁并发、循环依赖、设备性能或跨平台结论。
 
 ## Runtime：初始化序列
 
