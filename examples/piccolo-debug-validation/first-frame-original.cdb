@@ -1,0 +1,19 @@
+.symopt+0x10
+.reload /f PiccoloEditor.exe
+lmvm PiccoloEditor
+bu /1 PiccoloEditor!main ".echo STAGE_MAIN; kn; dv /t; g"
+bu /1 PiccoloEditor!Piccolo::PiccoloEngine::startEngine ".echo STAGE_START_ENGINE; kn; da poi(@rdx); g"
+bu /1 PiccoloEditor!Piccolo::RuntimeGlobalContext::startSystems ".echo STAGE_START_SYSTEMS; kn; g"
+bu /1 PiccoloEditor!Piccolo::ConfigManager::initialize ".echo STAGE_CONFIG; kn; dx config_file_path; g"
+bu /1 PiccoloEditor!Piccolo::PiccoloEditor::initialize ".echo STAGE_EDITOR_INITIALIZE; kn; g"
+bu /1 PiccoloEditor!Piccolo::PiccoloEditor::run ".echo STAGE_EDITOR_RUN; kn; g"
+bu /1 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame ".echo STAGE_TICK_ONE_FRAME; kn; dv /t; g"
+bu /1 PiccoloEditor!Piccolo::WorldManager::tick ".echo STAGE_WORLD_TICK; kn; dt PiccoloEditor!Piccolo::WorldManager @rcx m_is_world_loaded m_current_world_url; g"
+bu /1 PiccoloEditor!Piccolo::WorldManager::loadWorld ".echo STAGE_LOAD_WORLD; kn; da poi(@rdx); g"
+bu /1 PiccoloEditor!Piccolo::RenderSystem::swapLogicRenderData ".echo STAGE_SWAP; kn; g"
+bu /1 PiccoloEditor!Piccolo::RenderPipeline::deferredRender ".echo STAGE_DEFERRED_RENDER; kn; g"
+bu /1 PiccoloEditor!Piccolo::VulkanRHI::submitRendering ".echo STAGE_SUBMIT; kn; g"
+bp /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo STAGE_FIRST_PRESENT_RETURN; kn; dv /t; dt this m_current_frame_index m_current_swapchain_image_index; .echo FIRST_FRAME_PAUSED"
+bp /1 `PiccoloEditor!global_context.cpp:33` ".echo STAGE_CONFIG_READY; dx this->m_config_manager._Ptr->m_root_folder; dx this->m_config_manager._Ptr->m_asset_folder; g"
+bu /1 PiccoloEditor!Piccolo::PiccoloEngine::shutdownEngine ".echo STAGE_SHUTDOWN; kn; g"
+g

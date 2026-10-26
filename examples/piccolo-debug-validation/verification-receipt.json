@@ -1,0 +1,172 @@
+{
+  "revision": "f5053707fed4d3f94d270a436fb0d3a8ae54e3e5",
+  "source": "<lab>/source",
+  "build": "<lab>/build",
+  "patches": [
+    {
+      "file": "engine/3rdparty/spdlog/include/spdlog/fmt/bundled/format.h",
+      "before_sha256": "c993b0da6eafd6ae7eaaf4345fe0d6fbdd55c31c1459ddb239876543808c6945",
+      "after_sha256": "0e5dfb6e0781e84358433682ff49b13527e0f10a499eacc0b3f6c010f164c32a",
+      "before_lf_sha256": "2e03ac1c88b2339c2bb14291cbfc0915dbdc66318a932706ce653c599fac309e",
+      "after_lf_sha256": "2d174f2e0aca87e8df7ee12bc938c2b8768d1dd7e3f52cf2040c27baefa959fd"
+    },
+    {
+      "file": "engine/3rdparty/JoltPhysics/Jolt/Core/JobSystemThreadPool.cpp",
+      "before_sha256": "8a9f27868a0ea0745f26d6008b86f7f2d03d9ed9ff333dcbde0fe5bed807972f",
+      "after_sha256": "82576b6f48a80da47c9de99f1f136eb702039ed2098f0777915b3e6daa8eb165",
+      "before_lf_sha256": "e6015085aed4584c34921aa2d8a48e597d6d591e6c39e8e3494f9f9d0c5a3458",
+      "after_lf_sha256": "7f63dd69e5d35565ceb9c8638e0860704e6612f4002c539e58e1423cc437f39c"
+    }
+  ],
+  "configuration": "Debug",
+  "configure_exit": 0,
+  "build_exit": 0,
+  "artifacts": {
+    "PiccoloEditor.exe": {
+      "bytes": 16653824,
+      "sha256": "18f308810512da53194f3961a8f506a6a5ceeaabf012c53d789dce702a0f3b6a"
+    },
+    "PiccoloEditor.pdb": {
+      "bytes": 62517248,
+      "sha256": "292a6d2751cc17039cb3da02c5c092c3efd239b4a92f8321a76d5c56fe31eda2"
+    },
+    "PiccoloEditor.ini": {
+      "bytes": 376,
+      "sha256": "c02bdc20126d543d36a610439cb716081a6d5512bcf89054b1124e0d2448eb81"
+    }
+  },
+  "validation_date": "2026-10-26",
+  "baseline_id": "piccolo-debug-msvc1951-20261026",
+  "toolchain": {
+    "cmake": "4.3.1",
+    "generator": "Visual Studio 18 2026",
+    "architecture": "x64",
+    "compiler": "MSVC 19.51.36260",
+    "toolset": "14.51.36231",
+    "windows_sdk": "10.0.26100.0",
+    "cdb": "10.0.19041.685 AMD64"
+  },
+  "minimal_probes": {
+    "fmt_before_exit": 1,
+    "fmt_after_exit": 0,
+    "jolt_before_exit": 1,
+    "jolt_after_exit": 0
+  },
+  "debug_run": {
+    "log": "debug-first-frame.log",
+    "module": "<lab>/source/bin/PiccoloEditor.exe",
+    "pdb": "<lab>/source/bin/PiccoloEditor.pdb",
+    "symbols": "private pdb symbols",
+    "ini": "<lab>/source/bin/PiccoloEditor.ini",
+    "binary_root_folder": ".",
+    "world_url": "asset/world/hello.world.json",
+    "loaded_level": "asset/level/1-1.level.json",
+    "world_loaded_at_first_present": true,
+    "loaded_levels": 1,
+    "first_present_source": "vulkan_rhi.cpp:494",
+    "res_end_command_buffer": 0,
+    "res_reset_fences": 0,
+    "res_queue_submit": 0,
+    "present_result": 0,
+    "frame_resource_index": 0,
+    "swapchain_image_index": 0,
+    "normal_window_close": true,
+    "process_exit_code": 0,
+    "runtime_validation_layer_module": "D:/VulkanSDK/1.3.261.1/Bin/VkLayer_khronos_validation.dll",
+    "working_directory": "<site-repo>"
+  },
+  "handoff_run": {
+    "log": "debug-frame-handoff.log",
+    "main_thread_id_hex": "2784c",
+    "logic_render_indices_before": [
+      0,
+      1
+    ],
+    "logic_render_indices_after": [
+      1,
+      0
+    ],
+    "slot0_object_desc_before_consume": "engaged",
+    "slot0_object_desc_after_consume": "nullopt",
+    "stop": "debugger terminated after sampling; normal exit proof belongs to debug_run"
+  },
+  "capture_run": {
+    "tool": "RenderDoc 1.43",
+    "capture": "piccolo_frame17931.rdc",
+    "bytes": 64267488,
+    "sha256": "3fcfe9b3eda0f1021f1c7f7a2c9408a34dd2333768acfef0e7677eab69793072",
+    "capture_frame_number": 17931,
+    "image": "static/images/piccolo-debug-default-scene-20261026.png",
+    "image_sha256": "6bdd4591f51e7dfaae5abc97b3561f59bcea1c497456317edbaac7f24e783553",
+    "scope": "separate instrumented run, later frame; embedded thumbnail exported by renderdoccmd thumb, not first debugger present or monitor scanout",
+    "working_directory": "<lab>/source/bin"
+  },
+  "remaining": [
+    "LNK4098 MSVCRT default library conflict warning",
+    "MSB8029 temporary directory incremental build warning",
+    "existing C4715 LuaComponent::get<bool> warning",
+    "input/character/camera/editor edit/save and per-pass GPU validation not performed",
+    "no performance acceptance or zero-validation-message claim"
+  ],
+  "retained_logs": {
+    "build-debug.log": {
+      "sha256": "a06d80d3a29909b5f90f577a5cb7510ca466469c22d7fcd6fbc171c32edc5fee",
+      "bytes": 19288
+    },
+    "configure.log": {
+      "sha256": "59a7985357ab626bce4a5c95438930e28df672ce41287cafda2ab7d7738949c3",
+      "bytes": 2205
+    },
+    "debug-first-frame.log": {
+      "sha256": "7f7c8f9b55c60deb5edeb920d1b145968ab82bfad8491e89e1d62f32666925df",
+      "bytes": 41661
+    },
+    "debug-frame-handoff.log": {
+      "sha256": "d53c76dfa84a9e0844ace96330f37fb33cdbecbcefa106b81ec5684e2e5d2ddb",
+      "bytes": 21625
+    },
+    "fmt_probe-after.log": {
+      "sha256": "8b8b9e9a993092797f103f3cb84de174739acbc0a99ba5cc1da2e68c09349944",
+      "bytes": 758
+    },
+    "fmt_probe-before.log": {
+      "sha256": "c99f8220d1a1559112ace90fe9b327a364f18a3bb7db32332971a114c6f88b51",
+      "bytes": 4945
+    },
+    "jolt_probe-after.log": {
+      "sha256": "3444b1724760de82f6e484f08719afb69efaf8293326b520ad7edd9153a7682c",
+      "bytes": 763
+    },
+    "jolt_probe-before.log": {
+      "sha256": "87d0fb69b733173f986315c49b28e68ffa138c89cc22bbab9f6a6ae133e822ca",
+      "bytes": 926
+    }
+  },
+  "recheck": {
+    "fresh_archive_patch_check_exit": 0,
+    "fresh_archive_patch_apply_exit": 0,
+    "patched_byte_hashes_match": true,
+    "source_hash_convention": "sha256 = raw CRLF bytes; lf_sha256 = newline normalized LF",
+    "binary_and_pdb_hashes_match": true,
+    "original_reading_clone_clean": true
+  },
+  "site_validation": {
+    "hugo": "0.157.0 extended",
+    "build_exit": 0,
+    "pages": 1414,
+    "static_files": 55,
+    "checked_pages": 29,
+    "links_assets": 1856,
+    "anchor_refs": 851,
+    "errors": 0,
+    "piccolo_articles": 27,
+    "home_coverage": 27,
+    "series_order": "0..26 unique",
+    "browser_image_loaded": true,
+    "image_dimensions": [
+      1280,
+      720
+    ],
+    "browser_document_horizontal_overflow": false
+  }
+}

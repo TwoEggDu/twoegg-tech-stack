@@ -1,0 +1,262 @@
+Opened log file '<lab>/debug-frame-handoff.log'
+
+Microsoft (R) Windows Debugger Version 10.0.19041.685 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: <lab>/source/bin/PiccoloEditor.exe
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <lab>/source/bin
+Symbol search path is: <lab>/source/bin
+Executable search path is: 
+ModLoad: 00007ff6`66ff0000 00007ff6`68013000   PiccoloEditor.exe
+ModLoad: 00007ffc`14290000 00007ffc`14488000   ntdll.dll
+ModLoad: 00007ffc`13fd0000 00007ffc`14092000   C:\Windows\System32\KERNEL32.DLL
+ModLoad: 00007ffc`11db0000 00007ffc`120a6000   C:\Windows\System32\KERNELBASE.dll
+ModLoad: 00007ffc`0c200000 00007ffc`0c294000   C:\Windows\SYSTEM32\apphelp.dll
+ModLoad: 00007ffc`13490000 00007ffc`13631000   C:\Windows\System32\USER32.dll
+ModLoad: 00007ffc`11a10000 00007ffc`11a32000   C:\Windows\System32\win32u.dll
+ModLoad: 00007ffc`13390000 00007ffc`133bb000   C:\Windows\System32\GDI32.dll
+ModLoad: 00007ffa`d56c0000 00007ffa`d5824000   C:\Windows\SYSTEM32\vulkan-1.dll
+ModLoad: 00007ffc`120b0000 00007ffc`121c9000   C:\Windows\System32\gdi32full.dll
+ModLoad: 00007ffc`11970000 00007ffc`11a0d000   C:\Windows\System32\msvcp_win.dll
+ModLoad: 00007ffc`11ba0000 00007ffc`11ca0000   C:\Windows\System32\ucrtbase.dll
+ModLoad: 00007ffc`11920000 00007ffc`1196e000   C:\Windows\System32\CFGMGR32.dll
+ModLoad: 00007ffc`12610000 00007ffc`12d80000   C:\Windows\System32\SHELL32.dll
+ModLoad: 00007ffc`12e60000 00007ffc`12f11000   C:\Windows\System32\ADVAPI32.dll
+ModLoad: 00007ffc`133f0000 00007ffc`1348e000   C:\Windows\System32\msvcrt.dll
+ModLoad: 00007ffc`138f0000 00007ffc`1391f000   C:\Windows\System32\IMM32.dll
+ModLoad: 00007ffc`13850000 00007ffc`138ef000   C:\Windows\System32\sechost.dll
+ModLoad: 00007ffb`0fe80000 00007ffb`0ff5a000   C:\Windows\SYSTEM32\MSVCP140D.dll
+ModLoad: 00007ffc`13920000 00007ffc`13a40000   C:\Windows\System32\RPCRT4.dll
+ModLoad: 00007ffa`ddb80000 00007ffa`ddbf1000   C:\Windows\SYSTEM32\MSVCP140_2D.dll
+ModLoad: 00007ffb`0fe50000 00007ffb`0fe80000   C:\Windows\SYSTEM32\VCRUNTIME140D.dll
+ModLoad: 00007ffb`96c60000 00007ffb`96c6f000   C:\Windows\SYSTEM32\VCRUNTIME140_1D.dll
+ModLoad: 00007ffc`121d0000 00007ffc`121f7000   C:\Windows\System32\bcrypt.dll
+ModLoad: 0000019b`b1a70000 0000019b`b1c74000   C:\Windows\SYSTEM32\ucrtbased.dll
+ModLoad: 00007ffa`ad5c0000 00007ffa`ad7c4000   C:\Windows\SYSTEM32\ucrtbased.dll
+ModLoad: 0000019b`b1c80000 0000019b`b1e84000   C:\Windows\SYSTEM32\ucrtbased.dll
+ModLoad: 0000019b`b1e90000 0000019b`b2094000   C:\Windows\SYSTEM32\ucrtbased.dll
+(29710.2784c): Break instruction exception - code 80000003 (first chance)
+ntdll!LdrInitShimEngineDynamic+0x360:
+00007ffc`14360860 cc              int     3
+0:000> .symopt+0x10
+Symbol options are 0xB0337:
+  0x00000001 - SYMOPT_CASE_INSENSITIVE
+  0x00000002 - SYMOPT_UNDNAME
+  0x00000004 - SYMOPT_DEFERRED_LOADS
+  0x00000010 - SYMOPT_LOAD_LINES
+  0x00000020 - SYMOPT_OMAP_FIND_NEAREST
+  0x00000100 - SYMOPT_NO_UNQUALIFIED_LOADS
+  0x00000200 - SYMOPT_FAIL_CRITICAL_ERRORS
+  0x00010000 - SYMOPT_AUTO_PUBLICS
+  0x00020000 - SYMOPT_NO_IMAGE_SEARCH
+  0x00080000 - SYMOPT_NO_PROMPTS
+0:000> .reload /f PiccoloEditor.exe
+*** WARNING: Unable to verify checksum for PiccoloEditor.exe
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEngine::logicalTick ".echo TRACE_LOGICAL; .printf \"tid=%x\n\", @$tid; kn; g"
+0:000> bu /1 PiccoloEditor!Piccolo::InputSystem::tick ".echo TRACE_INPUT; .printf \"tid=%x\n\", @$tid; kn; g"
+0:000> bp /1 `PiccoloEditor!engine.cpp:75` ".echo TRACE_BEFORE_SWAP; .printf \"tid=%x\n\", @$tid; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context; g"
+0:000> bp /1 `PiccoloEditor!engine.cpp:77` ".echo TRACE_AFTER_SWAP; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context; g"
+0:000> bu /1 PiccoloEditor!Piccolo::RenderSystem::processSwapData ".echo TRACE_CONSUME_BEGIN; .printf \"tid=%x\n\", @$tid; dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc; g"
+0:000> bp /1 `PiccoloEditor!render_system.cpp:103` ".echo TRACE_CONSUME_END; dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc; g"
+0:000> bp /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo TRACE_PRESENT; .printf \"tid=%x\n\", @$tid; dv /t; g"
+0:000> bp /1 `PiccoloEditor!engine.cpp:83` ".echo TRACE_POLL_EVENTS; .printf \"tid=%x\n\", @$tid; kn; .echo TRACE_PAUSED"
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEngine::shutdownEngine ".echo TRACE_SHUTDOWN; kn; g"
+0:000> g
+ModLoad: 00007ffc`10160000 00007ffc`10256000   C:\Windows\system32\dxgi.dll
+ModLoad: 00007ffc`10110000 00007ffc`10122000   C:\Windows\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ffc`0ee50000 00007ffc`0eeee000   C:\Windows\system32\uxtheme.dll
+ModLoad: 00007ffc`122b0000 00007ffc`12604000   C:\Windows\System32\combase.dll
+ModLoad: 00007ffb`f0720000 00007ffb`f0765000   C:\Windows\SYSTEM32\dinput8.dll
+ModLoad: 00007ffb`7e480000 00007ffb`7e491000   C:\Windows\SYSTEM32\xinput1_4.dll
+ModLoad: 00007ffc`116b0000 00007ffc`116e3000   C:\Windows\SYSTEM32\DEVOBJ.dll
+ModLoad: 00007ffc`0f160000 00007ffc`0f18e000   C:\Windows\SYSTEM32\dwmapi.dll
+ModLoad: 00007ffb`eb370000 00007ffb`eb4c2000   C:\Windows\SYSTEM32\inputhost.dll
+ModLoad: 00007ffc`13a40000 00007ffc`13aed000   C:\Windows\System32\shcore.dll
+ModLoad: 00007ffc`0d750000 00007ffc`0d842000   C:\Windows\SYSTEM32\CoreMessaging.dll
+ModLoad: 00007ffc`12d80000 00007ffc`12e4d000   C:\Windows\System32\OLEAUT32.dll
+ModLoad: 00007ffc`13640000 00007ffc`136ab000   C:\Windows\System32\WS2_32.dll
+ModLoad: 00007ffc`0f2b0000 00007ffc`0f3a4000   C:\Windows\SYSTEM32\PROPSYS.dll
+ModLoad: 00007ffc`0e3f0000 00007ffc`0e547000   C:\Windows\SYSTEM32\wintypes.dll
+ModLoad: 00007ffc`0ba50000 00007ffc`0bdab000   C:\Windows\SYSTEM32\CoreUIComponents.dll
+ModLoad: 00007ffc`11ca0000 00007ffc`11d22000   C:\Windows\System32\bcryptPrimitives.dll
+ModLoad: 00007ffc`10b70000 00007ffc`10ba3000   C:\Windows\SYSTEM32\ntmarta.dll
+ModLoad: 00007ffc`13be0000 00007ffc`13cf5000   C:\Windows\System32\MSCTF.dll
+ModLoad: 00007ffc`10100000 00007ffc`1010d000   C:\Windows\SYSTEM32\HID.DLL
+ModLoad: 00007ffc`12f20000 00007ffc`13390000   C:\Windows\System32\SETUPAPI.DLL
+ModLoad: 00007ffc`07020000 00007ffc`07047000   C:\Windows\SYSTEM32\WINMM.DLL
+ModLoad: 00007ffc`11d30000 00007ffc`11da3000   C:\Windows\System32\WINTRUST.dll
+ModLoad: 00007ffc`11a40000 00007ffc`11b9d000   C:\Windows\System32\CRYPT32.dll
+ModLoad: 00007ffc`114e0000 00007ffc`114f2000   C:\Windows\SYSTEM32\MSASN1.dll
+ModLoad: 00007ffb`eb270000 00007ffb`eb369000   C:\Windows\SYSTEM32\textinputframework.dll
+ModLoad: 00007ffb`ff820000 00007ffb`ff886000   C:\Windows\system32\Oleacc.dll
+ModLoad: 00007ffb`f8920000 00007ffb`f8931000   C:\Windows\SYSTEM32\windows.staterepositorycore.dll
+ModLoad: 00007ffc`0f020000 00007ffc`0f034000   C:\Windows\SYSTEM32\resourcepolicyclient.dll
+ModLoad: 00007ffa`a9240000 00007ffa`ab828000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvoglv64.dll
+ModLoad: 00007ffc`13710000 00007ffc`1383b000   C:\Windows\System32\ole32.dll
+ModLoad: 00007ffc`0c090000 00007ffc`0c0a4000   C:\Windows\SYSTEM32\WTSAPI32.dll
+ModLoad: 00007ffc`0f850000 00007ffc`0f85a000   C:\Windows\SYSTEM32\VERSION.dll
+ModLoad: 00007ffc`0aa40000 00007ffc`0aa71000   C:\Windows\SYSTEM32\cryptnet.dll
+ModLoad: 00007ffc`111e0000 00007ffc`111ec000   C:\Windows\SYSTEM32\cryptbase.dll
+ModLoad: 00007ffc`11270000 00007ffc`1129b000   C:\Windows\SYSTEM32\wldp.dll
+ModLoad: 00007ffc`0a870000 00007ffc`0a9b7000   C:\Windows\SYSTEM32\drvstore.dll
+ModLoad: 00007ffc`133c0000 00007ffc`133dd000   C:\Windows\System32\imagehlp.dll
+ModLoad: 00007ffc`112b0000 00007ffc`112c8000   C:\Windows\SYSTEM32\CRYPTSP.dll
+ModLoad: 00007ffc`10920000 00007ffc`10958000   C:\Windows\system32\rsaenh.dll
+ModLoad: 00007ffb`fb070000 00007ffb`fd05e000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvgpucomp64.dll
+ModLoad: 00007ffc`13f20000 00007ffc`13fc9000   C:\Windows\System32\clbcatq.dll
+ModLoad: 00007ffa`a7ca0000 00007ffa`a9238000   D:\VulkanSDK\1.3.261.1\Bin\VkLayer_khronos_validation.dll
+ModLoad: 00007ffb`ff650000 00007ffb`ff67c000   C:\Windows\SYSTEM32\VCRUNTIME140.dll
+ModLoad: 00007ffb`ff4a0000 00007ffb`ff4ac000   C:\Windows\SYSTEM32\VCRUNTIME140_1.dll
+ModLoad: 00007ffb`ff710000 00007ffb`ff7ad000   C:\Windows\SYSTEM32\MSVCP140.dll
+ModLoad: 00007ffc`0f950000 00007ffc`100f5000   C:\Windows\SYSTEM32\windows.storage.dll
+ModLoad: 00007ffc`136b0000 00007ffc`1370b000   C:\Windows\System32\shlwapi.dll
+ModLoad: 00007ffc`0b0a0000 00007ffc`0b0db000   C:\Windows\SYSTEM32\dxcore.dll
+ModLoad: 00007ffb`79140000 00007ffb`792a4000   C:\Windows\system32\nvspcap64.dll
+ModLoad: 00007ffc`11850000 00007ffc`11874000   C:\Windows\SYSTEM32\profapi.dll
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`09550000 00007ffc`09751000   C:\Windows\SYSTEM32\dbghelp.dll
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`09550000 00007ffc`09751000   C:\Windows\SYSTEM32\dbghelp.dll
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`09550000 00007ffc`09751000   C:\Windows\SYSTEM32\dbghelp.dll
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`09550000 00007ffc`09751000   C:\Windows\SYSTEM32\dbghelp.dll
+ModLoad: 00007ffc`06010000 00007ffc`06703000   C:\Windows\SYSTEM32\nvapi64.dll
+ModLoad: 00007ffb`126c0000 00007ffb`12768000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\NvCamera\NvCameraAllowlisting64.dll
+ModLoad: 00007ffb`9fe20000 00007ffb`9ff48000   C:\Windows\SYSTEM32\opengl32.dll
+ModLoad: 00007ffb`9ca70000 00007ffb`9ca9c000   C:\Windows\SYSTEM32\GLU32.dll
+ModLoad: 00007ffc`0ac50000 00007ffc`0ad56000   C:\Windows\System32\AppXDeploymentClient.dll
+ModLoad: 00007ffb`e3d80000 00007ffb`e3ed5000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvppex.dll
+ModLoad: 00007ffc`10e70000 00007ffc`10ebb000   C:\Windows\SYSTEM32\powrprof.dll
+ModLoad: 00007ffc`10ce0000 00007ffc`10cf2000   C:\Windows\SYSTEM32\UMPDC.dll
+ModLoad: 00007ffc`10590000 00007ffc`105f3000   C:\Windows\SYSTEM32\WINSTA.dll
+ModLoad: 00007ffc`07c10000 00007ffc`07cbe000   C:\Windows\SYSTEM32\mscms.dll
+ModLoad: 00007ffc`117d0000 00007ffc`117fe000   C:\Windows\SYSTEM32\USERENV.dll
+ModLoad: 00007ffc`07bd0000 00007ffc`07be1000   C:\Windows\SYSTEM32\ColorAdapterClient.dll
+ModLoad: 00007ffc`05eb0000 00007ffc`05ef5000   C:\Windows\SYSTEM32\icm32.dll
+TRACE_LOGICAL
+tid=2784c  # Child-SP          RetAddr           Call Site
+00 00000003`e7f3fa98 00007ff6`6723904b PiccoloEditor!Piccolo::PiccoloEngine::logicalTick [<lab>\source\engine\source\runtime\engine.cpp @ 94]
+01 00000003`e7f3faa0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x3b [<lab>\source\engine\source\runtime\engine.cpp @ 71]
+02 00000003`e7f3fbb0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+03 00000003`e7f3fbf0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+04 00000003`e7f3fd80 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+05 00000003`e7f3fdd0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+06 00000003`e7f3fe40 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+07 00000003`e7f3fe70 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+08 00000003`e7f3fea0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+09 00000003`e7f3fed0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+TRACE_INPUT
+tid=2784c  # Child-SP          RetAddr           Call Site
+00 00000003`e7f3fa58 00007ff6`67239245 PiccoloEditor!Piccolo::InputSystem::tick [<lab>\source\engine\source\runtime\function\input\input_system.cpp @ 156]
+01 00000003`e7f3fa60 00007ff6`6723904b PiccoloEditor!Piccolo::PiccoloEngine::logicalTick+0x45 [<lab>\source\engine\source\runtime\engine.cpp @ 96]
+02 00000003`e7f3faa0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x3b [<lab>\source\engine\source\runtime\engine.cpp @ 71]
+03 00000003`e7f3fbb0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+04 00000003`e7f3fbf0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+05 00000003`e7f3fd80 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+06 00000003`e7f3fdd0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+07 00000003`e7f3fe40 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+08 00000003`e7f3fe70 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+09 00000003`e7f3fea0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+0a 00000003`e7f3fed0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+TRACE_BEFORE_SWAP
+tid=2784c Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context [Type: Piccolo::RenderSwapContext]
+    [+0x000] m_logic_swap_data_index : 0x0 [Type: unsigned char]
+    [+0x001] m_render_swap_data_index : 0x1 [Type: unsigned char]
+    [+0x008] m_swap_data      [Type: Piccolo::RenderSwapData [2]]
+TRACE_AFTER_SWAP
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context [Type: Piccolo::RenderSwapContext]
+    [+0x000] m_logic_swap_data_index : 0x1 [Type: unsigned char]
+    [+0x001] m_render_swap_data_index : 0x0 [Type: unsigned char]
+    [+0x008] m_swap_data      [Type: Piccolo::RenderSwapData [2]]
+TRACE_CONSUME_BEGIN
+tid=2784c Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc : {...} [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+    [<Raw View>]     [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+TRACE_CONSUME_END
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc : nullopt [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+    [<Raw View>]     [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+TRACE_PRESENT
+tid=2784c class Piccolo::VulkanRHI * this = 0x0000019b`b4ce6df0
+class std::function<void __cdecl(void)> * passUpdateAfterRecreateSwapchain = 0x00000003`e7f3f6b0 bind(0x7ff666ffbc58, {...})
+unsigned int [1] wait_stages = unsigned int [1]
+struct VkPresentInfoKHR present_info = struct VkPresentInfoKHR
+VkResult res_reset_fences = VK_SUCCESS (0n0)
+VkResult present_result = VK_SUCCESS (0n0)
+VkResult res_end_command_buffer = VK_SUCCESS (0n0)
+struct VkSemaphore_T *[2] semaphores = struct VkSemaphore_T *[2]
+struct VkSubmitInfo submit_info = struct VkSubmitInfo
+VkResult res_queue_submit = VK_SUCCESS (0n0)
+TRACE_POLL_EVENTS
+tid=2784c  # Child-SP          RetAddr           Call Site
+00 00000003`e7f3faa0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+01 00000003`e7f3fbb0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+02 00000003`e7f3fbf0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+03 00000003`e7f3fd80 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+04 00000003`e7f3fdd0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+05 00000003`e7f3fe40 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+06 00000003`e7f3fe70 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+07 00000003`e7f3fea0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+08 00000003`e7f3fed0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+TRACE_PAUSED
+PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b:
+00007ff6`6723908b 488d0d1e7eca00  lea     rcx,[PiccoloEditor!Piccolo::g_runtime_global_context+0x70 (00007ff6`67ee0eb0)]
+0:000> ~
+.  0  Id: 29710.2784c Suspend: 1 Teb: 00000003`e808e000 Unfrozen
+   1  Id: 29710.f75c Suspend: 1 Teb: 00000003`e8090000 Unfrozen
+   2  Id: 29710.29820 Suspend: 1 Teb: 00000003`e8092000 Unfrozen
+   3  Id: 29710.26474 Suspend: 1 Teb: 00000003`e8094000 Unfrozen
+   4  Id: 29710.2ab30 Suspend: 1 Teb: 00000003`e8096000 Unfrozen
+   5  Id: 29710.19100 Suspend: 1 Teb: 00000003`e8098000 Unfrozen
+   6  Id: 29710.72ac Suspend: 1 Teb: 00000003`e809a000 Unfrozen
+   7  Id: 29710.13e40 Suspend: 1 Teb: 00000003`e809c000 Unfrozen
+   8  Id: 29710.261a0 Suspend: 1 Teb: 00000003`e80a2000 Unfrozen
+   9  Id: 29710.fb6c Suspend: 1 Teb: 00000003`e80a0000 Unfrozen
+  10  Id: 29710.149d0 Suspend: 1 Teb: 00000003`e80a4000 Unfrozen
+  11  Id: 29710.23190 Suspend: 1 Teb: 00000003`e80a6000 Unfrozen
+  12  Id: 29710.193bc Suspend: 1 Teb: 00000003`e80a8000 Unfrozen
+  13  Id: 29710.2a550 Suspend: 1 Teb: 00000003`e80aa000 Unfrozen
+  14  Id: 29710.28b7c Suspend: 1 Teb: 00000003`e80ac000 Unfrozen
+  15  Id: 29710.2e70 Suspend: 1 Teb: 00000003`e80ae000 Unfrozen
+  16  Id: 29710.28854 Suspend: 1 Teb: 00000003`e80b0000 Unfrozen
+  17  Id: 29710.139b4 Suspend: 1 Teb: 00000003`e80b2000 Unfrozen "Worker 1"
+  18  Id: 29710.13c54 Suspend: 1 Teb: 00000003`e80b4000 Unfrozen "Worker 2"
+  19  Id: 29710.1a138 Suspend: 1 Teb: 00000003`e80b6000 Unfrozen "Worker 3"
+  20  Id: 29710.1ae74 Suspend: 1 Teb: 00000003`e80b8000 Unfrozen "Worker 4"
+0:000> g
+(29710.5bfc): Control-C exception - code 40010005 (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+KERNELBASE!TlsGetValue+0x26467:
+00007ffc`11e8d1c7 0f1f440000      nop     dword ptr [rax+rax]
+0:022> g
+ModLoad: 00007ffb`d2840000 00007ffb`d2b34000   C:\Windows\System32\uiautomationcore.dll
+(29710.29c28): Break instruction exception - code 80000003 (first chance)
+ntdll!DbgBreakPoint:
+00007ffc`143310d0 cc              int     3
+0:002> .echo HANDOFF_TRACE_STOPPED_BY_DEBUGGER
+HANDOFF_TRACE_STOPPED_BY_DEBUGGER
+0:002> q
+quit:
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'

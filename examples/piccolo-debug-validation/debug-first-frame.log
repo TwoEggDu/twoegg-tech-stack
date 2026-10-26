@@ -1,0 +1,431 @@
+Opened log file '<lab>/debug-first-frame.log'
+
+Microsoft (R) Windows Debugger Version 10.0.19041.685 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: <lab>/source/bin/PiccoloEditor.exe
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <lab>/source/bin
+Symbol search path is: <lab>/source/bin
+Executable search path is: 
+ModLoad: 00007ff6`66ff0000 00007ff6`68013000   PiccoloEditor.exe
+ModLoad: 00007ffc`14290000 00007ffc`14488000   ntdll.dll
+ModLoad: 00007ffc`13fd0000 00007ffc`14092000   C:\Windows\System32\KERNEL32.DLL
+ModLoad: 00007ffc`11db0000 00007ffc`120a6000   C:\Windows\System32\KERNELBASE.dll
+ModLoad: 00007ffc`0c200000 00007ffc`0c294000   C:\Windows\SYSTEM32\apphelp.dll
+ModLoad: 00007ffc`13490000 00007ffc`13631000   C:\Windows\System32\USER32.dll
+ModLoad: 00007ffc`11a10000 00007ffc`11a32000   C:\Windows\System32\win32u.dll
+ModLoad: 00007ffa`d0be0000 00007ffa`d0d44000   C:\Windows\SYSTEM32\vulkan-1.dll
+ModLoad: 00007ffc`13390000 00007ffc`133bb000   C:\Windows\System32\GDI32.dll
+ModLoad: 00007ffc`120b0000 00007ffc`121c9000   C:\Windows\System32\gdi32full.dll
+ModLoad: 00007ffc`11970000 00007ffc`11a0d000   C:\Windows\System32\msvcp_win.dll
+ModLoad: 00007ffc`11ba0000 00007ffc`11ca0000   C:\Windows\System32\ucrtbase.dll
+ModLoad: 00007ffc`11920000 00007ffc`1196e000   C:\Windows\System32\CFGMGR32.dll
+ModLoad: 00007ffc`12610000 00007ffc`12d80000   C:\Windows\System32\SHELL32.dll
+ModLoad: 00007ffc`12e60000 00007ffc`12f11000   C:\Windows\System32\ADVAPI32.dll
+ModLoad: 00007ffc`133f0000 00007ffc`1348e000   C:\Windows\System32\msvcrt.dll
+ModLoad: 00007ffc`138f0000 00007ffc`1391f000   C:\Windows\System32\IMM32.dll
+ModLoad: 00007ffc`13850000 00007ffc`138ef000   C:\Windows\System32\sechost.dll
+ModLoad: 00007ffa`d0b00000 00007ffa`d0bda000   C:\Windows\SYSTEM32\MSVCP140D.dll
+ModLoad: 00007ffc`13920000 00007ffc`13a40000   C:\Windows\System32\RPCRT4.dll
+ModLoad: 00007ffa`d0a80000 00007ffa`d0af1000   C:\Windows\SYSTEM32\MSVCP140_2D.dll
+ModLoad: 00007ffc`121d0000 00007ffc`121f7000   C:\Windows\System32\bcrypt.dll
+ModLoad: 00007ffa`d0a50000 00007ffa`d0a80000   C:\Windows\SYSTEM32\VCRUNTIME140D.dll
+ModLoad: 00007ffb`89550000 00007ffb`8955f000   C:\Windows\SYSTEM32\VCRUNTIME140_1D.dll
+ModLoad: 00007ffa`d0840000 00007ffa`d0a44000   C:\Windows\SYSTEM32\ucrtbased.dll
+(1a9f4.22fa8): Break instruction exception - code 80000003 (first chance)
+ntdll!LdrInitShimEngineDynamic+0x360:
+00007ffc`14360860 cc              int     3
+0:000> .symopt+0x10
+Symbol options are 0xB0337:
+  0x00000001 - SYMOPT_CASE_INSENSITIVE
+  0x00000002 - SYMOPT_UNDNAME
+  0x00000004 - SYMOPT_DEFERRED_LOADS
+  0x00000010 - SYMOPT_LOAD_LINES
+  0x00000020 - SYMOPT_OMAP_FIND_NEAREST
+  0x00000100 - SYMOPT_NO_UNQUALIFIED_LOADS
+  0x00000200 - SYMOPT_FAIL_CRITICAL_ERRORS
+  0x00010000 - SYMOPT_AUTO_PUBLICS
+  0x00020000 - SYMOPT_NO_IMAGE_SEARCH
+  0x00080000 - SYMOPT_NO_PROMPTS
+0:000> .reload /f PiccoloEditor.exe
+*** WARNING: Unable to verify checksum for PiccoloEditor.exe
+0:000> lmvm PiccoloEditor
+start             end                 module name
+00007ff6`66ff0000 00007ff6`68013000   PiccoloEditor C (private pdb symbols)  <lab>/source/bin\PiccoloEditor.pdb
+    Loaded symbol image file: <lab>\source\bin\PiccoloEditor.exe
+    Image path: PiccoloEditor.exe
+    Image name: PiccoloEditor.exe
+    Timestamp:        Mon Oct 26 10:17:35 2026 (6ADEB83F)
+    CheckSum:         00000000
+    ImageSize:        01023000
+    Translations:     0000.04b0 0000.04e4 0409.04b0 0409.04e4
+    Information from resource tables:
+0:000> bu /1 PiccoloEditor!main ".echo STAGE_MAIN; kn; dv /t; g"
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEngine::startEngine ".echo STAGE_START_ENGINE; kn; da poi(@rdx); g"
+0:000> bu /1 PiccoloEditor!Piccolo::RuntimeGlobalContext::startSystems ".echo STAGE_START_SYSTEMS; kn; g"
+0:000> bu /1 PiccoloEditor!Piccolo::ConfigManager::initialize ".echo STAGE_CONFIG; kn; dx config_file_path; g"
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEditor::initialize ".echo STAGE_EDITOR_INITIALIZE; kn; g"
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEditor::run ".echo STAGE_EDITOR_RUN; kn; g"
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame ".echo STAGE_TICK_ONE_FRAME; kn; dv /t; g"
+0:000> bu /1 PiccoloEditor!Piccolo::WorldManager::tick ".echo STAGE_WORLD_TICK; kn; dt PiccoloEditor!Piccolo::WorldManager @rcx m_is_world_loaded m_current_world_url; g"
+0:000> bu /1 PiccoloEditor!Piccolo::WorldManager::loadWorld ".echo STAGE_LOAD_WORLD; kn; da poi(@rdx); g"
+0:000> bu /1 PiccoloEditor!Piccolo::RenderSystem::swapLogicRenderData ".echo STAGE_SWAP; kn; g"
+0:000> bu /1 PiccoloEditor!Piccolo::RenderPipeline::deferredRender ".echo STAGE_DEFERRED_RENDER; kn; g"
+0:000> bu /1 PiccoloEditor!Piccolo::VulkanRHI::submitRendering ".echo STAGE_SUBMIT; kn; g"
+0:000> bp /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo STAGE_FIRST_PRESENT_RETURN; kn; dv /t; dt this m_current_frame_index m_current_swapchain_image_index; .echo FIRST_FRAME_PAUSED"
+0:000> bp /1 `PiccoloEditor!global_context.cpp:33` ".echo STAGE_CONFIG_READY; dx this->m_config_manager._Ptr->m_root_folder; dx this->m_config_manager._Ptr->m_asset_folder; g"
+0:000> bu /1 PiccoloEditor!Piccolo::PiccoloEngine::shutdownEngine ".echo STAGE_SHUTDOWN; kn; g"
+0:000> g
+ModLoad: 00007ffc`10160000 00007ffc`10256000   C:\Windows\system32\dxgi.dll
+STAGE_MAIN
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f778 00007ff6`67b2d119 PiccoloEditor!main [<lab>\source\engine\source\editor\source\main.cpp @ 16]
+01 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+02 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+03 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+04 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+05 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+06 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+int argc = 0n0
+char ** argv = 0x00000000`00000000
+class std::filesystem::path config_file_path = class std::filesystem::path
+class std::filesystem::path executable_path = class std::filesystem::path
+class Piccolo::PiccoloEngine * engine = 0x00000000`00000000
+class Piccolo::PiccoloEditor * editor = 0x00000000`00000000
+STAGE_START_ENGINE
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f5e8 00007ff6`6723343c PiccoloEditor!Piccolo::PiccoloEngine::startEngine [<lab>\source\engine\source\runtime\engine.cpp @ 21]
+01 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x17c [<lab>\source\engine\source\editor\source\main.cpp @ 22]
+02 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+03 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+04 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+05 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+06 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+07 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+000001b5`bc5c7040  "....."
+STAGE_START_SYSTEMS
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f4b8 00007ff6`67238c4d PiccoloEditor!Piccolo::RuntimeGlobalContext::startSystems [<lab>\source\engine\source\runtime\function\global\global_context.cpp @ 27]
+01 00000083`0719f4c0 00007ff6`6723343c PiccoloEditor!Piccolo::PiccoloEngine::startEngine+0x3d [<lab>\source\engine\source\runtime\engine.cpp @ 24]
+02 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x17c [<lab>\source\engine\source\editor\source\main.cpp @ 22]
+03 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+04 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+05 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+06 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+07 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+08 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+STAGE_CONFIG
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f228 00007ff6`67286b81 PiccoloEditor!Piccolo::ConfigManager::initialize [<lab>\source\engine\source\runtime\resource\config_manager\config_manager.cpp @ 12]
+01 00000083`0719f230 00007ff6`67238c4d PiccoloEditor!Piccolo::RuntimeGlobalContext::startSystems+0xc1 [<lab>\source\engine\source\runtime\function\global\global_context.cpp @ 29]
+02 00000083`0719f4c0 00007ff6`6723343c PiccoloEditor!Piccolo::PiccoloEngine::startEngine+0x3d [<lab>\source\engine\source\runtime\engine.cpp @ 24]
+03 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x17c [<lab>\source\engine\source\editor\source\main.cpp @ 22]
+04 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+05 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+06 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+07 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+08 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+09 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+config_file_path [Type: std::filesystem::path]
+    preferred_separator : 92 '\' [Type: wchar_t]
+    [+0x000] _Text            [Type: std::basic_string<wchar_t,std::char_traits<wchar_t>,std::allocator<wchar_t> >]
+STAGE_CONFIG_READY
+this->m_config_manager._Ptr->m_root_folder [Type: std::filesystem::path]
+    preferred_separator : 92 '\' [Type: wchar_t]
+    [+0x000] _Text            : "<lab>/source/bin\." [Type: std::basic_string<wchar_t,std::char_traits<wchar_t>,std::allocator<wchar_t> >]
+this->m_config_manager._Ptr->m_asset_folder [Type: std::filesystem::path]
+    preferred_separator : 92 '\' [Type: wchar_t]
+    [+0x000] _Text            : "<lab>/source/bin\.\asset" [Type: std::basic_string<wchar_t,std::char_traits<wchar_t>,std::allocator<wchar_t> >]
+ModLoad: 00007ffc`10110000 00007ffc`10122000   C:\Windows\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ffc`0ee50000 00007ffc`0eeee000   C:\Windows\system32\uxtheme.dll
+ModLoad: 00007ffc`122b0000 00007ffc`12604000   C:\Windows\System32\combase.dll
+ModLoad: 00007ffb`f0720000 00007ffb`f0765000   C:\Windows\SYSTEM32\dinput8.dll
+ModLoad: 00007ffb`7e480000 00007ffb`7e491000   C:\Windows\SYSTEM32\xinput1_4.dll
+ModLoad: 00007ffc`116b0000 00007ffc`116e3000   C:\Windows\SYSTEM32\DEVOBJ.dll
+ModLoad: 00007ffc`0f160000 00007ffc`0f18e000   C:\Windows\SYSTEM32\dwmapi.dll
+ModLoad: 00007ffb`eb370000 00007ffb`eb4c2000   C:\Windows\SYSTEM32\inputhost.dll
+ModLoad: 00007ffc`13a40000 00007ffc`13aed000   C:\Windows\System32\shcore.dll
+ModLoad: 00007ffc`0d750000 00007ffc`0d842000   C:\Windows\SYSTEM32\CoreMessaging.dll
+ModLoad: 00007ffc`12d80000 00007ffc`12e4d000   C:\Windows\System32\OLEAUT32.dll
+ModLoad: 00007ffc`13640000 00007ffc`136ab000   C:\Windows\System32\WS2_32.dll
+ModLoad: 00007ffc`0f2b0000 00007ffc`0f3a4000   C:\Windows\SYSTEM32\PROPSYS.dll
+ModLoad: 00007ffc`0e3f0000 00007ffc`0e547000   C:\Windows\SYSTEM32\wintypes.dll
+ModLoad: 00007ffc`0ba50000 00007ffc`0bdab000   C:\Windows\SYSTEM32\CoreUIComponents.dll
+ModLoad: 00007ffc`11ca0000 00007ffc`11d22000   C:\Windows\System32\bcryptPrimitives.dll
+ModLoad: 00007ffc`10b70000 00007ffc`10ba3000   C:\Windows\SYSTEM32\ntmarta.dll
+ModLoad: 00007ffc`13be0000 00007ffc`13cf5000   C:\Windows\System32\MSCTF.dll
+ModLoad: 00007ffc`10100000 00007ffc`1010d000   C:\Windows\SYSTEM32\HID.DLL
+ModLoad: 00007ffc`12f20000 00007ffc`13390000   C:\Windows\System32\SETUPAPI.DLL
+ModLoad: 00007ffc`07020000 00007ffc`07047000   C:\Windows\SYSTEM32\WINMM.DLL
+ModLoad: 00007ffc`11d30000 00007ffc`11da3000   C:\Windows\System32\WINTRUST.dll
+ModLoad: 00007ffc`11a40000 00007ffc`11b9d000   C:\Windows\System32\CRYPT32.dll
+ModLoad: 00007ffc`114e0000 00007ffc`114f2000   C:\Windows\SYSTEM32\MSASN1.dll
+ModLoad: 00007ffb`eb270000 00007ffb`eb369000   C:\Windows\SYSTEM32\textinputframework.dll
+ModLoad: 00007ffb`ff820000 00007ffb`ff886000   C:\Windows\system32\Oleacc.dll
+ModLoad: 00007ffc`13710000 00007ffc`1383b000   C:\Windows\System32\ole32.dll
+ModLoad: 00007ffc`13f20000 00007ffc`13fc9000   C:\Windows\System32\clbcatq.dll
+ModLoad: 00007ffb`99a60000 00007ffb`99fa1000   C:\Windows\system32\SogouTSF.ime
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`0f850000 00007ffc`0f85a000   C:\Windows\system32\VERSION.dll
+ModLoad: 00007ffb`ffc10000 00007ffb`ffc17000   C:\Windows\system32\MSIMG32.dll
+ModLoad: 00007ffc`111e0000 00007ffc`111ec000   C:\Windows\system32\CRYPTBASE.DLL
+ModLoad: 00007ffc`0f950000 00007ffc`100f5000   C:\Windows\SYSTEM32\windows.storage.dll
+ModLoad: 00007ffc`11270000 00007ffc`1129b000   C:\Windows\SYSTEM32\Wldp.dll
+ModLoad: 00007ffc`136b0000 00007ffc`1370b000   C:\Windows\System32\shlwapi.dll
+ModLoad: 00007ffb`97d80000 00007ffb`9993e000   C:\Windows\system32\SogouPY.ime
+ModLoad: 00007ffc`133c0000 00007ffc`133dd000   C:\Windows\System32\imagehlp.dll
+ModLoad: 00007ffc`0a220000 00007ffc`0a32a000   C:\Windows\SYSTEM32\WINHTTP.dll
+ModLoad: 00007ffc`117d0000 00007ffc`117fe000   C:\Windows\SYSTEM32\USERENV.dll
+ModLoad: 00007ffc`11850000 00007ffc`11874000   C:\Windows\SYSTEM32\profapi.dll
+ModLoad: 00007ffc`09550000 00007ffc`09751000   C:\Windows\SYSTEM32\dbghelp.dll
+ModLoad: 00007ffb`9d9d0000 00007ffb`9da76000   C:\Program Files (x86)\SogouInput\Components\isgpet\1.0.2.3152\isgpet_bundle64.dll
+ModLoad: 00000000`10000000 00000000`104a2000   C:\Program Files (x86)\SogouInput\16.8.0.5415\Resource.dll
+ModLoad: 00007ffb`9b980000 00007ffb`9be33000   C:\Program Files (x86)\SogouInput\Components\PicFace\1.1.0.3184\PicFace64.dll
+ModLoad: 00007ffc`13de0000 00007ffc`13eba000   C:\Windows\System32\COMDLG32.dll
+ModLoad: 00007ffb`f70c0000 00007ffb`f7170000   C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.6280_none_792d7c952443c49a\COMCTL32.dll
+ModLoad: 00007ffc`0d180000 00007ffc`0d740000   C:\Windows\SYSTEM32\d2d1.dll
+ModLoad: 00007ffb`e5050000 00007ffb`e50fc000   C:\Windows\SYSTEM32\TextShaping.dll
+ModLoad: 00007ffb`f9f60000 00007ffb`fa1df000   C:\Windows\SYSTEM32\dwrite.dll
+ModLoad: 00007ffb`9d8b0000 00007ffb`9d930000   C:\Program Files (x86)\SogouInput\Components\systembeautify\1.0.2.2868\systembeautify_bundle64.dll
+ModLoad: 00007ffb`9b6b0000 00007ffb`9b97d000   C:\Program Files (x86)\SogouInput\Components\IChat\1.0.2.3359\ichat_bundle64.dll
+ModLoad: 00007ffb`f8920000 00007ffb`f8931000   C:\Windows\SYSTEM32\windows.staterepositorycore.dll
+ModLoad: 00007ffc`0f020000 00007ffc`0f034000   C:\Windows\SYSTEM32\resourcepolicyclient.dll
+ModLoad: 00007ffa`a9240000 00007ffa`ab828000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvoglv64.dll
+ModLoad: 00007ffc`0c090000 00007ffc`0c0a4000   C:\Windows\SYSTEM32\WTSAPI32.dll
+ModLoad: 00007ffc`0aa40000 00007ffc`0aa71000   C:\Windows\SYSTEM32\cryptnet.dll
+ModLoad: 00007ffc`0a870000 00007ffc`0a9b7000   C:\Windows\SYSTEM32\drvstore.dll
+ModLoad: 00007ffc`112b0000 00007ffc`112c8000   C:\Windows\SYSTEM32\CRYPTSP.dll
+ModLoad: 00007ffc`10920000 00007ffc`10958000   C:\Windows\system32\rsaenh.dll
+ModLoad: 00007ffb`fb070000 00007ffb`fd05e000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvgpucomp64.dll
+ModLoad: 00007ffa`a7ca0000 00007ffa`a9238000   D:\VulkanSDK\1.3.261.1\Bin\VkLayer_khronos_validation.dll
+ModLoad: 00007ffb`ff4a0000 00007ffb`ff4ac000   C:\Windows\SYSTEM32\VCRUNTIME140_1.dll
+ModLoad: 00007ffb`ff710000 00007ffb`ff7ad000   C:\Windows\SYSTEM32\MSVCP140.dll
+ModLoad: 00007ffb`ff650000 00007ffb`ff67c000   C:\Windows\SYSTEM32\VCRUNTIME140.dll
+ModLoad: 00007ffc`0b0a0000 00007ffc`0b0db000   C:\Windows\SYSTEM32\dxcore.dll
+ModLoad: 00007ffb`79140000 00007ffb`792a4000   C:\Windows\system32\nvspcap64.dll
+ModLoad: 00007ffc`06010000 00007ffc`06703000   C:\Windows\SYSTEM32\nvapi64.dll
+ModLoad: 00007ffb`16fd0000 00007ffb`17078000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\NvCamera\NvCameraAllowlisting64.dll
+ModLoad: 00007ffb`9fe20000 00007ffb`9ff48000   C:\Windows\SYSTEM32\opengl32.dll
+ModLoad: 00007ffb`9ca70000 00007ffb`9ca9c000   C:\Windows\SYSTEM32\GLU32.dll
+ModLoad: 00007ffc`0ac50000 00007ffc`0ad56000   C:\Windows\System32\AppXDeploymentClient.dll
+ModLoad: 00007ffb`e3d80000 00007ffb`e3ed5000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvppex.dll
+ModLoad: 00007ffc`10e70000 00007ffc`10ebb000   C:\Windows\SYSTEM32\powrprof.dll
+ModLoad: 00007ffc`10ce0000 00007ffc`10cf2000   C:\Windows\SYSTEM32\UMPDC.dll
+ModLoad: 00007ffc`10590000 00007ffc`105f3000   C:\Windows\SYSTEM32\WINSTA.dll
+STAGE_EDITOR_INITIALIZE
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f5e8 00007ff6`672334ce PiccoloEditor!Piccolo::PiccoloEditor::initialize [<lab>\source\engine\source\editor\source\editor.cpp @ 29]
+01 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x20e [<lab>\source\engine\source\editor\source\main.cpp @ 28]
+02 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+03 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+04 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+05 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+06 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+07 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+ModLoad: 00007ffc`07c10000 00007ffc`07cbe000   C:\Windows\SYSTEM32\mscms.dll
+ModLoad: 00007ffc`07bd0000 00007ffc`07be1000   C:\Windows\SYSTEM32\ColorAdapterClient.dll
+ModLoad: 00007ffc`05eb0000 00007ffc`05ef5000   C:\Windows\SYSTEM32\icm32.dll
+STAGE_EDITOR_RUN
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f5e8 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run [<lab>\source\engine\source\editor\source\editor.cpp @ 52]
+01 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+02 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+03 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+04 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+05 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+06 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+07 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+STAGE_TICK_ONE_FRAME
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f5a8 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame [<lab>\source\engine\source\runtime\engine.cpp @ 69]
+01 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+02 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+03 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+04 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+05 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+06 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+07 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+08 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+class Piccolo::PiccoloEngine * this = 0x000001b5`bc5c0000
+float delta_time = 0
+bool should_window_close = true
+STAGE_WORLD_TICK
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f458 00007ff6`67239231 PiccoloEditor!Piccolo::WorldManager::tick [<lab>\source\engine\source\runtime\function\framework\world\world_manager.cpp @ 48]
+01 00000083`0719f460 00007ff6`6723904b PiccoloEditor!Piccolo::PiccoloEngine::logicalTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 96]
+02 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x3b [<lab>\source\engine\source\runtime\engine.cpp @ 71]
+03 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+04 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+05 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+06 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+07 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+08 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+09 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+0a 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+   +0x008 m_is_world_loaded   : 0
+   +0x010 m_current_world_url : std::basic_string<char,std::char_traits<char>,std::allocator<char> >
+STAGE_LOAD_WORLD
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f3b8 00007ff6`672deed8 PiccoloEditor!Piccolo::WorldManager::loadWorld [<lab>\source\engine\source\runtime\function\framework\world\world_manager.cpp @ 75]
+01 00000083`0719f3c0 00007ff6`67239231 PiccoloEditor!Piccolo::WorldManager::tick+0x58 [<lab>\source\engine\source\runtime\function\framework\world\world_manager.cpp @ 51]
+02 00000083`0719f460 00007ff6`6723904b PiccoloEditor!Piccolo::PiccoloEngine::logicalTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 96]
+03 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x3b [<lab>\source\engine\source\runtime\engine.cpp @ 71]
+04 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+05 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+06 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+07 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+08 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+09 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+0a 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+0b 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+000001b5`bc6140d0  ".?a..."
+STAGE_SWAP
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f498 00007ff6`67239075 PiccoloEditor!Piccolo::RenderSystem::swapLogicRenderData [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 159]
+01 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x65 [<lab>\source\engine\source\runtime\engine.cpp @ 77]
+02 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+03 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+04 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+05 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+06 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+07 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+08 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+09 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+STAGE_DEFERRED_RENDER
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f168 00007ff6`6723af26 PiccoloEditor!Piccolo::RenderPipeline::deferredRender [<lab>\source\engine\source\runtime\function\render\render_pipeline.cpp @ 167]
+01 00000083`0719f170 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x4b6 [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 124]
+02 00000083`0719f460 00007ff6`6723908b PiccoloEditor!Piccolo::PiccoloEngine::rendererTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 102]
+03 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+04 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+05 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+06 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+07 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+08 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+09 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+0a 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+0b 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+STAGE_SUBMIT
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719efb8 00007ff6`673e17ad PiccoloEditor!Piccolo::VulkanRHI::submitRendering [<lab>\source\engine\source\runtime\function\render\interface\vulkan\vulkan_rhi.cpp @ 444]
+01 00000083`0719efc0 00007ff6`6723af26 PiccoloEditor!Piccolo::RenderPipeline::deferredRender+0x35d [<lab>\source\engine\source\runtime\function\render\render_pipeline.cpp @ 210]
+02 00000083`0719f170 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x4b6 [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 124]
+03 00000083`0719f460 00007ff6`6723908b PiccoloEditor!Piccolo::PiccoloEngine::rendererTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 102]
+04 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+05 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+06 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+07 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+08 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+09 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+0a 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+0b 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+0c 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+STAGE_FIRST_PRESENT_RETURN
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719ea70 00007ff6`673e17ad PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe [<lab>\source\engine\source\runtime\function\render\interface\vulkan\vulkan_rhi.cpp @ 494]
+01 00000083`0719efc0 00007ff6`6723af26 PiccoloEditor!Piccolo::RenderPipeline::deferredRender+0x35d [<lab>\source\engine\source\runtime\function\render\render_pipeline.cpp @ 210]
+02 00000083`0719f170 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x4b6 [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 124]
+03 00000083`0719f460 00007ff6`6723908b PiccoloEditor!Piccolo::PiccoloEngine::rendererTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 102]
+04 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+05 00000083`0719f5b0 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+06 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+07 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+08 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+09 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+0a 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+0b 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+0c 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+class Piccolo::VulkanRHI * this = 0x000001b5`c45aade0
+class std::function<void __cdecl(void)> * passUpdateAfterRecreateSwapchain = 0x00000083`0719f0b0 bind(0x7ff666ffbc58, {...})
+unsigned int [1] wait_stages = unsigned int [1]
+struct VkPresentInfoKHR present_info = struct VkPresentInfoKHR
+VkResult res_reset_fences = VK_SUCCESS (0n0)
+VkResult present_result = VK_SUCCESS (0n0)
+VkResult res_end_command_buffer = VK_SUCCESS (0n0)
+struct VkSemaphore_T *[2] semaphores = struct VkSemaphore_T *[2]
+struct VkSubmitInfo submit_info = struct VkSubmitInfo
+VkResult res_queue_submit = VK_SUCCESS (0n0)
+Local var @ 0x830719efc0 Type Piccolo::VulkanRHI*
+0x000001b5`c45aade0 
+   +0x208 m_current_frame_index           : 0 ''
+   +0x2a8 m_current_swapchain_image_index : 0
+FIRST_FRAME_PAUSED
+PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe:
+00007ff6`6741ae5e 81bc2424030000143265c4 cmp dword ptr [rsp+324h],0C4653214h ss:00000083`0719ed94=00000000
+0:000> .echo STAGE_FIRST_FRAME_STATE
+STAGE_FIRST_FRAME_STATE
+0:000> dx Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_is_world_loaded
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_is_world_loaded : true [Type: bool]
+0:000> dx Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_loaded_levels
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_loaded_levels : { size=0x1 } [Type: std::unordered_map<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::shared_ptr<Piccolo::Level>,std::hash<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::equal_to<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::allocator<std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> > > >]
+    [<Raw View>]     [Type: std::unordered_map<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::shared_ptr<Piccolo::Level>,std::hash<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::equal_to<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::allocator<std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> > > >]
+    [bucket_count]   : 0x8 [Type: unsigned __int64]
+    [load_factor]    : 0.125000
+    [max_load_factor] : 1.000000 [Type: float]
+    [hash_function]  : hash [Type: std::_Compressed_pair<std::hash<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::_Compressed_pair<std::equal_to<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,float,1>,1>]
+    [key_eq]         : equal_to [Type: std::_Compressed_pair<std::equal_to<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,float,1>]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<std::_List_node<std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> >,void *> >,std::_List_val<std::_List_simple_types<std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> > > >,1>]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<std::_List_node<std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> >,void *> >,std::_List_val<std::_List_simple_types<std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> > > >,1>]
+    [0x0]            : "asset/level/1-1.level.json", {...} [Type: std::pair<std::basic_string<char,std::char_traits<char>,std::allocator<char> > const ,std::shared_ptr<Piccolo::Level> >]
+0:000> dx -r1 Piccolo::g_runtime_global_context.m_config_manager._Ptr->m_root_folder
+Piccolo::g_runtime_global_context.m_config_manager._Ptr->m_root_folder [Type: std::filesystem::path]
+    preferred_separator : 92 '\' [Type: wchar_t]
+    [+0x000] _Text            : "<lab>/source/bin\." [Type: std::basic_string<wchar_t,std::char_traits<wchar_t>,std::allocator<wchar_t> >]
+0:000> dx -r1 Piccolo::g_runtime_global_context.m_config_manager._Ptr->m_asset_folder
+Piccolo::g_runtime_global_context.m_config_manager._Ptr->m_asset_folder [Type: std::filesystem::path]
+    preferred_separator : 92 '\' [Type: wchar_t]
+    [+0x000] _Text            : "<lab>/source/bin\.\asset" [Type: std::basic_string<wchar_t,std::char_traits<wchar_t>,std::allocator<wchar_t> >]
+0:000> .frame 4
+04 00000083`0719f4a0 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+0:000> dv /t
+class Piccolo::PiccoloEngine * this = 0x000001b5`bc5c6e30
+float delta_time = 5.447724819
+bool should_window_close = false
+0:000> .frame 0
+00 00000083`0719ea70 00007ff6`673e17ad PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe [<lab>\source\engine\source\runtime\function\render\interface\vulkan\vulkan_rhi.cpp @ 494]
+0:000> g
+(1a9f4.1cf38): Windows Runtime Originate Error - code 40080201 (first chance)
+ModLoad: 00007ffb`d2840000 00007ffb`d2b34000   C:\Windows\System32\uiautomationcore.dll
+ModLoad: 00007ffc`0cf10000 00007ffc`0d174000   C:\Windows\SYSTEM32\d3d11.dll
+ModLoad: 00007ffc`02270000 00007ffc`02331000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvldumdx.dll
+ModLoad: 00007ffb`f0d50000 00007ffb`f4e6c000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvwgf2umx.dll
+STAGE_SHUTDOWN
+ # Child-SP          RetAddr           Call Site
+00 00000083`0719f5e8 00007ff6`67233502 PiccoloEditor!Piccolo::PiccoloEngine::shutdownEngine [<lab>\source\engine\source\runtime\engine.cpp @ 30]
+01 00000083`0719f5f0 00007ff6`67b2d119 PiccoloEditor!main+0x242 [<lab>\source\engine\source\editor\source\main.cpp @ 33]
+02 00000083`0719f780 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+03 00000083`0719f7d0 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+04 00000083`0719f840 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+05 00000083`0719f870 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+06 00000083`0719f8a0 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+07 00000083`0719f8d0 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+ntdll!NtTerminateProcess+0x14:
+00007ffc`1432db24 c3              ret
+0:000> .lastevent
+Last event: 1a9f4.22fa8: Exit process 0:1a9f4, code 0
+  debugger time: Mon Oct 26 10:22:36.586 2026 (UTC + 8:00)
+0:000> q
+quit:
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'

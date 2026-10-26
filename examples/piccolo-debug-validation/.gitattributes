@@ -1,0 +1,3 @@
+# Preserve evidence bytes and the patch's required blank context lines.
+*.log -text -whitespace
+compat-msvc1951.patch -text -whitespace

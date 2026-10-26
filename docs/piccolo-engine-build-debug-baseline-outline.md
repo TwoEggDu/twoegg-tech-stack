@@ -61,3 +61,10 @@
 只读复核既有`%TEMP%/TechStackShow-piccolo-baseline-01-20261025/verification-receipt.json`及`build-clean-debug.log`。固定revision仍f5053707fed4d3f94d270a436fb0d3a8ae54e3e5；历史干净Debug配置0、生成目标0、完整编辑器构建1，原始日志仍含Jolt的C3688 us字面量和fmt的C2653/checked_array_iterator错误。四份代表reflection/serializer/shader生成文件的当前SHA256均与回执相同。
 
 定向检查原source/bin与build-vs18-debug-clean下没有PiccoloEditor.exe，故没有新的引擎运行、事件退出、线程/Trace或GPU捕获。这里是复核旧回执，不声称本轮又做了一次构建。未改源码/工具链时重跑相同已知失败不会产生新证据；不改第三方依赖或安装系统组件来制造通过。下一步是单独解决该固定revision与工具链兼容，再新建build目录重建并保留完整身份，之后执行PCPP各运行矩阵。
+
+
+## Debug 首帧实测补充（2026-10-26）
+
+原失败已分别用最小探针复现，fmt/Jolt 修复前各退出1、修复后各退出0；带两处补丁完整 Debug 目标退出0。模块、PDB、部署 ini 与路径已实测，01 首屏和阶段表改为当前结果，原失败过程保留。
+
+固定输入仍为 f5053707fed4d3f94d270a436fb0d3a8ae54e3e5，另加两处明确补丁；与此前仅源码/配置生成阶段区分。详见 [共享执行记录](piccolo-debug-first-frame-validation-outline.md) 和 [复现材料](../examples/piccolo-debug-validation/README.md)。历史验证记录保持其原时间范围，本节更新当前状态。

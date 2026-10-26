@@ -1,0 +1,432 @@
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\ZERO_CHECK.vcxproj]
+  Checking File Globs
+  1>Checking Build System
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\stb.vcxproj]
+  Building Custom Rule <lab>/source/engine/3rdparty/CMakeLists.txt
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\JoltPhysics\Build\Jolt.vcxproj]
+  Building Custom Rule <lab>/source/engine/3rdparty/JoltPhysics/Build/CMakeLists.txt
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\source\meta_parser\PiccoloParser.vcxproj]
+  Building Custom Rule <lab>/source/engine/source/meta_parser/CMakeLists.txt
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\glfw\src\glfw.vcxproj]
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\source\runtime\json11.vcxproj]
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\spdlog\spdlog.vcxproj]
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\tinyobjloader\tinyobjloader.vcxproj]
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\lua_static.vcxproj]
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\shader\PiccoloShaderCompile.vcxproj]
+  Building Custom Rule <lab>/source/engine/3rdparty/CMakeLists.txt
+  Building Custom Rule <lab>/source/engine/source/runtime/CMakeLists.txt
+  Building Custom Rule <lab>/source/engine/3rdparty/tinyobjloader/CMakeLists.txt
+  Building Custom Rule <lab>/source/engine/3rdparty/glfw/src/CMakeLists.txt
+  Building Custom Rule <lab>/source/engine/3rdparty/spdlog/CMakeLists.txt
+  pch.cpp
+  cursor.cpp
+  cursor_type.cpp
+  generator.cpp
+  reflection_generator.cpp
+  serializer_generator.cpp
+  class.cpp
+  field.cpp
+  method.cpp
+  type_info.cpp
+  main.cpp
+  meta_info.cpp
+  meta_utils.cpp
+  parser.cpp
+  template_manager.cpp
+  json11.cpp
+  context.c
+  spdlog.cpp
+  init.c
+  stdout_sinks.cpp
+  input.c
+  monitor.c
+  vulkan.c
+  color_sinks.cpp
+  file_sinks.cpp
+  window.c
+  tiny_obj_loader.cc
+  async.cpp
+  cfg.cpp
+  fmt.cpp
+  win32_init.c
+  win32_joystick.c
+  win32_monitor.c
+  win32_time.c
+  win32_thread.c
+  win32_window.c
+  Generating <lab>/source/engine/shader/generated/spv/axis.frag.spv
+  wgl_context.c
+  egl_context.c
+  lapi.c
+  osmesa_context.c
+  lauxlib.c
+  lbaselib.c
+  lcode.c
+  lcorolib.c
+  lctype.c
+  ldblib.c
+  ldebug.c
+  ldo.c
+  ldump.c
+  lfunc.c
+  lgc.c
+  linit.c
+  liolib.c
+  llex.c
+  lmathlib.c
+  <lab>/source/engine/shader/glsl/axis.frag
+  Generating <lab>/source/engine/shader/generated/spv/axis.vert.spv
+  lmem.c
+  loadlib.c
+  lobject.c
+  lopcodes.c
+  loslib.c
+  <lab>/source/engine/shader/glsl/axis.vert
+  lparser.c
+  lstate.c
+  lstring.c
+  lstrlib.c
+  ltable.c
+  ltablib.c
+  ltm.c
+  lundump.c
+  lutf8lib.c
+  lvm.c
+  lzio.c
+  Generating <lab>/source/engine/shader/generated/spv/color_grading.frag.spv
+  AABBTreeBuilder.cpp
+  <lab>/source/engine/shader/glsl/color_grading.frag
+  Color.cpp
+  Factory.cpp
+  IssueReporting.cpp
+  JobSystemThreadPool.cpp
+  LinearCurve.cpp
+  Memory.cpp
+  Profiler.cpp
+  RTTI.cpp
+  StringTools.cpp
+  Generating <lab>/source/engine/shader/generated/spv/combine_ui.frag.spv
+  TickCounter.cpp
+  ConvexHullBuilder.cpp
+  ConvexHullBuilder2D.cpp
+  Indexify.cpp
+  OrientedBox.cpp
+  UVec4.cpp
+  Vec3.cpp
+  ObjectStream.cpp
+  <lab>/source/engine/shader/glsl/combine_ui.frag
+  json11.vcxproj -> <lab>\build\engine\source\runtime\Debug\json11.lib
+  ObjectStreamBinaryIn.cpp
+  Generating <lab>/source/engine/shader/generated/spv/debugdraw.frag.spv
+  ObjectStreamBinaryOut.cpp
+  <lab>/source/engine/shader/glsl/debugdraw.frag
+  Generating <lab>/source/engine/shader/generated/spv/debugdraw.vert.spv
+  ObjectStreamIn.cpp
+  tinyobjloader.vcxproj -> <lab>\build\engine\3rdparty\tinyobjloader\Debug\tinyobjloader.lib
+  <lab>/source/engine/shader/glsl/debugdraw.vert
+  ObjectStreamOut.cpp
+  ObjectStreamTextIn.cpp
+  ObjectStreamTextOut.cpp
+  SerializableObject.cpp
+  TypeDeclarations.cpp
+  Body.cpp
+  Generating <lab>/source/engine/shader/generated/spv/deferred_lighting.frag.spv
+  BodyAccess.cpp
+  BodyCreationSettings.cpp
+  BodyInterface.cpp
+  BodyManager.cpp
+  MassProperties.cpp
+  MotionProperties.cpp
+  Character.cpp
+  CharacterBase.cpp
+  CharacterVirtual.cpp
+  BroadPhase.cpp
+  <lab>/source/engine/shader/glsl/deferred_lighting.frag
+  BroadPhaseBruteForce.cpp
+  BroadPhaseQuadTree.cpp
+  QuadTree.cpp
+  Generating <lab>/source/engine/shader/generated/spv/deferred_lighting.vert.spv
+  CastConvexVsTriangles.cpp
+  CastSphereVsTriangles.cpp
+  CollideConvexVsTriangles.cpp
+  CollideSphereVsTriangles.cpp
+  <lab>/source/engine/shader/glsl/deferred_lighting.vert
+  CollisionDispatch.cpp
+  CollisionGroup.cpp
+  GroupFilter.cpp
+  GroupFilterTable.cpp
+  Generating <lab>/source/engine/shader/generated/spv/fxaa.frag.spv
+  ManifoldBetweenTwoFaces.cpp
+  NarrowPhaseQuery.cpp
+  NarrowPhaseStats.cpp
+  PhysicsMaterial.cpp
+  PhysicsMaterialSimple.cpp
+  BoxShape.cpp
+  CapsuleShape.cpp
+  <lab>/source/engine/shader/glsl/fxaa.frag
+  CompoundShape.cpp
+  ConvexHullShape.cpp
+  ConvexShape.cpp
+  CylinderShape.cpp
+  DecoratedShape.cpp
+  HeightFieldShape.cpp
+  MeshShape.cpp
+  MutableCompoundShape.cpp
+  Generating <lab>/source/engine/shader/generated/spv/fxaa.vert.spv
+  OffsetCenterOfMassShape.cpp
+  glfw.vcxproj -> <lab>\build\engine\3rdparty\glfw\src\Debug\glfw3.lib
+  RotatedTranslatedShape.cpp
+  <lab>/source/engine/shader/glsl/fxaa.vert
+  ScaledShape.cpp
+  Shape.cpp
+  SphereShape.cpp
+  Generating <lab>/source/engine/shader/generated/spv/mesh_directional_light_shadow.frag.spv
+  StaticCompoundShape.cpp
+  TaperedCapsuleShape.cpp
+  TriangleShape.cpp
+  TransformedShape.cpp
+  <lab>/source/engine/shader/glsl/mesh_directional_light_shadow.frag
+  ConeConstraint.cpp
+  Constraint.cpp
+  lua_static.vcxproj -> <lab>\build\engine\3rdparty\Debug\lua_static.lib
+  ConstraintManager.cpp
+  ContactConstraintManager.cpp
+  DistanceConstraint.cpp
+  Generating <lab>/source/engine/shader/generated/spv/mesh_directional_light_shadow.vert.spv
+  FixedConstraint.cpp
+  HingeConstraint.cpp
+  MotorSettings.cpp
+  <lab>/source/engine/shader/glsl/mesh_directional_light_shadow.vert
+  PathConstraint.cpp
+  Generating <lab>/source/engine/shader/generated/spv/mesh.frag.spv
+  PathConstraintPath.cpp
+  PathConstraintPathHermite.cpp
+  PointConstraint.cpp
+  SixDOFConstraint.cpp
+  SliderConstraint.cpp
+  SwingTwistConstraint.cpp
+  TwoBodyConstraint.cpp
+  IslandBuilder.cpp
+  PhysicsLock.cpp
+  <lab>/source/engine/shader/glsl/mesh.frag
+  PhysicsScene.cpp
+  PhysicsSystem.cpp
+  PhysicsUpdateContext.cpp
+  Ragdoll.cpp
+  Generating <lab>/source/engine/shader/generated/spv/mesh_gbuffer.frag.spv
+  StateRecorderImpl.cpp
+  TrackedVehicleController.cpp
+  VehicleAntiRollBar.cpp
+  VehicleCollisionTester.cpp
+  VehicleConstraint.cpp
+  VehicleController.cpp
+  VehicleDifferential.cpp
+  <lab>/source/engine/shader/glsl/mesh_gbuffer.frag
+  VehicleEngine.cpp
+  PiccoloParser.vcxproj -> <lab>\source\engine\bin\PiccoloParser.exe
+  VehicleTrack.cpp
+  VehicleTransmission.cpp
+  Wheel.cpp
+  spdlog.vcxproj -> <lab>\build\engine\3rdparty\spdlog\Debug\spdlogd.lib
+  WheeledVehicleController.cpp
+  RegisterTypes.cpp
+  DebugRenderer.cpp
+  Generating <lab>/source/engine/shader/generated/spv/mesh_inefficient_pick.frag.spv
+  DebugRendererPlayback.cpp
+  DebugRendererRecorder.cpp
+  SkeletalAnimation.cpp
+  Skeleton.cpp
+  SkeletonPose.cpp
+  <lab>/source/engine/shader/glsl/mesh_inefficient_pick.frag
+  TriangleGrouperClosestCentroid.cpp
+  Generating <lab>/source/engine/shader/generated/spv/mesh_inefficient_pick.vert.spv
+  TriangleGrouperMorton.cpp
+  TriangleSplitter.cpp
+  TriangleSplitterBinning.cpp
+  TriangleSplitterFixedLeafSize.cpp
+  TriangleSplitterLongestAxis.cpp
+  TriangleSplitterMean.cpp
+  TriangleSplitterMorton.cpp
+  <lab>/source/engine/shader/glsl/mesh_inefficient_pick.vert
+  Generating <lab>/source/engine/shader/generated/spv/mesh_point_light_shadow.frag.spv
+  <lab>/source/engine/shader/glsl/mesh_point_light_shadow.frag
+  Generating <lab>/source/engine/shader/generated/spv/mesh_point_light_shadow.geom.spv
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\PiccoloPreCompile.vcxproj]
+  <lab>/source/engine/shader/glsl/mesh_point_light_shadow.geom
+  Generating <lab>/source/engine/shader/generated/spv/mesh_point_light_shadow.vert.spv
+  ************************************************************* 
+  **** [Precompile] BEGIN 
+  ************************************************************* 
+  <lab>/source/engine/shader/glsl/mesh_point_light_shadow.vert
+  Generating <lab>/source/engine/shader/generated/spv/mesh.vert.spv
+  <lab>/source/engine/shader/glsl/mesh.vert
+  Generating <lab>/source/engine/shader/generated/spv/particle_emit.comp.spv
+  <lab>/source/engine/shader/glsl/particle_emit.comp
+  Generating <lab>/source/engine/shader/generated/spv/particle_kickoff.comp.spv
+  
+  Parsing meta data for target "Piccolo"
+  Parsing in <lab>/source/engine/source
+  Parsing project file: <lab>/source/engine/bin/precompile.json
+  Generating the Source Include file: <lab>/build/parser_header.h
+  Parsing the whole project...
+  <lab>/source/engine/shader/glsl/particle_kickoff.comp
+  Generating <lab>/source/engine/shader/generated/spv/particle_simulate.comp.spv
+  <lab>/source/engine/shader/glsl/particle_simulate.comp
+  Generating <lab>/source/engine/shader/generated/spv/particlebillboard.frag.spv
+  <lab>/source/engine/shader/glsl/particlebillboard.frag
+  Generating <lab>/source/engine/shader/generated/spv/particlebillboard.vert.spv
+  <lab>/source/engine/shader/glsl/particlebillboard.vert
+  Generating <lab>/source/engine/shader/generated/spv/post_process.vert.spv
+  <lab>/source/engine/shader/glsl/post_process.vert
+  Generating <lab>/source/engine/shader/generated/spv/skybox.frag.spv
+  <lab>/source/engine/shader/glsl/skybox.frag
+  Generating <lab>/source/engine/shader/generated/spv/skybox.vert.spv
+  <lab>/source/engine/shader/glsl/skybox.vert
+  Generating <lab>/source/engine/shader/generated/spv/tone_mapping.frag.spv
+  <lab>/source/engine/shader/glsl/tone_mapping.frag
+  Building Custom Rule <lab>/source/engine/shader/CMakeLists.txt
+  Generating <lab>/source/engine/shader/generated/cpp/axis_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/axis_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/color_grading_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/combine_ui_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/debugdraw_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/debugdraw_vert.h
+  Jolt.vcxproj -> <lab>\build\engine\3rdparty\JoltPhysics\Build\Debug\Jolt.lib
+  Generating <lab>/source/engine/shader/generated/cpp/deferred_lighting_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/deferred_lighting_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/fxaa_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/fxaa_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_directional_light_shadow_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_directional_light_shadow_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_gbuffer_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_inefficient_pick_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_inefficient_pick_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_point_light_shadow_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_point_light_shadow_geom.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_point_light_shadow_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/mesh_vert.h
+  Start generate runtime schemas(39)...
+  Generating <lab>/source/engine/shader/generated/cpp/particle_emit_comp.h
+  Generating <lab>/source/engine/shader/generated/cpp/particle_kickoff_comp.h
+  Generating <lab>/source/engine/shader/generated/cpp/particle_simulate_comp.h
+  Generating <lab>/source/engine/shader/generated/cpp/particlebillboard_frag.h
+  Generating <lab>/source/engine/shader/generated/cpp/particlebillboard_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/post_process_vert.h
+  Generating <lab>/source/engine/shader/generated/cpp/skybox_frag.h
+  Completed in 2104ms
+  Generating <lab>/source/engine/shader/generated/cpp/skybox_vert.h
+  +++ Precompile finished +++
+  Building Custom Rule <lab>/source/engine/CMakeLists.txt
+  Generating <lab>/source/engine/shader/generated/cpp/tone_mapping_frag.h
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\3rdparty\imgui.vcxproj]
+  Building Custom Rule <lab>/source/engine/3rdparty/CMakeLists.txt
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_vulkan.cpp
+  imgui.vcxproj -> <lab>\build\engine\3rdparty\Debug\imgui.lib
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\source\runtime\PiccoloRuntime.vcxproj]
+  Building Custom Rule <lab>/source/engine/source/runtime/CMakeLists.txt
+  log_system.cpp
+  axis_aligned.cpp
+  math.cpp
+  matrix3.cpp
+  matrix4.cpp
+  quaternion.cpp
+  vector2.cpp
+  vector3.cpp
+  vector4.cpp
+  meta_example.cpp
+  reflection.cpp
+  reflection_register.cpp
+  serializer.cpp
+  engine.cpp
+  animation_loader.cpp
+  animation_system.cpp
+  node.cpp
+  skeleton.cpp
+  utilities.cpp
+  character.cpp
+  character_controller.cpp
+  animation_component.cpp
+  camera_component.cpp
+  lua_component.cpp
+  mesh_component.cpp
+  motor_component.cpp
+  particle_component.cpp
+  rigidbody_component.cpp
+  transform_component.cpp
+  level.cpp
+  level_debugger.cpp
+  object.cpp
+  object_id_allocator.cpp
+  world_manager.cpp
+  global_context.cpp
+  input_system.cpp
+  emitter_id_allocator.cpp
+  particle_manager.cpp
+  utils.cpp
+  physics_manager.cpp
+  physics_scene.cpp
+  debug_draw_buffer.cpp
+<lab>\source\engine\source\runtime\function\framework\component\lua\lua_component.cpp(83,1): warning C4715: “Piccolo::LuaComponent::get<bool>”: 不是所有的控件路径都返回值 [<lab>\build\engine\source\runtime\PiccoloRuntime.vcxproj]
+  debug_draw_context.cpp
+  debug_draw_font.cpp
+  debug_draw_group.cpp
+  debug_draw_manager.cpp
+  debug_draw_pipeline.cpp
+  debug_draw_primitive.cpp
+  vulkan_rhi.cpp
+  vulkan_util.cpp
+  vulkan_vma.cpp
+  color_grading_pass.cpp
+  combine_ui_pass.cpp
+  directional_light_pass.cpp
+  fxaa_pass.cpp
+  main_camera_pass.cpp
+<lab>\source\engine\source\runtime\function\render\debugdraw\debug_draw_font.cpp(19,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [<lab>\build\engine\source\runtime\PiccoloRuntime.vcxproj]
+<lab>\source\engine\source\runtime\function\render\debugdraw\debug_draw_font.cpp(32,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [<lab>\build\engine\source\runtime\PiccoloRuntime.vcxproj]
+  particle_pass.cpp
+  pick_pass.cpp
+  point_light_pass.cpp
+  tone_mapping_pass.cpp
+  ui_pass.cpp
+  render_camera.cpp
+  render_helper.cpp
+  render_pass.cpp
+  render_pass_base.cpp
+  render_pipeline.cpp
+  render_pipeline_base.cpp
+  render_resource.cpp
+  render_resource_base.cpp
+  render_scene.cpp
+  render_swap_context.cpp
+  render_system.cpp
+  window_system.cpp
+  window_ui.cpp
+  file_service.cpp
+  path.cpp
+  asset_manager.cpp
+  config_manager.cpp
+  camera.cpp
+  motor.cpp
+  rigid_body.cpp
+  PiccoloRuntime.vcxproj -> <lab>\build\engine\source\runtime\Debug\PiccoloRuntime.lib
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\build\engine\source\editor\PiccoloEditor.vcxproj]
+  Building Custom Rule <lab>/source/engine/source/editor/CMakeLists.txt
+  axis.cpp
+  editor.cpp
+  editor_file_service.cpp
+  editor_global_context.cpp
+  editor_input_manager.cpp
+  editor_scene_manager.cpp
+  editor_ui.cpp
+  main.cpp
+LINK : warning LNK4098: 默认库“MSVCRT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library [<lab>\build\engine\source\editor\PiccoloEditor.vcxproj]
+  PiccoloEditor.vcxproj -> <lab>\build\engine\source\editor\Debug\PiccoloEditor.exe

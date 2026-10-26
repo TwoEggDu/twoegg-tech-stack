@@ -1,0 +1,62 @@
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\probe-build\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\probe-build\fmt_probe.vcxproj]
+  Building Custom Rule <lab>/probes/CMakeLists.txt
+  fmt_probe.cpp
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(341,43): error C2653: “stdext”: 不是类或命名空间名称 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(341,51): error C2061: 语法错误: 标识符“checked_array_iterator” [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(342,63): error C3613: “->”后缺少返回类型(假定为“int”) [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(342,63): error C3646: “checked_ptr”: 未知重写说明符 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(342,74): error C2988: 不可识别的模板声明/定义 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(342,74): error C2059: 语法错误:“<” [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(342,78): error C2143: 语法错误: 缺少“;”(在“{”的前面) [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(342,78): error C2447: “{”: 缺少函数标题(是否是老式的形式表?) [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(358,8): error C3613: “->”后缺少返回类型(假定为“int”) [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(352,31): warning C4346: "value": 依赖名称不是类型 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+      <lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(352,31):
+      通过指示类型的 "typename" 为 qualified-id 添加前缀
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(358,8): error C3646: “checked_ptr”: 未知重写说明符 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(358,19): error C2988: 不可识别的模板声明/定义 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(358,19): error C2059: 语法错误:“<” [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(358,52): error C2143: 语法错误: 缺少“;”(在“{”的前面) [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(358,52): error C2447: “{”: 缺少函数标题(是否是老式的形式表?) [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(393,31): warning C4346: "value": 依赖名称不是类型 [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+      <lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(393,31):
+      通过指示类型的 "typename" 为 qualified-id 添加前缀
+  
+<lab>\source\engine\3rdparty\spdlog\include\spdlog\fmt\bundled\format.h(395,27): error C2061: 语法错误: 标识符“checked_ptr” [<lab>\probe-build\fmt_probe.vcxproj]
+  (编译源文件“../probes/fmt_probe.cpp”)
+  

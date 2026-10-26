@@ -1,0 +1,8 @@
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\probe-build\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(560,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [<lab>\probe-build\jolt_probe.vcxproj]
+  Building Custom Rule <lab>/probes/CMakeLists.txt
+  jolt_probe.cpp
+<lab>\probes\jolt_probe.cpp(3,46): error C3688: 文本后缀“us”无效；未找到文文本运算符或文本运算符模板“operator """"us” [<lab>\probe-build\jolt_probe.vcxproj]

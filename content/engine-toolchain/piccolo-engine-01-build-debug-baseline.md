@@ -2,7 +2,8 @@
 title: "建立构建与调试基线：源码、生成文件、配置与程序怎样对应"
 slug: "piccolo-engine-01-build-debug-baseline"
 date: "2026-10-25"
-description: "从固定 Piccolo 提交出发，实际验证 Windows 工程配置、反射和 shader 生成，记录完整 Debug 构建的兼容阻塞，并建立程序、配置、符号与断点的核对方法。"
+lastmod: "2026-10-26"
+description: "从固定 Piccolo 提交出发，用两处兼容补丁完成 Windows Debug 构建，再以实际模块、PDB、配置路径和首帧断点建立可核对的调试基线。"
 tags:
   - "Piccolo"
   - "构建与调试"
@@ -15,7 +16,7 @@ type: "reading-series"
 topic_key: "engine"
 content_stage: "article"
 reading_title: "建立构建与调试基线"
-reading_summary: "把源码提交、工具链、生成文件、构建产物与配置路径连起来，区分本机实测结果和后续符号、断点验收。"
+reading_summary: "把源码提交、工具链、生成文件、构建产物与配置路径连起来，核对本机实测的模块、符号和断点。"
 reading_index: "reading/piccolo-engine.md"
 weight: 502
 ---
@@ -24,11 +25,11 @@ weight: 502
 
 能打开工程，只说明开发工具认识这组文件。生成解决方案、执行代码生成、编译出编辑器、加载正确资源和命中源码断点，分别跨过不同边界。如果这些身份没有固定，后面看似是引擎逻辑的问题，也可能只是旧产物、错误路径或不匹配的符号。
 
-本篇用一次实际 Windows 构建尝试，把这条关系逐层核对。读者已经熟悉调试器，这里重点关注陌生工程中的输入、产物和验证终点。
+本篇用一次从编译失败走到首帧断点的 Windows 实验，把这条关系逐层核对。读者已经熟悉调试器，这里重点关注陌生工程中的输入、产物和验证终点。
 
-> **当前实测范围**：固定提交 `f5053707fed4` 的 CMake 配置、反射/序列化生成和 shader 生成已通过；完整 Debug 编辑器构建遇到第三方代码与当前工具链的兼容错误，未生成可启动的 PiccoloEditor。本文没有引擎启动、首帧或断点命中的成功记录；后半部分的运行与调试检查是待执行步骤。
+> **当前实测范围（2026-10-26）**：固定提交 `f5053707fed4` 加两处第三方兼容补丁，已完成 x64 Debug 的配置、生成和完整 `PiccoloEditor` 构建。CDB 已加载对应 PDB，沿启动走到首次世界加载及第一次 Vulkan 提交/呈现返回，正常关闭进程退出 0；另一次 RenderDoc 运行取得默认场景图像。原提交在本机 MSVC 19.51 下的失败记录仍保留，不能把成功归于未修补的上游源码。
 >
-> 源码基线：[BoomingTech/Piccolo，完整提交 `f5053707fed4d3f94d270a436fb0d3a8ae54e3e5`][revision]。本篇为主线 01，在阅读顺序中放于前置知识之后、[02 启动篇]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 之前。本文记录 2026-10-25 的本机实验，不代表其他工具版本或平台已验证。
+> 源码基线：[BoomingTech/Piccolo，完整提交 `f5053707fed4d3f94d270a436fb0d3a8ae54e3e5`][revision]。本篇为主线 01，置于前置知识之后、[02 启动篇]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 之前。补丁、命令文件、日志与完整指纹见[实验材料][lab-files]；本机结果不代表其他工具版本、平台或全系列功能验收。
 
 ## 最小基线，是一条能够核对身份的链
 
@@ -187,7 +188,7 @@ ret_context.insert_or_assign("character_name", Serializer::write(instance.m_char
 
 这两段来自本次实际生成文件，可以与 [05 资源和类型恢复]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}}) 及 [08 保存重载]({{< relref "engine-toolchain/piccolo-engine-08-editor-save-reload.md" >}}) 中的声明、模板推导对照。它们证明写出代码已经生成，仍不能证明引擎已编译、运行注册或执行过保存。
 
-## 完整 Debug 构建，实际停在了哪里
+## 完整 Debug 构建：先分离两处根因，再重新构建
 
 生成目标成功后，本次继续执行：
 
@@ -196,33 +197,48 @@ cmake --build $piccoloBuild --config Debug `
   --target PiccoloEditor --parallel 2
 ```
 
-这次命令退出码为 1。在全新构建目录复核时，生成步骤仍然执行成功，完整编辑器构建仍然失败。日志中至少有两组需要分别处理的编译问题：
+2026-10-25 的原源码构建退出码为 1。在全新构建目录复核时，生成步骤仍然执行成功，完整编辑器构建仍然失败。日志中至少有两组需要分别处理的编译问题：
 
 | 位置 | 实际错误标识 | 当前能下的结论 |
 | --- | --- | --- |
 | 仓库内 spdlog/fmt 的 format.h | C2653：stdext；C2061：checked_array_iterator | 旧依赖的这条代码路径未通过当前工具链编译 |
 | Jolt 的 JobSystemThreadPool.cpp | C3688：us 字面量；伴随 sleep_for 的 C2672 | 另一个第三方目标也有独立的编译阻塞 |
 
-表格摘录错误码和标识符，没有把随后的一串语法错误全部当成独立根因。[fmt 对应代码][fmt-header]、[Jolt 对应代码][jolt-threadpool] 可以用来定位当前失败入口；最终修法还需要独立验证。
+表格摘录错误码和标识符，没有把随后的一串语法错误全部当成独立根因。[fmt 对应代码][fmt-header]、[Jolt 对应代码][jolt-threadpool] 可以用来定位当前失败入口；下面把两处问题分别缩成最小编译探针，再回到完整目标验证。
 
-本次没有升级依赖、修改标准库相关宏或修补这些第三方文件，也没有安装另一套工具链。因此，文章能够交付一份有证据的阶段记录，但**完整构建与调试基线仍未验收通过**。
+2026-10-26 从同一提交重新展开隔离副本，保持编译器、架构和 Debug 配置不变，分别复现 fmt 头文件使用和 Jolt 的 `100us`。两个探针修复前都退出 1，补齐各自条件后都退出 0，随后只修改真实源码中的两处：
 
-目前各阶段的结果应记为：
+| 根因 | 实际补丁 | 为什么足够小 |
+| --- | --- | --- |
+| fmt 旧分支引用已移除的 `stdext::checked_array_iterator` | 将该分支条件补为 `_SECURE_SCL` 有效且 `(!defined(_MSC_VER) || _MSC_VER < 1951)` | MSVC 19.51 起走 fmt 已有的普通指针分支，不全局关闭 Debug 检查 |
+| Jolt cpp 使用 chrono 字面量却依赖间接头文件提供声明 | `JobSystemThreadPool.cpp` 显式 `#include <chrono>` | 给使用处补直接依赖，不改等待时长或任务调度 |
 
-| 阶段 | 本次结果 |
+Microsoft 文档明确说明 `checked_array_iterator` 在 Build Tools 14.51 中移除；`us` 等字面量由 `<chrono>` 定义。[移除说明][checked-iterator]、[chrono 字面量][chrono-literals]。第二处修复还利用了该版本 Jolt 既有的命名空间导入，不能把“任意位置加一个头就能裸写 `100us`”当成通用规则。
+
+完整补丁保存在[实验材料][lab-files]，本轮没有升级 spdlog/Jolt，也没有把 `_SECURE_SCL`、迭代器调试或断言全局关掉。带补丁输入的新构建目录使用前述配置参数，随后执行：
+
+```powershell
+cmake --build $piccoloBuild --config Debug `
+  --target PiccoloEditor --parallel 8
+```
+
+本次完整目标退出 **0**，并执行了构建后的程序、配置和资源复制。记录身份为 `piccolo-debug-msvc1951-20261026`：
+
+| 阶段 | 当前结果 |
 | --- | --- |
-| 固定提交与隔离副本 | 已完成，原阅读用克隆保持干净 |
-| 工具发现与 CMake 配置 | 已完成；使用外部 policy 兼容参数 |
-| 反射/序列化与 shader 生成 | 已完成，有实际文件与成功退出码 |
-| PiccoloEditor Debug 全量编译 | 未通过，第三方编译阻塞 |
-| 可启动 exe 与匹配符号 | 尚无可验收的编辑器产物 |
-| 实际启动、断点和首帧 | 未执行 |
+| 源码输入 | 固定提交加两处已保存补丁；原阅读用克隆保持干净 |
+| 工具发现与 CMake 配置 | 退出 0；外部 policy 兼容参数保留 |
+| 反射/序列化与 shader 生成 | 随完整构建通过，有实际生成文件 |
+| PiccoloEditor Debug 完整目标 | 退出 0，生成并复制 exe/PDB |
+| 进程与符号 | CDB 加载部署 bin 中的 exe 及其 private PDB symbols |
+| 启动与第一帧 | 世界加载后走到第一次 queue submit / present 返回，均为 `VK_SUCCESS` |
+| 正常关闭 | 命中 `shutdownEngine`，卸载默认关卡，进程退出 0 |
 
-本次输出目录在系统临时目录中，MSBuild 还报告了 MSB8029 增量构建警告。正式保留的开发工程应使用稳定位置，继续验证时保留当前失败日志即可，不必把一次临时实验变成长期工作目录。
+成功仍带有边界：日志保留 LNK4098（MSVCRT 默认库冲突）、MSB8029（临时目录增量构建）和原有 Lua `get<bool>` 的 C4715 等警告。没有用 `/NODEFAULTLIB` 隐去冲突，也没有把这次启动通过当成所有运行库搭配、脚本分支或泄漏检查都已通过。正式开发应把实验目录迁到稳定位置，并单独处理这些构建卫生问题。
 
 ## 编译通过之后，先核对程序和资源布局
 
-以下布局来自构建脚本核对，尚不是本次成功部署的目录快照。[Editor 的构建后命令][editor-cmake] 主要做四件事：
+以下布局先由构建脚本解释，本轮也在成功产物中核对到对应 exe、PDB、ini、asset 与 resource。[Editor 的构建后命令][editor-cmake] 主要做四件事：
 
 1. 创建源码根的 bin，并复制编辑器界面资源。
 2. 把目标输出目录中的文件复制到 bin。
@@ -264,15 +280,15 @@ std::filesystem::path config_file_path = executable_path.parent_path() / "Piccol
   <lab>/source/bin
 ```
 
-这组路径计算已在本次实验中核对；第二种布局的两个根目录不同。由于完整编译失败，尚未观察到由此产生的实际启动错误，不能把路径推导写成已复现的资源加载故障。
+这组路径计算已核对；第二种布局的两个根目录不同。2026-10-26 实际选择构建后复制到 `<lab>/source/bin` 的程序，以绝对 exe 路径启动，使用原部署 ini 的 `BinaryRootFolder=.`，没有改写开发 ini。调试现场的 root folder 为 `<lab>/source/bin\.`，asset folder 为其下 `asset`；默认世界成功从这套布局加载。并列构建目录的开发 ini 问题仍只是路径推导，本轮没有故意用错配置复现故障。
 
 它给出的操作原则很明确：**换构建目录后，要重新计算运行配置中的相对路径。** 后续可以选择保持默认目录层级，或在实验配置中明确使用正确 root folder；如果启动构建后准备的 bin 副本，则应核对其部署 ini、资源和匹配符号。任何调整都要作为运行输入记录。
 
 工作目录也应记录，但不能用“把 Working Directory 改对”替代上面这条路径追踪。这里的配置选择直接依赖 argv[0]，root folder 又依赖配置路径；使用绝对程序路径启动，有助于让这些输入明确。
 
-## 把符号与断点验收，留到实际产物之后
+## 有了产物，再让实际模块、符号与配置互相对应
 
-完整编译通过后，才进入这一组检查。本次没有执行以下调试操作。
+本轮使用已安装的 CDB 10.0.19041.685 AMD64 调试器执行这些检查；VS 的 Modules 窗口可承接相同核对问题，但本次没有把命令行结果写成 VS 窗口验收。
 
 首先给准备运行的编辑器产物分配构建身份，记录完整 exe 路径及对应 PDB。源码提交相同，不代表不同次链接得到的符号可以混用；Visual Studio 要求符号与对应构建精确匹配。[Microsoft 符号说明][vs-symbols]
 
@@ -290,7 +306,17 @@ std::filesystem::path config_file_path = executable_path.parent_path() / "Piccol
 
 这些位置的后续细节由 [02 启动篇]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 展开。进入 main 不能证明 Vulkan 初始化完成；世界加载函数返回，也不能证明首帧图形工作已经完成。观察终点应随着验证问题逐步后移。
 
-若在 Vulkan 初始化处失败，再核对实际运行机器的设备、驱动、验证层和加载路径。仓库内存在编译头文件与导入库，不等于该进程已经成功取得可用的图形运行环境。本篇没有运行验证，因而不报告设备或驱动可用。
+本次 `lmvm PiccoloEditor` 显示实际加载 `<lab>/source/bin/PiccoloEditor.exe`，符号为同目录 `PiccoloEditor.pdb` 的 `private pdb symbols`，源码行能解析到隔离副本。产物 SHA-256 前缀分别为 exe `18f308810512da53`、PDB `292a6d2751cc1703`；完整值与 ini 指纹在[回执][lab-files]中。哈希用于识别这次产物，不要求读者重新链接后产生相同字节。
+
+```text
+PiccoloEditor.exe  -> <lab>/source/bin/PiccoloEditor.exe
+private pdb symbols -> <lab>/source/bin/PiccoloEditor.pdb
+root folder         -> <lab>/source/bin\.
+asset folder        -> <lab>/source/bin\.\asset
+DefaultWorld        -> asset/world/hello.world.json
+```
+
+若复现时停在 Vulkan 初始化，继续核对实际加载模块。本机设备清单有 RTX 2060；CDB 模块日志显示运行时验证层来自 `D:/VulkanSDK/1.3.261.1/Bin/VkLayer_khronos_validation.dll`。编译使用仓库内 SDK，与 Loader 实际选择哪份层 DLL 是两件事，不能从 CMake 路径替代模块现场。这里也不把一次成功启动扩大成驱动、验证层和全部图形功能的兼容性验收。
 
 ## 以后复现时，留下怎样的一张记录
 
@@ -310,11 +336,11 @@ runtime_inputs: 程序、ini、root folder 和资源路径
 debug_evidence: 模块、符号、调用栈与状态
 ```
 
-本次有源码身份、环境记录、配置/生成回执和两轮完整编译失败记录；没有可用编辑器产物，也没有 run_id 或断点现场。生成结果中的代表文件已经保留内容指纹，便于后续判断重新生成是否改变了输入。
+本轮已经把源码与补丁身份、完整构建回执、exe/PDB/ini 指纹、实际模块和运行输入接起来。复现时使用[实验材料][lab-files]中的补丁与 CDB 命令，并新建自己的日志；CDB 的 `-y`、`-srcpath`、`-logo` 与 `-cf` 分别指定符号、源码、日志和命令文件，含义见[官方参数说明][cdb-options]。
 
-下一次继续，应先解决已记录的第三方编译兼容问题，取得完整目标成功回执，再开展上述程序、配置和符号检查。若改工具链或补丁，给新尝试分配新身份，不能沿用这次记录的结论。
+函数入口断点还有一个现场陷阱：栈帧序言尚未执行时，`dv` 中的局部变量可能显示 `0xcccc` 或无法读取。本轮原始日志保留了这类探索输出；有效路径与世界状态取自第一次 present 后、对象已建立的全局上下文。不要把无效的局部读取当成引擎持有了坏路径。
 
-<!-- DATA-TODO: 完整编辑器构建通过后补编译工具/补丁身份、exe 与 PDB 指纹、实际启动路径、Modules 符号状态、main 配置路径、首次 WorldManager tick 的调用栈与状态；当前配置及生成已验证，Debug 全量编译未通过，未运行编辑器。 -->
+[02 启动篇]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 展开实际启动、世界状态、present 调用栈和正常退出；[03 一帧执行]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}}) 记录另一轮断点中的槽位与线程。RenderDoc 图像来自独立运行的后续帧，不能替代 CDB 首次 present 的状态记录。输入运动、编辑保存和逐 Pass 的专项验证继续按各篇计划推进。
 
 ## 继续阅读
 
@@ -348,3 +374,8 @@ Piccolo 源码、脚本与实际生成片段版权：Copyright (c) 2022 Contribu
 [cmake-policy]: https://cmake.org/cmake/help/v4.3/variable/CMAKE_POLICY_VERSION_MINIMUM.html
 [cmake-config]: https://cmake.org/cmake/help/v4.3/manual/cmake-buildsystem.7.html#build-configurations
 [vs-symbols]: https://learn.microsoft.com/en-us/visualstudio/debugger/specify-symbol-dot-pdb-and-source-files-in-the-visual-studio-debugger?view=visualstudio
+
+[lab-files]: https://github.com/TwoEggDu/twoegg-tech-stack/tree/main/examples/piccolo-debug-validation
+[checked-iterator]: https://learn.microsoft.com/en-us/cpp/standard-library/checked-array-iterator-class?view=msvc-170
+[chrono-literals]: https://learn.microsoft.com/en-us/cpp/standard-library/chrono-literals?view=msvc-170
+[cdb-options]: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/cdb-command-line-options

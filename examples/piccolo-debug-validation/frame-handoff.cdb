@@ -1,0 +1,12 @@
+.symopt+0x10
+.reload /f PiccoloEditor.exe
+bu /1 PiccoloEditor!Piccolo::PiccoloEngine::logicalTick ".echo TRACE_LOGICAL; .printf \"tid=%x\n\", @$tid; kn; g"
+bu /1 PiccoloEditor!Piccolo::InputSystem::tick ".echo TRACE_INPUT; .printf \"tid=%x\n\", @$tid; kn; g"
+bp /1 `PiccoloEditor!engine.cpp:75` ".echo TRACE_BEFORE_SWAP; .printf \"tid=%x\n\", @$tid; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context; g"
+bp /1 `PiccoloEditor!engine.cpp:77` ".echo TRACE_AFTER_SWAP; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context; g"
+bu /1 PiccoloEditor!Piccolo::RenderSystem::processSwapData ".echo TRACE_CONSUME_BEGIN; .printf \"tid=%x\n\", @$tid; dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc; g"
+bp /1 `PiccoloEditor!render_system.cpp:103` ".echo TRACE_CONSUME_END; dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc; g"
+bp /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo TRACE_PRESENT; .printf \"tid=%x\n\", @$tid; dv /t; g"
+bp /1 `PiccoloEditor!engine.cpp:83` ".echo TRACE_POLL_EVENTS; .printf \"tid=%x\n\", @$tid; kn; .echo TRACE_PAUSED"
+bu /1 PiccoloEditor!Piccolo::PiccoloEngine::shutdownEngine ".echo TRACE_SHUTDOWN; kn; g"
+g

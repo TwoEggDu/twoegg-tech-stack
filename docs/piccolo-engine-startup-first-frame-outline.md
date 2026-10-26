@@ -60,3 +60,10 @@
 - 新篇上一篇指向 GFX-01，GFX-01 下一篇指向新篇；新篇返回系列指向 Piccolo 首页 chapters 锚点。两个阅读首页均有新链接，旧启动篇待写占位移除。主线 01 仍保留待写，网页阅读位置与主线编号分别说明。
 - 源码工作区保持干净，未触及其他任务与前几篇的未提交成果，暂存区未改变。
 - 未构建或运行 Piccolo；断点表是后续任务，不是执行记录。本次不提交或推送。
+
+
+## Debug 首帧实测补充（2026-10-26）
+
+02 新增独立实测段：系统启动→编辑器循环→首次世界 tick/loadWorld→deferredRender→submitRendering；首次世界 tick false、present 后 true，loaded_levels=1 且含默认关卡；API 结果均成功。窗口正常关闭命中 shutdownEngine，默认关卡卸载，进程退出0；另一次后续帧图像单列。
+
+固定输入仍为 f5053707fed4d3f94d270a436fb0d3a8ae54e3e5，另加两处明确补丁；与此前仅源码/配置生成阶段区分。详见 [共享执行记录](piccolo-debug-first-frame-validation-outline.md) 和 [复现材料](../examples/piccolo-debug-validation/README.md)。历史验证记录保持其原时间范围，本节更新当前状态。

@@ -19,7 +19,7 @@ reading_status: "27 篇正文 · 源码阅读与调试"
 
 **第一次读**：[00 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}}) → [02 启动到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) → [03 一帧执行]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})。先找到入口和主循环，再沿对象变化深入各系统。准备实际动手时，先核对[01 构建与调试基线]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}})；语言或图形概念遇到卡点时，再查页末前置。
 
-> **当前范围**：27篇正文已写，原定00—18主线齐备。已有固定源码核对与部分独立程序、资源和Shader编译验证。完整Debug编辑器编译仍被第三方兼容问题阻塞，实际运行、断点与GPU捕获待验证；[详细范围见页末](#validation)。
+> **当前范围**：27篇正文已写，原定00—18主线齐备。已有固定源码核对与部分独立程序、资源和Shader编译验证。2026-10-26已完成带两处兼容补丁的Debug构建、启动到首次提交/呈现的实际断点与正常退出，并取得独立RenderDoc后续帧图像；其他系统专项仍待验证；[详细范围见页末](#validation)。
 
 <a id="chapters"></a>
 
@@ -28,7 +28,7 @@ reading_status: "27 篇正文 · 源码阅读与调试"
 从哪里进入引擎，怎样核对工程、配置与程序。
 
 - [00｜架构地图：编辑器、世界、资源与渲染怎样协作]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}})：找到职责、构建和数据交接的主要入口。
-- [01｜建立构建与调试基线：源码、生成文件、配置与程序怎样对应]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}})：核对工具链、生成产物、程序与符号，了解当前编译阻塞。
+- [01｜建立构建与调试基线：源码、生成文件、配置与程序怎样对应]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}})：核对工具链、生成产物、程序与符号，查看兼容修补和实际符号、路径证据。
 - [02｜从启动走到第一帧：初始化、世界加载与退出怎样衔接]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}})：从编辑器入口追到系统启动、首次世界加载与退出。
 
 ## 一帧执行与系统协作
@@ -85,7 +85,7 @@ reading_status: "27 篇正文 · 源码阅读与调试"
 - [18｜编辑器怎样拾取、创建和删除场景对象]({{< relref "engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md" >}})：沿拾取ID、对象实例化和删除路径追踪状态变化。
 - [PCPP-2｜窗口与编辑器回调怎样绑定、调用和注销]({{< relref "engine-toolchain/piccolo-pcpp-02-window-editor-callbacks.md" >}})：检查回调注册、捕获寿命、实际分发与退出清理。
 
-需要设计图形观察时，查[RenderDoc阅读入口]({{< relref "rendering/renderdoc-reading-entry.md" >}})。Piccolo的实际接入、断点与图形捕获仍待运行验证。
+需要设计图形观察时，查[RenderDoc阅读入口]({{< relref "rendering/renderdoc-reading-entry.md" >}})。01—03已有首轮断点和独立场景捕获；逐Pass、资源和同步的图形验收仍待开展。
 
 ## 公共基础之后，补 Piccolo 的约定
 
@@ -108,11 +108,11 @@ PCPP-2回调与PCPP-3缓冲分别在上面的编辑器、一帧分组中。容�
 <a id="validation"></a>
 
 <details class="validation-details">
-<summary>查看验证范围与当前构建阻塞</summary>
+<summary>查看验证范围与实际运行记录</summary>
 
-<p>主线 00—18、五篇前置与渲染补充、三篇 C++ 专项共 27 篇正文已写，覆盖架构、构建基线、启动、对象恢复、输入运动、相机、GPU 资源、表面着色、后处理输出与编辑器操作/保存重载。01 已实际完成 Windows 配置、反射/序列化和 shader 生成；09 含原输入/运动/控制器函数及数学实现的独立条件检查；10 含原形状转换/步进/更新函数的记录适配与几何检查；12 含原骨骼/数学的独立资源桥接与 Shader 编译；13 含原类型布局/字节、独立池状态检查及五份 Shader 编译，实际 GPU 粒子待验证；14 含随附 Lua/sol2 与原桥接/反射的独立桩宿主检查，实际引擎脚本与角色运行待验证；GFX-02 核对程序产物与系统边界；11/15 含独立数学与实际资源检查；16/17 含相关 Shader 编译和条件数值检查；18 含拾取 Shader 编译及原 ID/删除/坐标函数的条件检查。完整 Debug 编辑器编译仍被第三方兼容问题阻塞。实际启动、输入运动、相机跟随、GPU 上传/着色/后处理、拾取/创建/删除、保存/重载、断点与图形捕获尚未完成，各篇分别说明源码推导和运行证据范围。</p>
+<p>主线 00—18、五篇前置与渲染补充、三篇 C++ 专项共 27 篇正文已写，覆盖架构、构建基线、启动、对象恢复、输入运动、相机、GPU 资源、表面着色、后处理输出与编辑器操作/保存重载。01—03 已实际完成带兼容补丁的 Windows Debug 完整构建、模块/PDB/配置身份核对、首次世界加载、提交/呈现返回成功及正常退出 0，03 另核对首轮槽位交换与对象描述清理；独立 RenderDoc 后续帧图像已补入02。09 含原输入/运动/控制器函数及数学实现的独立条件检查；10 含原形状转换/步进/更新函数的记录适配与几何检查；12 含原骨骼/数学的独立资源桥接与 Shader 编译；13 含原类型布局/字节、独立池状态检查及五份 Shader 编译，实际 GPU 粒子待验证；14 含随附 Lua/sol2 与原桥接/反射的独立桩宿主检查，实际引擎脚本与角色运行待验证；GFX-02 核对程序产物与系统边界；11/15 含独立数学与实际资源检查；16/17 含相关 Shader 编译和条件数值检查；18 含拾取 Shader 编译及原 ID/删除/坐标函数的条件检查。原源码的MSVC19.51兼容失败及两处补丁均有记录；构建仍有运行库冲突等警告。实际输入运动、相机跟随、GPU上传/着色/后处理的分项核对、拾取/创建/删除和保存/重载尚未验收，各篇分别说明源码推导和运行证据范围。</p>
 
-<p>源码基线为 <code>f5053707fed4</code>。源码推导、独立实验与完整引擎运行分别记录，每篇说明自己的证据范围。后续“断点、日志、画面与图形捕获互相印证”的实践建议仍待完成，不计入27篇已写正文。</p>
+<p>源码基线为 <code>f5053707fed4</code>。源码推导、独立实验与完整引擎运行分别记录，每篇说明自己的证据范围。本轮基线为固定提交加两处已保存兼容补丁；断点、日志与独立捕获已开始落地，其他系统专项继续按各篇待验证项推进，不增加正文数量。</p>
 </details>
 
 **官方材料**：[Piccolo官方仓库与构建说明](https://github.com/BoomingTech/Piccolo) · [官方Wiki](https://github.com/BoomingTech/Piccolo/wiki)

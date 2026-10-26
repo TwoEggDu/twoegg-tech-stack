@@ -2,6 +2,7 @@
 title: "一帧怎样推进：调用顺序、状态交接与线程怎样核对"
 slug: "piccolo-engine-03-frame-order-data-handoff-threads"
 date: "2026-10-25"
+lastmod: "2026-10-26"
 description: "沿 Piccolo 编辑器循环核对世界、输入、逻辑渲染交换与事件的顺序，用两槽位推导和 Jolt 实现区分数据交接、CPU 线程与 GPU 执行。"
 tags:
   - "Piccolo"
@@ -28,7 +29,7 @@ weight: 504
 
 > **读这篇之前**：建议先读 [从启动走到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}})，确认当前执行的是编辑器循环。[渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}}) 已展开场景、Pass 和呈现，本篇重点看它们在一帧中怎样接起来。
 >
-> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 03，网页位置按已完成文章的阅读顺序排列。以下以编辑器入口、世界已加载且相关调用正常返回的循环为主；首次世界加载见上一篇。尚未构建或运行 Piccolo，图表与案例都是源码推导，没有实测线程时间线或输入延迟。
+> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 03，网页位置按已完成文章的阅读顺序排列。以下以编辑器入口、世界已加载且相关调用正常返回的循环为主；首次世界加载见上一篇。2026-10-26 已在固定提交加 01 所述两处兼容补丁的 Debug 产物中核对首轮索引交换、对象描述消费清理及主链断点线程。下文图表与输入案例仍为源码推导，实测单列；没有跨线程时间线或输入延迟测量。
 
 > 缓冲中的值与借用、发布/复用条件及 Jolt/日志的实际线程入口，见 [状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})。
 
@@ -283,6 +284,33 @@ CPU 线程与 GPU 执行又是不同维度。[VulkanRHI][vulkan-rhi] 的主渲�
 
 同理，这份 RenderSwapContext 的两个槽位和普通索引没有自动提供多线程生产、消费协议。若未来要改成并行逻辑与渲染，还需要核对槽位何时归谁、怎样发布数据、何时允许复用及怎样同步。把现有索引交换函数放到两个线程中，不能单独构成并发正确性的证明。
 
+## 用首轮断点，检查交换和消费是否真的发生
+
+[01 构建基线]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}}) 已完成带兼容补丁的 Debug 构建，[02 启动篇]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) 记录首次世界加载和 present。本篇另启同一 exe，以一次性源码断点检查首轮迭代；命令文件及 `debug-frame-handoff.log` 见[实验材料][lab-files]。
+
+| 观察点 | 本次实际读到的状态 |
+| --- | --- |
+| `engine.cpp:75`，交换调用前 | 逻辑索引 0，渲染索引 1 |
+| `engine.cpp:77`，交换返回后、渲染调用前 | 逻辑索引 1，渲染索引 0 |
+| `processSwapData` 入口 | 槽 0 的 `m_game_object_resource_desc` 为有值 optional |
+| `render_system.cpp:103`，消费返回后 | 同一槽 0 的对象描述为 `nullopt` |
+| 首次 `vulkan_rhi.cpp:494` | queue submit 与 present 均为 `VK_SUCCESS` |
+| `engine.cpp:83` | 已到本轮窗口事件轮询前 |
+
+这次不仅进入了交换函数，也观察到索引确实交换；原逻辑槽 0 成为渲染消费槽，并在消费后清掉对象描述。它印证前面的正常路径推导。我们没有逐项检查七个 optional、比较每条对象描述，或主动构造“旧渲染槽非空而不交换”的分支，不能把这张表说成完整的缓冲协议回归测试。
+
+在 `logicalTick`、运行时 `InputSystem::tick`、交换前、`processSwapData`、首次 present 后及轮询前记录的线程 ID 都是本次主线程 `0x2784c`。日志的顺序为：
+
+```text
+logicalTick → InputSystem::tick → 交换前 → 交换后
+            → processSwapData 入口 → 消费返回后
+            → 首次 present 返回 → 窗口事件轮询前
+```
+
+这说明所采样的外层逻辑、交接、消费和渲染提交在同一主线程上依次到达。线程列表同时存在多个其他线程，并有 `Worker 1`～`Worker 4` 命名线程；本轮没有进入任务体关联其具体工作，也没有测量重叠。**不能把主链同线程扩大成整台引擎没有并发。** 线程 ID 只属于这次进程，读者复现不应匹配这个数值。
+
+断点停顿也会影响时间：02 那次启动现场的首轮 `delta_time` 约为 5.45 秒，已经包含调试干预，不能当成加载或渲染的独立耗时。窗口 FPS 同样不用于性能验收。第二次槽位采样结束后由调试器终止进程；正常窗口关闭与退出 0 的证据来自 02 的第一次调试运行，二者分别记录。
+
 ## 不运行程序，也能先检查一次阅读结果
 
 先完成三个静态练习：
@@ -291,7 +319,7 @@ CPU 线程与 GPU 执行又是不同维度。[VulkanRHI][vulkan-rhi] 的主渲�
 2. 在两槽位表中加入一个条件：旧渲染槽的对象 optional 有值，但内部队列为空。判断本次交换是否发生，指出还需要哪个清理动作。
 3. 沿 PhysicsScene 的任务系统追到 Jolt 的线程创建与 WaitForJobs，分别解释外层顺序、内部并行与返回前等待，避免只用一个“多线程”概括。
 
-等构建与调试基线完成后，再按下面的表记录实际观察。以下是验证计划，本次没有执行这些断点或采样：
+本轮已取得上述首轮样本，后续继续按下面的矩阵记录；对象遍历、输入第一次消费、拒绝交换分支、Jolt 任务和 GPU 时间线仍未执行，不能被这些主链断点替代：
 
 | 位置 | 要一起记录的状态 |
 | --- | --- |
@@ -348,3 +376,5 @@ Piccolo 源码节选版权：Copyright (c) 2022 Contributors to the Piccolo Engi
 [license]: https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/LICENSE
 [glfw-events]: https://www.glfw.org/docs/latest/input_guide.html#events
 [vk-submit]: https://docs.vulkan.org/refpages/latest/refpages/source/vkQueueSubmit.html
+
+[lab-files]: https://github.com/TwoEggDu/twoegg-tech-stack/tree/main/examples/piccolo-debug-validation

@@ -2,6 +2,7 @@
 title: "从启动走到第一帧：初始化、世界加载与退出怎样衔接"
 slug: "piccolo-engine-02-startup-first-frame"
 date: "2026-10-23"
+lastmod: "2026-10-26"
 description: "沿 Piccolo 编辑器入口核对配置、系统初始化、首次 tick 的世界加载与正常退出，区分函数返回、内容可用和首帧工作的完成边界。"
 tags:
   - "Piccolo"
@@ -28,7 +29,7 @@ weight: 503
 
 > **读这篇之前**：先看 [架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}}) 认识系统职责；遇到 `shared_ptr`、`weak_ptr` 和 `reset()`，可回看 [智能指针与对象生命周期]({{< relref "engine-toolchain/piccolo-cpp-01-smart-pointers-lifetime.md" >}})。[渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}}) 已展开从场景到画面的链路，本篇聚焦它怎样第一次被启动。
 >
-> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 02，依据源码阅读与静态核对写作；[01 构建与调试基线]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}}) 已记录配置与代码生成实测、完整 Debug 编译阻塞。本篇的引擎启动和后文断点表仍待运行验证。
+> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 02。2026-10-26 已在该提交加两处兼容补丁的 x64 Debug 产物上，用实际断点核对启动、首次世界加载、第一次 Vulkan 提交/呈现返回及正常退出；另一次 RenderDoc 运行捕获默认场景。补丁、工具链和符号身份见[01 构建与调试基线]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}})，本篇后部集中列出实测范围；其余对象/失败分支分析仍来自源码。
 
 ## 先把启动分成几个不同的完成状态
 
@@ -103,7 +104,7 @@ flowchart TD
 
 所以，阅读默认世界时应记录这条链：**实际 ini 路径 → 根目录 → 世界 URL → 最终文件路径**。不能把 `AssetFolder=asset` 再无条件加在 DefaultWorld 前面，因为默认世界字符串本身已经带有 `asset/`。
 
-[编辑器 CMake 文件][editor-cmake] 声明了构建后复制规则：开发配置复制到目标程序目录，部署配置及资源复制到二进制根目录。这解释了两套相对路径的用途；它只是构建规则，不能证明我们当前磁盘上已经生成了对应程序与资源。
+[编辑器 CMake 文件][editor-cmake] 声明了构建后复制规则：开发配置复制到目标程序目录，部署配置及资源复制到二进制根目录。这解释了两套相对路径的用途；规则本身不能证明产物存在；本轮完整构建后另行核对到 bin 中的程序、PDB、部署 ini 和资源，并以这份 bin 运行。
 
 ## 系统初始化的顺序，来自具体依赖
 
@@ -318,6 +319,49 @@ GLFW 的关闭标志可由 `glfwWindowShouldClose()` 查询；请求关闭与实
 
 最后还要限制结论的范围：入口以 `new` 创建引擎和编辑器，没有在这里配对 `delete`，也没有统一包住启动阶段的异常回滚流程。`shutdownSystems()` 中还直接使用多个系统指针，所以也不能未经检查就重复调用或在任意半初始化状态调用。本文说明的是这条正常退出协议，不据此宣称所有初始化失败都能完整清理。
 
+## 把源码链与一次真实启动对应起来
+
+本轮实验身份为 `piccolo-debug-msvc1951-20261026`，输入与 [01]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}}) 一致。CDB 从部署 bin 的绝对 exe 路径启动并加载同次构建的 PDB；原始命令和归一化路径后的日志见[实验材料][lab-files]。
+
+| 实际到达的阶段 | 本次记录 | 能支持的结论 |
+| --- | --- | --- |
+| `main → startEngine → startSystems` | 入口和系统启动的源码断点、调用栈 | 当前程序确实走这条编辑器启动链 |
+| 配置进入系统 | 首次 present 暂停后读到 root 为 `<lab>/source/bin\.`，asset 为其下 `asset` | 本次使用部署 bin 布局；没有把开发 ini 的相对层级套进来 |
+| `editor.initialize → editor.run → tickOneFrame` | 相应断点按此顺序出现 | 运行循环来自编辑器入口 |
+| 第一次 `WorldManager::tick` | 入口对象字段 `m_is_world_loaded=0`，随后进入 `loadWorld` | 这次世界加载发生在首次世界 tick 内 |
+| 第一次 present 后 | 加载标志 `true`；`m_loaded_levels` 大小 1，键为 `asset/level/1-1.level.json`；有世界加载成功日志 | 默认世界与关卡达到本段加载协议的成功状态 |
+| 窗口正常关闭 | `main` 调用 `shutdownEngine`，日志卸载默认关卡；CDB `.lastevent` 显示进程退出码 0 | 本次正常退出路径走通；不等于异常启动回滚或泄漏验收 |
+
+世界 URL 是部署 ini 中的 `asset/world/hello.world.json`。上述证据只验证本次默认资源与正常路径，没有逐对象比较恢复前后的全部字段，也没有注入缺文件、坏 JSON 等失败条件。
+
+### 首次呈现请求：停在 API 已返回的位置
+
+只在 `submitRendering` 入口停下来，还不知道 API 的结果。这里将一次性断点放在固定源码 `vulkan_rhi.cpp:494`，即 `vkQueuePresentKHR` 返回后、结果分支判断处。实际调用栈按入口到当前位置整理为：
+
+```text
+main:30
+  PiccoloEditor::run:61
+    PiccoloEngine::tickOneFrame
+      PiccoloEngine::rendererTick:102
+        RenderSystem::tick:124
+          RenderPipeline::deferredRender:210
+            VulkanRHI::submitRendering:494
+```
+
+在这一现场，`res_end_command_buffer`、`res_reset_fences`、`res_queue_submit` 和 `present_result` 均为 `VK_SUCCESS (0)`；当前在途帧资源索引与交换链图像索引均为 0。两个索引属于不同协议，数值恰好相同不能把它们视为同一对象。
+
+这比“进入渲染函数”多了一份实际提交与呈现请求回执，但仍不等于此时已观察到 GPU 执行完成或显示器扫描输出。这里的“走到第一帧”具体指**首次世界更新到第一次主画面 queue submit/present 返回的调试链已打通**。
+
+### 另一次捕获：确认默认场景确实产生图像
+
+Windows 窗口截图接口两次超时，本轮没有把窗口标题更新当作画面证据。随后用 RenderDoc 1.43 单独启动同一 exe，在运行后的第 17931 帧捕获，并导出捕获文件的原始缩略图：
+
+![RenderDoc 独立运行捕获的默认场景：中央角色与墙体，周围是编辑器对象、资源和组件面板](../../images/piccolo-debug-default-scene-20261026.png)
+
+*这张图来自 RenderDoc 介入的另一进程、后续帧。可以看到默认关卡、角色、墙体和编辑器面板；它不是上一个 CDB 首次 present 现场的截图，也未用于性能比较。完整 `.rdc` 留在本机，大小与 SHA-256 见实验回执；本轮没有进一步重放或逐 Pass 检查。*
+
+把这两类证据分开，后续才知道自己验证的是控制流、API 返回，还是图像内容。首帧走通也不自动验收角色输入、动画、粒子、拾取或保存重载。
+
 ## 先完成一次静态追踪，再带着明确问题调试
 
 现在可以不运行程序，先在固定源码里完成四个任务：
@@ -327,9 +371,9 @@ GLFW 的关闭标志可由 `glfwWindowShouldClose()` 查询；请求关闭与实
 3. 从刚体组件恢复追到当前物理场景，解释为什么 loadLevel 临时设置活动关卡。
 4. 从窗口回调追到主循环返回，再写出关卡卸载与物理管理器清理的先后关系。
 
-等构建与调试基线建立后，可以按下面的观察表验证。它不是本次已取得的断点记录：
+后续仍可按下面的观察表深化。上面的实测没有覆盖整张表：刚体恢复现场、逐对象数量/脏描述、窗口回调内的标志变化与逐项销毁时刻仍待专门观察。
 
-| 后续停在哪里 | 要记录什么 |
+| 后续继续观察的位置 | 要记录什么 |
 | --- | --- |
 | main 与 ConfigManager 初始化后 | 实际可执行入口参数、工作目录、ini 路径与根目录 |
 | WorldManager 初始化结束与首次 tick | 默认世界 URL、加载标志，确认加载发生在哪次调用 |
@@ -347,7 +391,7 @@ GLFW 的关闭标志可由 `glfwWindowShouldClose()` 查询；请求关闭与实
 - [从场景对象到一帧画面]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}})：继续追首次渲染工作的数据、命令与呈现边界。
 - [Piccolo 阅读入口]({{< relref "reading/piccolo-engine.md" >}})：返回系列目录。
 
-Piccolo 源码节选版权：Copyright (c) 2022 Contributors to the Piccolo Engine，按 [MIT License][license] 提供。两张图为正常路径的阅读模型，未包含真实运行时序。
+Piccolo 源码节选版权：Copyright (c) 2022 Contributors to the Piccolo Engine，按 [MIT License][license] 提供。两张 Mermaid 图为正常路径的阅读模型，未标真实耗时；本轮断点记录和独立 RenderDoc 图像在实测段分别说明。
 
 **读启动链，要把每个阶段交出的状态、依赖和清理责任一起读出来。**
 
@@ -376,3 +420,5 @@ Piccolo 源码节选版权：Copyright (c) 2022 Contributors to the Piccolo Engi
 [editor-context]: https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/engine/source/editor/source/editor_global_context.cpp
 [license]: https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/LICENSE
 [glfw-close]: https://www.glfw.org/docs/latest/window_guide.html#window_close
+
+[lab-files]: https://github.com/TwoEggDu/twoegg-tech-stack/tree/main/examples/piccolo-debug-validation

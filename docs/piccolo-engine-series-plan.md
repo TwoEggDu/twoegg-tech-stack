@@ -57,9 +57,9 @@
 | 编号 | 主问题 / 拟题 | 状态 | 正文 |
 | --- | --- | --- | --- |
 | 00 | 架构地图：编辑器、世界、资源与渲染怎样协作 | 已写：源码核对、站点构建和图形检查通过，运行待验证 | [正文](../content/system-design/piccolo-engine-00-architecture-map.md) |
-| 01 | 建立构建与调试基线：源码、生成文件、配置与程序怎样对应 | 已写：配置、反射/序列化与 shader 生成实测通过，站点检查通过；完整 Debug 编译被第三方兼容问题阻塞，运行与断点待验证 | [正文](../content/engine-toolchain/piccolo-engine-01-build-debug-baseline.md) |
-| 02 | 从启动走到第一帧：初始化、世界加载与退出怎样衔接 | 已写：源码、站点构建与页面检查通过；引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-02-startup-first-frame.md) |
-| 03 | 一帧怎样推进：调用顺序、状态交接与线程怎样核对 | 已写：源码、站点构建与生成页静态检查通过；浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md) |
+| 01 | 建立构建与调试基线：源码、生成文件、配置与程序怎样对应 | 已写；2026-10-26 固定提交加两处兼容补丁的 x64 Debug 完整目标通过，exe/PDB/ini 与 CDB 模块、符号和路径对应；警告及功能专项保留 | [正文](../content/engine-toolchain/piccolo-engine-01-build-debug-baseline.md) |
+| 02 | 从启动走到第一帧：初始化、世界加载与退出怎样衔接 | 已写；默认世界/关卡加载、首次 queue submit/present 返回成功、正常关闭退出 0 已实测；另一次 RenderDoc 后续帧有图像，失败分支/逐对象恢复未验收 | [正文](../content/engine-toolchain/piccolo-engine-02-startup-first-frame.md) |
+| 03 | 一帧怎样推进：调用顺序、状态交接与线程怎样核对 | 已写；首轮槽位 0/1→1/0、对象描述消费后 nullopt、主链同线程断点已实测；输入延迟、拒绝交换、Jolt 任务与 GPU 时间线仍待验证 | [正文](../content/engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md) |
 | 04 | 场景文件怎样成为世界中的对象与组件 | 已写：源码、资源、站点构建与生成页静态检查通过；浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-04-scene-to-objects-components.md) |
 | 05 | 资源、类型信息与序列化怎样共同恢复对象 | 已写：源码、模板、站点构建与生成页静态检查通过；01 已核对实际生成片段，浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-05-resource-type-serialization.md) |
 | 06 | 改一个位置，怎样沿逻辑数据追到渲染表示 | 已写：源码、资源数值、站点构建与生成页静态检查通过；浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-06-position-to-render-representation.md) |
@@ -85,11 +85,11 @@
 | 17 | [场景颜色怎样经过后处理成为最终画面](../content/engine-toolchain/piccolo-engine-17-post-processing-final-frame.md) | 已写：固定源码、五个 GLSL 独立编译、原曲线文本的 C++ 适配与分支检查、Hugo 和生成页静态检查通过；GPU 后处理、UI 画面与显示时序待验证。核对 LUT 透传、FXAA 两路附件、UI 条件选色与格式/呈现边界 |
 | 18 | [编辑器怎样拾取、创建和删除场景对象](../content/engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md) | 已写：固定源码、两份拾取 GLSL 独立编译、原 ID 映射/删除与坐标表达式的 C++ 适配检查、实际墙资源检查、Hugo 与生成页静态检查通过；编辑器实际拾取/创建/删除、GPU 回读与保存验证待进行。明确 ID 无效值不一致、拾取蒙皮位置未消费及多部件删除范围 |
 
-09—18 现均有独立正文，00—18 主线文章已齐备。12 补齐片段到姿态与网格变形，13 接通粒子状态、计算调度与后续绘制，14 接通脚本与反射访问；后续优先按各篇待验证项建立完整构建、实际断点与运行证据，不自动扩充新主线编号。仍按“问题 → 必要概念 → 固定源码路径 → 状态推导 → 验证”写作。执行证据见 [09 输入](piccolo-engine-input-motor-controller-outline.md)、[10 物理](piccolo-engine-rigidbody-collision-query-outline.md)、[11 相机](piccolo-engine-camera-follow-render-outline.md)、[12 动画与蒙皮](piccolo-engine-animation-skeleton-skinning-outline.md)、[13 粒子](piccolo-engine-particle-gpu-simulation-outline.md)、[14 Lua](piccolo-engine-lua-component-reflection-outline.md)、[15 资源](piccolo-engine-mesh-texture-gpu-resources-outline.md)、[16 着色](piccolo-engine-material-light-shadow-outline.md)、[17 后处理](piccolo-engine-post-processing-final-frame-outline.md)、[18 编辑器](piccolo-engine-editor-pick-create-delete-outline.md)。
+09—18 现均有独立正文，00—18 主线文章已齐备。12 补齐片段到姿态与网格变形，13 接通粒子状态、计算调度与后续绘制，14 接通脚本与反射访问；后续复用已建立的带补丁 Debug 基线，按各篇待验证项补实际断点与专项运行证据，不自动扩充新主线编号。仍按“问题 → 必要概念 → 固定源码路径 → 状态推导 → 验证”写作。执行证据见 [09 输入](piccolo-engine-input-motor-controller-outline.md)、[10 物理](piccolo-engine-rigidbody-collision-query-outline.md)、[11 相机](piccolo-engine-camera-follow-render-outline.md)、[12 动画与蒙皮](piccolo-engine-animation-skeleton-skinning-outline.md)、[13 粒子](piccolo-engine-particle-gpu-simulation-outline.md)、[14 Lua](piccolo-engine-lua-component-reflection-outline.md)、[15 资源](piccolo-engine-mesh-texture-gpu-resources-outline.md)、[16 着色](piccolo-engine-material-light-shadow-outline.md)、[17 后处理](piccolo-engine-post-processing-final-frame-outline.md)、[18 编辑器](piccolo-engine-editor-pick-create-delete-outline.md)。
 
 ## 随主线补充的前置
 
-补篇按学习需要插入，不占主线编号。网页先读 00、C++ 前置/专项与渲染基础，再沿 01—10 进入构建、启动、对象、资源、变换、提交、编辑器和输入/物理；GFX-02、11/12/13/14/15/16/17/18 随后接续。主线 00—18、五篇前置与渲染补充、PCPP-1/2/3 共 27 篇，series_order 连续 0～26。14 使用 22，原 15/16/17/18 四篇顺移为23～26，URL 不变；原定主线正文齐备。完整 Debug 构建与实际运行状态不随文章成稿升级。
+补篇按学习需要插入，不占主线编号。网页先读 00、C++ 前置/专项与渲染基础，再沿 01—10 进入构建、启动、对象、资源、变换、提交、编辑器和输入/物理；GFX-02、11/12/13/14/15/16/17/18 随后接续。主线 00—18、五篇前置与渲染补充、PCPP-1/2/3 共 27 篇，series_order 连续 0～26。14 使用 22，原 15/16/17/18 四篇顺移为23～26，URL 不变；原定主线正文齐备。完整 Debug 构建与实际运行状态不随文章成稿升级；2026-10-26 的基线实测仅登记到 01/02/03，其他篇的专项结论保持原范围。
 
 | 编号 | 主题 | 状态 | 正文 |
 | --- | --- | --- | --- |
@@ -119,7 +119,7 @@ GFX-02 作为渲染补充，解释程序、数据和命令的交接：从 GLSL �
 
 - 首篇提纲、源码证据入口和验证记录：[2026-10-23 架构地图执行计划](superpowers/plans/2026-10-23-piccolo-architecture-article.md)。
 - 2026-10-23：首篇正文完成，源码事实与图关系已核对，Hugo 构建和页面图形渲染检查通过；阅读入口与根路由已接入。提交、远端与站点部署状态以 Git 和 CI 实时回执为准。
-- Piccolo 完整编辑器构建、调试器运行和图形捕获尚未通过；01 的配置与生成已实测，编译阻塞和后续验收边界见其执行记录。
+- 2026-10-26 已通过带两处兼容补丁的完整 Debug 构建与启动到首次主画面提交/呈现的 CDB 调试，正常退出 0；另一次 RenderDoc 捕获默认场景图像。原始源码在 MSVC 19.51 的兼容失败记录保留，各系统专项与逐 Pass 验证不随本次结果升级。
 - CPP-01 提纲与源码、小程序验证记录：[智能指针与生命周期](piccolo-cpp-smart-pointers-outline.md)。
 - CPP-02 提纲与源码、小程序验证记录：[类、继承与虚函数](piccolo-cpp-classes-virtual-functions-outline.md)。
 - CPP-03 提纲与源码、小程序验证记录：[模板、宏与反射代码生成](piccolo-cpp-templates-macros-reflection-outline.md)。
@@ -150,3 +150,11 @@ GFX-02 作为渲染补充，解释程序、数据和命令的交接：从 GLSL �
 ## 本轮运行证据复核（2026-10-25）
 
 A12回读现有固定revision回执及原始Debug错误，四份代表生成文件hash仍匹配；指定历史构建/资源目录无编辑器exe。没有重复运行已知失败构建，没有新增事件/退出、CPU线程或GPU观察。正文和PCPP成稿状态保持，完整编辑器编译仍是后续工程阻塞；具体复核附于原四份outline，不新增基础篇。
+
+## Debug 与首次呈现实测（2026-10-26）
+
+- 用户明确授权解决构建兼容并运行调试；本轮没有继续沿用此前“仅文章、不修依赖”的执行范围。固定提交未变，在新 archive 副本上只改 fmt 分支兼容条件与 Jolt 的 chrono 直接包含，原阅读克隆保持干净。
+- 完整目标配置 0、构建 0；实际 CDB private PDB、部署 root/asset、首次世界加载标志 false→true、默认关卡、首次 submit/present 成功与正常退出 0，回填 01、02。03 另记首轮槽位和对象描述清理、采样的主链线程 ID；第二次采样由调试器停止，不冒充正常退出。
+- RenderDoc 1.43 另启同一 exe，取得后续第 17931 帧的原始缩略图。图像不冒充首次 present 截图；未做捕获重放或逐 Pass/同步正确性验收。
+- 保留 LNK4098、MSB8029 和 Lua C4715 等警告；输入/角色、相机、动画/粒子、脚本、编辑器操作/保存与 GPU 分项仍待验证。首轮成功不能覆盖这些矩阵。
+- 复现补丁、CDB 命令、归一化日志和产物/capture 指纹见 [examples/piccolo-debug-validation](../examples/piccolo-debug-validation/README.md)；执行边界和站点回归见 [Debug 首帧实测记录](piccolo-debug-first-frame-validation-outline.md)。原 2026-10-25/A12 阻塞结论是历史记录，不删除或改写成当时已通过。
