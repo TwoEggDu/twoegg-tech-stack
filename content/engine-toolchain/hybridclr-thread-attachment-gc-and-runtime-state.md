@@ -234,7 +234,7 @@ python tools/lifetime_lab.py verify
 
 这次故意把两线程的目标调用串行化，未验证并发首次转换竞争、线程池复用或原生回调 attach／detach。正常 `System.Threading.Thread` 的成功路径，也不能代替异常中止、宿主关机与设备压力测试。
 
-<!-- DATA-TODO: 并发首次转换及线程池仍待补；活跃根区间见后续gc-roots实验。 -->
+<!-- DATA-TODO: 线程池与更完整的首次转换竞争覆盖仍待补；有界并发首次调用见后文新实验，活跃根区间见后续gc-roots实验。 -->
 
 ## 动手验证二：把原生回调单独做成一组
 
@@ -387,6 +387,22 @@ build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb` 中，AOT／hot各3个普通Play
 每个hot调试进程有一组归属该worker的动态根注册／注销，6次GC查询入口top0／frames0：1次在基线、2次在目标周期收尾、3次在周期后及退出清理；不能把退出清理查询解释为仍在等待下一次任务。目标周期中的两次查询发生在writer返回后的等待阶段。12次scrub后，当前活跃worker栈内均未找到当前候选的对齐精确指针；这不排除寄存器、内部指针、其他目标和其他线程。这里只采了根回调入口状态，真实返回缓冲的独立证据仍属于前轮gc-roots实验。
 
 复现使用实验仓库 `tools/incremental_lab.py`，记录为 `evidence/2026-10-25-incremental-barriers/`；本轮固定提交为 [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/results.json)；旧4861bed仅标识前轮根区间实验。固定依赖、Manual控制和单worker串行握手是结论成立的条件，原生回调竞争、异常退出与其他平台继续单独验证。
+
+## 并发首次调用：先建立 worker 协议，再看初始化竞争 {#concurrent-initialization-threads}
+
+前面的常驻 worker 握手让任务串行运行，不能替代多个线程第一次调用同一目标的实验。本轮独立工程 `concurrent-initialization` 使用 2／4 个托管 Thread：全部 ready → 主线程记录冷缓存标记 → 打开门闩 → worker 在日志锁外反射调用 → AOT 外层记录成功／异常 → 有界 Join → 失败类型另访问两次。
+
+managed ID 与 OS ID 均逐个记录并要求互异，ready、attempt、方法体、结果和 Join 按同一进程序号校验。`Thread` 的托管接入沿用当前 runtime；没有另用原生插件创建线程，也没有把它作为 Attach／Detach 或动态根注销的新证明。worker 只调用本例纯托管计算、线程同步与日志，不操作 Unity 场景对象；`Application.Quit` 留在主线程。
+
+沿用本机自定义 Unity 2022.3.62f3、固定 v9 和 Windows x64。54 个普通 Player 全部通过验收；54 次是独立进程，不是单进程循环调用。成功、失败与封闭泛型状态的完整表在[类型初始化篇]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#concurrent-initialization-player" >}})：成功类型只初始化一次，失败不重试，mixed 中直接 AOT 与 hot Bridge 共用同一 AOT Strict。
+
+静态构造只用有界 Sleep 延长窗口，**不在其中 Join worker、等待主线程回调或等待依赖本类型的任务**。门闩只保证 worker 在调用前都已 ready；attempt 与返回区间的重叠也不是每条 runtime 指令同时执行的证明。8 个独立原生进程另补选定现场：ClassInit 的竞争者已有不同 owner，AOT Strict 的部分等待栈进入 ClassInit／Sleep(1)。调试暂停会改变时序，等待栈计数不是等待时长或竞争概率。
+
+本轮运行时仍是原始固定输入，没有安装前轮异常反事实补丁；初始化失败由 AOT 反射边界收集，不把热更内部 catch 当成已修复。它也不覆盖原生回调重入、取消中途退出、循环初始化、并发 GC 或长期多线程压力。复现入口为 `tools/concurrent_lab.py` 与 `tools/concurrent_trace.py`。
+
+<!-- CONCURRENT-LAB-PUBLICATION -->
+本轮固定提交为 [8ac20ea](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b)，可查看[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/projects/concurrent-initialization)、[同源场景](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/samples/concurrent-initialization/Scenarios.cs)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/results.json)。复现请检出该提交；前轮 `5638131` 不包含本样本。
+<!-- /CONCURRENT-LAB-PUBLICATION -->
 
 ## Unity 主线程与 Web 平台的边界
 

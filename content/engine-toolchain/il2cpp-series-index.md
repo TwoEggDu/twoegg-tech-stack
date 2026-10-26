@@ -115,6 +115,10 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 - [HybridCLR 源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})：准备版本、调试工程和第一条调用链。
 - [HybridCLR 系列索引]({{< relref "engine-toolchain/hybridclr-series-index.md" >}})：从基础机制进入案例与工程防线。
 
+## 共享并发首次调用实验
+
+[并发首次调用与类型初始化]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#concurrent-initialization-player" >}})沿用原始固定环境：54 个普通 Player 对照 2／4 个托管 worker 的冷方法、成功／失败初始化、封闭泛型静态状态，以及 hot Bridge 与直接 AOT 共享同一 AOT 类型。162 次成功返回、60 次预期初始化失败；构造不重复，字段完整发布，失败后的两次访问不重试。8 个独立原生进程检查冷缓存与 ClassInit 选定现场，入口命中数与自有事件分别保留，不代表普遍无竞争。[runtime 篇]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#concurrent-initialization-runtime" >}})区分准备与静态构造。本轮固定提交为 [8ac20ea](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/results.json)；前轮5638131不含本样本。
+
 ## 接下来补强什么
 
 源码阅读起步、三栏泛型调用、对象保留对照和托管工作线程已完成各自固定环境的 Player 验证。对象快照与实际活跃根区间也已采证；后续补完整动态根路径归因、长期原生回调压力与固定采样条件的性能测量；已有结果不代表全系列经过统一版本验收。

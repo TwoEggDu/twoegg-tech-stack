@@ -237,7 +237,26 @@ v9 的 Transform 接收 MethodInfo，并在内部经 MethodBodyCache 取得方�
 
 本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。
 
-其余训练按实际问题推进：constrained.／装箱需要对应 CIL 与对象身份，本轮已补跨 AOT／解释器普通抛出与 finally 对照；filter／嵌套展开的完整覆盖仍需独立验证，并发／长期压力需要单独的调度、时长和停止协议。这些不会成为第一轮阅读的统一门槛。
+其余训练按实际问题推进：constrained.／装箱需要对应 CIL 与对象身份，本轮已补跨 AOT／解释器普通抛出与 finally 对照；filter／嵌套展开的完整覆盖仍需独立验证，并发首次调用的有界样本见下文；长期压力仍需单独的调度、时长和停止协议。这些不会成为第一轮阅读的统一门槛。
+
+## 并发补证：冷方法缓存与类型初始化分开读 {#concurrent-first-call-source}
+
+两次顺序调用能看到缓存复用，但不能回答冷方法被多个线程同时请求时会发生什么。本轮 `concurrent-initialization` 先做无 .cctor 的 Cold，再做显式成功／失败与两个封闭泛型类型；所有目标都在工作线程调用前解析，由主线程的外部标记暴露目标 MethodHandle，用匹配 PDB 读取对应 MethodInfo。**只有释放前 interpData 为空的目标，才称作冷方法。**
+
+| 阅读／观察点 | 这轮检查什么 | 容易误判的地方 |
+|---|---|---|
+| `InterpreterModule::GetInterpMethodInfo` | 固定 runtime8392978 的公开源码中，缓存检查、转换与发布位于同一 metadata 锁作用域 | 函数入口命中次数不等于缓存未命中次数；最终原生协议不在此混用软件断点 |
+| `HiTransform::Transform`／`Interpreter::Execute` | 用硬件入口断点绑定目标 MethodInfo，核对初始空缓存、最终非空缓存和执行时缓存身份 | 断点计数仍是调试观察，不能推广为所有调度下只转换一次 |
+| `Runtime::ClassInit` | AOT 组另看 started／finished、owner 与当前 OS 线程；Strict 还采等待栈 | 不把 Class::Init、方法转换与用户 .cctor 合成同一把锁 |
+| 自有 body／outcome 事件 | 普通运行按 worker 身份核对完整字段值、失败原因及 Join | 入口断点不能代替实际结果与生命周期证据 |
+
+源码阅读路径是事实指引，不发布 Unity C++ 函数体。原始固定运行时的 919 个输入哈希相同，前轮异常补丁未安装。54 个普通 Player 的结果与 8 个原生进程分开；热更成功方法使用已发布缓存，失败类型的 Read 未进入、缓存仍为空。两种封闭泛型的静态状态隔离由各自初始化事件与结果判定，不能只凭 native 代码指针是否相同。
+
+实验问题、完整结果和版本见[类型初始化篇的并发实验]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#concurrent-initialization-player" >}})，线程协议见[线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md#concurrent-initialization-threads" >}})。软件断点探索有计数偏差，已归档并改用硬件入口断点；这不构成运行时竞态缺陷的定位。循环／递归初始化、长期压力、性能与其他平台仍未验收。
+
+<!-- CONCURRENT-LAB-PUBLICATION -->
+本轮固定提交为 [8ac20ea](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b)，可查看[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/projects/concurrent-initialization)、[同源场景](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/samples/concurrent-initialization/Scenarios.cs)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/results.json)。复现请检出该提交；前轮 `5638131` 不包含本样本。
+<!-- /CONCURRENT-LAB-PUBLICATION -->
 
 ## 历史 v6.1.0 对照
 

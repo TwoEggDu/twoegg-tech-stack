@@ -198,6 +198,22 @@ bool Class::Init(Il2CppClass* klass)
 
 本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。
 
+## 并发补证：ClassInit 与方法缓存各自负责什么 {#concurrent-initialization-runtime}
+
+冷方法转换只产生执行该方法需要的表示；类型初始化建立该类型的静态状态。把两者都称作“首次初始化”，会把缓存发布问题和用户 .cctor 的等待／失败混在一起。`Class::Init` 的类型描述准备也不能代替 `Runtime::ClassInit` 的用户静态构造语义。
+
+本轮独立 `concurrent-initialization` 沿用本机自定义 Unity2022.3.62f3、package9.0.3／runtime9.0.1、Windows x64 Development IL2CPP Debug。919 个安装输入与原始 prepared 树相同，未安装异常反事实补丁；最终 AOT／hot DLL 的目标 .cctor 和 beforefieldinit 已检查，HotUpdate 未进入 AOT 注册。
+
+54 个普通 Player 中，无 .cctor 的 Cold 均返回7；Strict 每类型只出现一次初始化，所有字段组合为41083；Failed 仅尝试一次，worker 和 Join 后两次访问均报告预期包装链；`Cache<int>`／`Cache<string>`分别为41083／81123。mixed 的直接 AOT 与 hot Bridge 最终共用 `AotConcurrent.Strict`，不是把两份程序集中的同名类型当成一个。详细矩阵见[类型初始化篇]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#concurrent-initialization-player" >}})。
+
+8 个独立匹配 PDB 进程将现场分层：释放前的目标 MethodInfo 缓存为空；成功 hot 方法随后有稳定解释缓存，AOT 直接方法则保持没有解释缓存；失败 hot 类型执行 .cctor 后没有进入 Read，Read 缓存仍为空。ClassInit 竞争者可见 started=1、finished=0、owner 为其他线程，AOT Strict 的等待栈采到 ClassInit／Sleep(1)。这些是当前构建选定路径的观测，不把内部字段名或等待方式写成跨版本契约。
+
+转换／执行入口使用硬件断点，原软件断点的漏记／重复记录另归档；自有事件与原生命中分开计数。原生暂停改变调度，不能把一次缓存发布解释为普遍无竞争，也不能把 Sleep 栈数解释为等待时长。循环初始化、原生回调竞争、完整异常语义、长期压力及其他平台仍需独立验证。复现工具是 `tools/concurrent_lab.py`／`tools/concurrent_trace.py`，源码阅读路线见[并发补证]({{< relref "engine-toolchain/hybridclr-source-reading-start.md#concurrent-first-call-source" >}})。
+
+<!-- CONCURRENT-LAB-PUBLICATION -->
+本轮固定提交为 [8ac20ea](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b)，可查看[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/projects/concurrent-initialization)、[同源场景](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/samples/concurrent-initialization/Scenarios.cs)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/results.json)。复现请检出该提交；前轮 `5638131` 不包含本样本。
+<!-- /CONCURRENT-LAB-PUBLICATION -->
+
 ## Runtime：初始化序列
 
 **源码位置：** `il2cpp/vm/Runtime.cpp`

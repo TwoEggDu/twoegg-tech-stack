@@ -255,6 +255,50 @@ Relaxed 的结果也不能改写成“带 beforefieldinit 的类型必在首次�
 
 本轮固定提交为 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/46ac71c74cd068bc177d653dd143b7bb9dc482bd)，可查看[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/46ac71c74cd068bc177d653dd143b7bb9dc482bd/projects/type-initialization)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/results.json)。复现请先检出该提交；前轮 `74da063` 只包含资源实验。这里只验证单线程输入，不覆盖初始化锁竞争、循环初始化、性能、其他平台或所有异常展开路径。[源码起步篇]({{< relref "engine-toolchain/hybridclr-source-reading-start.md#type-initialization-first-call" >}})解释如何把首次调用的证据分层，[IL2CPP runtime 篇]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#type-initialization-runtime" >}})补充类型准备与 .cctor 的区别。
 
+## 并发 Player 实测：首次调用争用的是哪份状态 {#concurrent-initialization-player}
+
+单线程的第二次调用会复用状态，却回答不了两个 worker 同时第一次访问时发生什么。这轮把两个问题拆开：**方法是否已有可执行的解释表示，以及类型的静态状态是否已经建立。** 即使两者都在首次调用发生，也不能把转换次数当作 .cctor 次数。
+
+[ECMA-335 第六版 §II.10.5.3](https://ecma-international.org/wp-content/uploads/ECMA-335_6th_edition_june_2012.pdf)讨论类型初始化与线程交互。本例只取没有循环依赖的显式 .cctor；其中用 `Thread.Sleep(150)` 延长观测窗口，不等待其他 worker、主线程派发或依赖该类型初始化的任务。循环与递归情况下的部分状态可见性继续保留为边界。
+
+### 先让线程就绪，再释放首次访问
+
+新建独立 `projects/concurrent-initialization`，AOT／hot 场景仍只差命名空间。驱动先加载并解析 Type／MethodInfo、读取 beforefieldinit／.cctor 标志，再创建 2 或 4 个 `System.Threading.Thread`。每个 worker 记录自己的 managed／OS ID，全部 ready 后由外部门闩一起放行，调用目标并在 AOT 外层记录结果，最后逐个有界 Join。
+
+这不是原生线程 Attach 实验，也不是直接调用的性能测试。反射和日志自身会影响调度；门闩同时放行不保证每个线程在同一条运行时指令上重叠。日志锁只保护自有序号与事件写入，目标反射调用在锁外。原生取证进程另算，不把调试器暂停后的顺序当成普通运行的调度。
+
+沿用本机自定义 Unity `2022.3.62f3_96770f904ca7`、package v9.0.3／runtime v9.0.1、Windows x64 Development／IL2CPP C++ Debug／Minimal stripping／OptimizeSpeed。build_id 为 `d2edc1a5-8237-4f19-b2c6-bc260c0167b2`。919 个安装运行时输入与原始 prepared 树逐文件相同，没有安装前轮异常传播补丁；最终 DLL 确认目标标志，HotUpdate 未进入 AOT 产物。
+
+### 54 个普通进程的结果
+
+AOT／hot 各四种场景 × 2／4 workers × 三次新进程，另加共享 AOT 类型的两种 worker 数各三次，共 54 个普通 Player，全部通过事件验收并退出 0。
+
+| 场景 | 观察结果 | 回答的边界 |
+|---|---|---|
+| Cold：无静态字段、无 .cctor | 每个 worker 返回 7；没有类型初始化事件 | 单独观察方法准备，不能把它称作静态构造 |
+| Strict：显式 .cctor | 每个类型恰好一次 begin／end，所有方法体均在 end 之后；字段组合均为 41083 | 本例未读到只写入 a、尚未写入 b 的状态 |
+| Failed：构造中抛异常 | 每进程一次构造尝试，无 Read 方法体；所有 worker 及 Join 后两次访问均得到反射包装 → TypeInitializationException → InvalidOperationException，并核对自有原因消息 | 后续访问不重跑构造；AOT 外层捕获不代表热更内部 catch 缺陷已修复 |
+| `Cache<int>`／`Cache<string>` | 每个封闭类型各初始化一次，各 worker 分别返回 41083／81123 | 方法实现可能共享，不等于两个封闭类型共享静态状态 |
+| mixed：直接 AOT 与 hot Bridge → AOT | 两种入口共同访问 `AotConcurrent.Strict`，仍只有一个初始化 owner，全部返回 41083 | 验证共享的是同一个 AOT 类型，不是 AOT／hot 两个同名类型互相合并 |
+
+成功返回 162 次，预期初始化失败 60 次；失败不是 Player 崩溃。每个进程都检查 ready／attempt／body／outcome／Join 的身份与顺序，任一 worker 超时、未知异常、事件缺失或半初始化值都会拒收。原先[热更内部 catch 逃逸]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}})仍由独立实验维护，本轮刻意在共同 AOT 反射边界捕获。
+
+### 原生证据把两个状态分开
+
+8 个匹配 PDB 的独立进程，观察门闩释放前／Join 后同一 MethodInfo 的 `interpData`，并记录转换、解释执行和 `Runtime::ClassInit` 的选定路径。释放前缓存为空，才把它计为冷调用；解析 MethodInfo 成功本身不足以证明冷缓存。
+
+成功 hot 方法的最终缓存非空，已捕获的解释入口复用同一缓存；无 .cctor 的 Cold 不出现初始化体。失败 hot 类型的 .cctor 被执行，Read 方法体未进入、目标 Read 缓存仍为空。AOT 直接方法保持无解释缓存，与成功执行并不矛盾。ClassInit 现场另可见其他线程访问 started=1／finished=0 且 owner 为另一线程的类型；AOT Strict 的等待栈落在 ClassInit 的 Sleep(1) 路径。
+
+这与前轮 failed 的 Ping 已有转换缓存并不矛盾：前轮由解释执行的 Cases 直接调用 Ping，本轮由共同 AOT 驱动反射调用目标 Read，调用边界不同。本轮观察到 Read 尚未准备便因类型初始化失败而返回异常，不能把任一场景的准备先后推广成固定总顺序。
+
+方法入口最终采用硬件断点；软件断点探索曾出现漏记或重复入口，探索记录单独归档，没有把命中次数归一后当执行次数。公开结果保留原始命中数与命中的 worker 身份。最终硬件样本中，Strict 有 4 条自有 body 事件但仅捕获 2 个 Execute 入口，泛型两目标也各为 4／2；方法体执行次数以自有事件为准。AOT 的解释器入口覆盖标为不适用，不把 0 个命中写成完整观察。调试器仍改变调度，这些样本不证明所有调度下只转换一次、没有竞争或满足性能要求。
+
+源码如何顺着两条准备路径读，见[源码起步的并发补证]({{< relref "engine-toolchain/hybridclr-source-reading-start.md#concurrent-first-call-source" >}})；线程退出和门闩协议见[线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md#concurrent-initialization-threads" >}})。本轮没有测试循环初始化、原生回调竞争、长期压力或其他平台。
+
+<!-- CONCURRENT-LAB-PUBLICATION -->
+本轮固定提交为 [8ac20ea](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b)，可查看[实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/projects/concurrent-initialization)、[同源场景](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/samples/concurrent-initialization/Scenarios.cs)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/results.json)。复现请检出该提交；前轮 `5638131` 不包含本样本。
+<!-- /CONCURRENT-LAB-PUBLICATION -->
+
 ## 回到热更新启动流程
 
 把业务启动安排成显式依赖，而不是依赖扫描顺序：

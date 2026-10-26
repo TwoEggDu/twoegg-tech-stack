@@ -178,3 +178,11 @@ GC 前置增加事件／实例委托保留与退订实验，区分 Normal、Weak
 独立projects/constrained-boxing，沿用固定自定义Editor/v9/Windows x64；build_id 9e084001-a41b-42c2-8fbd-62efc0d147d4，48输入／236产物、919原始runtime。72普通Player：69完成，3个cross/off/value在GenericCalls.ByValue<HotCounter>缺可用AOT实例处停止，补充最终匹配Probe.AOT metadata后恢复。ref on/off均命中native ByRef共享入口，不推广普遍免补metadata；cross/box只作非泛型语义控制。
 
 27个匹配PDB独立进程：原21加value on/off各3。hot箱对象两次接口调用指向同payload，unbox.any副本this不同；override无自有接收者Box命中，fallback有PlainCounter Box；按值on进入ByValue解释帧，ref仍native。on/ref准备期也会读取ByValue body，不当作实际执行证明。四篇既有正文分工：类型系统维护副本身份、调用语义集中完整实验、AOT泛型与调用链篇回链实际路径；三索引复用入口，主线篇数及URL不变。本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。实验已推送；文稿随本次文档提交交付，Pages另行核验。执行记录见[本轮记录](./hybridclr-constrained-boxing-outline.md)。
+
+## 并发首次调用与类型初始化（2026-10-26）
+
+独立 projects/concurrent-initialization，原始固定自定义 Editor/v9/Windows x64；build_id d2edc1a5-8237-4f19-b2c6-bc260c0167b2，919 runtime 输入与 prepared 树相同。54 普通 Player：AOT/hot 的 Cold、Strict、Failed、封闭泛型各2/4 workers各3进程，mixed直接AOT/hot Bridge共享同一AOT Strict各2/4 workers各3进程。全部退出0；162次成功返回／60次预期初始化失败，成功完整发布、失败不重试、泛型静态状态隔离。
+
+8 个独立匹配PDB进程检查释放前空缓存、最终缓存与执行身份、ClassInit竞争现场及AOT Strict等待栈。方法入口最终用硬件断点，软件探索偏差另归档；不把命中数当所有调度下的执行／转换次数。类型初始化篇集中语义与矩阵，线程篇维护门闩/Join，源码起步维护冷缓存与两条准备路径，IL2CPP runtime区分元数据准备/类型静态构造；三个索引复用同一入口，不新增主线正文。
+
+本轮固定提交为 [8ac20ea](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/8ac20eae2fe9734dc7f691e1028594be9d0dbd3b/evidence/2026-10-26-concurrent-initialization/results.json)。实验仓库已推送并核验远端，文稿随本次文档提交交付，Pages另行核验；前轮5638131不是本轮源码版本。不覆盖循环/递归初始化、原生回调竞争、长期压力及其他平台。执行记录见[本轮大纲](./hybridclr-concurrent-initialization-outline.md)。
