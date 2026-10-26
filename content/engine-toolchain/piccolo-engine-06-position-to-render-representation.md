@@ -2,6 +2,7 @@
 title: "改一个位置，怎样沿逻辑数据追到渲染表示"
 slug: "piccolo-engine-06-position-to-render-representation"
 date: "2026-10-25"
+lastmod: "2026-10-26"
 description: "沿 Piccolo 中 Wall_1 的一次位置变化，逐值追踪 Transform 双缓冲、脏网格描述、交换数据与 RenderEntity，并核对更新时机和对象身份。"
 tags:
   - "Piccolo"
@@ -28,7 +29,7 @@ weight: 507
 
 > **读这篇之前**：建议读过 [03 一帧执行]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})、[04 场景对象与组件]({{< relref "engine-toolchain/piccolo-engine-04-scene-to-objects-components.md" >}})。[05 资源与类型恢复]({{< relref "engine-toolchain/piccolo-engine-05-resource-type-serialization.md" >}}) 说明初始字段怎样进入组件；[渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}}) 提供后续 Pass 与呈现的完整地图。
 >
-> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 06。以下是依据真实资源与源码建立的条件推导，不是已执行的场景修改、断点快照或画面验收。本次未构建、运行 Piccolo，也未进行图形捕获。
+> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 06。2026-10-26 已复用[01 的带兼容补丁 Debug 基线]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}})，在实际进程中调用一次位置 setter，核对 Transform、Mesh 描述、交换队列、已有 RenderEntity 和主相机可见节点。实测单列于后文；原缓冲表与较晚写入反例仍是条件推导。没有验证鼠标拖轴、属性面板或本次变化的 GPU 像素。
 
 > 两种缓冲的角色、描述复制与可见节点借用，以及跨线程所需的额外协议，见 [状态缓冲怎样交接，哪些地方真的跨线程]({{< relref "engine-toolchain/piccolo-pcpp-03-state-buffer-thread-boundaries.md" >}})。
 
@@ -40,7 +41,7 @@ weight: 507
 
 | 项目 | 本篇使用的值或条件 |
 | --- | --- |
-| 对象 | Wall_1；运行时 ID 记为 G，实际数值以后从调试器取得 |
+| 对象 | Wall_1；模型中记为 G，本轮实测 GObjectID 为 2 |
 | 原位置 P₀ | 约 `(1.94597, -0.38554, 0)` |
 | 目标位置 P₁ | P₀ 加 `(1, 0, 0)`，约 `(2.94597, -0.38554, 0)` |
 | 其他对象字段 | 保持原旋转、缩放，不改变网格与材质来源 |
@@ -106,7 +107,7 @@ Vector3 getPosition() const { return m_transform_buffer[m_current_index].m_posit
 | Transform tick 交换后 | 1 / 0 | P₀ | P₁ | P₁ | true |
 | 编辑器复制 next 后 | 1 / 0 | P₁ | P₁ | P₁ | true |
 
-第二行中，getPosition 仍从缓冲 0 读 P₀；第三行开始，当前值才是 P₁。这里的起点、索引和值是条件推导，不是引擎运行记录。
+第二行中，getPosition 仍从缓冲 0 读 P₀；第三行开始，当前值才是 P₁。这里的起点、索引和值是条件推导，不是引擎运行记录。后文实测的起点相反，为 current=1、next=0；不要把这张示意表中的索引当成固定配置。
 
 ## 第二步：Transform tick 让新值进入当前状态
 
@@ -272,6 +273,47 @@ for (auto& entity : m_render_scene->m_render_entities)
 
 本篇到这里完成“逻辑位置 → 渲染表示”的追踪。可见节点进入哪个 Pass、怎样写入绘制数据并提交 Vulkan，留到主线 07；实体或节点更新仍不等于实际像素已改变。
 
+## 用真实断点贯穿一次 Wall_1 的位置修改
+
+本轮复用 `piccolo-debug-msvc1951-20261026` 的 exe/PDB/ini，回读指纹与 01 一致，没有重新修改或编译引擎。先在第一次主画面 present 返回后暂停，找到已加载的 Wall_1，确认它已拥有渲染实体；再停在下一轮 `engine.cpp:70`，也就是 `logicalTick()` 调用之前，只调用一次真实的 `TransformComponent::setPosition`。
+
+这里选择受控写入，是为了把“写入发生在哪个阶段”固定下来。CDB `.call` 令当前调试线程执行目标函数，方法调用的第一个参数是 `this`；本轮另分配一页调试暂存内存装入 Vector3 参数，再调用 setter。命令的机制见 [Microsoft `.call` 说明][cdb-call]。**这次验证从 setter 开始，不冒充编辑器鼠标拖轴或属性面板操作**，也没有直接改 RenderEntity 来绕过中间链路。
+
+实际身份为：逻辑对象 **G=2**，part **0**，渲染实例 **I=5**。网格资源 ID 也是 5，材质资源 ID 为 2；这些数字恰好重合，没有把不同分配器合并成同一身份。ID、对象地址与向量中的位置均属于这次进程，复现时应先重新查找。
+
+### 从 setter 到消费，每一步实际读到了什么
+
+目标位置仍取本篇的 `P₁≈(2.94597,-0.38554,0)`。下面是同一次运行的断点记录，而不是根据源码填出的预期值：
+
+| 实际观察点 | 读到的状态 |
+| --- | --- |
+| 写入前 | current/next 为 **1/0**；两份位置均为 P₀，dirty=false、scale dirty=false；已有实例 5 的矩阵平移列为 P₀ |
+| setter 的三次写入完成后 | 索引仍为 **1/0**；缓冲0为 P₁、缓冲1为 P₀，`m_transform` 为 P₁，dirty=true；current 此时仍指向旧值 |
+| `transform_component.cpp:42` | 交换后 current/next 为 **0/1**，current 已读到 P₁；调用栈来自 `GObject::tick → Level::tick → WorldManager::tick` |
+| Transform tick 结束 | 编辑器复制后，两份缓冲均为 P₁；没有修改旋转或缩放，scale dirty 仍为 false |
+| `mesh_component.cpp:100` | `dirty_mesh_parts[0]` 中矩阵平移列为 P₁；`m_raw_meshes[0]` 的局部矩阵已恢复为单位矩阵 |
+| 描述入队后、交换之前 | 逻辑/渲染槽索引为 **1/0**；逻辑槽1恰有一条对象描述，G=2、一个 part，矩阵为 M₁；Mesh 已清脏；旧渲染槽0的七项 optional 均为 nullopt |
+| 交换返回后 | 逻辑/渲染索引变为 **0/1**，带描述的槽1成为渲染消费槽 |
+| `render_system.cpp:355` | `(2,0)` 命中已有实例；实体、网格与材质存在标志均为 true；临时 RenderEntity 的实例/网格/材质 ID 为 **5/5/2**，模型矩阵为 M₁ |
+| `render_system.cpp:366` | 整体赋值之后，列表中实例5的矩阵已变为 M₁，不能只把临时变量当成消费终点 |
+| 消费返回后 | 槽1的对象描述 optional 变为 nullopt |
+
+本轮保存了修改前的实体矩阵，以及 Mesh 描述、队列描述、临时实体和列表实体的矩阵输出。将 CDB 打印出的元素按 `1e-5` 容差比较，四处传递的新矩阵一致；与原矩阵相比，仅 `[0][3]` 从约 `1.94597` 变为 `2.94597`，其他元素保持一致。局部 part 矩阵则仍为单位矩阵。
+
+这也让“清脏”和“渲染收到”有了实际区分：停在交换前，dirty 已经是 false，但新矩阵仍在逻辑槽的队列中；直到消费后的列表实体赋值，才能确认渲染表示已经接到它。资源缓存命中说明本次对象消费复用了已有网格和材质，不代表后续没有逐帧 GPU 数据更新。
+
+### 再追一步：可见节点借用的是哪个矩阵
+
+同一轮进入主相机可见性函数，在视锥测试处读取到实例5的新模型矩阵。该对象进入可见列表后，`render_scene.cpp:216` 的节点 ID 为5，`temp_node.model_matrix` 与 `&entity.m_model_matrix` 的实际地址相同，解引用后的 `[0][3]` 为 `2.94597`；帧末按 ID 查询可见列表，得到一条节点。
+
+所以本次验证不止停在实体字段赋值，还核对了后续节点确实借用这份矩阵。我们没有单独保存变换后包围盒的数值，也没有把主相机可见性通过解释成无遮挡或屏幕一定出现指定像素。
+
+随后同一轮的 queue submit 与 present 返回均为 `VK_SUCCESS`，此时 `m_frame_count=2`，采样主线程为 `0x1afc4`。帧计数说明它是首次呈现后的下一次引擎迭代，不是显示器刷新编号；断点停顿后的时间和 FPS 不用于性能结论。CPU 数据链已走通，矩阵最终进入哪次 Draw、GPU 读取值以及画面差异，仍需 07 的分项图形验证。
+
+完整记录、矩阵比较结果和命令见[位置链实验材料][position-files]。日志还保留了一次断点条件解析错误：本次 PDB 把可见性循环里的引用显示为指针，`@@c++` 条件需要用 `->`，而 `dx` 可以自动展开引用；修正条件后在同一进程继续完成观察，未改引擎代码。`.call` 自带的人工调用栈也没有被当成原生编辑器调用栈。
+
+最后以调试器结束本次实验，没有执行场景保存；部署关卡文件与固定源码资源的完整字节一致。正常窗口退出已由 02 单独记录，本轮不把结束调试记成又一次正常退出验收。较晚写入、多条同对象描述、其他置脏者、刚体姿态和真实编辑交互仍未加入本轮测试。
+
 ## 换一个写入时机，结论就可能不同
 
 现在保持其他条件，只把 setPosition 的调用移到 **Transform tick 之后、Mesh tick 之前**，并假设暂时没有其他置脏者：
@@ -295,7 +337,7 @@ for (auto& entity : m_render_scene->m_render_entities)
 2. 从 setPosition 走到 entity 赋值，沿途写出 current/next、dirty、G、part_index、实例 I 与模型矩阵，检查有没有把不同身份或不同缓冲合并。
 3. 对比主路径和较晚写入的反例，指出“写入发生在 Mesh 前面”为什么仍不充分。
 
-之后建立工程调试基线，可以按下面的顺序验证。本次没有执行这些断点：
+上面的实测已覆盖受控 setter 主路径，后续可按此表扩展条件。仍需分别补真实编辑入口、较晚写入、多次写入、刚体状态和包围盒数值，不能把一次主路径通过当成整张矩阵验收：
 
 | 观察位置 | 要记录的值与条件 |
 | --- | --- |
@@ -321,7 +363,7 @@ for (auto& entity : m_render_scene->m_render_entities)
 - [从渲染场景进入 Pass 与 Vulkan 提交]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}})：继续沿主相机可见节点、GBuffer 实例批次和缓冲绑定，追到命令记录、队列提交与呈现请求。
 - [Piccolo 阅读入口]({{< relref "reading/piccolo-engine.md" >}})：返回目录。
 
-Piccolo 源码与资源节选版权：Copyright (c) 2022 Contributors to the Piccolo Engine，按 [MIT License][license] 提供。两张图、缓冲表、矩阵列和时序反例均为条件推导，不是运行时截图或测量。
+Piccolo 源码与资源节选版权：Copyright (c) 2022 Contributors to the Piccolo Engine，按 [MIT License][license] 提供。两张图、原缓冲表和时序反例为条件推导；2026-10-26 的运行段另列真实断点与状态，未提供本次改动的画面或 GPU 捕获。
 
 **追一次位置变化，要固定身份和值，并核对写入、读取、交接和消费发生的时机。**
 
@@ -344,3 +386,6 @@ Piccolo 源码与资源节选版权：Copyright (c) 2022 Contributors to the Pic
 [guid]: https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/engine/source/runtime/function/render/render_guid_allocator.h
 [render-scene]: https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/engine/source/runtime/function/render/render_scene.cpp
 [license]: https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/LICENSE
+
+[cdb-call]: https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/-call--call-function-
+[position-files]: https://github.com/TwoEggDu/twoegg-tech-stack/blob/main/examples/piccolo-debug-validation/POSITION-CHAIN.md

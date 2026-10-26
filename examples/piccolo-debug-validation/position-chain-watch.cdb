@@ -1,0 +1,16 @@
+$$ Observed IDs are GObjectID=2 and instance_id=5; verify before reuse.
+$$ Set $t0=TransformComponent pointer and $t1=MeshComponent pointer first.
+bp10 `PiccoloEditor!transform_component.cpp:40` ".if (@@c++(this) == @$t0) {bd 10; .echo POSITION_TRANSFORM_BEFORE_SWAP; dt this m_current_index m_next_index m_is_dirty; gc} .else {gc}"
+bp11 `PiccoloEditor!transform_component.cpp:42` ".if (@@c++(this) == @$t0) {bd 11; .echo POSITION_TRANSFORM_CURRENT; dt this m_current_index m_next_index m_is_dirty; dx this->m_transform_buffer[0].m_position.x; dx this->m_transform_buffer[1].m_position.x; kn 4; gc} .else {gc}"
+bp12 `PiccoloEditor!transform_component.cpp:52` ".if (@@c++(this) == @$t0) {bd 12; .echo POSITION_TRANSFORM_EDITOR_COPY; dx this->m_transform_buffer[0].m_position.x; dx this->m_transform_buffer[1].m_position.x; gc} .else {gc}"
+bp13 `PiccoloEditor!mesh_component.cpp:100` ".if (@@c++(this) == @$t1) {bd 13; .echo POSITION_MESH_DESCRIPTION; dx -r2 dirty_mesh_parts[0].m_transform_desc.m_transform_matrix.m_mat; dx -r2 this->m_raw_meshes[0].m_transform_desc.m_transform_matrix.m_mat; gc} .else {gc}"
+bu14 PiccoloEditor!Piccolo::RenderSwapData::addDirtyGameObject ".if (poi(@rdx) == 2) {bd 14; .echo POSITION_ADD_DIRTY_OBJECT; dt PiccoloEditor!Piccolo::GameObjectDesc @rdx m_go_id; dx ((Piccolo::GameObjectDesc*)@rdx)->m_object_parts[0].m_transform_desc.m_transform_matrix.m_mat[0][3]; kn 4; gc} .else {gc}"
+bp15 /1 `PiccoloEditor!engine.cpp:75` ".echo POSITION_LOGIC_QUEUE_READY; dt PiccoloEditor!Piccolo::TransformComponent @$t0 m_is_dirty; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context"
+bp16 /1 `PiccoloEditor!engine.cpp:77` ".echo POSITION_SWAP_COMPLETE; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context; gc"
+bp17 `PiccoloEditor!render_system.cpp:355` ".if (@@c++(part_id.m_go_id) == 2) {bd 17; .echo POSITION_RENDER_CACHED_EXISTING; dx part_id; dx is_entity_in_scene; dx is_mesh_loaded; dx is_material_loaded; dx render_entity.m_instance_id; dx render_entity.m_mesh_asset_id; dx render_entity.m_material_asset_id; dx -r2 render_entity.m_model_matrix.m_mat; gc} .else {gc}"
+bp18 `PiccoloEditor!render_system.cpp:366` ".if (@@c++(render_entity.m_instance_id) == 5) {bd 18; .echo POSITION_LIST_ENTITY_UPDATED; dx entity.m_instance_id; dx -r2 entity.m_model_matrix.m_mat; dx &entity.m_model_matrix; kn 4; gc} .else {gc}"
+bp19 /1 `PiccoloEditor!render_system.cpp:103` ".echo POSITION_RENDER_QUEUE_RESET; dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc; gc"
+bp20 `PiccoloEditor!render_scene.cpp:202` ".if (@@c++(entity->m_instance_id) == 5) {bd 20; .echo POSITION_VISIBILITY_TEST; dx entity.m_model_matrix.m_mat[0][3]; dx mesh_asset_bounding_box; gc} .else {gc}"
+bp21 `PiccoloEditor!render_scene.cpp:216` ".if (@@c++(temp_node->node_id) == 5) {bd 21; .echo POSITION_VISIBLE_NODE; dx temp_node.node_id; dx temp_node.model_matrix; dx &entity.m_model_matrix; dx temp_node.model_matrix->m_mat[0][3]; kn 4; gc} .else {gc}"
+bp22 /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo POSITION_CHANGED_FRAME_PRESENT; dv /t; .printf \"tid=%x\n\", @$tid; .echo POSITION_END_PAUSED"
+g

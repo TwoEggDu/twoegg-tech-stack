@@ -1,5 +1,7 @@
 # Piccolo Debug 与启动到首帧：2026-10-26 实测材料
 
+后续专项：[Wall_1 位置修改：Transform 到渲染表示](POSITION-CHAIN.md)，记录独立的 setter、缓冲、描述、实体和可见节点运行证据，不改变本页首帧实验的回执。
+
 输入为 BoomingTech/Piccolo `f5053707fed4d3f94d270a436fb0d3a8ae54e3e5` 加本目录的两处兼容补丁。配置和完整 `PiccoloEditor` Debug 目标均退出 0；CDB 加载对应 PDB，走到第一次 `vkQueuePresentKHR` 返回并正常关闭，进程退出码 0。详见 `verification-receipt.json`。
 
 ## 复现构建

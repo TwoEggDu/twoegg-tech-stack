@@ -62,7 +62,7 @@
 | 03 | 一帧怎样推进：调用顺序、状态交接与线程怎样核对 | 已写；首轮槽位 0/1→1/0、对象描述消费后 nullopt、主链同线程断点已实测；输入延迟、拒绝交换、Jolt 任务与 GPU 时间线仍待验证 | [正文](../content/engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md) |
 | 04 | 场景文件怎样成为世界中的对象与组件 | 已写：源码、资源、站点构建与生成页静态检查通过；浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-04-scene-to-objects-components.md) |
 | 05 | 资源、类型信息与序列化怎样共同恢复对象 | 已写：源码、模板、站点构建与生成页静态检查通过；01 已核对实际生成片段，浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-05-resource-type-serialization.md) |
-| 06 | 改一个位置，怎样沿逻辑数据追到渲染表示 | 已写：源码、资源数值、站点构建与生成页静态检查通过；浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-06-position-to-render-representation.md) |
+| 06 | 改一个位置，怎样沿逻辑数据追到渲染表示 | 已写；2026-10-26 受控真实setter运行通过：Wall_1 的缓冲、描述、槽位、已有实体与主相机节点逐值对应；缓存命中、清脏和消费reset已实测；编辑交互、较晚写入及GPU像素仍待验证 | [正文](../content/engine-toolchain/piccolo-engine-06-position-to-render-representation.md) |
 | 07 | 从渲染场景进入 Pass 与 Vulkan 提交 | 已写：源码、图形接口语义、站点构建与生成页静态检查通过；浏览器目视、引擎运行及图形捕获待验证 | [正文](../content/engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md) |
 | 08 | 编辑器怎样修改、保存并恢复场景状态 | 已写：源码、资源、模板、站点构建与生成页静态检查通过；实际保存/重载、浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-08-editor-save-reload.md) |
 
@@ -99,7 +99,7 @@
 | GFX-01 | 读懂渲染管线：从场景对象到一帧画面 | 已写：源码、API 语义与页面检查通过；引擎运行与图形捕获待验证 | [正文](../content/rendering/piccolo-rendering-01-scene-to-frame.md) |
 | GFX-02 | 从 GLSL 到 GPU：用 Piccolo 串起渲染引擎、API 与系统 | 已写：源码、两份 Shader 编译与嵌入字节、Hugo、链接和浏览器图形检查通过；引擎运行、GPU 与显示时序待验证 | [正文](../content/rendering/piccolo-rendering-02-shader-api-driver-gpu.md) |
 
-GFX-01 建立完整渲染链路的阅读模型，不替代主线 06 的具体对象变化案例与 07 的 Pass/Vulkan 深挖。06 追踪 Wall_1 的位置变化到渲染实体；07 继续沿可见输入、实例批次和缓冲绑定追到命令记录、队列提交与呈现请求。两篇均提供源码条件推导，运行与图形捕获待开展。
+GFX-01 建立完整渲染链路的阅读模型，不替代主线 06 的具体对象变化案例与 07 的 Pass/Vulkan 深挖。06 追踪 Wall_1 的位置变化到渲染实体；07 继续沿可见输入、实例批次和缓冲绑定追到命令记录、队列提交与呈现请求。06 的受控位置主路径已取得真实断点，止于渲染表示和可见节点；07 的逐Pass/Draw与本次变化的图形捕获仍待开展。
 
 GFX-02 作为渲染补充，解释程序、数据和命令的交接：从 GLSL 编译到 SPIR-V 与 C++ 嵌入头，核对 pipeline、资源绑定和矩阵布局，再用官方资料解释 Loader、驱动、OS 与 GPU 的边界。只保留语言与 API 非一一对应的必要说明，完整 HLSL 对照按需另行安排；实际编译验证不等于完整引擎运行或硬件性能验证。
 
@@ -158,3 +158,10 @@ A12回读现有固定revision回执及原始Debug错误，四份代表生成文�
 - RenderDoc 1.43 另启同一 exe，取得后续第 17931 帧的原始缩略图。图像不冒充首次 present 截图；未做捕获重放或逐 Pass/同步正确性验收。
 - 保留 LNK4098、MSB8029 和 Lua C4715 等警告；输入/角色、相机、动画/粒子、脚本、编辑器操作/保存与 GPU 分项仍待验证。首轮成功不能覆盖这些矩阵。
 - 复现补丁、CDB 命令、归一化日志和产物/capture 指纹见 [examples/piccolo-debug-validation](../examples/piccolo-debug-validation/README.md)；执行边界和站点回归见 [Debug 首帧实测记录](piccolo-debug-first-frame-validation-outline.md)。原 2026-10-25/A12 阻塞结论是历史记录，不删除或改写成当时已通过。
+
+## 位置链运行验证（2026-10-26）
+
+- 复用01已保存指纹的Debug产物，不改引擎、不重建、不保存场景。用CDB在下一轮logicalTick之前调用真实setPosition，Wall_1的x从约1.94597变为2.94597；这不是鼠标拖轴或属性面板验收。
+- 实测GObjectID=2、part=0、实例ID=5；Transform current/next从1/0变为0/1，编辑器复制后两份均新值。Mesh矩阵、逻辑槽1的一条描述、消费临时实体和列表实体一致；交换角色1/0→0/1，清脏与消费reset分开核对。
+- 已有实体/网格/材质标志全true，资源ID5/2稳定；主相机node_id=5的矩阵指针等于实体矩阵地址，列表中有一条匹配节点。同轮present处frame_count=2，submit/present均成功。没有测GPU实际取值或像素，也未覆盖较晚setter、多写入者、刚体姿态和保存重载。
+- 回填06、原执行提纲和两个阅读入口；原缓冲示意与时序反例仍标条件推导。原始日志的归一化副本、独立回执及最终有效断点定义见[位置链材料](../examples/piccolo-debug-validation/POSITION-CHAIN.md)，不改此前首帧回执。后续优先沿同一实例进07核对Pass/Draw/矩阵缓冲；UI入口按08/18另验。

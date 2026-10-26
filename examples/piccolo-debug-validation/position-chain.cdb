@@ -1,0 +1,5 @@
+.symopt+0x10
+.reload /f PiccoloEditor.exe
+lmvm PiccoloEditor
+bp /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo POSITION_BASELINE_FIRST_PRESENT; dv /t; .echo POSITION_BASELINE_PAUSED"
+g

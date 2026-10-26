@@ -1,0 +1,208 @@
+{
+  "experiment_id": "piccolo-position-chain-20261026",
+  "date": "2026-10-26",
+  "source_revision": "f5053707fed4d3f94d270a436fb0d3a8ae54e3e5",
+  "build_baseline_id": "piccolo-debug-msvc1951-20261026",
+  "artifacts": {
+    "PiccoloEditor.exe": {
+      "bytes": 16653824,
+      "sha256": "18f308810512da53194f3961a8f506a6a5ceeaabf012c53d789dce702a0f3b6a"
+    },
+    "PiccoloEditor.pdb": {
+      "bytes": 62517248,
+      "sha256": "292a6d2751cc17039cb3da02c5c092c3efd239b4a92f8321a76d5c56fe31eda2"
+    },
+    "PiccoloEditor.ini": {
+      "bytes": 376,
+      "sha256": "c02bdc20126d543d36a610439cb716081a6d5512bcf89054b1124e0d2448eb81"
+    }
+  },
+  "toolchain": {
+    "cmake": "4.3.1",
+    "generator": "Visual Studio 18 2026",
+    "architecture": "x64",
+    "compiler": "MSVC 19.51.36260",
+    "toolset": "14.51.36231",
+    "windows_sdk": "10.0.26100.0",
+    "cdb": "10.0.19041.685 AMD64"
+  },
+  "working_directory": "<lab>/source/bin",
+  "entry": "one CDB .call to real TransformComponent::setPosition before next logicalTick; not editor gesture",
+  "scene": "asset/level/1-1.level.json",
+  "object_name": "Wall_1",
+  "gobject_id": 2,
+  "part_index": 0,
+  "instance_id": 5,
+  "mesh_asset_id_before_after": [
+    5,
+    5
+  ],
+  "material_asset_id_before_after": [
+    2,
+    2
+  ],
+  "frame_count_at_changed_present": 2,
+  "main_thread_hex": "1afc4",
+  "position_before": [
+    1.94597,
+    -0.38554,
+    0.0
+  ],
+  "position_after": [
+    2.94597,
+    -0.38554,
+    0.0
+  ],
+  "numeric_precision": "matrix and component decimals from CDB dx output; comparison tolerance 1e-5",
+  "transform": {
+    "indices_before": [
+      1,
+      0
+    ],
+    "indices_after_tick": [
+      0,
+      1
+    ],
+    "setter_return_buffer_x": [
+      2.94597,
+      1.94597
+    ],
+    "setter_return_serialized_x": 2.94597,
+    "setter_return_dirty": true,
+    "after_editor_copy_buffer_x": [
+      2.94597,
+      2.94597
+    ],
+    "dirty_after_mesh": false,
+    "scale_dirty_before_after": [
+      false,
+      false
+    ]
+  },
+  "handoff": {
+    "indices_before": [
+      1,
+      0
+    ],
+    "indices_after": [
+      0,
+      1
+    ],
+    "logic_queue_slot": 1,
+    "object_desc_count": 1,
+    "object_desc_go_id": 2,
+    "parts_in_desc": 1,
+    "old_render_slot_all_seven_nullopt": true,
+    "after_consume_object_optional": "nullopt"
+  },
+  "render": {
+    "is_entity_in_scene": true,
+    "is_mesh_loaded": true,
+    "is_material_loaded": true,
+    "model_matrix_before_rows": [
+      [
+        -0.001631,
+        0.999992,
+        0.0,
+        1.94597
+      ],
+      [
+        -0.999992,
+        -0.001631,
+        -0.0,
+        -0.38554
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "model_matrix_after_rows": [
+      [
+        -0.001631,
+        0.999992,
+        0.0,
+        2.94597
+      ],
+      [
+        -0.999992,
+        -0.001631,
+        -0.0,
+        -0.38554
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "raw_part_matrix_restored_identity": true,
+    "mesh_queue_temp_entity_list_matrices_match": true,
+    "only_matrix_x_translation_changed": true,
+    "visible_node_count_for_instance": 1,
+    "visible_node_matrix_ptr": "0x1af5d3f3c04",
+    "entity_matrix_ptr": "0x1af5d3f3c04",
+    "visible_node_borrows_entity_matrix": true
+  },
+  "changed_frame": {
+    "queue_submit_result": 0,
+    "present_result": 0
+  },
+  "stop": "debugger q after changed-frame present; no normal-window-exit or performance validation in this experiment",
+  "scene_not_saved": true,
+  "deployed_level_sha256": "51a7d1cc2ed20fb68758c7b5663d354fae1a29acd6c7e65443918a9442c0169c",
+  "deployed_level_matches_source": true,
+  "original_reading_clone_clean": true,
+  "debugger_note": "one C++ breakpoint condition using dot failed because PDB represented const reference as pointer; corrected to arrow, same run continued; synthetic .call stack is not native editor call stack",
+  "not_validated": [
+    "mouse drag and property-panel input",
+    "late setter or multiple-writer branches",
+    "rigid-body pose assertions",
+    "GPU buffer/draw/pixel changes",
+    "scene save/reload",
+    "all future frames or concurrent logic/render scheduling"
+  ],
+  "evidence_files": {
+    "debug-position-chain.log": {
+      "bytes": 69568,
+      "sha256": "417e8540f2652000e61d720e9d23887220403895683cd4e4d656c5da572a38de"
+    },
+    "position-chain.cdb": {
+      "bytes": 184,
+      "sha256": "5a816b0ce5b7b3d78a48eb66acb1794d1be5f2b61b835bbcec6e882094cee5ac"
+    },
+    "position-chain-watch.cdb": {
+      "bytes": 3217,
+      "sha256": "7bdb31ac9c6a7e76c68a2f2f14aad5509bf0cd82a1621ebd1aaaa582cc8d774f"
+    }
+  },
+  "site_validation": {
+    "hugo": "0.157.0 extended",
+    "build_exit": 0,
+    "generated_pages": 1425,
+    "static_files": 55,
+    "checked_pages": 29,
+    "local_links_assets": 1863,
+    "anchor_refs": 857,
+    "series_articles": 27,
+    "series_order": "0..26 unique",
+    "home_coverage": 27,
+    "errors": [],
+    "evidence_hashes_match": true
+  }
+}

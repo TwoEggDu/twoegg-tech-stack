@@ -1,0 +1,849 @@
+Opened log file '<lab>/debug-position-chain.log'
+
+Microsoft (R) Windows Debugger Version 10.0.19041.685 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: <lab>/source/bin/PiccoloEditor.exe
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <lab>/source/bin
+Symbol search path is: <lab>/source/bin
+Executable search path is: 
+ModLoad: 00007ff6`66ff0000 00007ff6`68013000   PiccoloEditor.exe
+ModLoad: 00007ffc`14290000 00007ffc`14488000   ntdll.dll
+ModLoad: 00007ffc`13fd0000 00007ffc`14092000   C:\Windows\System32\KERNEL32.DLL
+ModLoad: 00007ffc`11db0000 00007ffc`120a6000   C:\Windows\System32\KERNELBASE.dll
+ModLoad: 00007ffc`0c200000 00007ffc`0c294000   C:\Windows\SYSTEM32\apphelp.dll
+ModLoad: 00007ffc`13490000 00007ffc`13631000   C:\Windows\System32\USER32.dll
+ModLoad: 00007ffc`11a10000 00007ffc`11a32000   C:\Windows\System32\win32u.dll
+ModLoad: 00007ffc`13390000 00007ffc`133bb000   C:\Windows\System32\GDI32.dll
+ModLoad: 00007ffb`50780000 00007ffb`508e4000   C:\Windows\SYSTEM32\vulkan-1.dll
+ModLoad: 00007ffc`120b0000 00007ffc`121c9000   C:\Windows\System32\gdi32full.dll
+ModLoad: 00007ffc`11970000 00007ffc`11a0d000   C:\Windows\System32\msvcp_win.dll
+ModLoad: 00007ffc`11ba0000 00007ffc`11ca0000   C:\Windows\System32\ucrtbase.dll
+ModLoad: 00007ffc`11920000 00007ffc`1196e000   C:\Windows\System32\CFGMGR32.dll
+ModLoad: 00007ffc`12610000 00007ffc`12d80000   C:\Windows\System32\SHELL32.dll
+ModLoad: 00007ffc`12e60000 00007ffc`12f11000   C:\Windows\System32\ADVAPI32.dll
+ModLoad: 000001af`6a0a0000 000001af`6a151000   C:\Windows\System32\ADVAPI32.dll
+ModLoad: 00007ffc`133f0000 00007ffc`1348e000   C:\Windows\System32\msvcrt.dll
+ModLoad: 00007ffc`138f0000 00007ffc`1391f000   C:\Windows\System32\IMM32.dll
+ModLoad: 00007ffc`13850000 00007ffc`138ef000   C:\Windows\System32\sechost.dll
+ModLoad: 00007ffc`13920000 00007ffc`13a40000   C:\Windows\System32\RPCRT4.dll
+ModLoad: 00007ffb`72c80000 00007ffb`72d5a000   C:\Windows\SYSTEM32\MSVCP140D.dll
+ModLoad: 00007ffc`00a20000 00007ffc`00a91000   C:\Windows\SYSTEM32\MSVCP140_2D.dll
+ModLoad: 00007ffc`121d0000 00007ffc`121f7000   C:\Windows\System32\bcrypt.dll
+ModLoad: 00007ffc`0f050000 00007ffc`0f080000   C:\Windows\SYSTEM32\VCRUNTIME140D.dll
+ModLoad: 00007ffc`0f5a0000 00007ffc`0f5af000   C:\Windows\SYSTEM32\VCRUNTIME140_1D.dll
+ModLoad: 00007ffb`49020000 00007ffb`49224000   C:\Windows\SYSTEM32\ucrtbased.dll
+(2c954.1afc4): Break instruction exception - code 80000003 (first chance)
+ntdll!LdrInitShimEngineDynamic+0x360:
+00007ffc`14360860 cc              int     3
+0:000> .symopt+0x10
+Symbol options are 0xB0337:
+  0x00000001 - SYMOPT_CASE_INSENSITIVE
+  0x00000002 - SYMOPT_UNDNAME
+  0x00000004 - SYMOPT_DEFERRED_LOADS
+  0x00000010 - SYMOPT_LOAD_LINES
+  0x00000020 - SYMOPT_OMAP_FIND_NEAREST
+  0x00000100 - SYMOPT_NO_UNQUALIFIED_LOADS
+  0x00000200 - SYMOPT_FAIL_CRITICAL_ERRORS
+  0x00010000 - SYMOPT_AUTO_PUBLICS
+  0x00020000 - SYMOPT_NO_IMAGE_SEARCH
+  0x00080000 - SYMOPT_NO_PROMPTS
+0:000> .reload /f PiccoloEditor.exe
+*** WARNING: Unable to verify checksum for PiccoloEditor.exe
+0:000> lmvm PiccoloEditor
+start             end                 module name
+00007ff6`66ff0000 00007ff6`68013000   PiccoloEditor C (private pdb symbols)  <lab>/source/bin\PiccoloEditor.pdb
+    Loaded symbol image file: <lab>\source\bin\PiccoloEditor.exe
+    Image path: PiccoloEditor.exe
+    Image name: PiccoloEditor.exe
+    Timestamp:        Mon Oct 26 10:17:35 2026 (6ADEB83F)
+    CheckSum:         00000000
+    ImageSize:        01023000
+    Translations:     0000.04b0 0000.04e4 0409.04b0 0409.04e4
+    Information from resource tables:
+0:000> bp /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo POSITION_BASELINE_FIRST_PRESENT; dv /t; .echo POSITION_BASELINE_PAUSED"
+0:000> g
+ModLoad: 00007ffc`10160000 00007ffc`10256000   C:\Windows\system32\dxgi.dll
+ModLoad: 00007ffc`10110000 00007ffc`10122000   C:\Windows\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ffc`0ee50000 00007ffc`0eeee000   C:\Windows\system32\uxtheme.dll
+ModLoad: 00007ffc`122b0000 00007ffc`12604000   C:\Windows\System32\combase.dll
+ModLoad: 00007ffb`f0720000 00007ffb`f0765000   C:\Windows\SYSTEM32\dinput8.dll
+ModLoad: 00007ffb`7e480000 00007ffb`7e491000   C:\Windows\SYSTEM32\xinput1_4.dll
+ModLoad: 00007ffc`116b0000 00007ffc`116e3000   C:\Windows\SYSTEM32\DEVOBJ.dll
+ModLoad: 00007ffc`0f160000 00007ffc`0f18e000   C:\Windows\SYSTEM32\dwmapi.dll
+ModLoad: 00007ffb`eb370000 00007ffb`eb4c2000   C:\Windows\SYSTEM32\inputhost.dll
+ModLoad: 00007ffc`13a40000 00007ffc`13aed000   C:\Windows\System32\shcore.dll
+ModLoad: 00007ffc`0d750000 00007ffc`0d842000   C:\Windows\SYSTEM32\CoreMessaging.dll
+ModLoad: 00007ffc`12d80000 00007ffc`12e4d000   C:\Windows\System32\OLEAUT32.dll
+ModLoad: 00007ffc`13640000 00007ffc`136ab000   C:\Windows\System32\WS2_32.dll
+ModLoad: 00007ffc`0f2b0000 00007ffc`0f3a4000   C:\Windows\SYSTEM32\PROPSYS.dll
+ModLoad: 00007ffc`0e3f0000 00007ffc`0e547000   C:\Windows\SYSTEM32\wintypes.dll
+ModLoad: 00007ffc`0ba50000 00007ffc`0bdab000   C:\Windows\SYSTEM32\CoreUIComponents.dll
+ModLoad: 00007ffc`11ca0000 00007ffc`11d22000   C:\Windows\System32\bcryptPrimitives.dll
+ModLoad: 00007ffc`10b70000 00007ffc`10ba3000   C:\Windows\SYSTEM32\ntmarta.dll
+ModLoad: 00007ffc`13be0000 00007ffc`13cf5000   C:\Windows\System32\MSCTF.dll
+ModLoad: 00007ffc`10100000 00007ffc`1010d000   C:\Windows\SYSTEM32\HID.DLL
+ModLoad: 00007ffc`12f20000 00007ffc`13390000   C:\Windows\System32\SETUPAPI.DLL
+ModLoad: 00007ffc`07020000 00007ffc`07047000   C:\Windows\SYSTEM32\WINMM.DLL
+ModLoad: 00007ffc`11d30000 00007ffc`11da3000   C:\Windows\System32\WINTRUST.dll
+ModLoad: 00007ffc`11a40000 00007ffc`11b9d000   C:\Windows\System32\CRYPT32.dll
+ModLoad: 00007ffc`114e0000 00007ffc`114f2000   C:\Windows\SYSTEM32\MSASN1.dll
+ModLoad: 00007ffb`eb270000 00007ffb`eb369000   C:\Windows\SYSTEM32\textinputframework.dll
+ModLoad: 00007ffc`13710000 00007ffc`1383b000   C:\Windows\System32\ole32.dll
+ModLoad: 00007ffc`13f20000 00007ffc`13fc9000   C:\Windows\System32\clbcatq.dll
+ModLoad: 00007ffb`99a60000 00007ffb`99fa1000   C:\Windows\system32\SogouTSF.ime
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`0f850000 00007ffc`0f85a000   C:\Windows\system32\VERSION.dll
+ModLoad: 00007ffb`ffc10000 00007ffb`ffc17000   C:\Windows\system32\MSIMG32.dll
+ModLoad: 00007ffc`111e0000 00007ffc`111ec000   C:\Windows\system32\CRYPTBASE.DLL
+ModLoad: 00007ffc`0f950000 00007ffc`100f5000   C:\Windows\SYSTEM32\windows.storage.dll
+ModLoad: 00007ffc`11270000 00007ffc`1129b000   C:\Windows\SYSTEM32\Wldp.dll
+ModLoad: 00007ffc`136b0000 00007ffc`1370b000   C:\Windows\System32\shlwapi.dll
+ModLoad: 00007ffb`97d80000 00007ffb`9993e000   C:\Windows\system32\SogouPY.ime
+ModLoad: 00007ffc`133c0000 00007ffc`133dd000   C:\Windows\System32\imagehlp.dll
+ModLoad: 00007ffb`ff820000 00007ffb`ff886000   C:\Windows\SYSTEM32\OLEACC.dll
+ModLoad: 00007ffc`0a220000 00007ffc`0a32a000   C:\Windows\SYSTEM32\WINHTTP.dll
+ModLoad: 00007ffc`117d0000 00007ffc`117fe000   C:\Windows\SYSTEM32\USERENV.dll
+ModLoad: 00007ffc`11850000 00007ffc`11874000   C:\Windows\SYSTEM32\profapi.dll
+ModLoad: 00007ffb`9d9d0000 00007ffb`9da76000   C:\Program Files (x86)\SogouInput\Components\isgpet\1.0.2.3152\isgpet_bundle64.dll
+ModLoad: 00007ffc`09550000 00007ffc`09751000   C:\Windows\SYSTEM32\dbghelp.dll
+ModLoad: 00000000`10000000 00000000`104a2000   C:\Program Files (x86)\SogouInput\16.8.0.5415\Resource.dll
+ModLoad: 00007ffb`9b980000 00007ffb`9be33000   C:\Program Files (x86)\SogouInput\Components\PicFace\1.1.0.3184\PicFace64.dll
+ModLoad: 00007ffc`13de0000 00007ffc`13eba000   C:\Windows\System32\COMDLG32.dll
+ModLoad: 00007ffb`f70c0000 00007ffb`f7170000   C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.6280_none_792d7c952443c49a\COMCTL32.dll
+ModLoad: 00007ffc`0d180000 00007ffc`0d740000   C:\Windows\SYSTEM32\d2d1.dll
+ModLoad: 00007ffb`f9f60000 00007ffb`fa1df000   C:\Windows\SYSTEM32\dwrite.dll
+ModLoad: 00007ffb`e5050000 00007ffb`e50fc000   C:\Windows\SYSTEM32\TextShaping.dll
+ModLoad: 00007ffb`9d8b0000 00007ffb`9d930000   C:\Program Files (x86)\SogouInput\Components\systembeautify\1.0.2.2868\systembeautify_bundle64.dll
+ModLoad: 00007ffb`9b6b0000 00007ffb`9b97d000   C:\Program Files (x86)\SogouInput\Components\IChat\1.0.2.3359\ichat_bundle64.dll
+ModLoad: 00007ffb`f8920000 00007ffb`f8931000   C:\Windows\SYSTEM32\windows.staterepositorycore.dll
+ModLoad: 00007ffc`0f020000 00007ffc`0f034000   C:\Windows\SYSTEM32\resourcepolicyclient.dll
+ModLoad: 00007ffa`d3800000 00007ffa`d5de8000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvoglv64.dll
+ModLoad: 00007ffc`0c090000 00007ffc`0c0a4000   C:\Windows\SYSTEM32\WTSAPI32.dll
+ModLoad: 00007ffc`0aa40000 00007ffc`0aa71000   C:\Windows\SYSTEM32\cryptnet.dll
+ModLoad: 00007ffc`0a870000 00007ffc`0a9b7000   C:\Windows\SYSTEM32\drvstore.dll
+ModLoad: 00007ffc`112b0000 00007ffc`112c8000   C:\Windows\SYSTEM32\CRYPTSP.dll
+ModLoad: 00007ffc`10920000 00007ffc`10958000   C:\Windows\system32\rsaenh.dll
+ModLoad: 00007ffb`fb070000 00007ffb`fd05e000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvgpucomp64.dll
+ModLoad: 00007ffb`176f0000 00007ffb`18c88000   D:\VulkanSDK\1.3.261.1\Bin\VkLayer_khronos_validation.dll
+ModLoad: 00007ffb`ff4a0000 00007ffb`ff4ac000   C:\Windows\SYSTEM32\VCRUNTIME140_1.dll
+ModLoad: 00007ffb`ff650000 00007ffb`ff67c000   C:\Windows\SYSTEM32\VCRUNTIME140.dll
+ModLoad: 000001af`744d0000 000001af`744fc000   C:\Windows\SYSTEM32\VCRUNTIME140.dll
+ModLoad: 00007ffb`ff710000 00007ffb`ff7ad000   C:\Windows\SYSTEM32\MSVCP140.dll
+ModLoad: 00007ffc`0b0a0000 00007ffc`0b0db000   C:\Windows\SYSTEM32\dxcore.dll
+ModLoad: 00007ffb`79140000 00007ffb`792a4000   C:\Windows\system32\nvspcap64.dll
+ModLoad: 00007ffc`06010000 00007ffc`06703000   C:\Windows\SYSTEM32\nvapi64.dll
+ModLoad: 00007ffb`48f70000 00007ffb`49018000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\NvCamera\NvCameraAllowlisting64.dll
+ModLoad: 00007ffb`9fe20000 00007ffb`9ff48000   C:\Windows\SYSTEM32\opengl32.dll
+ModLoad: 00007ffb`9ca70000 00007ffb`9ca9c000   C:\Windows\SYSTEM32\GLU32.dll
+ModLoad: 00007ffc`0ac50000 00007ffc`0ad56000   C:\Windows\System32\AppXDeploymentClient.dll
+ModLoad: 00007ffb`e3d80000 00007ffb`e3ed5000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvppex.dll
+ModLoad: 00007ffc`10e70000 00007ffc`10ebb000   C:\Windows\SYSTEM32\powrprof.dll
+ModLoad: 00007ffc`10ce0000 00007ffc`10cf2000   C:\Windows\SYSTEM32\UMPDC.dll
+ModLoad: 00007ffc`10590000 00007ffc`105f3000   C:\Windows\SYSTEM32\WINSTA.dll
+ModLoad: 00007ffc`07c10000 00007ffc`07cbe000   C:\Windows\SYSTEM32\mscms.dll
+ModLoad: 00007ffc`07bd0000 00007ffc`07be1000   C:\Windows\SYSTEM32\ColorAdapterClient.dll
+ModLoad: 00007ffc`05eb0000 00007ffc`05ef5000   C:\Windows\SYSTEM32\icm32.dll
+POSITION_BASELINE_FIRST_PRESENT
+class Piccolo::VulkanRHI * this = 0x000001af`72003290
+class std::function<void __cdecl(void)> * passUpdateAfterRecreateSwapchain = 0x0000002c`3d52f640 bind(0x7ff666ffbc58, {...})
+unsigned int [1] wait_stages = unsigned int [1]
+struct VkPresentInfoKHR present_info = struct VkPresentInfoKHR
+VkResult res_reset_fences = VK_SUCCESS (0n0)
+VkResult present_result = VK_SUCCESS (0n0)
+VkResult res_end_command_buffer = VK_SUCCESS (0n0)
+struct VkSemaphore_T *[2] semaphores = struct VkSemaphore_T *[2]
+struct VkSubmitInfo submit_info = struct VkSubmitInfo
+VkResult res_queue_submit = VK_SUCCESS (0n0)
+POSITION_BASELINE_PAUSED
+PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe:
+00007ff6`6741ae5e 81bc2424030000143265c4 cmp dword ptr [rsp+324h],0C4653214h ss:0000002c`3d52f324=00000000
+0:000> .echo POSITION_OBJECT_LOOKUP
+POSITION_OBJECT_LOOKUP
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects : { size=0x1f } [Type: std::unordered_map<unsigned __int64,std::shared_ptr<Piccolo::GObject>,std::hash<unsigned __int64>,std::equal_to<unsigned __int64>,std::allocator<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> > > >]
+    [<Raw View>]     [Type: std::unordered_map<unsigned __int64,std::shared_ptr<Piccolo::GObject>,std::hash<unsigned __int64>,std::equal_to<unsigned __int64>,std::allocator<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> > > >]
+    [bucket_count]   : 0x40 [Type: unsigned __int64]
+    [load_factor]    : 0.484375
+    [max_load_factor] : 1.000000 [Type: float]
+    [hash_function]  : hash [Type: std::_Compressed_pair<std::hash<unsigned __int64>,std::_Compressed_pair<std::equal_to<unsigned __int64>,float,1>,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::hash<unsigned __int64>,std::_Compressed_pair<std::equal_to<unsigned __int64>,float,1>,1>]
+    [key_eq]         : equal_to [Type: std::_Compressed_pair<std::equal_to<unsigned __int64>,float,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::equal_to<unsigned __int64>,float,1>]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<std::_List_node<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >,void *> >,std::_List_val<std::_List_simple_types<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> > > >,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::allocator<std::_List_node<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >,void *> >,std::_List_val<std::_List_simple_types<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> > > >,1>]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<std::_List_node<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >,void *> >,std::_List_val<std::_List_simple_types<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> > > >,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::allocator<std::_List_node<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >,void *> >,std::_List_val<std::_List_simple_types<std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> > > >,1>]
+    [0x0]            : 0x0, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x0 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x1]            : 0x1, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x1 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x2]            : 0x2, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x2 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x3]            : 0x3, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x3 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x4]            : 0x4, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x4 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x5]            : 0x5, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x5 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x6]            : 0x6, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x6 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x7]            : 0x7, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x7 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x8]            : 0x8, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x8 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x9]            : 0x9, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x9 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0xa]            : 0xa, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0xa [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0xb]            : 0xb, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0xb [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0xc]            : 0xc, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0xc [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0xd]            : 0xd, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0xd [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0xe]            : 0xe, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0xe [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0xf]            : 0xf, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0xf [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x10]           : 0x10, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x10 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x11]           : 0x11, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x11 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x12]           : 0x12, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x12 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x13]           : 0x13, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x13 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x14]           : 0x14, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x14 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x15]           : 0x15, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x15 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x16]           : 0x16, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x16 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x17]           : 0x17, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x17 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x18]           : 0x18, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x18 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x19]           : 0x19, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x19 [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x1a]           : 0x1a, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x1a [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x1b]           : 0x1b, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x1b [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x1c]           : 0x1c, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x1c [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x1d]           : 0x1d, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x1d [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+    [0x1e]           : 0x1e, {...} [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        [<Raw View>]     [Type: std::pair<unsigned __int64 const ,std::shared_ptr<Piccolo::GObject> >]
+        first            : 0x1e [Type: unsigned __int64]
+        second           : {...} [Type: std::shared_ptr<Piccolo::GObject>]
+0:000> dx Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_name
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_name : "Wall_1" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+    [<Raw View>]     [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+    [size]           : 0x6 [Type: unsigned __int64]
+    [capacity]       : 0xf [Type: unsigned __int64]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<char>,std::_String_val<std::_Simple_types<char> >,1>]
+    [0]              : 87 'W' [Type: char]
+    [1]              : 97 'a' [Type: char]
+    [2]              : 108 'l' [Type: char]
+    [3]              : 108 'l' [Type: char]
+    [4]              : 95 '_' [Type: char]
+    [5]              : 49 '1' [Type: char]
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_components
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_components : { size=3 } [Type: std::vector<Piccolo::Reflection::ReflectionPtr<Piccolo::Component>,std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >]
+    [<Raw View>]     [Type: std::vector<Piccolo::Reflection::ReflectionPtr<Piccolo::Component>,std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >]
+    [capacity]       : 3
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> >,std::_Vector_val<std::_Simple_types<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> >,std::_Vector_val<std::_Simple_types<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >,1>]
+    [0]              [Type: Piccolo::Reflection::ReflectionPtr<Piccolo::Component>]
+        [+0x000] m_type_name      : "TransformComponent" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+        [+0x028] m_instance       : 0x1af7c561070 [Type: Piccolo::Component *]
+    [1]              [Type: Piccolo::Reflection::ReflectionPtr<Piccolo::Component>]
+        [+0x000] m_type_name      : "MeshComponent" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+        [+0x028] m_instance       : 0x1af7c656dd0 [Type: Piccolo::Component *]
+    [2]              [Type: Piccolo::Reflection::ReflectionPtr<Piccolo::Component>]
+        [+0x000] m_type_name      : "RigidBodyComponent" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+        [+0x028] m_instance       : 0x1af7c657750 [Type: Piccolo::Component *]
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_mesh_object_id_map.Where(e => e.second == 2)
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_mesh_object_id_map.Where(e => e.second == 2)
+    [0x0]            : 0x5, 0x2 [Type: std::pair<unsigned int const ,unsigned __int64>]
+        [<Raw View>]     [Type: std::pair<unsigned int const ,unsigned __int64>]
+        first            : 0x5 [Type: unsigned int]
+        second           : 0x2 [Type: unsigned __int64]
+0:000> r @$t0 = 0x1af7c561070
+0:000> r @$t1 = 0x1af7c656dd0
+0:000> dt PiccoloEditor!Piccolo::TransformComponent @$t0 m_current_index m_next_index m_is_dirty m_is_scale_dirty
+   +0x018 m_is_dirty       : 0
+   +0x019 m_is_scale_dirty : 0
+   +0x098 m_current_index  : 1
+   +0x0a0 m_next_index     : 0
+0:000> dx ((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[0].m_position
+((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[0].m_position [Type: Piccolo::Vector3]
+    [+0x000] x                : 1.945970 [Type: float]
+    [+0x004] y                : -0.385540 [Type: float]
+    [+0x008] z                : 0.000000 [Type: float]
+    [=0x7ff667ee0c10] ZERO             [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bf0] UNIT_X           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bd0] UNIT_Y           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bb0] UNIT_Z           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bc0] NEGATIVE_UNIT_X  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0ba0] NEGATIVE_UNIT_Y  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0be0] NEGATIVE_UNIT_Z  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0c00] UNIT_SCALE       [Type: Piccolo::Vector3]
+0:000> dx ((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[1].m_position
+((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[1].m_position [Type: Piccolo::Vector3]
+    [+0x000] x                : 1.945970 [Type: float]
+    [+0x004] y                : -0.385540 [Type: float]
+    [+0x008] z                : 0.000000 [Type: float]
+    [=0x7ff667ee0c10] ZERO             [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bf0] UNIT_X           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bd0] UNIT_Y           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bb0] UNIT_Z           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bc0] NEGATIVE_UNIT_X  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0ba0] NEGATIVE_UNIT_Y  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0be0] NEGATIVE_UNIT_Z  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0c00] UNIT_SCALE       [Type: Piccolo::Vector3]
+0:000> dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities.Where(e => e.m_instance_id == 5)
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities.Where(e => e.m_instance_id == 5)
+    [1]              [Type: Piccolo::RenderEntity]
+0:000> bp /1 `PiccoloEditor!engine.cpp:70` ".echo POSITION_BEFORE_NEXT_LOGICAL_TICK; kn; .printf \"tid=%x\n\", @$tid"
+0:000> g
+POSITION_BEFORE_NEXT_LOGICAL_TICK
+ # Child-SP          RetAddr           Call Site
+00 0000002c`3d52fa30 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x25 [<lab>\source\engine\source\runtime\engine.cpp @ 70]
+01 0000002c`3d52fb40 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+02 0000002c`3d52fb80 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+03 0000002c`3d52fd10 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+04 0000002c`3d52fd60 00007ff6`67b2cebe PiccoloEditor!__scrt_common_main_seh+0x132 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+05 0000002c`3d52fdd0 00007ff6`67b2d1ae PiccoloEditor!__scrt_common_main+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 331]
+06 0000002c`3d52fe00 00007ffc`13fe7374 PiccoloEditor!mainCRTStartup+0xe [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp @ 17]
+07 0000002c`3d52fe30 00007ffc`142dcc91 KERNEL32!BaseThreadInitThunk+0x14
+08 0000002c`3d52fe60 00000000`00000000 ntdll!RtlUserThreadStart+0x21
+tid=1afc4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x25:
+00007ff6`67239035 f30f108c2418010000 movss xmm1,dword ptr [rsp+118h] ss:0000002c`3d52fb48=42c640f3
+0:000> .echo POSITION_BASELINE_ENTITY
+POSITION_BASELINE_ENTITY
+0:000> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_instance_id
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_instance_id : 0x5 [Type: unsigned int]
+0:000> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_mesh_asset_id
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_mesh_asset_id : 0x5 [Type: unsigned __int64]
+0:000> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_material_asset_id
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_material_asset_id : 0x2 [Type: unsigned __int64]
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_model_matrix.m_mat
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_model_matrix.m_mat [Type: float [4][4]]
+    [0]              [Type: float [4]]
+        [0]              : -0.001631 [Type: float]
+        [1]              : 0.999992 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.945970 [Type: float]
+    [1]              [Type: float [4]]
+        [0]              : -0.999992 [Type: float]
+        [1]              : -0.001631 [Type: float]
+        [2]              : -0.000000 [Type: float]
+        [3]              : -0.385540 [Type: float]
+    [2]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 1.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [3]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.000000 [Type: float]
+0:000> .dvalloc 0x1000
+Allocated 1000 bytes starting at 000001af`53880000
+0:000> r @$t9 = 0x1af53880000
+0:000> ef @$t9 2.94597 -0.38554 0.0
+0:000> df @$t9 L3
+000001af`53880000         2.9459701      -0.38554001                0
+0:000> bp /1 `PiccoloEditor!transform_component.cpp:21` ".echo POSITION_SETTER_WRITTEN; kn; dt PiccoloEditor!Piccolo::TransformComponent @$t0 m_current_index m_next_index m_is_dirty m_is_scale_dirty; dx ((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[0].m_position.x; dx ((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[1].m_position.x; dx ((Piccolo::TransformComponent*)@$t0)->m_transform.m_position.x; g"
+0:000> .call /v PiccoloEditor!Piccolo::TransformComponent::setPosition(@$t0, @$t9)
+Call to function: PiccoloEditor!Piccolo::TransformComponent::setPosition (00007ff6`672b06b0) [<lab>\source\engine\source\runtime\function\framework\component\transform\transform_component.cpp @ 17]
+Checking value for arg 0: class Piccolo::TransformComponent * this
+Checking value for arg 1: class Piccolo::Vector3 * new_translation
+Thread is set up for call, 'g' will execute.
+WARNING: This can have serious side-effects,
+including deadlocks and corruption of the debuggee.
+0:000> g
+POSITION_SETTER_WRITTEN
+ # Child-SP          RetAddr           Call Site
+00 0000002c`3d52f9e8 0000002c`3d52fa28 PiccoloEditor!Piccolo::TransformComponent::setPosition+0x4d [<lab>\source\engine\source\runtime\function\framework\component\transform\transform_component.cpp @ 21]
+01 0000002c`3d52fa00 000001af`7c561070 0x0000002c`3d52fa28
+02 0000002c`3d52fa08 000001af`53880000 0x000001af`7c561070
+03 0000002c`3d52fa10 cccccccc`00000000 0x000001af`53880000
+04 0000002c`3d52fa18 cccccccc`cccccccc 0xcccccccc`00000000
+05 0000002c`3d52fa20 3f3504f4`cccccccc 0xcccccccc`cccccccc
+06 0000002c`3d52fa28 cccccccc`ccfdebcc 0x3f3504f4`cccccccc
+07 0000002c`3d52fa30 cccccccc`3f3504f4 0xcccccccc`ccfdebcc
+08 0000002c`3d52fa38 cccccccc`cccccccc 0xcccccccc`3f3504f4
+09 0000002c`3d52fa40 cccccccc`cccccccc 0xcccccccc`cccccccc
+0a 0000002c`3d52fa48 cccccccc`cccccccc 0xcccccccc`cccccccc
+0b 0000002c`3d52fa50 cccccccc`cccccccc 0xcccccccc`cccccccc
+0c 0000002c`3d52fa58 cccccccc`cccccccc 0xcccccccc`cccccccc
+0d 0000002c`3d52fa60 cccccccc`cccccccc 0xcccccccc`cccccccc
+0e 0000002c`3d52fa68 cccccccc`cccccccc 0xcccccccc`cccccccc
+0f 0000002c`3d52fa70 cccccccc`cccccccc 0xcccccccc`cccccccc
+10 0000002c`3d52fa78 cccccccc`cccccccc 0xcccccccc`cccccccc
+11 0000002c`3d52fa80 cccccccc`cccccccc 0xcccccccc`cccccccc
+12 0000002c`3d52fa88 cccccccc`cccccccc 0xcccccccc`cccccccc
+13 0000002c`3d52fa90 cccccccc`cccccccc 0xcccccccc`cccccccc
+14 0000002c`3d52fa98 cccccccc`cccccccc 0xcccccccc`cccccccc
+15 0000002c`3d52faa0 cccccccc`cccccccc 0xcccccccc`cccccccc
+16 0000002c`3d52faa8 cccccccc`cccccccc 0xcccccccc`cccccccc
+17 0000002c`3d52fab0 00000000`00000000 0xcccccccc`cccccccc
+   +0x018 m_is_dirty       : 1
+   +0x019 m_is_scale_dirty : 0
+   +0x098 m_current_index  : 1
+   +0x0a0 m_next_index     : 0
+((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[0].m_position.x : 2.945970 [Type: float]
+((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[1].m_position.x : 1.945970 [Type: float]
+((Piccolo::TransformComponent*)@$t0)->m_transform.m_position.x : 2.945970 [Type: float]
+PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x25:
+00007ff6`67239035 f30f108c2418010000 movss xmm1,dword ptr [rsp+118h] ss:0000002c`3d52fb48=42c640f3
+0:000> bp10 `PiccoloEditor!transform_component.cpp:40` ".if (@@c++(this) == @$t0) {bd 10; .echo POSITION_TRANSFORM_BEFORE_SWAP; dt this m_current_index m_next_index m_is_dirty; gc} .else {gc}"
+0:000> bp11 `PiccoloEditor!transform_component.cpp:42` ".if (@@c++(this) == @$t0) {bd 11; .echo POSITION_TRANSFORM_CURRENT; dt this m_current_index m_next_index m_is_dirty; dx this->m_transform_buffer[0].m_position.x; dx this->m_transform_buffer[1].m_position.x; kn 4; gc} .else {gc}"
+0:000> bp12 `PiccoloEditor!transform_component.cpp:52` ".if (@@c++(this) == @$t0) {bd 12; .echo POSITION_TRANSFORM_EDITOR_COPY; dx this->m_transform_buffer[0].m_position.x; dx this->m_transform_buffer[1].m_position.x; gc} .else {gc}"
+0:000> bp13 `PiccoloEditor!mesh_component.cpp:100` ".if (@@c++(this) == @$t1) {bd 13; .echo POSITION_MESH_DESCRIPTION; dx -r2 dirty_mesh_parts[0].m_transform_desc.m_transform_matrix.m_mat; dx -r2 this->m_raw_meshes[0].m_transform_desc.m_transform_matrix.m_mat; gc} .else {gc}"
+0:000> bu14 PiccoloEditor!Piccolo::RenderSwapData::addDirtyGameObject ".if (poi(@rdx) == 2) {bd 14; .echo POSITION_ADD_DIRTY_OBJECT; dt PiccoloEditor!Piccolo::GameObjectDesc @rdx m_go_id; dx ((Piccolo::GameObjectDesc*)@rdx)->m_object_parts[0].m_transform_desc.m_transform_matrix.m_mat[0][3]; kn 4; gc} .else {gc}"
+0:000> bp15 /1 `PiccoloEditor!engine.cpp:75` ".echo POSITION_LOGIC_QUEUE_READY; dt PiccoloEditor!Piccolo::TransformComponent @$t0 m_is_dirty; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context"
+0:000> g
+POSITION_TRANSFORM_BEFORE_SWAP
+Local var @ 0x2c3d52f7e0 Type Piccolo::TransformComponent*
+0x000001af`7c561070 
+   +0x018 m_is_dirty      : 1
+   +0x098 m_current_index : 1
+   +0x0a0 m_next_index    : 0
+POSITION_TRANSFORM_CURRENT
+Local var @ 0x2c3d52f7e0 Type Piccolo::TransformComponent*
+0x000001af`7c561070 
+   +0x018 m_is_dirty      : 1
+   +0x098 m_current_index : 0
+   +0x0a0 m_next_index    : 1
+this->m_transform_buffer[0].m_position.x : 2.945970 [Type: float]
+this->m_transform_buffer[1].m_position.x : 1.945970 [Type: float]
+ # Child-SP          RetAddr           Call Site
+00 0000002c`3d52f7a0 00007ff6`6747da7f PiccoloEditor!Piccolo::TransformComponent::tick+0x31 [<lab>\source\engine\source\runtime\function\framework\component\transform\transform_component.cpp @ 42]
+01 0000002c`3d52f7e0 00007ff6`672b1c7b PiccoloEditor!Piccolo::GObject::tick+0xcf [<lab>\source\engine\source\runtime\function\framework\object\object.cpp @ 47]
+02 0000002c`3d52f880 00007ff6`672def2f PiccoloEditor!Piccolo::Level::tick+0x13b [<lab>\source\engine\source\runtime\function\framework\level\level.cpp @ 150]
+03 0000002c`3d52f950 00007ff6`67239231 PiccoloEditor!Piccolo::WorldManager::tick+0xaf [<lab>\source\engine\source\runtime\function\framework\world\world_manager.cpp @ 58]
+POSITION_TRANSFORM_EDITOR_COPY
+this->m_transform_buffer[0].m_position.x : 2.945970 [Type: float]
+this->m_transform_buffer[1].m_position.x : 2.945970 [Type: float]
+POSITION_MESH_DESCRIPTION
+dirty_mesh_parts[0].m_transform_desc.m_transform_matrix.m_mat [Type: float [4][4]]
+    [0]              [Type: float [4]]
+        [0]              : -0.001631 [Type: float]
+        [1]              : 0.999992 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 2.945970 [Type: float]
+    [1]              [Type: float [4]]
+        [0]              : -0.999992 [Type: float]
+        [1]              : -0.001631 [Type: float]
+        [2]              : -0.000000 [Type: float]
+        [3]              : -0.385540 [Type: float]
+    [2]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 1.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [3]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.000000 [Type: float]
+this->m_raw_meshes[0].m_transform_desc.m_transform_matrix.m_mat [Type: float [4][4]]
+    [0]              [Type: float [4]]
+        [0]              : 1.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [1]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 1.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [2]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 1.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [3]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.000000 [Type: float]
+POSITION_ADD_DIRTY_OBJECT
+   +0x000 m_go_id : 2
+((Piccolo::GameObjectDesc*)@rdx)->m_object_parts[0].m_transform_desc.m_transform_matrix.m_mat[0][3] : 2.945970 [Type: float]
+ # Child-SP          RetAddr           Call Site
+00 0000002c`3d52f3f8 00007ff6`674c1289 PiccoloEditor!Piccolo::RenderSwapData::addDirtyGameObject [<lab>\source\engine\source\runtime\function\render\render_swap_context.cpp @ 101]
+01 0000002c`3d52f400 00007ff6`6747da7f PiccoloEditor!Piccolo::MeshComponent::tick+0x559 [<lab>\source\engine\source\runtime\function\framework\component\mesh\mesh_component.cpp @ 100]
+02 0000002c`3d52f7e0 00007ff6`672b1c7b PiccoloEditor!Piccolo::GObject::tick+0xcf [<lab>\source\engine\source\runtime\function\framework\object\object.cpp @ 47]
+03 0000002c`3d52f880 00007ff6`672def2f PiccoloEditor!Piccolo::Level::tick+0x13b [<lab>\source\engine\source\runtime\function\framework\level\level.cpp @ 150]
+POSITION_LOGIC_QUEUE_READY
+   +0x018 m_is_dirty : 0
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context [Type: Piccolo::RenderSwapContext]
+    [+0x000] m_logic_swap_data_index : 0x1 [Type: unsigned char]
+    [+0x001] m_render_swap_data_index : 0x0 [Type: unsigned char]
+    [+0x008] m_swap_data      [Type: Piccolo::RenderSwapData [2]]
+PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x51:
+00007ff6`67239061 488d0d587eca00  lea     rcx,[PiccoloEditor!Piccolo::g_runtime_global_context+0x80 (00007ff6`67ee0ec0)]
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc._Value.m_game_object_descs
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc._Value.m_game_object_descs : { size=0x1 } [Type: std::deque<Piccolo::GameObjectDesc,std::allocator<Piccolo::GameObjectDesc> >]
+    [<Raw View>]     [Type: std::deque<Piccolo::GameObjectDesc,std::allocator<Piccolo::GameObjectDesc> >]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<Piccolo::GameObjectDesc>,std::_Deque_val<std::_Deque_simple_types<Piccolo::GameObjectDesc> >,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::allocator<Piccolo::GameObjectDesc>,std::_Deque_val<std::_Deque_simple_types<Piccolo::GameObjectDesc> >,1>]
+    [0x0]            [Type: Piccolo::GameObjectDesc]
+        [+0x000] m_go_id          : 0x2 [Type: unsigned __int64]
+        [+0x008] m_object_parts   : { size=1 } [Type: std::vector<Piccolo::GameObjectPartDesc,std::allocator<Piccolo::GameObjectPartDesc> >]
+0:000> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0].m_game_object_resource_desc : nullopt [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+    [<Raw View>]     [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+0:000> dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0]
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[0] [Type: Piccolo::RenderSwapData]
+    [+0x000] m_level_resource_desc : nullopt [Type: std::optional<Piccolo::LevelResourceDesc>]
+    [+0x238] m_game_object_resource_desc : nullopt [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+    [+0x268] m_game_object_to_delete : nullopt [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+    [+0x298] m_camera_swap_data : nullopt [Type: std::optional<Piccolo::CameraSwapData>]
+    [+0x2f0] m_particle_submit_request : nullopt [Type: std::optional<Piccolo::ParticleSubmitRequest>]
+    [+0x318] m_emitter_tick_request : nullopt [Type: std::optional<Piccolo::EmitterTickRequest>]
+    [+0x340] m_emitter_transform_request : nullopt [Type: std::optional<Piccolo::EmitterTransformRequest>]
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc._Value.m_game_object_descs[0].m_object_parts[0].m_transform_desc.m_transform_matrix.m_mat
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc._Value.m_game_object_descs[0].m_object_parts[0].m_transform_desc.m_transform_matrix.m_mat [Type: float [4][4]]
+    [0]              [Type: float [4]]
+        [0]              : -0.001631 [Type: float]
+        [1]              : 0.999992 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 2.945970 [Type: float]
+    [1]              [Type: float [4]]
+        [0]              : -0.999992 [Type: float]
+        [1]              : -0.001631 [Type: float]
+        [2]              : -0.000000 [Type: float]
+        [3]              : -0.385540 [Type: float]
+    [2]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 1.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [3]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.000000 [Type: float]
+0:000> bp16 /1 `PiccoloEditor!engine.cpp:77` ".echo POSITION_SWAP_COMPLETE; dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context; gc"
+0:000> bp17 `PiccoloEditor!render_system.cpp:355` ".if (@@c++(part_id.m_go_id) == 2) {bd 17; .echo POSITION_RENDER_CACHED_EXISTING; dx part_id; dx is_entity_in_scene; dx is_mesh_loaded; dx is_material_loaded; dx render_entity.m_instance_id; dx render_entity.m_mesh_asset_id; dx render_entity.m_material_asset_id; dx -r2 render_entity.m_model_matrix.m_mat; gc} .else {gc}"
+0:000> bp18 `PiccoloEditor!render_system.cpp:366` ".if (@@c++(render_entity.m_instance_id) == 5) {bd 18; .echo POSITION_LIST_ENTITY_UPDATED; dx entity.m_instance_id; dx -r2 entity.m_model_matrix.m_mat; dx &entity.m_model_matrix; kn 4; gc} .else {gc}"
+0:000> bp19 /1 `PiccoloEditor!render_system.cpp:103` ".echo POSITION_RENDER_QUEUE_RESET; dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc; gc"
+0:000> bp20 `PiccoloEditor!render_scene.cpp:202` ".if (@@c++(entity.m_instance_id) == 5) {bd 20; .echo POSITION_VISIBILITY_TEST; dx entity.m_model_matrix.m_mat[0][3]; dx mesh_asset_bounding_box; gc} .else {gc}"
+0:000> bp21 `PiccoloEditor!render_scene.cpp:216` ".if (@@c++(temp_node.node_id) == 5) {bd 21; .echo POSITION_VISIBLE_NODE; dx temp_node.node_id; dx temp_node.model_matrix; dx &entity.m_model_matrix; dx temp_node.model_matrix->m_mat[0][3]; kn 4; gc} .else {gc}"
+0:000> bp22 /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo POSITION_CHANGED_FRAME_PRESENT; dv /t; .printf \"tid=%x\n\", @$tid; .echo POSITION_END_PAUSED"
+0:000> g
+POSITION_SWAP_COMPLETE
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context [Type: Piccolo::RenderSwapContext]
+    [+0x000] m_logic_swap_data_index : 0x0 [Type: unsigned char]
+    [+0x001] m_render_swap_data_index : 0x1 [Type: unsigned char]
+    [+0x008] m_swap_data      [Type: Piccolo::RenderSwapData [2]]
+POSITION_RENDER_CACHED_EXISTING
+part_id          [Type: Piccolo::GameObjectPartId]
+    [+0x000] m_go_id          : 0x2 [Type: unsigned __int64]
+    [+0x008] m_part_id        : 0x0 [Type: unsigned __int64]
+is_entity_in_scene : true [Type: bool]
+is_mesh_loaded   : true [Type: bool]
+is_material_loaded : true [Type: bool]
+render_entity.m_instance_id : 0x5 [Type: unsigned int]
+render_entity.m_mesh_asset_id : 0x5 [Type: unsigned __int64]
+render_entity.m_material_asset_id : 0x2 [Type: unsigned __int64]
+render_entity.m_model_matrix.m_mat [Type: float [4][4]]
+    [0]              [Type: float [4]]
+        [0]              : -0.001631 [Type: float]
+        [1]              : 0.999992 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 2.945970 [Type: float]
+    [1]              [Type: float [4]]
+        [0]              : -0.999992 [Type: float]
+        [1]              : -0.001631 [Type: float]
+        [2]              : -0.000000 [Type: float]
+        [3]              : -0.385540 [Type: float]
+    [2]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 1.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [3]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.000000 [Type: float]
+POSITION_LIST_ENTITY_UPDATED
+entity.m_instance_id : 0x5 [Type: unsigned int]
+entity.m_model_matrix.m_mat [Type: float [4][4]]
+    [0]              [Type: float [4]]
+        [0]              : -0.001631 [Type: float]
+        [1]              : 0.999992 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 2.945970 [Type: float]
+    [1]              [Type: float [4]]
+        [0]              : -0.999992 [Type: float]
+        [1]              : -0.001631 [Type: float]
+        [2]              : -0.000000 [Type: float]
+        [3]              : -0.385540 [Type: float]
+    [2]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 1.000000 [Type: float]
+        [3]              : 0.000000 [Type: float]
+    [3]              [Type: float [4]]
+        [0]              : 0.000000 [Type: float]
+        [1]              : 0.000000 [Type: float]
+        [2]              : 0.000000 [Type: float]
+        [3]              : 1.000000 [Type: float]
+&entity.m_model_matrix : 0x1af5d3f3c04 [Type: Piccolo::Matrix4x4 *]
+    [+0x000] m_mat            [Type: float [4][4]]
+    [=0x7ff667ee0c40] ZERO             [Type: Piccolo::Matrix4x4]
+    [=0x7ff667ee0cc0] ZEROAFFINE       [Type: Piccolo::Matrix4x4]
+    [=0x7ff667ee0c80] IDENTITY         [Type: Piccolo::Matrix4x4]
+ # Child-SP          RetAddr           Call Site
+00 0000002c`3d52e790 00007ff6`6723aaa2 PiccoloEditor!Piccolo::RenderSystem::processSwapData+0xdae [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 366]
+01 0000002c`3d52f700 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x32 [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 103]
+02 0000002c`3d52f9f0 00007ff6`6723908b PiccoloEditor!Piccolo::PiccoloEngine::rendererTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 102]
+03 0000002c`3d52fa30 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+POSITION_RENDER_QUEUE_RESET
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_swap_context.m_swap_data[1].m_game_object_resource_desc : nullopt [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+    [<Raw View>]     [Type: std::optional<Piccolo::GameObjectResourceDesc>]
+Type is not struct/class/union for operator. '.m_instance_id) == 5) {bd 20; .echo POSITION_VISIBILITY_TEST; dx entity.m_model_matrix.m_mat[0][3]; dx mesh_asset_bounding_box; gc} .else {gc}'
+PiccoloEditor!Piccolo::RenderScene::updateVisibleObjectsMainCamera+0x221:
+00007ff6`673caf21 488b8424f0010000 mov     rax,qword ptr [rsp+1F0h] ss:0000002c`3d52f270=000001af5d3f3b20
+0:000> dv /t
+struct Piccolo::BoundingBox mesh_asset_bounding_box = struct Piccolo::BoundingBox
+class Piccolo::RenderEntity * entity = 0x000001af`5d3f3b20
+class std::vector<Piccolo::RenderEntity,std::allocator<Piccolo::RenderEntity> > * <range>$L0 = 0x000001af`7c1d1998 { size=30 }
+class Piccolo::RenderEntity * <begin>$L0 = 0x000001af`5d3f3b20
+class Piccolo::RenderEntity * <end>$L0 = 0x000001af`5d3f5560
+class Piccolo::RenderScene * this = 0x000001af`7c1d1940
+class std::shared_ptr<Piccolo::RenderResource> * render_resource = 0x0000002c`3d52f650 {...}
+class std::shared_ptr<Piccolo::RenderCamera> * camera = 0x0000002c`3d52f638 {...}
+class Piccolo::Matrix4x4 view_matrix = class Piccolo::Matrix4x4
+struct Piccolo::ClusterFrustum f = struct Piccolo::ClusterFrustum
+class Piccolo::Matrix4x4 proj_matrix = class Piccolo::Matrix4x4
+class Piccolo::Matrix4x4 proj_view_matrix = class Piccolo::Matrix4x4
+0:000> dx entity
+entity           [Type: Piccolo::RenderEntity]
+    [+0x000] m_instance_id    : 0x4 [Type: unsigned int]
+    [+0x004] m_model_matrix   [Type: Piccolo::Matrix4x4]
+    [+0x048] m_mesh_asset_id  : 0x4 [Type: unsigned __int64]
+    [+0x050] m_enable_vertex_blending : false [Type: bool]
+    [+0x058] m_joint_matrices : { size=1 } [Type: std::vector<Piccolo::Matrix4x4,std::allocator<Piccolo::Matrix4x4> >]
+    [+0x078] m_bounding_box   [Type: Piccolo::AxisAlignedBox]
+    [+0x0a8] m_material_asset_id : 0x1 [Type: unsigned __int64]
+    [+0x0b0] m_blend          : false [Type: bool]
+    [+0x0b1] m_double_sided   : false [Type: bool]
+    [+0x0b4] m_base_color_factor [Type: Piccolo::Vector4]
+    [+0x0c4] m_metallic_factor : 1.000000 [Type: float]
+    [+0x0c8] m_roughness_factor : 1.000000 [Type: float]
+    [+0x0cc] m_normal_scale   : 1.000000 [Type: float]
+    [+0x0d0] m_occlusion_strength : 1.000000 [Type: float]
+    [+0x0d4] m_emissive_factor [Type: Piccolo::Vector3]
+0:000> dx entity.m_instance_id
+entity.m_instance_id : 0x4 [Type: unsigned int]
+0:000> ?? entity
+class Piccolo::RenderEntity * 0x000001af`5d3f3b20
+   +0x000 m_instance_id    : 4
+   +0x004 m_model_matrix   : Piccolo::Matrix4x4
+   +0x048 m_mesh_asset_id  : 4
+   +0x050 m_enable_vertex_blending : 0
+   +0x058 m_joint_matrices : std::vector<Piccolo::Matrix4x4,std::allocator<Piccolo::Matrix4x4> >
+   +0x078 m_bounding_box   : Piccolo::AxisAlignedBox
+   +0x0a8 m_material_asset_id : 1
+   +0x0b0 m_blend          : 0
+   +0x0b1 m_double_sided   : 0
+   +0x0b4 m_base_color_factor : Piccolo::Vector4
+   +0x0c4 m_metallic_factor : 1 
+   +0x0c8 m_roughness_factor : 1 
+   +0x0cc m_normal_scale   : 1 
+   +0x0d0 m_occlusion_strength : 1 
+   +0x0d4 m_emissive_factor : Piccolo::Vector3
+0:000> bl
+10 d 00007ff6`672b07e1     0001 (0001)  0:**** PiccoloEditor!Piccolo::TransformComponent::tick+0x11 ".if (@@c++(this) == @$t0) {bd 10; .echo POSITION_TRANSFORM_BEFORE_SWAP; dt this m_current_index m_next_index m_is_dirty; gc} .else {gc}"
+11 d 00007ff6`672b0801     0001 (0001)  0:**** PiccoloEditor!Piccolo::TransformComponent::tick+0x31 ".if (@@c++(this) == @$t0) {bd 11; .echo POSITION_TRANSFORM_CURRENT; dt this m_current_index m_next_index m_is_dirty; dx this->m_transform_buffer[0].m_position.x; dx this->m_transform_buffer[1].m_position.x; kn 4; gc} .else {gc}"
+12 d 00007ff6`672b084b     0001 (0001)  0:**** PiccoloEditor!Piccolo::TransformComponent::tick+0x7b ".if (@@c++(this) == @$t0) {bd 12; .echo POSITION_TRANSFORM_EDITOR_COPY; dx this->m_transform_buffer[0].m_position.x; dx this->m_transform_buffer[1].m_position.x; gc} .else {gc}"
+13 d 00007ff6`674c11ee     0001 (0001)  0:**** PiccoloEditor!Piccolo::MeshComponent::tick+0x4be ".if (@@c++(this) == @$t1) {bd 13; .echo POSITION_MESH_DESCRIPTION; dx -r2 dirty_mesh_parts[0].m_transform_desc.m_transform_matrix.m_mat; dx -r2 this->m_raw_meshes[0].m_transform_desc.m_transform_matrix.m_mat; gc} .else {gc}"
+14 d 00007ff6`672bbe80     0001 (0001)  0:**** PiccoloEditor!Piccolo::RenderSwapData::addDirtyGameObject ".if (poi(@rdx) == 2) {bd 14; .echo POSITION_ADD_DIRTY_OBJECT; dt PiccoloEditor!Piccolo::GameObjectDesc @rdx m_go_id; dx ((Piccolo::GameObjectDesc*)@rdx)->m_object_parts[0].m_transform_desc.m_transform_matrix.m_mat[0][3]; kn 4; gc} .else {gc}"
+17 d 00007ff6`6723c866     0001 (0001)  0:**** PiccoloEditor!Piccolo::RenderSystem::processSwapData+0xcb6 ".if (@@c++(part_id.m_go_id) == 2) {bd 17; .echo POSITION_RENDER_CACHED_EXISTING; dx part_id; dx is_entity_in_scene; dx is_mesh_loaded; dx is_material_loaded; dx render_entity.m_instance_id; dx render_entity.m_mesh_asset_id; dx render_entity.m_material_asset_id; dx -r2 render_entity.m_model_matrix.m_mat; gc} .else {gc}"
+18 d 00007ff6`6723c95e     0001 (0001)  0:**** PiccoloEditor!Piccolo::RenderSystem::processSwapData+0xdae ".if (@@c++(render_entity.m_instance_id) == 5) {bd 18; .echo POSITION_LIST_ENTITY_UPDATED; dx entity.m_instance_id; dx -r2 entity.m_model_matrix.m_mat; dx &entity.m_model_matrix; kn 4; gc} .else {gc}"
+20 e 00007ff6`673caf21     0001 (0001)  0:**** PiccoloEditor!Piccolo::RenderScene::updateVisibleObjectsMainCamera+0x221 ".if (@@c++(entity.m_instance_id) == 5) {bd 20; .echo POSITION_VISIBILITY_TEST; dx entity.m_model_matrix.m_mat[0][3]; dx mesh_asset_bounding_box; gc} .else {gc}"
+21 e 00007ff6`673cb052     0001 (0001)  0:**** PiccoloEditor!Piccolo::RenderScene::updateVisibleObjectsMainCamera+0x352 ".if (@@c++(temp_node.node_id) == 5) {bd 21; .echo POSITION_VISIBLE_NODE; dx temp_node.node_id; dx temp_node.model_matrix; dx &entity.m_model_matrix; dx temp_node.model_matrix->m_mat[0][3]; kn 4; gc} .else {gc}"
+22 e 00007ff6`6741ae5e     /1 0001 (0001)  0:**** PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe ".echo POSITION_CHANGED_FRAME_PRESENT; dv /t; .printf \"tid=%x\n\", @$tid; .echo POSITION_END_PAUSED"
+0:000> .echo POSITION_DEBUGGER_CONDITION_CORRECTED_FOR_REFERENCE_AS_POINTER
+POSITION_DEBUGGER_CONDITION_CORRECTED_FOR_REFERENCE_AS_POINTER
+0:000> bp20 `PiccoloEditor!render_scene.cpp:202` ".if (@@c++(entity->m_instance_id) == 5) {bd 20; .echo POSITION_VISIBILITY_TEST; dx entity.m_model_matrix.m_mat[0][3]; dx mesh_asset_bounding_box; gc} .else {gc}"
+breakpoint 20 exists, redefining
+0:000> bp21 `PiccoloEditor!render_scene.cpp:216` ".if (@@c++(temp_node->node_id) == 5) {bd 21; .echo POSITION_VISIBLE_NODE; dx temp_node.node_id; dx temp_node.model_matrix; dx &entity.m_model_matrix; dx temp_node.model_matrix->m_mat[0][3]; kn 4; gc} .else {gc}"
+breakpoint 21 exists, redefining
+0:000> g
+POSITION_VISIBILITY_TEST
+entity.m_model_matrix.m_mat[0][3] : 2.945970 [Type: float]
+mesh_asset_bounding_box [Type: Piccolo::BoundingBox]
+    [+0x000] min_bound        [Type: Piccolo::Vector3]
+    [+0x00c] max_bound        [Type: Piccolo::Vector3]
+POSITION_VISIBLE_NODE
+temp_node.node_id : 0x5 [Type: unsigned int]
+temp_node.model_matrix : 0x1af5d3f3c04 [Type: Piccolo::Matrix4x4 *]
+    [+0x000] m_mat            [Type: float [4][4]]
+    [=0x7ff667ee0c40] ZERO             [Type: Piccolo::Matrix4x4]
+    [=0x7ff667ee0cc0] ZEROAFFINE       [Type: Piccolo::Matrix4x4]
+    [=0x7ff667ee0c80] IDENTITY         [Type: Piccolo::Matrix4x4]
+&entity.m_model_matrix : 0x1af5d3f3c04 [Type: Piccolo::Matrix4x4 *]
+    [+0x000] m_mat            [Type: float [4][4]]
+    [=0x7ff667ee0c40] ZERO             [Type: Piccolo::Matrix4x4]
+    [=0x7ff667ee0cc0] ZEROAFFINE       [Type: Piccolo::Matrix4x4]
+    [=0x7ff667ee0c80] IDENTITY         [Type: Piccolo::Matrix4x4]
+temp_node.model_matrix->m_mat[0][3] : 2.945970 [Type: float]
+ # Child-SP          RetAddr           Call Site
+00 0000002c`3d52f080 00007ff6`673c9ca5 PiccoloEditor!Piccolo::RenderScene::updateVisibleObjectsMainCamera+0x352 [<lab>\source\engine\source\runtime\function\render\render_scene.cpp @ 216]
+01 0000002c`3d52f5d0 00007ff6`6723ac7f PiccoloEditor!Piccolo::RenderScene::updateVisibleObjects+0x165 [<lab>\source\engine\source\runtime\function\render\render_scene.cpp @ 17]
+02 0000002c`3d52f700 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x20f [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 109]
+03 0000002c`3d52f9f0 00007ff6`6723908b PiccoloEditor!Piccolo::PiccoloEngine::rendererTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 102]
+POSITION_CHANGED_FRAME_PRESENT
+class Piccolo::VulkanRHI * this = 0x000001af`72003290
+class std::function<void __cdecl(void)> * passUpdateAfterRecreateSwapchain = 0x0000002c`3d52f640 bind(0x7ff666ffbc58, {...})
+unsigned int [1] wait_stages = unsigned int [1]
+struct VkPresentInfoKHR present_info = struct VkPresentInfoKHR
+VkResult res_reset_fences = VK_SUCCESS (0n0)
+VkResult present_result = VK_SUCCESS (0n0)
+VkResult res_end_command_buffer = VK_SUCCESS (0n0)
+struct VkSemaphore_T *[2] semaphores = struct VkSemaphore_T *[2]
+struct VkSubmitInfo submit_info = struct VkSubmitInfo
+VkResult res_queue_submit = VK_SUCCESS (0n0)
+tid=1afc4 POSITION_END_PAUSED
+PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe:
+00007ff6`6741ae5e 81bc2424030000143265c4 cmp dword ptr [rsp+324h],0C4653214h ss:0000002c`3d52f324=00000000
+0:000> .echo POSITION_FINAL_STATE
+POSITION_FINAL_STATE
+0:000> .frame 4
+04 0000002c`3d52fa30 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+0:000> dx this->m_frame_count
+this->m_frame_count : 2 [Type: int]
+0:000> .frame 0
+00 0000002c`3d52f000 00007ff6`673e17ad PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe [<lab>\source\engine\source\runtime\function\render\interface\vulkan\vulkan_rhi.cpp @ 494]
+0:000> dt PiccoloEditor!Piccolo::TransformComponent @$t0 m_current_index m_next_index m_is_dirty m_is_scale_dirty
+   +0x018 m_is_dirty       : 0
+   +0x019 m_is_scale_dirty : 0
+   +0x098 m_current_index  : 0
+   +0x0a0 m_next_index     : 1
+0:000> dx ((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[0].m_position
+((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[0].m_position [Type: Piccolo::Vector3]
+    [+0x000] x                : 2.945970 [Type: float]
+    [+0x004] y                : -0.385540 [Type: float]
+    [+0x008] z                : 0.000000 [Type: float]
+    [=0x7ff667ee0c10] ZERO             [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bf0] UNIT_X           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bd0] UNIT_Y           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bb0] UNIT_Z           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bc0] NEGATIVE_UNIT_X  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0ba0] NEGATIVE_UNIT_Y  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0be0] NEGATIVE_UNIT_Z  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0c00] UNIT_SCALE       [Type: Piccolo::Vector3]
+0:000> dx ((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[1].m_position
+((Piccolo::TransformComponent*)@$t0)->m_transform_buffer[1].m_position [Type: Piccolo::Vector3]
+    [+0x000] x                : 2.945970 [Type: float]
+    [+0x004] y                : -0.385540 [Type: float]
+    [+0x008] z                : 0.000000 [Type: float]
+    [=0x7ff667ee0c10] ZERO             [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bf0] UNIT_X           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bd0] UNIT_Y           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bb0] UNIT_Z           [Type: Piccolo::Vector3]
+    [=0x7ff667ee0bc0] NEGATIVE_UNIT_X  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0ba0] NEGATIVE_UNIT_Y  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0be0] NEGATIVE_UNIT_Z  [Type: Piccolo::Vector3]
+    [=0x7ff667ee0c00] UNIT_SCALE       [Type: Piccolo::Vector3]
+0:000> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_main_camera_visible_mesh_nodes.Where(n => n.node_id == 5).Count()
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_main_camera_visible_mesh_nodes.Where(n => n.node_id == 5).Count() : 0x1
+0:000> .echo POSITION_EXPERIMENT_TERMINATED_BY_DEBUGGER_NO_SCENE_SAVE
+POSITION_EXPERIMENT_TERMINATED_BY_DEBUGGER_NO_SCENE_SAVE
+0:000> q
+quit:
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'
