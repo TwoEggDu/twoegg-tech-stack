@@ -2,7 +2,7 @@
 title: "03｜角色：从设计稿到模型与材质"
 slug: "game-art-production-03-character-assets"
 date: "2026-10-25"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 description: "从角色体块与拓扑，到 Maya 建模、UV、Photoshop 贴图、FBX 导出和 Unity 材质与 Prefab，串起资产制作与进入游戏的过程。"
 draft: false
 featured: false
@@ -230,7 +230,7 @@ Unity 的[模型导入设置](https://docs.unity3d.com/6000.0/Documentation/Manu
 
 本例暂不提供金属度或光滑度纹理，可先用以下参数作比较起点：木杆 Metallic=0、Smoothness=0.25；金属框 Metallic=1、Smoothness=0.55；核心 Metallic=0、Smoothness=0.4。它们是候选外观参数，不是实测材料常数。金属反射还依赖环境和光照，不能只看滑块就判断材质正确。
 
-核心先用不透明有色表面，不在这里承诺透明折射、辉光或施法时序。是否启用发光、怎样随状态变化，要在特效与 TA 方案中继续处理。
+核心先用不透明有色表面。本系列用[第 08 篇的杖尖粒子]({{< relref "delivery-engineering/game-art-production-08-vfx.md" >}})表达施法提示，[第 09 篇的 TA 模板]({{< relref "delivery-engineering/game-art-production-09-technical-art.md" >}})处理目标反馈圆环；核心材质随状态变化的自发光、透明折射与 Bloom 不在本例实现范围内，可留作后续扩展。
 
 ### 3. 明确把材质映射到模型
 

@@ -116,6 +116,24 @@ Assets/Scenes/ArtProduction/Courtyard/CourtyardPlayable.unity
 
 综合场景只启用一套输入与表现入口：停用旧 WalkProbe、NavProbe、CourtyardVfxPreview 和 CourtyardClientDemo 对象。角色 Prefab 上的移动组件会保留；停用的是场景中的旧测试角色，避免两个身体、两个时钟同时响应按键。
 
+### 在各测试入口之间切换 {#test-entry-switches}
+
+这些入口依次验证不同的联系。切换时另存场景并保留原资产，每次只启用表中对应的一套驱动：
+
+<div role="region" aria-label="局部预览与综合场景的入口切换，可横向查看" tabindex="0" style="overflow-x:auto">
+
+| 入口 | 启用的驱动 | 时间与反馈来源 | 切换时检查 |
+| --- | --- | --- | --- |
+| 07：CourtyardWalkthrough | WalkProbe 或 NavProbe，分别走查 | 只检查通行与导航，不驱动技能 | 独立 WalkProbe 没有 ActorView 也能移动；不要让 CharacterController 与 NavMeshAgent 同时控制一个根节点 |
+| 08：独立粒子预览 | CourtyardVfxPreview，usePreviewClock=true | 预览时钟在 0.5 秒创建 Release 与 Impact；Animator 可空 | 保留独立 Driver，停用其他施法入口；这里不判断游戏命中 |
+| 08：动画事件预览 | Animator 所在物体上的 CourtyardVfxPreview，usePreviewClock=false | 第 05 篇 AnimationTest.controller 的 Trigger 与 Cast 中的 OnPreviewRelease 事件 | 停用旧独立 Driver；检查脚本与 Animator 在同一 GameObject，保留原事件资产 |
+| 10：CourtyardClientIntegration | CourtyardClientDemo + CourtyardActorView | View 时钟释放；I 请求当前动作反馈，O 演示旧编号反馈 | 停用 08 的预览驱动；ClientPresentation.controller 直接播放、无自动过渡，引用已移除旧事件的 arm_actions_client.fbx 副本；镜头手动绑定当前实例 |
+| 11：CourtyardPlayable | CourtyardPlayableDemo + CourtyardActorView | View 时钟发出 Released 通知，场景复核距离与遮挡后提交反馈 | 停用 CourtyardClientDemo 和旧测试角色；重建时自动绑定新实例镜头，离场时切回 IdleCameraTarget |
+
+</div>
+
+还有两处场景引用需要迁移：第 07 篇目标的 Collider 原在 Environment 层，在本篇场景副本中将其改到 Target 层，blockers 只包含 Environment，排除 Player 与 Target。第 08 篇独立放置的 PreviewImpactAnchor 在这里改为 Target 的子物体，保留世界位置 `(4,1.1,4.65)`，并重新绑定场景入口引用。原局部场景保持各自的检查条件。
+
 ### 固定场景坐标，先检查能走到哪里
 
 沿用第 07 篇尺度：1 单位对应 1 米，Y 向上，入口朝 +Z。庭院范围约为 X=0—8、Z=0—6，地面顶面 Y=0；门洞净开口 X=3—5。

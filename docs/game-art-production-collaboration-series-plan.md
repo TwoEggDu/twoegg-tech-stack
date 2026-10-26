@@ -194,6 +194,7 @@ flowchart TD
 - 10 正文已成稿，连接导入复核、角色模板与配置、直接引用创建、动作编号、释放/反馈分离、取消、尾部与整体清理；说明独立 Controller/动作事件副本、移动与镜头接入，以及实例与资源句柄边界。实际 Unity 工程、编译、运行和加载框架验证待补。
 - 11 正文已成稿，汇合各工种原稿、导出物与场景依赖，提供占位替换、身体/视觉/挂点/镜头组装、距离与遮挡、释放通知、反馈/重开及动作时长修改方案；真实工程、编译、运行和 Player 记录待补。
 - 12 正文已成稿，建立同一候选与观察条件、共同走查、CPU/GPU/内存与帧调试证据、五类异常定位、责任划分、变更依赖回归和接受例外方法；真实素材、联合验收、性能采样、修复与设备复查待补。12 篇主题边界保持不变。
+- 2026-10-26 整体复查修订：修正 10 的移动许可补丁以保留 07 独立走查，明确 03 的核心材质扩展边界；11 增加 07/08/10/11 入口切换表与场景引用迁移，07 与 12 的重复内容改为引用上游说明。12 篇主题与实操待补状态不变。
 - 后续写作若未实际操作工具，应明确标为操作设计或待验证步骤；不能用本轮规划更新宣称软件或引擎验证完成。
 
 **本轮核对的原始资料**：Adobe [PSD 原稿与 PNG 导出说明](https://helpx.adobe.com/photoshop/desktop/save-and-export/save-files/save-in-png-and-gif-formats.html)、Autodesk [Maya FBX 导出（2024）](https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Interoperability/files/GUID-C64CFD18-517C-47A2-9E5D-489EC5D6480C.htm)及 [3ds Max 游戏 FBX 导出（2022）](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-70DBCE92-4D55-4CD6-A2E9-23E48E571068.htm)。这些资料确认了教学路径可参考的能力范围；旧版本菜单和默认值不能直接写成当前版本保证。

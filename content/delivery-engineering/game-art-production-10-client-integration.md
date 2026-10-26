@@ -131,11 +131,11 @@ CharacterController 仍负责本例身体通行；视觉对象在子层级，不
 
 ```csharp
 var view = GetComponent<CourtyardActorView>();
-if (view == null || !view.CanMove)
+if (view != null && !view.CanMove)
     direction = Vector3.zero;
 ```
 
-这只阻止水平输入，仍保留原脚本的重力处理。真正工程通常会缓存组件或通过初始化注入，避免每帧查询。
+存在 CourtyardActorView 时才按 CanMove 限制水平输入；没有该组件的第 07 篇独立 WalkProbe 仍可移动。两条路径都保留原脚本的重力处理。接入场景中的角色仍必须配置 View，缺失时由后面的创建流程拒绝并清理实例。真正工程通常会缓存组件或通过初始化注入，避免每帧查询。
 
 本系列只有局部手臂的 Idle / Cast / Hit，没有完整角色走跑动画，因此 **本篇不伪装已经做成了移动 Blend Tree 和脚步同步**。占位体可以移动，测试手臂也可以保持 Idle；有全身素材后再把真实速度、落地与转向等状态映射到动作系统。
 
@@ -152,6 +152,8 @@ Animator.Play 的状态名包含层名，第三个参数可以指定归一化起
 独立时钟也不是逐帧同步保证。Animator 求值顺序、帧间隔、暂停和速度变化都会影响观察；后续可采用统一动作时间轴或带动作身份的事件映射。不能将当前方案中的 0.5 秒称为任意 Controller 的准确释放时点。
 
 保存为 `ResearcherPresentation.prefab`，在 CourtyardActorView 中绑定该实例的 Animator（可空）与 staff_tip；停用旧 CourtyardVfxPreview，避免两个脚本同时响应 Space 或创建效果。
+
+回到局部预览或继续组装综合场景时，按[第 11 篇的入口切换表]({{< relref "delivery-engineering/game-art-production-11-integrated-example.md" >}}#test-entry-switches)核对驱动脚本、动作事件与场景引用。
 
 ## 用配置选择资产，用实例保存运行状态
 
