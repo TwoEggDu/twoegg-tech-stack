@@ -2,7 +2,7 @@
 title: "ECMA-335 基础｜类型系统：值、引用、泛型与接口"
 slug: "ecma335-type-system-value-ref-generic-interface"
 date: "2026-04-14"
-lastmod: "2026-10-23"
+lastmod: "2026-10-26"
 description: "区分值复制、对象引用、托管指针和泛型上下文，为 IL2CPP 泛型共享与 HybridCLR 调用边界建立语义基础。"
 weight: 12
 featured: false
@@ -71,6 +71,25 @@ Point copy = (Point)boxed;   // copy.X 为 1
 本例把 Point 的值复制到装箱对象中。随后修改 p 不会修改那个副本。CIL 中 `box`、`unbox` 与 `unbox.any` 的职责不同：unbox 取得指向装箱值的托管指针，unbox.any 对普通值类型取出相应的值。
 
 因此“struct 没有对象头”只适用于未装箱的值存储，不能概括装箱后的形态。`Nullable<T>` 的装箱另有专门规则，不能用这一个 Point 例子推导所有细节。
+
+<a id="boxing-storage-player"></a>
+### Player 对照：原变量、箱内值与拆箱副本
+
+固定自定义 Unity 2022.3.62f3／HybridCLR v9／Windows x64 的本轮样本，把初值 10 的 Counter 分别送入四条独立路径：
+
+| 路径 | 原变量／原对象 | 被调用目标或副本 |
+|---|---|---|
+| 泛型按值 | 仍 10 | 参数副本到 11 |
+| 泛型 ref T | 到 11 | 通过原存储地址修改 |
+| 显式接口装箱 | 原值仍 10 | 同一箱内值两次调用到 12 |
+| unbox.any 后再修改 | 原值仍 10，箱内仍 12 | 取出的新副本从 12 到 13 |
+| 引用类型按值／ref | 同一对象到 11／12 | 复制对象引用仍指向它 |
+
+匹配 PDB 的 hot/box 记录中，两次接口调用的 this 都等于同一箱内 payload，第三次修改副本时 this 已是另一地址；PDB 核对本构建对象头大小后，payload 为 object+16。地址只在同一进程内关联，不把该布局推广为所有 runtime。
+
+[constrained.／装箱 Player 实测]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md#constrained-boxing-player" >}})集中给出六情景的 72 普通＋27 native 记录、实际 CIL 和验证边界。尤其是相同 constrained. 前缀可以作用于参数副本或调用方原存储；引用类型的按值传参也不能解释成复制整个对象。
+
+本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。
 
 ## 泛型：定义、开放类型与封闭类型
 

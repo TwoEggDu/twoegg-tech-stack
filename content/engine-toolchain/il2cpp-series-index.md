@@ -92,6 +92,10 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 [async／UniTask Player 实测]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md#async-unitask-player" >}})沿用固定自定义 Editor／v9 环境，以 60 普通＋12 native 进程区分同步完成、两次跨帧恢复和前后异常。实际 class／struct 热更状态机都通过现有 native builder 调用解释器 MoveNext；on/off 对照没有产生 metadata 缺失失败，不把补充后的成功写成修复。样本保留整个 UniTask 程序集，历史 Android 根因与其他平台仍待验证。本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。
 
+## 共享 constrained.／装箱实验
+
+[constrained.／装箱 Player 实测]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md#constrained-boxing-player" >}})用 72 普通＋27 native 进程核对参数副本、ref 地址、箱内值和拆箱副本。cross/off/value 有 3 个缺实现对照，补充后进入 AOT 方法体的解释实现；ref on/off 均命中已有 native 共享入口。hot 的 ToString 覆盖与回退分别核对自有接收者的 Box 路径，不报性能或零分配结论。本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。
+
 ## 按问题查阅
 
 | 问题 | 阅读入口 |

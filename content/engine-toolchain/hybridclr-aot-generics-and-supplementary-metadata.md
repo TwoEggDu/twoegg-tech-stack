@@ -11,7 +11,7 @@ tags:
   - "Generics"
 series: "HybridCLR"
 hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 热更代码可以编译，运行时也能找到泛型类型，却在调用方法时报错。真正缺的可能是方法实现，也可能是解释该方法所需的 IL；只问“这个类型存在吗”还不够。
@@ -86,6 +86,16 @@ SuperSet 会处理额外定义，不意味着能复活 Player 中已裁掉的所
 [泛型综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}}) 固定同一热更 DLL，改变显式 AOT seeds 与补充 metadata 两个变量，并用原生断点区分路径。
 
 无 seeds、无补充 metadata 的 int/结构体样本出现方法缺失；补充后相应样本能执行。这证明没有对应 native 实例与无法运行并不等价。具体方法、配置与断点归因以实验正文为准，不扩展成所有泛型和平台已验证。
+
+## 同一热更结构体：按值与 ref 的实现选择
+
+[constrained.／装箱 Player 实测]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md#constrained-boxing-player" >}})补充了一组更具体的对照。同一 Player／hot DLL 中，GenericCalls.ByValue<HotCounter> 在 metadata off 时三次报告 MissingMethod；on 组补充与最终主包匹配的 Probe.AOT.dll 后，三次从其 IL 准备／转换并进入解释帧，返回 11、调用方原值仍 10。
+
+同一组 ref T 调用的 on/off 则都命中已有 native ByRef 共享入口，随后进入 hot Counter.Increment，原值改为 11。AOT Cases.Run 没有提前调用这两个目标的具体种子；cross/box 对照本身不经过泛型 helper。
+
+这是“身份、签名、可用实现与执行位置要一起检查”的固定样本，不是 ref T 普遍免补 metadata 的新规则。带 FullySharedGenericAny 名称的函数存在，也不证明当前实参／签名必然会选中它。on/ref 现场在准备阶段读取过 ByValue 的补充 body，实际执行却仍是 native ByRef；不能只凭 metadata 已加载或 body 被读取就宣布目标被解释执行。
+
+本轮沿用自定义 Editor/v9/Windows x64，记录在实验仓库 evidence/2026-10-26-constrained-boxing；本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。
 
 ## 系列位置
 

@@ -86,7 +86,7 @@
 | AOT 泛型 | HCLR-2 建立身份／实现／执行模型，19 决策、20 共享规则、21 模板、22 工作流、23 场景、24 检查；不再重复铺设同一套定义 |
 | async 历史案例 | 固定 UniTask2.5.10 的 class/struct 挂起、恢复与前后异常已采证；metadata on/off 均命中已有 native builder，历史 Android 根因仍未知 |
 | GC 与线程 | 正常接入、保留、根区间与串行跨增量片段样本已完成；完整根归因、屏障反事实、并发／长期压力与其他平台待补 |
-| 调用语义 | 泛型与类型初始化对照已完成采证；热更初始化异常的内部catch根因已由同DLL单点反事实定位；constrained.／装箱及其他异常路径按需补证 |
+| 调用语义 | 泛型与类型初始化对照已完成采证；热更初始化异常的内部catch根因已由同DLL单点反事实定位；constrained.／装箱固定样本已完成，72普通／27native；其他接收者形态及异常路径按需补证 |
 | 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 固定样本已完成；async／UniTask 有限矩阵已完成；取消／更广调度、metadata 缺失失败与设备性能待补 |
 | 商业能力 | 已按官方文档核对 FGS、DHE、热重载与访问控制契约；商业私有实现及项目收益不作源码或实测结论 |
 
@@ -186,3 +186,9 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 固定自定义 Editor／v9／Windows x64，额外锁定 UniTask2.5.10/7c0f199。独立 projects/async-unitask，build_id c2a81f08-12d1-4f70-b333-d4bd26705388，44输入／264产物，919runtime与原始prepared一致。60普通Player：AOT class、hot class/struct的同步、两次跨帧、前后异常按实际事件完成；30结果／30预期异常，finally各一次。12匹配PDB进程验证hot MoveNext三Execute/一Transform及恢复缓存复用。
 
 同一Player的metadata on/off均能运行；class命中native引用共享builder，struct命中带FullySharedGenericAny名字的native入口，补充不强制替换。样本显式preserve整个UniTask，off不等于无可用native实例；无metadata缺失失败对照，也不宣布历史Android根因闭合。HCLR17集中补结果，14保留历史边界与回链，23同步场景覆盖；三索引复用入口，不新增正文。本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。实验已提交推送；文稿随本次文档提交交付，Pages另行核验；执行记录见[async实验](./hybridclr-async-unitask-outline.md)。
+
+## constrained.／装箱调用实测（2026-10-26）
+
+独立projects/constrained-boxing，沿用固定自定义Editor/v9/Windows x64；build_id 9e084001-a41b-42c2-8fbd-62efc0d147d4，48输入／236产物、919原始runtime。72普通Player：69完成，3个cross/off/value在GenericCalls.ByValue<HotCounter>缺可用AOT实例处停止，补充最终匹配Probe.AOT metadata后恢复。ref on/off均命中native ByRef共享入口，不推广普遍免补metadata；cross/box只作非泛型语义控制。
+
+27个匹配PDB独立进程：原21加value on/off各3。hot箱对象两次接口调用指向同payload，unbox.any副本this不同；override无自有接收者Box命中，fallback有PlainCounter Box；按值on进入ByValue解释帧，ref仍native。on/ref准备期也会读取ByValue body，不当作实际执行证明。四篇既有正文分工：类型系统维护副本身份、调用语义集中完整实验、AOT泛型与调用链篇回链实际路径；三索引复用入口，主线篇数及URL不变。本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。实验已推送；文稿随本次文档提交交付，Pages另行核验。执行记录见[本轮记录](./hybridclr-constrained-boxing-outline.md)。

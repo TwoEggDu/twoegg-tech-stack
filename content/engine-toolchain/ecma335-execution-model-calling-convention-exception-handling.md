@@ -137,6 +137,60 @@ Calls.Reset(ref counter);    // 对原变量位置调用，counter.Value 变为 
 
 这个差别同时影响行为、分配和传参。排查 HybridCLR 的结构体接口调用时，先看实际 IL 是否经过 box、是否使用 constrained.，再分析桥接实现，不能只按 C# 表面语法猜测。
 
+<a id="constrained-boxing-player"></a>
+### 固定 Player：相同 constrained.，为什么修改的不是同一份值
+
+先把接收者指向哪份存储，与方法在哪里执行分开。这轮用同一个初值为 10 的 Counter，比较泛型按值、`ref T`、接口装箱、拆箱副本及两种 ToString；每组重新初始化，不能把多组结果串成一次对象变化。
+
+沿用本机自定义 Unity `2022.3.62f3_96770f904ca7`、HybridCLR package v9.0.3／runtime v9.0.1 配套组合、Windows x64 Development／IL2CPP C++ Debug／Minimal。独立工程 `projects/constrained-boxing`，build ID `9e084001-a41b-42c2-8fbd-62efc0d147d4`，48 项源输入与 236 份产物哈希绑定；919 个运行时文件与原始准备源相同，未带入之前的异常反事实补丁。
+
+#### 先确认 CIL 接收者
+
+最终 AOT／hot DLL 都显示：按值 helper 的参数是 `!!0`，用 `ldarga.s` 取得自己那份参数的地址；ref helper 参数是 `!!0&`，`ldarg.0` 直接取得传入的托管指针。两者随后都使用 `constrained. !!0`／`callvirt IMutableCounter::Increment`。前缀相同，不表示指向同一存储。
+
+| 独立情景 | 本次完成结果 |
+|---|---|
+| 泛型按值 | 返回 11，调用方原变量仍 10 |
+| 泛型 ref T | 返回 11，原变量也变为 11 |
+| 显式接口装箱 | 同一箱对象两次调用到 12，原变量仍 10；拆箱副本改到 13，箱内仍 12 |
+| 引用类型对照 | 按值／ref 调用依次返回 11／12，同一对象变成 12，身份保持 |
+| 覆盖 ToString 的结构体 | 返回 counter:10，原值 10 |
+| 未覆盖 ToString 的结构体 | 返回该 PlainCounter 的类型全名，原值 10 |
+
+Cases.Run 的实际 IL 含显式 `box Counter` 与 `unbox.any Counter`。原生 hot/box 对照中，前两次 Increment 的 this 等于同一装箱 payload，进入时值为 10／11；第三次 this 是另一地址、进入时值为 12，修改的是拆箱副本。原变量、箱内值和副本的结果也分别校验，不只看返回值。
+
+#### 没写 box 指令的 ToString，也可能装箱
+
+两个泛型 TextLocal 的 IL 都是 `constrained.` 加 `Object.ToString`，没有在该方法内直接写 box。匹配 PDB 的 hot/text-override 对照没有命中自有 Counter 接收者的 Object::Box，TextLocal 与 Counter.ToString 使用同一地址；hot/text-fallback 则实际对未覆盖方法的 PlainCounter 命中一次 Object::Box，输入地址与 TextLocal 的 ref 参数一致，箱内初值仍是 10。
+
+这里确认的是该接收者在固定路径上的装箱行为，不是整条流程零分配，也不从次数推导性能。`constrained.` 统一调用形式，并不承诺所有目标都免装箱。
+
+#### 跨 AOT 泛型的 on/off 对照
+
+纯 AOT／hot 各六情景、每格三个新进程；cross 的 metadata off/on 也各六情景、每格三个，总计 72 个普通 Player。其中 69 个完成语义校验，3 个 cross/off/value 明确报告 `GenericCalls.ByValue<HotBox.Counter>` 缺少可用的 AOT 实例。驱动退出 0 仅表示采集结束，不把这个负对照算作语义通过。
+
+on 组在加载 hot 前，用 SuperSet 补充与最终 Player 裁剪产物逐字节匹配的 Probe.AOT.dll，返回码为 0。同一 Player／hot DLL／输入下，按值样本恢复完成；ref 样本的 on/off 都能完成。AOT 对照的 Cases.Run 没有提前调用 GenericCalls 的具体种子；cross 的 box 模式不经过 AOT 泛型 helper，只作为装箱语义控制。
+
+27 个匹配 private PDB 的独立进程将差异定位到实际路径：
+
+| 交叉组 | 实际路径 |
+|---|---|
+| value／off | 目标方法体前报告 MissingMethod，未进入 Counter.Increment |
+| value／on | 从补充 image 读取 ByValue，MethodDef 为 `0x06000008`；准备、转换并进入解释帧各一次 |
+| ref／off、on | 都命中同一带 FullySharedGenericAny 名称的 native ByRef 共享入口，MethodDef 为 `0x06000009`，再调用 hot Counter.Increment |
+
+同一源码的按值／按地址调用，可以有不同的可用实现与执行路径；本次结果不能推广成“ref T 总不需要补充”或“结构体按值总不能共享”。即使生成物中有一个带 ByValue 名称的函数，也应核对当前 runtime 是否实际选用了它。
+
+还有一个容易误判的现场：on/ref 在准备 Run 时也读取了 ByValue 的补充 body，栈中是 `MethodBodyCache::IsInlineable`；但实际执行的仍是 native ByRef，没有执行 ByValue。读取或准备了方法体，不等于当前调用经过它。
+
+#### 复现与边界
+
+自有源码、工具及 99 份结构化事件随 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 本轮提交发布。本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。复现使用[固定实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/563813195813cc2d618bdf301e12ab1af0556d79/projects/constrained-boxing)；旧 `b34ac10` 仍属于 async 实验。
+
+运行 `tools/box_lab.py build/run`、`tools/box_trace.py` 和 `tools/box_lab.py verify/export`，分别重验普通与原生进程、实际 DLL token、地址关系和原始哈希。完整日志、PDB、二进制和 Unity 生成 C++ 留在本地。
+
+本轮不覆盖 Nullable、readonly 防御性复制、其他泛型接口形态、并发、移动端或性能。规范要求的值／引用语义，与具体版本的实现选择分别记录。
+
 ## 异常处理模型
 
 ECMA-335 Partition I 12.4.2 定义了 CLI 的异常处理模型。这个模型的核心是两遍扫描（two-pass）机制。

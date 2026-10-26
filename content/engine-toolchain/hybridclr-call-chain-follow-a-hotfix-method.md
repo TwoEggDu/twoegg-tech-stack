@@ -7,7 +7,7 @@ featured: false
 tags: [Unity, IL2CPP, HybridCLR, Runtime, SourceCode]
 series: "HybridCLR"
 hybridclr_version: "源码与 Player runtime v9.0.1 / package v9.0.3；v6.1.0 仅历史对照"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 热更 DLL 已经加载，反射也取到了方法，调用后返回了正确结果。这些现象能证明业务入口可用，却还没有回答：参数经过了哪个 invoker，什么时候转换方法体，第二次调用又复用了什么？
@@ -202,6 +202,16 @@ CDB 从进程创建时设置断点，`lmv m GameAssembly` 指向本次构建的�
 新仓库重新构建后，[公开摘要](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/call-chain.json) 再次确认装载 1 次、invoker 2 次、Transform 1 次、Execute 2 次，同一方法与缓存返回 5、15。构建标识为 `136f3c65-0c8b-4944-a838-39a5f4024e27`，热更 DLL SHA-256 为 `3A0BE651942B13C706EC2369D6F9CE5F6174858672C75863796B643C2C3A3E98`。这是另一份构建和进程，不能套用上表原始记录中的地址与 DLL 哈希。
 
 这组记录验证了当前样本的转换结果复用。它没有测量速度，不证明所有方法形态、AOT 泛型、GC、线程接入或移动端行为；v6.1.0 也没有因为这次 v9 成功而获得 Player 验收。
+
+## 把方法体准备与实际调用再分开一次
+
+[constrained.／装箱 Player 实测]({{< relref "engine-toolchain/ecma335-execution-model-calling-convention-exception-handling.md#constrained-boxing-player" >}})沿用同一自定义 Editor/v9 环境，把跟踪对象从 Add 换成结构体泛型调用。cross/on/value 读取了 Probe.AOT 的 ByValue（MethodDef 0x06000008），随后准备、转换和解释帧入口各一次，并完成“返回 11、原值 10”。cross/off/value 则在目标体前报告 MissingMethod。
+
+cross/ref 的 on/off 都实际命中 native ByRef（MethodDef 0x06000009），再由 native constrained 调用进入 hot Counter.Increment。这里的入口委托由反射创建，目标调用使用缓存委托，不把 MethodInfo.Invoke 的包装异常混入比较。
+
+有意思的反例是 on/ref：Run 准备期间同样读取过 ByValue body，栈含 MethodBodyCache::IsInlineable，但没有执行 ByValue。要把转换期查询、缓存准备、native 实际命中和解释帧入口逐一对应到方法身份，不能用前两项代替执行证据。
+
+另一个可直接跟读的对象身份例子是[值与箱内副本对照]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md#boxing-storage-player" >}})：两次接口调用共享箱内 payload，拆箱副本使用另一 this 地址。先核对本构建 PDB 布局和最终 DLL token，再解释地址；不把地址套给其他进程或版本。本轮固定提交为 [5638131](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/563813195813cc2d618bdf301e12ab1af0556d79)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/563813195813cc2d618bdf301e12ab1af0556d79/evidence/2026-10-26-constrained-boxing/results.json)。
 
 ## 系列位置
 
