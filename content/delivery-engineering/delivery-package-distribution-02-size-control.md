@@ -2,6 +2,7 @@
 title: "包体管理与分发 02｜包体大小控制——压缩、裁剪与贡献度追踪"
 slug: "delivery-package-distribution-02-size-control"
 date: "2026-04-14"
+lastmod: "2026-10-26"
 description: "包体超预算时不是'随便砍点资源'。系统性的包体控制需要知道每个模块贡献了多少、哪些可以压缩、哪些可以裁剪、哪些必须延迟加载。"
 tags:
   - "Delivery Engineering"
@@ -23,6 +24,8 @@ delivery_reading_lines:
 
 上一篇定义了首包 / 追加 / 热更的三层架构和包体预算。这一篇回答：预算定了之后，具体怎么控制包体大小——从贡献度分析到压缩策略到代码裁剪。
 
+> 证据范围：下文提供分析方向和待执行检查，没有本项目的构建占比、压缩收益或设备结果。涉及 Unity 的边界按 6000.0 文档核对，具体产物与运行表现需另行验证。
+
 ## 本质是什么
 
 包体控制的核心流程：
@@ -37,15 +40,15 @@ delivery_reading_lines:
 
 第一步是知道包体里每个部分占了多少：
 
-| 类别 | 典型占比 | 可优化空间 |
+| 类别 | 本次构建占比 | 优先检查方向 |
 |------|---------|-----------|
-| 纹理 | 40-60% | 大（压缩格式、分辨率降级） |
-| 模型与动画 | 10-20% | 中（面数限制、动画压缩） |
-| 音频 | 5-15% | 中（压缩质量、采样率） |
-| 代码（IL2CPP 产出） | 5-15% | 中（Managed Stripping） |
-| Shader 变体 | 5-10% | 大（变体裁剪） |
-| 配置数据 | 1-5% | 小 |
-| 引擎运行时 | 3-8% | 小（Engine Stripping） |
+| 纹理 | 待统计 | 实际格式、分辨率、Mip 与重复依赖 |
+| 模型与动画 | 待统计 | 导入数据、动画压缩与必要表现 |
+| 音频 | 待统计 | 编码、质量、采样率与语言交付 |
+| 代码（IL2CPP 产出） | 待统计 | Managed Stripping 与实际保留需求 |
+| Shader 变体 | 待统计 | 候选、裁剪与实际交付 |
+| 配置数据 | 待统计 | 重复、表示与交付范围 |
+| 引擎运行时 | 待统计 | 实际模块与 Engine Stripping 条件 |
 
 **贡献度报告**应该在每次构建后自动生成，按模块和资源类型分列。CI 中设置包体预算告警——超过阈值时构建标红。
 
@@ -54,10 +57,10 @@ delivery_reading_lines:
 贡献度告诉你"哪里大"，还需要进一步分析"为什么大"：
 
 **纹理大**的常见原因：
-- 压缩格式不对（RGBA32 未压缩 vs ASTC 6x6 压缩比约 10:1）
-- 分辨率超规范（该用 512 的用了 2048）
-- Mipmap 不必要地开启（UI 贴图不需要 Mipmap）
-- Read/Write Enabled 导致内存和包体双份
+- 目标格式与预期不符，例如原计划使用支持设备上的 GPU 块压缩，实际产物却未采用；格式字节不能直接代表下载包压缩比
+- 分辨率高于目标镜头和显示条件需要的范围
+- 保留了当前使用不需要的 Mip；是否需要应结合实际缩放、投影与过滤判断，不能只凭“UI”分类决定
+- `Read/Write Enabled` 增加了运行时 CPU 可寻址副本；它是内存检查项，不能据此断言包体也变成双份。见 [TextureImporter.isReadable](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/TextureImporter-isReadable.html)
 
 **代码大**的常见原因：
 - Managed Stripping 级别太低（保留了大量未使用的 BCL 类型）
@@ -67,16 +70,16 @@ delivery_reading_lines:
 **Shader 变体大**的常见原因：
 - multi_compile 关键字组合爆炸
 - 未使用的变体没有被裁剪
-- 全局关键字和局部关键字没有区分
+- 把关键字作用范围与候选组合数混在一起，未按实际构建报告定位增长
 
 ### 优化：按类别处理
 
 **纹理优化**：
-- 统一压缩格式（V02-06 已覆盖多端纹理格式选择）
-- 按规范限制最大分辨率
-- UI 贴图关闭 Mipmap
+- 按目标能力和纹理用途选择格式，检查实际产物与回退；具体见[多端资源差异]({{< relref "delivery-engineering/delivery-content-pipeline-06-multiplatform-assets.md" >}})
+- 根据目标镜头与画面接受条件约束最大分辨率
+- 按 UI 的实际显示与缩放条件比较是否需要 Mip，再检查画质和占用
 - 关闭不必要的 Read/Write Enabled
-- 使用 Texture Atlas 合并小贴图
+- 评估 Texture Atlas 的合批条件、边距与共用范围，不把图片数量减少直接当成包体收益；机制见[存储基础]({{< relref "rendering/unity-rendering-supp-a-mesh-texture-storage.md" >}})
 
 **代码裁剪**：
 - 提高 Managed Stripping 级别（配合 link.xml 保护反射和热更新需要的类型）
@@ -84,13 +87,15 @@ delivery_reading_lines:
 - 审查第三方 SDK 的代码体积，移除不需要的功能模块
 
 **Shader 变体裁剪**：
-- 使用 IPreprocessShaders 或 ShaderVariantCollection 裁剪未使用的变体
-- 减少 multi_compile 关键字数量
-- 用 shader_feature 替代 multi_compile（shader_feature 只编译使用到的变体）
+- 用构建配置及 `IPreprocessShaders` 等入口处理不需要的候选；`ShaderVariantCollection` 用于记录组合并参与保留/预热流程，不是等效的通用裁剪器
+- 减少不必要的候选组合，按 Shader、pass、平台和构建阶段检查数量
+- 仅在使用需求适合时选择 `shader_feature`，动态切换与热更所需组合仍需保留规则和目标 Player 验证，不能统一替换 `multi_compile`
+
+集合、构建处理与预热的区别见 [ShaderVariantCollection](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/ShaderVariantCollection.html)及[裁剪层次]({{< relref "rendering/unity-shader-variant-stripping-stages-prefiltering-builtin-custom.md" >}})。本篇没有实际裁剪回执或运行命中结果。
 
 **音频优化**：
 - 降低非关键音效的采样率和质量
-- 长音频使用流式加载而非全部加载到内存
+- 比较长音频是否适合流式加载；这是运行驻留与播放策略，不会单独让同一编码文件的包体变小
 - 移除未使用的音频文件
 
 **资源外移**：
@@ -127,9 +132,9 @@ delivery_reading_lines:
 
 - [ ] 是否有每次构建后的包体贡献度报告
 - [ ] CI 是否有包体预算告警（警告线 + 阻止线）
-- [ ] 纹理是否统一使用了平台最优的压缩格式
+- [ ] 纹理格式是否被目标设备支持，并经过对应用途的质量与产物检查
 - [ ] Managed Stripping 级别是否已优化（配合 link.xml）
-- [ ] Shader 变体是否有裁剪机制
+- [ ] Shader 变体是否有裁剪与动态需求保留机制，并保留构建和运行验证记录
 - [ ] 非首次体验必需的资源是否已移到追加下载层
 - [ ] 包体大小是否有版本趋势追踪
 - [ ] 包体优化后是否做了视觉回归验证

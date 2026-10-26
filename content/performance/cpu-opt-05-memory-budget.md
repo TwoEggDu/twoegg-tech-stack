@@ -2,6 +2,7 @@
 title: "CPU 性能优化 05｜内存预算管理：按系统分配上限、Texture Streaming 与 OOM/LMK 防护"
 slug: "cpu-opt-05-memory-budget"
 date: "2026-03-28"
+lastmod: "2026-10-26"
 description: "移动端内存问题最难的往往不是分配失败本身，而是 LMK / jetsam 这类系统强杀。本篇建立系统化的内存预算框架：按目标设备倒推预算、配置 Texture Streaming、建立 OOM/LMK 预警与响应机制。"
 tags: ["Unity", "内存", "Texture Streaming", "OOM", "LMK", "性能优化"]
 series: "移动端硬件与优化"
@@ -484,28 +485,25 @@ void LogStreamingStats()
 
 ## Audio 内存优化
 
-Audio 通常占总内存的 5-15%，优化手段主要是 Load Type 的正确选择。
+Audio 的占比应从当前内容和目标设备测量，不能用固定百分比代替预算。这里区分编码、加载和播放策略对驻留的影响。
+
+> 本节按 Unity 6000.0 [Audio Clip Import Settings](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AudioClip.html)核对字段。以下是机制说明与待比较候选，未进行音频内存、CPU、首播延迟或听感测试；本文其他系统的示例不由此次音频修订代为验证。
 
 ### AudioClip 的三种 Load Type
 
-```csharp
-// 通过 Inspector 或代码设置
-// AudioClip Import Settings → Load Type
-```
+导入资产的 `Load Type` 在 Audio Clip Import Settings 的目标平台覆盖中选择；它与压缩格式是不同的设置。下载生成的 AudioClip 则需要按对应下载 API 的行为单独检查，不能直接等同于导入器配置。
 
-| Load Type                  | 解压时机       | 内存占用       | CPU 开销  | 适用场景                    |
+| Load Type                  | 数据处理时机       | 驻留方向       | 需要检查的工作  | 候选用途                    |
 |---------------------------|--------------|--------------|---------|---------------------------|
-| Decompress On Load        | 加载时解压     | 高（原始 PCM） | 低（播放时）| 短音效（< 5 秒），需要低延迟  |
-| Compressed In Memory      | 播放时按需解压  | 低（压缩格式） | 中（播放时）| 中等长度音效，平衡内存和 CPU |
-| Streaming                 | 播放时流式读取  | 极低（只缓冲）  | 高（持续IO）| 背景音乐（长音频），最省内存  |
+| Decompress On Load        | 加载时解压     | 保留解码数据，大小依素材与实现 | 加载/解码、播放准备与混音 | 可比较短小、频繁播放且需及时响应的声音 |
+| Compressed In Memory      | 保留压缩数据，播放时解码 | 仍有压缩数据及运行开销 | 解码与混音线程工作、并发 | 在驻留和播放工作之间比较，不按片长自动决定 |
+| Streaming                 | 分段读取与解码 | Clip、缓冲与解码等仍有开销 | 读取、解码、并发及可能的等待 | 可比较长片段/音乐，不保证总开销最小 |
+
+官方文档说明 Streaming Clip 即使尚未加载音频数据也有基础开销，因此不能写成近零内存。目标后端可能有不同实现或限制，应结合素材、加载/首播和稳定播放分别观察；不把三种方式排成通用的 CPU 高中低顺序。
 
 ```csharp
-// 推荐配置：
-// 背景音乐 → Streaming（内存几乎为零）
-// 长音效（1-5秒）→ Compressed In Memory（Vorbis/MP3 压缩）
-// 短音效（< 1秒）→ Decompress On Load（无延迟，内存可接受）
-
-// 代码中动态加载 AudioClip 时指定 Load Type
+// 教学片段：请求完整的 MPEG 文件并取得 AudioClip；不设置导入器 Load Type。
+// 未在目标 Unity/平台编译运行，资源持有、播放和释放需由调用方另行处理。
 IEnumerator LoadAudioClip(string path)
 {
     using (var request = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(
@@ -515,22 +513,25 @@ IEnumerator LoadAudioClip(string path)
         if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
         {
             var clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(request);
-            clip.LoadAudioData(); // 触发加载
+            clip.LoadAudioData(); // 请求加载音频数据，不会改写 loadType
         }
     }
 }
 ```
 
-**内存量化示例**：
+`LoadAudioData()` 用于请求加载数据，不是 Load Type 设置器，见[该方法说明](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AudioClip.LoadAudioData.html)。若要使用下载流式音频，需要按 [DownloadHandlerAudioClip.streamAudio](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Networking.DownloadHandlerAudioClip-streamAudio.html)配置并判断是否已下载足够数据，不能仅靠调用 `LoadAudioData()` 保证流式或立即可播。
+
+**理论数据量示例，不是运行占用结果**：
 
 ```
-1 首 3 分钟背景音乐（44.1kHz, Stereo）：
-  未压缩 PCM（Decompress On Load）：44100 × 180s × 2ch × 2bytes ≈ 30 MB
-  Vorbis 压缩（Compressed In Memory, quality=0.5）：约 3 MB
-  Streaming：约 0.1 MB（只缓冲几秒数据）
-
-结论：背景音乐用 Streaming，节省 ~30 MB
+假设：3 分钟、44.1 kHz、双声道、每样本 16 bit 的 PCM 数据
+有效载荷 = 44100 × 180 × 2 × 2 = 31,752,000 bytes
+           = 31.752 MB，约 30.28 MiB
 ```
+
+这只计算指定 PCM 表示的理论有效载荷，不是 Unity 内部音频格式或进程占用的保证。压缩文件大小、解码表示、Clip/缓冲和其他开销需另外确认；没有原始记录时，不填 Vorbis、Streaming 的占用或节省结果。
+
+<!-- DATA-TODO: 固定素材、编码、采样率/声道、目标平台及 Unity 补丁，分别观察加载、首播、循环和稳定播放；先固定表示比较 Load Type，再独立改变并发。保留内存、DSP/Streaming CPU、I/O、响应与听感记录，未执行前不写收益。 -->
 
 ---
 
@@ -896,7 +897,7 @@ iOS 的内存警告机制与 Android 不同：Unity 的 `Application.lowMemory` 
   □ 纹理内存 < 280 MB（全部使用 ASTC/ETC2 压缩）
   □ 托管堆 < 30 MB（无持续 GC 分配）
   □ 无 Read/Write 开启的纹理（除 RenderTexture）
-  □ 背景音乐使用 Streaming Load Type
+  □ 音乐 Load Type 已按素材、并发与首播条件比较，Streaming 开销已纳入预算
   □ 所有纹理开启 Streaming Mipmaps
   □ 场景切换后无内存泄漏（切换 3 次后 RAM 不再增长）
 

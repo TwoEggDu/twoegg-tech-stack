@@ -2,6 +2,7 @@
 title: "游戏与引擎算法 11｜动画压缩"
 slug: "algo-11-animation-compression"
 date: "2026-04-17"
+lastmod: "2026-10-26"
 description: "解释关键帧简化、曲线拟合、量化和运行时解码如何共同把动画数据从‘又大又慢’变成‘足够小且足够快’。"
 tags:
   - "动画压缩"
@@ -20,15 +21,17 @@ weight: 1811
 
 > 读这篇之前：建议先看 [游戏与引擎算法 09｜旋转插值：Slerp、Nlerp、Squad]({{< relref "system-design/algorithms/algo-09-rotation-interpolation.md" >}})、[游戏与引擎算法 38｜四元数完全指南：旋转表示、Log/Exp、奇异性]({{< relref "system-design/algorithms/algo-38-quaternion-deep-dive.md" >}}) 和 [游戏与引擎算法 41｜浮点精度与数值稳定性]({{< relref "system-design/algorithms/algo-41-floating-point-stability.md" >}})。动画压缩的核心误差，几乎总会落到插值和量化上。
 
+> 版本与证据范围：数学与代码是教学模型，Unity 映射按 6000.0 文档区分录制 API、ModelImporter 和 Rig 类型；ACL/ozz 的公开数据仅属于所列版本与度量。C# 片段仅在独立 .NET 10 合成数据下做了有限检查，没有执行 Unity 导入、真实片段、采样性能或设备画面/玩法验证，不把这些证据混写成本项目结果。
+
 ## 问题动机
 
 动画数据在引擎里很容易成为隐形大户。
 
-一个角色的骨架可能只有几十到几百根骨头，但一条动作片段常常包含成百上千帧的位移、旋转、缩放和曲线事件。几百个角色、几套 LOD、再叠上 root motion 和 additive clip，内存和磁盘就会很快上去。
+动画可能包含位移、旋转、缩放、BlendShape 或其他属性曲线，也可能带事件。动作库、骨架、附加片段与资源驻留范围都会影响数据量；事件与对象引用不应直接当作连续数值曲线交给同一种有损压缩。
 
-更麻烦的是，动画不是只占内存。采样时你还要查关键帧、插值、重建局部空间姿态、再做局部到模型空间转换。数据越大，缓存局部性越差，解码次数越多，采样就越慢。
+动画还涉及查找关键帧、插值、局部姿态重建，以及后续层级变换、混合与蒙皮。表示、访问方式、缓存、求值频率和活动对象共同决定工作，不能由文件更大直接推导采样更慢，也不能把删 key 等同于减少每帧活跃通道的求值次数。
 
-所以动画压缩的目标不是“越狠越好”，而是**让引擎在可控误差下，以更低的内存和更高的采样吞吐播放同样的动作。**
+因此要在接受条件内比较存储、加载和求值的取舍，不能预设压小以后吞吐必然更高。
 
 ### 压缩管线要平衡三件事
 
@@ -50,7 +53,7 @@ flowchart LR
 
 后来，游戏开始追求更大的角色库、更长的动作片段和更快的运行时采样，单纯删帧不够了。必须把曲线表示、量化策略、运行时 codec 和数据布局一起考虑。
 
-`ozz-animation` 把这件事做成了一个完整 pipeline：离线构建优化结构，运行时做局部空间采样和混合。`ACL` 则更进一步，把“压得更小、解得更快、误差更低”变成了明确的工程目标，并做成可嵌入引擎的压缩库。Unreal 在 5.3 把 ACL 插件直接纳入引擎默认 codec，这说明动画压缩已经从可选优化变成了基础设施。
+`ozz-animation` 和 `ACL` 都把离线表示与运行时采样结合设计。[ACL UE 插件仓库](https://github.com/nfrechette/acl-ue4-plugin)说明自 UE 5.3 起插件随引擎分发并由 Epic 维护；“随引擎分发”不能直接写成“该版本每个项目已默认采用”，具体选择仍需检查所用引擎与项目设置。
 
 ## 数学基础
 
@@ -76,7 +79,9 @@ $$
 \varepsilon_q = \max_t 2\arccos\left(|q(t) \cdot \hat q(t)|\right)
 $$
 
-这条式子和旋转插值文章是一致的：旋转误差不该在分量空间里算，而要在球面上算。
+这是本篇使用的姿态角度度量，计算时先归一化并把点积绝对值限制到 `[0,1]`。分量误差可以服务某些编码步骤，但不能直接代替最终旋转角度误差。
+
+这些式子首先约束所选空间的轨迹。父关节的小角度误差可能随骨链放大成手脚或挂点的位置偏移；局部通道通过不等于最终姿态、重定向、混合、脚接触或玩法命中通过。连续区间的最大误差还需检查区间内部，不能只比较原始 key 时刻。
 
 ### 2. 关键帧简化
 
@@ -88,7 +93,7 @@ $$
 
 ### 3. 曲线拟合
 
-如果只删点，得到的是折线式恢复。更好的做法是把关键帧拟合成 Hermite、Bezier 或分段样条，再在运行时采样。
+本篇的简化示例用端点线性插值恢复标量轨迹；删 key 本身不规定恢复一定是折线，实际动画曲线还可能有切线等语义。Hermite、Bezier 或分段样条是另一类可比较表示，不保证对每条动作都更好。
 
 拟合的好处，是可以用更少的控制点表达更平滑的曲线；坏处是拟合阶段更复杂，运行时还得付更多插值成本。
 
@@ -108,7 +113,7 @@ $$
 \hat x = x_{\min} + \frac{u}{2^b - 1}(x_{\max} - x_{\min})
 $$
 
-对于单位四元数，常见做法是存三个分量和一个符号位，第四个分量由单位长度约束恢复。
+单位四元数可省略一个可恢复分量，但不同编码对符号、被省略分量的索引与量化范围有不同约定。固定省略 W 时可以先把四元数翻到 W 非负的等价表示，再由单位长度恢复 W；这不等于所有编码都额外存一个符号位。
 
 这就是为什么很多引擎里的旋转 codec 都会写成 `NoW`：不是不管 `W`，而是把它从显式存储改成隐式恢复。
 
@@ -118,17 +123,17 @@ $$
 
 动画轨迹里常常有大量冗余帧。对于缓慢变化的关节，连续帧之间差别很小，留着只会增加存储和采样成本。
 
-所以最先做的通常是错误有界的关键帧简化。它能直接减少 key count，也能降低运行时查找和插值次数。
+关键帧简化可以先降低 key count；查找、读取和插值成本是否降低还需看运行表示。下面的离散检查只限制所检查时刻的简化误差，后续量化仍会增加误差，需要解码后重新检查总误差。
 
 ### 为什么“单一误差阈值”不够
 
 位置、旋转和缩放的误差感知方式不同。1 厘米的位置误差和 1 度的旋转误差，视觉影响完全不是一个量级。
 
-Unity 的 `CurveFilterOptions` 就把 `positionError`、`rotationError`、`scaleError` 和 `floatError` 分开。这个设计很实际：不同通道用不同单位，才能让导演、动画师和程序员达成一致。
+Unity 6000.0 的 [CurveFilterOptions](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Animations.CurveFilterOptions.html)分别给出这些字段，但它用于 `GameObjectRecorder.SaveToClip` 的录制曲线过滤，不是所有模型导入压缩的统一入口。其旋转字段以度计，位置、缩放和 float 字段以百分比计；不能把数学示例的长度单位阈值直接填进去，或把百分比解释成通用厘米误差。
 
 ### 为什么量化通常要和运行时 codec 绑定
 
-如果离线只做简化，运行时还是按原始浮点全量读写，那收益会很有限。
+只做简化仍可能减少数据量；是否还有量化、布局或查找方面的收益，需要按实际运行表示检查，不能一概认定简化收益有限。
 
 真正的压缩体系会把表示法也一起变掉：例如把旋转改成 48/32 位格式，把常量轨迹单独剥离，把索引和时间点压缩掉，把相邻帧的读取顺序也优化掉。
 
@@ -136,9 +141,9 @@ Unity 的 `CurveFilterOptions` 就把 `positionError`、`rotationError`、`scale
 
 ### 为什么 root motion 要单独处理
 
-Root motion 是角色运动和碰撞的来源，不只是普通动画通道。
+Root motion 在采用动画驱动位移的系统里可能参与角色运动；碰撞、网络同步和最终位移怎样应用，还取决于角色控制器与玩法代码。
 
-如果你把根骨轨迹压得太狠，角色脚底会滑，位移会抖，网络同步也会更容易分叉。所以 `ozz` 的 motion extraction / motion blending、Unreal 的数据库和 ACL 的 bind-pose stripping 都在做一件相似的事：**把根运动和普通姿态分开考虑。**
+根运动轨迹变化可能影响接触、位移和回放，需要沿实际消费者单独确认。根运动提取、混合与省略可恢复的默认姿态数据是不同机制，不能用 bind-pose stripping 证明根运动处理正确；默认轨道被省略也不等于骨骼、蒙皮或挂点可以删除。
 
 ## 结构图 / 流程图
 
@@ -146,21 +151,23 @@ Root motion 是角色运动和碰撞的来源，不只是普通动画通道。
 flowchart TD
     A[原始 clip] --> B[轨迹重建 / unroll rotation]
     B --> C[误差度量]
-    C --> D{关键帧可删?}
-    D -->|否| E[保留]
-    D -->|是| F[递归切分 / 曲线拟合]
+    C --> D{中间采样误差超阈值?}
+    D -->|是| E[保留最大误差 key / 检查子区间]
+    E --> D
+    D -->|否| F[保留端点 / 省略中间 key]
     F --> G[通道量化]
     G --> H[codec 选择]
     H --> I[运行时采样]
+    I --> J[重新检查总误差与最终动作]
 ```
 
 ```mermaid
 flowchart LR
-    A[Unity] --> A1[CurveFilterOptions]
+    A[Unity 6000.0] --> A1[录制过滤 / 模型导入设置]
     B[Unreal] --> B1[AnimationCompressionFormat / ACLPlugin]
     C[ozz] --> C1[Keyframe reduction / Sampling cache]
     D[ACL] --> D1[高压缩 + 快解码]
-    A1 --> E[以误差阈值驱动导入压缩]
+    A1 --> E[按入口与 Rig 核对误差语义]
     B1 --> F[按 codec 选存储格式]
     C1 --> G[离线优化 runtime 结构]
     D1 --> H[把采样吞吐和内存一起优化]
@@ -168,7 +175,9 @@ flowchart LR
 
 ## 算法实现
 
-下面给一个可落地的压缩骨架。它不是 ACL 完整实现，但把“简化、拟合、量化”三步拆清楚了。
+下面是独立 C# 教学片段，用 `System.Numerics`、`record struct` 等语法表达离散关键帧简化和标量量化。它不是 Unity 内置压缩实现，也没有曲线拟合、完整二进制编解码、动画绑定、事件或性能验证；不能直接当作可接入的 Unity 脚本。
+
+假定时间有限且严格递增、标量值有限、旋转为可归一化的非零四元数、阈值非负。常量轨道要检查所有保留值，首尾相等并不能证明中间不动。`ushort` 码字仍各占 16 位，`QuantizationBits < 16` 本身不会把容器自动打包成相应位宽；XYZ 示例也只展示数值格点，没有完成存储压缩或四元数恢复。
 
 ```csharp
 using System;
@@ -188,7 +197,9 @@ public sealed class AnimationCompressionSettings
 public sealed class CompressedTrack<T>
 {
     public readonly List<float> KeyTimes = new();
-    public readonly List<T> QuantizedValues = new();
+    public readonly List<ushort> QuantizedValues = new();
+    public float RangeMin, RangeMax;
+    public int Bits;
     public T DefaultValue = default!;
     public bool IsConstant;
 }
@@ -210,10 +221,13 @@ public static class AnimationCompression
             return track;
         }
 
+        track.RangeMin = Min(source);
+        track.RangeMax = Max(source);
+        track.Bits = settings.QuantizationBits;
         foreach (var k in reduced)
         {
             track.KeyTimes.Add(k.Time);
-            track.QuantizedValues.Add(QuantizeFloat(k.Value, Min(source), Max(source), settings.QuantizationBits));
+            track.QuantizedValues.Add(QuantizeFloat(k.Value, track.RangeMin, track.RangeMax, track.Bits));
         }
 
         return track;
@@ -252,8 +266,7 @@ public static class AnimationCompression
     {
         a = Quaternion.Normalize(a);
         b = Quaternion.Normalize(b);
-        float dot = MathF.Abs(Quaternion.Dot(a, b));
-        dot = Math.Clamp(dot, -1f, 1f);
+        float dot = Math.Clamp(MathF.Abs(Quaternion.Dot(a, b)), 0f, 1f);
         return 2f * MathF.Acos(dot) * 180f / MathF.PI;
     }
 
@@ -270,6 +283,8 @@ public static class AnimationCompression
 
     public static Vector3 QuantizeQuaternionXYZ(Quaternion q, int bitsPerComponent)
     {
+        if (bitsPerComponent <= 0 || bitsPerComponent > 16)
+            throw new ArgumentOutOfRangeException(nameof(bitsPerComponent));
         q = Quaternion.Normalize(q);
         if (q.W < 0f) q = Negate(q);
         float scale = (1 << bitsPerComponent) - 1;
@@ -357,7 +372,13 @@ public static class AnimationCompression
     }
 
     private static bool IsConstant<T>(IReadOnlyList<Keyframe<T>> keys)
-        => keys.Count > 0 && EqualityComparer<T>.Default.Equals(keys[0].Value, keys[^1].Value);
+    {
+        if (keys.Count == 0) return false;
+        for (int i = 1; i < keys.Count; i++)
+            if (!EqualityComparer<T>.Default.Equals(keys[0].Value, keys[i].Value))
+                return false;
+        return true;
+    }
 
     private static float Min(IReadOnlyList<Keyframe<float>> keys)
     {
@@ -410,11 +431,13 @@ public static class AnimationCompression
 
 这段骨架故意把“删关键帧”和“量化”分开写。原因很简单：它们解决的是不同层次的成本。
 
-删关键帧减少采样次数；量化减少每个 key 的位宽；曲线拟合减少控制点数量；运行时 codec 负责把这些收益兑现成 cache 友好的解码路径。
+简化减少保留 key；实际位打包才改变存储位宽；曲线拟合需要另一套表示与误差检查。本片段只检查原始时刻的简化误差，尚无完整轨道解码后、区间内部或模型空间验证。示例阈值不是 Unity Importer 默认值，也不是项目已接受的误差。
+
+本轮把该 C# 块放进独立 .NET 10 控制台，编译并检查了 8 组合成情况：首尾相同但中间运动、范围元数据、常量轨道、线性简化、101 个标量量化往返点、四元数符号等价、旋转简化及非法位宽。通过仅覆盖这些离散样例；标量量化往返不等于完整轨道 codec、连续误差或 Unity 兼容性验证。
 
 ## 复杂度分析
 
-关键帧简化最常见的递归切分是 `O(n^2)`，如果每次都扫描整段中间点做最大误差检查，最坏情况会比较贵。
+本例递归简化每次扫描区间寻找最大误差，最坏时间为 `O(n^2)`，保留标记和输出为 `O(n)`，递归栈最坏也为 `O(n)`；这不是所有压缩算法的复杂度。
 
 量化本身通常是 `O(n)`，而且主要是一次范围映射和位打包。
 
@@ -428,14 +451,14 @@ public static class AnimationCompression
 - **Curve fitting**：用分段样条或 Hermite 拟合控制点，减少 key 数。
 - **Quaternion unroll**：先把符号连续化，再做简化和量化。
 - **Track-wise quantization**：不同通道用不同位宽，不要一刀切。
-- **Bind pose stripping**：把未动画化的关节绑定姿态剥离掉，减少冗余。
-- **Sampling cache**：把常见采样点的解码状态缓存起来，减少重复解压。
+- **默认/绑定姿态数据省略**：在解码器能恢复所需默认值的契约下省略冗余轨道；不是直接删除未运动骨骼。
+- **Sampling cache**：保留轨道与时间区间相关的采样状态，减少重复查找或准备；具体含义依 codec，不等于缓存所有已解码姿态。
 
 ## 对比其他算法
 
 | 路线 | 核心思路 | 优点 | 缺点 | 典型代表 |
 |---|---|---|---|---|
-| 原始浮点存储 | 什么都不压 | 最简单、最精确 | 最占内存、采样最慢 | 早期导入管线 |
+| 原始浮点存储 | 保留原数值表示 | 避免额外有损量化 | 数据量可能较大，但无解码或规则访问也可能更快 | 教学对照表示 |
 | 关键帧简化 | 删掉冗余点 | 容易实现、收益明显 | 对高频动作不够狠 | Unity keyframe reduction |
 | 曲线拟合 | 少量控制点拟合整段 | 平滑、控制力强 | 离线成本高 | 样条 / Hermite 轨迹 |
 | codec / quantization | 改表示法和位宽 | 内存和速度一起优化 | 误差预算更难调 | ACL、Unreal codec |
@@ -444,7 +467,7 @@ public static class AnimationCompression
 
 动画压缩没有“免费午餐”。压得越狠，foot sliding、肩部塌陷、手腕抖动、root motion 漂移就越容易出现。
 
-另一个误区是把压缩当纯存储优化。对游戏引擎来说，动画更重要的是运行时采样成本。数据越大，缓存越差，后续插值、混合和蒙皮也越慢。
+另一个误区是把压缩当纯存储优化。存储、解码、采样、混合和蒙皮要分别观察；减少 key 不等于减少骨骼数，也不保证后续每一阶段都更快。
 
 所以真正成熟的方案，都会把离线构建和运行时表示一起设计。`ozz-animation` 和 ACL 都是在这条线上做文章，而不是只删几个关键帧就结束。
 
@@ -460,23 +483,27 @@ public static class AnimationCompression
 
 ## 真实案例
 
-- [Unity `CurveFilterOptions`](https://docs.unity3d.com/ru/2019.4/ScriptReference/Animations.CurveFilterOptions.html) 明确暴露了 `keyframeReduction`、`rotationError`、`positionError`、`scaleError` 和 `floatError`，这就是典型的导入期关键帧压缩入口。
-- [Unity `ModelImporterAnimationCompression`](https://docs.unity3d.com/es/530/ScriptReference/ModelImporterAnimationCompression.html) 提供 `Off`、`KeyframeReduction`、`KeyframeReductionAndCompression`、`Optimal` 等选项，直接把压缩策略做成了导入器设置。
-- [Unreal Engine 5.3 release notes](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5.3-release-notes%3Fapplication_version%3D5.3%3Fapplication_version%3D5.3?application_version=5.3) 说明 ACL Plugin 已作为引擎插件并设为默认动画压缩 codec，路径在 `/Engine/Plugins/Animation/ACLPlugin/Source/ACLPlugin/`。
-- [Unreal `AnimationCompressionFormat`](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/Engine/AnimationCompressionFormat) 列出了 `ACF_Float96NoW`、`ACF_Fixed48NoW`、`ACF_IntervalFixed32NoW`、`ACF_Fixed32NoW`、`ACF_Float32NoW`、`ACF_Identity` 等格式，说明运行时 codec 选择是显式的一部分。
+- [Unity 6000.0 CurveFilterOptions](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Animations.CurveFilterOptions.html)是录制保存时的曲线过滤配置，不能与 ModelImporter 混称。
+- [Unity 6000.0 ModelImporterAnimationCompression](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/ModelImporterAnimationCompression.html)列出压缩枚举，但枚举存在不代表每种 Rig 都适用全部选项。[Animation tab](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AnimationClip.html)说明 `Keyframe Reduction and Compression` 仅适用 Legacy，额外压缩影响文件存储，运行内存与仅 Keyframe Reduction 相同；`Optimal` 适用 Generic/Humanoid，在关键帧简化与 dense 表示间选择。不能把这些选项排成跨 Rig 通用的“压缩越高越省内存”档位。
+- [ACL UE 插件仓库](https://github.com/nfrechette/acl-ue4-plugin)说明 UE 5.3 起的分发与维护关系，不据此认定所有版本和项目都使用同一默认 codec。
+- [Unreal AnimationCompressionFormat](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/Engine/AnimationCompressionFormat)在本次查阅时显示 UE 5.8，列出 `ACF_Float96NoW`、`ACF_Fixed48NoW`、`ACF_IntervalFixed32NoW` 等枚举。这里只作编码格式背景，不将它当成 UE 5.3 的配置证据，也不据名称推导 ACL 或 Unity 的实际表示。
 - [ACL UE plugin repository](https://github.com/nfrechette/acl-ue4-plugin) 和 [ACL core repository](https://github.com/nfrechette/acl) 都把“压缩比、解码速度、准确性”列成明确目标。
-- [ozz-animation features page](https://guillaumeblanc.github.io/ozz-animation/documentation/features/) 和 [Release 0.15.0](https://github.com/guillaumeblanc/ozz-animation/releases) 则展示了 keyframe optimizations、sampling cache、backward sampling optimization 和 keyframe 时间索引压缩。
+- [ozz-animation Release 0.15.0](https://github.com/guillaumeblanc/ozz-animation/releases/tag/0.15.0)记录了时间索引、反向读取、采样缓存和运行格式变化；该版本说明要求重建运行时动画，不能只替换库就假设旧产物兼容。
 
 ## 量化数据
 
-这篇最重要的量化数据，来自真实系统的公开说明。
+以下均为特定来源的公开说明，不是本篇复测，更不是项目性能预测：
 
-- ACL UE 插件对比 UE 5.2.0：**最多 2.9x 更小、最多 2x 更准确、最多 2x 更快压缩、最多 6.3x 更快解压**。这不是局部技巧，而是整条 codec 路线的结果。
-- ozz-animation 0.15.0：keyframe times indexed 后，**每个 keyframe 节省约 16b 到 24b**，也就是 **17% 到 25%** 的 keyframe size。
-- Unity `CurveFilterOptions` 把旋转误差明确为 **0 到 180 度**，位置 / 缩放 / float 误差明确为 **0 到 100%**。这说明压缩不是黑箱，而是可调预算。
-- Unreal `AnimationCompressionFormat` 给出的位宽菜单本身就是数值证据：96、48、32 位和 identity，表示它已经在运行时把位宽当成一等公民。
+- ACL UE 插件 README 所述 ACL **2.1.0** 集成对比 **UE 5.2.0**：最多 2.9x 更小、2x 更准确、2x 更快压缩、6.3x 更快解压；原文说明结果依平台与数据变化。这些是不同指标的最大值，不是同一片段同时获得的保证，准确度也不能当作最终玩法验收。
+- ozz-animation **0.15.0**：时间索引变化省下的是每个 keyframe 的 **16–24 bit、约 17%–25% 的 keyframe 结构大小**，依片长而异；共享时间点等开销另计，不是整个动画包、进程内存或 CPU 等比例降低。
+- Unity **6000.0 CurveFilterOptions** 的旋转误差用度、位置/缩放/float 用百分比；这是 API 参数语义，不是压缩收益。[ModelImporter.animationPositionError](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/ModelImporter-animationPositionError.html)与[animationRotationError](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/ModelImporter-animationRotationError.html)需分别按文档解释，不能把录制过滤、模型导入和本文绝对误差公式直接等同。
+- Unreal 枚举中的 96/48/32 等名称提示要检查存储表示，但名称本身不是整个轨道/片段的字节统计，更不是本项目测量。
 
 这些数字放在一起，说明压缩不是单一技术，而是一整套从误差预算到存储格式再到解码器布局的系统设计。
+
+Unity 检查保持三步：固定版本/Rig/片段和原始对照；一次改变一种压缩候选；分别记录导入曲线、构建体积、运行驻留/采样与最终动作。还要检查根运动、混合、重定向、脚接触、武器/挂点、属性曲线与事件消费者，方法可接[动画制作]({{< relref "delivery-engineering/game-art-production-05-animation.md" >}})和[联合验收]({{< relref "delivery-engineering/game-art-production-12-joint-acceptance.md" >}})。这三步尚未执行。
+
+<!-- DATA-TODO: 在合成离散检查之外补输入合法性、完整轨道编解码与连续区间误差验证；固定 Unity 补丁、Rig、模型比例、片段与运行控制器，先比较原始/简化，再检查量化后的区间与最终姿态。分别记录构建字节、驻留、解码/采样及画面和玩法；第三方 benchmark 若作比较，另固定库/codec 版本、数据集、硬件与误差指标，未复测前不填收益。 -->
 
 ## 常见坑
 
@@ -529,9 +556,9 @@ public static class AnimationCompression
 
 - [ACL core repository](https://github.com/nfrechette/acl)
 - [ACL UE plugin repository](https://github.com/nfrechette/acl-ue4-plugin)
-- [Unity `CurveFilterOptions`](https://docs.unity3d.com/ru/2019.4/ScriptReference/Animations.CurveFilterOptions.html)
-- [Unity `ModelImporterAnimationCompression`](https://docs.unity3d.com/es/530/ScriptReference/ModelImporterAnimationCompression.html)
-- [Unreal Engine 5.3 release notes](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5.3-release-notes%3Fapplication_version%3D5.3%3Fapplication_version%3D5.3?application_version=5.3)
+- [Unity 6000.0 CurveFilterOptions](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Animations.CurveFilterOptions.html)
+- [Unity 6000.0 ModelImporterAnimationCompression](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/ModelImporterAnimationCompression.html)
+- [Unity 6000.0 Animation tab](https://docs.unity3d.com/6000.0/Documentation/Manual/class-AnimationClip.html)
 - [Unreal `AnimationCompressionFormat`](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/Engine/AnimationCompressionFormat)
 - [ozz-animation features](https://guillaumeblanc.github.io/ozz-animation/documentation/features/)
-- [ozz-animation release 0.15.0](https://github.com/guillaumeblanc/ozz-animation/releases)
+- [ozz-animation release 0.15.0](https://github.com/guillaumeblanc/ozz-animation/releases/tag/0.15.0)
