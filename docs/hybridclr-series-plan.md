@@ -87,7 +87,7 @@
 | async 历史案例 | 区分堆栈观察、候选原因与尚未闭合的根因；后续用固定样本验证 builder/state machine 与构建配置 |
 | GC 与线程 | 正常接入、保留、根区间与串行跨增量片段样本已完成；完整根归因、屏障反事实、并发／长期压力与其他平台待补 |
 | 调用语义 | 泛型四组对照已完成；下一步按需补 constrained.／装箱、异常展开和类型初始化的跨运行时实测 |
-| 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 和 async／UniTask 的回归样本待补 |
+| 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 固定样本已完成；async／UniTask 回归和设备性能仍待补 |
 | 商业能力 | 已按官方文档核对 FGS、DHE、热重载与访问控制契约；商业私有实现及项目收益不作源码或实测结论 |
 
 旧 `hybridclr-structural-diagnosis-and-bridge-articles-plan.md` 保留为历史诊断与补桥执行材料，不再作为当前进度目录。源码起步的提纲与证据见 `hybridclr-source-reading-start-outline.md`。
@@ -158,3 +158,9 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 ## 本轮专项复用与最小缺口（2026-10-25）
 
 公共入口已纠正为现有三组训练，不新增HCPP。只读复核lab公开边界408文件、96验收器测试、既有输入hash和六份跨片段日志通过；不增加Player运行次数。下一最小问题是现有入口未含显式`.cctor`时无法回答的类型初始化顺序，输入与采证边界登记于源码起步/线程outline；尚未新建或执行该Player实验，其他候选按实际跟读需要推进。
+
+## Prefab／AssetBundle 资源挂载实测（2026-10-26）
+
+共享实验 `projects/resource-mounting` 已完成固定自定义 Editor／v9／Windows x64 Player 验证：code、bundle、late、unregistered、resources 五组各三个新进程。正向字段/子引用/生命周期通过；负向在资源读取阶段即缺组件，清单缺项组仍能加载DLL并调用静态方法。只改复制Player启动清单的单变量对照与主包Resources的独立资产对照分别说明，不推广为平台/版本演进或性能验收。
+
+正文回填 HCLR-4；三栏引用同一篇。实验数据、哈希与边界见实验仓库 `evidence/2026-10-26-resource-mounting/` 和本仓 [资源挂载执行记录](./hybridclr-resource-mounting-outline.md)。本轮实验固定提交为 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/74da063e0fe2a4cbac894acfa77d3b0df4074356)，已推送并核验远端；[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/results.json)均锁定该提交。文稿与索引随本次文档提交交付，Pages 在推送后另行验收。

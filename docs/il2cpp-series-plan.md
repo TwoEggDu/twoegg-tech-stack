@@ -107,3 +107,9 @@
 - hot每进程6次根查询入口top0／frames0（基线1、目标周期收尾2、周期后／退出清理3），注册注销所有者匹配；scrub后当前worker栈的当前目标精确地址12次均0处。不是所有辅助根缺失证明，也未重新采根回调返回缓冲。
 - 96项Python测试通过。源码、产物、原始日志、CIL和验收工具有哈希绑定；公开结果／自有事件在实验仓库evidence/2026-10-25-incremental-barriers。完整动态根归因、屏障反事实与完整路径、并发／长期／性能及其他平台仍待补。
 - 三篇GC／线程正文、三个索引同步本样本结果，不新增正文篇数，不把实现行为上升为ECMA-335规范要求。本轮源码与公开证据已随 [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a) 发布，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/results.json)。
+
+## Prefab／AssetBundle 资源挂载实测（2026-10-26）
+
+共享实验 `projects/resource-mounting` 已完成固定自定义 Editor／v9／Windows x64 Player 验证：code、bundle、late、unregistered、resources 五组各三个新进程。正向字段/子引用/生命周期通过；负向在资源读取阶段即缺组件，清单缺项组仍能加载DLL并调用静态方法。只改复制Player启动清单的单变量对照与主包Resources的独立资产对照分别说明，不推广为平台/版本演进或性能验收。
+
+正文回填 HCLR-4；三栏引用同一篇。实验数据、哈希与边界见实验仓库 `evidence/2026-10-26-resource-mounting/` 和本仓 [资源挂载执行记录](./hybridclr-resource-mounting-outline.md)。本轮实验固定提交为 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/74da063e0fe2a4cbac894acfa77d3b0df4074356)，已推送并核验远端；[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/results.json)均锁定该提交。文稿与索引随本次文档提交交付，Pages 在推送后另行验收。

@@ -84,6 +84,7 @@ tags: [ECMA-335, IL2CPP, HybridCLR, Index]
 | [回调下的 GC 保留与压力]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 句柄与活跃引用怎样跨收集保持可用？ | [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md) |
 | [对象快照与活跃根区间]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 分配容量、实际报告区间与对象保留路径有什么区别？ | [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md) |
 | [跨增量片段的引用修改]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) | 如何关联持续写入、屏障、脏页与重扫？ | [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md) |
+| [Prefab／AssetBundle 资源挂载]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md#resource-mounting-player" >}}) | DLL可调用为何不等于资源组件可恢复？ | 五组各3个本地Player已验证；固定记录 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md) |
 
 上述 Player 证据限于本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 package v9.0.3／runtime v9.0.1 和 Windows x64。最后一组将 GCMode 改为 Manual，采用常驻托管 worker 的串行握手；不是原生回调竞争或所有屏障路径的验收。其本地记录为 `evidence/2026-10-25-incremental-barriers/`，build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb`，不能借用前轮提交充当本轮源码版本。
 

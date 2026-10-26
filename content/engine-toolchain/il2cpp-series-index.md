@@ -76,6 +76,10 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 当前验证范围是本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 HybridCLR v9 组合与 Windows x64 Development Player。已新增 [对象保留与释放对照]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}}) 和 [托管工作线程实测]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})；完整动态根路径归因、写屏障反事实与完整路径、长期压力、多原生线程竞争、性能和其他平台继续按专题的待验证项阅读。
 
+## 共享资源挂载实验
+
+[Prefab／AssetBundle 资源挂载对照]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md#resource-mounting-player" >}}) 已在固定自定义 Editor／v9／Windows x64 完成 code、bundle、late、unregistered、resources 五组各三个Player。区分DLL可执行、启动清单登记、组件字段/引用恢复与生命周期；实验记录为 `evidence/2026-10-26-resource-mounting/`，本轮固定提交为 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/74da063e0fe2a4cbac894acfa77d3b0df4074356)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/results.json)。它是实现层样本，不表示全平台或字段版本兼容性已验收。
+
 ## 按问题查阅
 
 | 问题 | 阅读入口 |

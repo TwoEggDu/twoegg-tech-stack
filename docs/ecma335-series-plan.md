@@ -144,3 +144,9 @@ GC 前置增加事件／实例委托保留与退订实验，区分 Normal、Weak
 ## 主线配图（2026-10-25）
 
 签名篇补跨模块引用关系图，类型初始化篇补职责与触发窗口图；调用与异常篇以 Mermaid 更新既有两阶段图，明确 filter 与展开清理。索引直接链接图所在小节，主线篇数和旧 URL 不变。配图范围与文档验证见 [配图记录](./ecma335-hybridclr-diagrams-20261025.md)，不增加运行时验收结论。
+
+## Prefab／AssetBundle 资源挂载实测（2026-10-26）
+
+共享实验 `projects/resource-mounting` 已完成固定自定义 Editor／v9／Windows x64 Player 验证：code、bundle、late、unregistered、resources 五组各三个新进程。正向字段/子引用/生命周期通过；负向在资源读取阶段即缺组件，清单缺项组仍能加载DLL并调用静态方法。只改复制Player启动清单的单变量对照与主包Resources的独立资产对照分别说明，不推广为平台/版本演进或性能验收。
+
+正文回填 HCLR-4；三栏引用同一篇。实验数据、哈希与边界见实验仓库 `evidence/2026-10-26-resource-mounting/` 和本仓 [资源挂载执行记录](./hybridclr-resource-mounting-outline.md)。本轮实验固定提交为 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/74da063e0fe2a4cbac894acfa77d3b0df4074356)，已推送并核验远端；[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/results.json)均锁定该提交。文稿与索引随本次文档提交交付，Pages 在推送后另行验收。
