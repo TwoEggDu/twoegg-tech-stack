@@ -96,3 +96,9 @@
 - 三篇GC／线程正文、三个索引同步本样本结果，不新增正文篇数，不把实现行为上升为ECMA-335规范要求。本轮源码与公开证据已随 [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a) 发布，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/results.json)。
 
 本轮最终验收：独立复核修正marker4返回前采样、根查询阶段和事件时序漏检；96项Python测试通过。仅覆盖本轮11路径的隔离候选Hugo0.157.0 extended构建1408页、零ERROR；3篇正文及3个索引的382个站内链接／锚点通过。实验源码与公开证据已随 [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a) 推送；本文稿为后续文档同步，不据此宣称Pages已上线。
+
+## A13 补证范围复核（2026-10-25）
+
+本轮只读复用lab当前记录，不覆盖其他对话工作。`python -B tools/check_repo.py`检查408公开文件通过；`python -B -m unittest discover -s tests`96项通过；29/30/30份lifetime/gc-roots/incremental源码hash全匹配，六份既有跨片段普通Player日志原解析器重读通过。没有启动新的Player，没有把验收器单测当GC或并发运行证据。
+
+选取当前首调样本未含显式`.cctor`的缺口，在源码起步篇登记单线程类型初始化顺序的最小输入/采证要求；本轮不写外部lab，不重复已有GC/回调/根实验。其他ABI、constrained./装箱、异常、并发/长期压力仍独立待补。

@@ -239,3 +239,5 @@ Blueprint 的变量、函数调用，在底层全部走反射接口：
 - **Get/Set 节点**：读写操作通过 `FProperty::GetValue` / `SetValue` 实现
 
 这就是为什么 `UFUNCTION(BlueprintCallable)` 能让 C++ 函数直接出现在蓝图节点列表里——UHT 生成了对应的 `UFunction` 对象和 thunk 包装函数。
+
+沿同一自有声明跟读生成、跨模块链接和实际反射执行，见[UCPP-4生成文件与模块接线]({{< relref "engine-toolchain/ucpp-04-uht-ubt-generated-module-wiring.md" >}})。该专项提供完整源文件与故障矩阵，UE工程验收仍待执行。

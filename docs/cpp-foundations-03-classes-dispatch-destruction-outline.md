@@ -43,3 +43,7 @@
 - 最终正文中的五个 C++ 代码块与已验证源文件逐一比对一致。对应文档的差异检查通过。
 - 更新范围：新正文与本提纲；canonical plan、公共索引、根 doc-plan 的 C++ 系列行；CXX-02 后续链接与 Piccolo CPP-02 前置提示。共享文件中其他任务的改动保留，不视作本篇产出。
 - 不包含：Piccolo / Unreal / HybridCLR / IL2CPP 工程运行、调试、ABI 布局检查、跨平台与性能测量。
+
+## 2026-10-25 公共接缝补充
+
+本轮在原课补充语法、完整定义或失败状态相关接缝，未新增公共编号。完整自有代码在`examples/cpp-foundations/`；GCC 8.3.0（x86_64-posix-seh，Strawberry）、C++17、Windows x64，正常5个目标编译/运行退出0，五种独立编译拒绝退出1。正常配置`-O0 -g -Wall -Wextra -Wpedantic`，失败使用`-fsyntax-only`，保留assert、允许异常，不执行UB。具体归属和结果见`cpp-foundations-adjustment-execution-report.md`；旧验证记录不改写成此次重测。

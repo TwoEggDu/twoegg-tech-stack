@@ -35,3 +35,9 @@
 - 保留共享工作区无关改动；写作前快照：本机临时目录 `ucpp02-before-6fupv07k`。
 - 验证通过：隔离副本 Hugo v0.157.0 构建 1411 页、零 ERROR；15 个范围内文件格式/shortcode 检查，238 个 relref 目标存在；11 个相关生成页的 524 处本站链接、资源与锚点检查通过，10 个旧页面回链与样例/类型表显示通过。
 - 随回链修复 UFS-03B 与引擎入口中已有的单层花括号 relref；公共课/UE 工程与 M0/个人能力状态不因成稿改为通过。UE 正常样例、两个失败变体、本地化与性能均未编译或运行。
+
+## A08 环境复核（2026-10-25）
+
+M0仍未确认TwinArena的实际工程目录、输入revision或build_id。`Get-Command UnrealEditor,UnrealBuildTool,RunUBT`未返回已在PATH中的入口；这不证明全机没有其他安装。`E:\workspace\UnrealEngineSrc`同名目录存在，但其根下`Engine/Build/Build.version`与`Engine/Build/BatchFiles/Build.bat`不存在，不能据名称认定合法、完整或UE5.8.2可构建源码。源码登记仍TODO，不升级READY。
+
+本轮没有下载/安装引擎、创建另一个UE工程或运行UHT/UBT/PIE/独立包；自有文件、官方核对与静态责任审查可完成，所有实际引擎观察继续待验。必须先取得实际版本/工程位置和工具链，再按本提纲矩阵逐项取证，不用普通C++/.NET通过替代。

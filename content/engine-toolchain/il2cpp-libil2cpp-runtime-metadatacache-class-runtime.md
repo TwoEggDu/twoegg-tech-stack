@@ -409,6 +409,37 @@ HybridCLR 为需要解释执行的方法接入相应调用路径。原始 CIL �
 
 这是 HybridCLR 系列 D1 篇详细拆解的内容，这里只点出嵌入位置和机制。核心认知是：HybridCLR 没有替换 libil2cpp，而是在 libil2cpp 已有的框架内注入了解释执行路径。
 
+<a id="icpp-2"></a>
+
+## ICPP-2：它描述谁，指向谁，又由谁管理
+
+沿[D2同一ReadingProbe程序]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md#icpp-1" >}})继续。Counter类型、某个counter实例、Value字段描述、Value的当前值和保存它的存储是五项不同的观察内容，不能因为调试器都能显示一个地址就混成一项。
+
+| 读到的东西 | 它描述/指向谁 | 管理与观察边界 |
+|---|---|---|
+| Counter的CLI TypeDef及runtime类型描述 | 一种类型；后者还承担当前runtime实现所需信息 | 描述符不是Counter实例，不按实例析构处理 |
+| Step的方法描述/MethodDef身份 | 声明类型、签名和方法 | 找到描述不保证已有独立native函数或代码已准备 |
+| token、转换索引、GCHandle值 | 各自表/命名空间中的定位信息 | 不能当可直接解引用的对象地址；须经对应解析协议 |
+| counter引用 | 一个运行实例 | 与另一次new的Counter不同；类描述可相同 |
+| Value字段描述/本次字段访问 | 字段定义及counter内当前值 | 原始CLI信息与runtime实际布局分层；偏移随版本/平台/类型变化 |
+| ReadingProbe.Held静态字段 | 一条托管强持有关系 | 清空仅解除这条路径，不删除类型描述，也不承诺当场GC |
+| native局部/包装 | 一条C++访问或资源责任 | 析构native包装不等于销毁托管目标，是否登记GC根另查 |
+
+桌面自测的实际变化是：Counter(7)建立实例；Step(4)读Value并写成11；Held赋值后ReferenceEquals为真、读到同一字段11；再把Held清空。这条**字段读写与持有解除**路径已在.NET桌面执行。它没有测量该对象在Unity中的地址、runtime描述符或GC归因。
+
+### 把三段证据摆开
+
+1. **新样本的实际CIL**：Step有ldfld/stfld，Run有stsfld Held和置空。操作数解析为字段身份而非凭相邻字节猜偏移；输出和hash随完整输入维护。
+2. **已有Player的保留/解除实验**：固定实验仓[a387d28记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/a387d2807f4251fce0e5fc24e8d1debddb4ca79d/evidence/2026-10-25-lifetime-threads/README.md)，build_id70021d1d-8d18-4bdf-8066-446dd9898b80。held三组为0/16/16，解除静态数组后0/0/16，再解除事件后0/0/0；它回答该独立样本的托管持有路径，不是本节Counter的回收记录。
+3. **已有根区间与对象快照**：固定[4861bed记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)有活跃根区间及Context→Slots的对象图；ManagedStacks条目为0，没有给出解释器动态根的完整唯一归因。不可用这份快照推定任何native局部都不会保留目标。
+
+这三段具有独立构建/进程身份。复用已取得的Player证据避免重做相同GC实验，但不会把新程序也标为Unity通过。新Counter的IL2CPP字段访问、类型/方法描述与实际实例地址对应仍待同源构建采证。
+
+语言接缝回看[CXX-02拥有]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}})、[CXX-06布局/字节]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})、[CXX-09对象/存储]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})；托管存储与根协议继续见[GC专题]({{< relref "engine-toolchain/il2cpp-gc-integration-boehm-wbarrier-finalization.md" >}})和[共享线程专题]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。不复写某版结构体，更不把双指针对象头大小当通用托管格式。
+
+方法描述如何接入调用和注册，接[D5的同样本分派表]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md#icpp-3" >}})。
+
+
 ## 收束
 
 libil2cpp 的内部结构可以归纳为三个核心层次：

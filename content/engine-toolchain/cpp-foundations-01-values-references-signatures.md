@@ -429,6 +429,33 @@ int main()
 
 这张表是跟读方法，不是四个系统使用同一对象协议的证明。方法指针、内存布局、GC、引用计数都需要自己的知识和证据；本篇先解决“这一行正在访问谁”。
 
+## 源码阅读补桥：别名展开后，再读const和签名
+
+`reading::Pointer`中的`::`指定名字查找范围；`reading`若是命名空间，就到其中找Pointer。类的`Type::Member`也使用限定名语法，不能凭大写或前缀认定它一定是命名空间。
+
+`using Pointer = int*;`没有创建新的指针种类，而是为整个`int*`命名。因此`const Pointer`等于`int* const`，const约束指针变量；它不等于`const int*`。不要先做文本替换，再把const错误地粘到int上。同样，函数指针别名仍要展开参数与返回类型。见[C++17别名规则](https://timsong-cpp.github.io/cppwp/n4659/dcl.typedef)。
+
+完整自有程序`examples/cpp-foundations/cxx-01/alias.cpp`：
+
+```cpp
+#include <cassert>
+#include <type_traits>
+namespace reading { using Pointer = int*; using Callback = int (*)(int); }
+int Twice(int n) { return n * 2; }
+int main() {
+    int value = 3;
+    const reading::Pointer p = &value;
+    static_assert(std::is_same_v<decltype(p), int* const>);
+    *p = 4;
+    reading::Callback callback = &Twice;
+    assert(callback(*p) == 8);
+}
+```
+
+`p`不能重新指向另一个int，但`*p`仍能修改value。`callback`保存匹配签名的函数入口，调用返回8。独立失败变体`fail/alias_const.cpp`重新赋值p，本轮GCC 8.3.0编译拒绝，诊断`assignment of read-only variable`；没有运行失败产物。编译配置见本轮样例README。
+
+枚举也先还原类型：`enum class Phase { Ready, Closed };`中的值写成`Phase::Ready`；`enum class`不自动隐式转为整数。看到`Flags & Mask`时再确认这是整数位操作，还是项目为枚举定义的重载；结果是否为零、组合是否合法和业务权限是否满足是后续判断。不要看到一个大写宏就推断它只定义了语言内建行为。
+
 ## 9. 自测与验证边界
 
 不打开编译器，先回答三题，再回到完整程序验证同类关系：

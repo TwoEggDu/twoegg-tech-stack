@@ -308,3 +308,5 @@ IL2CPP 作为 AOT 方案的核心 trade-off 可以压成一句：用构建时间
 
 - 上一篇：无。IL2CPP 模块首篇。
 - 下一篇：<a href="{{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md" >}}">IL2CPP 实现分析｜il2cpp.exe 转换器</a>
+
+连续自有样本从[D2的ICPP-1]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md#icpp-1" >}})进入，再到D3对象/描述与D5分派/泛型。新样本已做桌面输入与CIL检查，Unity生成物及native接线仍待验；既有Player结果继续按各自身份复用。

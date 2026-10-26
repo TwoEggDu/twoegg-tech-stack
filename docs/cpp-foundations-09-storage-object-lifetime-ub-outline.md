@@ -44,3 +44,7 @@
 - 从当时 HEAD `cbc8038d2c438ff642c32f8431d2ebf66e188fec` 导出站点，叠加本次 11 个正文/目录/规划/回链文件；根 doc-plan 仅叠加 C++ 系列行，隔离其他并行编辑。Hugo v0.157.0 生成 1407 页，退出码 0、无 ERROR；该结果不代表全部脏工作区验证通过。
 - 新正文、公共索引、CXX-08、CXX-02、CXX-06、DS-19、Piccolo CPP-01、UFS-02 共 8 个生成页面，397 处本地链接、资源和锚点检查通过；七个已有页面均能进入新正文，代码与正常输出可见。
 - Canonical plan 与索引回写十篇公共正文已写、一篇待写，下一篇 CXX-11；批次 1～3 仅表示公共课完成，专项状态继续归各路线。六篇旧文保留 URL、归属和原始验证记录；DS-19 新增语言边界提示，不把 C# 策略示意当 C++ 分配器实测。提交/推送状态以 Git 记录为准。
+
+## 2026-10-25 公共接缝补充
+
+本轮在原课补充语法、完整定义或失败状态相关接缝，未新增公共编号。完整自有代码在`examples/cpp-foundations/`；GCC 8.3.0（x86_64-posix-seh，Strawberry）、C++17、Windows x64，正常5个目标编译/运行退出0，五种独立编译拒绝退出1。正常配置`-O0 -g -Wall -Wextra -Wpedantic`，失败使用`-fsyntax-only`，保留assert、允许异常，不执行UB。具体归属和结果见`cpp-foundations-adjustment-execution-report.md`；旧验证记录不改写成此次重测。

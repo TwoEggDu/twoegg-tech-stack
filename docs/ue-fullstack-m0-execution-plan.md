@@ -246,3 +246,7 @@ M0 通过后可以开始 M1 准备；M1 的完整通过仍以主计划为准。�
 5. 在 M1 建成两个独立 Windows 客户端和 Linux DS 后，补 UFS-04@M1 对象存在/权威/所有权矩阵与 UFS-09@M1 进程日志关联；M2 再加业务与数据库，M3 再补重连。M2 不等待完整 GAS。
 
 本文件完成只表示第一个里程碑已有执行方案。当前 Windows/UE 构建、C++ 行为、独立故障诊断、Linux DS、业务后端/数据库、性能与专项深度、外部评审均没有在本轮获得工程验收证据。
+
+## 2026-10-25 UCPP工程证据预检
+
+UCPP1～5正文和自有接入文件已经齐备；M0实际PRACTICE_ROOT/ARTIFACT_ROOT仍未确认。PATH未发现UnrealEditor/UnrealBuildTool/RunUBT；同名UnrealEngineSrc根缺Build.version/Build.bat，不能作为可用UE5.8.2环境。没有启动新的UE工程/安装或把本次内容验收登记成M0通过。先补真实工程路径、合法引擎身份、工具链及source_revision，再逐项运行UCPP矩阵并关联包/PDB/run_id。

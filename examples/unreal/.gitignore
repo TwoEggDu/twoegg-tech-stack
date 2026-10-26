@@ -1,0 +1,5 @@
+# The root Hugo public/ ignore also matches UE Public/ on Windows.
+!ucpp-04/Source/ProbeMath/Public/
+!ucpp-04/Source/ProbeMath/Public/**
+!ucpp-04/Source/TwinArena/Public/
+!ucpp-04/Source/TwinArena/Public/**

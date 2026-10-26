@@ -40,3 +40,7 @@
 - GDB 8.2.1：将正文交互命令写入命令文件后批量执行，退出 0，无命令错误。info files / info source 核对当前 exe 和源码；命中 Frame.cpp:14，current=10，计数 0→1；bt 回到 main.cpp:7，finish 返回 12；继续执行后正常退出。调试信息报告 DWARF 2。
 - Hugo v0.157.0 工作区本地构建通过：1383 页，退出 0，无 ERROR。检查新文、目录、CXX-01/03、UFS 和构建调试 02/02b 共 7 个生成页面，309 处本地链接、资源和锚点均可达；所有旧文回链均存在。
 - 动态库构建/装载、跨语言调用、MSVC/PDB 操作、四条源码路线实际构建与断点、跨平台 ABI 和性能均未在本篇执行。语言规则、GNU 实验结果和后续项目阅读任务分别标明。
+
+## 2026-10-25 公共接缝补充
+
+本轮在原课补充语法、完整定义或失败状态相关接缝，未新增公共编号。完整自有代码在`examples/cpp-foundations/`；GCC 8.3.0（x86_64-posix-seh，Strawberry）、C++17、Windows x64，正常5个目标编译/运行退出0，五种独立编译拒绝退出1。正常配置`-O0 -g -Wall -Wextra -Wpedantic`，失败使用`-fsyntax-only`，保留assert、允许异常，不执行UB。具体归属和结果见`cpp-foundations-adjustment-execution-report.md`；旧验证记录不改写成此次重测。

@@ -208,3 +208,5 @@ RHI Thread 执行：
 ```
 
 是否启用 RHI Thread 取决于平台和配置（`r.RHIThread.Enable`）。禁用时，RenderThread 直接提交 GPU，减少一层开销但也减少并行度。
+
+针对一个有限纯数据任务的完整接入与退出，见[UCPP-5快照、完成和结果应用]({{< relref "engine-toolchain/ucpp-05-task-thread-data-handoff.md" >}})：GT取快照、后台拥有输入、完成后GT检查目标/代次，停止后先等待再释放；实际线程与UE运行待验。

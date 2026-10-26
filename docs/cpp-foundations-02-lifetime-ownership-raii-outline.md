@@ -44,3 +44,7 @@
 - 检查新文、公共目录、CXX-01、UFS-02、Piccolo CPP-01 五个生成页的 246 个站内链接/资源引用及锚点，缺失为 0；对应正文 relref 均有源文件。确认 CXX-01/02 互相可达、两篇旧文回链到公共第二篇、目录显示 2 篇已写且下一篇为 CXX-03。
 - 更新范围：新正文与本执行记录；canonical plan、公共索引、根 doc-plan 的 C++ 系列行；CXX-01 后续链接、UFS RAII 解释、Piccolo CPP-01 公共前置提示。保留共享文件中其他任务的修改。
 - 不包含：四个引擎/运行时的构建或调试、跨平台测试、性能测量、内存分配器或 GC 回收验证。
+
+## 2026-10-25 公共接缝补充
+
+本轮在原课补充语法、完整定义或失败状态相关接缝，未新增公共编号。完整自有代码在`examples/cpp-foundations/`；GCC 8.3.0（x86_64-posix-seh，Strawberry）、C++17、Windows x64，正常5个目标编译/运行退出0，五种独立编译拒绝退出1。正常配置`-O0 -g -Wall -Wextra -Wpedantic`，失败使用`-fsyntax-only`，保留assert、允许异常，不执行UB。具体归属和结果见`cpp-foundations-adjustment-execution-report.md`；旧验证记录不改写成此次重测。

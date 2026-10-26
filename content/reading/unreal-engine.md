@@ -33,13 +33,13 @@ engine_name: "unreal"
 
 ## 公共基础之后，补 UE 的约定
 
-现有工程地图、Actor 和下方对象专题可先用来衔接。后续专项前置按以下顺序补齐，逐项解释 UE 在普通 C++ 之外增加了什么：
+现有工程地图、Actor 和下方对象专题可先用来衔接。五项专项正文已齐备，按以下顺序解释UE在普通C++之外增加的约定；工程实测分别保持待验：
 
 1. **对象与指针边界（已写，UE 实验待验证）**：[UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，分开普通对象、UObject 与 Actor 的创建、GC 可见持有、弱观察、Outer 与结束协议。
 2. **容器与模板惯用法（已写，UE 实验待验证）**：[UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})，把 TArray/TMap 的查询、修改与访问有效性接到 FString/FName/FText、MoveTemp/Forward；含完整自有两文件样例及两个待验证的编译失败变体。
-3. **Delegate 与 Lambda（待写）**：绑定、捕获、弱引用、解绑和延迟执行怎样约束访问对象的寿命。
-4. **UHT/UBT（待补桥）**：复用工程地图、模块和反射专题，补生成文件的生产、消费与模块接线。
-5. **任务线程（待补桥）**：复用线程专题，补任务捕获、对象访问和跨线程数据交接练习。
+3. **Delegate 与 Lambda（已写，UE实测待验）**：[UCPP-3]({{< relref "engine-toolchain/ucpp-03-delegates-lambda-callback-lifetime.md" >}})，绑定、捕获、解绑、已保存任务与业务关闭的完整自有样例。
+4. **UHT/UBT（已写，UE实测待验）**：[UCPP-4]({{< relref "engine-toolchain/ucpp-04-uht-ubt-generated-module-wiring.md" >}})，完整自有反射/双模块文件，分开生成、头可见性、导出与实际反射执行。
+5. **任务线程（已写，UE实测待验）**：[UCPP-5]({{< relref "engine-toolchain/ucpp-05-task-thread-data-handoff.md" >}})，GT快照、纯数据工作、完成确认、弱目标/代次与退出排空。
 
 读对象系统前先完成第一项；读事件、异步和渲染线程前再补相应后续项。高级模板和任务系统不是运行第一个 Actor 的前提。
 

@@ -19,7 +19,7 @@ series_level: "基础到进阶"
 series_best_for: "能写业务代码，希望逐句解释引擎与运行时中的 C++"
 series_summary: "共用语言与工程基础，按项目补专项前置，再进入具体源码。"
 series_intro: "围绕对象怎样存活、调用怎样发生、内存怎样被访问和代码怎样进入程序，建立跨项目复用的 C++ 阅读能力。"
-series_reading_hint: "先读 CXX-01～03，再用 CXX-10 练习多文件构建与调试，再读 CXX-05～06、04 和 07～09，最后用 CXX-11 连接并发、发布与收尾，再按目标进入专项前置。"
+series_reading_hint: "共同起点01→02→03→10；其余按访问/容器/回调、布局/模板/生成、对象寿命/并发的系统需要选读。"
 tags: ["C++", "源码阅读", "Piccolo", "Unreal", "HybridCLR", "IL2CPP"]
 weight: 490
 ---
@@ -34,7 +34,22 @@ weight: 490
 
 ## 现在从哪里开始
 
-先读 [CXX-01：一次传参到底复制、借用还是只读访问]({{< relref "engine-toolchain/cpp-foundations-01-values-references-signatures.md" >}})，分清对象与指针变量、const、auto 和借用寿命。再读 [CXX-02：对象与资源由谁结束]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}})，理解 RAII、拥有关系与引用环。接着读 [CXX-03：一次成员调用执行谁]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}})，用独立程序区分重载、覆盖、切片和虚析构。再读 [CXX-10：源文件怎样成为正在调试的程序]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})，沿同一个多文件工程练习编译、链接、静态库与断点。接着读 [CXX-05：行为怎样被保存并稍后调用]({{< relref "engine-toolchain/cpp-foundations-05-callables-callback-lifetime.md" >}})，区分函数指针、捕获和取消后的任务副本。再读 [CXX-06：从一段字节读到一个值]({{< relref "engine-toolchain/cpp-foundations-06-layout-bytes-casts.md" >}})，核对布局、类型访问和字节解码的前提。接着读 [CXX-04：复制、移动和容器修改以后，哪些访问还有效]({{< relref "engine-toolchain/cpp-foundations-04-move-containers-invalidation.md" >}})，把元素地址、拥有关系、索引和身份分开判断。再读 [CXX-07：模板调用怎样选择实现]({{< relref "engine-toolchain/cpp-foundations-07-template-reading.md" >}})，沿推导、重载与特化、类型工具和转发核对选择与实例化。接着读 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})，实际区分宏、条件开关、文件生成、链接与启动注册。再读 [CXX-09：有内存为什么还没有对象]({{< relref "engine-toolchain/cpp-foundations-09-storage-object-lifetime-ub.md" >}})，分别追踪存储、对象寿命、资源与访问。最后读 [CXX-11：数据交给另一个线程后，谁保证它有效且可见]({{< relref "engine-toolchain/cpp-foundations-11-concurrency-handoff.md" >}})，区分保活、互斥、发布与完成协议，再进入下面的综合练习和项目案例。
+不必先读完十一篇。先建立共同起点，再按将要阅读的系统补课。
+
+| 阶段 | 阅读顺序与问题 |
+|---|---|
+| 共同起点 | [01 值与访问]({{< relref "engine-toolchain/cpp-foundations-01-values-references-signatures.md" >}}) → [02 所有权]({{< relref "engine-toolchain/cpp-foundations-02-lifetime-ownership-raii.md" >}}) → [03 类与调用]({{< relref "engine-toolchain/cpp-foundations-03-classes-dispatch-destruction.md" >}}) → [10 构建与符号]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md" >}})；从第一课即可做最小编译 |
+| 访问、容器、回调 | 按需读04、05、06：元素地址、捕获寿命与字节访问 |
+| 布局、模板、生成 | 06 → 07 → 08，结合10理解声明与生产/消费 |
+| 对象寿命与并发 | 09依赖02/06；11依赖02/04/05，进入存储或任务系统时补读 |
+
+| 路线 | 首次进入必读 | 遇到对应系统再补 |
+|---|---|---|
+| Piccolo | 共同起点，随后对象/容器用04、PCPP-1 | 回调用05/PCPP-2；反射生成用07/08；交接用06/11/PCPP-3 |
+| Unreal | 共同起点，UCPP-1对象、04/07与UCPP-2 | Delegate用05；UHT/UBT用08；任务用11 |
+| HybridCLR | 共同起点，05/06与CLI/IL2CPP地图 | 存储用09；模板07、线程11随具体入口补读 |
+| IL2CPP | 共同起点，CLI与产物地图 | 生成调用用05；对象存储用06/09；泛型07、线程11按需 |
+
 
 | 用途 | 已有文章 | 先掌握什么 |
 |---|---|---|
@@ -86,7 +101,7 @@ weight: 490
 - 已有 [UE 工程地图]({{< relref "engine-toolchain/ufs-03a-project-build-map.md" >}})、[旋转 Actor]({{< relref "engine-toolchain/ufs-03b-first-rotating-actor.md" >}})、对象/反射与 GC 专题，可以衔接最小工程和 UObject 生命周期。
 - **对象专项已写**：[UCPP-1：普通对象与 UObject 的边界]({{< relref "engine-toolchain/ucpp-01-uobject-ownership-boundaries.md" >}})，复用已有 Actor、对象和 GC 材料，补 Outer/强持有/弱观察与结束协议；完整自有 UE 样例及步骤已写，UE 编译、运行与 GC 对照待验证。
 - **容器与模板专项已写**：[UCPP-2：容器、字符串与模板惯用法]({{< relref "engine-toolchain/ucpp-02-containers-strings-template-idioms.md" >}})，复用 CXX-04/07，核对引擎容器的访问失效、文本角色及 MoveTemp/Forward 约定；UE 编译和运行待验证。
-- **后续专项**：Delegate 与 Lambda 的绑定/取消、UHT/UBT 接线，以及任务线程中的数据寿命。
+- **回调专项已写**：[UCPP-3 Delegate与Lambda]({{< relref "engine-toolchain/ucpp-03-delegates-lambda-callback-lifetime.md" >}})，含订阅、延迟副本与重复清理；UE编译运行待验。随后读[UCPP-4生成与模块接线]({{< relref "engine-toolchain/ucpp-04-uht-ubt-generated-module-wiring.md" >}})和[UCPP-5任务交接]({{< relref "engine-toolchain/ucpp-05-task-thread-data-handoff.md" >}})，三篇均有完整自有代码，UE工程实测待验。
 
 重点是重新确认该项目怎样创建、保存和结束对象，不能仅按名字把引擎类型与标准库类型一一替换。
 
@@ -96,13 +111,13 @@ weight: 490
 
 在 [HybridCLR 专项入口]({{< relref "engine-toolchain/hybridclr-series-index.md" >}}) 复用现有 ABI、解释器与 GC 桥接，再读 [源码阅读起步]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})。
 
-**待补专项**是逐句读懂方法指针、参数槽、返回值、解释帧和 metadata 索引怎样连接；已有机制解释还不能代替这组 C++ 跟读练习。
+已有三组训练已吸收入现有正文：[ABI桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}})读方法指针、参数槽和返回值；[解释器基础]({{< relref "engine-toolchain/hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md" >}})与源码起步读metadata、转换和解释帧；[共享线程专题]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})读对象、接入和退出。固定自定义Editor/v9已有首次/再次调用、对象保留、原生回调、活跃根和串行跨片段证据。其他ABI、完整根归因、并发/长期压力按具体问题补，不再安排HCPP独立文章。
 
 ## 进入 IL2CPP 之前
 
 公共基础优先补对象、间接调用、布局、存储和编译链接，同时建立 ECMA-335 的托管语义。再从 [IL2CPP 专项入口]({{< relref "engine-toolchain/il2cpp-series-index.md" >}}) 进入产物地图和核心机制。
 
-**待补专项**包括：同一小程序的 C#、IL、生成代码对应阅读；托管对象与原生存储的边界；metadata、代码注册与方法分派的接线；C++ 模板和托管泛型分别在哪一层发挥作用。公共课解释语言，专项课解释 runtime 如何用这些语言机制实现自己的规则。
+三项训练已分别嵌入[D2同一程序对应阅读]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md#icpp-1" >}})、[D3描述/对象/存储]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#icpp-2" >}})、[D5分派/注册/泛型]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md#icpp-3" >}})。完整自有输入、实际桌面CIL和既有Player证据的对应已写；新样本Unity构建、stripped IL及native虚分派仍待验，不新增ICPP独立正文。
 
 ## 公共课之后继续什么
 
@@ -113,3 +128,21 @@ weight: 490
 现有 [ABI 桥接]({{< relref "engine-toolchain/hybridclr-bridge-abi-cross-boundary-calling-convention.md" >}})、[解释器基础]({{< relref "engine-toolchain/hybridclr-bridge-interpreter-basics-dispatch-stack-register-ir.md" >}})、[UE GC]({{< relref "system-design/ds-23-unreal-gc.md" >}}) 和 [硬件多核与内存序]({{< relref "performance/hardware-cpu-f05-multicore-false-sharing.md" >}}) 继续承担自己的专题；公共课补齐进入它们之前的语言基础。
 
 **公共课回答 C++ 的规则，专项前置回答项目的约定，源码主线再追踪一次真实的执行与状态变化。**
+
+## 源码语法短速查
+
+先判断名字、类型和调用，再判断拥有与业务协议。以下只作阅读入口，细节回原课。
+
+| 看到什么 | 先怎样读 | 回看 |
+|---|---|---|
+| `scope::Type`、`::name` | 限定作用域；可能是命名空间、类或全局名字 | CXX-01签名与别名 |
+| `using P = T*`、`typedef` | 别名是整个类型的另一个名字，先展开再读const | CXX-01 |
+| `Ctor(...) : member(...)` | 成员初始化发生在函数体之前，按声明顺序 | CXX-03 |
+| `explicit Ctor` | 约束隐式转换，不等于禁止直接初始化 | CXX-02观察包装 |
+| `= default` / `= delete` | 请求默认定义 / 明确禁止该函数参与使用 | CXX-03/04 |
+| `*wrapper`、`wrapper->field` | 先查运算符成员，不能直接认作原生指针 | CXX-02观察包装 |
+| `if (wrapper)` | 可用显式布尔转换；判真具体保证由包装定义 | CXX-02 |
+| `enum class`、`Flags & Mask` | 枚举值、底层表示、位操作及判零分开看；作用域枚举不自动转int，项目是否定义位操作要查声明 | CXX-01类型；CXX-08条件与宏 |
+| `typename T::value_type` | 依赖类型名先读作类型，具体定义到实例化再核对 | CXX-07依赖名 |
+
+本轮新增自有样例集中在仓库 `examples/cpp-foundations/`，说明与正常/失败命令见该目录README；它只覆盖本轮补充，不声称既有全部练习已集中。

@@ -146,3 +146,7 @@ GFX-02 作为渲染补充，解释程序、数据和命令的交接：从 GLSL �
 - 主线 10 提纲与源码、形状转换/物理步进/刚体更新的记录检查及导航验证：[刚体与碰撞查询](piccolo-engine-rigidbody-collision-query-outline.md)。
 - 主线 09 提纲与源码、原输入/运动/控制器函数与数学实现的条件检查及导航验证记录：[从一次按键到角色位移](piccolo-engine-input-motor-controller-outline.md)。
 - 主线 01 提纲与工具链、配置/生成实测及页面验证记录：[建立构建与调试基线](piccolo-engine-build-debug-baseline-outline.md)。
+
+## 本轮运行证据复核（2026-10-25）
+
+A12回读现有固定revision回执及原始Debug错误，四份代表生成文件hash仍匹配；指定历史构建/资源目录无编辑器exe。没有重复运行已知失败构建，没有新增事件/退出、CPU线程或GPU观察。正文和PCPP成稿状态保持，完整编辑器编译仍是后续工程阻塞；具体复核附于原四份outline，不新增基础篇。

@@ -408,6 +408,136 @@ after breaking the cycle=0
 
 回到源码，可以沿着五个动作做笔记：**谁创建 → 谁保存拥有关系 → 谁只借用 → 谁停止业务 → 谁最终释放。** 如果它们不是同一个对象或同一个函数，就把边界明确写出来。
 
+## 阅读补桥：包装的星号、箭头和判真
+
+原生指针的`*`与类类型的`operator*`不是同一条阅读路径。下面是完整的**只读借用包装**，没有分配和删除责任；其前置条件是被观察对象在访问期间仍存活。包装不会探测悬垂指针。它的断言只检查空值，不能检查被释放的非空地址。
+
+`Observer.h`：
+
+```cpp
+#pragma once
+#include <cassert>
+struct Item { int id; bool active; };
+class Observer {
+    const Item* value_ = nullptr; // borrowed; never deletes or extends lifetime
+public:
+    Observer() = default;
+    explicit Observer(const Item* value) : value_(value) {}
+    const Item& operator*() const { assert(value_); return *value_; }
+    const Item* operator->() const { assert(value_); return value_; }
+    explicit operator bool() const { return value_ != nullptr; }
+};
+```
+
+`observer.cpp`：
+
+```cpp
+#include "Observer.h"
+#include <cassert>
+#include <type_traits>
+int main() {
+    Item item{7, true};
+    Observer observation{&item};
+    static_assert(std::is_same_v<decltype(*observation), const Item&>);
+    static_assert(!std::is_convertible_v<Observer, bool>);
+    assert(observation && observation->id == 7);
+    assert(&*observation == &item);
+    item.active = false;
+    assert(observation && !observation->active);
+    Observer empty;
+    assert(!empty);
+}
+```
+
+`*observation`选择`observation.operator*()`，返回只读Item引用；箭头先调用`operator->()`取得原生指针，再访问字段。`if (observation)`可使用显式布尔转换；普通`bool b = observation`不因此成立。`explicit`构造允许`Observer{&item}`，禁止把Item指针自动当Observer传入；`= default`请求默认构造，`= delete`则可禁止某个操作，见本篇独占责任与CXX-04。
+
+item停用后，包装仍判真：这里只承诺地址非空。调用资格要额外检查active；对象寿命要由外部协议保证。空观察者只判假，不解引用。两个独立失败文件`observer_implicit.cpp`与`observer_write.cpp`分别被拒绝隐式构造、经只读路径修改字段。
+
+这能解释UCPP-2的`*FString`：先找FString的运算符定义和返回类型，它取得字符访问路径；不是把一个FString对象强行当原生指针，也不复制或转移字符拥有权。有效区间仍受原字符串寿命与修改约束。
+
+### 声明不等于完整定义
+
+`unique_ptr<Impl>`可以保存前向声明类型，但默认删除器真正删除时需要完整定义。析构和可能销毁旧值的操作放在哪里，见[CXX-10三文件Handle工程]({{< relref "engine-toolchain/cpp-foundations-10-build-link-symbols.md#incomplete-handle" >}})。这是具体删除器/操作的要求，不能推广成所有智能指针完全一样。
+
+## 失败协议：清理资源以后，业务状态是否仍成立
+
+资源释放与更新成功要分开验收。提前返回和异常展开都可能正确释放资源，同时只更新了业务状态的一半。
+
+| 信号 | 表达什么 | 调用方必须做什么 |
+|---|---|---|
+| bool/错误码/结果类型 | 预期业务失败，例如输入不合法 | 消费结果并按约定保留、重试或放弃状态 |
+| 异常 | 非局部退出，交由匹配处理者接手 | 在允许异常的配置中约定边界与恢复；不能吞掉后继续用不明状态 |
+| assert | 检查程序员前置条件或内部不变量 | 修正违约；标准assert受NDEBUG影响，不替代生产输入校验 |
+| 日志 | 留下可观测记录 | 仍需真实的返回、退出或恢复控制流 |
+
+UE的check/ensure有自己的构建配置协议，不能用标准assert的NDEBUG结论替代。这里的普通C++实验开启异常、保留断言，不把策略推广到禁异常引擎配置。
+
+阅读异常安全保证时，先明确观察范围：**基本保证**通常要求不泄漏、对象不变量保持，但值可能已变化；**强保证**要求失败不产生约定范围内的状态变化；**不抛出约定**约束异常离开函数，不保证函数业务成功。`noexcept`不自动回滚；异常逃出非抛出函数将终止程序，见[C++17异常规格](https://timsong-cpp.github.io/cppwp/n4659/except.spec)。
+
+### 完整练习：准备、验证、提交替换
+
+`State.h`把待提交值放在临时vector里，验证及注入失败都发生在替换以前。Ticket是自有资源计数探针，不是操作系统文件句柄。
+
+```cpp
+#pragma once
+#include <stdexcept>
+#include <utility>
+#include <vector>
+struct Ticket {
+    inline static int alive = 0;
+    Ticket() { ++alive; }
+    ~Ticket() noexcept { --alive; }
+    Ticket(const Ticket&) = delete;
+    Ticket& operator=(const Ticket&) = delete;
+};
+enum class Failure { None, Return, Throw };
+class State {
+    std::vector<int> values_;
+public:
+    const std::vector<int>& Values() const noexcept { return values_; }
+    bool Replace(std::vector<int> proposed, Failure fault) {
+        Ticket resource;
+        for (int value : proposed) if (value < 0) return false;
+        if (fault == Failure::Return) return false;
+        if (fault == Failure::Throw) throw std::runtime_error("controlled preparation failure");
+        values_.swap(proposed); // std::vector<int> with std::allocator: nonthrowing commit
+        return true;
+    }
+};
+```
+
+`failure_protocol.cpp`：
+
+```cpp
+#include "State.h"
+#include <cassert>
+#include <iostream>
+int main() {
+    {
+        State state;
+        assert(state.Replace({1, 2}, Failure::None));
+        const auto original = state.Values();
+        assert(!state.Replace({8, 9}, Failure::Return));
+        assert(state.Values() == original && Ticket::alive == 0);
+        bool caught = false;
+        try { state.Replace({8, 9}, Failure::Throw); }
+        catch (const std::runtime_error&) { caught = true; }
+        assert(caught && state.Values() == original && Ticket::alive == 0);
+        assert(!state.Replace({-1}, Failure::None));
+        assert(state.Values() == original && Ticket::alive == 0);
+        assert(state.Replace({3, 4}, Failure::None));
+        assert((state.Values() == std::vector<int>{3, 4}));
+    }
+    assert(Ticket::alive == 0);
+    std::cout << "return/throw/invalid preserved old state; success committed; tickets=0\n";
+}
+```
+
+按值参数的复制可能在进入函数前失败；这也尚未接触旧values。函数内受控返回、受控异常及负值验证失败均保留旧状态。最后`vector<int>`使用默认allocator交换作为不抛出的提交点；这个具体前提不能替换成“任意两个业务对象swap都安全”。临时proposed在成功后负责旧状态的释放。
+
+本轮实际GCC 8.3.0/C++17、Windows x64、`-O0 -g -Wall -Wextra -Wpedantic`：三条失败路径被观察，旧值断言通过，Ticket计数均归零，后续正常提交成功，退出0。输出：`return/throw/invalid preserved old state; success committed; tickets=0`。该例只对本函数管理的vector给出强保证；外部日志、网络发送、文件替换或跨对象事务需要自己的提交/补偿协议。
+
+
 ## 7. 四条源码路线怎样复用这个模型
 
 | 路线 | 带着本篇去追踪什么 | 仍需补充的项目规则 |

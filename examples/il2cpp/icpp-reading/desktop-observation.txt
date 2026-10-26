@@ -1,0 +1,169 @@
+DESKTOP_SOURCE_CHECK passed: 5,11,25,42,same; Held=null
+METHOD IcppReading.NodeBase::.ctor TOKEN=0x06000005
+ IL_0000: ldarg.0
+ IL_0001: call 0x0A000030 System.Object::Void .ctor()
+ IL_0006: nop
+ IL_0007: nop
+ IL_0008: ldarg.0
+ IL_0009: ldarg.1
+ IL_000A: stfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_000F: ret
+METHOD IcppReading.NodeBase::Evaluate TOKEN=0x06000006
+ IL_0000: nop
+ IL_0001: ldarg.0
+ IL_0002: ldfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_0007: ldarg.1
+ IL_0008: add
+ IL_0009: stloc.0
+ IL_000A: br.s 00
+ IL_000C: ldloc.0
+ IL_000D: ret
+METHOD IcppReading.Counter::.ctor TOKEN=0x06000007
+ IL_0000: ldarg.0
+ IL_0001: ldarg.1
+ IL_0002: call 0x06000005 IcppReading.NodeBase::Void .ctor(Int32)
+ IL_0007: nop
+ IL_0008: nop
+ IL_0009: ret
+METHOD IcppReading.Counter::Step TOKEN=0x06000008
+ IL_0000: nop
+ IL_0001: ldarg.0
+ IL_0002: ldarg.0
+ IL_0003: ldfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_0008: ldarg.1
+ IL_0009: add
+ IL_000A: stfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_000F: ldarg.0
+ IL_0010: ldfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_0015: stloc.0
+ IL_0016: br.s 00
+ IL_0018: ldloc.0
+ IL_0019: ret
+METHOD IcppReading.Counter::Evaluate TOKEN=0x06000009
+ IL_0000: nop
+ IL_0001: ldarg.0
+ IL_0002: ldfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_0007: ldc.i4.2
+ IL_0008: mul
+ IL_0009: ldarg.1
+ IL_000A: add
+ IL_000B: stloc.0
+ IL_000C: br.s 00
+ IL_000E: ldloc.0
+ IL_000F: ret
+METHOD IcppReading.ReadingProbe::Add TOKEN=0x0600000A
+ IL_0000: nop
+ IL_0001: ldarg.0
+ IL_0002: ldarg.1
+ IL_0003: add
+ IL_0004: stloc.0
+ IL_0005: br.s 00
+ IL_0007: ldloc.0
+ IL_0008: ret
+METHOD IcppReading.ReadingProbe::CallVirtual TOKEN=0x0600000B
+ IL_0000: nop
+ IL_0001: ldarg.0
+ IL_0002: ldarg.1
+ IL_0003: callvirt 0x06000006 IcppReading.NodeBase::Int32 Evaluate(Int32)
+ IL_0008: stloc.0
+ IL_0009: br.s 00
+ IL_000B: ldloc.0
+ IL_000C: ret
+METHOD IcppReading.ReadingProbe::Echo TOKEN=0x0600000C
+ IL_0000: nop
+ IL_0001: ldarg.0
+ IL_0002: stloc.0
+ IL_0003: br.s 00
+ IL_0005: ldloc.0
+ IL_0006: ret
+METHOD IcppReading.ReadingProbe::Run TOKEN=0x0600000D
+ IL_0000: nop
+ IL_0001: ldc.i4.7
+ IL_0002: newobj 0x06000007 IcppReading.Counter::Void .ctor(Int32)
+ IL_0007: stloc.0
+ IL_0008: ldc.i4.2
+ IL_0009: ldc.i4.3
+ IL_000A: call 0x0600000A IcppReading.ReadingProbe::Int32 Add(Int32, Int32)
+ IL_000F: stloc.1
+ IL_0010: ldloc.0
+ IL_0011: ldc.i4.4
+ IL_0012: callvirt 0x06000008 IcppReading.Counter::Int32 Step(Int32)
+ IL_0017: stloc.2
+ IL_0018: ldloc.0
+ IL_0019: ldc.i4.3
+ IL_001A: call 0x0600000B IcppReading.ReadingProbe::Int32 CallVirtual(IcppReading.NodeBase, Int32)
+ IL_001F: stloc.3
+ IL_0020: ldc.i4.s 2A
+ IL_0022: call 0x2B000001 IcppReading.ReadingProbe::Int32 Echo[Int32](Int32)
+ IL_0027: stloc.s 04
+ IL_0029: ldstr C3-01-00-70
+ IL_002E: call 0x2B000002 IcppReading.ReadingProbe::System.String Echo[String](System.String)
+ IL_0033: stloc.s 05
+ IL_0035: ldloc.0
+ IL_0036: stsfld 0x04000003 IcppReading.ReadingProbe::IcppReading.NodeBase Held
+ IL_003B: ldsfld 0x04000003 IcppReading.ReadingProbe::IcppReading.NodeBase Held
+ IL_0040: ldloc.0
+ IL_0041: bne.un.s 13
+ IL_0043: ldsfld 0x04000003 IcppReading.ReadingProbe::IcppReading.NodeBase Held
+ IL_0048: ldfld 0x04000002 IcppReading.NodeBase::Int32 Value
+ IL_004D: ldc.i4.s 0B
+ IL_004F: ceq
+ IL_0051: ldc.i4.0
+ IL_0052: ceq
+ IL_0054: br.s 01
+ IL_0056: ldc.i4.1
+ IL_0057: stloc.s 06
+ IL_0059: ldloc.s 06
+ IL_005B: brfalse.s 0B
+ IL_005D: ldstr CD-01-00-70
+ IL_0062: newobj 0x0A000031 System.InvalidOperationException::Void .ctor(System.String)
+ IL_0067: throw
+ IL_0068: ldnull
+ IL_0069: stsfld 0x04000003 IcppReading.ReadingProbe::IcppReading.NodeBase Held
+ IL_006E: ldc.i4.s 09
+ IL_0070: newarr 0x01000019 ::System.String
+ IL_0075: dup
+ IL_0076: ldc.i4.0
+ IL_0077: ldloca.s 01
+ IL_0079: call 0x0A000032 System.Int32::System.String ToString()
+ IL_007E: stelem.ref
+ IL_007F: dup
+ IL_0080: ldc.i4.1
+ IL_0081: ldstr F5-01-00-70
+ IL_0086: stelem.ref
+ IL_0087: dup
+ IL_0088: ldc.i4.2
+ IL_0089: ldloca.s 02
+ IL_008B: call 0x0A000032 System.Int32::System.String ToString()
+ IL_0090: stelem.ref
+ IL_0091: dup
+ IL_0092: ldc.i4.3
+ IL_0093: ldstr F5-01-00-70
+ IL_0098: stelem.ref
+ IL_0099: dup
+ IL_009A: ldc.i4.4
+ IL_009B: ldloca.s 03
+ IL_009D: call 0x0A000032 System.Int32::System.String ToString()
+ IL_00A2: stelem.ref
+ IL_00A3: dup
+ IL_00A4: ldc.i4.5
+ IL_00A5: ldstr F5-01-00-70
+ IL_00AA: stelem.ref
+ IL_00AB: dup
+ IL_00AC: ldc.i4.6
+ IL_00AD: ldloca.s 04
+ IL_00AF: call 0x0A000032 System.Int32::System.String ToString()
+ IL_00B4: stelem.ref
+ IL_00B5: dup
+ IL_00B6: ldc.i4.7
+ IL_00B7: ldstr F5-01-00-70
+ IL_00BC: stelem.ref
+ IL_00BD: dup
+ IL_00BE: ldc.i4.8
+ IL_00BF: ldloc.s 05
+ IL_00C1: stelem.ref
+ IL_00C2: call 0x0A000021 System.String::System.String Concat(System.String[])
+ IL_00C7: stloc.s 07
+ IL_00C9: br.s 00
+ IL_00CB: ldloc.s 07
+ IL_00CD: ret

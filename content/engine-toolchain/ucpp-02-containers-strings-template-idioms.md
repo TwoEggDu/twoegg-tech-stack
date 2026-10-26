@@ -320,3 +320,5 @@ check 在本例用于 Development 验证，不把必要的修改操作藏在 che
 [localization]: https://dev.epicgames.com/documentation/en-us/unreal-engine/text-localization-in-unreal-engine
 [move]: https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/Core/MoveTemp
 [forward]: https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/Core/Forward
+
+接下来沿[UCPP-3 Delegate与Lambda]({{< relref "engine-toolchain/ucpp-03-delegates-lambda-callback-lifetime.md" >}})读容器保存的行为：handle指向订阅条目，已复制闭包有独立寿命，删除条目不自动取消所有任务。

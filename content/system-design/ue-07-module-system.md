@@ -230,3 +230,5 @@ Source/
 - 增量编译：修改 UI 代码只重编 UI 模块，不重编战斗模块
 - 强制解耦：模块边界迫使明确声明依赖，避免隐式耦合
 - 插件化：Combat 模块将来可以独立打包复用
+
+沿同一自有声明跟读生成、跨模块链接和实际反射执行，见[UCPP-4生成文件与模块接线]({{< relref "engine-toolchain/ucpp-04-uht-ubt-generated-module-wiring.md" >}})。该专项提供完整源文件与故障矩阵，UE工程验收仍待执行。

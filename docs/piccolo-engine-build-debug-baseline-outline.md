@@ -55,3 +55,9 @@
 - 系列 `series_order` 为 0—12 且唯一；已确认 GFX-01 → 01 → 02、02 返回 01、返回 chapters 与两个首页入口。01 已写入 canonical plan；05/CPP-03 的实际生成状态同步引用本篇，其他文章原有运行待验证状态保留。
 - 本次共 13 个任务文件：两份新文件、02—08 七份正文的顺序元数据及相关衔接、两个阅读首页、系列 plan 与根路由。导航与规划范围 `git diff --check` 通过，暂存区为空；共享工作区无关改动保留。
 - 不提交/推送；不把本篇写完登记成引擎构建、符号加载或首帧调试通过。
+
+## A12 原始回执复核（2026-10-25）
+
+只读复核既有`%TEMP%/TechStackShow-piccolo-baseline-01-20261025/verification-receipt.json`及`build-clean-debug.log`。固定revision仍f5053707fed4d3f94d270a436fb0d3a8ae54e3e5；历史干净Debug配置0、生成目标0、完整编辑器构建1，原始日志仍含Jolt的C3688 us字面量和fmt的C2653/checked_array_iterator错误。四份代表reflection/serializer/shader生成文件的当前SHA256均与回执相同。
+
+定向检查原source/bin与build-vs18-debug-clean下没有PiccoloEditor.exe，故没有新的引擎运行、事件退出、线程/Trace或GPU捕获。这里是复核旧回执，不声称本轮又做了一次构建。未改源码/工具链时重跑相同已知失败不会产生新证据；不改第三方依赖或安装系统组件来制造通过。下一步是单独解决该固定revision与工具链兼容，再新建build目录重建并保留完整身份，之后执行PCPP各运行矩阵。

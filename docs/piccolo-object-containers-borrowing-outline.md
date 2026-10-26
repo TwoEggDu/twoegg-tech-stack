@@ -49,3 +49,9 @@
 - 14 篇正文、两个阅读首页与公共 C++ 入口共 17 个生成页，995 处站内链接、锚点和资源引用检查通过；三个入口均已链接新篇。生成页静态检查不等于浏览器视觉或 Mermaid 实际渲染验收。
 - 导航更新覆盖专项入口、引擎首页、公共 C++ 入口、CPP-03 接续、主线 04 前置、系列目录和根系列路由；公共 CXX-04 保持待写，PCPP-2/3 继续待补。共享工作区的无关改动保留，不修改公共模板和样式。
 - 本次没有构建或运行 Piccolo，没有执行引擎断点；完整引擎构建、运行与浏览器目视边界沿用原记录。未暂存、提交或推送本次文章。
+
+## A12 原始回执复核（2026-10-25）
+
+只读复核既有`%TEMP%/TechStackShow-piccolo-baseline-01-20261025/verification-receipt.json`及`build-clean-debug.log`。固定revision仍f5053707fed4d3f94d270a436fb0d3a8ae54e3e5；历史干净Debug配置0、生成目标0、完整编辑器构建1，原始日志仍含Jolt的C3688 us字面量和fmt的C2653/checked_array_iterator错误。四份代表reflection/serializer/shader生成文件的当前SHA256均与回执相同。
+
+定向检查原source/bin与build-vs18-debug-clean下没有PiccoloEditor.exe，故没有新的引擎运行、事件退出、线程/Trace或GPU捕获。这里是复核旧回执，不声称本轮又做了一次构建。未改源码/工具链时重跑相同已知失败不会产生新证据；不改第三方依赖或安装系统组件来制造通过。下一步是单独解决该固定revision与工具链兼容，再新建build目录重建并保留完整身份，之后执行PCPP各运行矩阵。

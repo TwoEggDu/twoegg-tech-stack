@@ -370,6 +370,45 @@ LeanCLR 的泛型处理和 IL2CPP 形成了两个极端：IL2CPP 用代码膨胀
 | 运行时灵活性 | 仅限构建时可见 | 保底路径可用 | 任意组合 | 任意组合 |
 | 值类型性能 | 最优（直接访问） | 有间接开销 | 最优（JIT 优化） | 最低（解释执行） |
 
+<a id="icpp-3"></a>
+
+## ICPP-3：同一次虚调用与泛型调用，怎样逐层接线
+
+继续[D2的ReadingProbe]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md#icpp-1" >}})，保持程序集、对象和参数不换。C++模板是编译期语言机制；托管泛型实例的身份、metadata、runtime上下文与代码共享是另外几层，不能画成“`Echo<T>`就是一个C++模板特化”。
+
+### 先追CallVirtual，再追Echo
+
+| 层次 | `CallVirtual(counter,3)` | `Echo<int>(42)` / `Echo<string>(same)` |
+|---|---|---|
+| 托管身份 | NodeBase.Evaluate声明、Counter覆盖、counter实际类型 | 同一Echo泛型定义，两个不同托管实例 |
+| 实际桌面CIL | CallVirtual内callvirt NodeBase.Evaluate | Run内两个MethodSpec，解析为int和string |
+| 生成调用 | 应核对IL2CPP保留/优化后的调用形态 | 应核对实际专用/共享调用及参数/返回适配 |
+| 方法入口/包装 | 运行时选取的目标与调用包装职责分开 | 方法身份、可调用入口、通用调用包装不假设同一地址 |
+| 注册与上下文 | 描述信息如何找到实际可执行入口 | 注册信息与泛型上下文如何让共享代码仍知道具体类型 |
+| 本轮实际边界 | 桌面返回25，覆盖身份断言通过；Unity native待验 | 桌面两实例返回42/same；Unity native待验 |
+
+这份桌面程序集的CallVirtual使用MethodDef 0x06000006指向基类声明；Counter覆盖执行后得到25。Run里的MethodSpec为0x2B000001/2，不能从这个序号推定Unity生成函数表下标。非虚Step也使用callvirt，更不能把每条callvirt都画成某种固定native虚表查找。
+
+### 复用已有泛型Player证据，但保持程序身份
+
+现有[泛型综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})已经同时保留实际CLI签名、构建产物和原生断点。固定实验仓[e0220099的metadata.txt](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/metadata.txt)将HotUpdate.GenericCalls中的MethodSpec连接到Generic.AOT:GenericTarget.Echo的MemberRef，以及其MethodDef/GenericParam；[同构建结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/e0220099d293f7a1a4601ee9931b49a10dd519f9/evidence/2026-10-25/generics.json)绑定build_id136f3c65-0c8b-4944-a838-39a5f4024e27和各GameAssembly/PDB hash。
+
+| 组别 | 实际观察 | 可以回答什么 |
+|---|---|---|
+| P0/M0 无显式实例、不补metadata | string成功；int/Payload按预期MissingMethodException，进程2 | 有托管方法身份不等于原生可执行实例齐全 |
+| P0/M1 无显式实例、补metadata | 三种均成功；int/Payload体来自补充AOT image，目标转换/包装解释路径有断点 | metadata补足与执行路径变化需结合实际runtime |
+| P1/M0 有显式seeds、不补 | 三种成功，有原生共享相关命中 | 构建可见实例改变产物与可执行路径 |
+| P1/M1 有seeds、补metadata | 三种成功；补metadata没有强制替换已有原生路径 | 补充metadata不是无条件重定向开关 |
+
+这组固定自定义Editor/v9、Windows x64、C++ Debug产物记录bee_enable_full_generic_sharing=false；不能用它验证所有版本的FGS。P1 seeds本身已经调用目标，原生命中数包含预调用，不比较冷启动性能或简单换算共享成本。细节复用[泛型共享桥接]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-generic-sharing-rules.md" >}})，不再复制一轮实验。
+
+### 最后还差哪条真正的接线证据
+
+新ReadingProbe已把虚调用与泛型放进同一输入，并取得真实桌面CIL；本轮没有把它编成新的Unity Player，所以**新Counter的native虚分派/注册和新Echo的Unity入口仍待验**。旧泛型证据不能替它填这一格。
+
+下一次在原实验仓空闲后，只补这个缺口：同一次构建保存新程序集/stripped IL、生成目录、GameAssembly/PDB，沿CallVirtual到实际Counter.Evaluate，沿两个Echo实例到真实入口/上下文；把托管身份、生成调用、注册、包装、执行及返回分别记载。没有独立符号就查共享/内联/裁剪，不编造一一对应的函数名。公开页仅描述自有输入和观察，不复制受限实现。
+
+
 ## 收束
 
 IL2CPP 的泛型代码生成经历了三个阶段的演化：

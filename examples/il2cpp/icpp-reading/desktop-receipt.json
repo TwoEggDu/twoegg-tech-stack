@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-25",
+  "sdk": "10.0.402",
+  "target": "net10.0",
+  "configuration": "Debug Optimize=false",
+  "runtime_scope": "desktop .NET only, not Unity, not stripped IL, not IL2CPP native",
+  "build_exit": 0,
+  "run_exit": 0,
+  "source_sha256": "1feb43fd80a446dc4cae011e442fb075f5fbe2578a7bd4e3ca216011871b5735",
+  "assembly_sha256": "1ee92c0dcff215dcd3ef451f56533764ebc07f349fca8daac7f035e5abb5b1a5",
+  "observation_sha256": "3770cf04c8167560f1785d4fc9ef1c82a1615663400aeb7c126de654947f2c1c"
+}

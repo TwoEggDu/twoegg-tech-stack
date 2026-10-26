@@ -254,6 +254,96 @@ C 中去掉 `inline` 后，一个普通外部函数的定义同时进入两个�
 
 另外两处常见语法不能照搬这个解释：函数内部的 static 局部对象具有静态存储期；类里的 static 成员表示它不属于每个实例各一份。读代码时先确定它位于命名空间、函数还是类中，再谈链接与寿命。
 
+<a id="incomplete-handle"></a>
+
+## 前向声明、完整类型与定义位置
+
+`class Impl;`让编译器知道这是一个类名，可在接口中声明`Impl*`、`Impl&`及某些以它为参数/返回类型的函数声明。它没有告诉编译器对象布局。按值成员需要空间，`sizeof(Impl)`需要大小，经指针访问成员需要知道成员声明；这些操作在相应位置要求完整定义。一个函数可以先声明返回不完整类型，但不能据此推断调用、定义或销毁该返回值也不需要定义。
+
+下面独立三文件工程只隐藏一个int，展示定义位置，尚不是完整PImpl设计教程。保存于`examples/cpp-foundations/cxx-10/handle/`。
+
+`Handle.h`：
+
+```cpp
+#pragma once
+#include <memory>
+class Handle {
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+public:
+    explicit Handle(int value);
+    ~Handle();
+    Handle(Handle&&) noexcept;
+    Handle& operator=(Handle&&) noexcept;
+    Handle(const Handle&) = delete;
+    Handle& operator=(const Handle&) = delete;
+    int Value() const;
+};
+```
+
+`Handle.cpp`：
+
+```cpp
+#include "Handle.h"
+struct Handle::Impl { int value; };
+Handle::Handle(int value) : impl_(std::make_unique<Impl>(Impl{value})) {}
+Handle::~Handle() = default;
+Handle::Handle(Handle&&) noexcept = default;
+Handle& Handle::operator=(Handle&&) noexcept = default;
+int Handle::Value() const { return impl_->value; }
+```
+
+`main.cpp`：
+
+```cpp
+#include "Handle.h"
+#include <cassert>
+#include <utility>
+int main() {
+    Handle first{7};
+    Handle next{std::move(first)};
+    Handle third{2};
+    third = std::move(next);
+    assert(third.Value() == 7);
+}
+```
+
+头里`unique_ptr<Impl>`的包装布局不要求立刻展开Impl。默认删除器真正参与销毁时却需要完整类型；把析构和会销毁旧拥有对象的移动赋值定义到看到Impl的.cpp。构造、移动构造也在同一位置定义，避免构造清理路径在调用者不可见定义处实例化。不能推导成“每种智能指针的所有操作都需要完整类型”。[C++17 unique_ptr析构](https://timsong-cpp.github.io/cppwp/n4659/unique.ptr.single.dtor)
+
+```powershell
+g++ -std=c++17 -O0 -g -Wall -Wextra -Wpedantic Handle.cpp main.cpp -o handle.exe
+if ($LASTEXITCODE -ne 0) { throw "Handle compile/link failed" }
+.\handle.exe
+if ($LASTEXITCODE -ne 0) { throw "Handle runtime assertions failed" }
+```
+
+移动后的first/next仅析构；Value要求当前仍拥有Impl，本例不在移动后的对象上调用它。接口没有承诺移动后Value仍可调用。
+
+### 两种独立拒绝，分别定位完整定义缺在哪
+
+`fail/incomplete_value.cpp`：
+
+```cpp
+class Impl;
+struct Broken { Impl value; };
+```
+
+该文件在编译期即被拒绝：`field ... has incomplete type`，尚未进入链接。修复为指针/引用接口，或在此位置提供完整定义；不能靠追加链接库修好布局未知。
+
+`fail/inline_destructor.cpp`：
+
+```cpp
+#include <memory>
+struct Impl;
+struct Broken {
+    std::unique_ptr<Impl> value;
+    ~Broken() = default;
+};
+int main() { Broken broken; }
+```
+
+这个独立文件把析构留在看不到Impl定义的位置；实例化默认删除器时报`sizeof`应用于不完整类型。本轮GCC 8.3.0/Windows x64的两种失败都返回1，均使用`-fsyntax-only`，未执行产物。诊断文本随标准库/编译器变化。正确三文件版本编译、链接、运行均0，移动赋值覆盖旧值与最终析构路径断言成立；既有Frame/静态库练习未被改动。
+
 ## 6. 把同一份实现放进库
 
 ### 6.1 静态库改变实现的组织方式

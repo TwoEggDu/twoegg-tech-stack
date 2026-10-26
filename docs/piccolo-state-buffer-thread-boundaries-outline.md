@@ -55,3 +55,9 @@
 - 相关入口、03/06/07 与 PCPP-2 回链完成；专项 canonical 表将三项登记为正文已写，公共 CXX-04/05/06/11 保持自身待写状态；保留同期 CXX-01 已成稿和 GFX-02 的规划更新。根 doc-plan 仅维护系列汇总。
 - 限定任务路径的 git diff --check 通过，暂存区为空。未改引擎源码、共享模板/CSS，未暂存、提交或推送；共享工作区其他内容保留。
 - 未运行 Piccolo、Jolt、spdlog 或 Vulkan，也未取得引擎断点、线程采样、GPU 捕获和显示时序。源码、独立模型与引擎运行证据分别登记，三项专项正文齐备不等于整个基础课程或引擎实践验收完成。
+
+## A12 原始回执复核（2026-10-25）
+
+只读复核既有`%TEMP%/TechStackShow-piccolo-baseline-01-20261025/verification-receipt.json`及`build-clean-debug.log`。固定revision仍f5053707fed4d3f94d270a436fb0d3a8ae54e3e5；历史干净Debug配置0、生成目标0、完整编辑器构建1，原始日志仍含Jolt的C3688 us字面量和fmt的C2653/checked_array_iterator错误。四份代表reflection/serializer/shader生成文件的当前SHA256均与回执相同。
+
+定向检查原source/bin与build-vs18-debug-clean下没有PiccoloEditor.exe，故没有新的引擎运行、事件退出、线程/Trace或GPU捕获。这里是复核旧回执，不声称本轮又做了一次构建。未改源码/工具链时重跑相同已知失败不会产生新证据；不改第三方依赖或安装系统组件来制造通过。下一步是单独解决该固定revision与工具链兼容，再新建build目录重建并保留完整身份，之后执行PCPP各运行矩阵。

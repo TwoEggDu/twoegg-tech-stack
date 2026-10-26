@@ -17,7 +17,7 @@ series_id: "il2cpp"
 
 > **公共前置**：生成代码、平台编译与运行时接线的共同模型，见 [CXX-08：眼前的代码由谁产生]({{< relref "engine-toolchain/cpp-foundations-08-macros-code-generation.md" >}})。先用独立工程验证生产与消费关系，再读本文的转换器专题；教学函数表不是 IL2CPP 的实际注册格式，也不增加 Unity 构建或运行验证结论。
 
-> il2cpp.exe 不是编译器——它是一个 source-to-source 转换器，把 .NET IL 翻译成等价的 C++ 代码，然后交给平台编译器做真正的编译。
+> IL2CPP的AOT流程包含IL→C++转换与平台原生编译；il2cpp.exe负责转换阶段，不直接产生最终目标机器码。
 
 这是 .NET Runtime 生态全景系列 IL2CPP 模块第 2 篇，承接 D1 架构总览中 Stage 3 的展开。
 
@@ -35,7 +35,7 @@ C# 源码  →  IL 程序集  →  Stripped IL  →  C++ 源码  →  native bin
 
 il2cpp.exe 的输入是 UnityLinker 裁剪后的 IL 程序集，输出是一组 C++ 源码文件和 `global-metadata.dat`。它本身是一个用 C# 编写的命令行工具，Unity 编辑器在构建时通过命令行调用它，传入裁剪后的程序集路径、输出目录和一系列配置参数。
 
-关键认知：il2cpp.exe 不做优化、不做寄存器分配、不生成机器码。它只负责语义等价的 source-to-source 翻译。真正的优化和机器码生成是下游 C++ 编译器（Clang / MSVC / GCC）的工作。
+关键边界：IL→C++转换阶段不直接生成最终机器码；平台C++编译器负责C++→机器码及目标级优化。转换阶段自身可能包含降低、改写和生成策略，不能概括成完全不优化，也不能把后文示意当固定版本实测。[Unity 2022.3：How IL2CPP works](https://docs.unity3d.com/2022.3/Documentation/Manual/IL2CPP.html)
 
 ## 输入与输出
 
@@ -456,7 +456,7 @@ String_t* L_0 = _stringLiteralXXXX;
 
 ## 优化
 
-严格来说，il2cpp.exe 本身几乎不做优化。但它会生成一些有利于下游 C++ 编译器优化的代码模式。
+转换器生成的C++形态会影响后续优化；具体版本做了哪些转换与优化需按实际输入/产物核对。下面介绍阅读时可能遇到的代码模式，不据此量化各阶段优化份额。
 
 ### 去虚化（Devirtualization）
 
@@ -515,9 +515,92 @@ il2cpp.exe 只能为它在静态分析中发现的泛型实例生成代码。如
 
 il2cpp.exe 的输出是大量 C++ 代码，下游 C++ 编译器需要编译这些代码。一个大型项目可能输出 50 万行以上的 C++ 代码，C++ 编译耗时可能占整个构建的 60%~80%。il2cpp.exe 自身的转换速度反而不是瓶颈——瓶颈在它产出的 C++ 代码太多。
 
+<a id="icpp-1"></a>
+
+## ICPP-1：沿同一个自有程序保持方法身份
+
+看懂几个生成函数名，仍可能把不同构建的IL、符号和进程拼在一起。先固定一个输入，给每次变化保留对应关系，才知道参数、字段和返回值走的是哪条实际路径。
+
+下面完整自有程序同时供D3的ICPP-2和D5的ICPP-3使用，文件在仓库`examples/il2cpp/icpp-reading/ReadingProbe.cs`。它没有引用Unity实现，可以作为实验输入；不要把下面的C#转换成一段臆造的C++再当生成实测。
+
+```csharp
+using System;
+using System.Runtime.CompilerServices;
+
+namespace IcppReading
+{
+    public class NodeBase
+    {
+        public int Value;
+        public NodeBase(int value) { Value = value; }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public virtual int Evaluate(int delta) { return Value + delta; }
+    }
+    public sealed class Counter : NodeBase
+    {
+        public Counter(int value) : base(value) { }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public int Step(int delta) { Value += delta; return Value; }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public override int Evaluate(int delta) { return Value * 2 + delta; }
+    }
+    public static class ReadingProbe
+    {
+        public static NodeBase Held;
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static int Add(int a, int b) { return a + b; }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static int CallVirtual(NodeBase target, int delta) { return target.Evaluate(delta); }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static T Echo<T>(T value) { return value; }
+        public static string Run()
+        {
+            var counter = new Counter(7);
+            int sum = Add(2, 3);
+            int field = counter.Step(4);
+            int dispatched = CallVirtual(counter, 3);
+            int generic = Echo<int>(42);
+            string text = Echo<string>("same");
+            Held = counter;
+            if (!object.ReferenceEquals(Held, counter) || Held.Value != 11)
+                throw new InvalidOperationException("hold/field identity");
+            Held = null;
+            return sum + "," + field + "," + dispatched + "," + generic + "," + text;
+        }
+    }
+}
+```
+
+### 这次实际执行到了哪一层
+
+2026-10-25新执行的是**桌面.NET自测**：SDK10.0.402、net10.0、Debug、Optimize=false，结果为`5,11,25,42,same`，Held已置空；同目录DesktopCheck读取当前程序集真实CIL并核对覆盖身份，build/run均0。源/程序集/输出hash在desktop-receipt.json。它不是Unity编译器输出，不是裁剪后IL，也不是IL2CPP验证。
+
+| 自有操作 | 这份桌面IL实际观察 | 下一层要保持的身份 |
+|---|---|---|
+| Add(2,3) | Add为0x0600000A，ldarg.0/ldarg.1/add，返回5 | 模块、声明类型、方法签名、实际Unity程序集hash |
+| counter.Step(4) | Step读写Value字段0x04000002，最终11 | counter实例、字段声明与当前构建字段访问 |
+| CallVirtual(counter,3) | IL_0003是callvirt，目标NodeBase.Evaluate；结果25 | 基类声明、Counter覆盖及运行时所选入口 |
+| `Echo<int>` / `Echo<string>` | Run中MethodSpec 0x2B000001/2，实参不同 | 同一泛型定义、各托管实例、实际共享/专用入口 |
+
+这些token只属于上述桌面程序集。Unity重新编译/裁剪后可能改变，不把token数值当跨构建ID。特别是Run调用非虚Step也用了callvirt；不能看到opcode就断言native必然查虚表。CIL规则由[CLI调用前置]({{< relref "engine-toolchain/hybridclr-pre-cil-instruction-set-stack-machine-model.md" >}})负责。
+
+### 再沿Unity构建走四个接点
+
+新样本的目标选择现有lab固定组合：**本机自定义Unity2022.3.62f3_96770f904ca7**、Windows x64、IL2CPP Development/C++ Debug、Minimal stripping、OptimizeSpeed。该选择沿用已有环境身份，不表示本次已经构建；没有把它推广成标准发行版要求。
+
+1. **输入**：在既有实验工程空闲后，把同一文件编入自有AOT程序集，从现有launcher显式调用Run。核对程序集身份、源hash、构建参数；不要放进被排除AOT的HotUpdate程序集却期待看到其AOT函数。
+2. **裁剪**：保存本次Unity生成DLL与实际stripped DLL，核对目标方法仍在。NoInlining不是保留规则；按实际调用与精确link.xml记录，不能因源文件存在就说转换器一定消费过。
+3. **转换与原生构建**：从真实日志定位生成文件。只记录方法对应、参数/返回表示、实际符号及所在模块，公共文稿不复制受限生成/引擎实现。若共享、内联或裁剪使独立符号不存在，就记录该事实并继续追实际消费者。
+4. **进程**：同次GameAssembly/PDB匹配后，跟Add、Step、CallVirtual与Echo实际入口，记录调用栈、输入、返回与run_id。反射包装入口、直接入口和虚分派入口不能混为一个固定字段。
+
+已有[源码起步的Add Player记录]({{< relref "engine-toolchain/hybridclr-source-reading-start.md" >}})和[泛型综合实验]({{< relref "engine-toolchain/runtime-generic-call-experiment.md" >}})可练习模块/符号与调用身份，但它们的build_id与程序不同，不能给新Counter样本填通过。新样本的Unity IL、生成物与native接线仍待验；本节已提供完整输入、实际桌面IL和逐项阅读内容。
+
+继续在[D3的对象/描述观察表]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#icpp-2" >}})追同一个counter，在[D5的分派接线]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md#icpp-3" >}})追同一次虚调用和泛型。
+
+
 ## 收束
 
-回到 D1 中对 il2cpp.exe 的一句定位：它是转换器，不是编译器。
+回到D1的阶段定位：IL2CPP是AOT编译流程，il2cpp.exe承担其中的IL→C++转换阶段。
 
 这篇拆开了这个转换器内部的具体策略。总结下来，il2cpp.exe 的工作可以归纳为六个核心转换：
 
@@ -528,7 +611,7 @@ il2cpp.exe 的输出是大量 C++ 代码，下游 C++ 编译器需要编译这�
 5. **异常 → C++ try/catch 或 setjmp/longjmp**。根据平台配置选择实现策略。
 6. **字符串 → metadata 查找**。字符串字面量不内联到 C++ 代码中，而是存储在 `global-metadata.dat` 中，运行时按索引加载。
 
-il2cpp.exe 自身不做优化，它的策略是生成尽可能直白的 C++ 代码，让下游成熟的 C++ 编译器做真正的优化工作。这个设计决策既降低了 il2cpp.exe 自身的复杂度，也让 IL2CPP 能够"借力"不同平台上最好的 C++ 编译器基础设施。
+后续平台C++编译器继续负责目标机器码与目标级优化。转换器生成策略和平台编译优化共同影响最后产物，应分别取证，不能由这一分工推断转换器自身没有任何优化。
 
 但这个策略也带来了代价：C++ 代码量膨胀导致编译时间长，泛型实例化导致包体变大。后续 D5 篇会专门讨论泛型代码生成的优化策略。
 

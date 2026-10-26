@@ -143,3 +143,5 @@ public static class Demo
 - 现代 C# 把很多经典模式压缩成了更轻的委托、回调和事件
 - 先判断问题是否只需要行为值，再决定要不要上到完整的类层次设计
 
+
+UE中的绑定和结束协议，接[UCPP-3 Delegate与Lambda]({{< relref "engine-toolchain/ucpp-03-delegates-lambda-callback-lifetime.md" >}})：公共行为注入模型继续复用本篇，项目专项另追保存、弱观察、解绑和延迟副本。

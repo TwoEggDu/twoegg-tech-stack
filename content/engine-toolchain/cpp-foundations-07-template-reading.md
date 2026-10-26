@@ -141,6 +141,10 @@ int main()
 
 `decltype(n)` 对未加括号的变量名有特殊规则，得到其声明类型；`decltype((n))` 中 `(n)` 是左值表达式，得到左值引用类型。对一般表达式，左值对应 `T&`、亡值对应 `T&&`、纯右值对应 T；不能把所有情形都按“变量是什么类型”处理。[C++17：decltype][decltype]
 
+### using是在命名类型，还是引入已有成员
+
+读模板声明时，先把别名与名字引入分开。先判断`using Alias = Type`的类型别名，还是`using Base::member`把名字引入查找；二者语法和职责不同。指针别名上的const细节见[CXX-01别名补桥]({{< relref "engine-toolchain/cpp-foundations-01-values-references-signatures.md" >}})，不另开一份模板规则。
+
 ### 程序二：检测失败，还是函数体真的出错
 
 ```cpp

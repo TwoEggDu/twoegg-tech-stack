@@ -218,3 +218,5 @@ worker每次返回后擦除一段自有native栈，并在自有marker处搜索�
 - 上一篇：[泛型代码生成]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md" >}})
 - 下一篇：[ECMA-335 覆盖度]({{< relref "engine-toolchain/il2cpp-ecma335-coverage-supported-unsupported.md" >}})
 - 返回：[IL2CPP 索引]({{< relref "engine-toolchain/il2cpp-series-index.md" >}})
+
+同一自有对象的类型/字段描述、实例身份和持有解除，见[D3的ICPP-2观察表]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#icpp-2" >}})。token/转换索引、对象地址、根与native包装责任分别核对；不以清空一条引用推断立即回收。

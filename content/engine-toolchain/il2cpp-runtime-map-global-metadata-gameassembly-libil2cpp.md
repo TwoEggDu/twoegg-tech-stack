@@ -466,3 +466,5 @@ metadata 解决的是"认得出来"，不自动等于"有可执行实现"。
 - [HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
 - [HybridCLR AOT 泛型与补充元数据｜为什么代码能编译，到了 IL2CPP 运行时却不一定能跑]({{< relref "engine-toolchain/hybridclr-aot-generics-and-supplementary-metadata.md" >}})
 - [Unity 裁剪 01｜Unity 的裁剪到底分几层]({{< relref "engine-toolchain/unity-stripping-01-what-gets-stripped.md" >}})
+
+连续自有样本从[D2的ICPP-1]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md#icpp-1" >}})进入，再到D3对象/描述与D5分派/泛型。新样本已做桌面输入与CIL检查，Unity生成物及native接线仍待验；既有Player结果继续按各自身份复用。

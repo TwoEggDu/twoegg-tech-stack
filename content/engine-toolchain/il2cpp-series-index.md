@@ -98,3 +98,13 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 ## 接下来补强什么
 
 源码阅读起步、三栏泛型调用、对象保留对照和托管工作线程已完成各自固定环境的 Player 验证。对象快照与实际活跃根区间也已采证；后续补完整动态根路径归因、长期原生回调压力与固定采样条件的性能测量；已有结果不代表全系列经过统一版本验收。
+
+## 同一自有程序的连续跟读
+
+| 入口 | 已有内容与证据 | 仍待验证 |
+|---|---|---|
+| [ICPP-1 / D2]({{< relref "engine-toolchain/il2cpp-converter-il-to-cpp-code-generation.md#icpp-1" >}}) | 完整C#输入、真实桌面CIL、方法身份与返回 | 同源Unity IL/stripped IL、生成物与native路径 |
+| [ICPP-2 / D3]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#icpp-2" >}}) | 同对象的描述/实例/字段/持有表；复用既有Player保留/快照 | 新Counter的Unity布局/实际对象对应与根归因 |
+| [ICPP-3 / D5]({{< relref "engine-toolchain/il2cpp-generic-code-generation-sharing-instantiation.md#icpp-3" >}}) | 同输入的虚/泛型CIL；复用已有四组泛型Player | 新样本native虚分派、注册和泛型上下文 |
+
+三项嵌入既有正文，不增加篇数；桌面检查、旧Player证据与新Unity待验分开。

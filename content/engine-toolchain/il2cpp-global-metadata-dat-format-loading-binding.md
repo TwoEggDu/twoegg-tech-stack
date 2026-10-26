@@ -377,3 +377,5 @@ il2cpp.exe 在转换 IL 代码的过程中，把 DLL 中的 metadata tables 提�
 - [IL2CPP 运行时地图｜global-metadata.dat、GameAssembly、libil2cpp 到底各管什么]({{< relref "engine-toolchain/il2cpp-runtime-map-global-metadata-gameassembly-libil2cpp.md" >}})
 - [HybridCLR 原理拆解｜从 RuntimeApi 到 Interpreter::Execute]({{< relref "engine-toolchain/hybridclr-principle-from-runtimeapi-to-interpreter-execute.md" >}})
 - [ECMA-335 基础｜CLI Type System：值类型 vs 引用类型、泛型、接口、约束]({{< relref "engine-toolchain/ecma335-type-system-value-ref-generic-interface.md" >}})
+
+同一自有对象的类型/字段描述、实例身份和持有解除，见[D3的ICPP-2观察表]({{< relref "engine-toolchain/il2cpp-libil2cpp-runtime-metadatacache-class-runtime.md#icpp-2" >}})。token/转换索引、对象地址、根与native包装责任分别核对；不以清空一条引用推断立即回收。

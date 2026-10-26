@@ -53,3 +53,9 @@
 - 本轮变更为 16 个已有文件与 2 个新文件；其中 7 篇原文仅调整 series_order 和 weight，其余为正文回链、首页和规划。已对写作前快照检查改动范围，限定路径的 git diff --check 通过，暂存区为空，源码克隆保持干净。
 - 公共 CXX-04/05 保持待写，PCPP-3 保持待补桥；根 doc-plan 只更新 Piccolo 系列汇总为 15 篇，不回填篇级清单。引擎构建/运行、实际事件和退出断点、浏览器目视与 Mermaid 实际渲染仍待验证。
 - 本次未修改引擎源码、公共模板/CSS，未暂存、提交或推送；保留共享工作区无关改动。
+
+## A12 原始回执复核（2026-10-25）
+
+只读复核既有`%TEMP%/TechStackShow-piccolo-baseline-01-20261025/verification-receipt.json`及`build-clean-debug.log`。固定revision仍f5053707fed4d3f94d270a436fb0d3a8ae54e3e5；历史干净Debug配置0、生成目标0、完整编辑器构建1，原始日志仍含Jolt的C3688 us字面量和fmt的C2653/checked_array_iterator错误。四份代表reflection/serializer/shader生成文件的当前SHA256均与回执相同。
+
+定向检查原source/bin与build-vs18-debug-clean下没有PiccoloEditor.exe，故没有新的引擎运行、事件退出、线程/Trace或GPU捕获。这里是复核旧回执，不声称本轮又做了一次构建。未改源码/工具链时重跑相同已知失败不会产生新证据；不改第三方依赖或安装系统组件来制造通过。下一步是单独解决该固定revision与工具链兼容，再新建build目录重建并保留完整身份，之后执行PCPP各运行矩阵。

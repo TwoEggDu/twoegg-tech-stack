@@ -41,3 +41,9 @@
 - 两个自有 UE 代码块完成声明/定义、generated.h 最后 include、四个蓝图调用入口、弱观察无旧裸指针解引用等静态检查；并非 UHT 或 UE 编译通过。
 - 清理当前入口的公共课过期状态；历史 CXX/PCPP outline 的当时验证记录不回写成今日状态。
 - UE 验证继续为待执行，不因文章成稿更新 M0 或个人能力状态。提交和推送以 Git 记录为准。
+
+## A08 环境复核（2026-10-25）
+
+M0仍未确认TwinArena的实际工程目录、输入revision或build_id。`Get-Command UnrealEditor,UnrealBuildTool,RunUBT`未返回已在PATH中的入口；这不证明全机没有其他安装。`E:\workspace\UnrealEngineSrc`同名目录存在，但其根下`Engine/Build/Build.version`与`Engine/Build/BatchFiles/Build.bat`不存在，不能据名称认定合法、完整或UE5.8.2可构建源码。源码登记仍TODO，不升级READY。
+
+本轮没有下载/安装引擎、创建另一个UE工程或运行UHT/UBT/PIE/独立包；自有文件、官方核对与静态责任审查可完成，所有实际引擎观察继续待验。必须先取得实际版本/工程位置和工具链，再按本提纲矩阵逐项取证，不用普通C++/.NET通过替代。

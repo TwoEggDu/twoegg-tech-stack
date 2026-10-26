@@ -388,6 +388,26 @@ int main()
 
 纯虚析构还有一个特殊点：将析构声明为 `= 0`，并不免除它参与派生对象析构链的需要；在这种使用中仍要提供定义。已有 Piccolo 文章的 RHI 案例展示了这种声明与定义的配对。
 
+## 初始化列表先看声明顺序
+
+构造初始化列表在构造函数体之前初始化基类与成员；构造函数体里的`member = value`则是对已完成初始化的成员赋值。const成员和引用成员等不能靠后续赋值补上初始化。
+
+同一个类的非静态数据成员按**成员声明顺序**初始化，和冒号后书写顺序无关。下面完整程序把id声明在twice之前，后者读取已经初始化的id：
+
+```cpp
+#include <cassert>
+struct Row {
+    int id;
+    int twice;
+    explicit Row(int n) : id(n), twice(id * 2) {}
+};
+int main() { Row row{3}; assert(row.id == 3 && row.twice == 6); }
+```
+
+本轮编译运行退出0。若将twice声明到id之前，即使初始化列表仍写id在前，依赖也会反过来；不要运行读取未初始化id的版本来“观察顺序”。通过重排成员声明或消除依赖修复，而不是只重排冒号后的文本。[C++17成员初始化](https://timsong-cpp.github.io/cppwp/n4659/class.base.init)
+
+`explicit Row(int)`允许`Row{3}`，限制`Row row = 3`这样的隐式转换；它不改变成员初始化顺序。`= default/delete`与特殊成员选择继续见CXX-04，不在这里重复模板或移动课。
+
 ## 6. 带着调用链进入四条源码路线
 
 把本篇的模型放回项目时，可以为一次调用留下五项记录：

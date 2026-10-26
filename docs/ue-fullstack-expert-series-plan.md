@@ -1,6 +1,6 @@
 # UE 全栈工程师成长路线：从入门到专家的内容建设与实践计划
 
-> 初版：2026-09-20；定向修订：2026-09-21；首批教程：2026-09-22。状态：**3 篇 UFS 入门正文与 2 篇 UCPP 专项桥梁已写；普通 C++ 小练习已有验证记录，UCPP-1/2 文档与样例静态核对完成；UE 工程、源码与个人能力尚未验证**。
+> 初版：2026-09-20；定向修订：2026-09-21；首批教程：2026-09-22。状态：**3 篇 UFS 入门正文与 5 篇 UCPP 专项桥梁已写；普通 C++ 小练习已有验证记录，UCPP-1～5 文档与样例静态核对完成；UE 工程、源码与个人能力尚未验证**。
 > 本文件只对四领域的贯通路径和新增桥梁内容建立权威目录。现有专题继续维护自己的原路径、原编号和发布状态。
 > 盘点依据：[UE 全栈内容盘点快照](ue-fullstack-content-audit.md)；站点入口：[doc-plan.md](../doc-plan.md)。
 > 首个里程碑的唯一执行入口：[M0 执行计划](ue-fullstack-m0-execution-plan.md)。历史审计保留原日期与事实，不随本轮修订回写。
@@ -48,17 +48,17 @@
 
 通用语言知识归 [C++ 公共基础 plan](cpp-foundations-series-plan.md)，读者先走 [公共索引](../content/engine-toolchain/cpp-foundations-series-index.md)，再到 [Unreal 入口](../content/reading/unreal-engine.md) 补 UE 约定。本节只管理新增专项桥梁，不接管原 Unreal 架构/GC/模块正文，也不改变 TwinArena 的里程碑。
 
-CXX-01～11 公共正文已齐备；UFS-02 保留综合练习、故障与原验证记录，重复的语言解释已有公共回链。UCPP-1/2 已成稿，其他专项按下表推进；公共成稿不把 UE 工程、线程/GC 实验或 M0 实践改为已完成。
+CXX-01～11 公共正文已齐备；UFS-02 保留综合练习、故障与原验证记录，重复的语言解释已有公共回链。UCPP-1～5 已成稿，专项工程证据按下表分别推进；公共成稿不把 UE 工程、线程/GC 实验或 M0 实践改为已完成。
 
 | 补充次序 | 专项拟题 / 工作 | 状态与复用 | 公共依赖与验收 |
 |---|---|---|---|
 | UCPP-1 | [普通对象与 UObject：创建、指针、持有和结束的边界](../content/engine-toolchain/ucpp-01-uobject-ownership-boundaries.md) | 已写；复用 UFS-03B、UE-01/03、DS-23，修正 Outer/引用/收集请求口径，含完整自有 UE 样例；[执行记录](ucpp-01-uobject-ownership-boundaries-outline.md) | CXX-01～03 已齐；官方 5.8 文档及样例静态核对完成。UE 5.8.2 的 UHT/编译、强弱/Outer/解除持有与 Actor 退出观察待验证 |
 | UCPP-2 | [容器、字符串与模板惯用法的阅读](../content/engine-toolchain/ucpp-02-containers-strings-template-idioms.md) | 已写；复用 CXX-04/07、UFS-03B、UE-01/02；两文件自有样例、两种编译失败变体及步骤已写；[执行记录](ucpp-02-containers-strings-template-idioms-outline.md) | 公共依赖已齐；官方 5.8 文档与静态核对完成。UE 5.8.2 编译、运行、两个失败/恢复、文本与分配器/性能观察仍按正文分别标注未验证 |
-| UCPP-3 | Delegate 与 Lambda：绑定、捕获、解绑和延迟调用 | 待写 | CXX-02、05；选一个回调跟踪对象寿命、弱引用与取消路径，区分普通回调和引擎提供的附加约束 |
-| UCPP-4 | UHT/UBT 的生成文件与模块接线 | 待补桥；复用 UFS-03A、UE-02/07，旧文风险继续按原登记复核 | CXX-07～08、10；固定构建日志和产物，串起声明、生成、编译、链接、注册，识别条件编译分支 |
-| UCPP-5 | 任务与线程中的捕获、数据交接和访问边界 | 待补桥；复用 UE-05，不重写完整线程架构 | CXX-05、11；在目标版本确认执行线程/任务依赖、数据所有权和同步，附一次受控交接观察 |
+| UCPP-3 | [Delegate 与 Lambda：绑定、捕获、解绑和延迟调用](../content/engine-toolchain/ucpp-03-delegates-lambda-callback-lifetime.md) | 已写；完整自有文件与[执行记录](ucpp-03-delegates-lambda-callback-lifetime-outline.md)，Epic5.8文档/静态责任检查，UE5.8.2编译运行待验 | CXX-02、05；选一个回调跟踪对象寿命、弱引用与取消路径，区分普通回调和引擎提供的附加约束 |
+| UCPP-4 | [UHT/UBT：从生成文件到模块与反射接线](../content/engine-toolchain/ucpp-04-uht-ubt-generated-module-wiring.md) | 已写；完整自有反射/双模块源文件与[执行记录](ucpp-04-uht-ubt-generated-module-wiring-outline.md)，工程与三种故障待验 | CXX-07～08、10；固定构建日志和产物，串起声明、生成、编译、链接、注册，识别条件编译分支 |
+| UCPP-5 | [任务与线程：快照、完成和结果应用的边界](../content/engine-toolchain/ucpp-05-task-thread-data-handoff.md) | 已写；完整自有受控任务与[执行记录](ucpp-05-task-thread-data-handoff-outline.md)，UE编译/线程与排空实测待验 | CXX-05、11；在目标版本确认执行线程/任务依赖、数据所有权和同步，附一次受控交接观察 |
 
-UCPP-1/2 已写，3～5 仍待补充；本专项与现有三篇 UFS 入门正文分别计数，不新增 UFS 编号。接下来按 3 → 4 → 5 推进，公共依赖已成稿，实际 UE 依赖与验证仍逐项落实。M0 可继续用现有工程地图和 Actor 课起步，任务系统与高级模板不前移成 M0 的硬门槛。正文归属本路线，具体文件名在单篇 outline 时确定，避免与原架构系列产生第二份完整目录。
+UCPP-1～5 已写，UE编译、运行及故障矩阵仍待验证；本专项与现有三篇 UFS 入门正文分别计数，不新增 UFS 编号。阅读按3 → 4 → 5推进，公共依赖与专项正文均已成稿，实际UE依赖与验证仍逐项落实。M0 可继续用现有工程地图和 Actor 课起步，任务系统与高级模板不前移成 M0 的硬门槛。正文归属本路线，具体文件名在单篇 outline 时确定，避免与原架构系列产生第二份完整目录。
 
 ## 3. 三类状态与证据制度
 
@@ -554,7 +554,7 @@ M1 不等读完 UE 内部机制；M2 不等完整 GAS。第一期要求走到 M5
 | UFS-03 子课 A / 2 | [UE 工程地图：从 .uproject、模块到编译和打包](../content/engine-toolchain/ufs-03a-project-build-map.md) | M0-T01/T03/T05，衔接 T06/T08 的身份与产物 | 正文、最小模块/Target 文件与步骤已写；按官方 5.8 文档核对。5.8.2 创建工程、编译、打包、符号匹配待验证 |
 | UFS-03 子课 B / 3 | [UE C++ 第一课：一个旋转 Actor 怎样连接代码、反射和蓝图？](../content/engine-toolchain/ufs-03b-first-rotating-actor.md) | M0-T04/T06/T07，与 A 共用 T05；为 UFS-04 铺路 | 完整 Actor 头/实现、蓝图/实例步骤、断点与时间单位故障已写并静态核对；UE 编译、画面、包内调试和回归均待运行 |
 
-三篇 UFS 均为教程正文，不是已测 UE 案例；另有 UCPP-1/2 专项桥梁，路径和状态只在 2.1 管理，不重复计入 UFS 编号。先读 1→2 的工程创建部分→3 的 Actor/地图，再回 2 打包并继续 3 的独立包验证；始终使用同一个 TwinArena。M0 仍由[原执行计划](ue-fullstack-m0-execution-plan.md)验收，T01–T08 与个人能力不因文章成稿自动改成通过；UFS-09 的完整证据专题仍待写。
+三篇 UFS 均为教程正文，不是已测 UE 案例；另有 UCPP-1～5 专项桥梁，路径和状态只在 2.1 管理，不重复计入 UFS 编号。先读 1→2 的工程创建部分→3 的 Actor/地图，再回 2 打包并继续 3 的独立包验证；始终使用同一个 TwinArena。M0 仍由[原执行计划](ue-fullstack-m0-execution-plan.md)验收，T01–T08 与个人能力不因文章成稿自动改成通过；UFS-09 的完整证据专题仍待写。
 
 ## 8. 准备清单：最低条件、验证方式与替代路径
 
