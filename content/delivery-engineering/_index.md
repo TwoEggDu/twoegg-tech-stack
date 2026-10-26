@@ -11,7 +11,7 @@ hero_title: "交付不是发布。从代码到产品稳定运行在用户设备�
 
 ## 选择阅读入口
 
-- **[从提交检查到修正复检]({{< relref "delivery-engineering/game-delivery-agent-series-index.md" >}})**：以 Missing 为例，研究现有工具、固定流程、人和模型的分工。第 01～02 篇正文已写，其余 6 篇为提纲；新增服务与适配器未实现，实验未执行。
+- **[从提交检查到修正复检]({{< relref "delivery-engineering/game-delivery-agent-series-index.md" >}})**：以 Missing 为例，研究现有工具、固定流程、人和模型的分工。第 01～03 篇正文已写，其余 5 篇为提纲；新增服务与适配器未实现，实验未执行。
 
 - **[从美术制作与客户端协作开始]({{< relref "delivery-engineering/game-art-production-collaboration-series-index.md" >}})**：沿原画、角色、绑定、动画、场景资产、地编、特效和 TA，认识制作、接入与联合验收。12 篇正文已成稿，软件实操与素材待补。
 
