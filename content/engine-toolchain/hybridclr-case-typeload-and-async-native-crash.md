@@ -15,7 +15,7 @@ tags:
   - "CaseStudy"
 series: "HybridCLR"
 hybridclr_version: "历史案例版本未完整固定；当前机制另按 v9 配套源码核对"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 一次接入记录先遇到 TypeLoadException，调整 DLL 加载顺序后，又出现带有重复解释器与 async builder 帧的 native crash。这个案例最值得保留的是分层取证过程；旧文把后半段直接归因于空 RefMethods，证据不足。
@@ -104,6 +104,14 @@ llvm-addr2line -f -C -e <matching-libil2cpp.so> <module-relative-pc>
 复现应固定同一 Player、热更 DLL 和 UniTask 版本，记录补充 DLL 的模式、hash、返回码，以及目标状态机和方法实例。先建立能完成的最小 async 样本，再分别改变加载与构建变量。
 
 若怀疑补充 metadata，验证方法体来源与转换；若怀疑递归，记录同一状态机每次进入和 continuation 注册/恢复；若怀疑生成物兼容，比较实际调用入口。方案详见 [续篇]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})。
+
+## 当前固定环境的新证据
+
+[async／UniTask Player 实测]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md#async-unitask-player" >}})已完成 60 个普通 Player 与 12 个匹配 PDB 进程，覆盖 class／struct 热更状态机的同步完成、实际跨帧以及 await 前后异常。本样本 metadata on/off 都有可用 native builder；带 FullySharedGenericAny 名称的入口也正常完成，因此不能仅凭旧栈中的该名称或重复帧认定泛型缺失与递归。
+
+本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。
+
+新实验使用自定义 Unity 2022.3.62f3／HybridCLR v9／UniTask 2.5.10／Windows x64，与原 Android Release 现场分别记录；历史根因仍未知。
 
 ## 系列位置
 

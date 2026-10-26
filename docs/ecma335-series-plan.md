@@ -1,6 +1,6 @@
 # ECMA-335 系列计划：IL2CPP 与 HybridCLR 前置层
 
-更新：2026-10-25。本文是 ECMA-335 系列唯一的 canonical 篇级目录；生态总规划仅保留模块路由。
+更新：2026-10-26。本文是 ECMA-335 系列唯一的 canonical 篇级目录；生态总规划仅保留模块路由。
 
 ## 定位与边界
 
@@ -166,3 +166,9 @@ GC 前置增加事件／实例委托保留与退订实验，区分 Normal、Weak
 两版各48个普通Player，原始45处理成功/3hh-cctor-ret两次均逃逸且finally0，反事实48处理成功且每次finally1。另每版3个关键native进程及1个内联控制，共8个。原始6个关键现场活动imi=被调PingRet、EH0，caller EH3；偏移304位于caller[48,328)，反事实保持caller imi/EH3；被调缓存两版都准备。短void实际命中InitClassStaticCtor、活动上下文保持caller。
 
 异常处理篇集中解释根因与坐标，类型初始化篇回填后续证据，源起步/runtime篇同步状态，三个索引复用同一入口。普通抛出/手工TypeInitializationException与其他方向对照未变，不把返回类型单独当因果变量。本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。实验已推送并核验远端；46ac71c仍是前轮类型初始化版本。文稿随本次文档提交交付，Pages另行验收。范围不含并发、性能、其他版本或完整filter/嵌套异常语义。执行记录见[异常传播实验](./hybridclr-exception-flow-outline.md)。
+
+## async／UniTask 跨边界验证（2026-10-26）
+
+固定自定义 Editor／v9／Windows x64，额外锁定 UniTask2.5.10/7c0f199。独立 projects/async-unitask，build_id c2a81f08-12d1-4f70-b333-d4bd26705388，44输入／264产物，919runtime与原始prepared一致。60普通Player：AOT class、hot class/struct的同步、两次跨帧、前后异常按实际事件完成；30结果／30预期异常，finally各一次。12匹配PDB进程验证hot MoveNext三Execute/一Transform及恢复缓存复用。
+
+同一Player的metadata on/off均能运行；class命中native引用共享builder，struct命中带FullySharedGenericAny名字的native入口，补充不强制替换。样本显式preserve整个UniTask，off不等于无可用native实例；无metadata缺失失败对照，也不宣布历史Android根因闭合。HCLR17集中补结果，14保留历史边界与回链，23同步场景覆盖；三索引复用入口，不新增正文。本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。实验已提交推送；文稿随本次文档提交交付，Pages另行核验；执行记录见[async实验](./hybridclr-async-unitask-outline.md)。

@@ -12,7 +12,7 @@ tags:
   - "LINQ"
 series: "HybridCLR"
 hybridclr_version: "源码阅读 runtime v9.0.1 / package v9.0.3；实测范围逐节注明"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 AOT 泛型问题常藏在语法糖和容器内部：业务代码只有一次 `await`、`ToList` 或委托调用，实际 IL 却多出若干泛型成员。排查时应从具体调用展开依赖，不能凭框架名字就断言“都是同一种缺失”。
@@ -28,6 +28,14 @@ AOT 泛型问题常藏在语法糖和容器内部：业务代码只有一次 `aw
 需要展开的调用包括 builder 的 `Start<TStateMachine>`、await 注册和恢复所需的方法。builder 可能来自 AOT UniTask 程序集，状态机参数来自热更程序集，这才是需要检查的交界。
 
 检查顺序是：反编译目标 DLL → 记录状态机类型和方法引用 → 核对 builder 定义所在程序集 → 查 native 与补充元数据。栈上出现 `FullySharedGenericAny` 或反复出现 `MoveNext`，都不足以直接证明缺少实例导致递归。历史证据与待复现项见 [async 案例续篇]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md" >}})。
+
+### 已验证的固定样本
+
+[async／UniTask Player 实测]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md#async-unitask-player" >}})以相同 Player 比较两份热更 DLL：实际 class 与 struct 状态机各做 metadata on/off 对照；连同 AOT 参考，共 60 个普通进程完成同步、两次跨帧恢复和 await 前后异常。每次 Work 与 AOT 等待方 finally 各一次，异常由等待方实际 await 捕获。
+
+12 个 native 进程确认 hot MoveNext 三次执行、一轮转换，并复用恢复缓存。class builder 命中 native 引用共享；struct builder 命中带 FullySharedGenericAny 名称的 native 入口，on/off 都成功。**本样本保留整个 UniTask 程序集，未补 metadata 不等于没有 native 实现**；结果既不说明所有 async 无需补充，也不替代历史 Android 故障的定因。版本、事件、失败阶段与路径应一起检查。
+
+本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。
 
 ## LINQ 与闭包：先看是不是实际捕获
 
@@ -71,4 +79,4 @@ lambda 也不都创建 `DisplayClass`：
 | 委托 / 原生回调 | 注册、调用、停止、Join 和解除持有 | 目标方法、签名、线程与构建身份 |
 | 自定义容器 | 外层入口和内部依赖成员 | 每层定义程序集及具体签名 |
 
-现有调用链、泛型、GC 与线程实验已有固定记录；完整 async/UniTask、LINQ 和资源装载矩阵仍待补。下一篇 [回归检查]({{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}) 说明如何把“待验证”与“已通过”保留为可审计的不同状态。
+现有调用链、泛型、GC 与线程实验已有固定记录；async／UniTask 的本轮有限对照见上文；更广调度／取消、metadata 缺失失败、LINQ 及资源演进矩阵仍待补。下一篇 [回归检查]({{< relref "engine-toolchain/hybridclr-aot-generic-guardrails-generate-ci-build-checks.md" >}}) 说明如何把“待验证”与“已通过”保留为可审计的不同状态。

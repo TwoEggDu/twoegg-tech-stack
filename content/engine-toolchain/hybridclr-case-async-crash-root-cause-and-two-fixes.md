@@ -11,12 +11,12 @@ tags:
   - "crash"
   - "AOT"
 weight: 46
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 历史 async 崩溃记录出现了重复的 builder 与解释器栈。旧文先把空 RefMethods 当根因，后来又把 Development 不一致写成必然导致 metadata 失效的完整链。两种说法都超过了现存证据。
 
-> **证据状态**：这是系列第 17 篇的历史案例复核。原 Android Release 记录没有完整固定源码、补充 DLL hash/返回码、状态机对照和修复后回归材料。本篇保留观察、撤回确定根因，并给出下一轮可执行的验证设计；没有新增 async Player 实测。
+> **证据状态**：这是系列第 17 篇的历史案例复核。原 Android Release 记录没有完整固定源码、补充 DLL hash/返回码、状态机对照和修复后回归材料。本篇保留历史观察与两条验证路线，并在下文补入固定自定义 Editor／v9 的 async Player 实测；新样本不替代原 Android 现场。
 
 ## 目前能确认与不能确认的事
 
@@ -63,7 +63,82 @@ lastmod: "2026-10-25"
 
 构建参数统一有长期价值，见 [打包工程化]({{< relref "engine-toolchain/hybridclr-ci-pipeline-generate-all-and-development-flag.md" >}})，但流程变整齐本身不是历史根因已确认的证据。
 
-<!-- DATA-TODO: 补充最小 UniTask/async Player 实验，固定库版本、class/struct 状态机、metadata加载结果及continuation状态。保留单变量失败与恢复记录后再定因。 -->
+<a id="async-unitask-player"></a>
+## 固定 Player：挂起、恢复和异常怎样穿过边界
+
+这轮先建立一个能逐步核对的 async 样本。它回答的是“哪些状态已经推进、调用走到哪里”，不会用一次 Windows 成功覆盖历史 Android 崩溃。
+
+### 从一次方法调用拆成两次恢复
+
+入口委托调用、未完成 await 注册、continuation 恢复与等待方取结果，是四个不同的观察点。`Work` 返回一个 Faulted UniTask，也不等于入口委托直接抛出异常。等待方必须实际 `await`，才能确认异常从哪个阶段被观察。
+
+```mermaid
+flowchart TD
+    A["缓存委托调用 Work"] --> B["builder Start → 热更 MoveNext"]
+    B --> C["同步完成 / 首次 await 前失败"]
+    B --> D["Gate 未完成：注册 continuation，返回 Pending"]
+    D --> E["后续帧 AOT Update 完成 Gate"]
+    E --> F["恢复 MoveNext，再 await UniTask.NextFrame"]
+    F --> G["下一帧再次恢复 MoveNext"]
+    C --> H["AOT 等待方 await 观察结果或异常"]
+    G --> H
+    H --> I["检查 Work 和等待方的 finally"]
+```
+
+图是本样本的调用与调度模型；builder 与 MoveNext 的执行位置要分别取证，不能因热更方法经过解释器就把 builder 也画成解释执行。
+
+### 版本与变量
+
+沿用本机自定义 Unity `2022.3.62f3_96770f904ca7`、HybridCLR package v9.0.3／runtime v9.0.1 配套组合、Windows x64 Development／IL2CPP C++ Debug；额外固定 [UniTask 2.5.10](https://github.com/Cysharp/UniTask/tree/7c0f199fe0d3fc528024488ccd671e6c7b27745b)。未应用前轮初始化异常的反事实补丁，919 个运行时实现文件与原始准备源相同。
+
+独立工程 `projects/async-unitask` 的 build ID 为 `c2a81f08-12d1-4f70-b333-d4bd26705388`，44 项输入和 264 份产物有哈希绑定。AOT／热更场景同源，反射仅创建缓存委托，目标调用不走 `MethodInfo.Invoke`；热更程序集从最终 AOT 产物排除。
+
+同一 Player 同时携带 Development／Release 编译的两份热更 DLL。读取实际状态机基类后，前者是 class，后者是 struct，AOT 对照为 class。两种热更编译形态是独立维度；只有同一形态的 metadata on/off 才是加载条件对照，不能把 Development 差异直接当成 metadata 失效。
+
+on 组在加载热更前，以 SuperSet 模式补充与最终 Player 裁剪 DLL 逐字节一致的 `UniTask.dll`，返回码均为 0。**本样本显式保留整个 UniTask 程序集**；off 只表示不加载这份补充 metadata，不表示移除了已有 native 泛型实现。
+
+### 60 个普通 Player 的实际结果
+
+四组路径分别是：同步完成 await、真正跨帧、await 前抛出、两次恢复后抛出。每格均为 3 个新进程。
+
+| 状态机／metadata | 同步完成 | 跨帧恢复 | await 前异常 | 恢复后异常 |
+|---|---|---|---|---|
+| AOT class／off | 3 次返回 42 | 3 次返回 42 | 3 次等待方捕获 | 3 次等待方捕获 |
+| hot class／off | 3 次返回 42 | 3 次返回 42 | 3 次等待方捕获 | 3 次等待方捕获 |
+| hot class／on | 3 次返回 42 | 3 次返回 42 | 3 次等待方捕获 | 3 次等待方捕获 |
+| hot struct／off | 3 次返回 42 | 3 次返回 42 | 3 次等待方捕获 | 3 次等待方捕获 |
+| hot struct／on | 3 次返回 42 | 3 次返回 42 | 3 次等待方捕获 | 3 次等待方捕获 |
+
+30 次结果为 42，30 次预期 `InvalidOperationException` 由 AOT 等待方的实际 await 捕获；每次 Work finally 和等待方 finally 各执行一次。没有观察到入口同步 escape 或未观察异常。await 前抛出组先返回 Faulted UniTask，不能把这条正常异步异常路径归入入口调用失败。
+
+30 个挂起样本均记录：帧 1 注册自有 Gate 的 continuation，入口与等待方 Pending；帧 3 由 AOT Update 完成 Gate 并触发第一次恢复，随后实际 await `UniTask.NextFrame`；帧 4 第二次恢复并完成或抛出。事件中的托管线程 ID 始终为主线程 1。另 30 个同步／await 前异常样本没有 Gate 注册，不拿它们证明挂起。
+
+### 补充 metadata 前后为何都成功
+
+12 个匹配 private PDB 的独立进程进一步对照 class/off/跨帧、struct/off/跨帧、struct/on/跨帧、struct/on/恢复后异常，各 3 次：
+
+| 观察对象 | 本次证据 |
+|---|---|
+| 热更 Work | 每进程 Execute 1 次、转换 1 次 |
+| 热更 MoveNext | 每进程 Execute 3 次、转换 1 次；后两次复用同一非空 interpData |
+| 方法身份 | class MoveNext token 为 `0x06000005`，struct 为 `0x06000004`，与最终 DLL 对应 |
+| class 的 builder | 实际命中 native 引用共享 Start 和两种 AwaitUnsafeOnCompleted |
+| struct 的 builder | 实际命中带 `Il2CppFullySharedGenericAny` 名称的 native Start／AwaitUnsafeOnCompleted |
+| struct 的 on/off | 命中相同 native 符号；所跟踪路径未读取补充 UniTask 方法体，也未把 builder 转成解释实现 |
+
+这组结果支持“当前样本已经有可用 native builder 实现，加载 metadata 不强制替换已有路径”。它不支持“所有 struct async 都不需要补充”，也没有建立 metadata 缺失失败与恢复的因果对照。
+
+带 `FullySharedGenericAny` 名称的入口在这轮完成了正常调用，因此该名称不是缺失实现占位或无限递归的证据；也不能据此判断启用了 HybridCLR 商业 FGS。热更 MoveNext 的三次执行分别对应首次进入和两次恢复，不能只数重复符号就认定没有状态推进。
+
+### 复现、证据与剩余问题
+
+自有工程、解析工具与 72 份结构化事件随 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 本轮提交发布。本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。复现使用[固定实验工程](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/projects/async-unitask)；旧 `f5ba510` 不包含本轮 async 样本。
+
+先运行 `tools/prepare_async.py` 获取固定 UniTask，再运行 `tools/async_lab.py build/run`、`tools/async_trace.py` 和 `tools/async_lab.py verify/export`。验收重读原始日志、哈希与最终 DLL；普通 Player 与 native 进程分开统计，生成 C++、完整日志、PDB 和二进制留在本地。
+
+本轮没有复现历史 Android arm64 Release 崩溃，没有验证错误 metadata、取消、同步重入、递归、并发、其他平台或性能。历史现场仍需原始构建身份及相同失败条件，才能继续定因。
+
+<!-- DATA-TODO: 历史 Android async 故障仍需原版本/构建身份、相同失败条件和修复前后对照；当前样本未复现 metadata 缺失失败。 -->
 
 ## 系列位置
 

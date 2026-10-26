@@ -88,6 +88,10 @@ D3 与 D6 之后可读 [IL2CPP 与 HybridCLR 的线程接入]({{< relref "engine
 
 [跨 AOT／解释器异常传播]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}}) 用相同自有DLL比较原始运行时与新工程内的单点反事实。两版96普通Player、8个native进程：活动imi提前切换导致查错EH表，原始3个内部catch/finally缺失对照在延后赋值后恢复，其他方向与抛出对照保持原结果。[类型初始化篇]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#initializer-escape-cause" >}})同步后续证据；本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。不表示上游或其他平台已修复。
 
+## 共享 async／UniTask 实验
+
+[async／UniTask Player 实测]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md#async-unitask-player" >}})沿用固定自定义 Editor／v9 环境，以 60 普通＋12 native 进程区分同步完成、两次跨帧恢复和前后异常。实际 class／struct 热更状态机都通过现有 native builder 调用解释器 MoveNext；on/off 对照没有产生 metadata 缺失失败，不把补充后的成功写成修复。样本保留整个 UniTask 程序集，历史 Android 根因与其他平台仍待验证。本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。
+
 ## 按问题查阅
 
 | 问题 | 阅读入口 |

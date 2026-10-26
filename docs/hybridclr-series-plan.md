@@ -1,6 +1,6 @@
 # HybridCLR 系列计划
 
-更新：2026-10-25。本文是该系列唯一的 canonical 篇级目录。已写表示正文存在，不代表 Player 或设备验证完成。
+更新：2026-10-26。本文是该系列唯一的 canonical 篇级目录。已写表示正文存在，不代表 Player 或设备验证完成。
 
 ## 定位与边界
 
@@ -84,10 +84,10 @@
 | 规范与基础解释 | ECMA 补强值复制／地址操作及异常过滤顺序；Bridge-C/E 校正 ABI、槽位单位、方法体与转换缓存 |
 | 源码起步与主链 | 固定 v9 源码、生成物和现有 Player 证据对应；历史 v6 放在单独对照段 |
 | AOT 泛型 | HCLR-2 建立身份／实现／执行模型，19 决策、20 共享规则、21 模板、22 工作流、23 场景、24 检查；不再重复铺设同一套定义 |
-| async 历史案例 | 区分堆栈观察、候选原因与尚未闭合的根因；后续用固定样本验证 builder/state machine 与构建配置 |
+| async 历史案例 | 固定 UniTask2.5.10 的 class/struct 挂起、恢复与前后异常已采证；metadata on/off 均命中已有 native builder，历史 Android 根因仍未知 |
 | GC 与线程 | 正常接入、保留、根区间与串行跨增量片段样本已完成；完整根归因、屏障反事实、并发／长期压力与其他平台待补 |
 | 调用语义 | 泛型与类型初始化对照已完成采证；热更初始化异常的内部catch根因已由同DLL单点反事实定位；constrained.／装箱及其他异常路径按需补证 |
-| 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 固定样本已完成；async／UniTask 回归和设备性能仍待补 |
+| 性能与资源装载 | 性能须区分首次准备、预热与稳态；Prefab／AssetBundle 固定样本已完成；async／UniTask 有限矩阵已完成；取消／更广调度、metadata 缺失失败与设备性能待补 |
 | 商业能力 | 已按官方文档核对 FGS、DHE、热重载与访问控制契约；商业私有实现及项目收益不作源码或实测结论 |
 
 旧 `hybridclr-structural-diagnosis-and-bridge-articles-plan.md` 保留为历史诊断与补桥执行材料，不再作为当前进度目录。源码起步的提纲与证据见 `hybridclr-source-reading-start-outline.md`。
@@ -180,3 +180,9 @@ Bridge-F 明确动态根回调及活跃范围；HCLR-27 同步修正根描述，
 两版各48个普通Player，原始45处理成功/3hh-cctor-ret两次均逃逸且finally0，反事实48处理成功且每次finally1。另每版3个关键native进程及1个内联控制，共8个。原始6个关键现场活动imi=被调PingRet、EH0，caller EH3；偏移304位于caller[48,328)，反事实保持caller imi/EH3；被调缓存两版都准备。短void实际命中InitClassStaticCtor、活动上下文保持caller。
 
 异常处理篇集中解释根因与坐标，类型初始化篇回填后续证据，源起步/runtime篇同步状态，三个索引复用同一入口。普通抛出/手工TypeInitializationException与其他方向对照未变，不把返回类型单独当因果变量。本轮固定提交为 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/f5ba510382e170ac06d2fd7033db363e6c58f62e)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md)、[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/results.json)与[公开最小补丁](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/patches/exception-flow-delay-active-imi.patch)。实验已推送并核验远端；46ac71c仍是前轮类型初始化版本。文稿随本次文档提交交付，Pages另行验收。范围不含并发、性能、其他版本或完整filter/嵌套异常语义。执行记录见[异常传播实验](./hybridclr-exception-flow-outline.md)。
+
+## async／UniTask 跨边界验证（2026-10-26）
+
+固定自定义 Editor／v9／Windows x64，额外锁定 UniTask2.5.10/7c0f199。独立 projects/async-unitask，build_id c2a81f08-12d1-4f70-b333-d4bd26705388，44输入／264产物，919runtime与原始prepared一致。60普通Player：AOT class、hot class/struct的同步、两次跨帧、前后异常按实际事件完成；30结果／30预期异常，finally各一次。12匹配PDB进程验证hot MoveNext三Execute/一Transform及恢复缓存复用。
+
+同一Player的metadata on/off均能运行；class命中native引用共享builder，struct命中带FullySharedGenericAny名字的native入口，补充不强制替换。样本显式preserve整个UniTask，off不等于无可用native实例；无metadata缺失失败对照，也不宣布历史Android根因闭合。HCLR17集中补结果，14保留历史边界与回链，23同步场景覆盖；三索引复用入口，不新增正文。本轮固定提交为 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/b34ac104fa72504d1d2a480ca936ea57a7a0fb22)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/results.json)。实验已提交推送；文稿随本次文档提交交付，Pages另行核验；执行记录见[async实验](./hybridclr-async-unitask-outline.md)。

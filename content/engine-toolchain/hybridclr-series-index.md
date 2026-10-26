@@ -171,6 +171,7 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 | [Prefab／AssetBundle 资源挂载]({{< relref "engine-toolchain/hybridclr-monobehaviour-and-resource-mounting-chain.md#resource-mounting-player" >}}) | DLL可调用为何不等于资源组件可恢复？ | 五组各3个本地Player已验证；固定记录 [74da063](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/74da063e0fe2a4cbac894acfa77d3b0df4074356/evidence/2026-10-26-resource-mounting/README.md) |
 | [类型初始化与首次调用]({{< relref "engine-toolchain/ecma335-type-loading-and-initialization.md#type-initialization-player" >}}) | 加载、.cctor、转换缓存与方法体执行怎样区分？ | 30进程＋2份native记录；3个热更内部捕获差异保留，固定记录 [46ac71c](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/46ac71c74cd068bc177d653dd143b7bb9dc482bd/evidence/2026-10-26-type-initialization/README.md) |
 | [跨 AOT／解释器异常传播]({{< relref "engine-toolchain/runtime-cross-exception-handling-seh-setjmp-interpreter.md#exception-flow-player" >}}) | 内部catch与finally为何跳过，活动方法上下文如何保持一致？ | 96普通＋8native；原始3个逃逸由隔离单点反事实恢复，固定记录 [f5ba510](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/f5ba510382e170ac06d2fd7033db363e6c58f62e/evidence/2026-10-26-exception-flow/README.md) |
+| [async／UniTask Player 实测]({{< relref "engine-toolchain/hybridclr-case-async-crash-root-cause-and-two-fixes.md#async-unitask-player" >}}) | 同步完成、真正挂起与恢复后异常怎样区分？ | 60 普通＋12 native；class／struct 两次恢复，metadata 对照均有可用 native builder；固定记录 [b34ac10](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/b34ac104fa72504d1d2a480ca936ea57a7a0fb22/evidence/2026-10-26-async-unitask/README.md) |
 
 上述 Player 证据限于本机自定义 Unity `2022.3.62f3_96770f904ca7`、固定 package v9.0.3／runtime v9.0.1 和 Windows x64。跨增量片段组将 GCMode 改为 Manual，采用常驻托管 worker 的串行握手；不是原生回调竞争或所有屏障路径的验收。其本地记录为 `evidence/2026-10-25-incremental-barriers/`，build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb`，不能借用前轮提交充当本轮源码版本。
 
@@ -181,7 +182,7 @@ HCLR-10～12 涉及高级能力与选型，HCLR-13 用来回看常见混淆。�
 接下来优先加强现有文章：
 
 1. 调用语义：constrained.、装箱副本、跨 AOT／解释器的 filter/finally，以及泛型静态初始化。
-2. 工程复现：async／UniTask 最小对照、Prefab／AssetBundle 热更脚本加载与裁剪回归。
+2. 工程复现：扩展 async／UniTask 调度／取消与 metadata 缺失失败对照；资源 schema 演进和更广裁剪回归。
 3. 性能测量：固定设备与构建，分别测首次准备、预热、稳定执行和跨边界调用。
 
 GC 后续仍有完整动态根归因、屏障反事实、长期与多线程竞争等待验证项；现有样本不推广为所有平台。C++ 逐句跟读训练可补进 ABI、调用链和 GC 专题，不为增加数量另开重复文章。
