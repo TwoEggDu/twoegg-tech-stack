@@ -1,0 +1,59 @@
+<figure aria-label="资产到运行实例、动作编号与清理责任的原理示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="客户端接入与动作生命周期，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 650" role="img" aria-labelledby="client-integration-title client-integration-desc" style="display:block;width:100%;min-width:740px;height:auto">
+      <title id="client-integration-title">稳定引用创建实例，动作编号隔离请求，拥有者负责退出</title>
+      <desc id="client-integration-desc">上方从导入对象到Prefab和配置，再由场景入口创建角色实例。角色表现拥有者关联Animator、挂点和效果记录。下方左侧显示Idle、Cast、Recover、Idle及取消后的Hit路径，释放与目标反馈分开，旧动作编号反馈被拒绝。右侧区分正常动作完成后的粒子尾部、当前动作取消和角色整体退出。所有内容是教学原理示意，没有运行或资源框架验证结果。</desc>
+      <defs><marker id="client-integration-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker></defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="32" font-size="20" font-weight="600">资源引用、运行状态和退出责任分开保存</text>
+        <g fill="#f0f4ed" stroke="#c6d0c1">
+          <rect x="22" y="55" width="220" height="83" rx="8"/>
+          <rect x="310" y="55" width="220" height="83" rx="8"/>
+          <rect x="598" y="55" width="220" height="83" rx="8"/>
+        </g>
+        <g text-anchor="middle">
+          <g font-size="17" font-weight="600"><text x="132" y="83">导入对象</text><text x="420" y="83">组装与配置</text><text x="708" y="83">运行实例</text></g>
+          <g font-size="14" fill="#526b58"><text x="132" y="108">模型 / Avatar / Clip / 纹理</text><text x="420" y="108">Prefab / Controller / Profile</text><text x="708" y="108">场景入口创建，显式初始化</text></g>
+          <g font-size="13" fill="#657b68"><text x="132" y="127">先核对用途与版本</text><text x="420" y="127">保存稳定引用，不放当前目标</text><text x="708" y="127">持有状态、目标和效果记录</text></g>
+        </g>
+      </g>
+      <g stroke="#728977" stroke-width="2" fill="none" marker-end="url(#client-integration-arrow)"><path d="M246 96H303"/><path d="M534 96H591"/></g>
+      <rect x="22" y="161" width="796" height="79" rx="8" fill="#e7eee2" stroke="#bdcdb5"/>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="40" y="188" font-size="17" font-weight="600">角色表现拥有者 CourtyardActorView</text>
+        <text x="40" y="214" font-size="14">Animator + staff_tip + 当前动作编号 + 目标 + 每个粒子的 owner 编号</text>
+        <text x="40" y="232" font-size="13" fill="#657b68">效果放到世界中，仍由创建者登记和清理；本例没有异步加载或伤害计算。</text>
+      </g>
+      <g fill="#f1f4ee" stroke="#c6d0c1"><rect x="22" y="264" width="385" height="299" rx="10"/><rect x="430" y="264" width="388" height="299" rx="10"/></g>
+      <g font-family="system-ui, sans-serif">
+        <g fill="#304b40" font-size="18" font-weight="600"><text x="40" y="296">请求：身份、阶段与重复检查</text><text x="448" y="296">清理：区分动作与角色</text></g>
+        <g fill="#e2ebe0" stroke="#b7c8b0">
+          <rect x="41" y="320" width="66" height="39" rx="6"/><rect x="126" y="320" width="66" height="39" rx="6"/>
+          <rect x="211" y="320" width="86" height="39" rx="6"/><rect x="316" y="320" width="66" height="39" rx="6"/>
+          <rect x="126" y="403" width="66" height="37" rx="6"/>
+        </g>
+        <g fill="#304b40" font-size="15" text-anchor="middle"><text x="74" y="345">Idle</text><text x="159" y="345">Cast</text><text x="254" y="345">Recover</text><text x="349" y="345">Idle</text><text x="159" y="427">Hit</text></g>
+        <g stroke="#728977" stroke-width="1.5" fill="none" marker-end="url(#client-integration-arrow)">
+          <path d="M108 340H121"/><path d="M193 340H206"/><path d="M299 340H311"/><path d="M159 362V398"/><path d="M193 422H349V362"/>
+        </g>
+        <g font-size="14" fill="#526b58">
+          <text x="180" y="384">取消 / 受击</text>
+          <text x="42" y="471">释放：时钟推进，只产生 Release</text>
+          <text x="42" y="497">反馈：另外请求，检查动作编号</text>
+          <text x="42" y="523">当前 42；收到旧 41 → 拒绝</text>
+          <text x="42" y="547">编号示意，不是实际运行日志。</text>
+        </g>
+        <g fill="#e2ebe0" stroke="#b7c8b0"><rect x="448" y="320" width="352" height="63" rx="7"/><rect x="448" y="396" width="352" height="63" rx="7"/><rect x="448" y="472" width="352" height="63" rx="7"/></g>
+        <g fill="#304b40" font-size="15">
+          <text x="461" y="344">正常完成：动作编号失效</text><text x="461" y="421">动作取消：只清理该动作 owner</text><text x="461" y="497">角色退出：停止接收 + 清理全部</text>
+        </g>
+        <g fill="#526b58" font-size="14">
+          <text x="461" y="369">尾部仍有拥有者，等待粒子自然结束</text><text x="461" y="446">不误删上一轮已经正常完成的尾部</text><text x="461" y="522">处理实例后，再按资源协议处理句柄</text>
+        </g>
+      </g>
+      <path d="M22 584H818" stroke="#cdd7c8"/>
+      <g font-family="system-ui, sans-serif" fill="#526b58" font-size="14"><text x="22" y="611">对象销毁 ≠ 共享资产或句柄已经释放；静态引用检查 ≠ 实际运行验证。</text><text x="22" y="637">编译、输入、取消、目标失效、旧反馈、场景退出与设备行为，需要分别实操记录。</text></g>
+    </svg>
+  </div>
+  <figcaption style="font-size:.9rem;color:var(--muted-foreground,#66736a);margin-top:.6rem">原创接入原理图。动作与效果的策略为本文教学选择，实际工程、编译、运行与资源框架验证均待补。</figcaption>
+</figure>

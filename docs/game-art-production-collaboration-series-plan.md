@@ -1,7 +1,7 @@
 # 游戏美术生产与客户端协作：系列规划
 
 > 创建：2026-10-25。用户已选择 **12 篇正文 + 1 个系列首页**；用户于同日确认本设计并要求落地；首页与 12 篇章节提纲现已建立。
-> 状态：首页与 12 篇章节已落地；第 01—08 篇正文已成稿，其余 4 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括工具地图、Photoshop 原画、建模到 Unity 接入，以及 Maya / 3ds Max 绑定、蒙皮、动画制作到 Unity 播放、混合和打断，以及场景构件建模/UV/贴图到 Unity 材质与拼装，以及 Unity 庭院搭建、地形/光照、碰撞/导航/镜头走查，以及 Photoshop 特效素材到 Unity 粒子组装、挂点/动画/取消与结束的操作方案；具体软件实操、素材与运行验证待完成。
+> 状态：首页与 12 篇章节已落地；第 01—10 篇正文已成稿，其余 2 篇为提纲。2026-10-25 用户进一步明确：需要介绍各工种工具，并讲清资产怎样制作、导出、进入游戏及修改回流。现有内容包括工具地图、Photoshop 原画、建模到 Unity 接入，以及 Maya / 3ds Max 绑定、蒙皮、动画制作到 Unity 播放、混合和打断，以及场景构件建模/UV/贴图到 Unity 材质与拼装，以及 Unity 庭院搭建、地形/光照、碰撞/导航/镜头走查，以及 Photoshop 特效素材到 Unity 粒子组装、挂点/动画/取消与结束，以及 TA 的 Shader Graph 参数模板、只读检查器和维护交接，以及客户端组装、动作编号、表现驱动和退出清理方案；具体软件实操、素材与运行验证待完成。
 > 本文件是本系列唯一的篇级规划。根 `doc-plan.md` 只保留系列路由；具体开写时再建立单篇执行提纲。
 
 ## 1. 定位、读者与边界
@@ -64,7 +64,7 @@
 
 - 主要面向希望理解美术制作的客户端工程师，以及需要认识上下游工作的美术与 TA。
 - 以实时 3D 游戏为主要语境，先讲通用模型，再落到具体工具和引擎。
-- 首页当前显示：**第 01—08 篇已有正文，其余 4 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
+- 首页当前显示：**第 01—10 篇已有正文，其余 2 篇为提纲。** 状态随实际成稿进度更新，教学工程验证单独说明。
 
 ### 2.3 页面从上到下的结构
 
@@ -163,8 +163,8 @@ flowchart TD
 | 06 场景资产 | Maya 2024 的基本体、枢轴与平面 UV；3ds Max 2024 的 Box/Editable Poly/UVW Map/Unwrap UVW；Photoshop 平铺颜色图 | 已写墙/门框/地板原稿 → FBX/PNG → Unity 6000.0 / URP 17 材质、Prefab、碰撞与坐标试拼；光照 UV/LOD/复用边界已说明，素材与实操待补 |
 | 07 地编 | Unity 场景、地形、光照等编辑工具怎样消费上游资产；Unreal 作为按需对照 | 从导入的模块开始搭庭院、组织路线/视线，配置 Terrain 与光照，再用 CharacterController、AI Navigation 和 Cinemachine 独立走查并保存依赖 |
 | 08 特效 | 已写 Photoshop 柔光/圆环 RGBA 素材，Unity 6000.0 / URP 17 粒子与材质；网格、拖尾、序列帧、VFX Graph 为扩展 | PSD → PNG → 导入/材质 → Charge/Release/Impact Prefab → 独立预览与动画事件 → 挂点、本地/世界空间、取消及结束；脚本编译、素材与运行实操待补 |
-| 09 TA | 材质/Shader 编辑工具、DCC 脚本或引擎编辑器工具的不同位置 | 选一个小需求展示原型、参数开放、导出辅助/校验与预览，解释哪个操作由工具自动完成 |
-| 10 客户端 | Unity 的导入面板、Prefab、动画系统与最小 C# 表现驱动；按需对照 Unreal | 收到模型/纹理/动作 → 配置导入 → 组装模板及引用 → 创建实例 → 用输入/状态驱动动画与特效 → 退出清理 |
+| 09 TA | 已写 Shader Graph 17 参数原型与 Unity Editor C# 只读检查器；说明 Maya Python / 3ds Max MAXScript 辅助导出的位置 | 目标反馈复用需求 → 方案比较 → 图/材质/参数 → TA001—TA006 检查 → 创作者试用、运行与分档验证 → 版本维护；实际图/工具编译与实操待补 |
+| 10 客户端 | 已写 Unity 导入复核、Prefab、ScriptableObject、Animator 与 C# 表现拥有者/场景入口；直接引用作为主路径 | 资产/模板/配置 → 初始化实例 → 动作编号与释放/目标反馈 → 当前动作取消/尾部自然结束/角色退出 → 日志与版本复查；编译运行与资源框架接入待补 |
 | 11 综合示例 | 汇合前述工具和项目，不重新讲全套软件 | 从原画原稿到角色、场景、动作、特效文件，再到运行场景；保留目录、版本、导出物、接入配置及一次修改回流 |
 | 12 验收 | 制作软件预览与引擎观察/Profiler/Frame Debugger 等工具的不同证据范围 | 用同一资产定位源文件、导出、导入或运行问题；记录条件和修正后的复查，不以单个工具结果替代完整验收 |
 
@@ -190,7 +190,9 @@ flowchart TD
 - 06 正文已成稿，沿模块接口、Maya / Max 建模和 UV、Photoshop 平铺贴图、FBX、Unity 材质/Prefab/碰撞与坐标试拼展开；明确平铺颜色 UV 与光照 UV、编辑器尺寸检查与实际通行的区别。实际素材、拼装及运行记录待补。
 - 07 正文已成稿，沿用庭院构件，解释四类空间、灰盒路线与视线、Unity 搭建、外围 Terrain、实时与可选烘焙光照，再给出 CharacterController、AI Navigation 和 Cinemachine 走查方案；原创示意已写，Unity 工程、脚本编译与运行记录待补。
 - 08 正文已成稿，从效果职责、三层产物与时间/空间/生命周期，落到 Photoshop 两张 RGBA 素材、URP 粒子材质、三段效果 Prefab、预览脚本与动画事件；明确预览目标反馈不表示命中，素材、脚本编译及运行验证待补。
-- 09—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
+- 09 正文已成稿，以目标反馈复用串起 TA 工作：现成能力评估、Shader Graph 参数、Editor 只读 Prefab 检查、DCC 工具位置、创作者使用、质量分档与版本/例外维护；静态检查与运行目标分别说明，图/工具工程、编译与设备验证待补。
+- 10 正文已成稿，连接导入复核、角色模板与配置、直接引用创建、动作编号、释放/反馈分离、取消、尾部与整体清理；说明独立 Controller/动作事件副本、移动与镜头接入，以及实例与资源句柄边界。实际 Unity 工程、编译、运行和加载框架验证待补。
+- 11—12 正文待写，须按上表纳入工具和文件传递。章节编号与主题边界保持不变。
 - 后续写作若未实际操作工具，应明确标为操作设计或待验证步骤；不能用本轮规划更新宣称软件或引擎验证完成。
 
 **本轮核对的原始资料**：Adobe [PSD 原稿与 PNG 导出说明](https://helpx.adobe.com/photoshop/desktop/save-and-export/save-files/save-in-png-and-gif-formats.html)、Autodesk [Maya FBX 导出（2024）](https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Interoperability/files/GUID-C64CFD18-517C-47A2-9E5D-489EC5D6480C.htm)及 [3ds Max 游戏 FBX 导出（2022）](https://help.autodesk.com/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-70DBCE92-4D55-4CD6-A2E9-23E48E571068.htm)。这些资料确认了教学路径可参考的能力范围；旧版本菜单和默认值不能直接写成当前版本保证。
@@ -341,6 +343,8 @@ flowchart TD
 
 ### 09｜TA：怎样把视觉方案变成团队可用的技术能力
 
+**当前状态：** 正文已写，含工具位置、现成方案与研发取舍、Shader Graph 四属性/颜色/Alpha、只读 Prefab 检查器、使用与运行验证、质量分档及维护责任；原创图已制作，实际图/工具工程、编译和设备运行尚未执行。
+
 **核心问题：** 哪些反复出现的制作难题，需要形成技术方案、工具或共同规则？
 
 1. 从“想做的效果”“现有制作方式”“目标平台约束”三者之间的差距识别任务。
@@ -355,6 +359,8 @@ flowchart TD
 **边界：** 现有 TA 职责文章作为前置/延伸。本篇重点补实际工作过程，避免把 TA 定义成唯一预算负责人或所有视觉问题的接收者。
 
 ### 10｜客户端：怎样把美术资产接成运行中的表现
+
+**当前状态：** 正文已写，含导入/引用、模板/配置/实例、三个教学脚本、动作身份与所有权、正常/取消/退出分支、日志与版本复查；原创图已制作，实际工程、脚本编译与运行未执行，加载框架仅解释边界。
 
 **核心问题：** 一组交付资源怎样成为可驱动、可释放、可调试的游戏表现？
 
@@ -431,7 +437,7 @@ flowchart TD
 
 ### 6.2 篇级页面与状态
 
-以下页面已建立；第 01—08 篇为正文，其余 4 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
+以下页面已建立；第 01—10 篇为正文，其余 2 篇为提纲。前缀统一为 `game-art-production-`，均位于上述栏目。
 
 | 编号 | 章节页面 | 状态 |
 | --- | --- | --- |
@@ -443,8 +449,8 @@ flowchart TD
 | 06 | [game-art-production-06-environment-assets.md](../content/delivery-engineering/game-art-production-06-environment-assets.md) | 正文已成稿；Maya / Max 构件建模/UV、Photoshop 贴图与 Unity 材质/拼装方案，实操待补 |
 | 07 | [game-art-production-07-level-art.md](../content/delivery-engineering/game-art-production-07-level-art.md) | 正文已成稿；Unity 庭院/路线/地形/光照与碰撞、导航、镜头走查方案，实操待补 |
 | 08 | [game-art-production-08-vfx.md](../content/delivery-engineering/game-art-production-08-vfx.md) | 正文已成稿；Photoshop RGBA → Unity 粒子/材质/Prefab → 挂点/动画/取消与结束方案，实操待补 |
-| 09 | [game-art-production-09-technical-art.md](../content/delivery-engineering/game-art-production-09-technical-art.md) | 提纲已建立；正文待写 |
-| 10 | [game-art-production-10-client-integration.md](../content/delivery-engineering/game-art-production-10-client-integration.md) | 提纲已建立；正文待写 |
+| 09 | [game-art-production-09-technical-art.md](../content/delivery-engineering/game-art-production-09-technical-art.md) | 正文已成稿；TA 材质参数模板/只读检查/分档与维护工作方案，图和工具实操待补 |
+| 10 | [game-art-production-10-client-integration.md](../content/delivery-engineering/game-art-production-10-client-integration.md) | 正文已成稿；客户端组装、动作编号、表现驱动与生命周期方案，工程/编译/运行待补 |
 | 11 | [game-art-production-11-integrated-example.md](../content/delivery-engineering/game-art-production-11-integrated-example.md) | 提纲已建立；正文待写 |
 | 12 | [game-art-production-12-joint-acceptance.md](../content/delivery-engineering/game-art-production-12-joint-acceptance.md) | 提纲已建立；正文待写 |
 

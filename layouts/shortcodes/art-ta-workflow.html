@@ -1,0 +1,79 @@
+<figure aria-label="TA 从视觉需求到共享能力的原理示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="TA 交付流程、材质接口与静态检查，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 660" role="img" aria-labelledby="ta-workflow-title ta-workflow-desc" style="display:block;width:100%;min-width:740px;height:auto">
+      <title id="ta-workflow-title">把一个圆环效果，沉淀为可使用和维护的方案</title>
+      <desc id="ta-workflow-desc">上方从视觉目标与限制，经方案比较、原型和公开参数、创作者试用到运行验证与维护，箭头回到原型修订。下方左侧区分纹理、粒子顶点色、材质调色产生的RGB与Alpha路径；右侧显示只读Prefab检查器报告规则编号、资产路径和层级，不能证明运行或性能通过。本图是教学原理示意，没有实际Shader Graph、工具或设备验证结果。</desc>
+      <defs><marker id="ta-flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker></defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="32" font-size="20" font-weight="600">TA 的交付包含实现、接口、验证方法和维护约定</text>
+        <g fill="#f0f4ed" stroke="#c6d0c1">
+          <rect x="22" y="59" width="142" height="86" rx="8"/>
+          <rect x="185" y="59" width="142" height="86" rx="8"/>
+          <rect x="348" y="59" width="142" height="86" rx="8"/>
+          <rect x="511" y="59" width="142" height="86" rx="8"/>
+          <rect x="674" y="59" width="144" height="86" rx="8"/>
+        </g>
+        <g font-size="16" font-weight="600" text-anchor="middle">
+          <text x="93" y="87">目标与限制</text><text x="256" y="87">方案比较</text><text x="419" y="87">原型与接口</text><text x="582" y="87">创作者试用</text><text x="746" y="87">运行与维护</text>
+        </g>
+        <g font-size="13" text-anchor="middle" fill="#526b58">
+          <text x="93" y="112">观感 / 生产 / 平台</text><text x="256" y="112">现成配置先评估</text><text x="419" y="112">参数 / 工具 / 规则</text><text x="582" y="112">能否独立使用？</text><text x="746" y="112">行为 / 画面 / 设备</text>
+          <text x="93" y="132">先说明缺口</text><text x="256" y="132">再决定是否研发</text><text x="419" y="132">明确适用范围</text><text x="582" y="132">错误能否定位？</text><text x="746" y="132">版本与修改回流</text>
+        </g>
+      </g>
+      <g stroke="#728977" stroke-width="1.7" fill="none" marker-end="url(#ta-flow-arrow)">
+        <path d="M166 102H180"/><path d="M329 102H343"/><path d="M492 102H506"/><path d="M655 102H669"/>
+        <path d="M746 147V179H419V149"/>
+      </g>
+      <text x="439" y="202" font-family="system-ui, sans-serif" fill="#657b68" font-size="14">问题回到可修复的原稿、模板、工具或接入代码</text>
+      <g fill="#f1f4ee" stroke="#c6d0c1">
+        <rect x="22" y="224" width="385" height="333" rx="10"/>
+        <rect x="430" y="224" width="388" height="333" rx="10"/>
+      </g>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="40" y="255" font-size="18" font-weight="600">材质接口：颜色与 Alpha 分开</text>
+        <text x="448" y="255" font-size="18" font-weight="600">工具接口：报告能指向输入</text>
+        <g font-size="14" fill="#435b48">
+          <text x="40" y="285">Shape Texture × Vertex Color × Tint</text>
+          <text x="40" y="308">得到 Q（RGBA），保留粒子颜色和淡出</text>
+        </g>
+        <g fill="#e2ebe0" stroke="#b7c8b0">
+          <rect x="42" y="332" width="343" height="70" rx="7"/>
+          <rect x="42" y="417" width="343" height="70" rx="7"/>
+        </g>
+        <g font-size="15">
+          <text x="56" y="359">Q.rgb × clamp(Intensity, 0, 4)</text>
+          <text x="56" y="385">→ Base Color</text>
+          <text x="56" y="444">saturate(Q.a × saturate(Opacity))</text>
+          <text x="56" y="470">→ Alpha</text>
+        </g>
+        <g font-size="14" fill="#526b58">
+          <text x="40" y="518">透明 Alpha 混合；属性范围为教学选择</text>
+          <text x="40" y="541">不宣称覆盖现成粒子 Shader 的所有功能</text>
+        </g>
+        <g font-size="14" fill="#435b48">
+          <text x="448" y="289">所选 Prefab → 读取结构与字段</text>
+          <text x="448" y="315">TA001 根系统 / TA002 根缩放</text>
+          <text x="448" y="341">TA003 循环 / TA004 自动播放</text>
+          <text x="448" y="367">TA005 停止策略 / TA006 主材质</text>
+        </g>
+        <rect x="448" y="388" width="352" height="80" rx="7" fill="#efe4d4" stroke="#d5bb98"/>
+        <g font-size="14" fill="#735d3e">
+          <text x="460" y="414">[TA003] 资产路径 :: ImpactSparks</text>
+          <text x="460" y="441">→ 检查对应 Main 模块的 Looping</text>
+        </g>
+        <g font-size="14" fill="#526b58">
+          <text x="448" y="499">只读；不自动修改共享资产</text>
+          <text x="448" y="522">零告警 ≠ 视觉、运行或性能已通过</text>
+          <text x="448" y="545">规则只适用于本例一次性粒子契约</text>
+        </g>
+      </g>
+      <path d="M22 580H818" stroke="#cdd7c8"/>
+      <g font-family="system-ui, sans-serif" fill="#526b58" font-size="14">
+        <text x="22" y="610">静态检查 → 创作者试用 → 游戏走查 → 目标设备测量：分别记录结果，不互相代替。</text>
+        <text x="22" y="640">实现与预算的责任由团队明确；岗位名称不等于所有视觉问题的唯一接收者。</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption style="font-size:.9rem;color:var(--muted-foreground,#66736a);margin-top:.6rem">原创工作关系图。节点连接和告警为方案示意；实际 Shader Graph、工具编译、试用与设备运行仍待执行。</figcaption>
+</figure>
