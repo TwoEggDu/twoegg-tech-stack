@@ -1,0 +1,44 @@
+<figure aria-label="同一候选的联合观察、问题修复与复查流程示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="联合验收的证据与责任，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 660" role="img" aria-labelledby="joint-acceptance-title joint-acceptance-desc" style="display:block;width:100%;min-width:760px;height:auto">
+      <title id="joint-acceptance-title">共同观察同一候选，按证据修复并确定复查范围</title>
+      <desc id="joint-acceptance-desc">顶部固定代码、资源、配置、构建和设备条件。画面与可读性、交互与体验、性能与生命周期沿同一路线观察，再根据证据判定。结果可以在明确范围内通过或有条件接受；异常和缺少证据分别保留为失败或未执行。问题经现象、复现、候选原因与区分试验定位，明确牵头、修复和复查责任。新候选重新检查原用例、依赖消费者和关键回归，再形成结论。图是流程设计，没有实际验收或性能结果。</desc>
+      <defs><marker id="joint-acceptance-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker></defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="31" font-size="20" font-weight="600">把观察、原因、责任和复查接回同一份内容</text>
+        <rect x="22" y="52" width="816" height="64" rx="8" fill="#eaf1e6" stroke="#b6c6b0"/>
+        <text x="430" y="78" text-anchor="middle" font-size="17" font-weight="600">固定候选与条件</text>
+        <text x="430" y="101" text-anchor="middle" font-size="14" fill="#526b58">代码 / 资源 / Profile / Player · 镜头 / 路线 / 质量 / 设备 / 工具开关</text>
+        <g fill="none" stroke="#728977" stroke-width="1.6" marker-end="url(#joint-acceptance-arrow)"><path d="M147 116V149"/><path d="M430 116V149"/><path d="M713 116V149"/></g>
+        <g fill="#f0f4ed" stroke="#c6d0c1"><rect x="22" y="152" width="250" height="92" rx="8"/><rect x="305" y="152" width="250" height="92" rx="8"/><rect x="588" y="152" width="250" height="92" rx="8"/></g>
+        <g text-anchor="middle">
+          <g font-size="17" font-weight="600"><text x="147" y="180">画面与可读性</text><text x="430" y="180">交互与体验</text><text x="713" y="180">性能与生命周期</text></g>
+          <g font-size="14" fill="#526b58"><text x="147" y="204">姿态 / 材质 / 阶段反馈</text><text x="430" y="204">通行 / 遮挡 / 取消 / 镜头</text><text x="713" y="204">CPU / GPU / 分配 / 清理</text></g>
+          <g font-size="13" fill="#657b68"><text x="147" y="226">参考图与实际观察条件</text><text x="430" y="226">同一动作身份与输入记录</text><text x="713" y="226">实际 Player 与原始采样</text></g>
+        </g>
+        <g fill="none" stroke="#728977" stroke-width="1.6"><path d="M147 244V265H713V244"/><path d="M430 244V279" marker-end="url(#joint-acceptance-arrow)"/></g>
+        <text x="430" y="300" text-anchor="middle" font-size="15" font-weight="600">沿同一组操作收集证据，再判定</text>
+        <g fill="none" stroke="#728977" stroke-width="1.6" marker-end="url(#joint-acceptance-arrow)"><path d="M430 310H215V328"/><path d="M430 310H645V328"/></g>
+        <rect x="22" y="331" width="386" height="66" rx="8" fill="#eaf1e6" stroke="#b6c6b0"/>
+        <rect x="452" y="331" width="386" height="66" rx="8" fill="#f6f3eb" stroke="#d6cebb"/>
+        <g text-anchor="middle"><g font-size="17" font-weight="600"><text x="215" y="358">通过 / 有条件接受</text><text x="645" y="358">失败 / 未执行或阻塞</text></g><g font-size="13" fill="#657b68"><text x="215" y="382">保留范围、条件、证据与接受记录</text><text x="645" y="382">异常与缺少证据分别记录</text></g></g>
+        <path d="M645 398V425" fill="none" stroke="#728977" stroke-width="1.6" marker-end="url(#joint-acceptance-arrow)"/>
+        <rect x="452" y="428" width="386" height="69" rx="8" fill="#f0f4ed" stroke="#c6d0c1"/>
+        <text x="645" y="454" text-anchor="middle" font-size="16" font-weight="600">定位后确定修复责任</text>
+        <text x="645" y="478" text-anchor="middle" font-size="13" fill="#526b58">现象 → 复现 → 候选原因 → 区分证据</text>
+        <path d="M645 498V525" fill="none" stroke="#728977" stroke-width="1.6" marker-end="url(#joint-acceptance-arrow)"/>
+        <rect x="452" y="528" width="386" height="62" rx="8" fill="#f0f4ed" stroke="#c6d0c1"/>
+        <text x="645" y="553" text-anchor="middle" font-size="16" font-weight="600">形成可追溯的新候选</text>
+        <text x="645" y="576" text-anchor="middle" font-size="13" fill="#526b58">原稿 / 资产 / 配置 / 代码 · 牵头与协作</text>
+        <path d="M452 559H412" fill="none" stroke="#728977" stroke-width="1.6" marker-end="url(#joint-acceptance-arrow)"/>
+        <rect x="22" y="528" width="386" height="62" rx="8" fill="#f0f4ed" stroke="#c6d0c1"/>
+        <text x="215" y="553" text-anchor="middle" font-size="16" font-weight="600">按变更依赖重新检查</text>
+        <text x="215" y="576" text-anchor="middle" font-size="13" fill="#526b58">原用例 + 共享消费者 + 关键回归</text>
+        <path d="M215 528V412H430V311" fill="none" stroke="#728977" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#joint-acceptance-arrow)"/>
+        <text x="22" y="465" font-size="13" fill="#657b68">复查证据回到判定，仍失败时继续调查</text>
+        <text x="22" y="630" font-size="14" fill="#657b68">结论只覆盖已执行的对象与条件；待测数据不能填写为通过。本图不代表实际验收结果。</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption style="font-size:.9em;color:#657b68;margin-top:.6rem">联合验收流程设计。牵头、实际修复、复查与接受责任可以由不同人员承担；窄屏可在图内横向查看。</figcaption>
+</figure>
