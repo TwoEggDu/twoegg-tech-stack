@@ -1,6 +1,6 @@
 ## 编辑工作单
 
-**选题：** [提交检查已经自动化，为什么修正仍要人盯？](../content/delivery-engineering/game-delivery-agent-01-why-checks-need-follow-through.md)（章节提纲已建，正文待写；实验未执行）
+**选题：** [提交检查已经自动化，为什么修正仍要人盯？](../content/delivery-engineering/game-delivery-agent-01-why-checks-need-follow-through.md)（正文已写，线上更新待核验；方案未实现，实验未执行）
 **系列 / 子系列：** 游戏交付 Agent 研究 / 一期：Missing 闭环 / DGA-01；篇级结构与状态以 [canonical plan](game-delivery-agent-series-plan.md) 为准。
 
 ---
@@ -65,3 +65,12 @@
 - **下一步应读：** [DGA-02《一次报错怎样追到复检：版本、问题与修正记录》](../content/delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md)——把本篇提出的交接信息变成可维护记录；当前为提纲，正文待写。
 - **扩展阅读：** [资源完整性实践](../content/engineering-journey/production-resource-completeness.md)——了解已有三个工具的形成过程与历史证据边界。
 - **扩展阅读：** [Agent Engineering 10：State Machine 与 Workflow](../content/ai-empowerment/agent-engineering-10-state-machine-workflow.md)——按需补充确定性流程与模型判断点的通用机制。
+
+### 8. DGA-01 成稿记录（2026-10-26）
+
+- 类型与范围：原理篇；从历史工具已形成的处理闭环出发，研究哪些人工交接可程序化，哪些调查值得比较模型参与。
+- 历史依据：已读资源完整性实践原文，保留检查、MissingFind、仲裁机、依赖提交、提交后检查与人工跟进的证据边界；未检查当前工具源码或运行情况。
+- 机制依据：[Unity 2022.3 Asset Metadata](https://docs.unity3d.com/2022.3/Documentation/Manual/AssetMetadata.html)，用于说明路径与资源身份不能混同，不据此推定历史项目版本。
+- 设计产物：四类交接信息、普通漏交流程表、流程断点分类、调查转折示意、职责图与分工表。普通路径和例外路径均明确为未执行的设计示例。
+- 表述约束：固定流程可包含人工确认；Missing 不等于漏交；无新增依赖不等于无场景修改；模型选择是请求，工具回执和复检证据决定后续状态；内容意图由负责人确认。
+- 本轮没有新增 Agent 实现、工具实验或模型实验，也没有效率、正确率和生产收益数据。正文已写不改变这些验证状态。
