@@ -1,0 +1,4497 @@
+{
+  "renderdoc_version": "1.43",
+  "scope": "Offline capture replay; GBuffer and deferred lighting only",
+  "before": {
+    "file": "gbuffer_frame6348.rdc",
+    "sha256": "93455f1fe7d5b4faeac729dddaab5b333d48b511338f8faa4bd3c804372e71ec",
+    "gbuffer_event": 177,
+    "viewport": {
+      "enabled": true,
+      "height": 448.0,
+      "maxDepth": 1.0,
+      "minDepth": 0.0,
+      "thisown": true,
+      "width": 668.0,
+      "x": 289.0,
+      "y": 60.0
+    },
+    "candidate": {
+      "triangle": 4,
+      "screen_triangle": [
+        [
+          678.7298399939632,
+          1019.2598659935966,
+          0.9487143019544315
+        ],
+        [
+          678.7298399939632,
+          -696.3464879914623,
+          0.9487143019544315
+        ],
+        [
+          632.7304529827636,
+          403.7876867146131,
+          0.991728316117789
+        ]
+      ],
+      "area": 39458.420317915894,
+      "barycentric": [
+        0.33492845480891503,
+        0.3339836550360456,
+        0.3310878901550393
+      ],
+      "predicted_depth": 0.9629557211508765,
+      "predicted_world": [
+        -2.307533057921668,
+        -0.22860532223099803,
+        3.2342495491766514
+      ],
+      "predicted_uv": [
+        1.1365179808584225,
+        0.6103075472356058
+      ],
+      "xy": [
+        663,
+        242
+      ],
+      "actual_depth": 0.9629561305046082,
+      "depth_error": 4.09353731689599e-07
+    },
+    "sample": {
+      "xy": [
+        663,
+        242
+      ],
+      "history_event_records": [
+        {
+          "event": 128,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        },
+        {
+          "event": 139,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        },
+        {
+          "event": 177,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        }
+      ],
+      "gbuffer": [
+        {
+          "resource": "ResourceId::247",
+          "view": "ResourceId::250",
+          "format": "R8G8B8A8_UNORM",
+          "raw_hex": "81ff7efb",
+          "raw_components": [
+            129,
+            255,
+            126,
+            251
+          ],
+          "picked_float": [
+            0.5058823823928833,
+            1.0,
+            0.4941176474094391,
+            0.9843137264251709
+          ]
+        },
+        {
+          "resource": "ResourceId::251",
+          "view": "ResourceId::254",
+          "format": "R8G8B8A8_UNORM",
+          "raw_hex": "007fbe01",
+          "raw_components": [
+            0,
+            127,
+            190,
+            1
+          ],
+          "picked_float": [
+            0.0,
+            0.49803921580314636,
+            0.7450980544090271,
+            0.003921568859368563
+          ]
+        },
+        {
+          "resource": "ResourceId::255",
+          "view": "ResourceId::258",
+          "format": "R8G8B8A8_SRGB",
+          "raw_hex": "7b6e5100",
+          "raw_components": [
+            123,
+            110,
+            81,
+            0
+          ],
+          "picked_float": [
+            0.1982421875,
+            0.15625,
+            0.08251953125,
+            0.0
+          ]
+        }
+      ],
+      "depth": {
+        "resource": "ResourceId::145",
+        "view": "ResourceId::148",
+        "format": "D32",
+        "raw_hex": "4b84763f",
+        "raw_components": [
+          0.9629561305046082
+        ],
+        "picked_float": [
+          0.9629561305046082,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "gbuffer_debug": {
+        "event": 177,
+        "steps": 163,
+        "spirv_sha256": "4da9fd3eadee358a58568230253119e9368fa285ef6c04c48d8f184ae7ab0718",
+        "inputs": [
+          {
+            "source_name": "in_texcoord",
+            "data": {
+              "id": "_110",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 2,
+              "value": [
+                1.1365032196044922,
+                0.6103106141090393
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_normal",
+            "data": {
+              "id": "_138",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                0.0016305445460602641,
+                0.9999985098838806,
+                0.0
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_tangent",
+            "data": {
+              "id": "_142",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                -0.9999985098838806,
+                0.0016305445460602641,
+                0.0
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_world_position",
+            "data": {
+              "id": "_225",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                -2.3075034618377686,
+                -0.22860532999038696,
+                3.234255790710449
+              ],
+              "members": []
+            }
+          }
+        ],
+        "semantics": {
+          "in_texcoord": [
+            {
+              "id": "_110",
+              "observed": true,
+              "data": {
+                "id": "_110",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 2,
+                "value": [
+                  1.1365032196044922,
+                  0.6103106141090393
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_normal": [
+            {
+              "id": "_138",
+              "observed": true,
+              "data": {
+                "id": "_138",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  0.0016305445460602641,
+                  0.9999985098838806,
+                  0.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_tangent": [
+            {
+              "id": "_142",
+              "observed": true,
+              "data": {
+                "id": "_142",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  -0.9999985098838806,
+                  0.0016305445460602641,
+                  0.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "gbuffer": [
+            {
+              "id": "_176",
+              "observed": true,
+              "data": {
+                "id": "_176",
+                "type": "VarType.Unknown",
+                "rows": 0,
+                "columns": 0,
+                "value": [],
+                "members": [
+                  {
+                    "id": "worldNormal",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 3,
+                    "value": [
+                      0.013486340641975403,
+                      0.9998387694358826,
+                      -0.011856039986014366
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "baseColor",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 3,
+                    "value": [
+                      0.1982421875,
+                      0.15625,
+                      0.08251953125
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "metallic",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.0
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "specular",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.5
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "roughness",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.7450980544090271
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "shadingModelID",
+                    "type": "VarType.UInt",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      1
+                    ],
+                    "members": []
+                  }
+                ]
+              }
+            }
+          ],
+          "out_gbuffer_a": [
+            {
+              "id": "_212",
+              "observed": true,
+              "data": {
+                "id": "_212",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.5067431926727295,
+                  0.9999194145202637,
+                  0.49407199025154114,
+                  -107374176.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "out_gbuffer_b": [
+            {
+              "id": "_213",
+              "observed": true,
+              "data": {
+                "id": "_213",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.0,
+                  0.5,
+                  0.7450980544090271,
+                  0.003921568859368563
+                ],
+                "members": []
+              }
+            }
+          ],
+          "out_gbuffer_c": [
+            {
+              "id": "_214",
+              "observed": true,
+              "data": {
+                "id": "_214",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.1982421875,
+                  0.15625,
+                  0.08251953125,
+                  -107374176.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_world_position": [
+            {
+              "id": "_225",
+              "observed": true,
+              "data": {
+                "id": "_225",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  -2.3075034618377686,
+                  -0.22860532999038696,
+                  3.234255790710449
+                ],
+                "members": []
+              }
+            }
+          ]
+        }
+      },
+      "instance_attribution": [
+        {
+          "triangle": 4,
+          "screen_triangle": [
+            [
+              678.7298422166873,
+              1019.259847388949,
+              0.9487142977004043
+            ],
+            [
+              678.7298422166873,
+              -696.3464631852653,
+              0.9487142977004043
+            ],
+            [
+              632.7304534286211,
+              403.7876873966535,
+              0.9917283144625991
+            ]
+          ],
+          "area": 39458.42084368156,
+          "barycentric": [
+            0.3349284306956802,
+            0.3339836436178281,
+            0.33108792568649176
+          ],
+          "predicted_depth": 0.9629557192856434,
+          "predicted_world": [
+            -2.3075329124875,
+            -0.22860532809643214,
+            3.234249564200653
+          ],
+          "predicted_uv": [
+            1.1365179146177256,
+            0.6103075547641287
+          ],
+          "instance_slot": 0,
+          "world_error": 2.945064973136624e-05
+        },
+        {
+          "triangle": 1,
+          "screen_triangle": [
+            [
+              644.7100103060916,
+              124.27654375206086,
+              0.991727971677494
+            ],
+            [
+              752.287700493086,
+              -696.5929012599773,
+              0.9487013804327776
+            ],
+            [
+              752.287700493086,
+              1019.444675944983,
+              0.9487013804327776
+            ]
+          ],
+          "area": 92303.67941489791,
+          "barycentric": [
+            0.825335628035449,
+            0.02222009813230531,
+            0.15244427383224568
+          ],
+          "predicted_depth": 0.9842127591399602,
+          "predicted_world": [
+            1.29496930361248,
+            -0.5344776653662805,
+            3.5476738500785356
+          ],
+          "predicted_uv": [
+            -0.6689558644473089,
+            0.7673643721755474
+          ],
+          "instance_slot": 0,
+          "world_error": 3.6024727654502486
+        }
+      ],
+      "confirmed_slots": [
+        0
+      ],
+      "lighting": {
+        "event": 186,
+        "pipeline": "ResourceId::289",
+        "shader": "ResourceId::288",
+        "subpass": 1,
+        "viewport": {
+          "enabled": true,
+          "height": 448.0,
+          "maxDepth": 1.0,
+          "minDepth": 0.0,
+          "thisown": true,
+          "width": 668.0,
+          "x": 289.0,
+          "y": 60.0
+        },
+        "sets": [
+          "ResourceId::302",
+          "ResourceId::306",
+          "ResourceId::304"
+        ],
+        "descriptors": [
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 3,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 0,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 1,
+              "resource": "ResourceId::194",
+              "secondary": "ResourceId::158",
+              "textureType": 4,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::207"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 4,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 1,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::161",
+              "secondary": "ResourceId::159",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::176"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 5,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 2,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::177",
+              "secondary": "ResourceId::160",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::190"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 6,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 3,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 30,
+              "resource": "ResourceId::225",
+              "secondary": "ResourceId::303",
+              "textureType": 6,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::228"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 7,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 4,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::236",
+              "secondary": "ResourceId::303",
+              "textureType": 4,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::239"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 0,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 5,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::247",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::250"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 1,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 6,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::251",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::254"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 2,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 7,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::255",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::258"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 3,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 8,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::145",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::148"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 1,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::304",
+              "index": 9,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::177",
+              "secondary": "ResourceId::160",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::190"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 0,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 0,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 9
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 4319248,
+              "byteSize": 688,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::149",
+              "secondary": "ResourceId::0",
+              "textureType": 0,
+              "thisown": false,
+              "type": 9,
+              "view": "ResourceId::0"
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "resource": "ResourceId::247",
+            "view": "ResourceId::250",
+            "format": "R8G8B8A8_UNORM",
+            "raw_hex": "81ff7efb",
+            "raw_components": [
+              129,
+              255,
+              126,
+              251
+            ],
+            "picked_float": [
+              0.5058823823928833,
+              1.0,
+              0.4941176474094391,
+              0.9843137264251709
+            ]
+          },
+          {
+            "resource": "ResourceId::251",
+            "view": "ResourceId::254",
+            "format": "R8G8B8A8_UNORM",
+            "raw_hex": "007fbe01",
+            "raw_components": [
+              0,
+              127,
+              190,
+              1
+            ],
+            "picked_float": [
+              0.0,
+              0.49803921580314636,
+              0.7450980544090271,
+              0.003921568859368563
+            ]
+          },
+          {
+            "resource": "ResourceId::255",
+            "view": "ResourceId::258",
+            "format": "R8G8B8A8_SRGB",
+            "raw_hex": "7b6e5100",
+            "raw_components": [
+              123,
+              110,
+              81,
+              0
+            ],
+            "picked_float": [
+              0.1982421875,
+              0.15625,
+              0.08251953125,
+              0.0
+            ]
+          },
+          {
+            "resource": "ResourceId::145",
+            "view": "ResourceId::148",
+            "format": "D32",
+            "raw_hex": "4b84763f",
+            "raw_components": [
+              0.9629561305046082
+            ],
+            "picked_float": [
+              0.9629561305046082,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "output": {
+          "resource": "ResourceId::259",
+          "view": "ResourceId::262",
+          "format": "R16G16B16A16_FLOAT",
+          "raw_hex": "a332ba331734003c",
+          "raw_components": [
+            0.2073974609375,
+            0.241455078125,
+            0.255615234375,
+            1.0
+          ],
+          "picked_float": [
+            0.2073974609375,
+            0.241455078125,
+            0.255615234375,
+            1.0
+          ]
+        },
+        "perframe": {
+          "descriptor": {
+            "bufferStructCount": 0,
+            "byteOffset": 4319248,
+            "byteSize": 688,
+            "counterByteOffset": 0,
+            "elementByteSize": 0,
+            "firstMip": 0,
+            "firstSlice": 0,
+            "flags": 0,
+            "minLODClamp": 0.0,
+            "numMips": 1,
+            "numSlices": 1,
+            "resource": "ResourceId::149",
+            "secondary": "ResourceId::0",
+            "textureType": 0,
+            "thisown": false,
+            "type": 9,
+            "view": "ResourceId::0"
+          },
+          "member_offsets": {
+            "proj_view_matrix": 0,
+            "camera_position": 64,
+            "_padding_camera_position": 76,
+            "ambient_light": 80,
+            "_padding_ambient_light": 92,
+            "point_light_num": 96,
+            "_padding_point_light_num_1": 100,
+            "_padding_point_light_num_2": 104,
+            "_padding_point_light_num_3": 108,
+            "scene_point_lights": 112,
+            "scene_directional_light": 592,
+            "directional_light_proj_view": 624
+          },
+          "sha256": "a30ca3b6ca69246a955060a54b3b741774a84cf6e5a245e27078d6ec2e2d3f74",
+          "camera": [
+            -5.0,
+            0.0,
+            3.0
+          ],
+          "ambient": [
+            0.029999999329447746,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "point_light_count": 0,
+          "directional_direction": [
+            0.5773503184318542,
+            -0.5773503184318542,
+            0.5773503184318542
+          ],
+          "directional_color": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "debug": {
+          "event": 186,
+          "steps": 296,
+          "spirv_sha256": "fdaef4613b34ecd4469385e83b73ffd5f9bf74223a35b6d607be82d601cd1e74",
+          "inputs": [
+            {
+              "source_name": "in_texcoord",
+              "data": {
+                "id": "_387",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 2,
+                "value": [
+                  0.5606287121772766,
+                  0.4073660969734192
+                ],
+                "members": []
+              }
+            }
+          ],
+          "semantics": {
+            "F0": [
+              {
+                "id": "_50",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_55",
+                "observed": true,
+                "data": {
+                  "id": "_55",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.039843134582042694,
+                    0.039843134582042694,
+                    0.039843134582042694
+                  ],
+                  "members": []
+                }
+              },
+              {
+                "id": "_63",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_482",
+                "observed": true,
+                "data": {
+                  "id": "_482",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.039843134582042694,
+                    0.039843134582042694,
+                    0.039843134582042694
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "L": [
+              {
+                "id": "_60",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_519",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_722",
+                "observed": true,
+                "data": {
+                  "id": "_722",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.5773501992225647,
+                    -0.5773501992225647,
+                    0.5773501992225647
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "V": [
+              {
+                "id": "_61",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_455",
+                "observed": true,
+                "data": {
+                  "id": "_455",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    -0.9926919937133789,
+                    0.08428466320037842,
+                    -0.08636375516653061
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_a": [
+              {
+                "id": "_337",
+                "observed": true,
+                "data": {
+                  "id": "_337",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.5058823823928833,
+                    1.0,
+                    0.4941176474094391,
+                    0.9843137264251709
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_b": [
+              {
+                "id": "_345",
+                "observed": true,
+                "data": {
+                  "id": "_345",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.0,
+                    0.49803921580314636,
+                    0.7450980544090271,
+                    0.003921568859368563
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_c": [
+              {
+                "id": "_349",
+                "observed": true,
+                "data": {
+                  "id": "_349",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.1982421875,
+                    0.15625,
+                    0.08251953125,
+                    0.0
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer": [
+              {
+                "id": "_353",
+                "observed": true,
+                "data": {
+                  "id": "_353",
+                  "type": "VarType.Unknown",
+                  "rows": 0,
+                  "columns": 0,
+                  "value": [],
+                  "members": [
+                    {
+                      "id": "worldNormal",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 3,
+                      "value": [
+                        0.011764764785766602,
+                        1.0,
+                        -0.011764705181121826
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "baseColor",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 3,
+                      "value": [
+                        0.1982421875,
+                        0.15625,
+                        0.08251953125
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "metallic",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.0
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "specular",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.49803921580314636
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "roughness",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.7450980544090271
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "shadingModelID",
+                      "type": "VarType.UInt",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        1
+                      ],
+                      "members": []
+                    }
+                  ]
+                }
+              }
+            ],
+            "scene_depth": [
+              {
+                "id": "_380",
+                "observed": true,
+                "data": {
+                  "id": "_380",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 1,
+                  "value": [
+                    0.9629561305046082
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "in_texcoord": [
+              {
+                "id": "_387",
+                "observed": true,
+                "data": {
+                  "id": "_387",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 2,
+                  "value": [
+                    0.5606287121772766,
+                    0.4073660969734192
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "in_world_position": [
+              {
+                "id": "_413",
+                "observed": true,
+                "data": {
+                  "id": "_413",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    -2.307494878768921,
+                    -0.22860756516456604,
+                    3.2342467308044434
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "result_color": [
+              {
+                "id": "_419",
+                "observed": true,
+                "data": {
+                  "id": "_419",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.2074808031320572,
+                    0.2415393441915512,
+                    0.25577428936958313
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "Lo": [
+              {
+                "id": "_491",
+                "observed": true,
+                "data": {
+                  "id": "_491",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "NoL": [
+              {
+                "id": "_524",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_727",
+                "observed": true,
+                "data": {
+                  "id": "_727",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 1,
+                  "value": [
+                    -0.5773501992225647
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "shadow": [
+              {
+                "id": "_611",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_768",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "La": [
+              {
+                "id": "_647",
+                "observed": true,
+                "data": {
+                  "id": "_647",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.005947265308350325,
+                    0.004687499720603228,
+                    0.002475585788488388
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "Libl": [
+              {
+                "id": "_716",
+                "observed": true,
+                "data": {
+                  "id": "_716",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.20153354108333588,
+                    0.23685184121131897,
+                    0.25329869985580444
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "closest_depth": [
+              {
+                "id": "_758",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "current_depth": [
+              {
+                "id": "_765",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "out_color": [
+              {
+                "id": "_807",
+                "observed": true,
+                "data": {
+                  "id": "_807",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.2074808031320572,
+                    0.2415393441915512,
+                    0.25577428936958313,
+                    1.0
+                  ],
+                  "members": []
+                }
+              }
+            ]
+          }
+        },
+        "sum_error": 3.725290298461914e-09,
+        "debug_to_stored_abs_error": [
+          8.334219455718994e-05,
+          8.42660665512085e-05,
+          0.00015905499458312988
+        ],
+        "debug_to_stored_half_ulp_error": [
+          0.6827392578125,
+          0.6903076171875,
+          0.6514892578125
+        ],
+        "gbuffer_input_match": true,
+        "debug_input_match": true
+      }
+    }
+  },
+  "after": {
+    "file": "gbuffer_frame28131.rdc",
+    "sha256": "ddee9ad5b155799a26b3390fb807085963c97bfae7d7bb6b1fb2f23c1a44fccc",
+    "gbuffer_event": 177,
+    "viewport": {
+      "enabled": true,
+      "height": 448.0,
+      "maxDepth": 1.0,
+      "minDepth": 0.0,
+      "thisown": true,
+      "width": 668.0,
+      "x": 289.0,
+      "y": 60.0
+    },
+    "candidate": {
+      "triangle": 4,
+      "screen_triangle": [
+        [
+          659.8143493835644,
+          769.7025611013753,
+          0.9661553602768717
+        ],
+        [
+          659.8143493835644,
+          -363.60341480183365,
+          0.9661553602768717
+        ],
+        [
+          631.9788406748308,
+          394.5349377084984,
+          0.9923749797974902
+        ]
+      ],
+      "area": 15773.074180956759,
+      "barycentric": [
+        0.33213828431771497,
+        0.33324058549105007,
+        0.33462113019123496
+      ],
+      "predicted_depth": 0.9749289989940452,
+      "predicted_world": [
+        -1.0267928094123342,
+        -0.22906308265807634,
+        3.1457671117594166
+      ],
+      "predicted_uv": [
+        0.9958378907720895,
+        0.5659690238865553
+      ],
+      "xy": [
+        650,
+        266
+      ],
+      "actual_depth": 0.9749283194541931,
+      "depth_error": 6.795398520553775e-07
+    },
+    "sample": {
+      "xy": [
+        650,
+        266
+      ],
+      "history_event_records": [
+        {
+          "event": 128,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        },
+        {
+          "event": 139,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        },
+        {
+          "event": 177,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        }
+      ],
+      "gbuffer": [
+        {
+          "resource": "ResourceId::247",
+          "view": "ResourceId::250",
+          "format": "R8G8B8A8_UNORM",
+          "raw_hex": "80ff7ea6",
+          "raw_components": [
+            128,
+            255,
+            126,
+            166
+          ],
+          "picked_float": [
+            0.501960813999176,
+            1.0,
+            0.4941176474094391,
+            0.6509804129600525
+          ]
+        },
+        {
+          "resource": "ResourceId::251",
+          "view": "ResourceId::254",
+          "format": "R8G8B8A8_UNORM",
+          "raw_hex": "007fbe01",
+          "raw_components": [
+            0,
+            127,
+            190,
+            1
+          ],
+          "picked_float": [
+            0.0,
+            0.49803921580314636,
+            0.7450980544090271,
+            0.003921568859368563
+          ]
+        },
+        {
+          "resource": "ResourceId::255",
+          "view": "ResourceId::258",
+          "format": "R8G8B8A8_SRGB",
+          "raw_hex": "60543c00",
+          "raw_components": [
+            96,
+            84,
+            60,
+            0
+          ],
+          "picked_float": [
+            0.1171875,
+            0.0888671875,
+            0.045166015625,
+            0.0
+          ]
+        }
+      ],
+      "depth": {
+        "resource": "ResourceId::145",
+        "view": "ResourceId::148",
+        "format": "D32",
+        "raw_hex": "e794793f",
+        "raw_components": [
+          0.9749283194541931
+        ],
+        "picked_float": [
+          0.9749283194541931,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "gbuffer_debug": {
+        "event": 177,
+        "steps": 163,
+        "spirv_sha256": "4da9fd3eadee358a58568230253119e9368fa285ef6c04c48d8f184ae7ab0718",
+        "inputs": [
+          {
+            "source_name": "in_texcoord",
+            "data": {
+              "id": "_110",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 2,
+              "value": [
+                0.9958888292312622,
+                0.5659705996513367
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_normal",
+            "data": {
+              "id": "_138",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                0.0016305447788909078,
+                0.9999986290931702,
+                0.0
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_tangent",
+            "data": {
+              "id": "_142",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                -0.9999986290931702,
+                0.0016305447788909078,
+                0.0
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_world_position",
+            "data": {
+              "id": "_225",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                -1.0268940925598145,
+                -0.22906292974948883,
+                3.14577054977417
+              ],
+              "members": []
+            }
+          }
+        ],
+        "semantics": {
+          "in_texcoord": [
+            {
+              "id": "_110",
+              "observed": true,
+              "data": {
+                "id": "_110",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 2,
+                "value": [
+                  0.9958888292312622,
+                  0.5659705996513367
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_normal": [
+            {
+              "id": "_138",
+              "observed": true,
+              "data": {
+                "id": "_138",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  0.0016305447788909078,
+                  0.9999986290931702,
+                  0.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_tangent": [
+            {
+              "id": "_142",
+              "observed": true,
+              "data": {
+                "id": "_142",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  -0.9999986290931702,
+                  0.0016305447788909078,
+                  0.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "gbuffer": [
+            {
+              "id": "_176",
+              "observed": true,
+              "data": {
+                "id": "_176",
+                "type": "VarType.Unknown",
+                "rows": 0,
+                "columns": 0,
+                "value": [],
+                "members": [
+                  {
+                    "id": "worldNormal",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 3,
+                    "value": [
+                      0.006563131231814623,
+                      0.9998722672462463,
+                      -0.014571566134691238
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "baseColor",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 3,
+                    "value": [
+                      0.11761474609375,
+                      0.089111328125,
+                      0.045257568359375
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "metallic",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.0
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "specular",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.5
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "roughness",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.7450980544090271
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "shadingModelID",
+                    "type": "VarType.UInt",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      1
+                    ],
+                    "members": []
+                  }
+                ]
+              }
+            }
+          ],
+          "out_gbuffer_a": [
+            {
+              "id": "_212",
+              "observed": true,
+              "data": {
+                "id": "_212",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.5032815933227539,
+                  0.9999361038208008,
+                  0.4927142262458801,
+                  -107374176.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "out_gbuffer_b": [
+            {
+              "id": "_213",
+              "observed": true,
+              "data": {
+                "id": "_213",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.0,
+                  0.5,
+                  0.7450980544090271,
+                  0.003921568859368563
+                ],
+                "members": []
+              }
+            }
+          ],
+          "out_gbuffer_c": [
+            {
+              "id": "_214",
+              "observed": true,
+              "data": {
+                "id": "_214",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.11761474609375,
+                  0.089111328125,
+                  0.045257568359375,
+                  -107374176.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_world_position": [
+            {
+              "id": "_225",
+              "observed": true,
+              "data": {
+                "id": "_225",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  -1.0268940925598145,
+                  -0.22906292974948883,
+                  3.14577054977417
+                ],
+                "members": []
+              }
+            }
+          ]
+        }
+      },
+      "instance_attribution": [
+        {
+          "triangle": 4,
+          "screen_triangle": [
+            [
+              659.8143487605366,
+              769.702552982787,
+              0.9661553167139191
+            ],
+            [
+              659.8143487605366,
+              -363.60340397704925,
+              0.9661553167139191
+            ],
+            [
+              631.9788405344063,
+              394.53493828924246,
+              0.9923749690654776
+            ]
+          ],
+          "area": 15773.07364383899,
+          "barycentric": [
+            0.33213829443461496,
+            0.33324059195507605,
+            0.334621113610309
+          ],
+          "predicted_depth": 0.9749289659822726,
+          "predicted_world": [
+            -1.0267928478940738,
+            -0.22906308795454894,
+            3.1457671113494223
+          ],
+          "predicted_uv": [
+            0.9958379150153583,
+            0.5659690236811072
+          ],
+          "instance_slot": 0,
+          "world_error": 0.00010124466574068514
+        },
+        {
+          "triangle": 0,
+          "screen_triangle": [
+            [
+              643.0329982632566,
+              394.5391146092358,
+              0.9923746771915152
+            ],
+            [
+              643.0329982632566,
+              136.61451385435225,
+              0.9923746771915152
+            ],
+            [
+              708.3983729717606,
+              769.7832005164727,
+              0.966149680432392
+            ]
+          ],
+          "area": 8429.669087442138,
+          "barycentric": [
+            0.22314884185391165,
+            0.6626163393289023,
+            0.11423481881718611
+          ],
+          "predicted_depth": 0.9893788694382555,
+          "predicted_world": [
+            4.3282740050168185,
+            -0.537793064160432,
+            3.342231226193804
+          ],
+          "predicted_uv": [
+            -1.6878532028065873,
+            0.6644171338094728
+          ],
+          "instance_slot": 0,
+          "world_error": 5.355168097576633
+        }
+      ],
+      "confirmed_slots": [
+        0
+      ],
+      "lighting": {
+        "event": 186,
+        "pipeline": "ResourceId::289",
+        "shader": "ResourceId::288",
+        "subpass": 1,
+        "viewport": {
+          "enabled": true,
+          "height": 448.0,
+          "maxDepth": 1.0,
+          "minDepth": 0.0,
+          "thisown": true,
+          "width": 668.0,
+          "x": 289.0,
+          "y": 60.0
+        },
+        "sets": [
+          "ResourceId::302",
+          "ResourceId::306",
+          "ResourceId::304"
+        ],
+        "descriptors": [
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 3,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 0,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 1,
+              "resource": "ResourceId::194",
+              "secondary": "ResourceId::158",
+              "textureType": 4,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::207"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 4,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 1,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::161",
+              "secondary": "ResourceId::159",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::176"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 5,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 2,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::177",
+              "secondary": "ResourceId::160",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::190"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 6,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 3,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 30,
+              "resource": "ResourceId::225",
+              "secondary": "ResourceId::303",
+              "textureType": 6,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::228"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 7,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 4,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::236",
+              "secondary": "ResourceId::303",
+              "textureType": 4,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::239"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 0,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 5,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::247",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::250"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 1,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 6,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::251",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::254"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 2,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 7,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::255",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::258"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 3,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 8,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::145",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::148"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 1,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::304",
+              "index": 9,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::177",
+              "secondary": "ResourceId::160",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::190"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 0,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 0,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 9
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 4319248,
+              "byteSize": 688,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::149",
+              "secondary": "ResourceId::0",
+              "textureType": 0,
+              "thisown": false,
+              "type": 9,
+              "view": "ResourceId::0"
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "resource": "ResourceId::247",
+            "view": "ResourceId::250",
+            "format": "R8G8B8A8_UNORM",
+            "raw_hex": "80ff7ea6",
+            "raw_components": [
+              128,
+              255,
+              126,
+              166
+            ],
+            "picked_float": [
+              0.501960813999176,
+              1.0,
+              0.4941176474094391,
+              0.6509804129600525
+            ]
+          },
+          {
+            "resource": "ResourceId::251",
+            "view": "ResourceId::254",
+            "format": "R8G8B8A8_UNORM",
+            "raw_hex": "007fbe01",
+            "raw_components": [
+              0,
+              127,
+              190,
+              1
+            ],
+            "picked_float": [
+              0.0,
+              0.49803921580314636,
+              0.7450980544090271,
+              0.003921568859368563
+            ]
+          },
+          {
+            "resource": "ResourceId::255",
+            "view": "ResourceId::258",
+            "format": "R8G8B8A8_SRGB",
+            "raw_hex": "60543c00",
+            "raw_components": [
+              96,
+              84,
+              60,
+              0
+            ],
+            "picked_float": [
+              0.1171875,
+              0.0888671875,
+              0.045166015625,
+              0.0
+            ]
+          },
+          {
+            "resource": "ResourceId::145",
+            "view": "ResourceId::148",
+            "format": "D32",
+            "raw_hex": "e794793f",
+            "raw_components": [
+              0.9749283194541931
+            ],
+            "picked_float": [
+              0.9749283194541931,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "output": {
+          "resource": "ResourceId::259",
+          "view": "ResourceId::262",
+          "format": "R16G16B16A16_FLOAT",
+          "raw_hex": "ba31b3322a33003c",
+          "raw_components": [
+            0.178955078125,
+            0.2093505859375,
+            0.223876953125,
+            1.0
+          ],
+          "picked_float": [
+            0.178955078125,
+            0.2093505859375,
+            0.223876953125,
+            1.0
+          ]
+        },
+        "perframe": {
+          "descriptor": {
+            "bufferStructCount": 0,
+            "byteOffset": 4319248,
+            "byteSize": 688,
+            "counterByteOffset": 0,
+            "elementByteSize": 0,
+            "firstMip": 0,
+            "firstSlice": 0,
+            "flags": 0,
+            "minLODClamp": 0.0,
+            "numMips": 1,
+            "numSlices": 1,
+            "resource": "ResourceId::149",
+            "secondary": "ResourceId::0",
+            "textureType": 0,
+            "thisown": false,
+            "type": 9,
+            "view": "ResourceId::0"
+          },
+          "member_offsets": {
+            "proj_view_matrix": 0,
+            "camera_position": 64,
+            "_padding_camera_position": 76,
+            "ambient_light": 80,
+            "_padding_ambient_light": 92,
+            "point_light_num": 96,
+            "_padding_point_light_num_1": 100,
+            "_padding_point_light_num_2": 104,
+            "_padding_point_light_num_3": 108,
+            "scene_point_lights": 112,
+            "scene_directional_light": 592,
+            "directional_light_proj_view": 624
+          },
+          "sha256": "a30ca3b6ca69246a955060a54b3b741774a84cf6e5a245e27078d6ec2e2d3f74",
+          "camera": [
+            -5.0,
+            0.0,
+            3.0
+          ],
+          "ambient": [
+            0.029999999329447746,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "point_light_count": 0,
+          "directional_direction": [
+            0.5773503184318542,
+            -0.5773503184318542,
+            0.5773503184318542
+          ],
+          "directional_color": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "debug": {
+          "event": 186,
+          "steps": 296,
+          "spirv_sha256": "fdaef4613b34ecd4469385e83b73ffd5f9bf74223a35b6d607be82d601cd1e74",
+          "inputs": [
+            {
+              "source_name": "in_texcoord",
+              "data": {
+                "id": "_387",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 2,
+                "value": [
+                  0.5411676168441772,
+                  0.4609375298023224
+                ],
+                "members": []
+              }
+            }
+          ],
+          "semantics": {
+            "F0": [
+              {
+                "id": "_50",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_55",
+                "observed": true,
+                "data": {
+                  "id": "_55",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.039843134582042694,
+                    0.039843134582042694,
+                    0.039843134582042694
+                  ],
+                  "members": []
+                }
+              },
+              {
+                "id": "_63",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_482",
+                "observed": true,
+                "data": {
+                  "id": "_482",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.039843134582042694,
+                    0.039843134582042694,
+                    0.039843134582042694
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "L": [
+              {
+                "id": "_60",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_519",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_722",
+                "observed": true,
+                "data": {
+                  "id": "_722",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.5773501992225647,
+                    -0.5773501992225647,
+                    0.5773501992225647
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "V": [
+              {
+                "id": "_61",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_455",
+                "observed": true,
+                "data": {
+                  "id": "_455",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    -0.9976734519004822,
+                    0.05751756951212883,
+                    -0.03659955784678459
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_a": [
+              {
+                "id": "_337",
+                "observed": true,
+                "data": {
+                  "id": "_337",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.501960813999176,
+                    1.0,
+                    0.4941176474094391,
+                    0.6509804129600525
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_b": [
+              {
+                "id": "_345",
+                "observed": true,
+                "data": {
+                  "id": "_345",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.0,
+                    0.49803921580314636,
+                    0.7450980544090271,
+                    0.003921568859368563
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_c": [
+              {
+                "id": "_349",
+                "observed": true,
+                "data": {
+                  "id": "_349",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.1171875,
+                    0.0888671875,
+                    0.045166015625,
+                    0.0
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer": [
+              {
+                "id": "_353",
+                "observed": true,
+                "data": {
+                  "id": "_353",
+                  "type": "VarType.Unknown",
+                  "rows": 0,
+                  "columns": 0,
+                  "value": [],
+                  "members": [
+                    {
+                      "id": "worldNormal",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 3,
+                      "value": [
+                        0.003921627998352051,
+                        1.0,
+                        -0.011764705181121826
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "baseColor",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 3,
+                      "value": [
+                        0.1171875,
+                        0.0888671875,
+                        0.045166015625
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "metallic",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.0
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "specular",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.49803921580314636
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "roughness",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.7450980544090271
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "shadingModelID",
+                      "type": "VarType.UInt",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        1
+                      ],
+                      "members": []
+                    }
+                  ]
+                }
+              }
+            ],
+            "scene_depth": [
+              {
+                "id": "_380",
+                "observed": true,
+                "data": {
+                  "id": "_380",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 1,
+                  "value": [
+                    0.9749283194541931
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "in_texcoord": [
+              {
+                "id": "_387",
+                "observed": true,
+                "data": {
+                  "id": "_387",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 2,
+                  "value": [
+                    0.5411676168441772,
+                    0.4609375298023224
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "in_world_position": [
+              {
+                "id": "_413",
+                "observed": true,
+                "data": {
+                  "id": "_413",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    -1.0268908739089966,
+                    -0.22905650734901428,
+                    3.1457531452178955
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "result_color": [
+              {
+                "id": "_419",
+                "observed": true,
+                "data": {
+                  "id": "_419",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.17903944849967957,
+                    0.20938001573085785,
+                    0.22390057146549225
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "Lo": [
+              {
+                "id": "_491",
+                "observed": true,
+                "data": {
+                  "id": "_491",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "NoL": [
+              {
+                "id": "_524",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_727",
+                "observed": true,
+                "data": {
+                  "id": "_727",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 1,
+                  "value": [
+                    -0.5818784236907959
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "shadow": [
+              {
+                "id": "_611",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_768",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "La": [
+              {
+                "id": "_647",
+                "observed": true,
+                "data": {
+                  "id": "_647",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.0035156249068677425,
+                    0.0026660156436264515,
+                    0.001354980398900807
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "Libl": [
+              {
+                "id": "_716",
+                "observed": true,
+                "data": {
+                  "id": "_716",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.1755238175392151,
+                    0.20671400427818298,
+                    0.2225455939769745
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "closest_depth": [
+              {
+                "id": "_758",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "current_depth": [
+              {
+                "id": "_765",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "out_color": [
+              {
+                "id": "_807",
+                "observed": true,
+                "data": {
+                  "id": "_807",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.17903944849967957,
+                    0.20938001573085785,
+                    0.22390057146549225,
+                    1.0
+                  ],
+                  "members": []
+                }
+              }
+            ]
+          }
+        },
+        "sum_error": 6.05359673500061e-09,
+        "debug_to_stored_abs_error": [
+          8.437037467956543e-05,
+          2.942979335784912e-05,
+          2.3618340492248535e-05
+        ],
+        "debug_to_stored_half_ulp_error": [
+          0.691162109375,
+          0.2410888671875,
+          0.1934814453125
+        ],
+        "gbuffer_input_match": true,
+        "debug_input_match": true
+      }
+    },
+    "previous_pixel_reference": {
+      "xy": [
+        663,
+        242
+      ],
+      "history_event_records": [
+        {
+          "event": 128,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        },
+        {
+          "event": 139,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        },
+        {
+          "event": 177,
+          "reported_primitive": 0,
+          "passed": true,
+          "value_validity": {
+            "preMod": false,
+            "postMod": false,
+            "shaderOut": false
+          }
+        }
+      ],
+      "gbuffer": [
+        {
+          "resource": "ResourceId::247",
+          "view": "ResourceId::250",
+          "format": "R8G8B8A8_UNORM",
+          "raw_hex": "007e81fb",
+          "raw_components": [
+            0,
+            126,
+            129,
+            251
+          ],
+          "picked_float": [
+            0.0,
+            0.4941176474094391,
+            0.5058823823928833,
+            0.9843137264251709
+          ]
+        },
+        {
+          "resource": "ResourceId::251",
+          "view": "ResourceId::254",
+          "format": "R8G8B8A8_UNORM",
+          "raw_hex": "007fbe01",
+          "raw_components": [
+            0,
+            127,
+            190,
+            1
+          ],
+          "picked_float": [
+            0.0,
+            0.49803921580314636,
+            0.7450980544090271,
+            0.003921568859368563
+          ]
+        },
+        {
+          "resource": "ResourceId::255",
+          "view": "ResourceId::258",
+          "format": "R8G8B8A8_SRGB",
+          "raw_hex": "7b6e5100",
+          "raw_components": [
+            123,
+            110,
+            81,
+            0
+          ],
+          "picked_float": [
+            0.1982421875,
+            0.15625,
+            0.08251953125,
+            0.0
+          ]
+        }
+      ],
+      "depth": {
+        "resource": "ResourceId::145",
+        "view": "ResourceId::148",
+        "format": "D32",
+        "raw_hex": "ed55773f",
+        "raw_components": [
+          0.9661548733711243
+        ],
+        "picked_float": [
+          0.9661548733711243,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "gbuffer_debug": {
+        "event": 177,
+        "steps": 163,
+        "spirv_sha256": "4da9fd3eadee358a58568230253119e9368fa285ef6c04c48d8f184ae7ab0718",
+        "inputs": [
+          {
+            "source_name": "in_texcoord",
+            "data": {
+              "id": "_110",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 2,
+              "value": [
+                -0.7010471224784851,
+                0.6213736534118652
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_normal",
+            "data": {
+              "id": "_138",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                -0.9999985694885254,
+                0.001630544662475586,
+                0.0
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_tangent",
+            "data": {
+              "id": "_142",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                0.001630544662475586,
+                0.9999985694885254,
+                0.0
+              ],
+              "members": []
+            }
+          },
+          {
+            "source_name": "in_world_position",
+            "data": {
+              "id": "_225",
+              "type": "VarType.Float",
+              "rows": 1,
+              "columns": 3,
+              "value": [
+                -2.0537803173065186,
+                -0.250160813331604,
+                3.2563326358795166
+              ],
+              "members": []
+            }
+          }
+        ],
+        "semantics": {
+          "in_texcoord": [
+            {
+              "id": "_110",
+              "observed": true,
+              "data": {
+                "id": "_110",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 2,
+                "value": [
+                  -0.7010471224784851,
+                  0.6213736534118652
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_normal": [
+            {
+              "id": "_138",
+              "observed": true,
+              "data": {
+                "id": "_138",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  -0.9999985694885254,
+                  0.001630544662475586,
+                  0.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_tangent": [
+            {
+              "id": "_142",
+              "observed": true,
+              "data": {
+                "id": "_142",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  0.001630544662475586,
+                  0.9999985694885254,
+                  0.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "gbuffer": [
+            {
+              "id": "_176",
+              "observed": true,
+              "data": {
+                "id": "_176",
+                "type": "VarType.Unknown",
+                "rows": 0,
+                "columns": 0,
+                "value": [],
+                "members": [
+                  {
+                    "id": "worldNormal",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 3,
+                    "value": [
+                      -0.999877393245697,
+                      -0.010225708596408367,
+                      0.011856039986014366
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "baseColor",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 3,
+                    "value": [
+                      0.1982421875,
+                      0.15625,
+                      0.08251953125
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "metallic",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.0
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "specular",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.5
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "roughness",
+                    "type": "VarType.Float",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      0.7450980544090271
+                    ],
+                    "members": []
+                  },
+                  {
+                    "id": "shadingModelID",
+                    "type": "VarType.UInt",
+                    "rows": 1,
+                    "columns": 1,
+                    "value": [
+                      1
+                    ],
+                    "members": []
+                  }
+                ]
+              }
+            }
+          ],
+          "out_gbuffer_a": [
+            {
+              "id": "_212",
+              "observed": true,
+              "data": {
+                "id": "_212",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  6.130337715148926e-05,
+                  0.4948871433734894,
+                  0.5059280395507812,
+                  -107374176.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "out_gbuffer_b": [
+            {
+              "id": "_213",
+              "observed": true,
+              "data": {
+                "id": "_213",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.0,
+                  0.5,
+                  0.7450980544090271,
+                  0.003921568859368563
+                ],
+                "members": []
+              }
+            }
+          ],
+          "out_gbuffer_c": [
+            {
+              "id": "_214",
+              "observed": true,
+              "data": {
+                "id": "_214",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 4,
+                "value": [
+                  0.1982421875,
+                  0.15625,
+                  0.08251953125,
+                  -107374176.0
+                ],
+                "members": []
+              }
+            }
+          ],
+          "in_world_position": [
+            {
+              "id": "_225",
+              "observed": true,
+              "data": {
+                "id": "_225",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 3,
+                "value": [
+                  -2.0537803173065186,
+                  -0.250160813331604,
+                  3.2563326358795166
+                ],
+                "members": []
+              }
+            }
+          ]
+        }
+      },
+      "instance_attribution": [
+        {
+          "triangle": 3,
+          "screen_triangle": [
+            [
+              708.3983729717606,
+              -363.7109340219635,
+              0.966149680432392
+            ],
+            [
+              659.8143487605366,
+              -363.60340397704925,
+              0.9661553167139191
+            ],
+            [
+              659.8143487605366,
+              769.702552982787,
+              0.9661553167139191
+            ]
+          ],
+          "area": 27530.282025830536,
+          "barycentric": [
+            0.07586138240503963,
+            0.38932137990846793,
+            0.5348172376864925
+          ],
+          "predicted_depth": 0.9661548891378109,
+          "predicted_world": [
+            -2.0537804543340537,
+            -0.25015031344480787,
+            3.2563264924620885
+          ],
+          "predicted_uv": [
+            -0.701041984126306,
+            0.6213702970186082
+          ],
+          "instance_slot": 0,
+          "world_error": 1.0499886796133673e-05
+        },
+        {
+          "triangle": 1,
+          "screen_triangle": [
+            [
+              643.0329982632566,
+              136.61451385435225,
+              0.9923746771915152
+            ],
+            [
+              708.3983729717606,
+              -363.7109340219635,
+              0.966149680432392
+            ],
+            [
+              708.3983729717606,
+              769.7832005164727,
+              0.966149680432392
+            ]
+          ],
+          "area": 37045.634416998204,
+          "barycentric": [
+            0.6868831269151944,
+            0.0814916551772208,
+            0.23162521790758483
+          ],
+          "predicted_depth": 0.9841631882096393,
+          "predicted_world": [
+            1.275389028466386,
+            -0.5328151918509114,
+            3.545970330306216
+          ],
+          "predicted_uv": [
+            -0.15804000030138057,
+            0.7665107389189908
+          ],
+          "instance_slot": 0,
+          "world_error": 3.329169345772905
+        }
+      ],
+      "confirmed_slots": [
+        0
+      ],
+      "lighting": {
+        "event": 186,
+        "pipeline": "ResourceId::289",
+        "shader": "ResourceId::288",
+        "subpass": 1,
+        "viewport": {
+          "enabled": true,
+          "height": 448.0,
+          "maxDepth": 1.0,
+          "minDepth": 0.0,
+          "thisown": true,
+          "width": 668.0,
+          "x": 289.0,
+          "y": 60.0
+        },
+        "sets": [
+          "ResourceId::302",
+          "ResourceId::306",
+          "ResourceId::304"
+        ],
+        "descriptors": [
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 3,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 0,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 1,
+              "resource": "ResourceId::194",
+              "secondary": "ResourceId::158",
+              "textureType": 4,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::207"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 4,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 1,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::161",
+              "secondary": "ResourceId::159",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::176"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 5,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 2,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::177",
+              "secondary": "ResourceId::160",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::190"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 6,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 3,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 30,
+              "resource": "ResourceId::225",
+              "secondary": "ResourceId::303",
+              "textureType": 6,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::228"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 7,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 4,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::236",
+              "secondary": "ResourceId::303",
+              "textureType": 4,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::239"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 0,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 5,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::247",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::250"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 1,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 6,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::251",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::254"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 2,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 7,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::255",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::258"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 3,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::306",
+              "index": 8,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 4
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::145",
+              "secondary": "ResourceId::0",
+              "textureType": 4,
+              "thisown": false,
+              "type": 4,
+              "view": "ResourceId::148"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 1,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::304",
+              "index": 9,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 3
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 5,
+              "byteSize": 0,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 9,
+              "numSlices": 6,
+              "resource": "ResourceId::177",
+              "secondary": "ResourceId::160",
+              "textureType": 10,
+              "thisown": false,
+              "type": 3,
+              "view": "ResourceId::190"
+            }
+          },
+          {
+            "access": {
+              "NoShaderBinding": 65535,
+              "arrayElement": 0,
+              "byteOffset": 0,
+              "byteSize": 1,
+              "descriptorStore": "ResourceId::302",
+              "index": 0,
+              "stage": 4,
+              "staticallyUnused": false,
+              "thisown": false,
+              "type": 9
+            },
+            "descriptor": {
+              "bufferStructCount": 0,
+              "byteOffset": 4319248,
+              "byteSize": 688,
+              "counterByteOffset": 0,
+              "elementByteSize": 0,
+              "firstMip": 0,
+              "firstSlice": 0,
+              "flags": 0,
+              "minLODClamp": 0.0,
+              "numMips": 1,
+              "numSlices": 1,
+              "resource": "ResourceId::149",
+              "secondary": "ResourceId::0",
+              "textureType": 0,
+              "thisown": false,
+              "type": 9,
+              "view": "ResourceId::0"
+            }
+          }
+        ],
+        "inputs": [
+          {
+            "resource": "ResourceId::247",
+            "view": "ResourceId::250",
+            "format": "R8G8B8A8_UNORM",
+            "raw_hex": "007e81fb",
+            "raw_components": [
+              0,
+              126,
+              129,
+              251
+            ],
+            "picked_float": [
+              0.0,
+              0.4941176474094391,
+              0.5058823823928833,
+              0.9843137264251709
+            ]
+          },
+          {
+            "resource": "ResourceId::251",
+            "view": "ResourceId::254",
+            "format": "R8G8B8A8_UNORM",
+            "raw_hex": "007fbe01",
+            "raw_components": [
+              0,
+              127,
+              190,
+              1
+            ],
+            "picked_float": [
+              0.0,
+              0.49803921580314636,
+              0.7450980544090271,
+              0.003921568859368563
+            ]
+          },
+          {
+            "resource": "ResourceId::255",
+            "view": "ResourceId::258",
+            "format": "R8G8B8A8_SRGB",
+            "raw_hex": "7b6e5100",
+            "raw_components": [
+              123,
+              110,
+              81,
+              0
+            ],
+            "picked_float": [
+              0.1982421875,
+              0.15625,
+              0.08251953125,
+              0.0
+            ]
+          },
+          {
+            "resource": "ResourceId::145",
+            "view": "ResourceId::148",
+            "format": "D32",
+            "raw_hex": "ed55773f",
+            "raw_components": [
+              0.9661548733711243
+            ],
+            "picked_float": [
+              0.9661548733711243,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "output": {
+          "resource": "ResourceId::259",
+          "view": "ResourceId::262",
+          "format": "R16G16B16A16_FLOAT",
+          "raw_hex": "ef2cd22c132b003c",
+          "raw_components": [
+            0.07708740234375,
+            0.0753173828125,
+            0.055267333984375,
+            1.0
+          ],
+          "picked_float": [
+            0.07708740234375,
+            0.0753173828125,
+            0.055267333984375,
+            1.0
+          ]
+        },
+        "perframe": {
+          "descriptor": {
+            "bufferStructCount": 0,
+            "byteOffset": 4319248,
+            "byteSize": 688,
+            "counterByteOffset": 0,
+            "elementByteSize": 0,
+            "firstMip": 0,
+            "firstSlice": 0,
+            "flags": 0,
+            "minLODClamp": 0.0,
+            "numMips": 1,
+            "numSlices": 1,
+            "resource": "ResourceId::149",
+            "secondary": "ResourceId::0",
+            "textureType": 0,
+            "thisown": false,
+            "type": 9,
+            "view": "ResourceId::0"
+          },
+          "member_offsets": {
+            "proj_view_matrix": 0,
+            "camera_position": 64,
+            "_padding_camera_position": 76,
+            "ambient_light": 80,
+            "_padding_ambient_light": 92,
+            "point_light_num": 96,
+            "_padding_point_light_num_1": 100,
+            "_padding_point_light_num_2": 104,
+            "_padding_point_light_num_3": 108,
+            "scene_point_lights": 112,
+            "scene_directional_light": 592,
+            "directional_light_proj_view": 624
+          },
+          "sha256": "a30ca3b6ca69246a955060a54b3b741774a84cf6e5a245e27078d6ec2e2d3f74",
+          "camera": [
+            -5.0,
+            0.0,
+            3.0
+          ],
+          "ambient": [
+            0.029999999329447746,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "point_light_count": 0,
+          "directional_direction": [
+            0.5773503184318542,
+            -0.5773503184318542,
+            0.5773503184318542
+          ],
+          "directional_color": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "debug": {
+          "event": 186,
+          "steps": 296,
+          "spirv_sha256": "fdaef4613b34ecd4469385e83b73ffd5f9bf74223a35b6d607be82d601cd1e74",
+          "inputs": [
+            {
+              "source_name": "in_texcoord",
+              "data": {
+                "id": "_387",
+                "type": "VarType.Float",
+                "rows": 1,
+                "columns": 2,
+                "value": [
+                  0.5606287121772766,
+                  0.4073660969734192
+                ],
+                "members": []
+              }
+            }
+          ],
+          "semantics": {
+            "F0": [
+              {
+                "id": "_50",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_55",
+                "observed": true,
+                "data": {
+                  "id": "_55",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.039843134582042694,
+                    0.039843134582042694,
+                    0.039843134582042694
+                  ],
+                  "members": []
+                }
+              },
+              {
+                "id": "_63",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_482",
+                "observed": true,
+                "data": {
+                  "id": "_482",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.039843134582042694,
+                    0.039843134582042694,
+                    0.039843134582042694
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "L": [
+              {
+                "id": "_60",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_519",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_722",
+                "observed": true,
+                "data": {
+                  "id": "_722",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.5773501992225647,
+                    -0.5773501992225647,
+                    0.5773501992225647
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "V": [
+              {
+                "id": "_61",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_455",
+                "observed": true,
+                "data": {
+                  "id": "_455",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    -0.9926919937133789,
+                    0.08428481966257095,
+                    -0.08636392652988434
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_a": [
+              {
+                "id": "_337",
+                "observed": true,
+                "data": {
+                  "id": "_337",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.0,
+                    0.4941176474094391,
+                    0.5058823823928833,
+                    0.9843137264251709
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_b": [
+              {
+                "id": "_345",
+                "observed": true,
+                "data": {
+                  "id": "_345",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.0,
+                    0.49803921580314636,
+                    0.7450980544090271,
+                    0.003921568859368563
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer_c": [
+              {
+                "id": "_349",
+                "observed": true,
+                "data": {
+                  "id": "_349",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.1982421875,
+                    0.15625,
+                    0.08251953125,
+                    0.0
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "gbuffer": [
+              {
+                "id": "_353",
+                "observed": true,
+                "data": {
+                  "id": "_353",
+                  "type": "VarType.Unknown",
+                  "rows": 0,
+                  "columns": 0,
+                  "value": [],
+                  "members": [
+                    {
+                      "id": "worldNormal",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 3,
+                      "value": [
+                        -1.0,
+                        -0.011764705181121826,
+                        0.011764764785766602
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "baseColor",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 3,
+                      "value": [
+                        0.1982421875,
+                        0.15625,
+                        0.08251953125
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "metallic",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.0
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "specular",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.49803921580314636
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "roughness",
+                      "type": "VarType.Float",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        0.7450980544090271
+                      ],
+                      "members": []
+                    },
+                    {
+                      "id": "shadingModelID",
+                      "type": "VarType.UInt",
+                      "rows": 1,
+                      "columns": 1,
+                      "value": [
+                        1
+                      ],
+                      "members": []
+                    }
+                  ]
+                }
+              }
+            ],
+            "scene_depth": [
+              {
+                "id": "_380",
+                "observed": true,
+                "data": {
+                  "id": "_380",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 1,
+                  "value": [
+                    0.9661548733711243
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "in_texcoord": [
+              {
+                "id": "_387",
+                "observed": true,
+                "data": {
+                  "id": "_387",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 2,
+                  "value": [
+                    0.5606287121772766,
+                    0.4073660969734192
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "in_world_position": [
+              {
+                "id": "_413",
+                "observed": true,
+                "data": {
+                  "id": "_413",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    -2.0537781715393066,
+                    -0.2501498758792877,
+                    3.2563204765319824
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "result_color": [
+              {
+                "id": "_419",
+                "observed": true,
+                "data": {
+                  "id": "_419",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.07711127400398254,
+                    0.07537628710269928,
+                    0.055267784744501114
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "Lo": [
+              {
+                "id": "_491",
+                "observed": true,
+                "data": {
+                  "id": "_491",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "NoL": [
+              {
+                "id": "_524",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_727",
+                "observed": true,
+                "data": {
+                  "id": "_727",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 1,
+                  "value": [
+                    -0.5637654662132263
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "shadow": [
+              {
+                "id": "_611",
+                "observed": false,
+                "data": null
+              },
+              {
+                "id": "_768",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "La": [
+              {
+                "id": "_647",
+                "observed": true,
+                "data": {
+                  "id": "_647",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.005947265308350325,
+                    0.004687499720603228,
+                    0.002475585788488388
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "Libl": [
+              {
+                "id": "_716",
+                "observed": true,
+                "data": {
+                  "id": "_716",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 3,
+                  "value": [
+                    0.07116401195526123,
+                    0.07068878412246704,
+                    0.052792198956012726
+                  ],
+                  "members": []
+                }
+              }
+            ],
+            "closest_depth": [
+              {
+                "id": "_758",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "current_depth": [
+              {
+                "id": "_765",
+                "observed": false,
+                "data": null
+              }
+            ],
+            "out_color": [
+              {
+                "id": "_807",
+                "observed": true,
+                "data": {
+                  "id": "_807",
+                  "type": "VarType.Float",
+                  "rows": 1,
+                  "columns": 4,
+                  "value": [
+                    0.07711127400398254,
+                    0.07537628710269928,
+                    0.055267784744501114,
+                    1.0
+                  ],
+                  "members": []
+                }
+              }
+            ]
+          }
+        },
+        "sum_error": 3.259629011154175e-09,
+        "debug_to_stored_abs_error": [
+          2.3871660232543945e-05,
+          5.8904290199279785e-05,
+          4.507601261138916e-07
+        ],
+        "debug_to_stored_half_ulp_error": [
+          0.39111328125,
+          0.965087890625,
+          0.0147705078125
+        ],
+        "gbuffer_input_match": true,
+        "debug_input_match": true
+      }
+    }
+  },
+  "checks": {
+    "before": {
+      "target_slot": [
+        0
+      ],
+      "input_attachment_bytes_match": true,
+      "debug_inputs_match_readback": true,
+      "Lo_La_Libl_sum_error": 3.725290298461914e-09,
+      "debug_to_stored_half_ulp_max": 0.6903076171875
+    },
+    "after": {
+      "target_slot": [
+        0
+      ],
+      "input_attachment_bytes_match": true,
+      "debug_inputs_match_readback": true,
+      "Lo_La_Libl_sum_error": 6.05359673500061e-09,
+      "debug_to_stored_half_ulp_max": 0.691162109375
+    }
+  }
+}

@@ -1,0 +1,5 @@
+.symopt+0x10
+.reload /f PiccoloEditor.exe
+lmvm PiccoloEditor
+bp /1 `PiccoloEditor!engine.cpp:70` ".echo GBUFFER_SAFE_BEFORE_LOGICAL; kn 4; .printf \"tid=%x\n\", @$tid"
+g

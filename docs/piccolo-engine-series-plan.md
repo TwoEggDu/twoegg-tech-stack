@@ -63,7 +63,7 @@
 | 04 | 场景文件怎样成为世界中的对象与组件 | 已写：源码、资源、站点构建与生成页静态检查通过；浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-04-scene-to-objects-components.md) |
 | 05 | 资源、类型信息与序列化怎样共同恢复对象 | 已写：源码、模板、站点构建与生成页静态检查通过；01 已核对实际生成片段，浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-05-resource-type-serialization.md) |
 | 06 | 改一个位置，怎样沿逻辑数据追到渲染表示 | 已写；2026-10-26 受控真实setter运行通过：Wall_1 的缓冲、描述、槽位、已有实体与主相机节点逐值对应；缓存命中、清脏和消费reset已实测；编辑交互、较晚写入及GPU像素仍待验证 | [正文](../content/engine-toolchain/piccolo-engine-06-position-to-render-representation.md) |
-| 07 | 从渲染场景进入 Pass 与 Vulkan 提交 | 已写：源码、图形接口语义、站点构建与生成页静态检查通过；浏览器目视、引擎运行及图形捕获待验证 | [正文](../content/engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md) |
+| 07 | 从渲染场景进入 Pass 与 Vulkan 提交 | 已写；2026-10-26 已实测目标 GBuffer 批次/缓冲/Draw、七份矩阵与36条顶点，并接通单点GBuffer/深度与延迟光照；完整同步、重建和后续合成仍待验证 | [正文](../content/engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md) |
 | 08 | 编辑器怎样修改、保存并恢复场景状态 | 已写：源码、资源、模板、站点构建与生成页静态检查通过；实际保存/重载、浏览器目视及引擎运行待验证 | [正文](../content/engine-toolchain/piccolo-engine-08-editor-save-reload.md) |
 
 编号代表当前推荐顺序。后续拟题在取材时细化，不代表已有正文或实验。
@@ -81,7 +81,7 @@
 | 13 | [粒子发射器怎样进入 GPU 模拟与绘制](../content/engine-toolchain/piccolo-engine-13-particle-emitter-gpu-simulation.md) | 已写：固定源码与实际粒子资源、原类型布局/字节及独立串行状态检查、五份 Shader 编译、Hugo 与生成页静态检查通过；引擎/GPU 粒子待验证。明确批次 ID 协议、双存活表/空闲池、先绘制后模拟、计数回读、发射间隔契约与屏幕空间碰撞边界 |
 | 14 | [Lua 脚本怎样读写组件并调用引擎方法](../content/engine-toolchain/piccolo-engine-14-lua-component-reflection.md) | 已写：固定源码、真实 Player 脚本、随附 Lua/sol2 与原 LuaComponent/反射的独立桩宿主检查、Hugo 与生成页静态检查通过；完整引擎脚本/角色运行待验证。明确 base 库、逐 tick 文本执行、点分字段 owner/leaf、类型/弱引用/错误边界、无参方法与嵌套分支缺口、直接赋值及 Motor 消费时序 |
 | 15 | [网格与纹理怎样从文件成为 GPU 资源](../content/engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md) | 已写：源码、实际 OBJ/TGA 的独立 CPU 检查、资源键/身份与字节检查、Hugo 和生成页静态检查通过；Vulkan 上传、GPU 采样与引擎运行待验证。区分材质与纹理缓存、等待与释放边界 |
-| 16 | [材质、光照与阴影怎样共同决定表面颜色](../content/engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md) | 已写：固定源码、四个 GLSL 独立编译、原 BRDF 文本的 C++ 适配数值检查、Hugo 与生成页静态检查通过；实际阴影/IBL/GPU 画面待验证。明确默认延迟路径的字段消费、量化与阴影开关边界，输出止于场景颜色 |
+| 16 | [材质、光照与阴影怎样共同决定表面颜色](../content/engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md) | 已写：固定源码、四个 GLSL 独立编译、原 BRDF 文本的 C++ 适配数值检查、Hugo 与生成页静态检查通过；2026-10-26 已从实际捕获核对Wall_1单点表面记录、延迟光照输入与RGBA16F输出，Lo/La/Libl调试值与读回分列；实际阴影比较、其他光源/表面、IBL全链与最终画面仍待验证 |
 | 17 | [场景颜色怎样经过后处理成为最终画面](../content/engine-toolchain/piccolo-engine-17-post-processing-final-frame.md) | 已写：固定源码、五个 GLSL 独立编译、原曲线文本的 C++ 适配与分支检查、Hugo 和生成页静态检查通过；GPU 后处理、UI 画面与显示时序待验证。核对 LUT 透传、FXAA 两路附件、UI 条件选色与格式/呈现边界 |
 | 18 | [编辑器怎样拾取、创建和删除场景对象](../content/engine-toolchain/piccolo-engine-18-editor-pick-create-delete.md) | 已写：固定源码、两份拾取 GLSL 独立编译、原 ID 映射/删除与坐标表达式的 C++ 适配检查、实际墙资源检查、Hugo 与生成页静态检查通过；编辑器实际拾取/创建/删除、GPU 回读与保存验证待进行。明确 ID 无效值不一致、拾取蒙皮位置未消费及多部件删除范围 |
 
@@ -99,7 +99,7 @@
 | GFX-01 | 读懂渲染管线：从场景对象到一帧画面 | 已写：源码、API 语义与页面检查通过；引擎运行与图形捕获待验证 | [正文](../content/rendering/piccolo-rendering-01-scene-to-frame.md) |
 | GFX-02 | 从 GLSL 到 GPU：用 Piccolo 串起渲染引擎、API 与系统 | 已写：源码、两份 Shader 编译与嵌入字节、Hugo、链接和浏览器图形检查通过；引擎运行、GPU 与显示时序待验证 | [正文](../content/rendering/piccolo-rendering-02-shader-api-driver-gpu.md) |
 
-GFX-01 建立完整渲染链路的阅读模型，不替代主线 06 的具体对象变化案例与 07 的 Pass/Vulkan 深挖。06 追踪 Wall_1 的位置变化到渲染实体；07 继续沿可见输入、实例批次和缓冲绑定追到命令记录、队列提交与呈现请求。06 的受控位置主路径已取得真实断点，止于渲染表示和可见节点；07 的逐Pass/Draw与本次变化的图形捕获仍待开展。
+GFX-01 建立完整渲染链路的阅读模型，不替代主线 06 的具体对象变化案例与 07 的 Pass/Vulkan 深挖。06 追踪 Wall_1 的位置变化到渲染实体；07 继续沿可见输入、实例批次和缓冲绑定追到命令记录、队列提交与呈现请求。06 的受控位置主路径已取得真实断点，止于渲染表示和可见节点；07 已另在同一 RenderDoc 进程取得前后捕获，核对目标 GBuffer Draw、绑定矩阵与回放顶点；后续已接通目标单点GBuffer/深度与延迟光照，其他Pass、阴影比较与完整同步仍待验证。
 
 GFX-02 作为渲染补充，解释程序、数据和命令的交接：从 GLSL 编译到 SPIR-V 与 C++ 嵌入头，核对 pipeline、资源绑定和矩阵布局，再用官方资料解释 Loader、驱动、OS 与 GPU 的边界。只保留语言与 API 非一一对应的必要说明，完整 HLSL 对照按需另行安排；实际编译验证不等于完整引擎运行或硬件性能验证。
 
@@ -165,3 +165,20 @@ A12回读现有固定revision回执及原始Debug错误，四份代表生成文�
 - 实测GObjectID=2、part=0、实例ID=5；Transform current/next从1/0变为0/1，编辑器复制后两份均新值。Mesh矩阵、逻辑槽1的一条描述、消费临时实体和列表实体一致；交换角色1/0→0/1，清脏与消费reset分开核对。
 - 已有实体/网格/材质标志全true，资源ID5/2稳定；主相机node_id=5的矩阵指针等于实体矩阵地址，列表中有一条匹配节点。同轮present处frame_count=2，submit/present均成功。没有测GPU实际取值或像素，也未覆盖较晚setter、多写入者、刚体姿态和保存重载。
 - 回填06、原执行提纲和两个阅读入口；原缓冲示意与时序反例仍标条件推导。原始日志的归一化副本、独立回执及最终有效断点定义见[位置链材料](../examples/piccolo-debug-validation/POSITION-CHAIN.md)，不改此前首帧回执。后续优先沿同一实例进07核对Pass/Draw/矩阵缓冲；UI入口按08/18另验。
+
+## GBuffer Draw 与回放顶点实测（2026-10-26）
+
+- 承接06，复用同一Debug exe/PDB/ini及两处兼容补丁。重新识别Wall_1为GObjectID2/part0/渲染实例5，实际GBuffer组为7实例，目标槽0；对象身份与Draw槽位分别记录。
+- 同一RenderDoc进程PID187472先捕获帧6348，再经CDB安全点调用真实setter令x增加1，记录CPU样本m_frame_count11659，继续后捕获帧28131。三者为不同观察点，不冒充同帧或相邻帧。
+- 真实RHI调用与捕获事件177均为36索引×7实例。set0/binding1实例数据有效偏移4314128、范围5120，stride80、矩阵offset16；CPU有效560字节中的七份矩阵与修改后捕获逐元素一致。
+- 前后网格/索引字节、相机与pipeline一致，其余六份矩阵不变；目标实例36条回放顶点的世界坐标差全为(1,0,0)，world/clip变换等式最大误差均小于1.3e-7。缩略图已补07，用于场景背景，不作为逐像素归因。
+- 同轮submit/present成功；启动API-Version-Violation告警仍保留，捕获消息列表为空不等于零验证错误。采样后CDB终止目标，本轮不验收正常退出、全部Pass/附件、同步时间线或重建。
+- [完整材料](../examples/piccolo-debug-validation/GBUFFER-DRAW.md)含独立回执、真实日志、复跑脚本、CPU矩阵和72行前后顶点CSV。原始RDC留本机。后续可沿该Draw核对GBuffer/深度与光照合成，或独立验证08/18编辑器原生入口；本次不增加新正文。
+
+## GBuffer 单点与延迟光照验证（2026-10-26）
+
+- 仅离线回放同一帧6348/28131捕获，不新增引擎运行、补丁或构建。实际viewport为289/60/668/448；分别选(663,242)/(650,266)，结合深度与片元世界位置反查七个实例，唯一匹配目标槽0/三角形4。几何插值最大误差约1.01e-4，采用1e-3归属门限。
+- GBuffer事件177的A/B/C/深度资源247/251/255/145，与延迟光照事件186/subpass1/set1 binding0—3对应，四份原始像素字节一致；片元调试输入也一致。输出259为RGBA16F。
+- 点光源数0，方向光N·L为负，未执行阴影采样比较。实际单点Lo=0、La与Libl保留，三项求和误差小于7e-9；调试输出与实际附件值分列，最大差约0.692个FP16间隔，不称为逐位一致或只由最终舍入造成。
+- 修改后旧坐标仍为Wall_1，但变为三角形3且UV变化，不能当同一表面点比较。PixelHistory三项数值均无效，未以其颜色/primitive字段作归属证据。
+- 07增添到单点光照的衔接；16集中解释表面量化、实际分支、分量与存储，两个阅读入口及根系列摘要同步。独立材料见[GBUFFER-LIGHTING](../examples/piccolo-debug-validation/GBUFFER-LIGHTING.md)；不增加文章数。后续可接17的后处理/最终合成，阴影专项需另选实际进入比较的表面。

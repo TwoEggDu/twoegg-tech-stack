@@ -67,3 +67,11 @@ RenderDoc 1.43 单独启动同一 exe，以 F12 捕获第 17931 帧；`renderdoc
 本轮不宣称零警告：仍有 LNK4098（MSVCRT 默认库冲突）、MSB8029（临时目录增量构建）和原有 Lua `get<bool>` 的 C4715 等。运行时实际加载的验证层 DLL 来自本机 `D:/VulkanSDK/1.3.261.1/Bin`；不能由仓库的编译输入配置推断实际加载模块。也未验证游戏输入、角色/相机运动、粒子、编辑操作与保存重载，未进行性能或泄漏验收。
 
 Piccolo 源码及补丁涉及片段：Copyright (c) 2022 Contributors to the Piccolo Engine，MIT License，见固定提交的 [LICENSE](https://github.com/BoomingTech/Piccolo/blob/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5/LICENSE)。
+
+## 后续：GBuffer 实例与顶点输出
+
+2026-10-26 另在同一 RenderDoc 进程内取得位置修改前后两帧，接通 06 的渲染表示与 07 的实际 Draw、实例缓冲和回放顶点。复现与边界见 [GBUFFER-DRAW.md](GBUFFER-DRAW.md)，独立回执为 `gbuffer-receipt.json`；不改写上面的首帧实验结果。
+
+## 后续：GBuffer 像素与延迟光照
+
+复用前后两份捕获，分别确认Wall_1表面点，核对GBuffer/深度、input attachments、光照分量及RGBA16F实际读回；旧坐标另行检查。见[GBUFFER-LIGHTING.md](GBUFFER-LIGHTING.md)与独立`gbuffer-lighting-receipt.json`。此轮是离线回放，不新增引擎运行；实际阴影比较与后处理仍待验证。

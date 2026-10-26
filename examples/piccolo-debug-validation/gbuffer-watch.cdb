@@ -1,0 +1,7 @@
+$$ Global descriptor index 1 incorporates the manual correction recorded in the log.
+$$ Set $t4 to the verified Wall_1 VulkanMesh pointer; IDs and addresses are process-local.
+bp10 `PiccoloEditor!main_camera_pass.cpp:2252` ".if (@@c++(mesh) == @$t4) {bd 10; .echo GBUFFER_BATCH_MATRIX_WRITTEN; dv /t; dx mesh_nodes.Select(n => n.model_matrix); dx perdrawcall_storage_buffer_object.mesh_instances[0].model_matrix.m_mat[0][3]; kn 5} .else {gc}"
+bp11 `PiccoloEditor!main_camera_pass.cpp:2318` ".if (@@c++(mesh) == @$t4) {bd 11; .echo GBUFFER_DRAW_PARAMETERS; dx mesh.mesh_index_count; dx current_instance_count; dx drawcall_index; dx -r1 dynamic_offsets; dx vertex_buffers; dx mesh.mesh_index_buffer; dx material.material_descriptor_set; dx mesh.mesh_vertex_blending_descriptor_set; dx m_descriptor_infos[1].descriptor_set; dx m_render_pipelines[0].pipeline; kn 4} .else {gc}"
+bp12 /1 `PiccoloEditor!vulkan_rhi.cpp:2033` ".echo GBUFFER_VULKAN_DRAW_RECORD; dv /t; kn 4; gc"
+bp13 /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo GBUFFER_CHANGED_FRAME_PRESENT; dv /t; .echo GBUFFER_CPU_TRACE_DONE"
+g

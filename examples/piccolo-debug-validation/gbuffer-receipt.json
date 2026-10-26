@@ -1,0 +1,441 @@
+{
+  "id": "piccolo-gbuffer-draw-20261026",
+  "date": "2026-10-26",
+  "revision": "f5053707fed4d3f94d270a436fb0d3a8ae54e3e5",
+  "configuration": "Debug",
+  "compatibility_patches": "same two patches recorded by verification-receipt.json; no new engine patch or build",
+  "artifacts_reverified": {
+    "PiccoloEditor.exe": {
+      "bytes": 16653824,
+      "sha256": "18f308810512da53194f3961a8f506a6a5ceeaabf012c53d789dce702a0f3b6a"
+    },
+    "PiccoloEditor.pdb": {
+      "bytes": 62517248,
+      "sha256": "292a6d2751cc17039cb3da02c5c092c3efd239b4a92f8321a76d5c56fe31eda2"
+    },
+    "PiccoloEditor.ini": {
+      "bytes": 376,
+      "sha256": "c02bdc20126d543d36a610439cb716081a6d5512bcf89054b1124e0d2448eb81"
+    }
+  },
+  "deployed_level": {
+    "bytes": 22537,
+    "sha256": "51a7d1cc2ed20fb68758c7b5663d354fae1a29acd6c7e65443918a9442c0169c"
+  },
+  "renderdoc_version": "1.43",
+  "pid": 187472,
+  "main_thread": "0x1798c",
+  "cpu_engine_frame_count": 11659,
+  "identity": {
+    "gobject": 2,
+    "part": 0,
+    "render_instance": 5,
+    "mesh_asset": 5,
+    "material_asset": 2,
+    "draw_instance_slot": 0
+  },
+  "cpu_sample": {
+    "source": "CDB .writemem of seven valid instance records; padding ignored",
+    "cpu_mapped_base": "0x22230380000",
+    "perdraw_dynamic_offset": 4314128,
+    "cpu_instance_records_address": "0x2223079d410",
+    "instance_stride": 80,
+    "matrix_offset": 16,
+    "valid_instances": 7,
+    "raw_sample_bytes": 560,
+    "raw_sample_sha256": "08344524b6e298b3772972f3ad367b7f86ce0f9f2236119d14c4ec1fe92b960b",
+    "instances": [
+      {
+        "slot": 0,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          -0.001630533253774047,
+          0.9999915957450867,
+          0.0,
+          2.945970058441162,
+          -0.9999915957450867,
+          -0.001630533253774047,
+          -0.0,
+          -0.3855400085449219,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "slot": 1,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          -0.0016304109012708068,
+          0.9999165534973145,
+          0.0,
+          -7.995100021362305,
+          -0.9999165534973145,
+          -0.0016304109012708068,
+          -0.0,
+          -0.3855400085449219,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "slot": 2,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          -0.0016302658477798104,
+          0.9998275637626648,
+          0.0,
+          28.10919952392578,
+          -0.9998275637626648,
+          -0.0016302658477798104,
+          -0.0,
+          -9.27869987487793,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "slot": 3,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          -0.0016302658477798104,
+          0.9998275637626648,
+          0.0,
+          27.54170036315918,
+          -0.9998275637626648,
+          -0.0016302658477798104,
+          -0.0,
+          -1.2243499755859375,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "slot": 4,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          -0.0016302658477798104,
+          0.9998275637626648,
+          0.0,
+          24.114500045776367,
+          -0.9998275637626648,
+          -0.0016302658477798104,
+          0.0,
+          11.760199546813965,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "slot": 5,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          -0.0016302658477798104,
+          0.9998275637626648,
+          0.0,
+          16.92930030822754,
+          -0.9998275637626648,
+          -0.0016302658477798104,
+          0.0,
+          11.760199546813965,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "slot": 6,
+        "enable_vertex_blending": -1.0,
+        "model_matrix": [
+          1.0,
+          0.0,
+          0.0,
+          23.177200317382812,
+          0.0,
+          0.8600000143051147,
+          0.0,
+          -13.40530014038086,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ]
+  },
+  "captures": {
+    "before": {
+      "capture_id": 0,
+      "frame": 6348,
+      "filename": "gbuffer_frame6348.rdc",
+      "bytes": 64458199,
+      "sha256": "93455f1fe7d5b4faeac729dddaab5b333d48b511338f8faa4bd3c804372e71ec",
+      "event": 177,
+      "instance_slot": 0,
+      "draw": {
+        "actionId": 26,
+        "baseVertex": 0,
+        "copyDestination": "ResourceId::0",
+        "copySource": "ResourceId::0",
+        "customName": "",
+        "depthOut": "ResourceId::145",
+        "drawIndex": 0,
+        "eventId": 177,
+        "flags": 196610,
+        "indexOffset": 0,
+        "instanceOffset": 0,
+        "numIndices": 36,
+        "numInstances": 7,
+        "vertexOffset": 0
+      },
+      "pipeline": "ResourceId::285",
+      "instance_descriptor": {
+        "bufferStructCount": 0,
+        "byteOffset": 4314128,
+        "byteSize": 5120,
+        "counterByteOffset": 0,
+        "elementByteSize": 0,
+        "firstMip": 0,
+        "firstSlice": 0,
+        "flags": 0,
+        "minLODClamp": 0.0,
+        "numMips": 1,
+        "numSlices": 1,
+        "resource": "ResourceId::149",
+        "secondary": "ResourceId::0",
+        "textureType": 0,
+        "type": 9,
+        "view": "ResourceId::0"
+      },
+      "dynamic_sets": [
+        {
+          "set": 0,
+          "descriptor_set": "ResourceId::302",
+          "dynamic_offsets": [
+            {
+              "descriptorByteOffset": 0,
+              "dynamicBufferByteOffset": 4277600
+            },
+            {
+              "descriptorByteOffset": 1,
+              "dynamicBufferByteOffset": 4314128
+            },
+            {
+              "descriptorByteOffset": 2,
+              "dynamicBufferByteOffset": 0
+            }
+          ]
+        },
+        {
+          "set": 1,
+          "descriptor_set": "ResourceId::728",
+          "dynamic_offsets": []
+        },
+        {
+          "set": 2,
+          "descriptor_set": "ResourceId::828",
+          "dynamic_offsets": []
+        }
+      ],
+      "vertex_records": 36,
+      "capture_debug_messages": []
+    },
+    "after": {
+      "capture_id": 1,
+      "frame": 28131,
+      "filename": "gbuffer_frame28131.rdc",
+      "bytes": 64818419,
+      "sha256": "ddee9ad5b155799a26b3390fb807085963c97bfae7d7bb6b1fb2f23c1a44fccc",
+      "event": 177,
+      "instance_slot": 0,
+      "draw": {
+        "actionId": 26,
+        "baseVertex": 0,
+        "copyDestination": "ResourceId::0",
+        "copySource": "ResourceId::0",
+        "customName": "",
+        "depthOut": "ResourceId::145",
+        "drawIndex": 0,
+        "eventId": 177,
+        "flags": 196610,
+        "indexOffset": 0,
+        "instanceOffset": 0,
+        "numIndices": 36,
+        "numInstances": 7,
+        "vertexOffset": 0
+      },
+      "pipeline": "ResourceId::285",
+      "instance_descriptor": {
+        "bufferStructCount": 0,
+        "byteOffset": 4314128,
+        "byteSize": 5120,
+        "counterByteOffset": 0,
+        "elementByteSize": 0,
+        "firstMip": 0,
+        "firstSlice": 0,
+        "flags": 0,
+        "minLODClamp": 0.0,
+        "numMips": 1,
+        "numSlices": 1,
+        "resource": "ResourceId::149",
+        "secondary": "ResourceId::0",
+        "textureType": 0,
+        "type": 9,
+        "view": "ResourceId::0"
+      },
+      "dynamic_sets": [
+        {
+          "set": 0,
+          "descriptor_set": "ResourceId::302",
+          "dynamic_offsets": [
+            {
+              "descriptorByteOffset": 0,
+              "dynamicBufferByteOffset": 4277600
+            },
+            {
+              "descriptorByteOffset": 1,
+              "dynamicBufferByteOffset": 4314128
+            },
+            {
+              "descriptorByteOffset": 2,
+              "dynamicBufferByteOffset": 0
+            }
+          ]
+        },
+        {
+          "set": 1,
+          "descriptor_set": "ResourceId::728",
+          "dynamic_offsets": []
+        },
+        {
+          "set": 2,
+          "descriptor_set": "ResourceId::828",
+          "dynamic_offsets": []
+        }
+      ],
+      "vertex_records": 36,
+      "capture_debug_messages": []
+    }
+  },
+  "checks": {
+    "same_event": true,
+    "same_pipeline": true,
+    "same_vertex_shader": true,
+    "same_instance_slot": true,
+    "same_vbuffers": true,
+    "same_ibuffer": true,
+    "same_vertex_bytes": true,
+    "same_index_bytes": true,
+    "same_camera": true,
+    "cpu_capture_matrix_max_error": 0.0,
+    "world_before_max_error": 9.706901771266985e-08,
+    "world_after_max_error": 9.706901771266985e-08,
+    "clip_before_max_error": 6.481306513705931e-08,
+    "clip_after_max_error": 1.2252510472876565e-07,
+    "world_delta_max_error": 0.0,
+    "other_instance_matrices_unchanged": true
+  },
+  "submit": "VK_SUCCESS",
+  "present": "VK_SUCCESS",
+  "termination": "CDB q terminates attached debuggee; not normal window close",
+  "limits": [
+    "controlled setter; no native editor mouse/property UI",
+    "CDB sample and capture frames are distinct observations",
+    "post-VS is replay-derived; no hardware trace or display scanout proof",
+    "no per-attachment or per-pixel final composition attribution",
+    "no full synchronization timeline or swapchain-rebuild/error-branch acceptance",
+    "startup API-Version-Violation observed; empty capture debug-message lists do not establish zero validation errors",
+    "original RDC and raw CPU bytes retained locally; exported data alone does not enable replay"
+  ],
+  "evidence_files": {
+    "debug-gbuffer-chain.log": {
+      "bytes": 40650,
+      "sha256": "962dd6b68d5b382983847bcaa321e6d0f52dc1cbbb50adc8f5aeb782bac82345"
+    },
+    "gbuffer-attach.cdb": {
+      "bytes": 171,
+      "sha256": "ad117410d1dc4bca62b46d3ad6dd23a84e901b7c99a4e21ec7c622c0ff242483"
+    },
+    "gbuffer-watch.cdb": {
+      "bytes": 1097,
+      "sha256": "da6330f33ff6696e6441868c70b57ca6e789c93bfd44efc1e68a536dd9ddf789"
+    },
+    "gbuffer-cpu-instance-data.json": {
+      "bytes": 3373,
+      "sha256": "fcbf13902ba08b4a2b3b6c8605806ebc76e9411224a994df7071ecb26aaca468"
+    },
+    "gbuffer-replay.py": {
+      "bytes": 7468,
+      "sha256": "0e98980d8bebb2807fde051ca31eebaada9d5336174ebb37dd35c57b57f9022d"
+    },
+    "gbuffer-replay-report.json": {
+      "bytes": 144071,
+      "sha256": "2e63aa0bce2cb681d492afbbc640d5117a2e48985da74ec0db2af5c335e3a04d"
+    },
+    "gbuffer-vertices.csv": {
+      "bytes": 11401,
+      "sha256": "c51b58f9660343979eb782f182ebc263734abce01de7e9cc4622fc3eb060bd4e"
+    },
+    "GBUFFER-DRAW.md": {
+      "bytes": 9468,
+      "sha256": "7976577340c6b72ba782005ba241cb59255e93872d53254324416fa778bb3034"
+    },
+    "static/images/piccolo-gbuffer-wall-before-20261026.png": {
+      "bytes": 504552,
+      "sha256": "ddc405350081c0e853244e25b1390be777c9f4298286ba7285f2fa98dc29fea5"
+    },
+    "static/images/piccolo-gbuffer-wall-after-20261026.png": {
+      "bytes": 501004,
+      "sha256": "a70265e3320b38820c561cfb162ef0c5f350f5c02945fa9c8529a584ea96e872"
+    }
+  },
+  "site_validation": {
+    "hugo_version": "0.157.0",
+    "hugo_exit": 0,
+    "hugo_errors": 0,
+    "pages": 1425,
+    "checked_pages": 29,
+    "local_links_anchors_resources": 1876,
+    "failures": [],
+    "evidence_hashes": "all match",
+    "scope": "local generated site; no deployment or pixel-perfect browser acceptance"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "id": "piccolo-gbuffer-lighting-20261026",
+  "date": "2026-10-26",
+  "revision": "f5053707fed4d3f94d270a436fb0d3a8ae54e3e5",
+  "configuration": "Debug",
+  "origin": "offline replay of the existing same-process capture pair; no new engine run/build/patch",
+  "prior_receipt": {
+    "bytes": 12375,
+    "sha256": "8827a182fa383bcbaa7ec5c2540b684569b6555179579e62677d512d61c02ebf"
+  },
+  "renderdoc_version": "1.43",
+  "captures": {
+    "before": {
+      "file": "gbuffer_frame6348.rdc",
+      "bytes": 64458199,
+      "sha256": "93455f1fe7d5b4faeac729dddaab5b333d48b511338f8faa4bd3c804372e71ec",
+      "gbuffer_event": 177,
+      "lighting_event": 186,
+      "xy": [
+        663,
+        242
+      ]
+    },
+    "after": {
+      "file": "gbuffer_frame28131.rdc",
+      "bytes": 64818419,
+      "sha256": "ddee9ad5b155799a26b3390fb807085963c97bfae7d7bb6b1fb2f23c1a44fccc",
+      "gbuffer_event": 177,
+      "lighting_event": 186,
+      "xy": [
+        650,
+        266
+      ]
+    }
+  },
+  "identity": {
+    "gobject": 2,
+    "part": 0,
+    "render_instance": 5,
+    "mesh_asset": 5,
+    "material_asset": 2,
+    "draw_instance_slot": 0
+  },
+  "checks": {
+    "before": {
+      "target_slot": [
+        0
+      ],
+      "input_attachment_bytes_match": true,
+      "debug_inputs_match_readback": true,
+      "Lo_La_Libl_sum_error": 3.725290298461914e-09,
+      "debug_to_stored_half_ulp_max": 0.6903076171875
+    },
+    "after": {
+      "target_slot": [
+        0
+      ],
+      "input_attachment_bytes_match": true,
+      "debug_inputs_match_readback": true,
+      "Lo_La_Libl_sum_error": 6.05359673500061e-09,
+      "debug_to_stored_half_ulp_max": 0.691162109375
+    }
+  },
+  "reference_pixel": {
+    "xy": [
+      663,
+      242
+    ],
+    "after_confirmed_slots": [
+      0
+    ],
+    "before_triangle": 4,
+    "after_triangle": 3
+  },
+  "evidence_files": {
+    "GBUFFER-LIGHTING.md": {
+      "bytes": 8081,
+      "sha256": "edbe0916e681affee611d3547a0a4d02ad4c97aa69abcf0d75ed847bd3d7db4f"
+    },
+    "gbuffer-lighting-replay.py": {
+      "bytes": 17325,
+      "sha256": "71d409ae9f47e4800ada10dc15a4dd7b06008b0be7bfed4ec57b4c729d43c980"
+    },
+    "gbuffer-lighting-report.json": {
+      "bytes": 130390,
+      "sha256": "c23ef5c3c6a78305583d7d37dc843071686443c82dac5454d7b4050806053c80"
+    },
+    "gbuffer-lighting-pixels.csv": {
+      "bytes": 1255,
+      "sha256": "0bc472bc1a0d3aa787663b3c599f1ef4c3578c80801a72ac0f3f05db675d7076"
+    }
+  },
+  "limits": [
+    "two primary samples are not identical material-space positions",
+    "single-point GBuffer and deferred lighting, no final composition/display acceptance",
+    "point light count zero and directional NdotL negative; no directional shadow lookup/comparison executed",
+    "shader debug result differs slightly from native FP16 texture readback; not a bit-exact hardware trace",
+    "PixelHistory value fields invalid; no history-color or reported-primitive attribution",
+    "sampled IBL contribution and bindings do not validate all IBL generation/filtering or other lighting branches",
+    "known startup validation warning not repaired; no new normal-exit evidence",
+    "texture bytes read from replayed GPU images; no separate original-time VRAM snapshot"
+  ],
+  "site_validation": {
+    "hugo_version": "0.157.0",
+    "hugo_exit": 0,
+    "hugo_errors": 0,
+    "pages": 1425,
+    "static_files": 57,
+    "checked_pages": 29,
+    "local_links_anchors_resources": 1887,
+    "failures": [],
+    "evidence_hashes": "all match; prior receipt unchanged",
+    "scope": "local generated site; no deployment or browser pixel-perfect acceptance"
+  },
+  "captured_shader_matches_prior_compile": {
+    "gbuffer": "4da9fd3eadee358a58568230253119e9368fa285ef6c04c48d8f184ae7ab0718",
+    "deferred_lighting": "fdaef4613b34ecd4469385e83b73ffd5f9bf74223a35b6d607be82d601cd1e74"
+  }
+}

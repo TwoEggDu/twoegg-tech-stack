@@ -1,0 +1,457 @@
+Opened log file '<lab>/debug-gbuffer-chain.log'
+
+Microsoft (R) Windows Debugger Version 10.0.19041.685 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+*** wait with pending attach
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script successfully loaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <lab>/source/bin
+Symbol search path is: <lab>/source/bin
+Executable search path is: 
+ModLoad: 00007ff6`66ff0000 00007ff6`68013000   <lab>\source\bin\PiccoloEditor.exe
+ModLoad: 00007ffc`14290000 00007ffc`14488000   C:\Windows\SYSTEM32\ntdll.dll
+ModLoad: 00007ffc`13fd0000 00007ffc`14092000   C:\Windows\System32\KERNEL32.DLL
+ModLoad: 00007ffc`11db0000 00007ffc`120a6000   C:\Windows\System32\KERNELBASE.dll
+ModLoad: 00007ffc`0c200000 00007ffc`0c294000   C:\Windows\SYSTEM32\apphelp.dll
+ModLoad: 00007ffc`13490000 00007ffc`13631000   C:\Windows\System32\USER32.dll
+ModLoad: 00007ffc`11a10000 00007ffc`11a32000   C:\Windows\System32\win32u.dll
+ModLoad: 00007ffc`13390000 00007ffc`133bb000   C:\Windows\System32\GDI32.dll
+ModLoad: 00007ffb`3dd40000 00007ffb`3dea4000   C:\Windows\SYSTEM32\vulkan-1.dll
+ModLoad: 00007ffc`120b0000 00007ffc`121c9000   C:\Windows\System32\gdi32full.dll
+ModLoad: 00007ffc`11970000 00007ffc`11a0d000   C:\Windows\System32\msvcp_win.dll
+ModLoad: 00007ffc`11ba0000 00007ffc`11ca0000   C:\Windows\System32\ucrtbase.dll
+ModLoad: 00007ffc`12610000 00007ffc`12d80000   C:\Windows\System32\SHELL32.dll
+ModLoad: 00007ffc`11920000 00007ffc`1196e000   C:\Windows\System32\CFGMGR32.dll
+ModLoad: 00007ffc`12e60000 00007ffc`12f11000   C:\Windows\System32\ADVAPI32.dll
+ModLoad: 00007ffc`133f0000 00007ffc`1348e000   C:\Windows\System32\msvcrt.dll
+ModLoad: 00007ffc`13850000 00007ffc`138ef000   C:\Windows\System32\sechost.dll
+ModLoad: 00007ffc`13920000 00007ffc`13a40000   C:\Windows\System32\RPCRT4.dll
+ModLoad: 00007ffc`121d0000 00007ffc`121f7000   C:\Windows\System32\bcrypt.dll
+ModLoad: 00007ffc`138f0000 00007ffc`1391f000   C:\Windows\System32\IMM32.dll
+ModLoad: 00007ffb`74150000 00007ffb`741c1000   C:\Windows\SYSTEM32\MSVCP140_2D.dll
+ModLoad: 00007ffb`3e8b0000 00007ffb`3e98a000   C:\Windows\SYSTEM32\MSVCP140D.dll
+ModLoad: 00007ffc`0f010000 00007ffc`0f01f000   C:\Windows\SYSTEM32\VCRUNTIME140_1D.dll
+ModLoad: 00007ffb`74120000 00007ffb`74150000   C:\Windows\SYSTEM32\VCRUNTIME140D.dll
+ModLoad: 00007ffb`1d550000 00007ffb`1d754000   C:\Windows\SYSTEM32\ucrtbased.dll
+ModLoad: 00007ffc`10160000 00007ffc`10256000   C:\Windows\system32\dxgi.dll
+ModLoad: 00007ffa`d5be0000 00007ffa`d75c3000   C:\Program Files\RenderDoc\renderdoc.dll
+ModLoad: 00007ffc`13640000 00007ffc`136ab000   C:\Windows\System32\WS2_32.dll
+ModLoad: 00007ffc`136b0000 00007ffc`1370b000   C:\Windows\System32\SHLWAPI.dll
+ModLoad: 00007ffc`12f20000 00007ffc`13390000   C:\Windows\System32\SETUPAPI.dll
+ModLoad: 00007ffc`13de0000 00007ffc`13eba000   C:\Windows\System32\COMDLG32.dll
+ModLoad: 00007ffc`122b0000 00007ffc`12604000   C:\Windows\System32\combase.dll
+ModLoad: 00007ffc`13a40000 00007ffc`13aed000   C:\Windows\System32\shcore.dll
+ModLoad: 00007ffc`13710000 00007ffc`1383b000   C:\Windows\System32\ole32.dll
+ModLoad: 00007ffb`f70c0000 00007ffb`f7170000   C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_5.82.19041.6280_none_792d7c952443c49a\COMCTL32.dll
+ModLoad: 00007ffc`12d80000 00007ffc`12e4d000   C:\Windows\System32\OLEAUT32.dll
+ModLoad: 00007ffb`ff650000 00007ffb`ff67c000   C:\Windows\SYSTEM32\VCRUNTIME140.dll
+ModLoad: 00007ffb`ff710000 00007ffb`ff7ad000   C:\Windows\SYSTEM32\MSVCP140.dll
+ModLoad: 00007ffb`ff4a0000 00007ffb`ff4ac000   C:\Windows\SYSTEM32\VCRUNTIME140_1.dll
+ModLoad: 00007ffb`20360000 00007ffb`204d0000   C:\Program Files\RenderDoc\dbghelp.dll
+ModLoad: 00007ffb`5aad0000 00007ffb`5ab16000   C:\Program Files\RenderDoc\symsrv.dll
+ModLoad: 00007ffc`11050000 00007ffc`110ba000   C:\Windows\system32\mswsock.dll
+ModLoad: 00007ffc`0f950000 00007ffc`100f5000   C:\Windows\SYSTEM32\windows.storage.dll
+ModLoad: 00007ffc`11270000 00007ffc`1129b000   C:\Windows\SYSTEM32\Wldp.dll
+ModLoad: 00007ffc`0cab0000 00007ffc`0cf0d000   C:\Windows\SYSTEM32\d3dcompiler_47.dll
+ModLoad: 00007ffc`112b0000 00007ffc`112c8000   C:\Windows\SYSTEM32\CRYPTSP.dll
+ModLoad: 00007ffb`9fe20000 00007ffb`9ff48000   C:\Windows\SYSTEM32\opengl32.dll
+ModLoad: 00007ffb`9ca70000 00007ffb`9ca9c000   C:\Windows\SYSTEM32\GLU32.dll
+ModLoad: 00007ffc`10110000 00007ffc`10122000   C:\Windows\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ffc`0ee50000 00007ffc`0eeee000   C:\Windows\system32\uxtheme.dll
+ModLoad: 00007ffb`f0720000 00007ffb`f0765000   C:\Windows\SYSTEM32\dinput8.dll
+ModLoad: 00007ffb`eb370000 00007ffb`eb4c2000   C:\Windows\SYSTEM32\inputhost.dll
+ModLoad: 00007ffc`0e3f0000 00007ffc`0e547000   C:\Windows\SYSTEM32\wintypes.dll
+ModLoad: 00007ffc`0f2b0000 00007ffc`0f3a4000   C:\Windows\SYSTEM32\PROPSYS.dll
+ModLoad: 00007ffc`0d750000 00007ffc`0d842000   C:\Windows\SYSTEM32\CoreMessaging.dll
+ModLoad: 00007ffc`0ba50000 00007ffc`0bdab000   C:\Windows\SYSTEM32\CoreUIComponents.dll
+ModLoad: 00007ffc`11ca0000 00007ffc`11d22000   C:\Windows\System32\bcryptPrimitives.dll
+ModLoad: 00007ffc`10b70000 00007ffc`10ba3000   C:\Windows\SYSTEM32\ntmarta.dll
+ModLoad: 00007ffb`7e480000 00007ffb`7e491000   C:\Windows\SYSTEM32\xinput1_4.dll
+ModLoad: 00007ffc`116b0000 00007ffc`116e3000   C:\Windows\SYSTEM32\DEVOBJ.dll
+ModLoad: 00007ffc`0f160000 00007ffc`0f18e000   C:\Windows\SYSTEM32\dwmapi.dll
+ModLoad: 00007ffc`13be0000 00007ffc`13cf5000   C:\Windows\System32\MSCTF.dll
+ModLoad: 00007ffc`10100000 00007ffc`1010d000   C:\Windows\SYSTEM32\HID.DLL
+ModLoad: 00007ffc`07020000 00007ffc`07047000   C:\Windows\SYSTEM32\WINMM.DLL
+ModLoad: 00007ffc`11d30000 00007ffc`11da3000   C:\Windows\System32\WINTRUST.dll
+ModLoad: 00007ffc`11a40000 00007ffc`11b9d000   C:\Windows\System32\CRYPT32.dll
+ModLoad: 00007ffc`114e0000 00007ffc`114f2000   C:\Windows\SYSTEM32\MSASN1.dll
+ModLoad: 00007ffb`eb270000 00007ffb`eb369000   C:\Windows\SYSTEM32\textinputframework.dll
+ModLoad: 00007ffc`13f20000 00007ffc`13fc9000   C:\Windows\System32\clbcatq.dll
+ModLoad: 00007ffb`99a60000 00007ffb`99fa1000   C:\Windows\system32\SogouTSF.ime
+ModLoad: 00007ffc`133e0000 00007ffc`133e8000   C:\Windows\System32\PSAPI.DLL
+ModLoad: 00007ffc`0f850000 00007ffc`0f85a000   C:\Windows\system32\VERSION.dll
+ModLoad: 00007ffb`ffc10000 00007ffb`ffc17000   C:\Windows\system32\MSIMG32.dll
+ModLoad: 00007ffc`111e0000 00007ffc`111ec000   C:\Windows\system32\CRYPTBASE.DLL
+ModLoad: 00007ffb`97d80000 00007ffb`9993e000   C:\Windows\system32\SogouPY.ime
+ModLoad: 00007ffc`133c0000 00007ffc`133dd000   C:\Windows\System32\imagehlp.dll
+ModLoad: 00007ffb`ff820000 00007ffb`ff886000   C:\Windows\SYSTEM32\OLEACC.dll
+ModLoad: 00007ffc`0a220000 00007ffc`0a32a000   C:\Windows\SYSTEM32\WINHTTP.dll
+ModLoad: 00007ffc`117d0000 00007ffc`117fe000   C:\Windows\SYSTEM32\USERENV.dll
+ModLoad: 00007ffc`11850000 00007ffc`11874000   C:\Windows\SYSTEM32\profapi.dll
+ModLoad: 00007ffb`9d9d0000 00007ffb`9da76000   C:\Program Files (x86)\SogouInput\Components\isgpet\1.0.2.3152\isgpet_bundle64.dll
+ModLoad: 00000000`10000000 00000000`104a2000   C:\Program Files (x86)\SogouInput\16.8.0.5415\Resource.dll
+ModLoad: 00007ffb`9b980000 00007ffb`9be33000   C:\Program Files (x86)\SogouInput\Components\PicFace\1.1.0.3184\PicFace64.dll
+ModLoad: 00007ffc`0d180000 00007ffc`0d740000   C:\Windows\SYSTEM32\d2d1.dll
+ModLoad: 00007ffb`f9f60000 00007ffb`fa1df000   C:\Windows\SYSTEM32\dwrite.dll
+ModLoad: 00007ffb`e5050000 00007ffb`e50fc000   C:\Windows\SYSTEM32\TextShaping.dll
+ModLoad: 00007ffb`9d8b0000 00007ffb`9d930000   C:\Program Files (x86)\SogouInput\Components\systembeautify\1.0.2.2868\systembeautify_bundle64.dll
+ModLoad: 00007ffb`9b6b0000 00007ffb`9b97d000   C:\Program Files (x86)\SogouInput\Components\IChat\1.0.2.3359\ichat_bundle64.dll
+ModLoad: 00007ffb`f8920000 00007ffb`f8931000   C:\Windows\SYSTEM32\windows.staterepositorycore.dll
+ModLoad: 00007ffa`d35f0000 00007ffa`d5bd8000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvoglv64.dll
+ModLoad: 00007ffc`0c090000 00007ffc`0c0a4000   C:\Windows\SYSTEM32\WTSAPI32.dll
+ModLoad: 00007ffc`0aa40000 00007ffc`0aa71000   C:\Windows\SYSTEM32\cryptnet.dll
+ModLoad: 00007ffc`0a870000 00007ffc`0a9b7000   C:\Windows\SYSTEM32\drvstore.dll
+ModLoad: 00007ffc`10920000 00007ffc`10958000   C:\Windows\system32\rsaenh.dll
+ModLoad: 00007ffb`fb070000 00007ffb`fd05e000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvgpucomp64.dll
+ModLoad: 00007ffa`d2050000 00007ffa`d35e8000   D:\VulkanSDK\1.3.261.1\Bin\VkLayer_khronos_validation.dll
+ModLoad: 00007ffc`0b0a0000 00007ffc`0b0db000   C:\Windows\SYSTEM32\dxcore.dll
+ModLoad: 00007ffb`79140000 00007ffb`792a4000   C:\Windows\system32\nvspcap64.dll
+ModLoad: 00007ffc`06010000 00007ffc`06703000   C:\Windows\SYSTEM32\nvapi64.dll
+ModLoad: 00007ffb`58a90000 00007ffb`58b38000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\NvCamera\NvCameraAllowlisting64.dll
+ModLoad: 00007ffc`0ac50000 00007ffc`0ad56000   C:\Windows\System32\AppXDeploymentClient.dll
+ModLoad: 00007ffb`e3d80000 00007ffb`e3ed5000   C:\Windows\System32\DriverStore\FileRepository\nv_dispig.inf_amd64_0afec3f2050014a0\nvppex.dll
+ModLoad: 00007ffc`10e70000 00007ffc`10ebb000   C:\Windows\SYSTEM32\powrprof.dll
+ModLoad: 00007ffc`10ce0000 00007ffc`10cf2000   C:\Windows\SYSTEM32\UMPDC.dll
+ModLoad: 00007ffc`10590000 00007ffc`105f3000   C:\Windows\SYSTEM32\WINSTA.dll
+ModLoad: 00007ffc`07c10000 00007ffc`07cbe000   C:\Windows\SYSTEM32\mscms.dll
+ModLoad: 00007ffc`07bd0000 00007ffc`07be1000   C:\Windows\SYSTEM32\ColorAdapterClient.dll
+ModLoad: 00007ffc`05eb0000 00007ffc`05ef5000   C:\Windows\SYSTEM32\icm32.dll
+ModLoad: 00007ffb`d2840000 00007ffb`d2b34000   C:\Windows\System32\uiautomationcore.dll
+(2dc50.2e674): Break instruction exception - code 80000003 (first chance)
+ntdll!DbgBreakPoint:
+00007ffc`143310d0 cc              int     3
+0:032> .symopt+0x10
+Symbol options are 0xB0337:
+  0x00000001 - SYMOPT_CASE_INSENSITIVE
+  0x00000002 - SYMOPT_UNDNAME
+  0x00000004 - SYMOPT_DEFERRED_LOADS
+  0x00000010 - SYMOPT_LOAD_LINES
+  0x00000020 - SYMOPT_OMAP_FIND_NEAREST
+  0x00000100 - SYMOPT_NO_UNQUALIFIED_LOADS
+  0x00000200 - SYMOPT_FAIL_CRITICAL_ERRORS
+  0x00010000 - SYMOPT_AUTO_PUBLICS
+  0x00020000 - SYMOPT_NO_IMAGE_SEARCH
+  0x00080000 - SYMOPT_NO_PROMPTS
+0:032> .reload /f PiccoloEditor.exe
+*** WARNING: Unable to verify checksum for <lab>\source\bin\PiccoloEditor.exe
+0:032> lmvm PiccoloEditor
+start             end                 module name
+00007ff6`66ff0000 00007ff6`68013000   PiccoloEditor C (private pdb symbols)  <lab>/source/bin\PiccoloEditor.pdb
+    Loaded symbol image file: <lab>\source\bin\PiccoloEditor.exe
+    Image path: <lab>\source\bin\PiccoloEditor.exe
+    Image name: PiccoloEditor.exe
+    Timestamp:        Mon Oct 26 10:17:35 2026 (6ADEB83F)
+    CheckSum:         00000000
+    ImageSize:        01023000
+    Translations:     0000.04b0 0000.04e4 0409.04b0 0409.04e4
+    Information from resource tables:
+0:032> bp /1 `PiccoloEditor!engine.cpp:70` ".echo GBUFFER_SAFE_BEFORE_LOGICAL; kn 4; .printf \"tid=%x\n\", @$tid"
+0:032> g
+GBUFFER_SAFE_BEFORE_LOGICAL
+ # Child-SP          RetAddr           Call Site
+00 00000075`6e2ff910 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x25 [<lab>\source\engine\source\runtime\engine.cpp @ 70]
+01 00000075`6e2ffa20 00007ff6`672334db PiccoloEditor!Piccolo::PiccoloEditor::run+0xc4 [<lab>\source\engine\source\editor\source\editor.cpp @ 61]
+02 00000075`6e2ffa60 00007ff6`67b2d119 PiccoloEditor!main+0x21b [<lab>\source\engine\source\editor\source\main.cpp @ 30]
+03 00000075`6e2ffbf0 00007ff6`67b2d002 PiccoloEditor!invoke_main+0x39 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 79]
+tid=1798c PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x25:
+00007ff6`67239035 f30f108c2418010000 movss xmm1,dword ptr [rsp+118h] ss:00000075`6e2ffa28=3f2ce5c4
+0:000> .echo GBUFFER_TARGET_LOOKUP
+GBUFFER_TARGET_LOOKUP
+0:000> dx Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_name
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_name : "Wall_1" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+    [<Raw View>]     [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+    [size]           : 0x6 [Type: unsigned __int64]
+    [capacity]       : 0xf [Type: unsigned __int64]
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<char>,std::_String_val<std::_Simple_types<char> >,1>]
+    [0]              : 87 'W' [Type: char]
+    [1]              : 97 'a' [Type: char]
+    [2]              : 108 'l' [Type: char]
+    [3]              : 108 'l' [Type: char]
+    [4]              : 95 '_' [Type: char]
+    [5]              : 49 '1' [Type: char]
+0:000> dx -r2 Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_components
+Piccolo::g_runtime_global_context.m_world_manager._Ptr->m_current_active_level._Ptr->m_gobjects[2].second._Ptr->m_components : { size=3 } [Type: std::vector<Piccolo::Reflection::ReflectionPtr<Piccolo::Component>,std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >]
+    [<Raw View>]     [Type: std::vector<Piccolo::Reflection::ReflectionPtr<Piccolo::Component>,std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >]
+    [capacity]       : 3
+    [allocator]      : allocator [Type: std::_Compressed_pair<std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> >,std::_Vector_val<std::_Simple_types<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >,1>]
+        [<Raw View>]     [Type: std::_Compressed_pair<std::allocator<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> >,std::_Vector_val<std::_Simple_types<Piccolo::Reflection::ReflectionPtr<Piccolo::Component> > >,1>]
+    [0]              [Type: Piccolo::Reflection::ReflectionPtr<Piccolo::Component>]
+        [+0x000] m_type_name      : "TransformComponent" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+        [+0x028] m_instance       : 0x2222fae8410 [Type: Piccolo::Component *]
+    [1]              [Type: Piccolo::Reflection::ReflectionPtr<Piccolo::Component>]
+        [+0x000] m_type_name      : "MeshComponent" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+        [+0x028] m_instance       : 0x2222fc20db0 [Type: Piccolo::Component *]
+    [2]              [Type: Piccolo::Reflection::ReflectionPtr<Piccolo::Component>]
+        [+0x000] m_type_name      : "RigidBodyComponent" [Type: std::basic_string<char,std::char_traits<char>,std::allocator<char> >]
+        [+0x028] m_instance       : 0x2222f9fbc10 [Type: Piccolo::Component *]
+0:000> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_mesh_object_id_map.Where(e => e.second == 2)
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_mesh_object_id_map.Where(e => e.second == 2)
+    [0x0]            : 0x5, 0x2 [Type: std::pair<unsigned int const ,unsigned __int64>]
+0:000> dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_main_camera_visible_mesh_nodes.Where(n => n.node_id == 5)
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_main_camera_visible_mesh_nodes.Where(n => n.node_id == 5)
+    [1]              [Type: Piccolo::RenderMeshNode]
+0:000> dx -r1 Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_main_camera_visible_mesh_nodes[1]
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_main_camera_visible_mesh_nodes[1] [Type: Piccolo::RenderMeshNode]
+    [+0x000] model_matrix     : 0x222847b1184 [Type: Piccolo::Matrix4x4 *]
+    [+0x008] joint_matrices   : 0x0 [Type: Piccolo::Matrix4x4 *]
+    [+0x010] joint_count      : 0x0 [Type: unsigned int]
+    [+0x018] ref_mesh         : 0x2222fc48a18 [Type: Piccolo::VulkanMesh *]
+    [+0x020] ref_material     : 0x2222f81ad98 [Type: Piccolo::VulkanPBRMaterial *]
+    [+0x028] node_id          : 0x5 [Type: unsigned int]
+    [+0x02c] enable_vertex_blending : false [Type: bool]
+0:000> r @$t0 = 0x2222fae8410
+0:000> .dvalloc 0x1000
+Allocated 1000 bytes starting at 00000222`04650000
+0:000> .echo GBUFFER_CONTROLLED_POSITION_WRITE
+GBUFFER_CONTROLLED_POSITION_WRITE
+0:000> r @$t2 = 0x222847b1184
+0:000> r @$t4 = 0x2222fc48a18
+0:000> r @$t5 = 0x2222f81ad98
+0:000> r @$t9 = 0x22204650000
+0:000> dx ((Piccolo::TransformComponent*)@$t0)->m_transform.m_position.x
+((Piccolo::TransformComponent*)@$t0)->m_transform.m_position.x : 1.945970 [Type: float]
+0:000> ef @$t9 2.94597 -0.38554 0.0
+0:000> .call /v PiccoloEditor!Piccolo::TransformComponent::setPosition(@$t0, @$t9)
+Call to function: PiccoloEditor!Piccolo::TransformComponent::setPosition (00007ff6`672b06b0) [<lab>\source\engine\source\runtime\function\framework\component\transform\transform_component.cpp @ 17]
+Checking value for arg 0: class Piccolo::TransformComponent * this
+Checking value for arg 1: class Piccolo::Vector3 * new_translation
+Thread is set up for call, 'g' will execute.
+WARNING: This can have serious side-effects,
+including deadlocks and corruption of the debuggee.
+0:000> g
+PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x25:
+00007ff6`67239035 f30f108c2418010000 movss xmm1,dword ptr [rsp+118h] ss:00000075`6e2ffa28=3f2ce5c4
+0:000> bp10 `PiccoloEditor!main_camera_pass.cpp:2252` ".if (@@c++(mesh) == @$t4) {bd 10; .echo GBUFFER_BATCH_MATRIX_WRITTEN; dv /t; dx mesh_nodes.Select(n => n.model_matrix); dx perdrawcall_storage_buffer_object.mesh_instances[0].model_matrix.m_mat[0][3]; kn 5} .else {gc}"
+0:000> g
+GBUFFER_BATCH_MATRIX_WRITTEN
+unsigned int perdrawcall_dynamic_offset = 0x41d410
+unsigned int [3] dynamic_offsets = unsigned int [3]
+struct Piccolo::MeshPerdrawcallStorageBufferObject * perdrawcall_storage_buffer_object = 0x00000222`3079d410
+unsigned int current_instance_count = 7
+bool least_one_enable_vertex_blending = false
+unsigned int per_drawcall_vertex_blending_dynamic_offset = 0
+unsigned int drawcall_index = 0
+class Piccolo::RHIBuffer *[3] vertex_buffers = class Piccolo::RHIBuffer *[3]
+unsigned int64 [3] offsets = unsigned int64 [3]
+unsigned int drawcall_count = 1
+unsigned int drawcall_max_instance_count = 0x40
+unsigned int total_instance_count = 7
+struct Piccolo::VulkanMesh * mesh = 0x00000222`2fc48a18
+class std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > * mesh_nodes = 0x00000222`2fcac1c8 { size=7 }
+struct std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > * pair2 = 0x00000222`2fcac1c0 {...}, { size=7 }
+struct std::_Default_sentinel <end>$L2 = struct std::_Default_sentinel
+class std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > * <range>$L2 = 0x00000222`83ada368 { size=0x5 }
+class std::_Tree_unchecked_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > > <begin>$L2 = class std::_Tree_unchecked_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > >
+class std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > * mesh_instanced = 0x00000222`83ada368 { size=0x5 }
+struct Piccolo::VulkanPBRMaterial * material = 0x00000222`2f81ad98
+struct std::pair<Piccolo::VulkanPBRMaterial * const,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > > * pair1 = 0x00000222`83ada360 {...}, { size=0x5 }
+struct std::_Default_sentinel <end>$L1 = struct std::_Default_sentinel
+class std::_Tree_unchecked_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<Piccolo::VulkanPBRMaterial * const,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > > > > > <begin>$L1 = class std::_Tree_unchecked_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<Piccolo::VulkanPBRMaterial * const,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > > > > >
+class std::map<Piccolo::VulkanPBRMaterial *,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > >,std::less<Piccolo::VulkanPBRMaterial *>,std::allocator<std::pair<Piccolo::VulkanPBRMaterial * const,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > > > > * <range>$L1 = 0x00000075`6e2fe7b8 { size=0x4 }
+class Piccolo::MainCameraPass * this = 0x00000222`2f66ecf0
+float [4] color = float [4]
+unsigned int perframe_dynamic_offset = 0x414560
+class std::map<Piccolo::VulkanPBRMaterial *,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > >,std::less<Piccolo::VulkanPBRMaterial *>,std::allocator<std::pair<Piccolo::VulkanPBRMaterial * const,std::map<Piccolo::VulkanMesh *,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> >,std::less<Piccolo::VulkanMesh *>,std::allocator<std::pair<Piccolo::VulkanMesh * const,std::vector<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode,std::allocator<`Piccolo::MainCameraPass::drawMeshGbuffer'::`2'::MeshNode> > > > > > > > main_camera_mesh_drawcall_batch = { size=0x4 }
+mesh_nodes.Select(n => n.model_matrix)
+    [0]              : 0x222847b1184 [Type: Piccolo::Matrix4x4 *]
+    [1]              : 0x222847b1264 [Type: Piccolo::Matrix4x4 *]
+    [2]              : 0x222847b1884 [Type: Piccolo::Matrix4x4 *]
+    [3]              : 0x222847b1964 [Type: Piccolo::Matrix4x4 *]
+    [4]              : 0x222847b1a44 [Type: Piccolo::Matrix4x4 *]
+    [5]              : 0x222847b1b24 [Type: Piccolo::Matrix4x4 *]
+    [6]              : 0x222847b1f84 [Type: Piccolo::Matrix4x4 *]
+perdrawcall_storage_buffer_object.mesh_instances[0].model_matrix.m_mat[0][3] : 2.945970 [Type: float]
+ # Child-SP          RetAddr           Call Site
+00 00000075`6e2fe760 00007ff6`674dd9c7 PiccoloEditor!Piccolo::MainCameraPass::drawMeshGbuffer+0x1209 [<lab>\source\engine\source\runtime\function\render\passes\main_camera_pass.cpp @ 2252]
+01 00000075`6e2fee90 00007ff6`673e16fc PiccoloEditor!Piccolo::MainCameraPass::draw+0x5b7 [<lab>\source\engine\source\runtime\function\render\passes\main_camera_pass.cpp @ 1950]
+02 00000075`6e2ff430 00007ff6`6723af26 PiccoloEditor!Piccolo::RenderPipeline::deferredRender+0x2ac [<lab>\source\engine\source\runtime\function\render\render_pipeline.cpp @ 208]
+03 00000075`6e2ff5e0 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x4b6 [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 124]
+04 00000075`6e2ff8d0 00007ff6`6723908b PiccoloEditor!Piccolo::PiccoloEngine::rendererTick+0x31 [<lab>\source\engine\source\runtime\engine.cpp @ 102]
+PiccoloEditor!Piccolo::MainCameraPass::drawMeshGbuffer+0x1209:
+00007ff6`674e8e09 c684244802000001 mov     byte ptr [rsp+248h],1 ss:00000075`6e2fe9a8=00
+0:000> .echo GBUFFER_CPU_LAYOUT
+GBUFFER_CPU_LAYOUT
+0:000> ?? sizeof(Piccolo::VulkanMeshInstance)
+unsigned int64 0x50
+0:000> ?? sizeof(Piccolo::MeshPerdrawcallStorageBufferObject)
+unsigned int64 0x1400
+0:000> ?? &((Piccolo::VulkanMeshInstance*)0)->model_matrix
+class Piccolo::Matrix4x4 * 0x00000000`00000010
+   +0x000 m_mat            : [4] [4] ??
+   =00007ff6`67ee0c40 ZERO             : Piccolo::Matrix4x4
+   =00007ff6`67ee0cc0 ZEROAFFINE       : Piccolo::Matrix4x4
+   =00007ff6`67ee0c80 IDENTITY         : Piccolo::Matrix4x4
+0:000> dx this->m_global_render_resource._Ptr->_storage_buffer._global_upload_ringbuffer_memory_pointer
+Error: -> must be used on pointers and . on structures
+0:000> dx this->m_global_render_resource._Ptr->_storage_buffer._global_upload_ringbuffer
+Error: -> must be used on pointers and . on structures
+0:000> bp11 `PiccoloEditor!main_camera_pass.cpp:2318` ".if (@@c++(mesh) == @$t4) {bd 11; .echo GBUFFER_DRAW_PARAMETERS; dx mesh.mesh_index_count; dx current_instance_count; dx drawcall_index; dx -r1 dynamic_offsets; dx vertex_buffers; dx mesh.mesh_index_buffer; dx material.material_descriptor_set; dx mesh.mesh_vertex_blending_descriptor_set; dx m_descriptor_infos[0].descriptor_set; dx m_render_pipelines[0].pipeline; kn 4} .else {gc}"
+0:000> g
+GBUFFER_DRAW_PARAMETERS
+mesh.mesh_index_count : 0x24 [Type: unsigned int]
+current_instance_count : 0x7 [Type: unsigned int]
+drawcall_index   : 0x0 [Type: unsigned int]
+dynamic_offsets  [Type: unsigned int [3]]
+    [0]              : 0x414560 [Type: unsigned int]
+    [1]              : 0x41d410 [Type: unsigned int]
+    [2]              : 0x0 [Type: unsigned int]
+vertex_buffers   [Type: Piccolo::RHIBuffer * [3]]
+    [0]              : 0x2221dd95c70 [Type: Piccolo::RHIBuffer *]
+    [1]              : 0x2221dd96710 [Type: Piccolo::RHIBuffer *]
+    [2]              : 0x2221dd96260 [Type: Piccolo::RHIBuffer *]
+mesh.mesh_index_buffer : 0x2221dd963f0 [Type: Piccolo::RHIBuffer *]
+material.material_descriptor_set : 0x2221df59dc0 [Type: Piccolo::RHIDescriptorSet *]
+mesh.mesh_vertex_blending_descriptor_set : 0x2221dd96760 [Type: Piccolo::RHIDescriptorSet *]
+m_descriptor_infos[0].descriptor_set : 0x0 [Type: Piccolo::RHIDescriptorSet *]
+m_render_pipelines[0].pipeline : 0x2221dda9bd0 [Type: Piccolo::RHIPipeline *]
+ # Child-SP          RetAddr           Call Site
+00 00000075`6e2fe760 00007ff6`674dd9c7 PiccoloEditor!Piccolo::MainCameraPass::drawMeshGbuffer+0x17f1 [<lab>\source\engine\source\runtime\function\render\passes\main_camera_pass.cpp @ 2318]
+01 00000075`6e2fee90 00007ff6`673e16fc PiccoloEditor!Piccolo::MainCameraPass::draw+0x5b7 [<lab>\source\engine\source\runtime\function\render\passes\main_camera_pass.cpp @ 1950]
+02 00000075`6e2ff430 00007ff6`6723af26 PiccoloEditor!Piccolo::RenderPipeline::deferredRender+0x2ac [<lab>\source\engine\source\runtime\function\render\render_pipeline.cpp @ 208]
+03 00000075`6e2ff5e0 00007ff6`67239291 PiccoloEditor!Piccolo::RenderSystem::tick+0x4b6 [<lab>\source\engine\source\runtime\function\render\render_system.cpp @ 124]
+PiccoloEditor!Piccolo::MainCameraPass::drawMeshGbuffer+0x17f1:
+00007ff6`674e93f1 488b842430070000 mov     rax,qword ptr [rsp+730h] ss:00000075`6e2fee90=000002222f66ecf0
+0:000> .echo GBUFFER_BUFFER_AND_BINDINGS
+GBUFFER_BUFFER_AND_BINDINGS
+0:000> .dx
+         ^ Syntax error in '.dx'
+0:000> dx this->m_global_render_resource->_storage_buffer._global_upload_ringbuffer_memory_pointer
+this->m_global_render_resource->_storage_buffer._global_upload_ringbuffer_memory_pointer : 0x22230380000 [Type: void *]
+0:000> dx this->m_global_render_resource->_storage_buffer._global_upload_ringbuffer
+this->m_global_render_resource->_storage_buffer._global_upload_ringbuffer : 0x2221dd96d00 [Type: Piccolo::RHIBuffer *]
+0:000> dx m_descriptor_infos[1].descriptor_set
+m_descriptor_infos[1].descriptor_set : 0x2221dda9770 [Type: Piccolo::RHIDescriptorSet *]
+0:000> dx ((Piccolo::VulkanBuffer*)vertex_buffers[0])->m_resource
+((Piccolo::VulkanBuffer*)vertex_buffers[0])->m_resource : 0x2222fa4bbd8 [Type: VkBuffer_T *]
+0:000> dx ((Piccolo::VulkanBuffer*)mesh.mesh_index_buffer)->m_resource
+((Piccolo::VulkanBuffer*)mesh.mesh_index_buffer)->m_resource : 0x2222fa4bb90 [Type: VkBuffer_T *]
+0:000> dx ((Piccolo::VulkanDescriptorSet*)m_descriptor_infos[1].descriptor_set)->m_resource
+((Piccolo::VulkanDescriptorSet*)m_descriptor_infos[1].descriptor_set)->m_resource : 0x222188c29e8 [Type: VkDescriptorSet_T *]
+0:000> .writemem <lab>\gbuffer-cpu-instances.bin 0x2223079d410 L0x230
+Writing 230 bytes.
+0:000> bp12 /1 `PiccoloEditor!vulkan_rhi.cpp:2033` ".echo GBUFFER_VULKAN_DRAW_RECORD; dv /t; kn 4; gc"
+0:000> bp13 /1 `PiccoloEditor!vulkan_rhi.cpp:494` ".echo GBUFFER_CHANGED_FRAME_PRESENT; dv /t; .echo GBUFFER_CPU_TRACE_DONE"
+0:000> g
+GBUFFER_VULKAN_DRAW_RECORD
+class Piccolo::VulkanRHI * this = 0x00000222`1df7cf50
+class Piccolo::RHICommandBuffer * commandBuffer = 0x00000222`1df67b70
+unsigned int indexCount = 0x24
+unsigned int instanceCount = 7
+unsigned int firstIndex = 0
+int vertexOffset = 0n0
+unsigned int firstInstance = 0
+ # Child-SP          RetAddr           Call Site
+00 00000075`6e2fe710 00007ff6`674e94b5 PiccoloEditor!Piccolo::VulkanRHI::cmdDrawIndexedPFN+0x19 [<lab>\source\engine\source\runtime\function\render\interface\vulkan\vulkan_rhi.cpp @ 2033]
+01 00000075`6e2fe760 00007ff6`674dd9c7 PiccoloEditor!Piccolo::MainCameraPass::drawMeshGbuffer+0x18b5 [<lab>\source\engine\source\runtime\function\render\passes\main_camera_pass.cpp @ 2318]
+02 00000075`6e2fee90 00007ff6`673e16fc PiccoloEditor!Piccolo::MainCameraPass::draw+0x5b7 [<lab>\source\engine\source\runtime\function\render\passes\main_camera_pass.cpp @ 1950]
+03 00000075`6e2ff430 00007ff6`6723af26 PiccoloEditor!Piccolo::RenderPipeline::deferredRender+0x2ac [<lab>\source\engine\source\runtime\function\render\render_pipeline.cpp @ 208]
+GBUFFER_CHANGED_FRAME_PRESENT
+class Piccolo::VulkanRHI * this = 0x00000222`1df7cf50
+class std::function<void __cdecl(void)> * passUpdateAfterRecreateSwapchain = 0x00000075`6e2ff520 bind(0x7ff666ffbc58, {...})
+unsigned int [1] wait_stages = unsigned int [1]
+struct VkPresentInfoKHR present_info = struct VkPresentInfoKHR
+VkResult res_reset_fences = VK_SUCCESS (0n0)
+VkResult present_result = VK_SUCCESS (0n0)
+VkResult res_end_command_buffer = VK_SUCCESS (0n0)
+struct VkSemaphore_T *[2] semaphores = struct VkSemaphore_T *[2]
+struct VkSubmitInfo submit_info = struct VkSubmitInfo
+VkResult res_queue_submit = VK_SUCCESS (0n0)
+GBUFFER_CPU_TRACE_DONE
+PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe:
+00007ff6`6741ae5e 81bc2424030000143265c4 cmp dword ptr [rsp+324h],0C4653214h ss:00000075`6e2ff204=00000000
+0:000> .echo GBUFFER_POST_DRAW_CAPTURE_READY
+GBUFFER_POST_DRAW_CAPTURE_READY
+0:000> .frame 4
+04 00000075`6e2ff910 00007ff6`671d90a4 PiccoloEditor!Piccolo::PiccoloEngine::tickOneFrame+0x7b [<lab>\source\engine\source\runtime\engine.cpp @ 83]
+0:000> dx this->m_frame_count
+this->m_frame_count : 11659 [Type: int]
+0:000> .frame 0
+00 00000075`6e2feee0 00007ff6`673e17ad PiccoloEditor!Piccolo::VulkanRHI::submitRendering+0x6fe [<lab>\source\engine\source\runtime\function\render\interface\vulkan\vulkan_rhi.cpp @ 494]
+0:000> g
+RDOC 187472: [15:27:34]         streamio.cpp( 454) - Warning - Socket unexpectedly disconnected during reading
+
+RDOC 187472: [15:27:34]    win32_network.cpp( 264) - Warning - recv peek failed: WSAECONNABORTED: An established connection was aborted by the software in your host machine.
+
+RDOC 187472: [15:28:00]          vk_core.cpp(2681) - Log     - Starting capture
+
+RDOC 187472: [15:28:00]   resource_manager.h(1451) - Log     - Preparing up to 114 potentially dirty resources
+
+RDOC 187472: [15:28:00]          rdcfile.cpp( 246) - Log     - Opening RDCFile <lab>/captures/gbuffer_frame6348.rdc
+
+ModLoad: 00007ffb`fdca0000 00007ffb`fde92000   C:\Windows\System32\urlmon.dll
+ModLoad: 00007ffb`ff4b0000 00007ffb`ff4d8000   C:\Windows\System32\srvcli.dll
+ModLoad: 00007ffb`fd310000 00007ffb`fd5cf000   C:\Windows\System32\iertutil.dll
+ModLoad: 00007ffc`10e10000 00007ffc`10e1c000   C:\Windows\System32\netutils.dll
+RDOC 187472: [15:28:00]   resource_manager.h(1508) - Log     - Prepared 66 dirty resources, postponed 41, skipped 6
+
+RDOC 187472: [15:28:01]   resource_manager.h(1127) - Log     - Preparing resource ResourceId::226370 after it has been postponed.
+
+RDOC 187472: [15:28:01]   resource_manager.h(1127) - Log     - Preparing resource ResourceId::226373 after it has been postponed.
+
+RDOC 187472: [15:28:01]   resource_manager.h(1127) - Log     - Preparing resource ResourceId::251 after it has been postponed.
+
+RDOC 187472: [15:28:01]   resource_manager.h(1127) - Log     - Preparing resource ResourceId::263 after it has been postponed.
+
+RDOC 187472: [15:28:01]   resource_manager.h(1127) - Log     - Preparing resource ResourceId::255 after it has been postponed.
+
+RDOC 187472: [15:28:01]   resource_manager.h(1127) - Log     - Preparing resource ResourceId::259 after it has been postponed.
+
+RDOC 187472: [15:28:01]   vk_queue_funcs.cpp(1362) - Log     - Persistent map flush forced for ResourceId::150 (0 -> 134217728)
+
+RDOC 187472: [15:28:01]   vk_queue_funcs.cpp(1362) - Log     - Persistent map flush forced for ResourceId::317 (0 -> 128)
+
+RDOC 187472: [15:28:01]          vk_core.cpp(2829) - Log     - Finished capture, Frame 28131
+
+RDOC 187472: [15:28:01]   resource_manager.h(1520) - Log     - Checking 111 resources with initial contents against 226 referenced resources
+
+RDOC 187472: [15:28:01]   resource_manager.h(1627) - Log     - Serialised 70 resources, skipped 28 unreferenced
+
+RDOC 187472: [15:28:01]          rdcfile.cpp(1247) - Log     - Finishing write to section 1 (renderdoc/internal/framecapture). Compressed from 1018973056 bytes to 64700409 (6.35 %)
+
+RDOC 187472: [15:28:01]          vk_core.cpp(3262) - Log     - Captured Vulkan frame with 971.768433 MB capture section in 0.621323 seconds
+
+RDOC 187472: [15:28:01]             core.cpp(2240) - Log     - Written to disk: <lab>/captures/gbuffer_frame28131.rdc
+
+RDOC 187472: [15:28:45]          rdcfile.cpp( 246) - Log     - Opening RDCFile <lab>/captures/gbuffer_frame6348.rdc
+
+RDOC 187472: [15:28:45]          rdcfile.cpp( 246) - Log     - Opening RDCFile <lab>/captures/gbuffer_frame28131.rdc
+
+RDOC 187472: [15:28:45]    win32_network.cpp( 264) - Warning - recv peek failed: WSAECONNRESET: An existing connection was forcibly closed by the remote host.
+
+(2dc50.2efa8): Break instruction exception - code 80000003 (first chance)
+ntdll!DbgBreakPoint:
+00007ffc`143310d0 cc              int     3
+0:005> .echo GBUFFER_FINAL_RUNTIME_STATE
+GBUFFER_FINAL_RUNTIME_STATE
+0:005> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_instance_id
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_instance_id : 0x5 [Type: unsigned int]
+0:005> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_mesh_asset_id
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_mesh_asset_id : 0x5 [Type: unsigned __int64]
+0:005> dx Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_material_asset_id
+Piccolo::g_runtime_global_context.m_render_system._Ptr->m_render_scene._Ptr->m_render_entities[1].m_material_asset_id : 0x2 [Type: unsigned __int64]
+0:005> .echo GBUFFER_EXPERIMENT_TERMINATED_BY_DEBUGGER_NO_SCENE_SAVE
+GBUFFER_EXPERIMENT_TERMINATED_BY_DEBUGGER_NO_SCENE_SAVE
+0:005> q
+quit:
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\Visualizers\winrt.natvis'

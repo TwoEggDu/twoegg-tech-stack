@@ -2,3 +2,7 @@
 *.log -text -whitespace
 compat-msvc1951.patch -text -whitespace
 position-chain*.cdb -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+gbuffer*.cdb -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Receipts fingerprint these exported evidence bytes, including their line endings.
+gbuffer-* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+GBUFFER-*.md -text

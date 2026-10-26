@@ -19,7 +19,7 @@ reading_status: "27 篇正文 · 源码阅读与调试"
 
 **第一次读**：[00 架构地图]({{< relref "system-design/piccolo-engine-00-architecture-map.md" >}}) → [02 启动到第一帧]({{< relref "engine-toolchain/piccolo-engine-02-startup-first-frame.md" >}}) → [03 一帧执行]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})。先找到入口和主循环，再沿对象变化深入各系统。准备实际动手时，先核对[01 构建与调试基线]({{< relref "engine-toolchain/piccolo-engine-01-build-debug-baseline.md" >}})；语言或图形概念遇到卡点时，再查页末前置。
 
-> **当前范围**：27篇正文已写，原定00—18主线齐备。已有固定源码核对与部分独立程序、资源和Shader编译验证。2026-10-26已完成带两处兼容补丁的Debug构建、启动到首次提交/呈现的实际断点与正常退出，并取得独立RenderDoc后续帧图像；06另有位置从Transform到渲染实体/可见节点的受控setter实测；其他系统专项仍待验证；[详细范围见页末](#validation)。
+> **当前范围**：27篇正文已写，原定00—18主线齐备。已有固定源码核对与部分独立程序、资源和Shader编译验证。2026-10-26已完成带两处兼容补丁的Debug构建、启动到首次提交/呈现的实际断点与正常退出，并取得独立RenderDoc后续帧图像；06另有位置从Transform到渲染实体/可见节点的受控setter实测；07已接通目标GBuffer Draw与回放顶点，16补入单点表面记录、延迟光照与浮点颜色读回；其他系统专项仍待验证；[详细范围见页末](#validation)。
 
 <a id="chapters"></a>
 
@@ -69,9 +69,9 @@ reading_status: "27 篇正文 · 源码阅读与调试"
 - [GFX-02｜从GLSL到GPU：用Piccolo串起渲染引擎、API与系统]({{< relref "rendering/piccolo-rendering-02-shader-api-driver-gpu.md" >}})：分清程序产物、资源绑定、驱动和GPU各自负责什么。
 - [11｜相机怎样跟随角色，并把视角交给渲染系统]({{< relref "engine-toolchain/piccolo-engine-11-camera-follow-render-view.md" >}})：追相机跟随、视图交接与绘制时的相机选择。
 - [15｜网格与纹理怎样从文件成为GPU资源]({{< relref "engine-toolchain/piccolo-engine-15-mesh-texture-gpu-resources.md" >}})：连接文件载荷、缓存、上传和绘制绑定。
-- [16｜材质、光照与阴影怎样共同决定表面颜色]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})：沿G-buffer和光照计算核对表面颜色的来源。
+- [16｜材质、光照与阴影怎样共同决定表面颜色]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})：沿G-buffer和光照计算核对表面颜色，已有Wall_1单点附件、实际分支与浮点颜色读回。
 - [17｜场景颜色怎样经过后处理成为最终画面]({{< relref "engine-toolchain/piccolo-engine-17-post-processing-final-frame.md" >}})：追色调映射、FXAA、UI合成与交换链输出。
-- [07｜从渲染场景进入Pass与Vulkan提交]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}})：从可见对象追到批次、缓冲绑定、命令记录与队列提交。
+- [07｜从渲染场景进入Pass与Vulkan提交]({{< relref "engine-toolchain/piccolo-engine-07-render-passes-vulkan-submit.md" >}})：从可见对象追到批次、缓冲绑定与提交，已有Wall_1目标Draw和前后回放顶点的实测。
 - [12｜一段动画怎样成为骨骼姿态与网格蒙皮]({{< relref "engine-toolchain/piccolo-engine-12-animation-skeleton-mesh-skinning.md" >}})：连接动画采样、骨骼层级、关节矩阵与顶点变形。
 - [13｜粒子发射器怎样进入GPU模拟与绘制]({{< relref "engine-toolchain/piccolo-engine-13-particle-emitter-gpu-simulation.md" >}})：追发射请求、粒子状态更新与后续绘制。
 
@@ -110,7 +110,7 @@ PCPP-2回调与PCPP-3缓冲分别在上面的编辑器、一帧分组中。容�
 <details class="validation-details">
 <summary>查看验证范围与实际运行记录</summary>
 
-<p>主线 00—18、五篇前置与渲染补充、三篇 C++ 专项共 27 篇正文已写，覆盖架构、构建基线、启动、对象恢复、输入运动、相机、GPU 资源、表面着色、后处理输出与编辑器操作/保存重载。01—03 已实际完成带兼容补丁的 Windows Debug 完整构建、模块/PDB/配置身份核对、首次世界加载、提交/呈现返回成功及正常退出 0，03 另核对首轮槽位交换与对象描述清理；独立 RenderDoc 后续帧图像已补入02。06已核对Wall_1的一次真实setter、缓冲交换、描述入队/消费及可见节点矩阵引用；该实验不包含鼠标拖轴、保存或GPU像素。09 含原输入/运动/控制器函数及数学实现的独立条件检查；10 含原形状转换/步进/更新函数的记录适配与几何检查；12 含原骨骼/数学的独立资源桥接与 Shader 编译；13 含原类型布局/字节、独立池状态检查及五份 Shader 编译，实际 GPU 粒子待验证；14 含随附 Lua/sol2 与原桥接/反射的独立桩宿主检查，实际引擎脚本与角色运行待验证；GFX-02 核对程序产物与系统边界；11/15 含独立数学与实际资源检查；16/17 含相关 Shader 编译和条件数值检查；18 含拾取 Shader 编译及原 ID/删除/坐标函数的条件检查。原源码的MSVC19.51兼容失败及两处补丁均有记录；构建仍有运行库冲突等警告。实际输入运动、相机跟随、GPU上传/着色/后处理的分项核对、拾取/创建/删除和保存/重载尚未验收，各篇分别说明源码推导和运行证据范围。</p>
+<p>主线 00—18、五篇前置与渲染补充、三篇 C++ 专项共 27 篇正文已写，覆盖架构、构建基线、启动、对象恢复、输入运动、相机、GPU 资源、表面着色、后处理输出与编辑器操作/保存重载。01—03 已实际完成带兼容补丁的 Windows Debug 完整构建、模块/PDB/配置身份核对、首次世界加载、提交/呈现返回成功及正常退出 0，03 另核对首轮槽位交换与对象描述清理；独立 RenderDoc 后续帧图像已补入02。06已核对Wall_1的一次真实setter、缓冲交换、描述入队/消费及可见节点矩阵引用；该实验不包含鼠标拖轴、保存或GPU像素。07另在同一进程捕获修改前后两帧，核对GBuffer事件、七份实例矩阵和36条顶点输出；后者为回放数据。16随后核对单点GBuffer/深度与延迟光照的输入输出，旧坐标另查表面归属；实际阴影比较、其他表面与最终合成仍待验证。09 含原输入/运动/控制器函数及数学实现的独立条件检查；10 含原形状转换/步进/更新函数的记录适配与几何检查；12 含原骨骼/数学的独立资源桥接与 Shader 编译；13 含原类型布局/字节、独立池状态检查及五份 Shader 编译，实际 GPU 粒子待验证；14 含随附 Lua/sol2 与原桥接/反射的独立桩宿主检查，实际引擎脚本与角色运行待验证；GFX-02 核对程序产物与系统边界；11/15 含独立数学与实际资源检查；16/17 含相关 Shader 编译和条件数值检查，16另有实际捕获的单点光照证据；18 含拾取 Shader 编译及原 ID/删除/坐标函数的条件检查。原源码的MSVC19.51兼容失败及两处补丁均有记录；构建仍有运行库冲突等警告。实际输入运动、相机跟随、GPU上传、其他着色分支及后处理的分项核对、拾取/创建/删除和保存/重载尚未验收，各篇分别说明源码推导和运行证据范围。</p>
 
 <p>源码基线为 <code>f5053707fed4</code>。源码推导、独立实验与完整引擎运行分别记录，每篇说明自己的证据范围。本轮基线为固定提交加两处已保存兼容补丁；断点、日志与独立捕获已开始落地，其他系统专项继续按各篇待验证项推进，不增加正文数量。</p>
 </details>

@@ -28,7 +28,7 @@ weight: 508
 
 > **读这篇之前**：建议读过 [06 位置变化与渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}}) 和 [渲染管线基础]({{< relref "rendering/piccolo-rendering-01-scene-to-frame.md" >}})。如果 RHI 指针和实际后端函数之间的关系不清楚，可以回看 [类、继承与虚函数]({{< relref "engine-toolchain/piccolo-cpp-02-classes-inheritance-virtual-functions.md" >}})。
 >
-> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 07，依据源码建立条件推导，未构建或运行 Piccolo，未执行断点观察与 GPU 捕获。Vulkan 语义参照 Khronos 官方文档；具体调用仍以该提交采用的接口为准。
+> 源码基线：[BoomingTech/Piccolo，固定提交 `f5053707fed4`][revision]。本篇为主线 07。2026-10-26 复用 01 的带两处兼容补丁 Debug 产物，已用 CDB 与 RenderDoc 核对 Wall_1 的 GBuffer 批次、缓冲绑定、Draw 参数和回放所得顶点输出；后续又用同一捕获对到目标像素的 GBuffer 与延迟光照输出。实测单列于后文；其他 Pass、完整同步与重建分支仍按源码解释或待验证任务表述。Vulkan 语义参照 Khronos 官方文档。
 
 ## 先把一帧的几个边界分开
 
@@ -298,7 +298,79 @@ sequenceDiagram
 
 `submitRendering()` 的呈现阶段也处理 OUT_OF_DATE 和 SUBOPTIMAL，调用同一个重建更新回调。回调会更新主相机 framebuffer 和相关后处理输入等。窗口变化时，应该把“旧目标是否已失效、相关引用是否更新”作为独立问题检查，而不是继续沿 Wall_1 的 Transform 查下去。[VulkanRHI][vulkan-rhi]、[Pass 更新回调][pipeline]
 
-## 暂时不运行，也可以完成哪些阅读任务
+## 实测：把 Wall_1 的矩阵对到一条真实 Draw
+
+实体字段正确，只解决了生产端的问题。这次实验继续问：**这份矩阵是否进入了目标 Draw，顶点输出又是否体现了它？**
+
+实验复用 01 的同一份 exe、PDB 与 ini，没有新增引擎补丁或改写关卡。RenderDoc 1.43 启动编辑器后，在同一进程 PID 187472 先捕获第 6348 帧；CDB 随后在主线程、逻辑更新前调用一次真实 `setPosition`，把 Wall_1 从 `(1.94597, -0.38554, 0)` 移到 `(2.94597, -0.38554, 0)`；继续运行后再捕获第 28131 帧。
+
+两份捕获与断点是三个分开的观察点。CDB 样本的引擎 `m_frame_count=11659`，不能与 RenderDoc 帧号相混，也不能把后续捕获称为 setter 同轮的 GPU 时间线。这里验证的是受控修改后稳定保留的数据及其绘制结果，没有验证鼠标拖轴或属性面板。
+
+### 先找批次槽位，再找缓冲地址
+
+本次重新识别出的 Wall_1 为 `GObjectID=2`、`part=0`、渲染实例 ID `5`。在 `drawMeshGbuffer()` 中，通过模型矩阵指针与网格/材质引用核对，找到它所在的组：
+
+| 观察项 | 本次真实值 |
+| --- | --- |
+| 网格 / 材质资源 ID | 5 / 2 |
+| 批次与实例槽位 | 同材质、同网格的 7 个实例，Wall_1 位于槽 0 |
+| 批次容量 / 有效数量 | 64 / 7，不能把容量当成这次 Draw 的实例数 |
+| 每实例布局 | stride 80 字节，模型矩阵在实例记录内偏移 16 字节 |
+| 动态偏移 | 每帧、每批实例、关节数据分别为 `[4277600, 4314128, 0]` |
+| 实例 descriptor | set 0 / binding 1，缓冲 `ResourceId::149`，有效起始偏移 4314128，范围 5120 字节 |
+| Indexed Draw | 36 个索引 × 7 个实例；firstIndex、vertexOffset、firstInstance 均为 0 |
+
+**对象 ID 2、渲染实例 ID 5、Draw 内实例槽 0 是三种身份。** shader 本次用 `gl_InstanceIndex=0` 取目标记录，不能因为渲染实例 ID 是 5，就去读数组第 5 项。
+
+矩阵地址按“descriptor 原始偏移 + dynamic offset + 槽位 × 80 + 16”计算。RenderDoc 返回的 descriptor `byteOffset=4314128` 已包含动态偏移，读取时不要再加一次。CDB 中映射基址为 `0x22230380000`，对应七份有效记录的起点为 `0x2223079d410`；导出的 560 字节恰好是 `7×80`。5120 字节 descriptor 范围来自 `64×80`，范围剩余部分不代表有效实例。
+
+前后捕获中的这组三个动态偏移恰好与 CPU 样本相同；这不是跨帧不变的保证。上述地址、资源号、事件号与槽位都只用于关联本次实验，复现时必须重新定位。
+
+### 用捕获核对真正绑定的输入
+
+CDB 在 `vulkan_rhi.cpp:2033` 停到实际 `vkCmdDrawIndexed` 包装调用，栈为 `deferredRender → MainCameraPass::draw → drawMeshGbuffer → cmdDrawIndexedPFN`。RenderDoc 在前后两份捕获中均找到 `/BasePass/Mesh GBuffer` 下的事件 177，render pass 的 subpass 为 0，Draw 参数也是 `36×7`。
+
+该事件的 graphics pipeline 为 `ResourceId::285`，顶点/片元 shader 为 `283/284`。三个顶点缓冲为 `716/717/718`，stride 分别为 `12/24/8`；索引缓冲为 `732`，索引宽度为 2 字节。前后捕获中的这些绑定、输入顶点/索引字节及相机 PV 矩阵均一致。
+
+随后读取 set 0 / binding 1 的实际数据：目标矩阵仅 x 平移由约 `1.94597` 变为 `2.94597`，另外六个实例的矩阵未变；修改后捕获中的**全部七份矩阵**都与 CDB 映射缓冲样本逐元素相等，最大差为 0。反射结果也独立给出数组容量 64、stride 80、矩阵偏移 16，与 CPU 布局相符。实例的蒙皮标志均为 `-1`，本次走静态网格路径。
+
+### 从“绑定正确”继续检查顶点输出
+
+使用 RenderDoc 回放导出的 post-VS 数据，可以把模型矩阵与实际顶点输出联系起来。目标实例有 36 条顶点输出记录；其中第 0 条为：
+
+| 数据 | 修改前 | 修改后 |
+| --- | --- | --- |
+| 输入位置 | `(0.150000006, 5, 0)` | 相同 |
+| 世界位置 | `(6.94568348, -0.54369140, 0)` | `(7.94568348, -0.54369140, 0)` |
+| 裁剪坐标 | `(0.77646977, 6.38841248, 11.84686852, 11.94568348)` | `(0.77646959, 6.38841248, 12.84696865, 12.94568348)` |
+
+对全部 36 条记录分别计算 `world=M×position` 和 `clip=PV×world`：世界位置的最大绝对误差小于 `1e-7`，裁剪坐标小于 `1.3e-7`；前后世界坐标差均为 `(1,0,0)`，该差值检查的最大误差为 0。这说明变化已经从实例缓冲传到了该 Draw 的顶点变换结果。
+
+这里的 post-VS 是**捕获回放所得输出**，不是原始执行期间逐顶点采集的硬件轨迹，也不能证明最终像素或显示时刻。本次 post-VS 输出 stride 也恰好为 80 字节，但它与上面的实例记录是两种不同布局，不能共用字段偏移。
+
+下面是两份捕获导出的原始缩略图，用于交代场景与修改前后的画面背景；数值结论来自绑定字节和顶点核对，没有用整图差异代替逐附件、逐像素归因。
+
+| 修改前：捕获帧 6348 | 修改后：捕获帧 28131 |
+| --- | --- |
+| ![修改前的默认场景与编辑器](../../images/piccolo-gbuffer-wall-before-20261026.png) | ![Wall_1 修改位置后的场景与编辑器](../../images/piccolo-gbuffer-wall-after-20261026.png) |
+
+### 这次闭合了哪段链路
+
+本次闭合的是“渲染实体矩阵 → 可见节点引用 → 批次槽位 → 实例缓冲 → descriptor 与 Draw → 回放顶点输出”。setter 同轮的 queue submit 与 present 返回均为 `VK_SUCCESS`；这不扩大为 fence/semaphore 完整时间线、所有 Pass 或显示输出验收。
+
+还需保留两个实际限制：启动控制台出现过 `UNASSIGNED-API-Version-Violation`，捕获内 debug messages 为空不能据此宣布零验证错误；采样结束通过 CDB `q` 终止进程，本轮没有正常关窗退出证据。此前 02 的正常退出记录属于另一轮实验。
+
+完整复现步骤、归一化 CDB 日志、七份 CPU 矩阵、回放脚本、顶点 CSV 与指纹见 [GBuffer 验证材料](https://github.com/twoeggdu/twoegg-tech-stack/blob/main/examples/piccolo-debug-validation/GBUFFER-DRAW.md)。两份原始 `.rdc` 留在本机实验目录，不将大二进制放入站点仓库。
+
+### 后续实测：从顶点接到 GBuffer 与延迟光照
+
+继续回放这两帧后，已将目标槽 0 的网格三角形对到前 `(663,242)`、后 `(650,266)` 两个像素。投影使用实际 viewport `(289,60,668,448)`，经过深度与片元世界位置交叉核对；不能把 1280×720 的整个编辑器窗口都当成场景 viewport。
+
+事件 177 写出的 GBuffer A/B/C 与深度资源 `247/251/255/145`，在事件 186 的 set 1 / binding 0—3 被作为 input attachments 读取。两点在两个事件读回的四份附件字节均一致，延迟光照输出则位于 RGBA16F 图像 `259`。这一轮已从“矩阵与顶点正确”推进到“目标表面数据被光照阶段实际读取，并产生浮点场景颜色”。
+
+旧坐标在新帧仍属于 Wall_1，但已落到另一面，三角形与 UV 都变了；因此没有用同一屏幕坐标的颜色差冒充固定表面点的单变量实验。本次目标点的方向光 `N·L<0`，跳过阴影比较，颜色来自环境项与 IBL。逐点数据、FP16 存储值与调试值的差异，以及 PixelHistory 数值无效的工具边界，集中放在 [16 的表面颜色实测]({{< relref "engine-toolchain/piccolo-engine-16-material-light-shadow-surface-color.md" >}})。
+
+## 阅读任务与后续验证
 
 先在固定源码中完成下面三项，避免直接从数千行的主相机实现开始无目的单步：
 
@@ -308,7 +380,7 @@ sequenceDiagram
 
 这些任务只验证我们能否解释代码，不会产生 GPU 执行证据。
 
-后续完成构建基线后，可以按下表逐层观察。表中均是**待执行的验证设计**：
+下表仍可作为逐层观察清单。实测已覆盖目标批次、实例缓冲、Draw、回放顶点及单点 GBuffer/延迟光照；S/J 与完整同步、重建分支、实际阴影比较及后续合成仍需单独采样：
 
 | 观察位置 | 应记录什么 | 能排查的问题 |
 | --- | --- | --- |
@@ -322,7 +394,7 @@ sequenceDiagram
 
 断点会改变执行时序，也不能代替 GPU 捕获。捕获时先从本篇的批次定位方法找到对应 Draw 和实例，再检查它的实际资源；不要根据事件树中的第几条 Draw 猜它就是 Wall_1。
 
-<!-- DATA-TODO: 完成 Piccolo 构建基线后，记录固定 SHA、工具链、deferred 分支、Wall_1 的实际实例身份与批次槽位、S/J、VkResult；补对应 GBuffer draw 的输入矩阵、附件和最终合成捕获。未取得运行证据前保留条件推导措辞。 -->
+<!-- DATA-TODO: 继续记录同一提交的 frame slot S / swapchain image J、fence/semaphore 等待完成关系；验证交换链重建/错误分支。当前已补单点 GBuffer/深度与延迟光照输入输出，尚需实际阴影比较、后处理与最终合成的像素归因，不将该点推广为所有像素或Pass。 -->
 
 ## 继续阅读
 
@@ -339,11 +411,11 @@ sequenceDiagram
 
 - [改一个位置，怎样沿逻辑数据追到渲染表示]({{< relref "engine-toolchain/piccolo-engine-06-position-to-render-representation.md" >}})：回看 M 的来源，以及逻辑对象和渲染实例怎样对应。
 - [一帧怎样推进]({{< relref "engine-toolchain/piccolo-engine-03-frame-order-data-handoff-threads.md" >}})：回看交接顺序，以及为什么 CPU 调用链不能直接证明线程或 GPU 时间线。
-- [RenderDoc 阅读入口]({{< relref "rendering/renderdoc-reading-entry.md" >}})：补充图形事件、资源和附件的阅读方法；Piccolo 实际捕获仍待开展。
+- [RenderDoc 阅读入口]({{< relref "rendering/renderdoc-reading-entry.md" >}})：补充图形事件、资源和附件的阅读方法；已有目标 Draw 与单点 GBuffer/延迟光照证据，后续合成仍待分项验证。
 - [编辑器怎样修改、保存并恢复场景状态]({{< relref "engine-toolchain/piccolo-engine-08-editor-save-reload.md" >}})：把面板修改、运行缓冲、关卡写出和重载重建连起来，核对保存内容与运行身份的边界。
 - [Piccolo 阅读入口]({{< relref "reading/piccolo-engine.md" >}})：返回目录。
 
-Piccolo 源码节选版权：Copyright (c) 2022 Contributors to the Piccolo Engine，按 [MIT License][license] 提供。文中图表、分批例子与观察表为源码解释或验证设计，均非运行快照。
+Piccolo 源码节选版权：Copyright (c) 2022 Contributors to the Piccolo Engine，按 [MIT License][license] 提供。原流程图、分批例子与观察清单为源码解释或验证设计；2026-10-26 实测段另列真实断点、捕获缩略图与回放数据，不将条件分支改写为已测事实。
 
 **从渲染实体追到画面，要逐层核对绘制输入、缓冲绑定、命令记录、队列提交与呈现目标。**
 

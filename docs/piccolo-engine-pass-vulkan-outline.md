@@ -55,3 +55,25 @@
 - `git diff --check` 在本次导航和规划文件范围通过；暂存区仍为空。只修改正文、本提纲、06、两个首页、canonical plan 和根路由，共 7 个任务文件，保留其他已有改动。
 - 浏览器目视、Piccolo 构建/运行、断点和 GPU 捕获均未执行。此前本地预览访问被 URL 安全策略拒绝，保持该限制，不换通道绕过。
 - 不暂存、提交或推送；保留共享工作区的已有改动。
+
+
+## GBuffer 实际调试安排（2026-10-26）
+
+用户确认承接06，沿Wall_1在主相机GBuffer批次中的实例槽位继续验证：节点矩阵指针→ring buffer写入地址/动态偏移→Draw参数与descriptor/VB/IB→RenderDoc实际绑定字节和post-VS顶点。复用01产物及真实setPosition控制入口，重新确认对象/实例ID；同一RenderDoc进程另取前后帧，断点样本与捕获帧分别标识，不宣称同一帧或同一offset。保持场景文件不变；本轮不提交/推送，不扩大为所有Pass或同步正确性验收。
+
+## GBuffer 实测结果（2026-10-26）
+
+- 实际采样已完成，复用原Debug产物，无新增引擎补丁。EXE/PDB/ini SHA-256与首帧回执匹配，部署关卡SHA-256保持51a7d1cc2ed20fb68758c7b5663d354fae1a29acd6c7e65443918a9442c0169c。
+- 同一PID187472：修改前RenderDoc帧6348 → CDB真实setter与CPU帧计数11659 → 修改后捕获28131。TargetControl初次连接重发已有捕获，另行查询确认id0/id1；未将第一条NewCapture消息误记为新帧证据。
+- GObjectID2/part0/实例5，网格5/材质2，GBuffer批7实例且目标槽0。模型矩阵指针与节点/实体关联；实例stride80、matrixoffset16，dynamic offsets=[4277600,4314128,0]。CPU映射起点0x2223079d410，导出7×80=560字节。
+- CDB实际vkCmdDrawIndexed路径为deferredRender→MainCameraPass::draw→drawMeshGbuffer→cmdDrawIndexedPFN，36×7，三个起始参数0。RenderDoc两帧的/BasePass/Mesh GBuffer事件177/subpass0与之一致；实例descriptor Resource149，effective offset4314128/range5120。进程地址/资源号/事件号不推广为固定常量。
+- 回放两帧的pipeline285、VS283、FS284、VB716/717/718与IB732相同，输入字节和PV矩阵相同；另六份实例矩阵不变。修改后七份实例矩阵与CPU样本最大差0。目标36条post-VS world delta=(1,0,0)误差0，world等式误差9.71e-8、clip最大1.23e-7。
+- 保存脚本曾因qrenderdoc无__file__失败，改用工作目录/显式PICCOLO_GBUFFER_CPU定位语义样本后，重新执行同一回放，两份结果成功导出。检查JSON无error及所有数值，不只检查GUI进程启动退出码。
+- CDB日志保留raw pointer误用_Ptr、descriptor下标0和.dx探测错误及纠正。watch脚本纳入实际手动确认的global descriptor下标1。RenderDoc查询的读写资源分类不当作shader写入证据。
+- 本轮queue submit/present成功；捕获debug messages空不消除启动API-Version-Violation。CDB q终止，不计正常退出；不验收原生编辑器交互、GBuffer片元/附件、完整同步、重建或性能。
+- 正文07新增实测，06只增独立后续证据入口；两个阅读入口与canonical系列状态同步，根plan只改系列摘要。独立材料见[GBUFFER-DRAW](../examples/piccolo-debug-validation/GBUFFER-DRAW.md)，原始RDC与padding字节不入库。
+- 本轮本地Hugo v0.157.0退出0、ERROR为零，生成1425页/57静态文件；Piccolo的27篇正文与两个阅读入口共29页、1876处站内链接/锚点/资源检查通过，证据文件SHA-256均匹配。未作线上部署验收或浏览器像素级检查；保留共享工作区无关改动，暂存区未改，不提交/推送。
+
+## 衔接单点GBuffer与延迟光照（2026-10-26）
+
+沿同两份捕获继续验证目标像素：实际viewport投影→唯一slot0/triangle4→GBuffer A/B/C与深度原始字节→事件186的input attachments与shader输入→RGBA16F读回。具体表面量化、Lo/La/Libl及未执行阴影分支集中回填16；07只补边界衔接和入口。旧坐标改落triangle3而非必然换对象，保留此实际观察。详见[16执行记录](piccolo-engine-material-light-shadow-outline.md)和[独立材料](../examples/piccolo-debug-validation/GBUFFER-LIGHTING.md)，不将单点证据升级为全部Pass/同步/最终合成。
