@@ -228,7 +228,7 @@ flowchart TD
 
 **当前完成的是记录与关联规则的设计说明。** 尚无真实数据证明问题匹配准确、输入可以完整采集或状态推进可靠；存储、适配器与实验均未实现或执行。后续验证需要保存原始回执，逐条检查预期关系是否成立，不能用手填的 `C104` 回执当作验证结果。
 
-需要通用证据组织背景时，可以按需阅读 [Evidence Contract]({{< relref "ai-empowerment/agent-engineering-18-evidence-contract.md" >}})。普通漏交的完整流程由[第 04 篇提纲]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})继续展开。
+需要通用证据组织背景时，可以按需阅读 [Evidence Contract]({{< relref "ai-empowerment/agent-engineering-18-evidence-contract.md" >}})。普通漏交的完整流程由[第 04 篇设计推演正文]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})继续展开。
 
 **修正提交说明改变了什么，复检记录说明检查了什么；只有两者连同问题目标对得上，才能给出有范围的修正结论。**
 

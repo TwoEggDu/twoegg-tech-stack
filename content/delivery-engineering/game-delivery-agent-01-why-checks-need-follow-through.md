@@ -180,7 +180,7 @@ flowchart TD
 
 这些是待执行的验证方向。**本文完成了问题拆分和职责设计，没有完成接口核对、服务实现或效果验证。** 若固定流程已经覆盖目标任务，或者人工判断更直接，研究应允许得到“不需要模型”的结论。
 
-接下来可以沿[第 02 篇：版本、问题与修正记录]({{< relref "delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md" >}})继续，把交接关系变成可维护的记录；[第 04 篇：固定流程基线]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})与[第 05 篇：模型介入条件]({{< relref "delivery-engineering/game-delivery-agent-05-agent-decision-points.md" >}})再分别展开两条路径。第 02 篇正文已写，第 04～05 篇当前仍为提纲。
+接下来可以沿[第 02 篇：版本、问题与修正记录]({{< relref "delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md" >}})继续，把交接关系变成可维护的记录；[第 04 篇：固定流程基线]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})与[第 05 篇：模型介入条件]({{< relref "delivery-engineering/game-delivery-agent-05-agent-decision-points.md" >}})再分别展开两条路径。第 02、04 篇正文已写，第 05 篇当前仍为提纲。
 
 需要补通用机制时，可按需阅读 [State Machine 与 Workflow]({{< relref "ai-empowerment/agent-engineering-10-state-machine-workflow.md" >}})。
 

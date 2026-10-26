@@ -232,7 +232,7 @@ flowchart TD
 
 **当前完成的是适配契约设计，没有完成项目能力盘点、接口实现或接入验证。** 第 02 篇的记录模型与本文字段都需要在真实样本上修订；本轮没有配置 Jenkins、访问项目 SVN 或运行 Unity 工具，也没有模型调用与效果数据。
 
-接下来沿[第 04 篇：普通 Missing 的固定流程]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})组织正常路径，该篇目前仍为提纲；异步结果、重试与恢复由[第 07 篇提纲]({{< relref "delivery-engineering/game-delivery-agent-07-verification-and-recovery.md" >}})进一步展开。通用执行分层可按需阅读 [Tool Runtime]({{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}})与 [Harness 在交付工程里的位置]({{< relref "harness-engineering/harness-engineering-06-in-delivery-engineering.md" >}})。
+接下来沿[第 04 篇：普通 Missing 的固定流程]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})阅读普通漏交的完整设计推演，该篇正文已写、流程未运行；异步结果、重试与恢复由[第 07 篇提纲]({{< relref "delivery-engineering/game-delivery-agent-07-verification-and-recovery.md" >}})进一步展开。通用执行分层可按需阅读 [Tool Runtime]({{< relref "ai-empowerment/agent-engineering-06-tool-runtime.md" >}})与 [Harness 在交付工程里的位置]({{< relref "harness-engineering/harness-engineering-06-in-delivery-engineering.md" >}})。
 
 **工具接口要交出一次操作实际做了什么的证据，服务才能把它接成一次有依据的修正与复检。**
 
