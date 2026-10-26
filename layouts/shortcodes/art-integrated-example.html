@@ -1,0 +1,45 @@
+<figure aria-label="综合场景的制作依赖和动作时长修改示意" style="margin:1.5rem 0">
+  <div role="region" aria-label="从各工种原稿到交互及版本比较，可横向查看" tabindex="0" style="overflow-x:auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 650" role="img" aria-labelledby="integrated-example-title integrated-example-desc" style="display:block;width:100%;min-width:760px;height:auto">
+      <title id="integrated-example-title">产物沿引用汇合，修改沿依赖传播</title>
+      <desc id="integrated-example-desc">三条制作支线分别提供角色与动作、庭院空间、纹理与效果，汇合到角色模板、表现配置与场景入口。玩家从入口走向目标，经过距离与遮挡检查，在释放通知后接受目标反馈或取消重开。下方对比24帧每秒时Cast由49到73帧改为49到85帧，释放由0.5秒改为0.75秒，表现恢复由1.1秒改为1.6秒。全部内容为教学设计，不代表真实工程和运行结果。</desc>
+      <defs><marker id="integrated-example-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#728977"/></marker></defs>
+      <g font-family="system-ui, sans-serif" fill="#304b40">
+        <text x="22" y="32" font-size="20" font-weight="600">先保留制作来源，再连接组装与运行</text>
+        <g fill="#f0f4ed" stroke="#c6d0c1">
+          <rect x="22" y="52" width="250" height="91" rx="8"/>
+          <rect x="305" y="52" width="250" height="91" rx="8"/>
+          <rect x="588" y="52" width="250" height="91" rx="8"/>
+        </g>
+        <g text-anchor="middle">
+          <g font-size="17" font-weight="600"><text x="147" y="79">角色与动作</text><text x="430" y="79">庭院与空间</text><text x="713" y="79">纹理与特效</text></g>
+          <g font-size="14" fill="#526b58"><text x="147" y="103">设计稿 → 模型 / 绑定 / 动画</text><text x="430" y="103">模块 → 摆放 / 碰撞 / 光照</text><text x="713" y="103">PSD → PNG / 材质 / 粒子</text></g>
+          <g font-size="13" fill="#657b68"><text x="147" y="125">FBX、Avatar、Clip 与挂点</text><text x="430" y="125">Scene、目标与观察条件</text><text x="713" y="125">Charge / Release / Impact</text></g>
+        </g>
+        <g fill="none" stroke="#728977" stroke-width="1.7" marker-end="url(#integrated-example-arrow)">
+          <path d="M147 143V173H320V192"/><path d="M430 143V192"/><path d="M713 143V173H540V192"/>
+        </g>
+        <rect x="186" y="194" width="488" height="76" rx="8" fill="#eaf1e6" stroke="#b6c6b0"/>
+        <text x="430" y="222" text-anchor="middle" font-size="17" font-weight="600">Prefab + Controller + Profile + 场景入口</text>
+        <text x="430" y="246" text-anchor="middle" font-size="14" fill="#526b58">明确实例内引用、唯一释放通知与退出责任</text>
+        <path d="M430 270V297" fill="none" stroke="#728977" stroke-width="1.7" marker-end="url(#integrated-example-arrow)"/>
+        <g fill="#f6f3eb" stroke="#d6cebb"><rect x="22" y="300" width="244" height="70" rx="8"/><rect x="308" y="300" width="244" height="70" rx="8"/><rect x="594" y="300" width="244" height="70" rx="8"/></g>
+        <g text-anchor="middle" font-size="16" font-weight="600"><text x="144" y="328">穿门、绕行、接近目标</text><text x="430" y="328">请求 → 释放 → 复查</text><text x="716" y="328">反馈、取消、离场与重开</text></g>
+        <g text-anchor="middle" font-size="13" fill="#657b68"><text x="144" y="351">身体与镜头分别观察</text><text x="430" y="351">距离与环境遮挡只是教学规则</text><text x="716" y="351">反馈接受不等于画面或伤害验证</text></g>
+        <g fill="none" stroke="#728977" stroke-width="1.6" marker-end="url(#integrated-example-arrow)"><path d="M267 335H304"/><path d="M553 335H590"/></g>
+        <path d="M22 397H838" stroke="#d9dfd5"/>
+        <text x="22" y="430" font-size="19" font-weight="600">一次动作时长修改，会传播到整组引用</text>
+        <text x="22" y="453" font-size="13" fill="#657b68">24 fps；Speed=1；以下为名义设计时间，实际片段与画面需运行记录</text>
+        <g font-size="14"><text x="24" y="500">v001：49—73 帧</text><text x="24" y="563">v002：49—85 帧</text></g>
+        <rect x="190" y="483" width="360" height="19" rx="4" fill="#c6d5be"/>
+        <rect x="550" y="483" width="36" height="19" rx="3" fill="#e1d5b9"/>
+        <rect x="190" y="546" width="540" height="19" rx="4" fill="#c6d5be"/>
+        <rect x="730" y="546" width="36" height="19" rx="3" fill="#e1d5b9"/>
+        <g stroke="#926f43" stroke-width="2"><path d="M370 479V506"/><path d="M460 542V569"/></g>
+        <g font-size="13" fill="#526b58"><text x="190" y="525">0</text><text x="325" y="525">释放 0.5 s</text><text x="555" y="525">恢复 1.1 s</text><text x="190" y="588">0</text><text x="416" y="588">释放 0.75 s</text><text x="735" y="588">恢复 1.6 s</text></g>
+        <text x="22" y="626" font-size="14" fill="#657b68">连同 Clip、Controller、Prefab、Profile 与蓄光一起对照；尾部寿命单独判断。</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption style="font-size:.9em;color:#657b68;margin-top:.6rem">依赖与修改时间线示意。图中的文件、通知和秒数为教学方案，不是 Unity 截图或实测轨迹；窄屏可在图内横向查看。</figcaption>
+</figure>
