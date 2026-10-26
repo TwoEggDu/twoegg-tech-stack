@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "generator": "generate_fixtures.py",
+  "origin": "Original deterministic numeric patterns and mesh; no external art inputs.",
+  "status": "SOURCE_FIXTURES_ONLY",
+  "not_results": [
+    "Unity import",
+    "ASTC encoding",
+    "build size",
+    "runtime format",
+    "rendered quality",
+    "performance"
+  ],
+  "textures": [
+    {
+      "path": "base-alpha.png",
+      "width": 1024,
+      "height": 1024,
+      "source_encoding": "PNG RGBA8",
+      "png_bytes": 377281,
+      "sha256": "989eb22c2b5315fd948691c3d9812df4fde24da2e3a97119f3c150a5672f3f9a",
+      "decoded_channel_sha256": {
+        "R": "35627b7c8e790f8f7248925510e66fcee15ad4cff3ae5af256fa9920ab96ace5",
+        "G": "09b15cd0f1a16fad932dc6308bc1180dbc5f449b0cc65480387f42991cefec0d",
+        "B": "41d29cd12007e4ba581d282947ae901d95f750b1aebd9f501be2c1dc5edbbe0a",
+        "A": "06872b985f78af1ac322dd72939602f4a10b77c260a86329c88a7257794eff5c"
+      },
+      "unity_import_status": "NOT_EXECUTED",
+      "android_runtime_status": "NOT_EXECUTED"
+    },
+    {
+      "path": "base-opaque.png",
+      "width": 1024,
+      "height": 1024,
+      "source_encoding": "PNG RGBA8",
+      "png_bytes": 188637,
+      "sha256": "02f9f65cc1fc8be7234ff4576a365ab57131a895986f21d149bc287f7475b7d9",
+      "decoded_channel_sha256": {
+        "R": "35627b7c8e790f8f7248925510e66fcee15ad4cff3ae5af256fa9920ab96ace5",
+        "G": "09b15cd0f1a16fad932dc6308bc1180dbc5f449b0cc65480387f42991cefec0d",
+        "B": "41d29cd12007e4ba581d282947ae901d95f750b1aebd9f501be2c1dc5edbbe0a",
+        "A": "f5fb04aa5b882706b9309e885f19477261336ef76a150c3b4d3489dfac3953ec"
+      },
+      "unity_import_status": "NOT_EXECUTED",
+      "android_runtime_status": "NOT_EXECUTED"
+    },
+    {
+      "path": "metal-ao-smooth.png",
+      "width": 1024,
+      "height": 1024,
+      "source_encoding": "PNG RGBA8",
+      "png_bytes": 205330,
+      "sha256": "15a2a16dbb4087b9745a93d2ced85836c10c30b6f58a6aa3cb729645c0fd4904",
+      "decoded_channel_sha256": {
+        "R": "06872b985f78af1ac322dd72939602f4a10b77c260a86329c88a7257794eff5c",
+        "G": "758ccd4e5d6372f76bc5c9679ede42413aa311c4734d34c2d8696e46f8b7bf18",
+        "B": "89dee2b7aab063e726f332b638e6e1863c994fca55d2174eda2adf6d072bd348",
+        "A": "8975189b246a4f1dea23682d29cebbe579691123e5aa65a3e5e621be3cf1fc76"
+      },
+      "unity_import_status": "NOT_EXECUTED",
+      "android_runtime_status": "NOT_EXECUTED"
+    }
+  ],
+  "model": {
+    "path": "uv-board.obj",
+    "source_vertices": 4,
+    "source_triangles": 2,
+    "sha256": "1438c03f08da5e481330cbf68eec6d51aae66590ecd676b44fd08ac01e98bbfa",
+    "unity_import_status": "NOT_EXECUTED"
+  }
+}

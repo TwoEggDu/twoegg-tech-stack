@@ -273,6 +273,14 @@ Arm 旧指南中的“绿色通道通常更精细”“增加 Alpha 改变位深
 
 本轮静态、示例与生成页面检查按各自范围通过；Hugo 完整本地构建退出码为 0、无 ERROR。详细范围及未执行项保留在上述第 10 节，不据此声称真实资产、动态覆盖或设备收益已经验证。
 
+## 16. 纹理与通道最小对照准备
+
+按用户确认顺序先准备 V-T / V-C，执行设计见[纹理与通道工作单](mobile-texture-channel-validation-workorder-2026-10-26.md)，阶段状态见[跨栏目盘点第 12 节](art-asset-cost-coverage-and-strengthening-audit-2026-10-26.md#12-v-t--v-c-最小对照准备)。三块分别处理尺寸、目标格式、Alpha 的实际消费者；原有几何/法杖例子仍未取得运行材料，不用诊断板替其补写结果。
+
+当前已取得本机 2022.3.62f3 / URP 14.0.12 和 Android 真机的只读环境信息，准备本仓原创诊断 PNG/OBJ 与来源清单。未启动本实验 Unity 导入、生成场景/材质、构建/安装 APK 或取得设备画面；未做压缩后质量、驻留或 GPU 时间对照。此阶段不新增文章，不改既有正文或提交推送。
+
+源文件独立解码、通道/文件摘要、重复生成与文档检查通过；Hugo 完整本地构建退出码为 0、无 ERROR。实际验证状态保持待执行，准备阶段结果详见上述工作单及跨栏目盘点第 12 节。
+
 [samsung]: https://developer.samsung.com/galaxy-gamedev/blog/en/2021/05/19/best-practices-for-mobile-game-developers-and-artists
 [geometry]: https://learn.unity.com/course/3d-art-optimization-for-mobile-gaming-5474/unit/geometry-7415/tutorial/triangle-and-polygon-usage-8140?version=2019.4
 [lod]: https://learn.unity.com/tutorial/level-of-detail-3653
