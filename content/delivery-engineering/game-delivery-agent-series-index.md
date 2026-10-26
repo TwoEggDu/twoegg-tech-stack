@@ -2,7 +2,7 @@
 title: "游戏交付 Agent 研究：从提交检查到修正复检"
 slug: "game-delivery-agent-series-index"
 date: "2026-10-26"
-description: "以 Missing 为贯穿案例，研究定位、补交与复检怎样形成闭环，以及何时值得引入模型。第 01～04 篇正文已写，其余 4 篇为提纲；新增方案未实现，实验未执行。"
+description: "以 Missing 为贯穿案例，研究定位、补交与复检怎样形成闭环，以及何时值得引入模型。第 01～05 篇正文已写，其余 3 篇为提纲；新增方案未实现，实验未执行。"
 draft: false
 featured: false
 weight: 3900
@@ -17,9 +17,9 @@ series_entry: true
 series_audience: ["Unity 与工具链工程师", "构建检查维护者", "QA 与技术负责人"]
 series_level: "工程研究"
 series_best_for: "已有提交检查和交付工具，希望组织定位、修正与复检，并判断模型能在哪些例外中提供帮助。"
-series_summary: "从 Missing 的固定处理流程出发，研究工具接口、版本与状态、逐轮模型判断及对照验证。第 01～04 篇正文已写，其余 4 篇为提纲；实验未执行。"
+series_summary: "从 Missing 的固定处理流程出发，研究工具接口、版本与状态、逐轮模型判断及对照验证。第 01～05 篇正文已写，其余 3 篇为提纲；实验未执行。"
 series_intro: "提交检查已经能发现问题，修正怎样进入可追踪的复检？本系列沿 Missing 研究现有工具、固定流程、人和模型的分工。"
-series_reading_hint: "先读 01～04 正文，沿分工、记录和工具契约进入固定流程推演；再按需读 05～06 的模型调查、07～08 的可靠性与验证提纲；后续 4 篇正文待写。"
+series_reading_hint: "先读 01～04 正文建立固定流程，再读 05 的模型介入与调查任务设计；06～08 的逐轮调查、可靠性和验证目前为提纲，后续 3 篇正文待写。"
 research_stage: "design-analysis"
 validation_status: "not-run"
 type: "reading-series"
@@ -28,7 +28,7 @@ reading_title: "游戏交付 Agent 研究"
 reading_lead: "从一次 Missing，研究问题怎样真正处理完。"
 reading_intro: "把定位、修正与复检接起来，再判断哪里值得引入模型。以可改造的 Jenkins、SVN 与 Unity 工具为设计前提，用固定流程和例外调查两条路径展开。"
 reading_route: ["固定流程基线", "例外调查与模型判断", "修正复检与对照验证"]
-reading_status: "第 01～04 篇正文已写，其余 4 篇为提纲；新增服务与适配器未实现，本系列实验未执行。"
+reading_status: "第 01～05 篇正文已写，其余 3 篇为提纲；新增服务与适配器未实现，本系列实验未执行。"
 reading_number_by_position: true
 reading_groups:
   - title: "先让固定流程成立"
@@ -49,9 +49,9 @@ reading_groups:
 
 | 维度 | 当前状态 |
 | --- | --- |
-| 内容进度 | 第 01～04 篇正文已写；第 05～08 篇为章节提纲，正文待写 |
+| 内容进度 | 第 01～05 篇正文已写；第 06～08 篇为章节提纲，正文待写 |
 | 历史材料 | 已有资源检查、MissingFind 与依赖提交的实践文章可供阅读；现有工具源码、接口和当前运行状态尚未在本系列核对 |
-| 设计研究 | 第 01～04 篇已展开职责分工、记录关联、拟议工具契约与普通漏交的固定流程推演；项目接口待核对，记录、适配器与流程未实现，模型参与尚待研究 |
+| 设计研究 | 第 01～05 篇已展开固定流程及候选模型调查的进入、任务包与退出条件；项目接口待核对，服务与策略未实现，工程和模型实验未执行 |
 | 新增工程实现 | 问题处理服务、适配器与自动状态管理尚未实现 |
 | 工具与模型实验 | 本系列均未执行；没有真实模型调用轨迹、对照成绩或生产收益结论 |
 
@@ -65,7 +65,7 @@ reading_groups:
 
 ## 系列目录 {#chapters}
 
-第 01～04 篇为正文，依次解释职责分工、记录关联、工具契约与普通漏交的完整流程推演。第 05～08 篇仍为提纲，列出核心问题、计划结构与待补证据；正文完成度与实验完成度分别标记。
+第 01～05 篇为正文，从固定流程设计推进到模型介入条件与调查任务。第 06～08 篇仍为提纲，列出核心问题、计划结构与待补证据；正文完成度与实验完成度分别标记。
 
 {{< reading-series-chapters >}}
 
@@ -81,7 +81,7 @@ reading_groups:
 ## 按问题选择阅读路径
 
 - **想先把处理流程组织起来**：先读 [01：分工]({{< relref "delivery-engineering/game-delivery-agent-01-why-checks-need-follow-through.md" >}})、[02：记录关联]({{< relref "delivery-engineering/game-delivery-agent-02-check-finding-repair-records.md" >}})与 [03：工具契约]({{< relref "delivery-engineering/game-delivery-agent-03-existing-tool-contracts.md" >}})正文，再读 [04：普通漏交的完整推演]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})。
-- **想知道模型究竟判断什么**：先看 [04：固定流程基线]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})，再进入 05 → 06。
+- **想知道模型究竟判断什么**：先看 [04：固定流程基线]({{< relref "delivery-engineering/game-delivery-agent-04-missing-workflow-baseline.md" >}})，再读 [05：候选调查与退出条件]({{< relref "delivery-engineering/game-delivery-agent-05-agent-decision-points.md" >}})正文，最后看第 06 篇提纲。
 - **负责工具接入与可靠性**：重点看 02 → 03 → 07。
 - **想判断是否值得投入**：沿 01 → 04 → 06 → 08 比较研究方案；当前尚无效果结论。
 
