@@ -2,7 +2,7 @@
 title: "IL2CPP 实现分析｜GC 集成：BoehmGC 的接入层、write barrier 与 finalization"
 slug: "il2cpp-gc-integration-boehm-wbarrier-finalization"
 date: "2026-04-14"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 description: "区分 IL2CPP 的对象分配、引用保留、增量 GC 与资源释放，并用 Player 观察方案定位内存增长。"
 weight: 55
 featured: false
@@ -146,7 +146,7 @@ handle/stack还各运行一个匹配PDB的CDB进程，验证三次Full入口位�
 
 复现入口为 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 中的 `tools/gc_callback_lab.py`，依次执行 `build --editor <Unity.exe路径>`、`run`、`trace --cdb <x64-cdb.exe路径>`、`verify`。本轮固定提交为 [449a994](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/449a9949122e791010624f4c799495d493cca9f4)，包含[GC 回调样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/449a9949122e791010624f4c799495d493cca9f4/projects/gc-callbacks)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/results.json)。产物和原始日志在忽略目录 `artifacts/gc-callbacks/`；旧 `b915632` 仍只标识前一轮原生回调实验。
 
-<!-- DATA-TODO: 持续跨片段引用修改和独立性能采样仍待补；快照与实际根区间见下一节。 -->
+<!-- DATA-TODO: 独立性能采样仍待补；快照、根区间和跨片段修改见后续实验。 -->
 
 ## 已完成：对象快照与解释器活跃根区间
 
@@ -170,7 +170,42 @@ stack组三个进程各取回调前、活跃、退出后三份快照，均无热
 
 复现入口为实验仓库的 `tools/gc_roots_lab.py`（build/run/inspect/trace/verify）及 `tools/check_snapshots_unity.py`，本轮固定提交为 [4861bed](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/4861bedd35f9785038a15d34c8de38f261746867)，包含[GC根区间样本](https://github.com/TwoEggDu/hybridclr-runtime-lab/tree/4861bedd35f9785038a15d34c8de38f261746867/projects/gc-roots)、[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)及[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/results.json)；`449a994` 继续作为前轮GC保留／压力基线。线程生命周期对照见 [线程接入篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})，模型区分见 [GC桥接篇]({{< relref "engine-toolchain/hybridclr-bridge-il2cpp-gc-model-boehm-root-write-barrier.md" >}})。
 
-<!-- DATA-TODO: 后续补完整动态根路径归因、持续跨增量片段引用修改、长期与性能采样；当前快照和区间记录不能替代。 -->
+<!-- DATA-TODO: 后续补完整动态根路径归因、长期与性能采样；跨片段修改见下一节。 -->
+
+## 已完成：同一增量周期内持续修改引用
+
+前一轮压力实验的128次增量请求均返回false，不能回答“收集尚未完成时继续改引用，会走到哪条写入协议”。这轮把**周期身份、引用写入、收集结果**分别取证，避免用对象仍存活代替写屏障证据。
+
+2026-10-25，独立 `projects/incremental-barriers`，build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb`。Editor、HybridCLR v9组合、Windows x64 Development／C++ Debug／Minimal stripping沿用前轮；**GCMode改为Manual**控制自动调度。持有者及其两个64槽数组在基线Full之前建立，之后分配25万个节点作保留负载；12个候选由短寿命creator线程创建，只留下短弱引用。常驻托管worker提前登记并预热，收集开始后不再新建writer线程。
+
+主线程连续12帧各请求一次 `CollectIncremental(1000)`，确认返回true和标记完成数未改变后，放行worker执行一次写入，等待writer返回，再进入下一帧。三种写入轮流进行，各4次：字段 `Field=value`、引用数组元素、含两个引用的结构体同时赋给 `Box.Pair` 和 `Pairs[seq]`。AOT与hot使用同一对象模型和写入序列，分别调用生成代码与解释方法。
+
+12次修改结束后，紧凑推进现有原生collect-a-little到第一次没有剩余工作，在worker Join之前校验对象图和最终标记。这样将线程退出可能推进的后续收集与目标周期分开。1000ns是请求预算，不是实测耗时或精确的调度承诺。[Unity API说明](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Scripting.GarbageCollector.CollectIncremental.html)中的true表示返回时仍有工作；本实验还独立核对周期身份。
+
+| 验收项 | AOT：3个普通Player＋3个CDB Player | hot：3个普通Player＋3个CDB Player |
+|---|---|---|
+| 连续12帧的修改前状态 | more均true，MARK_END完成数保持1 | 相同 |
+| CDB中的原生GC编号 | 修改窗口保持4，结束为5 | 相同 |
+| 写入前Box／当前候选标记位 | 1／0 | 1／0 |
+| writer末尾marker4（返回前）的候选标记位 | 0 | 0 |
+| 本周期结束、Join前12目标标记位 | 全部1 | 全部1 |
+| 对象图结果 | writes12、checksum12078、alive12 | 相同 |
+| 目标SetWriteBarrier重载入口命中 | 每个调试进程16次 | 每个调试进程24次 |
+| 目标槽所在页后续重扫 | 每个调试进程3页 | 相同 |
+
+12个进程均退出0。两组加载的HotUpdate字节相同，HotUpdate未进入AOT。实际DLL解析出 `stfld Field`、`stelem.ref`、`stfld Pair`、`stelem WbPair`；解析token后两份Write的指令序列仅异常诊断字符串不同。原生栈分别关联到AOT writer／codegen helper和 `Interpreter::Execute`。**16／24是重载入口命中数**，含嵌套调用，不是不同写入次数，也不能用来推算性能差。
+
+CDB只读解码当前产物的块头标记与dirty bitmap，先校验PDB布局和返回指令偏移，不调用目标函数或添加持有句柄。每个实际目标存储区域都关联到屏障入口和dirty前／后记录，after位均为1；每个进程只有2次新观察到0→1，其他页此前已dirty。随后对应页的扫描栈包含 `GC_push_next_marked_dirty`。对象图还检查Id、32字节payload、64槽占用、结构体左右引用／Tag、最新Field身份与Next为空，防止旧对象内容正确掩盖丢更新。
+
+周期编号有一个版本细节：这套运行时的profiler START／END并不覆盖每次增量周期，MARK_START也可能在同一周期多次发生。本轮使用启动前MARK_END基线、12次写入前后完成数不变、结束恰好增加1，并与原生 `GC_gc_no` 的4→5互证。没有把反复开始的新周期拼成“持续跨片段”。
+
+worker每次返回后擦除一段自有native栈，并在自有marker处搜索当前RSP到栈基址的8字节对齐精确目标地址，12次均未找到；hot组三个调试进程各6次根查询入口的top／frames均0，其中1次在基线、2次在目标周期收尾、3次在周期后及退出清理；注册与注销所有者匹配。它减少了活跃解释帧和当前worker栈残留的干扰，**不排除寄存器、内部指针、其他目标或其他线程的根**。本轮也未重新采集根回调真实返回缓冲。
+
+这些证据支持本样本的持续修改、屏障／脏页／重扫路径和数据完整性。**Box已标记不等于其字段此前已经扫描完成**；没有禁用屏障的反事实，也没有唯一根归因，不能宣称存活只由写屏障保证或所有解释指令均已验证。解除持有后三轮Full内弱引用均失效仍只是本次观察。串行托管worker的时序与线程选择见 [线程篇]({{< relref "engine-toolchain/hybridclr-thread-attachment-gc-and-runtime-state.md" >}})。
+
+复现入口为 [hybridclr-runtime-lab](https://github.com/TwoEggDu/hybridclr-runtime-lab) 的 `tools/incremental_lab.py`，依次build／run／trace／verify；本地记录为 `evidence/2026-10-25-incremental-barriers/README.md` 和同目录results.json、自有事件与CIL输出。本轮固定提交为 [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a)，包含[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/results.json)；旧4861bed只对应前轮根区间实验。原始PDB、日志和产物保留在忽略目录。
+
+<!-- DATA-TODO: 写屏障反事实、完整指令路径、多线程并发修改、长期压力及独立性能和其他平台仍待补。 -->
 
 ## 接到 HybridCLR
 

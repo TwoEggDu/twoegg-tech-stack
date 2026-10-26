@@ -8,7 +8,7 @@ featured: false
 tags: ["Unity", "IL2CPP", "HybridCLR", "Threading", "GC"]
 series: "HybridCLR"
 hybridclr_version: "runtime v9.0.1 (83929787) / package v9.0.3"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 ---
 
 同一个热更方法，从 Unity 主线程调用正常，换成 SDK 的工作线程回调后却失败。给业务数据加了锁，问题仍然存在；补上线程 attach 后，又发现访问场景对象不对。这里至少跨越了四种不同的边界。
@@ -386,7 +386,7 @@ build_id `70a8a176-4eee-43b2-8aa8-a75754ac0bfb` 中，AOT／hot各3个普通Play
 
 每个hot调试进程有一组归属该worker的动态根注册／注销，6次GC查询入口top0／frames0：1次在基线、2次在目标周期收尾、3次在周期后及退出清理；不能把退出清理查询解释为仍在等待下一次任务。目标周期中的两次查询发生在writer返回后的等待阶段。12次scrub后，当前活跃worker栈内均未找到当前候选的对齐精确指针；这不排除寄存器、内部指针、其他目标和其他线程。这里只采了根回调入口状态，真实返回缓冲的独立证据仍属于前轮gc-roots实验。
 
-复现使用实验仓库 `tools/incremental_lab.py`，记录为 `evidence/2026-10-25-incremental-barriers/`；当前尚未提交，本轮不借用旧4861bed充当源码版本。固定依赖、Manual控制和单worker串行握手是结论成立的条件，原生回调竞争、异常退出与其他平台继续单独验证。
+复现使用实验仓库 `tools/incremental_lab.py`，记录为 `evidence/2026-10-25-incremental-barriers/`；本轮固定提交为 [64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a)，见[实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md)与[结构化结果](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/results.json)；旧4861bed仅标识前轮根区间实验。固定依赖、Manual控制和单worker串行握手是结论成立的条件，原生回调竞争、异常退出与其他平台继续单独验证。
 
 ## Unity 主线程与 Web 平台的边界
 

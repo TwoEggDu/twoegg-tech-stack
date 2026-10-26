@@ -1,7 +1,7 @@
 ---
 title: "HybridCLR 桥接篇｜IL2CPP GC 模型：BoehmGC、GC root、write barrier 与解释器的关系"
 date: "2026-04-13"
-lastmod: "2026-10-25"
+lastmod: "2026-10-26"
 description: "沿固定 v9.0.1 源码理解解释器活跃栈的动态根、引用写屏障，以及托管对象与 metadata 的不同生命周期。"
 weight: 62
 featured: false
@@ -133,7 +133,7 @@ GC 只回答其对象体系中的可达性与回收问题，不会自动证明 n
 | 原生回调活跃时引用是否可用？ | Normal GCHandle 保留 Context；无 Context 句柄的活跃回调局部 Node 跨三次收集后仍可校验。压力组每轮 1024 次回调、8 MiB payload 分配，数据检查通过 | [回调 GC `449a994`](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/449a9949122e791010624f4c799495d493cca9f4/evidence/2026-10-25-gc-callbacks/README.md)；128 次增量请求均返回 false，未展示持续跨片段标记过程 |
 | 已分配容量与活跃根区间是否相同？ | 活跃回调实际返回 36 槽／288 字节，包含目标引用；空闲线程仍有 1 MiB backing 栈，但返回 null／0 | [根区间 `4861bed`](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/4861bedd35f9785038a15d34c8de38f261746867/evidence/2026-10-25-gc-roots/README.md)；不证明唯一根来源或标记器逐字遍历 |
 | 对象快照能否直接显示解释器动态根？ | 21 份快照可见强句柄 → Context → 数组路径；ManagedStacks 均为 0。官方读取器交叉校验 189 组缓冲 | 同上；对象引用路径、原生分配的 root 字段和动态根区间必须分别解释 |
-| 同一增量周期中修改引用会走哪些路径？ | 连续 12 帧 more=True 时写字段、数组与含引用结构体；关联目标槽屏障、dirty 位与后续页重扫，最终图校验通过 | 本地 `evidence/2026-10-25-incremental-barriers/`，尚无固定提交；详见下一段 |
+| 同一增量周期中修改引用会走哪些路径？ | 连续 12 帧 more=True 时写字段、数组与含引用结构体；关联目标槽屏障、dirty 位与后续页重扫，最终图校验通过 | [实验记录](https://github.com/TwoEggDu/hybridclr-runtime-lab/blob/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a/evidence/2026-10-25-incremental-barriers/README.md)（[64938d5](https://github.com/TwoEggDu/hybridclr-runtime-lab/commit/64938d5c5040fbc2f63274ee4efd8ab6b3c9d07a)）；详见下一段 |
 
 最后一轮 build_id 为 `70a8a176-4eee-43b2-8aa8-a75754ac0bfb`。AOT／hot 各三个普通 Player 与三个 CDB Player，目标周期 GC 编号从 4 到 5，checksum 均为 12078。Box 写入前有标记，候选在 writer 返回前仍未标记；周期完成、Join 之前 12 个目标均有标记。每进程只观察到两次 dirty 从 0 变 1，AOT 16／hot 24 是屏障重载入口命中数，不能换算为写入次数或性能比例。
 
