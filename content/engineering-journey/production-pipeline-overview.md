@@ -36,7 +36,7 @@ tags:
 
 | 篇目 | 回答的问题 |
 | --- | --- |
-| [01｜本地资源完整，为什么手机包里仍然缺内容？]({{< relref "engineering-journey/production-resource-completeness.md" >}}) | 从漏提交出发，展开 Missing 检查、对象定位、依赖提交与使用反馈。 |
+| [01｜本地资源完整，为什么手机包里仍然缺内容？]({{< relref "engineering-journey/production-resource-completeness.md" >}}) | 从美术现场对照出发，逐步补充定位、仲裁机、提交后检查与依赖提交，将集中排查提前到日常生产。 |
 | [02｜配置表导出了，为什么资源与双端仍然对不上？]({{< relref "engineering-journey/production-config-consistency.md" >}}) | 梳理配置含义、资源引用、生成物与双端消费之间的配套关系。 |
 | [03｜构建成功了，为什么设备上仍然跑不起来？]({{< relref "engineering-journey/production-build-runtime.md" >}}) | 从 AOT 元数据漏包的定位与修复，展开受控输入、失败条件与流程沉淀。 |
 | [04｜多个版本同时开发，怎样避免漏合修复和发错内容？]({{< relref "engineering-journey/production-parallel-versions.md" >}}) | 将多分支、多 Job 的包与测试范围对应起来，结合单号检查、SVN 日志核对和正式包复测控制交付内容。 |

@@ -125,7 +125,7 @@
 |------|----------------|------|------|
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
 | 版本管理 | [docs/version-management-series-plan.md](./docs/version-management-series-plan.md) | 首篇已有正文，其余 9 篇为提纲，实验未执行 | 工程与交付下的独立专栏；共同模型 → Git / SVN / P4 → 提交、合并、资源、审查与构建基线；发布节奏与冻结仍归交付 V04 |
-| FDE 方法与实践 | [docs/fde-methods-series-plan.md](./docs/fde-methods-series-plan.md) | 基础篇与方法篇已有正文，已完成精简与热点判断推演修订 | 归入工程与交付，按基础理论 → 交付方法 → 真实案例推进；Missing 案例保留原归属，后续补充 |
+| FDE 方法与实践 | [docs/fde-methods-series-plan.md](./docs/fde-methods-series-plan.md) | 基础与方法篇已发布；Missing 案例已按现场反馈完成修订 | 归入工程与交付，按基础理论 → 交付方法 → 真实案例阅读；案例保留生产管线实践归属，由专栏链接接入 |
 | 游戏交付 Agent 研究 | [docs/game-delivery-agent-series-plan.md](./docs/game-delivery-agent-series-plan.md) | 5 篇正文、3 篇提纲 | 已接入工程与交付入口；固定流程与候选模型调查设计；项目接口待核对，服务和策略未实现，实验未执行；前 3 篇线上已核验，第 04 篇线上待核验，本轮第 05 篇及同步的线上部署待核验 |
 | 游戏美术生产与客户端协作 | [docs/game-art-production-collaboration-series-plan.md](./docs/game-art-production-collaboration-series-plan.md) | 12 篇正文已成稿，软件实操与素材待补 | 沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端接入组织，综合示例与联合验收收束 |
 | Unity 游戏更新与发布 | [docs/unity-game-update-release-series-plan.md](./docs/unity-game-update-release-series-plan.md) | 首页与七篇提纲已建立，正文待写 | 从首次整包、线上修复与内容更新串联版本绑定、构建、强更热更和发布回退；由 YooAsset 首页交叉进入 |
@@ -138,7 +138,7 @@
 | 工程判断与组织领导力 | [docs/engineering-judgment-series-plan.md](./docs/engineering-judgment-series-plan.md) | 已拆出 | 从个人判断走向组织结果：权责、协作、反馈与能力沉淀 |
 | SEO / AI / 个人品牌执行 | [docs/site-seo-ai-personal-brand-execution-plan.md](./docs/site-seo-ai-personal-brand-execution-plan.md) | 已拆出 | 站点增长执行层 |
 | 角色化选题规划 | [docs/role-based-topic-planning-2026-03.md](./docs/role-based-topic-planning-2026-03.md) | 已拆出 | 角色视角的专题规划 |
-| 工程实践与演进 | [docs/engineering-journey-column-plan.md](./docs/engineering-journey-column-plan.md) | 生产管线实践正文与后续提纲已建立 | 维护真实经历、本人职责与案例证据；FDE 理论与方法归独立系列，Missing 案例后续补充并保持原归属 |
+| 工程实践与演进 | [docs/engineering-journey-column-plan.md](./docs/engineering-journey-column-plan.md) | 生产管线实践正文与后续提纲已建立；Missing 案例已按现场反馈完成修订 | 维护真实经历、本人职责与案例证据；FDE 理论与方法归独立系列，Missing 案例保持原归属并供其交叉阅读 |
 
 ---
 
