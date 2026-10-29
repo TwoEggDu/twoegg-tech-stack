@@ -1,0 +1,95 @@
+{
+    "passed":  true,
+    "failure":  null,
+    "recorded_at_utc":  "2026-10-29T10:03:37.5784750Z",
+    "git_version":  "git version 2.53.0.windows.2",
+    "powershell_version":  "5.1.19041.6456",
+    "os_version":  "Microsoft Windows NT 10.0.19045.0",
+    "scope":  "Local bare remote, two worktrees, text file only. No network, hosting platform or engine validation.",
+    "config_isolation":  "Empty process-local global config, no system config, empty init template; only lab repository config is written.",
+    "baseline_commit":  "516755fb6f3e47f72f8be0680011b193a6be0971",
+    "candidate_commit":  "4948ff5d011831377760eda670e4b8b8a794b377",
+    "snapshots":  {
+                      "baseline_receiver":  {
+                                                "worktree":  "damage=100\ncharge=off",
+                                                "index":  "damage=100\ncharge=off",
+                                                "head":  "damage=100\ncharge=off",
+                                                "status":  "",
+                                                "head_commit":  "516755fb6f3e47f72f8be0680011b193a6be0971",
+                                                "remote_tracking":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+                                            },
+                      "staged_then_edited":  {
+                                                 "worktree":  "damage=80\ncharge=on",
+                                                 "index":  "damage=80\ncharge=off",
+                                                 "head":  "damage=100\ncharge=off",
+                                                 "status":  "MM skill.rules",
+                                                 "head_commit":  "516755fb6f3e47f72f8be0680011b193a6be0971",
+                                                 "remote_tracking":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+                                             },
+                      "committed_not_pushed":  {
+                                                   "worktree":  "damage=80\ncharge=on",
+                                                   "index":  "damage=80\ncharge=off",
+                                                   "head":  "damage=80\ncharge=off",
+                                                   "status":  " M skill.rules",
+                                                   "head_commit":  "4948ff5d011831377760eda670e4b8b8a794b377",
+                                                   "remote_tracking":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+                                               },
+                      "receiver_before_fetch":  {
+                                                    "worktree":  "damage=100\ncharge=off",
+                                                    "index":  "damage=100\ncharge=off",
+                                                    "head":  "damage=100\ncharge=off",
+                                                    "status":  "",
+                                                    "head_commit":  "516755fb6f3e47f72f8be0680011b193a6be0971",
+                                                    "remote_tracking":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+                                                },
+                      "receiver_after_fetch":  {
+                                                   "worktree":  "damage=100\ncharge=off",
+                                                   "index":  "damage=100\ncharge=off",
+                                                   "head":  "damage=100\ncharge=off",
+                                                   "status":  "",
+                                                   "head_commit":  "516755fb6f3e47f72f8be0680011b193a6be0971",
+                                                   "remote_tracking":  "4948ff5d011831377760eda670e4b8b8a794b377"
+                                               },
+                      "receiver_at_candidate":  {
+                                                    "worktree":  "damage=80\ncharge=off",
+                                                    "index":  "damage=80\ncharge=off",
+                                                    "head":  "damage=80\ncharge=off",
+                                                    "status":  "",
+                                                    "head_commit":  "4948ff5d011831377760eda670e4b8b8a794b377",
+                                                    "remote_tracking":  "4948ff5d011831377760eda670e4b8b8a794b377"
+                                                },
+                      "developer_final":  {
+                                              "worktree":  "damage=80\ncharge=on",
+                                              "index":  "damage=80\ncharge=off",
+                                              "head":  "damage=80\ncharge=off",
+                                              "status":  " M skill.rules",
+                                              "head_commit":  "4948ff5d011831377760eda670e4b8b8a794b377",
+                                              "remote_tracking":  "4948ff5d011831377760eda670e4b8b8a794b377"
+                                          }
+                  },
+    "passed_checks":  [
+                          "receiver starts clean",
+                          "receiver starts at baseline content",
+                          "both index and worktree differ from their comparison bases",
+                          "index retains staged damage change without charge change",
+                          "HEAD retains baseline before commit",
+                          "worktree includes later charge edit",
+                          "unstaged diff isolates the later charge edit",
+                          "cached diff isolates the staged damage edit",
+                          "commit leaves the unstaged charge edit in place",
+                          "commit records staged content only",
+                          "remote remains at baseline before push",
+                          "developer remote-tracking reference still records baseline before push",
+                          "remote points to candidate after push",
+                          "push does not move receiver HEAD",
+                          "push does not rewrite receiver files",
+                          "receiver remote-tracking reference remains stale before fetch",
+                          "fetch refreshes receiver origin/main",
+                          "fetch leaves receiver HEAD unchanged",
+                          "fetch leaves receiver files unchanged",
+                          "receiver is clean at the selected candidate",
+                          "receiver checks out the exact candidate commit",
+                          "receiver gets damage fix without unfinished charge edit",
+                          "developer retains unfinished charge edit after sharing"
+                      ]
+}

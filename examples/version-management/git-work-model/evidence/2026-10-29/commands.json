@@ -1,0 +1,606 @@
+[
+    {
+        "directory":  "[LAB]",
+        "arguments":  [
+                          "--version"
+                      ],
+        "exit_code":  0,
+        "output":  "git version 2.53.0.windows.2"
+    },
+    {
+        "directory":  "[LAB]",
+        "arguments":  [
+                          "init",
+                          "--bare",
+                          "--initial-branch=main",
+                          "--template=[LAB]\\empty-template",
+                          "shared.git"
+                      ],
+        "exit_code":  0,
+        "output":  "Initialized empty Git repository in [LAB]/shared.git/"
+    },
+    {
+        "directory":  "[LAB]",
+        "arguments":  [
+                          "init",
+                          "--initial-branch=main",
+                          "--template=[LAB]\\empty-template",
+                          "developer"
+                      ],
+        "exit_code":  0,
+        "output":  "Initialized empty Git repository in [LAB]/developer/.git/"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "user.name",
+                          "Version Management Lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "user.email",
+                          "lab@example.invalid"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "core.autocrlf",
+                          "false"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "core.eol",
+                          "lf"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "commit.gpgsign",
+                          "false"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "remote",
+                          "add",
+                          "origin",
+                          "[LAB]\\shared.git"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]/developer/skill.rules",
+        "content":  "damage=100\ncharge=off\n"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "add",
+                          "--",
+                          "skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "commit",
+                          "-m",
+                          "Baseline"
+                      ],
+        "exit_code":  0,
+        "output":  "[main (root-commit) 516755f] Baseline\n 1 file changed, 2 insertions(+)\n create mode 100644 skill.rules"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "push",
+                          "-u",
+                          "origin",
+                          "main"
+                      ],
+        "exit_code":  0,
+        "output":  "To [LAB]\\shared.git\n * [new branch]      main -\u003e main\nbranch \u0027main\u0027 set up to track \u0027origin/main\u0027."
+    },
+    {
+        "directory":  "[LAB]",
+        "arguments":  [
+                          "clone",
+                          "--no-hardlinks",
+                          "--template=[LAB]\\empty-template",
+                          "shared.git",
+                          "receiver"
+                      ],
+        "exit_code":  0,
+        "output":  "Cloning into \u0027receiver\u0027...\ndone."
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "core.autocrlf",
+                          "false"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "config",
+                          "--local",
+                          "core.eol",
+                          "lf"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]/developer/skill.rules",
+        "content":  "damage=80\ncharge=off\n"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "add",
+                          "--",
+                          "skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]/developer/skill.rules",
+        "content":  "damage=80\ncharge=on\n"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  "MM skill.rules"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "diff",
+                          "--",
+                          "skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "diff --git a/skill.rules b/skill.rules\nindex 36f42aa..32cda71 100644\n--- a/skill.rules\n+++ b/skill.rules\n@@ -1,2 +1,2 @@\n damage=80\n-charge=off\n+charge=on"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "diff",
+                          "--cached",
+                          "--",
+                          "skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "diff --git a/skill.rules b/skill.rules\nindex 363f3d4..36f42aa 100644\n--- a/skill.rules\n+++ b/skill.rules\n@@ -1,2 +1,2 @@\n-damage=100\n+damage=80\n charge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "commit",
+                          "-m",
+                          "Reduce damage to 80"
+                      ],
+        "exit_code":  0,
+        "output":  "[main 4948ff5] Reduce damage to 80\n 1 file changed, 1 insertion(+), 1 deletion(-)"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  " M skill.rules"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "ls-remote",
+                          "--heads",
+                          "origin",
+                          "refs/heads/main"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971\trefs/heads/main"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "push",
+                          "origin",
+                          "main"
+                      ],
+        "exit_code":  0,
+        "output":  "To [LAB]\\shared.git\n   516755f..4948ff5  main -\u003e main"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "ls-remote",
+                          "--heads",
+                          "origin",
+                          "refs/heads/main"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377\trefs/heads/main"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "fetch",
+                          "origin"
+                      ],
+        "exit_code":  0,
+        "output":  "From [LAB]/shared\n   516755f..4948ff5  main       -\u003e origin/main"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "516755fb6f3e47f72f8be0680011b193a6be0971"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "-c",
+                          "advice.detachedHead=false",
+                          "switch",
+                          "--detach",
+                          "4948ff5d011831377760eda670e4b8b8a794b377"
+                      ],
+        "exit_code":  0,
+        "output":  "HEAD is now at 4948ff5 Reduce damage to 80"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    },
+    {
+        "directory":  "[LAB]\\receiver",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "show",
+                          ":skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "show",
+                          "HEAD:skill.rules"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "status",
+                          "--short"
+                      ],
+        "exit_code":  0,
+        "output":  " M skill.rules"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "HEAD"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    },
+    {
+        "directory":  "[LAB]\\developer",
+        "arguments":  [
+                          "rev-parse",
+                          "origin/main"
+                      ],
+        "exit_code":  0,
+        "output":  "4948ff5d011831377760eda670e4b8b8a794b377"
+    }
+]
