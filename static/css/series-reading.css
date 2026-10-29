@@ -1,4 +1,4 @@
-/* Opt-in series and article layouts; shared palette and grid come from reading.css. */
+/* Default article and series layouts; shared palette and grid come from reading.css. */
 .page-series main,.page-article main { min-width:0; }
 .page-series h1,.page-article h1 { font-weight:500; letter-spacing:.015em; }
 .reading-site .series-cover { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:80px; padding:22px 0 46px; align-items:center; }

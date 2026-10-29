@@ -57,6 +57,7 @@
 
 | 已有内容 | 继续由原系列负责 | 本系列新增的问题 |
 | --- | --- | --- |
+| [FDE 方法与实践](fde-methods-series-plan.md) | 基础理论、交付场景中的需求发现、热点判断与能力沉淀；基础篇与交付方法篇正文已写 | 从具体交付问题研究固定流程与模型判断；本系列不接管 FDE 方法目录，也不把使用 Agent 设为 FDE 的前提 |
 | [生产管线实践与资源完整性](../content/engineering-journey/production-resource-completeness.md) | 已确认历史经历、Missing 机器人、MissingFind、依赖提交的形成过程与使用反馈 | 在这些能力之上怎样设计明确的处理状态与复检回执；新增方案不能倒写成历史成果 |
 | [交付工程旗舰专栏](delivery-engineering-column-plan.md) | 构建、制品、质量门、发布与恢复的通用交付体系 | 提交检查问题的处理服务，以及有条件接入模型的取舍 |
 | [Agent Engineering](agent-engineering-series-plan.md) | Tool Runtime、Agent Loop、Context、Evidence、Eval 的通用机制；38–44 的 BuildPilot Design | 相同 Missing 样本中的固定流程、工具适配和逐轮决策；不另写 Agent 原理课程 |

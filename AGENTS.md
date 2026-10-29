@@ -65,11 +65,13 @@ doc-plan.md                          ← 系列级路由（不放篇级）
 1. **三层规划文档**：见上，doc-plan / series-plan / execution-plan / content/ 各司其职
 2. **YAML 引号 / Hugo shortcode 引号**：见下文「文章格式规范」——这是最高频构建失败原因
 3. **weight 子组规约**：见下文，URP 等系列有固定子组范围
-4. **写完先 hugo 本地构建**：`ERROR` 为零才能提交（`REF_NOT_FOUND` 指向计划中未写文章不算）
+4. **写完验证构建与阅读页面**：运行 Hugo、模板回归与生成页检查，命令见下文；构建成功不能替代样式和导航检查
 5. **私仓内容隔离**：不要把 GameEngineDev 的 C++ 源码引用直接搬进本仓
 6. **kb/ 是知识沉淀层**：与 docs/ 的"前置规划"职责不同，详见 [kb/CLAUDE.md](./kb/CLAUDE.md)
 
 ## 文章格式规范
+
+普通文章默认使用 Piccolo 的阅读样式，**不需要靠 `type` 才获得新外观**。新系列的章节和索引使用 `type: reading-series` 启用严格的系列配置校验。创建命令、导航规则与例外入口统一维护在 [文章呈现与创建约定](docs/article-presentation.md)。不要复制旧的卡片外壳或手写栏目返回链接。
 
 ### Frontmatter（YAML）
 
@@ -99,18 +101,34 @@ title: "文章标题"
 slug: "article-slug"
 date: "2026-04-14"
 description: "一句话描述"
+draft: true
+content_stage: "article"
 tags:
   - "Tag1"
   - "Tag2"
-series: "系列名"
 weight: 1500
 ---
+```
+
+**系列章节额外字段：**
+
+```yaml
+type: "reading-series"
+series: "系列名"
+primary_series: "series-slug"
+series_role: "article"
+series_order: 1
+# reading_index: "section/series-index.md"  # 需要明确索引时填写
 ```
 
 **系列索引页额外字段：**
 
 ```yaml
+type: "reading-series"
+topic_key: "delivery"
+series: "系列名"
 series_id: "series-slug"
+series_title: "系列名"
 series_role: "index"
 series_order: 0
 series_entry: true
@@ -184,14 +202,18 @@ URP 深度系列 weight 范围：
 
 ## 构建验证
 
-**每次提交前必须本地构建验证：**
+**每次提交前必须本地构建并检查阅读页面（Python 3.11+）：**
 
 ```bash
-hugo
+python -m unittest discover -s tests -p test_reading_layouts.py -v
+hugo --gc --minify --destination .tmp/publish-check
+python scripts/check-reading-pages.py --public .tmp/publish-check
 ```
 
 - `ERROR` 为零才可提交（`REF_NOT_FOUND` 指向计划中未写的文章不算）
 - 重点检查 YAML 解析错误和 shortcode 引号错误
+- 回归测试和生成页检查都通过才可提交；它们验证缺省文章样式、系列配置及导航目标。样式改动另需浏览器检查桌面与窄屏。
+- 不要让 `hugo server` 与发布检查写同一输出目录；自定义 baseURL 时为检查脚本传入相同的 `--base-url`。
 
 ## 待补数据标记
 

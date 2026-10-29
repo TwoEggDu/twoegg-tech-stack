@@ -40,11 +40,24 @@ jobs:
           hugo-version: ${{ env.HUGO_VERSION }}
           extended: true
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test default reading layouts and archetypes
+        run: python -m unittest discover -s tests -p test_reading_layouts.py -v
+
       - name: Build
         env:
           HUGO_ENVIRONMENT: production
           HUGO_BASEURL: ${{ steps.pages.outputs.base_url }}/
         run: hugo --gc --minify --baseURL "$HUGO_BASEURL"
+
+      - name: Check generated reading pages
+        env:
+          HUGO_BASEURL: ${{ steps.pages.outputs.base_url }}/
+        run: python scripts/check-reading-pages.py --base-url "$HUGO_BASEURL"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4

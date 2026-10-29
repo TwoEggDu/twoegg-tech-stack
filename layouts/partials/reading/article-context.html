@@ -1,0 +1,84 @@
+{{- $page := . -}}
+{{- $isIndex := eq .Params.series_role "index" -}}
+{{- $strict := eq .Type "reading-series" -}}
+{{- $id := .Params.primary_series | default "" -}}
+{{- if $isIndex }}{{ $id = .Params.series_id | default "" }}{{ end -}}
+{{- if and $strict (or (not $id) (eq $id "replace-with-series-id")) }}{{ errorf "Reading series requires a real series_id / primary_series: %s" .Path }}{{ end -}}
+{{- $index := false -}}
+{{- $indexes := where site.RegularPages "Params.series_role" "index" -}}
+{{- if $isIndex -}}
+  {{- $index = . -}}
+{{- else if .Params.reading_index -}}
+  {{- $index = site.GetPage .Params.reading_index -}}
+  {{- if not $index }}{{ errorf "Reading index not found: %s (%s)" .Params.reading_index .Path }}{{ end -}}
+{{- else if $id -}}
+  {{- $matches := where $indexes "Params.series_id" $id -}}
+  {{- if gt (len $matches) 1 }}{{ errorf "Reading index is ambiguous for %s: %s; set reading_index" .Path $id }}{{ end -}}
+  {{- if eq (len $matches) 1 }}{{ $index = index $matches 0 }}{{ end -}}
+{{- end -}}
+{{- if not $index -}}
+  {{- with partial "reading/runtime-context.html" . }}{{ $index = .index }}{{ end -}}
+{{- end -}}
+{{- if and (not $index) (not $strict) (not $id) (not .Params.series_id) .Params.series -}}
+  {{- $matches := where $indexes "Params.series" .Params.series -}}
+  {{- if eq (len $matches) 1 }}{{ $index = index $matches 0 }}{{ end -}}
+{{- end -}}
+{{- if and $strict (not $index) }}{{ errorf "Reading series requires an index: %s (%s)" $id .Path }}{{ end -}}
+{{- if $index -}}
+  {{- if and (or $strict .Params.reading_index) (ne $index.Params.series_role "index") }}{{ errorf "Reading index must have series_role: index (%s)" $index.Path }}{{ end -}}
+  {{- if and $id (ne $index.Params.series_id $id) }}{{ errorf "Reading index does not match series: %s (%s)" $id .Path }}{{ end -}}
+  {{- $id = $index.Params.series_id | default "" -}}
+{{- end -}}
+{{- $members := slice -}}
+{{- $position := -1 -}}
+{{- $ordered := true -}}
+{{- $indexURL := "" -}}
+{{- if $index -}}
+  {{- if eq $index.Params.series_role "index" }}{{ $members = partial "reading/series-members.html" $index }}{{ end -}}
+  {{- $strictOrders := or $strict (eq $index.Type "reading-series") -}}
+  {{- range $members }}{{ if eq .Type "reading-series" }}{{ $strictOrders = true }}{{ end }}{{ end -}}
+  {{- $orderPattern := `^[0-9]+$` -}}
+  {{- if $index.Params.reading_number_by_position }}{{ $orderPattern = `^[0-9]+(\.[0-9]+)?$` }}{{ end -}}
+  {{- $seen := slice -}}
+  {{- range $i, $member := $members -}}
+    {{- if eq $member.RelPermalink $page.RelPermalink }}{{ $position = $i }}{{ end -}}
+    {{- if not (isset $member.Params "series_order") -}}
+      {{- $ordered = false -}}
+    {{- else if not (findRE $orderPattern (printf "%v" $member.Params.series_order)) -}}
+      {{- $ordered = false -}}
+      {{- if $strictOrders -}}
+        {{- if $index.Params.reading_number_by_position -}}
+          {{- errorf "Reading series_order must be a non-negative number when numbering by position: %s (%v)" $member.Path $member.Params.series_order -}}
+        {{- else -}}
+          {{- errorf "Reading series_order must be a non-negative integer: %s (%v)" $member.Path $member.Params.series_order -}}
+        {{- end -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $orderKey := printf "%g" (float $member.Params.series_order) -}}
+      {{- if in $seen $orderKey -}}
+        {{- $ordered = false -}}
+        {{- if $strictOrders }}{{ errorf "Duplicate reading series_order in %s: %v" $index.Path $member.Params.series_order }}{{ end -}}
+      {{- end -}}
+      {{- $seen = $seen | append $orderKey -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $indexURL = $index.RelPermalink -}}
+  {{- if strings.Contains (string $index.Content) `id="chapters"` }}{{ $indexURL = printf "%s#chapters" $indexURL }}{{ end -}}
+{{- end -}}
+{{- $numbered := and (not $isIndex) (ge $position 0) -}}
+{{- if and $strict (not $isIndex) (not $numbered) }}{{ errorf "Article is missing from its reading series: %s" .Path }}{{ end -}}
+{{- if and $strict (not $isIndex) (not (isset .Params "series_order")) }}{{ errorf "Reading series_order is required: %s" .Path }}{{ end -}}
+{{- $chapter := 0 -}}
+{{- if $numbered -}}
+  {{- $chapter = add $position 1 -}}
+  {{- if and $ordered (not $index.Params.reading_number_by_position) }}{{ $chapter = int .Params.series_order }}{{ end -}}
+{{- end -}}
+{{- $topicKey := partial "reading/topic-key.html" (dict "page" . "index" $index) -}}
+{{- $topic := false -}}
+{{- $matches := where site.Data.reading_paths.topics "key" $topicKey -}}
+{{- if eq (len $matches) 1 }}{{ $topic = site.GetPage (index $matches 0).page }}{{ end -}}
+{{- if and $topicKey (not $topic) }}{{ errorf "Reading topic not found: %s (%s)" $topicKey .Path }}{{ end -}}
+{{- $back := site.GetPage "technical-topics.md" -}}
+{{- if $topic }}{{ $back = $topic }}{{ end -}}
+{{- if not $back }}{{ $back = site.Home }}{{ end -}}
+{{- return (dict "page" . "index" $index "id" $id "isIndex" $isIndex "members" $members "position" $position "numbered" $numbered "chapter" $chapter "indexURL" $indexURL "topic" $topic "back" $back) -}}

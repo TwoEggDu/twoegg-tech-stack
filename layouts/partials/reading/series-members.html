@@ -1,3 +1,11 @@
 {{- $id := .Params.series_id | default .Params.primary_series -}}
-{{- $members := where site.RegularPages "Params.primary_series" $id -}}
-{{- return ($members.ByParam "series_order") -}}
+{{- $members := first 0 site.RegularPages -}}
+{{- if $id }}{{ $members = where (where site.RegularPages "Params.primary_series" $id) "Params.series_role" "ne" "index" }}{{ end -}}
+{{- if and (eq (len $members) 0) .Params.series -}}
+  {{- $members = where (where site.RegularPages "Params.series" .Params.series) "Params.series_role" "ne" "index" -}}
+{{- end -}}
+{{- $ordered := true -}}
+{{- range $members }}{{ if not (isset .Params "series_order") }}{{ $ordered = false }}{{ end }}{{ end -}}
+{{- $members = $members.ByWeight -}}
+{{- if $ordered }}{{ $members = $members.ByParam "series_order" }}{{ end -}}
+{{- return $members -}}

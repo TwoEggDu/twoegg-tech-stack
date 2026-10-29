@@ -189,6 +189,16 @@
 
 如果文章涉及系列索引页，还要确认它的阅读路径和链接能成立。
 
+按[文章呈现与创建约定](article-presentation.md)使用新建模板，并执行：
+
+```powershell
+python -m unittest discover -s tests -p test_reading_layouts.py -v
+hugo --gc --minify --destination .tmp/publish-check
+python scripts/check-reading-pages.py --public .tmp/publish-check
+```
+
+普通文章无须额外指定样式。新系列需填写真实 ID、索引与顺序，先保持草稿状态，检查完再发布。页面呈现有变化时，在浏览器确认主题、系列和前后篇导航，查看桌面侧栏与窄屏目录。生成页检查通过和线上发布成功分别记录。
+
 ## 11. 第九步：发布 / 回写状态
 
 一篇文章发布之后，至少要回写这些地方中的相关项：
@@ -237,6 +247,7 @@
 - 是否讲清系统边界
 - 是否有一句最短结论
 - 本地构建是否通过
+- 模板回归与生成页样式、导航检查是否通过
 - 是否需要更新系列索引或 plan
 
 ## 15. 最短结论

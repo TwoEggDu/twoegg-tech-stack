@@ -1,41 +1,48 @@
 {{ $page := .page }}
 {{ $index := .index }}
 {{ $members := .members }}
-{{ $position := -1 }}
-{{ range $i, $member := $members }}{{ if eq $member.RelPermalink $page.RelPermalink }}{{ $position = $i }}{{ end }}{{ end }}
-{{ if lt $position 0 }}{{ errorf "Article is missing from its reading series: %s" $page.RelPermalink }}{{ end }}
-{{ $chapterNumber := int $page.Params.series_order }}
-{{ if $index.Params.reading_number_by_position }}{{ $chapterNumber = add $position 1 }}{{ end }}
+{{ $hasTOC := gt (len (findRE "<a " (string $page.TableOfContents) 1)) 0 }}
+{{ $backURL := .back.RelPermalink }}
+{{ $backTitle := .back.Title }}
+{{ $backLabel := "返回主题" }}
+{{ if not .topic }}{{ $backLabel = "返回目录" }}{{ end }}
+{{ if $index }}
+  {{ $backURL = .indexURL }}
+  {{ $backTitle = $index.Params.series_title | default $index.Params.reading_title | default $index.Title }}
+  {{ $backLabel = "返回系列目录" }}
+{{ end }}
 <article class="reading-article article-reading">
   <header class="reading-article-header">
-    <p class="eyebrow">{{ $index.Params.series_title }} <span aria-hidden="true">·</span> {{ printf "%02d" $chapterNumber }} / {{ printf "%02d" (len $members) }}{{ if eq $page.Params.content_stage "outline" }} <span class="reading-stage">章节提纲 · 正文待写</span>{{ end }}</p>
+    <p class="eyebrow">{{ $backTitle }}{{ if .numbered }} <span aria-hidden="true">·</span> {{ printf "%02d" .chapter }} / {{ printf "%02d" (len $members) }}{{ end }}{{ if eq $page.Params.content_stage "outline" }} <span class="reading-stage">章节提纲 · 正文待写</span>{{ end }}</p>
     <h1>{{ $page.Params.reading_title | default $page.Title }}</h1>
-    <p class="reading-article-dek">{{ $page.Params.reading_summary | default $page.Description }}</p>
+    {{ with $page.Params.reading_summary | default $page.Description }}<p class="reading-article-dek">{{ . }}</p>{{ end }}
   </header>
-  {{ with $page.TableOfContents }}
-    <details class="reading-toc-mobile"><summary>本篇目录 <span aria-hidden="true">＋</span></summary>{{ replace (string .) `id="TableOfContents"` `id="reading-toc-mobile"` | safeHTML }}</details>
+  {{ if $hasTOC }}
+    <details class="reading-toc-mobile"><summary>本篇目录 <span aria-hidden="true">＋</span></summary>{{ replace (string $page.TableOfContents) `id="TableOfContents"` `id="reading-toc-mobile"` | safeHTML }}</details>
   {{ end }}
   <div class="reading-article-grid">
     <div class="reading-article-main">
       <div class="article-body reading-prose">{{ $page.Content }}</div>
       <nav class="reading-pagination" aria-label="章节导航">
-        {{ if gt $position 0 }}{{ $previous := index $members (sub $position 1) }}
+        {{ if and .numbered (gt .position 0) }}{{ $previous := index $members (sub .position 1) }}
           <a class="reading-pagination-prev" href="{{ $previous.RelPermalink }}"><span>← 上一篇</span><strong>{{ $previous.Params.reading_title | default $previous.Title }}</strong></a>
         {{ else }}
-          <a class="reading-pagination-prev" href="{{ $index.RelPermalink }}"><span>← 回到系列</span><strong>{{ $index.Params.series_title }}</strong></a>
+          <a class="reading-pagination-prev" href="{{ $backURL }}"><span>← {{ $backLabel }}</span><strong>{{ $backTitle }}</strong></a>
         {{ end }}
-        {{ if lt (add $position 1) (len $members) }}{{ $next := index $members (add $position 1) }}
+        {{ if and .numbered (lt (add .position 1) (len $members)) }}{{ $next := index $members (add .position 1) }}
           <a class="reading-pagination-next" href="{{ $next.RelPermalink }}"><span>下一篇 →</span><strong>{{ $next.Params.reading_title | default $next.Title }}</strong></a>
-        {{ else }}
-          <a class="reading-pagination-next" href="{{ $index.RelPermalink }}#chapters"><span>回看全系列 →</span><strong>浏览 {{ len $members }} 篇章节目录</strong></a>
+        {{ else if .numbered }}
+          <a class="reading-pagination-next" href="{{ $backURL }}"><span>回看全系列 →</span><strong>浏览 {{ len $members }} 篇章节目录</strong></a>
         {{ end }}
       </nav>
     </div>
-    <aside class="reading-article-aside" aria-labelledby="reading-toc-title">
+    <aside class="reading-article-aside" aria-label="阅读导航">
       <div class="reading-article-aside-inner">
-        <p id="reading-toc-title" class="eyebrow">本篇目录</p>
-        {{ replace (string $page.TableOfContents) `id="TableOfContents"` `id="reading-toc-desktop"` | safeHTML }}
-        <a class="reading-series-back" href="{{ $index.RelPermalink }}#chapters">返回系列目录 <span aria-hidden="true">→</span></a>
+        {{ if $hasTOC }}
+          <p class="eyebrow">本篇目录</p>
+          {{ replace (string $page.TableOfContents) `id="TableOfContents"` `id="reading-toc-desktop"` | safeHTML }}
+        {{ end }}
+        <a class="reading-series-back" href="{{ $backURL }}">{{ $backLabel }} <span aria-hidden="true">→</span></a>
       </div>
     </aside>
   </div>

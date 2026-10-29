@@ -11,6 +11,8 @@ hero_title: "交付不是发布。从代码到产品稳定运行在用户设备�
 
 ## 选择阅读入口
 
+- **[FDE 方法与实践]({{< relref "delivery-engineering/fde-methods-series-index.md" >}})**：先理解 FDE 的现场工作与工程落地，再讨论需求发现、交付热点判断和能力沉淀，最后回到真实案例。基础篇与交付方法篇已有正文，包含三份实践记录模板；Missing 案例后续补充。
+
 - **[从提交检查到修正复检]({{< relref "delivery-engineering/game-delivery-agent-series-index.md" >}})**：以 Missing 为例，研究现有工具、固定流程、人和模型的分工。第 01～05 篇正文已写，其余 3 篇为提纲；新增服务与适配器未实现，实验未执行。
 
 - **[从美术制作与客户端协作开始]({{< relref "delivery-engineering/game-art-production-collaboration-series-index.md" >}})**：沿原画、角色、绑定、动画、场景资产、地编、特效和 TA，认识制作、接入与联合验收。12 篇正文已成稿，软件实操与素材待补。
