@@ -65,6 +65,7 @@ topics:
     entries:
       - { label: "生产管线实践", page: "engineering-journey/production-pipeline-overview.md" }
       - { label: "FDE 方法与实践", page: "delivery-engineering/fde-methods-series-index.md", value: "从现场问题到工程落地，基础篇与方法篇已有正文；覆盖需求发现、热点判断与能力沉淀，并附三份实践记录模板。" }
+      - { label: "版本管理", page: "delivery-engineering/version-management-series-index.md", value: "先理解 Git、SVN、P4，再进入任务提交、合并、资源协作、审查与构建基线。首篇已有正文，其余 9 篇为提纲，实验未执行。" }
       - { label: "游戏交付 Agent 研究", page: "delivery-engineering/game-delivery-agent-series-index.md", value: "以 Missing 研究定位、补交与复检，以及固定流程和模型判断的分工。第 01～05 篇正文已写，其余 3 篇为提纲；实验未执行。" }
       - { label: "美术生产与客户端协作", page: "delivery-engineering/game-art-production-collaboration-series-index.md", value: "认识美术各岗位的制作过程、交付物和客户端接入；12 篇正文已成稿，软件实操与素材待补。" }
       - { label: "Unity 游戏更新与发布", page: "delivery-engineering/unity-game-update-release-series-index.md", value: "从首次整包、线上修复与新内容上线，进入版本绑定、构建范围、强更热更和发布回退。七篇章节当前均为提纲，正文待写。" }

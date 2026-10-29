@@ -124,6 +124,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
+| 版本管理 | [docs/version-management-series-plan.md](./docs/version-management-series-plan.md) | 首篇已有正文，其余 9 篇为提纲，实验未执行 | 工程与交付下的独立专栏；共同模型 → Git / SVN / P4 → 提交、合并、资源、审查与构建基线；发布节奏与冻结仍归交付 V04 |
 | FDE 方法与实践 | [docs/fde-methods-series-plan.md](./docs/fde-methods-series-plan.md) | 基础篇与方法篇已有正文，已完成精简与热点判断推演修订 | 归入工程与交付，按基础理论 → 交付方法 → 真实案例推进；Missing 案例保留原归属，后续补充 |
 | 游戏交付 Agent 研究 | [docs/game-delivery-agent-series-plan.md](./docs/game-delivery-agent-series-plan.md) | 5 篇正文、3 篇提纲 | 已接入工程与交付入口；固定流程与候选模型调查设计；项目接口待核对，服务和策略未实现，实验未执行；前 3 篇线上已核验，第 04 篇线上待核验，本轮第 05 篇及同步的线上部署待核验 |
 | 游戏美术生产与客户端协作 | [docs/game-art-production-collaboration-series-plan.md](./docs/game-art-production-collaboration-series-plan.md) | 12 篇正文已成稿，软件实操与素材待补 | 沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端接入组织，综合示例与联合验收收束 |
