@@ -29,7 +29,7 @@
 | --- | --- | --- | --- | --- |
 | 1 | FDE-01：FDE 基础——从现场问题到工程落地 | 现场信息为什么会改变工程方案？工程师怎样参与实现，判断交付完成，并把经验带回公共能力？ | 原理篇；[文章正文](../content/delivery-engineering/fde-01-foundations.md)，[执行提纲与资料依据](fde-01-foundations-outline.md) | 2026-10-29 精简修订为五部分，减少与方法篇的重复；本地验证通过 |
 | 2 | FDE-02：将 FDE 方法用于交付工程——需求发现、热点判断与能力沉淀 | 怎样核实反馈、合并与拆分热点、说明投入优先级，再通过使用复验形成持续改进？ | 方法应用篇；[文章正文](../content/delivery-engineering/fde-02-delivery-method.md)，[执行提纲与资料依据](fde-02-delivery-method-outline.md) | 2026-10-29 精简修订，以三条虚构反馈演示热点判断，完整模板移入折叠附录；本地验证通过 |
-| 3 | Missing 工具链：从美术现场排查到日常提交 | 定位、环境、检查范围和触发时机怎样随使用困难逐步改进？ | 案例篇；[原案例正文](../content/engineering-journey/production-resource-completeness.md)，[执行提纲与事实记录](production-resource-completeness-outline.md) | 2026-10-29 已按作者确认的顺序完成修订与本地验证；保持原归属 |
+| 3 | Missing 工具链：从美术现场排查到日常提交 | 定位、环境、检查范围和触发时机怎样随使用困难逐步改进？ | 案例篇；[原案例正文](../content/engineering-journey/production-resource-completeness.md)，[执行提纲与事实记录](production-resource-completeness-outline.md) | 2026-10-29 已按作者确认的顺序完成修订与本地验证；2026-10-30 在开头和结尾补充运行时问题前移到日常开发与提交的目标；保持原归属 |
 
 本表是首期写作顺序。理论总论先行，方法应用随后，案例补充最后进行；暂不扩成大课程。文章标题与篇幅可在各篇编辑定位时细化，系列主线保持稳定。
 
