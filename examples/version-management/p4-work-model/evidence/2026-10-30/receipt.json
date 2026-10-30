@@ -1,0 +1,75 @@
+{
+    "passed":  true,
+    "failure":  null,
+    "recorded_at_utc":  "2026-10-30T13:47:42.1649504Z",
+    "client_version":  "Perforce - The Fast Software Configuration Management System.\nCopyright 1995-2026 Perforce Software.  All rights reserved.\nThis product includes software developed by the OpenSSL Project\nfor use in the OpenSSL Toolkit (http://www.openssl.org/)\nVersion of OpenSSL Libraries: OpenSSL 3.5.7 9 Jun 2026\nSee \u0027p4 help [ -l ] legal\u0027 for additional license information on\nthese licenses and others.\nExtensions/scripting support built-in.\nParallel sync threading built-in.\nRev. P4/NTX64/2026.1/3089746 (2026/10/07).",
+    "server_version":  "Perforce - The Fast Software Configuration Management System.\nCopyright 1995-2026 Perforce Software.  All rights reserved.\nThis product includes software developed by the OpenSSL Project\nfor use in the OpenSSL Toolkit (http://www.openssl.org/)\nVersion of OpenSSL Libraries: OpenSSL 3.5.7 9 Jun 2026\nSee \u0027p4 help [ -l ] legal\u0027 for additional license information on\nthese licenses and others.\nUsing the \u0027mimalloc\u0027 memory manager.\nRev. P4D/NTX64/2026.1/3089746 (2026/10/07).\nLicense: none",
+    "server_binary_sha256":  "EEE7AC13927872282BCB3E4B037AF960F2EC0905A1E6747CB343E77AC1E7091D",
+    "endpoint":  "127.0.0.1:3597",
+    "server_stopped":  true,
+    "changelist":  "2",
+    "powershell_version":  "5.1.19041.6456",
+    "scope":  "One loopback-only fresh server, one synthetic user, two client views, text file only. No TLS, permissions policy, Code Review, locks, Streams, engine or external network validation.",
+    "snapshots":  {
+                      "initialization":  {
+                                             "authenticated_info":  "... userName vm-lab\n... password enabled\n... clientName *unknown*\n... clientCwd [INVOCATION]\n... clientHost vm-lab-host\n... clientCase insensitive\n... peerAddress 127.0.0.1:3805\n... clientAddress 127.0.0.1\n... serverName vm-lab-dvcs-1793368059\n... monitor enabled\n... security enabled\n... serverAddress kubernetes.docker.internal:3597\n... serverRoot [LAB]\\server-init\\.p4root\n... serverDate 2026/10/30 21:47:40 +0800\n... tzoffset 28800\n... serverUptime 00:00:00\n... serverVersion P4D/NTX64/2026.1/3089746 (2026/10/07)\n... ServerID vm-lab-dvcs-1793368059\n... serverServices local\n... serverLicense none\n... caseHandling insensitive\n... allowStreamSpecInteg 1\n... allowPush 1\n... allowFetch 3\n... allowRewrite 1\n... parentViewDefault inheritAll\n... unloadSupport disabled\n... extensionsSupport enabled\n... memoryManager mimalloc 212\n... resourcePressureLastUpdate 0\n... resourcePressureCPU 0\n... resourcePressureMem 0",
+                                             "security":  "security=4 (default)",
+                                             "user_creation":  "dm.user.noautocreate:1 (configure)",
+                                             "bootstrap":  "p4 init -C1 -n creates a personal server; offline reset-password -s initializes its synthetic user; explicit loopback p4d follows."
+                                         },
+                      "baseline":  {
+                                       "depot":  "damage=100\ncharge=off",
+                                       "a":  "damage=100\ncharge=off",
+                                       "b":  "damage=100\ncharge=off",
+                                       "b_have":  "//depot/skill.rules#1 - [LAB]\\workspace-b\\skill.rules"
+                                   },
+                      "after_shelf_and_continue":  {
+                                                       "a":  "damage=80\ncharge=on",
+                                                       "shelf":  "damage=80\ncharge=off",
+                                                       "depot":  "damage=100\ncharge=off",
+                                                       "change":  "# A Perforce Change Specification.\n#\n#  Change:      The change number. \u0027new\u0027 on a new changelist.\n#  Date:        The date this specification was last modified.\n#  Client:      The client on which the changelist was created.  Read-only.\n#  User:        The user who created the changelist.\n#  Status:      Either \u0027pending\u0027 or \u0027submitted\u0027. Read-only.\n#  Type:        Either \u0027public\u0027 or \u0027restricted\u0027. Default is \u0027public\u0027.\n#  Description: Comments about the changelist.  Required.\n#  ImportedBy:  The user who fetched or pushed this change to this server.\n#  Identity:    Identifier for this change.\n#  Jobs:        What opened jobs are to be closed by this changelist.\n#               You may delete jobs from this list.  (New changelists only.)\n#  Stream:      What opened stream is to be added to this changelist.\n#               You may remove an opened stream from this list.\n#  Files:       What opened files from the default changelist are to be added\n#               to this changelist.  You may delete files from this list.\n#               (New changelists only.)\n\nChange:\t2\n\nDate:\t2026/10/30 21:47:41\n\nClient:\tvm-a\n\nUser:\tvm-lab\n\nStatus:\tpending\n\nDescription:\n\tDamage change for shelf exercise\n\nFiles:\n\t//depot/skill.rules\t# edit",
+                                                       "opened":  "//depot/skill.rules#1 - edit change 2 (text) by vm-lab@vm-a"
+                                                   },
+                      "b_unshelved":  {
+                                          "b":  "damage=80\ncharge=off",
+                                          "depot":  "damage=100\ncharge=off",
+                                          "opened":  "//depot/skill.rules#1 - edit default change (text)"
+                                      },
+                      "a_submitted_b_not_synced":  {
+                                                       "depot":  "damage=80\ncharge=on",
+                                                       "b":  "damage=100\ncharge=off",
+                                                       "b_have":  "//depot/skill.rules#1 - [LAB]\\workspace-b\\skill.rules",
+                                                       "change":  "# A Perforce Change Specification.\n#\n#  Change:      The change number. \u0027new\u0027 on a new changelist.\n#  Date:        The date this specification was last modified.\n#  Client:      The client on which the changelist was created.  Read-only.\n#  User:        The user who created the changelist.\n#  Status:      Either \u0027pending\u0027 or \u0027submitted\u0027. Read-only.\n#  Type:        Either \u0027public\u0027 or \u0027restricted\u0027. Default is \u0027public\u0027.\n#  Description: Comments about the changelist.  Required.\n#  ImportedBy:  The user who fetched or pushed this change to this server.\n#  Identity:    Identifier for this change.\n#  Jobs:        What opened jobs are to be closed by this changelist.\n#               You may delete jobs from this list.  (New changelists only.)\n#  Stream:      What opened stream is to be added to this changelist.\n#               You may remove an opened stream from this list.\n#  Files:       What opened files from the default changelist are to be added\n#               to this changelist.  You may delete files from this list.\n#               (New changelists only.)\n\nChange:\t2\n\nDate:\t2026/10/30 21:47:41\n\nClient:\tvm-a\n\nUser:\tvm-lab\n\nStatus:\tsubmitted\n\nDescription:\n\tDamage change for shelf exercise"
+                                                   },
+                      "b_synced":  {
+                                       "b":  "damage=80\ncharge=on",
+                                       "have":  "//depot/skill.rules#2 - [LAB]\\workspace-b\\skill.rules"
+                                   },
+                      "b_reconciled":  {
+                                           "b":  "damage=70\ncharge=on",
+                                           "opened":  "//depot/skill.rules#2 - edit default change (text)",
+                                           "depot":  "damage=80\ncharge=on"
+                                       }
+                  },
+    "passed_checks":  [
+                          "connection identifies the newly created lab server root",
+                          "client view maps depot path into A root",
+                          "B sync obtains baseline content",
+                          "A disk contains continued edit",
+                          "shelf retains content at shelve time",
+                          "shelving does not replace submitted depot content",
+                          "shelved changelist remains pending",
+                          "B receives shelf content rather than A latest disk edit",
+                          "unshelve opens B file for edit",
+                          "unshelving does not submit content",
+                          "ordinary submit records current opened file content, not deleted shelf content",
+                          "changelist status becomes submitted",
+                          "A submit does not rewrite B workspace",
+                          "B sync obtains submitted current content",
+                          "B have list advances to file revision 2",
+                          "disk edit alone does not register an open action",
+                          "reconcile preview reports edit without opening file",
+                          "reconcile registers existing disk edit",
+                          "reconcile does not submit the offline edit"
+                      ]
+}

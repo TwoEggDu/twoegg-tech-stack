@@ -1,0 +1,675 @@
+[
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "--version",
+                          "--quiet",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "1.14.1"
+    },
+    {
+        "tool":  "svnadmin",
+        "arguments":  [
+                          "--version",
+                          "--quiet"
+                      ],
+        "exit_code":  0,
+        "output":  "1.14.1"
+    },
+    {
+        "tool":  "svnadmin",
+        "arguments":  [
+                          "create",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\seed\\damage.rules",
+        "content":  "damage=100\n"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\seed\\charge.rules",
+        "content":  "charge=off\n"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "import",
+                          "[LAB]\\seed",
+                          "file:///[LAB]/repository",
+                          "-m",
+                          "Baseline",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "Adding         .tmp\\version-management-svn-20261030\\seed\\charge.rules\nAdding         .tmp\\version-management-svn-20261030\\seed\\damage.rules\nCommitting transaction...\nCommitted revision 1."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "checkout",
+                          "-r",
+                          "1",
+                          "file:///[LAB]/repository",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "A    .tmp\\version-management-svn-20261030\\wc-a\\charge.rules\nA    .tmp\\version-management-svn-20261030\\wc-a\\damage.rules\nChecked out revision 1."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "checkout",
+                          "-r",
+                          "1",
+                          "file:///[LAB]/repository",
+                          "[LAB]\\wc-b",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "A    .tmp\\version-management-svn-20261030\\wc-b\\charge.rules\nA    .tmp\\version-management-svn-20261030\\wc-b\\damage.rules\nChecked out revision 1."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-a\"\n   revision=\"1\"\n   kind=\"dir\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\charge.rules\"\n   revision=\"1\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.373678Z\u003c/text-updated\u003e\n\u003cchecksum\u003e7e4249396981a3923d5548853e2b79b50714aca8\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\damage.rules\"\n   revision=\"1\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.374675Z\u003c/text-updated\u003e\n\u003cchecksum\u003ead5ad8c93960dbbace5fc380b93113540e3f15b9\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "1"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-a"
+                      ],
+        "exit_code":  0,
+        "output":  "1"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 1        1 vm-lab       [LAB]\\wc-a\n                 1        1 vm-lab       [LAB]\\wc-a\\charge.rules\n                 1        1 vm-lab       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\wc-a\\damage.rules",
+        "content":  "damage=80\n"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "commit",
+                          "[LAB]\\wc-a\\damage.rules",
+                          "-m",
+                          "Reduce damage",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "Sending        .tmp\\version-management-svn-20261030\\wc-a\\damage.rules\nTransmitting file data .done\nCommitting transaction...\nCommitted revision 2."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   kind=\"dir\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\"\n   revision=\"1\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\charge.rules\"\n   revision=\"1\"\n   kind=\"file\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.373678Z\u003c/text-updated\u003e\n\u003cchecksum\u003e7e4249396981a3923d5548853e2b79b50714aca8\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\damage.rules\"\n   revision=\"2\"\n   kind=\"file\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.785680Z\u003c/text-updated\u003e\n\u003cchecksum\u003ef4aea8199c1a12c011dc9f46f4e2cf33a89f2b74\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"2\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.829680Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "2"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-a"
+                      ],
+        "exit_code":  0,
+        "output":  "1:2"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 1        1 vm-lab       [LAB]\\wc-a\n                 1        1 vm-lab       [LAB]\\wc-a\\charge.rules\n                 2        2 vm-lab       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\wc-b\\charge.rules",
+        "content":  "charge=on\n"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "commit",
+                          "[LAB]\\wc-b\\charge.rules",
+                          "-m",
+                          "Enable charge",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "Sending        .tmp\\version-management-svn-20261030\\wc-b\\charge.rules\nTransmitting file data .done\nCommitting transaction...\nCommitted revision 3."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   kind=\"dir\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\"\n   revision=\"1\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\charge.rules\"\n   revision=\"1\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.373678Z\u003c/text-updated\u003e\n\u003cchecksum\u003e7e4249396981a3923d5548853e2b79b50714aca8\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\damage.rules\"\n   revision=\"2\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.785680Z\u003c/text-updated\u003e\n\u003cchecksum\u003ef4aea8199c1a12c011dc9f46f4e2cf33a89f2b74\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"2\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.829680Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-a"
+                      ],
+        "exit_code":  0,
+        "output":  "1:2"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 1        1 vm-lab       [LAB]\\wc-a\n                 1        1 vm-lab       [LAB]\\wc-a\\charge.rules\n                 2        2 vm-lab       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "update",
+                          "[LAB]\\wc-a\\charge.rules",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "Updating \u0027.tmp\\version-management-svn-20261030\\wc-a\\charge.rules\u0027:\nU    .tmp\\version-management-svn-20261030\\wc-a\\charge.rules\nUpdated to revision 3."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-a\"\n   revision=\"1\"\n   kind=\"dir\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"1\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.233172Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   revision=\"3\"\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\charge.rules\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:41.242185Z\u003c/text-updated\u003e\n\u003cchecksum\u003e8bb6902485ce2ed986ab3c4326e9731f38a4f80a\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   revision=\"2\"\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\damage.rules\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.785680Z\u003c/text-updated\u003e\n\u003cchecksum\u003ef4aea8199c1a12c011dc9f46f4e2cf33a89f2b74\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"2\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.829680Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-a"
+                      ],
+        "exit_code":  0,
+        "output":  "1:3"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 1        1 vm-lab       [LAB]\\wc-a\n                 3        3 vm-lab       [LAB]\\wc-a\\charge.rules\n                 2        2 vm-lab       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "update",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "Updating \u0027.tmp\\version-management-svn-20261030\\wc-a\u0027:\nAt revision 3."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-a\"\n   revision=\"3\"\n   kind=\"dir\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\charge.rules\"\n   revision=\"3\"\n   kind=\"file\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:41.242185Z\u003c/text-updated\u003e\n\u003cchecksum\u003e8bb6902485ce2ed986ab3c4326e9731f38a4f80a\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\damage.rules\"\n   revision=\"3\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.785680Z\u003c/text-updated\u003e\n\u003cchecksum\u003ef4aea8199c1a12c011dc9f46f4e2cf33a89f2b74\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"2\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.829680Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-a"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 3        3 vm-lab       [LAB]\\wc-a\n                 3        3 vm-lab       [LAB]\\wc-a\\charge.rules\n                 3        2 vm-lab       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "checkout",
+                          "-r",
+                          "3",
+                          "file:///[LAB]/repository",
+                          "[LAB]\\wc-r3",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "A    .tmp\\version-management-svn-20261030\\wc-r3\\charge.rules\nA    .tmp\\version-management-svn-20261030\\wc-r3\\damage.rules\nChecked out revision 3."
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-r3",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-r3\"\n   revision=\"3\"\n   kind=\"dir\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-r3\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-r3\\charge.rules\"\n   revision=\"3\"\n   kind=\"file\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-r3\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:41.808693Z\u003c/text-updated\u003e\n\u003cchecksum\u003e8bb6902485ce2ed986ab3c4326e9731f38a4f80a\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   path=\".tmp\\version-management-svn-20261030\\wc-r3\\damage.rules\"\n   revision=\"3\"\n   kind=\"file\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-r3\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:41.809193Z\u003c/text-updated\u003e\n\u003cchecksum\u003ef4aea8199c1a12c011dc9f46f4e2cf33a89f2b74\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"2\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.829680Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-r3"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-r3",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  ""
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-r3",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 3        3 vm-lab       [LAB]\\wc-r3\n                 3        3 vm-lab       [LAB]\\wc-r3\\charge.rules\n                 3        2 vm-lab       [LAB]\\wc-r3\\damage.rules"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\wc-a\\damage.rules",
+        "content":  "damage=70\n"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "info",
+                          "--xml",
+                          "-R",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\n\u003cinfo\u003e\n\u003centry\n   revision=\"3\"\n   kind=\"dir\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\"\u003e\n\u003curl\u003efile:///[LAB]/repository\u003c/url\u003e\n\u003crelative-url\u003e^/\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\charge.rules\"\n   revision=\"3\"\u003e\n\u003curl\u003efile:///[LAB]/repository/charge.rules\u003c/url\u003e\n\u003crelative-url\u003e^/charge.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:41.242185Z\u003c/text-updated\u003e\n\u003cchecksum\u003e8bb6902485ce2ed986ab3c4326e9731f38a4f80a\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"3\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.987681Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003centry\n   kind=\"file\"\n   path=\".tmp\\version-management-svn-20261030\\wc-a\\damage.rules\"\n   revision=\"3\"\u003e\n\u003curl\u003efile:///[LAB]/repository/damage.rules\u003c/url\u003e\n\u003crelative-url\u003e^/damage.rules\u003c/relative-url\u003e\n\u003crepository\u003e\n\u003croot\u003efile:///[LAB]/repository\u003c/root\u003e\n\u003cuuid\u003e4bdb613e-aa59-6e49-a416-1124fd472af6\u003c/uuid\u003e\n\u003c/repository\u003e\n\u003cwc-info\u003e\n\u003cwcroot-abspath\u003e[LAB]/wc-a\u003c/wcroot-abspath\u003e\n\u003cschedule\u003enormal\u003c/schedule\u003e\n\u003cdepth\u003einfinity\u003c/depth\u003e\n\u003ctext-updated\u003e2026-10-30T13:38:40.785680Z\u003c/text-updated\u003e\n\u003cchecksum\u003ef4aea8199c1a12c011dc9f46f4e2cf33a89f2b74\u003c/checksum\u003e\n\u003c/wc-info\u003e\n\u003ccommit\n   revision=\"2\"\u003e\n\u003cauthor\u003evm-lab\u003c/author\u003e\n\u003cdate\u003e2026-10-30T13:38:40.829680Z\u003c/date\u003e\n\u003c/commit\u003e\n\u003c/entry\u003e\n\u003c/info\u003e"
+    },
+    {
+        "tool":  "svnlook",
+        "arguments":  [
+                          "youngest",
+                          "[LAB]\\repository"
+                      ],
+        "exit_code":  0,
+        "output":  "3"
+    },
+    {
+        "tool":  "svnversion",
+        "arguments":  [
+                          "-n",
+                          "[LAB]\\wc-a"
+                      ],
+        "exit_code":  0,
+        "output":  "3M"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "M       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "status",
+                          "-v",
+                          "[LAB]\\wc-a",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "                 3        3 vm-lab       [LAB]\\wc-a\n                 3        3 vm-lab       [LAB]\\wc-a\\charge.rules\nM                3        2 vm-lab       [LAB]\\wc-a\\damage.rules"
+    },
+    {
+        "tool":  "svn",
+        "arguments":  [
+                          "cat",
+                          "-r",
+                          "3",
+                          "file:///[LAB]/repository/damage.rules",
+                          "--config-dir",
+                          "[LAB]\\client-config",
+                          "--non-interactive",
+                          "--no-auth-cache",
+                          "--username",
+                          "vm-lab"
+                      ],
+        "exit_code":  0,
+        "output":  "damage=80"
+    }
+]

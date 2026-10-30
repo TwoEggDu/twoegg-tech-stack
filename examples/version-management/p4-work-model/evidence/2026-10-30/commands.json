@@ -1,0 +1,705 @@
+[
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-u",
+                          "vm-lab",
+                          "-d",
+                          "[LAB]/server-init",
+                          "init",
+                          "-C1",
+                          "-n"
+                      ],
+        "exit_code":  0,
+        "output":  "Server vm-lab-dvcs-1793368059 saved."
+    },
+    {
+        "tool":  "p4d",
+        "arguments":  [
+                          "-r",
+                          "[LAB]/server-init/.p4root",
+                          "--reset-password",
+                          "vm-lab",
+                          "-s"
+                      ],
+        "stdin":  "[REDACTED]",
+        "exit_code":  0,
+        "output":  "Enter new password: \nRe-enter new password: "
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "login"
+                      ],
+        "stdin":  "[REDACTED]",
+        "exit_code":  0,
+        "output":  "Enter password: \nUser vm-lab logged in."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "-ztag",
+                          "info"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "... userName vm-lab\n... password enabled\n... clientName *unknown*\n... clientCwd [INVOCATION]\n... clientHost vm-lab-host\n... clientCase insensitive\n... peerAddress 127.0.0.1:3805\n... clientAddress 127.0.0.1\n... serverName vm-lab-dvcs-1793368059\n... monitor enabled\n... security enabled\n... serverAddress kubernetes.docker.internal:3597\n... serverRoot [LAB]\\server-init\\.p4root\n... serverDate 2026/10/30 21:47:40 +0800\n... tzoffset 28800\n... serverUptime 00:00:00\n... serverVersion P4D/NTX64/2026.1/3089746 (2026/10/07)\n... ServerID vm-lab-dvcs-1793368059\n... serverServices local\n... serverLicense none\n... caseHandling insensitive\n... allowStreamSpecInteg 1\n... allowPush 1\n... allowFetch 3\n... allowRewrite 1\n... parentViewDefault inheritAll\n... unloadSupport disabled\n... extensionsSupport enabled\n... memoryManager mimalloc 212\n... resourcePressureLastUpdate 0\n... resourcePressureCPU 0\n... resourcePressureMem 0\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "configure",
+                          "show",
+                          "security"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "security=4 (default)"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "configure",
+                          "show",
+                          "dm.user.noautocreate"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "dm.user.noautocreate:1 (configure)"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "user",
+                          "-i"
+                      ],
+        "stdin":  "User: vm-lab\nEmail: lab@example.invalid\nFullName: Version Management Lab\n",
+        "exit_code":  0,
+        "output":  "User vm-lab saved."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "depot",
+                          "-i"
+                      ],
+        "stdin":  "Depot: depot\nOwner: vm-lab\nDescription:\n\tLocal lab depot\nType: local\nMap: depot/...\n",
+        "exit_code":  0,
+        "output":  "Depot depot saved."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "client",
+                          "-i"
+                      ],
+        "stdin":  "Client: vm-a\nOwner: vm-lab\nHost:\nRoot: [LAB]\\workspace-a\nOptions: noallwrite noclobber nocompress unlocked nomodtime normdir\nSubmitOptions: submitunchanged\nLineEnd: unix\nView:\n\t//depot/... //vm-a/...\n",
+        "exit_code":  0,
+        "output":  "Client vm-a saved."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "client",
+                          "-i"
+                      ],
+        "stdin":  "Client: vm-b\nOwner: vm-lab\nHost:\nRoot: [LAB]\\workspace-b\nOptions: noallwrite noclobber nocompress unlocked nomodtime normdir\nSubmitOptions: submitunchanged\nLineEnd: unix\nView:\n\t//depot/... //vm-b/...\n",
+        "exit_code":  0,
+        "output":  "Client vm-b saved."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "where",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules //vm-a/skill.rules [LAB]\\workspace-a\\skill.rules"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\workspace-a\\skill.rules",
+        "content":  "damage=100\ncharge=off\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "add",
+                          "-t",
+                          "text",
+                          "[LAB]\\workspace-a\\skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - opened for add"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "submit",
+                          "-d",
+                          "Baseline"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "Submitting change 1.\nLocking 1 files ...\nadd //depot/skill.rules#1\nChange 1 submitted."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "sync",
+                          "//depot/..."
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - added as [LAB]\\workspace-b\\skill.rules"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "print",
+                          "-q",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "have",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - [LAB]\\workspace-b\\skill.rules"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "change",
+                          "-i"
+                      ],
+        "stdin":  "Change: new\nClient: vm-a\nUser: vm-lab\nDescription:\n\tDamage change for shelf exercise\n",
+        "exit_code":  0,
+        "output":  "Change 2 created."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "edit",
+                          "-c",
+                          "2",
+                          "[LAB]\\workspace-a\\skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - opened for edit"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\workspace-a\\skill.rules",
+        "content":  "damage=80\ncharge=off\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "shelve",
+                          "-c",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "Shelving files for change 2.\nedit //depot/skill.rules#1\nChange 2 files shelved."
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\workspace-a\\skill.rules",
+        "content":  "damage=80\ncharge=on\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "print",
+                          "-q",
+                          "//depot/skill.rules@=2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=off"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "print",
+                          "-q",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "change",
+                          "-o",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "# A Perforce Change Specification.\n#\n#  Change:      The change number. \u0027new\u0027 on a new changelist.\n#  Date:        The date this specification was last modified.\n#  Client:      The client on which the changelist was created.  Read-only.\n#  User:        The user who created the changelist.\n#  Status:      Either \u0027pending\u0027 or \u0027submitted\u0027. Read-only.\n#  Type:        Either \u0027public\u0027 or \u0027restricted\u0027. Default is \u0027public\u0027.\n#  Description: Comments about the changelist.  Required.\n#  ImportedBy:  The user who fetched or pushed this change to this server.\n#  Identity:    Identifier for this change.\n#  Jobs:        What opened jobs are to be closed by this changelist.\n#               You may delete jobs from this list.  (New changelists only.)\n#  Stream:      What opened stream is to be added to this changelist.\n#               You may remove an opened stream from this list.\n#  Files:       What opened files from the default changelist are to be added\n#               to this changelist.  You may delete files from this list.\n#               (New changelists only.)\n\nChange:\t2\n\nDate:\t2026/10/30 21:47:41\n\nClient:\tvm-a\n\nUser:\tvm-lab\n\nStatus:\tpending\n\nDescription:\n\tDamage change for shelf exercise\n\nFiles:\n\t//depot/skill.rules\t# edit\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "opened",
+                          "-c",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - edit change 2 (text) by vm-lab@vm-a"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "unshelve",
+                          "-s",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - unshelved, opened for edit\n... //depot/skill.rules - also opened by vm-lab@vm-a"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "print",
+                          "-q",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "damage=100\ncharge=off"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "opened"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - edit default change (text)"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "revert",
+                          "[LAB]\\workspace-b\\skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - was edit, reverted"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "shelve",
+                          "-d",
+                          "-c",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "Shelved change 2 deleted."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "submit",
+                          "-c",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "Submitting change 2.\nLocking 1 files ...\nedit //depot/skill.rules#2\nChange 2 submitted."
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "print",
+                          "-q",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=on"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "have",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#1 - [LAB]\\workspace-b\\skill.rules"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "change",
+                          "-o",
+                          "2"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "# A Perforce Change Specification.\n#\n#  Change:      The change number. \u0027new\u0027 on a new changelist.\n#  Date:        The date this specification was last modified.\n#  Client:      The client on which the changelist was created.  Read-only.\n#  User:        The user who created the changelist.\n#  Status:      Either \u0027pending\u0027 or \u0027submitted\u0027. Read-only.\n#  Type:        Either \u0027public\u0027 or \u0027restricted\u0027. Default is \u0027public\u0027.\n#  Description: Comments about the changelist.  Required.\n#  ImportedBy:  The user who fetched or pushed this change to this server.\n#  Identity:    Identifier for this change.\n#  Jobs:        What opened jobs are to be closed by this changelist.\n#               You may delete jobs from this list.  (New changelists only.)\n#  Stream:      What opened stream is to be added to this changelist.\n#               You may remove an opened stream from this list.\n#  Files:       What opened files from the default changelist are to be added\n#               to this changelist.  You may delete files from this list.\n#               (New changelists only.)\n\nChange:\t2\n\nDate:\t2026/10/30 21:47:41\n\nClient:\tvm-a\n\nUser:\tvm-lab\n\nStatus:\tsubmitted\n\nDescription:\n\tDamage change for shelf exercise\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "sync",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#2 - updating [LAB]\\workspace-b\\skill.rules"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "have",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#2 - [LAB]\\workspace-b\\skill.rules"
+    },
+    {
+        "action":  "write_utf8_no_bom_lf",
+        "path":  "[LAB]\\workspace-b\\skill.rules",
+        "content":  "damage=70\ncharge=on\n"
+    },
+    {
+        "action":  "separate_fixture_mtime_from_sync",
+        "path":  "[LAB]\\workspace-b\\skill.rules",
+        "seconds_added":  2
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "-ztag",
+                          "fstat",
+                          "-T",
+                          "haveRev,headRev,action",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "... headRev 2\n... haveRev 2\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "reconcile",
+                          "-n",
+                          "-e",
+                          "[LAB]\\workspace-b\\skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#2 - opened for edit"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "-ztag",
+                          "fstat",
+                          "-T",
+                          "haveRev,headRev,action",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "... headRev 2\n... haveRev 2\n"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "reconcile",
+                          "-e",
+                          "[LAB]\\workspace-b\\skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#2 - opened for edit"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "opened"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "//depot/skill.rules#2 - edit default change (text)"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-b",
+                          "print",
+                          "-q",
+                          "//depot/skill.rules"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  "damage=80\ncharge=on"
+    },
+    {
+        "tool":  "p4",
+        "arguments":  [
+                          "-p",
+                          "127.0.0.1:3597",
+                          "-u",
+                          "vm-lab",
+                          "-c",
+                          "vm-a",
+                          "admin",
+                          "stop"
+                      ],
+        "stdin":  "",
+        "exit_code":  0,
+        "output":  ""
+    }
+]
