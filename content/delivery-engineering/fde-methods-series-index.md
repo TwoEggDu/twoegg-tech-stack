@@ -64,7 +64,7 @@ reading_groups:
 | --- | --- | --- |
 | 游戏核心模块 | [技能、效果、Buff 等职责边界]({{< relref "system-design/skill-system-01-boundaries.md" >}})，再看[策划数据怎样进入技能运行时]({{< relref "system-design/skill-system-27-designer-data-pipeline.md" >}}) | 新增规则时修改谁，哪些数据与行为需要共同验证，程序与策划怎样约定接口 |
 | 引擎设计 | [引擎怎样分层：职责、依赖与资源服务]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}) | 哪些能力应该共享，谁持有状态，加载、切换与退出由谁负责 |
-| 操作系统 | 先用[进程、线程调度与等待唤醒]({{< relref "performance/game-performance-thread-scheduling-waits.md" >}})区分执行与等待，再看[资源可用链]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})与[OS I/O]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}}) | 怎样识别运行、排队与依赖成本，选择并发、限流、异步等待或分帧，并明确结果寿命与验收条件 |
+| 操作系统 | 先用[进程、线程调度与等待唤醒]({{< relref "performance/game-performance-thread-scheduling-waits.md" >}})区分执行与等待，用[虚拟内存与内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})辨认占用与重叠峰值，再看[资源可用链]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})与[OS I/O]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}}) | 怎样识别执行与等待、统一内存口径，选择并发、限流和预加载范围，并明确资源寿命与验收条件 |
 | 硬件与产品范围 | [资产规格：贴图、LOD 与包体分层]({{< relref "performance/device-tier-asset-spec-texture-and-package.md" >}}) | 怎样结合目标镜头、内容规模与设备测量制定规格，画质、驻留和交付成本怎样取舍 |
 
 这组入口覆盖的是精选问题。引擎篇提供参考设计，OS 篇还需结合实际平台与运行时核对；资产规格篇的档位配置是待校准示例，局部纹理实验不能证明整个产品的容量或持续帧率。各层研究也不自动成为上面历史案例的验证证据。

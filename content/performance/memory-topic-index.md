@@ -1,5 +1,6 @@
 ---
 date: "2026-03-29"
+lastmod: "2026-10-31"
 title: "内存专题索引｜先分清运行时内存分布，再看预算、RT、流送、工作集和系统强杀"
 description: "给内存专题补一个稳定入口：先把运行时内存桶、预算线、工作集、RenderTexture、Shader Variant、资源生命周期，以及 Windows 的工作集/显存问题和移动端的 LMK / jetsam 看清，再按 Unity / 平台问题进入正文。"
 slug: "memory-topic-index"
@@ -34,14 +35,14 @@ tags:
 - AssetBundle / 下载缓存 / 解压 / Unload 为什么总会把内存峰值抬高
 - Shader Variant 为什么不一定最大，却仍然会把启动、驱动和 Native 压力一起抬高
 - Android 的 LMK、iOS 的 jetsam 为什么经常表现成"直接闪退回桌面"
-- Windows 上为什么更常先表现成工作集抖动、分页、显存驻留抖动或 TDR，而不是像手机那样先被系统强杀
+- Windows 的工作集、提交量、缺页和 GPU 驻留应该怎样分别调查
 
 ## 最短阅读路径
 
-如果你第一次系统读，我建议先按这条路径走：
+如果你第一次系统读，先看[内存到底占在哪里：从虚拟地址、物理页到游戏内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})，区分地址空间、分配、驻留与统计口径，再按问题进入下面的专项。各专项保留自己的版本与验证范围，不能据本次基础审校认定它们已全部复核：
 
 1. [手机和 PC 为什么要用不同的性能直觉]({{< relref "performance/game-performance-mobile-vs-pc-intuition.md" >}})
-   先把"移动端更怕系统强杀，桌面更怕工作集、分页和显存驻留慢慢把你拖垮"这条平台差异立住。
+   了解平台调查方向；具体故障原因仍须根据目标设备的事件与报告判断。
 2. [CPU 性能优化 05｜内存预算管理：按系统分配上限、Texture Streaming 与 OOM/LMK 防护]({{< relref "performance/cpu-opt-05-memory-budget.md" >}})
    再把 Unity / 移动端里的运行时内存桶、Texture / RT 分桶、LMK / jetsam 区别收进真实项目语境。
 3. [CPU 性能优化 01｜C# GC 压力：堆分配来源、零分配写法与对象池]({{< relref "performance/cpu-opt-01-gc-pressure.md" >}})
@@ -55,39 +56,20 @@ tags:
 
 ## Windows / 桌面平台需要关心什么
 
-Windows 当然也要关心内存，只是**关心的重点和移动端不一样**。
+平台差异决定应该查哪些指标与报告，不规定所有故障的出现顺序。Windows 同样可能发生分配失败；移动端也可能先出现延迟，而没有立即终止进程。
 
-移动端最该警惕的是：系统在高压下直接把前台进程送进 `LMK / jetsam`。  
-Windows 更常见的现实则是：**系统不一定先杀你，但会先让你变慢、抖、换页、显存回退，最后甚至走到 GPU 超时或分配失败。**
+- **Working Set（工作集）**：Windows 当前驻留的可分页页面集合，有特殊分配的排除项。数值变化不直接证明业务资源反复卸载。
+- **Commit（提交量）**：提交记账，不等于当前驻留量；两者不能相加。私有分配、文件映射和工具统计的边界应分别核对。
+- **Page Fault（缺页）**：区分不需要访问后备存储的软缺页与需要读取的硬缺页，再与 I/O、关键线程和坏帧对齐。依据见 [Microsoft Working Set](https://learn.microsoft.com/en-us/windows/win32/memory/working-set)。
+- **图形资源与 GPU 驻留**：单独记录图形工具的统计范围，核对是否与进程记账重叠；不能把图形估算直接加到系统进程总量。
+- **GPU 超时或设备移除**：转入图形故障调查，不能仅由内存数值推导原因。需要时进入 [CrashAnalysis 系列]({{< relref "engine-toolchain/crash-analysis-series-index.md" >}})。
 
-在 Windows / 桌面平台，最值得单独盯住的通常是这几条线：
-
-- **Working Set（工作集）**：
-  当前真正驻留在物理内存里的那部分页。它抖得厉害时，往往意味着资源进进出出过于频繁，或者切场景、首开 UI、热更恢复把热页集冲散了。
-- **Commit（提交量）**：
-  不是"现在实际驻留了多少"，而是系统承诺要为这些虚拟内存分配提供后备空间。大块分配、资源双驻留、解压缓冲和插件常驻，经常会先把这条线顶高。
-- **Page Fault / 分页**：
-  这通常是 Windows 上最容易先把体验拖坏的东西。它更常表现成切场景突然巨卡、磁盘活动升高、帧时间抖得很厉害，而不是立刻回桌面。
-- **VRAM / Shared GPU Memory / Driver Residency**：
-  桌面项目的 Texture、RT、Shadow Map、G-Buffer、驱动程序对象不只是"GPU 自己的事"。当显存预算不稳时，Windows 常见的表现是资源驻留抖动、复制增多、共享内存回退和帧时间突然上升。
-- **TDR（Timeout Detection and Recovery）风险**：
-  这不等于"纯粹的内存问题"，但过重的 RT 链、显存驻留抖动、异常长的 GPU 工作负载，会把问题一路放大到 `DXGI_ERROR_DEVICE_REMOVED` 这类桌面 GPU 故障形态。
-
-如果只用一句话概括 Windows 的内存直觉，我会这样说：
-
-`移动端更怕系统直接杀你，Windows 更怕系统先不杀你，但通过工作集、分页和显存驻留把你慢慢拖垮。`
-
-所以在 Windows 上，最该问的通常不是"为什么没收到 lowMemory"，而是：
-
-- 工作集是不是在关键时刻抖得太厉害
-- Commit 是不是被双驻留、解压和缓存顶高了
-- VRAM 和 Shared GPU Memory 是不是已经开始互相挤压
-- 切场景、首进、回前台和热更这些峰值时刻，是否在把 CPU 内存峰值和 GPU 驻留峰值叠在一起结账
+这些指标的共同基础见[内存统计与预算篇]({{< relref "performance/game-performance-memory-accounting.md" >}})。实际排查应覆盖首次进入、场景切换与重复操作，分别检查峰值、资源寿命和帧时间。
 
 ## 按你现在遇到的问题进入
 
 - 不知道现在到底是谁在吃内存：
-  先看 [CPU 性能优化 05｜内存预算管理]({{< relref "performance/cpu-opt-05-memory-budget.md" >}})。这篇现在已经把 `代码 / Runtime / Texture / RT / Mesh / Shader Variant / Objects / Cache` 分桶拆开了。
+  先看[虚拟内存与统计口径]({{< relref "performance/game-performance-memory-accounting.md" >}})，再看 [CPU 性能优化 05｜内存预算管理]({{< relref "performance/cpu-opt-05-memory-budget.md" >}})中的分类；确认分类互斥后再做预算。
 - 你看到的是 GC 抖动，不是系统强杀：
   先看 [CPU 性能优化 01｜C# GC 压力]({{< relref "performance/cpu-opt-01-gc-pressure.md" >}})，再看 [Object Pool：对象池化原理与实践]({{< relref "system-design/pattern-04-object-pool.md" >}})。
 - 一开 HDR、Bloom、阴影、多相机，内存和帧时间一起上去：

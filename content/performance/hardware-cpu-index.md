@@ -34,3 +34,5 @@ weight: 1300
 ## 从硬件机制进入操作系统
 
 理解 CPU 怎样执行指令之后，可以继续读[线程为什么没有在执行：从进程、调度到等待与唤醒]({{< relref "performance/game-performance-thread-scheduling-waits.md" >}})，区分硬件停顿、OS 就绪与阻塞、应用任务排队，再判断线程、异步等待与分帧的适用条件。
+
+理解访存延迟与带宽之后，再读[内存到底占在哪里：从虚拟地址、物理页到游戏内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})，把硬件访问成本与 OS 地址映射、驻留和进程记账分开，接到资源峰值与预算判断。
