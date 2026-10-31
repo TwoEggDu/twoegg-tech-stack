@@ -3,7 +3,7 @@ title: "Unity on Mobile｜iOS 专项：Metal 渲染行为、内存警告机制�
 slug: "mobile-unity-ios"
 date: "2026-03-28"
 lastmod: "2026-10-31"
-description: "以 Unity 2022.3 为基准，解释 Metal 资源生命周期、iOS 内存压力、Instruments 证据与崩溃分类，区分平台能力、引擎支持和真机验证。"
+description: "以 Unity 2022.3 为基准，解释 Metal、内存与诊断边界，并区分 App、UIKit Scene、进程和游戏会话，明确保存恢复责任、版本条件与验证证据。"
 tags: ["Unity", "iOS", "Metal", "Instruments", "Apple", "移动端"]
 series: "移动端硬件与优化"
 weight: 2210
@@ -172,6 +172,101 @@ VM Tracker 按虚拟内存区域分类；IOSurface 等分类也不能简单等�
 
 ---
 
+## 离开游戏再回来：App、Scene、进程与游戏会话
+
+玩家重新打开游戏，可能是在继续原进程，也可能已经进入一次新的启动。画面看似还在原位置，还可能只是系统显示的界面快照，不能直接证明渲染和交互已经恢复。要安排保存、重连与资源恢复，先分清这次变化发生在哪一层。
+
+本节建立恢复模型与责任分工，复用前文的内存、Metal 和诊断内容；验证矩阵是待执行设计，没有目标项目的 iPhone／iPad 恢复实测。
+
+### App 级协调、界面 Scene 与进程寿命分开看
+
+| 对象 | 本节中的含义 | 恢复时要确认什么 |
+| --- | --- | --- |
+| App 级协调 | 应用启动、共享服务及平台事件的管理 | 本次是否重新初始化应用级系统，SDK 与共享服务是否只建立一次 |
+| UIKit Scene | 应用的一份 UI 实例及其窗口相关状态 | 哪个界面连接、失活、进入后台或断开；对应数据与显示目标是否仍有效 |
+| 进程 | OS 承载本次执行的地址空间、线程与内存状态 | 是同一运行现场继续，还是新进程从记录重建；旧任务和句柄不能跨进程沿用 |
+| 游戏会话 | 项目定义的账号、存档进度、玩法状态与联网关系 | 哪些业务可继续，哪些需读档、重新确认或结束 |
+
+**这里的 UIKit Scene 不是 Unity 的场景。** UIKit 的界面连接变化，不自动等于 Unity Scene 被卸载；某个界面断开，也不能独自证明整个进程已结束或所有游戏会话都应退出。
+
+Apple 将进程级启动与界面生命周期分工：在 **iOS 13 及以后启用 Scene 支持**时，界面事件由相应 `UISceneDelegate` 接收，`UIApplicationDelegate` 仍负责应用启动等工作。多个 Scene 可以各有状态；是否支持多窗口还需要相应配置和实现。见 [Apple 生命周期说明](https://developer.apple.com/documentation/uikit/managing-your-app-s-life-cycle)及 [Scene 配置](https://developer.apple.com/documentation/uikit/specifying-the-scenes-your-app-supports)。这说明 API 与事件分工，不证明任意 Unity 2022.3 导出工程已经接入 Scene，也不替代目标 SDK 的适配要求。
+
+沿这个模型理解几种状态：前台 active 表示可与用户交互；inactive 可能只是系统面板等临时中断，不能直接认定已进入后台。进入 background 后，普通前台游戏需要收敛工作并为挂起做准备，允许继续的任务取决于实际后台能力。suspended 表示应用暂不执行，不能把它当作进程已死；进程终止后则需要重新启动。这是解释模型，不是一组在每个 Unity 回调中都能直接读到的枚举。
+
+Apple 的[后台 UI 准备说明](https://developer.apple.com/documentation/uikit/preparing-your-ui-to-run-in-the-background)同时描述了临时失活、后台转换和系统快照。App 切换器中的旧画面或恢复时短暂显示的快照都不能作为 Ready 证据，仍需实际的新画面与交互结果。
+
+### 把平台事件接到 Unity，先确认真实入口
+
+本篇仍以 **Unity 2022.3 LTS** 为基线。该版本的[导出工程说明](https://docs.unity3d.com/2022.3/Documentation/Manual/StructureOfXcodeProject.html)列出 `main.mm` 与 `UnityAppController` 等入口。实际项目可能还有原生宿主、自定义 AppDelegate 或 SDK 集成，应检查最终主 App 的 Info.plist、`UIApplicationSceneManifest`、Scene delegate 配置、入口类和事件传递链。不能只加一个 Scene 配置键，就宣称原生窗口、Unity 渲染与回调已经配套。
+
+Unity 的 [OnApplicationPause](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationPause.html)与 [OnApplicationFocus](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationFocus.html)提供引擎层通知，不能直接替代每个 UIKit Scene 的完整状态。初始化也可能收到 `OnApplicationPause(false)`；不要仅凭一次 false 就启动读档、重连和重建全部资源。回调与原生事件的实际关系需随 Unity 补丁、宿主和插件配置验证，Editor 中的焦点变化也不能充当 iOS 挂起实验。
+
+若集成确实支持多个 Scene，应分别记录界面身份与状态，协调共享游戏数据；一个界面失活不能直接翻译成“所有会话退出”。目标只支持单窗口时，就按单窗口范围验收，不预填多窗口能力。
+
+平台适配层负责把已有事件交给统一的恢复协调入口，保留重复通知与真实状态变化的区别。恢复入口再判断本轮上下文是否仍有效，避免每个 SDK、页面与系统各自发起一轮恢复。
+
+### UI 恢复、业务保存与后台工作分别负责
+
+Apple 的 [UI 状态保存说明](https://developer.apple.com/documentation/uikit/preserving-your-app-s-ui-across-launches)明确区分界面状态与持久数据：UIKit 可以丢弃 UI 恢复记录，所以它不能替代业务数据落盘。Scene 路线可用 `NSUserActivity` 保存重建界面的必要信息；具体接入见[官方恢复示例](https://developer.apple.com/documentation/uikit/restoring-your-app-s-state)。这些机制不会自动保存 Unity 对象图、纹理内容或服务端会话，项目仍需定义恢复入口与数据契约。
+
+可以按下面的责任划分检查设计；同一人可以承担多项职责：
+
+| 责任位置 | 保存／离开时 | 恢复／重新启动时 |
+| --- | --- | --- |
+| 玩法与存档 | 平时增量形成有效检查点，区分临时 UI、必须保留进度与可重建内容 | 校验存档版本、完整性与账号归属；失败时回退到明确的有效状态 |
+| 原生与 SDK 集成 | 正确传递应用／Scene 事件，按已启用能力收敛后台工作 | 核对新启动、界面重连与共享服务初始化，避免重复注册和重复恢复 |
+| 网络与业务会话 | 保留待确认操作身份，不把本地暂停当作服务端也暂停 | 重新确认连接、登录与请求结果，避免重复结算或把旧会话结果应用到新账号 |
+| 资源、渲染与异步调用方 | 标明保留、释放与重建范围，停止不再合法的目标使用 | 按依赖确认资源与显示目标，再接受本轮任务结果；不默认重载全部资源 |
+| 内容负责人及 QA | 约定进度、画面、输入、音频和离线计时的预期 | 验收实际功能与表现，记录失败及未覆盖项，不只确认“没有闪退” |
+
+关键状态应在形成时持续保存，记录“请求保存”“本地提交完成”和“服务端确认”各自的结果。恢复时选择最后一份有效检查点；若保存失败或记录损坏，应进入可解释的回退路径。提交方式、存储错误及突然终止下的一致性要按实际实现验证，不把启动异步写入当成已经持久保存。
+
+也不要把 `applicationWillTerminate` 或 Unity 的 `OnApplicationQuit` 当作必达的最后保存机会。Apple 的[终止通知说明](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/applicationwillterminate(_:))与 [Unity 2022.3 退出通知](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationQuit.html)都需要结合实际挂起／终止路径理解；原进程未执行的收尾代码，不会因下一次启动而自动补做。
+
+短时额外执行时间、系统调度的后台任务与后台传输也不是同一能力。已有第 6 节说明 `beginBackgroundTask` 的配对、失败与过期处理，这里只补一个保存约束：按 [Apple 后台执行说明](https://developer.apple.com/documentation/uikit/extending-your-app-s-background-execution-time)，应在需要的长任务开始前安排相应申请，不能等已经退后台才假定获得额外时间。不要把文档中的回调返回要求或 `backgroundTimeRemaining` 解释成每次保存稳定拥有的完成窗口。
+
+### 恢复本轮上下文，再判断画面与交互是否可用
+
+同一进程恢复时，原来的异步工作可能仍关联旧页面、旧账号或旧玩法状态。任务返回前后都应核对归属，按所有者约定取消、保留、重新请求或丢弃结果。对象与业务上下文的收口复用[《Unity 异步运行时 06》]({{< relref "engine-toolchain/unity-async-runtime-06-cancellation-destroy-playmode-lifecycle.md" >}})，不在这里重讲 CancellationToken；也不因短暂失活就一律取消所有任务。
+
+进程已经结束时，原内存任务没有可继续的执行现场；应从有效检查点及界面恢复信息重新建立工作，涉及联网时再核对当前服务端状态。界面恢复成功也不证明网络会话、资源与画面已准备好。项目可以采用下面的职责链；步骤可并行，但必须满足实际依赖：
+
+```text
+确认进程启动／界面身份与本轮恢复上下文
+  → 取得有效检查点，核对当前业务会话
+  → 确认所需资源、渲染目标及本轮任务结果
+  → 验证新画面、输入与相关业务结果，标记 Ready
+```
+
+退后台与恢复时，原生渲染插件还需遵守 [Metal 的后台使用约束](https://developer.apple.com/documentation/metal/preparing-your-metal-app-to-run-in-the-background)，配合引擎管理其拥有的资源和目标。收到 active 或 Unity 恢复通知，不等于下一帧已经正确显示；界面重连也不自动意味着全部 Metal 资源失效。沿前文的提交、执行、呈现区分取证，再判断恢复黑屏属于目标、资源、业务还是其他问题。
+
+内存压力下如何解释 footprint、驻留与引擎资源，复用[内存记账文章]({{< relref "performance/game-performance-memory-accounting.md" >}})中的 Apple 口径。同一进程的多个 Scene 不构成几份可直接相加的进程内存。本篇仍按 2022.3 核对 Unity 工具字段，不把那篇的 Unity 6 示例直接套用。警告、释放与真实终止分别看证据，不能假定每次终止前必有足够的卸载时间。
+
+### 用同一轮事件与结果证明恢复了什么
+
+每轮固定设备、iOS／iPadOS、Unity 补丁、Xcode／SDK、构建与资源版本、存档、主 App 配置和触发动作。记录外部测试轮次、进程启动身份与 PID、采用 Scene 时的会话／连接实例、业务会话、恢复批次和任务关联。关联字段由项目设计；PID 可能复用，只有一条“resume”日志不足以区分继续运行与新启动。
+
+将原生事件、Unity 通知、检查点提交、资源就绪和首个正确显示／交互结果放回可对齐的时间线；跨进程的旧／新记录要显式关联，不能只比较各自计时器数值。没有日志也不能证明系统已挂起，因为采集缺失、缓冲或事件覆盖范围都需要另查。
+
+以下是**待执行的验证矩阵**：
+
+| 场景 | 需要保留的证据 | 验收重点 |
+| --- | --- | --- |
+| 正常启动与短暂系统面板／中断 | 初始通知、实际前后台事件、进程／界面与恢复批次 | 初始化不误认恢复；临时失活不错误结束会话或重复结算 |
+| 切后台／锁屏后回前台 | 原生与 Unity 事件、保存结果、业务状态和新画面／输入 | 区分原进程继续与新启动；快照不作为恢复成功证据 |
+| 实际支持的 Scene 断开／重连或多窗口变化 | Scene 配置与身份、连接事件、共享服务和显示结果 | 按单个界面及共享数据分别验收；不支持的分支标“未覆盖” |
+| 进程终止后重新启动 | 终止方式、旧／新启动身份、有效检查点及可获得的退出报告 | 从有效记录重建，旧任务结果不回写；不能默认退出回调执行过 |
+| 保存失败／中断、UI 恢复记录不可用 | 失败输入、保存提交阶段、读档结果和回退动作 | 业务数据与 UI 记录分别处理，不把无效记录当作成功恢复 |
+| 后台任务失败／过期、联网操作结果待确认 | 申请与结束记录、过期处理、操作身份及服务端结果 | 完成清理和状态回流，不重复执行已完成业务，也不预填后台工作通过 |
+
+工具模拟的通知、Xcode 暂停／停止运行、模拟器测试与真实设备上的挂起、系统终止要分别标记。保留是否连接调试器及采集方式，并在相应运行条件下复查；不能用一次模拟内存警告证明已经覆盖 jetsam，也不能把停止调试当作真实系统回收。
+
+发现重新启动时，复用第 5 节的报告分类：普通崩溃、jetsam 与 watchdog 各用对应记录关联构建、时间和复现场景。Apple 的 [watchdog](https://developer.apple.com/documentation/xcode/addressing-watchdog-terminations)与 [jetsam 报告](https://developer.apple.com/documentation/xcode/identifying-high-memory-use-with-jetsam-event-reports)承担不同证据职责；拿不到报告时保留“原因未确认”，不要仅凭回到桌面就写成内存终止。
+
+<!-- DATA-TODO: 在固定 Unity 2022.3 补丁、Xcode／SDK 与目标 iPhone／iPad 上执行本节矩阵，归档主 App 配置、入口及 Scene 采用情况、原生／Unity 事件、有效检查点、新画面与交互结果及相关退出报告。区分工具注入和真实系统事件，保留失败样本、未覆盖分支和调试连接条件，不预填通过或恢复耗时。 -->
+
+---
+
 ## 5. iOS 崩溃分析
 
 ### dSYM 文件的生成与管理
@@ -241,4 +336,4 @@ Unity 层可在 `OnApplicationPause` 等生命周期回调中协调保存与恢�
 
 ## 总结
 
-iOS 的关键是明确生命周期：Attachment 何时还要被读取、资源何时可以释放、进程何时可能挂起，以及崩溃符号对应哪一次构建。Metal、Instruments 与 Unity Profiler 提供不同层面的证据，组合使用才能把平台机制落实为产品预算与可验证的优化。
+iOS 的关键是明确生命周期：App 与界面事件由谁处理、游戏会话怎样保存恢复、Attachment 何时还要被读取、资源何时可以释放，以及崩溃符号对应哪一次构建。Metal、Instruments 与 Unity Profiler 提供不同层面的证据，组合使用才能把平台机制落实为产品预算与可验证的优化。
