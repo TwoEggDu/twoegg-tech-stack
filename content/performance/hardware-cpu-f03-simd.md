@@ -1,8 +1,9 @@
 ---
-title: "底层硬件 F03｜SIMD 指令集：一条指令处理 8 个 float，Burst 背后在做什么"
+title: "底层硬件 F03｜SIMD 指令集：向量宽度、自动向量化与 Burst 的能力边界"
 slug: "hardware-cpu-f03-simd"
 date: "2026-03-28"
-description: "从 SSE2 到 AVX-512 再到 ARM NEON，解释 SIMD 的硬件原理和向量宽度演进，以及 Unity Burst 编译器如何通过自动向量化让同样的 C# 代码快 4~8 倍。"
+lastmod: "2026-10-31"
+description: "从 SSE、AVX 到 ARM NEON，区分向量宽度、指令吞吐和实际加速比，解释 Burst 自动向量化的条件、语言支持边界与验证方法。"
 tags:
   - "CPU"
   - "SIMD"
@@ -15,15 +16,17 @@ tags:
 series: "底层硬件 · CPU 与内存体系"
 weight: 1330
 ---
-一条 `VADDPS ymm0, ymm1, ymm2` 指令，让 8 个 float 同时完成加法，耗时和一次普通 `ADDSS`（单精度标量加法）完全相同。这不是编译器的魔法，而是硬件里真实存在的并行执行单元。
+一条 `VADDPS ymm0, ymm1, ymm2` 指令可以表达 8 个 float 的逐元素加法。但这不代表它在所有 CPU 上都只用一个周期，也不代表程序就能快 8 倍。指令处理多少数据、执行单元多久能接收下一条指令、整个循环跑多快，是三个不同的问题。
 
-理解这件事之后，你才能真正理解 Unity Burst 编译器的约束为什么存在——那些限制不是 Burst 团队的偏好，而是向量化执行的物理前提。
+理解这层区别，才能判断数据布局是否给了 SIMD 发挥空间，以及 Burst 实际利用了多少。
+
+> 版本与证据：Burst 部分按 1.8 文档核对；该文档入口本次显示为 1.8.31。具体目标选项需以项目安装版本为准。下面的代码用于说明机制，尚未在 Unity 中完成编译、汇编对照和设备性能测试。
 
 ---
 
 ## 标量 vs 向量：硬件层的根本差异
 
-**标量运算**是 CPU 执行的默认形态：一条指令，一个操作数，产生一个结果。
+**标量运算**以单个数据元素为单位。例如标量浮点加法读取两个输入，产生一个浮点结果。
 
 ```asm
 ; 标量：一条指令处理 1 个 float
@@ -33,67 +36,74 @@ ADDSS xmm0, xmm1        ; xmm0[0] = xmm0[0] + xmm1[0]，其余位不变
 **向量运算**是 SIMD 的形态：一条指令，多个操作数打包在一起，同时产生多个结果。
 
 ```asm
-; 向量：一条指令处理 8 个 float（AVX2，256-bit）
+; 向量：一条指令处理 8 个 float（AVX，256-bit）
 VADDPS ymm0, ymm1, ymm2
 ; ymm0[0..7] = ymm1[0..7] + ymm2[0..7]
-; 8 个加法，1 个时钟周期
+; 表达 8 个加法；周期数取决于具体 CPU 和依赖关系
 ```
 
-SIMD 的全称是 **Single Instruction, Multiple Data**（单指令多数据）。硬件能做到这件事，原因很直接：**物理上有多个 ALU 并排工作**。一个 256-bit 的向量 ALU，内部实际上是 8 个 32-bit 的浮点 ALU，它们共享同一套控制逻辑，在同一个时钟周期内同时完成各自的计算。
+SIMD 的全称是 **Single Instruction, Multiple Data**（单指令多数据）。指令集规定了多个数据通道（lane）的运算语义，具体硬件可以用宽执行单元实现，也可以把一条宽指令拆成较窄的内部操作。不能由 256-bit 寄存器直接推断出 8 个独立浮点单元及其周期数。
 
-这和多核并行不同。多核是多套完整的 CPU 流水线，各自独立调度。SIMD 是单个核心内部的数据级并行——同一条指令的解码、取操作数、写回，只发生一次，但数据处理宽度是标量的 N 倍。
+这和多核并行不同。多核是多套完整的 CPU 流水线，各自独立调度。SIMD 是单个核心内部的数据级并行——一条架构指令描述多个元素的同类运算；内部解码、执行和访存可能仍涉及多个微操作。
 
 ---
 
 ## 向量宽度演进史
 
-x86 的 SIMD 扩展从 1999 年开始积累，每隔几年增加一次宽度或指令集：
+x86 的 SIMD 扩展既增加过宽度，也扩充过同一宽度下的运算能力：
 
-| 指令集 | 年份 | 寄存器宽度 | float32 并行数 | 关键新增 |
-|--------|------|-----------|--------------|---------|
-| SSE | 1999 | 128-bit | 4x | 首个浮点 SIMD，4 个 XMM 寄存器 |
-| SSE2 | 2001 | 128-bit | 4x | 整数 SIMD，double 支持，16 个 XMM |
-| SSE4.1/4.2 | 2007 | 128-bit | 4x | 点积、字符串指令、blendvps |
-| AVX | 2011 | 256-bit | 8x | YMM 寄存器（256-bit），3 操作数格式 |
-| AVX2 | 2013 | 256-bit | 8x | **FMA**（融合乘加），整数 256-bit 支持 |
-| AVX-512 | 2017 | 512-bit | 16x | ZMM 寄存器，mask 寄存器，主要服务器/高端桌面 |
+| 指令集 | 寄存器宽度 | float32 通道数 | 关键区别 |
+|--------|-----------|--------------|---------|
+| SSE | 128-bit | 4 | 提供打包单精度浮点运算；IA-32 下有 8 个 XMM，64 位模式下有 16 个 |
+| SSE2 | 128-bit | 4 | 扩充 XMM 整数运算并增加双精度支持；XMM 数量增加不是 SSE2 本身的特性 |
+| SSE4.1 / SSE4.2 | 128-bit | 4 | 分别增加点积、混合选择及字符串比较等指令，不增加向量宽度 |
+| AVX | 256-bit | 8 | YMM 寄存器和三操作数形式，已支持 256-bit 浮点加法 |
+| AVX2 | 256-bit | 8 | 扩展 256-bit 整数等操作；FMA 是另一个独立的指令集特性 |
+| AVX-512 | 512-bit | 16 | ZMM、掩码及多个功能子集；需要核对具体 CPU 和所用子集 |
 
-ARM 侧的 SIMD 走了另一条路：
+这些是指令能力，不能直接当成加速倍数。指令语义和特性检测可查 [Intel 架构手册及优化手册入口](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)。
 
-| 指令集 | 宽度 | float32 并行数 | 备注 |
-|--------|------|--------------|------|
-| NEON (AArch32/64) | 128-bit | 4x | 所有现代 ARM Cortex-A 和 Apple Silicon 均支持 |
-| SVE / SVE2 | 128~2048-bit（可变） | 4~64x | Armv8.2+，宽度由硬件实现决定 |
-| Apple AMX | 不公开（推测 512-bit+） | — | Apple Silicon 专用矩阵扩展，加速 BLAS/ML 推理 |
+ARM 侧也需要区分固定宽度和可伸缩向量：
 
-AVX2 是今天 PC 游戏开发最重要的基准线：Intel Haswell（2013）和 AMD Ryzen（2017）之后的 CPU 均支持，Unity Burst 的默认 PC 目标就是 AVX2。
+| 指令集 | 向量宽度 | float32 通道数 | 备注 |
+|--------|---------|--------------|------|
+| NEON / Advanced SIMD | 128-bit | 4 | 本文讨论 128-bit 浮点向量形式；FP16 算术还需对应扩展 |
+| SVE / SVE2 | 128～2048-bit，按 128-bit 递增 | 4～64 | 可用向量长度依硬件与执行环境而定；SVE2 是进一步扩展，不能由 Armv8.2 版本号推定已支持 |
 
-**FMA（Fused Multiply-Add）**值得单独说一句。`a * b + c` 这个操作在 FMA 下变成一条指令（`VFMADD`），不仅节省了一条指令，还**消除了中间舍入误差**——乘法结果保持全精度再和 c 相加。神经网络推理、物理模拟、蒙皮计算中大量出现乘加操作，FMA 使 AVX2 的实际吞吐量接近理论值的两倍。
+宽度关系见 [Arm 对 Neon、SVE 和 SME 的说明](https://developer.arm.com/community/arm-community-blogs/b/architectures-and-processors-blog/posts/matrix-matrix-multiplication-neon-sve-and-sme-compared)。
+
+**FMA（Fused Multiply-Add）**把 `a * b + c` 按融合乘加语义计算，中间乘积不单独舍入，最终结果舍入一次。因此它可能与分开乘、加的结果不同。按通常 FLOP 计数，每个通道的 FMA 计两次浮点运算；这不等于程序吞吐自动翻倍，标量也可以使用 FMA。
+
+Burst 的 x64 构建目标有多个选项，不能统一称为“默认 AVX2”。还要区分 **ISA 特性**与**编译器目标名称**：Burst 1.8.31 名为 AVX2 的目标组合包含 FMA 等额外特性，不表示 FMA 属于 AVX2 指令集。最终代码取决于构建配置、运行时分派及 CPU / OS 支持，见 [Burst 平台和目标说明](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/building-projects.html)。
 
 ---
 
-## 理论峰值：为什么实际加速比不到 8x
+## 理论峰值：为什么向量宽度不等于加速比
 
-纯计算密集型循环（所有数据在寄存器或 L1 缓存里）：
+先只数一条指令表达的浮点工作量：
 
-- 标量 ADDSS：1 float/cycle
-- SSE ADDPS（128-bit）：4 float/cycle，**4x 理论上限**
-- AVX2 VADDPS（256-bit）：8 float/cycle，**8x 理论上限**
-- AVX2 VFMADD（FMA）：16 float/cycle（乘和加合并），**16x 理论上限**
+| 运算形式 | 元素数 | FLOP / 指令 |
+|---------|-------|-------------|
+| 标量加法 | 1 | 1 |
+| 128-bit float32 加法 | 4 | 4 |
+| 256-bit float32 加法 | 8 | 8 |
+| 256-bit float32 FMA | 8 | 16 |
 
-实际场景中达不到理论值，主要有三个原因：
+要从这个表推算每秒算力，还需要指令吞吐、执行单元数量和实际频率。**延迟**表示一条指令的结果多久可被依赖者使用；**吞吐**表示独立指令能以多快的速度持续执行，两者不能混用。比较加速比时，标量与向量版本也必须完成同样的工作。
+
+实际循环还受三类条件约束：
 
 **1. 内存带宽限制（Memory-Bound）**
 
-SIMD 每个时钟周期消耗的数据量是标量的 8 倍。如果数据在 L2/L3 缓存或主存，读取速度赶不上计算速度，ALU 就会等待。这就是为什么 cache-friendly 的数据布局和向量化必须配合使用——SIMD 扩大了对带宽的需求，不优化内存访问模式的向量化是残缺的向量化。
+向量化不必增加完成同一任务的总数据量，但会提高计算单元消费数据的速率。如果缓存或主存供数跟不上，执行单元仍会等待。因此应结合访问局部性和 [F04 的带宽模型]({{< relref "performance/hardware-cpu-f04-memory-bandwidth.md" >}}) 分析。
 
 **2. 循环开销（Loop Overhead）**
 
-向量化通常需要对循环做 peeling（处理头部不对齐的元素）和 remainder（处理尾部不足一个向量宽度的元素），这些额外代码会在数据量小时稀释收益。
+向量化可能增加别名检查、对齐处理和尾部处理；具体目标也可能用非对齐访问或掩码完成。数据量小时，这些开销会稀释收益。
 
 **3. 依赖链（Dependency Chain）**
 
-如果向量指令之间存在数据依赖（上一条的输出是下一条的输入），指令级并行度下降，后端执行单元空转。
+如果向量指令之间存在数据依赖（上一条的输出是下一条的输入），能同时推进的独立工作减少，宽执行单元也未必能跑满。
 
 ---
 
@@ -110,18 +120,18 @@ for (int i = 0; i < N; i++) {
 }
 ```
 
-满足：无依赖（`result[i]` 只依赖同下标的输入）、连续内存、相同操作（乘加）。编译器可以每次读 8 个 float，做 8 次乘加，写 8 个结果。
+这里还隐含一个条件：输出与输入之间没有造成跨迭代依赖的内存重叠。只看下标相同并不足以证明这一点，因为不同指针可能指向同一块内存。条件成立且成本合适时，编译器才可能批量加载、计算和写回；宽度由目标与优化决策决定。
 
-**无法被向量化：循环携带依赖（Loop-Carried Dependency）**
+**需要额外分析：循环携带依赖（Loop-Carried Dependency）**
 
 ```c
-// result[i] 依赖 result[i-1]，必须串行
+// 直接写法中，result[i] 依赖前一轮结果
 for (int i = 1; i < N; i++) {
     result[i] = result[i-1] + a[i];
 }
 ```
 
-第 i 次迭代必须等第 i-1 次完成才能开始，无法并行。这是**前缀和（Prefix Sum）**问题，有专用的并行算法，但普通自动向量化无法处理。
+直接按这个计算顺序执行时，第 i 次迭代依赖第 i-1 次。这是**前缀和（Prefix Sum）**问题，可以改用并行扫描算法，但不能把普通逐元素向量化直接套上去；浮点版本还要检查改写计算顺序是否改变结果。也不能据此认为所有循环携带依赖都无法向量化，例如归约有专门的处理方式。
 
 **条件分支：部分可向量化，部分不能**
 
@@ -132,23 +142,27 @@ for (int i = 0; i < N; i++) {
 }
 ```
 
-这里的分支可以用 SIMD 的 **mask（掩码）** 操作处理：同时计算两条路径的结果，再用比较结果作为掩码做 blend（混合）选择。但前提是两条路径的操作都没有副作用。如果分支内有函数调用、写外部状态或路径代价差异极大，向量化就会退化。
+这里可能用比较加 blend（混合选择），或目标支持的掩码执行处理。前者可能计算两条路径再选择，后者不必等价于两路全部执行。编译器需要保留副作用与异常语义，并判断转换是否划算；存在分支或函数调用本身并不等于不能向量化。
 
 ```c
-// 无法向量化：分支内有复杂控制流或副作用
+// 需要分别分析数学函数支持和输出下标依赖
 for (int i = 0; i < N; i++) {
     if (a[i] > threshold) {
-        result[i] = expf(a[i]);   // 超越函数，无法并行化
-        sideEffectBuffer[count++] = i;  // 写共享状态，有副作用
+        result[i] = expf(a[i]);   // 是否有可用的向量实现、是否依赖 errno 等语义
+        sideEffectBuffer[count++] = i;  // count 使输出位置依赖此前命中的元素数
     }
 }
 ```
 
+这里更难的是可变输出位置，可能需要压缩写入或算法改写。`expf` 并非物理上不能并行，是否能自动向量化取决于编译器、数学库和浮点选项。以上条件可对照 [LLVM 自动向量化文档](https://llvm.org/docs/Vectorizers.html)；LLVM 的通用能力不等于某个 Burst 版本一定会采用相同变换。
+
 ---
 
-## Burst 编译器：不是 JIT，是 AOT + LLVM
+## Burst 编译器：Editor 即时编译与 Player AOT
 
-Unity 的 Mono/IL2CPP 编译器是通用 C# 编译器，不为 SIMD 做专门优化。**Burst 是独立的 AOT 编译器**，使用 LLVM 后端，在构建时将 `[BurstCompile]` 标记的 Job 编译成目标平台的原生代码。
+Burst 使用 LLVM 后端编译受支持的 C# 子集：在 Editor 中按需即时编译，在 Player 构建时进行 AOT 编译。Editor 默认异步编译时，等待期间可能先执行托管版本，因此首次运行不能直接用来代表 Burst 性能。见 [Burst Play mode 编译说明](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/compilation-synchronous.html)。
+
+也不能把 Mono / IL2CPP 概括为“绝不生成 SIMD”：最终指令受运行时、原生编译后端、代码与选项影响。Burst 的支持范围和优化信息更有针对性，但收益仍需对照生成代码与测量。
 
 核心流程：
 
@@ -156,32 +170,30 @@ Unity 的 Mono/IL2CPP 编译器是通用 C# 编译器，不为 SIMD 做专门优
 C# IL → Burst 前端分析 → LLVM IR → LLVM 优化 Pass → 目标平台机器码
                                         ↑
                               自动向量化在这里发生
-                              （Loop Vectorization Pass）
+                              （循环向量化 / SLP 向量化等）
 ```
 
-LLVM 的向量化 Pass 会分析 IR 中的循环结构：检查依赖关系、内存对齐、步长是否连续，然后决定是否生成 `ymm` 或 `xmm` 向量指令。Burst 在此基础上增加了额外的分析（例如针对 `NativeArray` 的对齐保证），让向量化可以更激进。
+循环向量化分析多次迭代能否一起处理；SLP 向量化则尝试合并同一代码区域中的相似标量操作。依赖、别名、访问方式和目标成本都会影响决策。最终可能生成 x86 或 ARM 向量指令，也可能保留标量代码。
 
 ### Burst 的限制从哪里来
 
-Burst Job 有一套众所周知的约束：不能用 managed 对象、不能访问 static 字段、不能用 try/catch、不能用普通 C# 数组。这些约束通常被解释成"Burst 的规定"，但背后的原因是**向量化和并行执行的物理前提**。
+Burst 的限制首先是**编译器支持的语言与运行时边界**，不能全部归因于 SIMD 的物理要求。
 
-**不能用 managed 对象（class 实例、数组引用）**
+**托管对象与数组**
 
-向量化需要**连续的内存布局**。managed 对象由 GC 堆管理，地址不保证连续，对象头（object header）、GC 标记位散布其中。Burst 无法对 `new float[N]`（managed 数组）应用 SIMD 读取，因为它不知道内存是否连续对齐。`NativeArray<float>` 是固定地址的连续内存块，Burst 可以安全地生成宽度为 256-bit 的向量读取。
+Burst 一般不支持在编译代码中使用托管对象和普通托管数组，但原因不是 `float[]` 元素不连续：其元素本身是连续存储的。对象生命周期、GC 和运行时功能支持是另一层问题。`NativeArray<float>` 提供非托管连续存储及访问约定，利于分析，却不保证向量化。Burst 还有限制性地支持静态只读托管数组，见 [类型支持说明](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/csharp-type-support.html)。
 
-**不能用 static 字段**
+**静态字段**
 
-Burst Job 设计为可以在 Worker Thread 上并行运行多个实例。static 字段是共享状态，多个向量化的 Job 同时写同一个 static 变量会产生数据竞争（Data Race），向量化引入的批量写入甚至可能在错误的时序上部分提交结果。
+“不能用任何 static”也不准确。[静态只读字段](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/csharp-static-read-only-support.html)在规定条件下受支持；共享可变数据有专门的 [SharedStatic](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/csharp-shared-static.html) 机制。但可编译不代表并发安全，共享写入仍需要正确的同步。
 
-**不能用 try/catch**
+**异常处理**
 
-向量化循环要求循环体的控制流是**规则的**（没有任意跳出点）。try/catch 引入了隐式的控制流跳转（异常表），LLVM 的向量化 Pass 无法分析这种结构，遇到就会放弃向量化。
-
-这些约束不是 Burst 故意刁难开发者，而是向量化执行的物理前提的直接映射。
+不能在 Burst 中依赖普通托管 `try/catch` 恢复流程。Burst 支持 `try/finally` 等部分结构，但异常路径的行为与 .NET 不同。这是支持范围和运行时语义的约束，不能推导成“所有含异常结构的代码都不可能向量化”。具体边界见 [HPC# 支持说明](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/csharp-hpc-overview.html)。
 
 ---
 
-## 一个完整的 Burst Job 示例
+## 一个 Burst Job 定义示例
 
 ```csharp
 using Unity.Burst;
@@ -200,47 +212,42 @@ public struct MultiplyAddJob : IJobParallelFor
     public void Execute(int i)
     {
         // a[i] * b[i] + c[i]
-        // Burst 会把这个循环体向量化为 VFMADD256
+        // 是否向量化、是否融合成 FMA，需检查目标代码和浮点设置
         Result[i] = math.mad(A[i], B[i], C[i]);
     }
 }
 ```
 
-Burst 看到 `IJobParallelFor` 时，知道每个 `Execute(i)` 调用之间没有依赖。结合 `NativeArray` 提供的连续内存保证，它会把多个连续的 `Execute` 调用合并成向量指令：一次处理 8 个 i（AVX2）或 4 个 i（NEON/SSE），而不是每个 i 单独执行一次。
+这个定义假设四个数组覆盖相同的有效下标范围，且输出与输入没有产生依赖的重叠。调用方还需要负责分配、初始化、`Schedule`、`Complete` 和释放。
 
-你可以在 Burst Inspector（Window > Burst Inspector）里看到实际生成的汇编，确认 `ymm` 寄存器是否出现在输出里。
+`IJobParallelFor` 要求开发者保证迭代之间独立；接口不能证明任意用户代码都满足这一点。此示例给了编译器批量处理的机会，但不是“每次必定合并 8 个 Execute”的保证，`math.mad` 也不代表所有配置下都融合为 FMA。
+
+可以在 [Burst Inspector](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/editor-burst-inspector.html) 选择目标并看热点循环：确认是打包运算、如何加载和处理尾部，而不只是搜索 `ymm`。`xmm` 同时用于标量与向量指令，寄存器名本身不能证明整个循环已向量化。
 
 ---
 
-## 移动端 NEON：更窄，但够用
+## 移动端 NEON：宽度之外还要看什么
 
-ARM NEON 固定 128-bit，一次处理 4 个 float32 或 8 个 float16。相比 AVX2 的 256-bit，向量宽度只有一半，但移动端的数据集通常也更小，并且 NEON 的延迟和吞吐比 AVX2 更稳定（移动端 CPU 的热设计余量决定了不会有 AVX-512 那种降频风险）。
+128-bit NEON 一次可表达 4 个 float32 运算。若处理器具备相应 FP16 算术扩展，才可使用 8 个 float16 通道的算术指令；“支持 NEON”本身不足以推出这一点。FP16 存储、转换与算术能力也应分别核对，见 [Arm 的 Neon / FP16 扩展说明](https://developer.arm.com/documentation/101028/0009/Advanced-SIMD--Neon--intrinsics)。
 
-**float16 在移动端的重要性正在上升。** Qualcomm Adreno 和 Apple Neural Engine 的 ML 推理大量使用 float16，NEON 的 `FADD v0.8h, v1.8h, v2.8h`（8x float16，128-bit）在推理任务上的实际吞吐不输 PC 的 float32 路径。
+不能从向量更窄推导出移动端性能更稳定、数据集一定更小或不会热降频。持续性能还取决于频率、供数能力、整机负载和温控。GPU、NPU 的 FP16 吞吐也不能用来证明 CPU NEON 的性能。
 
-Burst 会根据构建目标自动选择后端：
-- PC（x64）：AVX2（默认），可降级到 SSE4 或 SSE2
-- iOS/Android（ARM64）：NEON
-- Apple Silicon Mac：NEON + AMX（通过 `Unity.Mathematics` 的 matrix 路径间接利用）
-
-开发者不需要手动选择，但了解目标平台的向量宽度，有助于判断某段代码的理论加速上限。
+Burst 支持的 ARM 目标会随版本扩展，应检查安装版本的平台表与构建设置，并在目标设备验证。不能仅凭使用 `Unity.Mathematics` 的矩阵 API 就断言调用了 Apple AMX，也不能用指令集名称替代生成代码证据。
 
 ---
 
 ## SoA 布局：SIMD 的天然搭档
 
-SIMD 需要三样东西：**连续内存、相同类型、相同操作**。
+连续存储和相同操作常让向量化更划算，但 SIMD 也能通过 gather、重排等方式处理部分非连续访问。以跨实体读取位置的 x 分量为例：
 
-ECS 的 Component 存储正好满足这三个条件。以位置更新为例：
-
-**AoS（Array of Structures）——SIMD 不友好：**
+**AoS（Array of Structures）——跨实体的同一分量不连续：**
 
 ```
 内存布局：[x0 y0 z0 | x1 y1 z1 | x2 y2 z2 | ...]
 取 8 个 x：需要跳跃读取，步长 = sizeof(float3) = 12 bytes
 ```
 
-SIMD 的 gather 指令（分散读取）可以处理，但延迟比连续读取高 4~5 倍。
+目标支持时可以考虑 gather，也可能连续加载后再重排；代价取决于访问分布、缓存和指令实现，没有通用的 4～5 倍结论。如果计算同时使用 x、y、z，AoS 也可能适合向量化。
 
 **SoA（Structure of Arrays）——SIMD 友好：**
 
@@ -249,43 +256,45 @@ SIMD 的 gather 指令（分散读取）可以处理，但延迟比连续读取�
 取 8 个 x：一条 VMOVUPS ymm0, [ptr]，连续 256-bit 读取
 ```
 
-ECS 的 Archetype Chunk 本质上就是 SoA：每种 Component 类型的所有实例连续存储在一起。当你写一个遍历 `Translation` 的 Burst Job，Burst 读取的是连续的 float3 数组，向量化读取每次可以装入 8 个 x 分量，然后 8 个 y，然后 8 个 z，计算完再写回。
+ECS Chunk 按组件类型组织数组，但**组件数组连续，不等于组件内部每个字段分别连续**。若组件存的是紧凑 `float3`，其 x 分量仍然跨 12 字节分布，不能直接当成上面的独立 x 数组。
 
-这是 **DOTS + Burst 组合能有如此显著性能提升的根本原因**：不是单独某一个技术，而是 SoA 满足了 SIMD 的内存前提，Burst 把这个前提转化为实际的向量指令。
-
----
-
-## 实际加速数据参考
-
-Unity 官方在 DOTS 相关博客和 GDC 演讲中给出的数据（2019~2021 年，基于不同测试场景）：
-
-- Burst 编译的代码 vs Mono：**典型范围 10x~100x**（包含 GC 消除、缓存优化、指令优化的综合效果）
-- 单纯向量化的理论贡献：**AVX2 下 float32 最多 8x，FMA 再翻倍到 16x**
-- 实测中向量化单独的贡献：通常 **3x~6x**（受内存带宽和循环开销影响）
-
-这些数字适合作为量级参考，具体场景差异很大。真正有说服力的是用 Burst Inspector 验证汇编里确实有 `ymm` 指令，以及 Profiler 里的实际帧时间对比。
+组件级拆分、字段级拆分与 AoSoA 是不同的布局选择，详见 [F06：数据布局]({{< relref "performance/hardware-cpu-f06-data-layout.md" >}})。布局能减少无用读取或重排，Burst 再把可利用的规律编译成代码；是否更快取决于实际访问的字段和工作量。
 
 ---
 
-## 写 Burst Job 时，什么样的代码能触发向量化
+## 加速比如何验证
 
-给一个直接可用的检查清单：
+没有对应的设备、版本、代码与计时方法，就不把“Burst 快 10～100 倍”或“单独向量化快 3～6 倍”当成通用参考。应拆开三个问题：
 
-**会触发向量化：**
-- `IJobParallelFor` 的 `Execute(int i)` 体内，用 `NativeArray` 做连续读写
-- 循环内操作是加、减、乘、除、FMA、min/max、比较
-- `math.` 前缀的函数（`math.mad`, `math.dot`, `math.sqrt` 等）——这些有 Burst intrinsic 对应
-- 循环体内没有函数调用，或调用的函数也是 `[BurstCompile]` 且是内联候选
+| 对照 | 能回答什么 | 不能直接归因为什么 |
+|------|-----------|------------------|
+| 同一任务，Burst 关闭 / 开启 | 该配置下编译路径改变后的整体收益 | 纯 SIMD 收益 |
+| 同一后端、单线程下的标量 / 向量版本 | 在控制算法、数据与浮点语义后的向量化收益 | 多核扩展收益 |
+| 相同计算内核，不同 Worker / 批次配置 | 并行调度和负载分配的效果 | 单条指令变快 |
 
-**会阻止向量化：**
-- 读写同一数组（`[ReadOnly]` 缺失，Burst 无法证明无别名）
-- 循环内有分支，且分支路径有副作用（写外部状态）
-- 使用 `NativeArray` 以外的数据容器（managed 数组、List）
-- 调用了非 Burst 编译的方法（包含 virtual 调用的接口方法）
-- 步长不为 1 的访问模式（`a[i * stride]`，Burst 有时能处理，但需要 stride 是编译时常量）
+先检查结果正确性，再排除编译、分配和预热时间；记录数据量、缓存工作集、CPU、构建目标与安全检查设置。短循环计时与整帧收益分别报告。若没有可控的标量基线，就只报告整体优化收益，不把它拆成未经验证的 SIMD 倍数。
 
-验证方式只有一个：打开 Burst Inspector，看汇编里是否出现 `ymm`（AVX2）或 `xmm`（SSE）寄存器操作序列，而不是一堆标量 `xmm0[0]` 操作。
+<!-- DATA-TODO: 补 MultiplyAddJob 在固定 Unity/Burst 版本和 x64/ARM64 设备上的生成代码、浮点设置、输入规模、结果误差和计时记录；当前未完成 Unity 运行验证，不填写性能倍数。 -->
 
 ---
 
-SIMD 是 CPU 里最被低估的性能杠杆。相比多线程，它不涉及同步开销；相比换算法，它几乎是"免费"的——只要数据布局对，只要代码结构合规，编译器会替你做完向量化。Burst 的价值不是它能做什么神奇的事，而是它把"合规代码自动变成向量指令"这件事做得足够可靠，让你可以信任它，然后专注于写出让向量化有发挥空间的数据结构和算法。
+## 写 Burst Job 时，如何检查向量化机会
+
+**有利条件：**
+
+- 迭代独立，热点数据连续或访问模式规则，工作量足以摊薄准备和尾部开销。
+- 编译器能判断别名关系，读写声明与真实访问一致。
+- 运算与被调用方法处于 Burst 支持范围，目标有合适的向量实现。
+
+**需要核对的边界：**
+
+- 原地更新同一数组不必然阻止向量化；关键是是否有跨迭代依赖，而不是单看 `[ReadOnly]` 是否存在。
+- `NativeArray` 不是唯一可用容器，指针和其他受支持的非托管结构也可能向量化。
+- 被调用方法不必逐一标记 `[BurstCompile]` 才能被内联；应检查入口及其可达代码是否受支持。
+- 分支、非单位步长或数学函数调用是分析条件，不是统一的否决项。
+
+验证应同时看**热点循环的生成指令、结果正确性和实际耗时**。汇编说明编译器做了什么，计时说明它在该设备、该工作量下是否值得。
+
+---
+
+SIMD 提供的是数据级并行机会。数据布局、算法依赖和编译配置决定能否利用它，供数和执行资源决定实际收益。Burst 可以自动完成许多变换，但工程判断仍要落在具体生成代码与可复现测量上。

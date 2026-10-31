@@ -2,7 +2,8 @@
 title: "底层硬件 F05｜多核与并行陷阱：False Sharing、内存序和原子操作的真实代价"
 slug: "hardware-cpu-f05-multicore-false-sharing"
 date: "2026-03-28"
-description: "从 Cache Coherence 协议出发，解释 False Sharing 如何让两个线程互相拖累，Memory Ordering 为什么让并发编程困难，以及 DOTS Job Safety System 的设计为何是这些硬件约束的直接映射。"
+lastmod: "2026-10-31"
+description: "从缓存一致性与伪共享出发，区分并发正确性和性能问题，说明原子内存序、Job 依赖、安全检查与任务粒度各自解决什么。"
 tags:
   - "CPU"
   - "多核"
@@ -19,320 +20,304 @@ weight: 1350
 
 > **C++ 公共前置**：数据竞争、happens-before、mutex/条件变量、原子发布与任务收尾，先读 [CXX-11：数据交给另一个线程后，谁保证它有效且可见]({{< relref "engine-toolchain/cpp-foundations-11-concurrency-handoff.md" >}})。本页保留硬件问题入口；缓存协议、缓存行大小、指令成本和性能倍数不能替代语言正确性证明，具体平台结论仍需相应测量。
 
-你启动了 8 个线程同时累加计数器，满心期待 8 倍性能，结果却比单线程版本慢了 6 倍。
+把计数工作拆到多个线程后，性能可能没有提高，甚至下降。应先排除数据竞争和错误依赖，再检查共享写入、带宽、调度与负载分配，不能只凭“并行后更慢”就认定是硬件惩罚。
 
-这不是 bug，也不是你用错了 API，而是多核 CPU 的物理结构在悄悄惩罚你。
+这篇文章从缓存一致性出发，解释 **False Sharing** 如何影响并行性能，再区分内存序、原子操作和 Unity Job 安全检查的责任边界。
 
-这篇文章从硬件出发，解释 **False Sharing** 为什么是多线程性能的头号隐形杀手，为什么内存序让并发编程如此困难，以及 DOTS Job Safety System 那些看似繁琐的读写声明究竟在保护什么。
+> 版本与证据：Unity 部分以 2022.3 的 Job System 文档为基线；C++ 示例使用 C++11 起的原子语义。缓存行大小、拓扑和指令成本依平台而变。本文没有提供设备性能实测，Unity 示例也尚未完成项目内运行验证。
 
 ---
 
 ## 多核 CPU 的真实拓扑
 
-首先建立一张正确的图：
+先用一个简化图建立层次关系，而不是把某款 CPU 的容量和延迟当成通用规格：
 
-```
-┌─────────────────────────────────────────────────────┐
-│  Core 0          Core 1          Core 2          Core 3  │
-│  ┌────────┐      ┌────────┐      ┌────────┐      ┌────────┐  │
-│  │ L1 32K │      │ L1 32K │      │ L1 32K │      │ L1 32K │  │
-│  │ L2 256K│      │ L2 256K│      │ L2 256K│      │ L2 256K│  │
-│  └────┬───┘      └────┬───┘      └────┬───┘      └────┬───┘  │
-│       └───────┬────────┘              └───────┬────────┘       │
-│               │                               │                │
-│        ┌──────┴───────────────────────────────┴──────┐        │
-│        │                  L3 Cache (共享, 8~32 MB)    │        │
-│        └──────────────────────┬───────────────────────┘        │
-│                               │                                │
-│                         ┌─────┴─────┐                          │
-│                         │    RAM     │                          │
-│                         └───────────┘                          │
-└─────────────────────────────────────────────────────┘
+```text
+Core 0 / L1 ─┐
+Core 1 / L1 ─┼─ 缓存层次与一致性互连 ── 内存控制器 ── DRAM
+Core 2 / L1 ─┤   （L2、末级缓存可能按核心或集群组织）
+Core 3 / L1 ─┘
 ```
 
-关键事实：
+常见设计中 L1 靠近各核心，但 L2 是否私有、末级缓存由哪些核心共享、是否存在跨芯粒或跨 NUMA 节点链路，都要按目标芯片核对。不能统一指定为“L1 32 KB / 4 cycle，L2 256 KB / 12 cycle，L3 所有核心共享”。
 
-- 每个核心有**私有**的 L1（~32KB）和 L2（~256KB），延迟分别是 4 cycle 和 12 cycle
-- L3 是所有核心**共享**的，延迟约 40 cycle
-- 核心之间**没有直接通信通道**，协调完全依赖 Cache Coherence 协议
-
-这最后一条是理解后续所有问题的根基。
+核心之间通过互连与缓存一致性机制协作，某些请求可以由另一核心的缓存供数。**缓存一致性协议正是通过通信工作的**，不能说核心之间没有通信通道，更不能据此推断所有数据都必须绕回内存。缓存层次与访问边界可接着看 [F02：Cache]({{< relref "performance/hardware-cpu-f02-cache.md" >}})。
 
 ---
 
 ## Cache Coherence：多核如何维持数据一致
 
-假设 Core0 和 Core1 都缓存了同一块内存地址（比如 `x = 5`）。现在 Core0 把 `x` 改成 `7`，Core1 的 L1 里还是旧值 `5`——这就是 **Cache Coherence 问题**，不解决会直接导致数据错误。
+假设两个核心都缓存了地址 `x`，其中一个核心修改它，硬件必须协调该地址的副本和写权限。这是 **Cache Coherence（缓存一致性）**要处理的问题，但它不自动为程序中不同地址建立完整的同步协议。
 
-现代 CPU 用 **MESI 协议**解决这个问题，每条 cache line 有四种状态：
+用经典 **MESI** 作为教学模型，某一级一致性缓存中的缓存行可处于以下状态：
 
-| 状态 | 含义 |
-|------|------|
-| **M**odified | 只有我有这个 cache line，且我修改过，与内存不同步 |
-| **E**xclusive | 只有我有这个 cache line，与内存一致 |
-| **S**hared | 多个核心都有这个 cache line 的副本，与内存一致 |
-| **I**nvalid | 这个 cache line 无效，需要重新加载 |
+| 状态 | 含义（简化模型） |
+|------|----------------|
+| **M**odified | 此缓存持有独占的已修改副本，尚未与内存一致 |
+| **E**xclusive | 此缓存持有独占的干净副本 |
+| **S**hared | 持有可共享的干净副本，其他缓存可能也有；不保证一定有多个副本 |
+| **I**nvalid | 当前副本无效 |
 
-发生写操作时，协议是这样的：
+实际处理器可能使用 MESIF、MOESI、目录协议及更多瞬态状态，不能把下列示意当作所有硬件的逐步实现：
 
-```
-Core0 想写 cache line X：
-  → 广播 "Invalidate" 信号给所有核心
-  → 其他核心将自己的 X 标为 Invalid
-  → Core0 将自己的 X 标为 Modified
-  → Core0 独占写权限
+```text
+Core 0 需要写行 X，但尚未取得写权限
+  → 请求该行的写权限
+  → 协议使相关共享副本失效并协调所有权
+  → 获得权限后执行写入
 
-Core1 之后读 cache line X：
-  → 发现自己的 X 是 Invalid
-  → 从 L3 或内存重新加载（~40+ cycle）
-  → 如果 Core0 的 X 还是 Modified 状态，Core0 必须先 flush 到 L3
+Core 1 之后请求 X
+  → 如果本地副本已失效，重新请求有效数据
+  → 数据可能由持有者缓存、下级缓存或内存提供
 ```
 
-这个流程在两个核心交替写同一地址时会反复触发，每次写操作都强迫对方重新加载，**性能就在这个来回里被耗尽**。
+这不要求每次都向所有核心广播，也不要求修改后的数据必须先写回 L3 才能交给另一个核心。具体 x86 协议和状态描述可查 [Intel 架构手册](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)。
+
+当两个核心反复请求同一行的写权限时，所有权交接可能限制吞吐。但某核心持有写权限期间可以连续写入多次，不能把每条 store 都机械地算成一次跨核往返。
 
 ---
 
-## False Sharing：代价昂贵的"巧合邻居"
+## False Sharing：代价昂贵的“巧合邻居”
 
-Cache Coherence 本身是必要的正确性保证。但 False Sharing 是它的副作用：**两个线程根本没有共享数据，却因为数据在同一条 cache line 上而互相拖累**。
+**两个线程访问不同的逻辑变量，却因变量位于同一缓存行而相互影响**，这是伪共享的典型形态。至少一方写入就可能产生这种问题，不限于双方都写；参见 [Linux 的 False Sharing 文档](https://docs.kernel.org/kernel-hacking/false-sharing.html)。
 
-Cache line 是 **64 bytes**，这是 CPU 加载和失效的最小单位，不是单个字节，也不是单个 int。
+下面仅以**一致性粒度为 64 bytes 的目标**为例。64 bytes 不是所有 CPU 的通用常量。为避免普通计数循环被编译器合并成少量写入，示意使用原子 RMW 保留重复更新：
 
-经典例子：
+```cpp
+#include <atomic>
 
-```c
-struct Counters {
-    int counter0;  // Core0 更新这个
-    int counter1;  // Core1 更新这个
+struct alignas(64) Counters {
+    std::atomic<int> counter0{0};
+    std::atomic<int> counter1{0};
 };
-// sizeof(int) = 4，两个 int 共 8 bytes，远小于 64 bytes
-// 它们必然在同一条 cache line 里
+static_assert(sizeof(Counters) == 64, "example requires one 64-byte block");
+Counters counters;
+
+// Thread 0 的循环
+// for (int i = 0; i < 100000000; ++i)
+//     counters.counter0.fetch_add(1, std::memory_order_relaxed);
+
+// Thread 1 的循环
+// for (int i = 0; i < 100000000; ++i)
+//     counters.counter1.fetch_add(1, std::memory_order_relaxed);
 ```
 
-运行两个线程：
+两个线程分别更新自己的对象，不存在对同一计数值的争抢，但两个字段位于同一示例缓存行，可能触发所有权反复交接。这里选原子操作是为了便于观察反复写入，并不表示“线程只写自己的独立字段”在语言层面必需原子操作。做实验还应确认 `std::atomic<int>` 在目标上是否 lock-free、线程实际落在哪些核心，并校验最终计数。
 
-```c
-// Thread 0
-for (int i = 0; i < 100000000; i++) {
-    counters.counter0++;  // 每次写操作：使 Core1 的 cache line 失效
-}
+### 修复方案：隔离热点写入，或减少发布次数
 
-// Thread 1
-for (int i = 0; i < 100000000; i++) {
-    counters.counter1++;  // 每次写操作：使 Core0 的 cache line 失效
-}
-```
+在同样的 64-byte 假设下，可以对照下面的布局：
 
-两个线程完全没有共享任何逻辑变量，但硬件层面每次写操作都会触发跨核 Invalidate。**实测结果：这段代码可以比单线程版本慢 5~10 倍**。线程数越多，如果数据布局不对，越慢。
-
-### 修复方案：强制对齐到独立 cache line
-
-```c
+```cpp
 struct alignas(64) PaddedCounter {
-    int value;
-    char padding[60];  // 填充到 64 bytes，独占一条 cache line
+    std::atomic<int> value{0};
 };
-
-PaddedCounter counters[NUM_THREADS];
-// counters[0] 和 counters[1] 现在在不同的 cache line 上
-// Core0 写 counters[0]，Core1 写 counters[1]：互不干扰
+static_assert(sizeof(PaddedCounter) == 64, "check array stride");
+PaddedCounter isolated[2];
+// 两个线程分别更新 isolated[0].value 和 isolated[1].value
 ```
 
-C# 在 Unity 中等价写法：
+`alignas` 与对象大小共同保证本例的起点和步长。目标一致性粒度变为其他值时，要重新检查；padding 还会增加空间、缓存和 TLB 压力，不能到处无条件添加。通常应优先考虑局部累积、批量发布，从源头减少跨核可见的写入。
+
+C# 的下面声明只指定布局大小，**不是 C++ `alignas(64)` 的等价物**。`Size` 与字段打包、对齐是不同属性，见 [Microsoft StructLayout 说明](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.structlayoutattribute?view=netframework-4.8.1)：
 
 ```csharp
 [StructLayout(LayoutKind.Sequential, Size = 64)]
 public struct PaddedCounter {
     public int value;
-    // 编译器自动填充到 64 bytes
 }
 ```
 
-修复后，两个线程真正并行，性能恢复到接近线性扩展。
+要证明每个对象独占缓存行，还需检查目标运行时的实际布局、分配起点、数组步长和缓存行粒度。仅看到 `Size = 64` 不能完成这个证明；布局调整也不保证恢复线性扩展，其他瓶颈可能仍然存在。
 
 ### False Sharing 的常见出现场景
 
-- **线程局部统计量**放在结构体数组里（最常见）
-- **NativeArray 分块处理**时，两个 Job 的边界数据在同一 cache line
-- **ECS 组件数据**中频繁写入的小字段紧密排列
-- **Job 的返回值**（如 IJobParallelFor 里的输出）与其他线程的输出共享 cache line
+- 线程局部统计量紧密放在同一数组里，且被频繁发布。
+- 不同工作线程写相邻分块的边界元素。
+- 同一缓存行上的不同 ECS 实体或组件字段由多个线程并发写入。
+- 一个线程写热点字段，其他线程频繁读取邻近的只读字段。
+
+诊断时要把这些作为候选：结合地址布局、访问频率和缓存一致性相关计数器，再比较隔离或减少写入后的变化，不能只因“字段相邻”就宣称它已是瓶颈。
 
 ---
 
 ## 内存序：乱序执行让并发更难
 
-False Sharing 是性能问题，**内存序**（Memory Ordering）是正确性问题。
+False Sharing 主要是性能问题，**内存序（Memory Ordering）**关乎并发正确性。编译器优化、CPU 执行与其他核心看到操作的顺序，需要通过语言内存模型约束。
 
-现代 CPU 为了提高吞吐量，会**乱序执行指令**（Out-of-Order Execution）。编译器也会在优化时**重排指令**。这在单线程下完全安全——CPU 保证从本线程的视角看结果正确。但在多核场景下，其他核心观察到的操作顺序可能和你代码里的顺序不同。
+经典错误写法如下，假设 `data` 和 `ready` 都是普通 C++ 变量：
 
-经典 bug 模式：
-
-```c
+```cpp
 // Thread 0
-data = compute();    // (1)
-ready = true;        // (2) 想让 Thread 1 知道数据准备好了
+// data = compute();
+// ready = true;
 
 // Thread 1
-while (!ready) {}    // (3) 等待
-process(data);       // (4) 使用数据
+// while (!ready) {}
+// process(data);
 ```
 
-直觉上 (1) 一定发生在 (2) 之前，(4) 等 (3) 通过后才执行。但没有内存序保证时，CPU 可能把 (2) 重排到 (1) 之前，Thread 1 看到 `ready = true` 时 `data` 还没写入。
+这里首先是**缺少同步的数据竞争，导致 C++ 未定义行为**，不能只解释成“CPU 偶尔把两条指令交换了”。编译器也可能优化等待循环。缓存一致性和 `volatile` 都不能替代正确的 C++ 同步，见 [C++ 数据竞争与 happens-before 规则](https://eel.is/c++draft/intro.races)。
 
 ### 内存序选项
 
-C++11 / Rust / C# 都提供了 atomic 操作的内存序参数：
+以下名称按 C++ 原子 API 描述；C# 常用 `Volatile`、`Interlocked` 等 API 表达同步，不能说三种语言都提供同一套参数。
 
-| 内存序 | 含义 | 代价 |
-|--------|------|------|
-| `Relaxed` | 无顺序保证，只保证原子性 | 最低 |
-| `Acquire` | 读操作，保证后面的读写不会被重排到这次读之前 | 低 |
-| `Release` | 写操作，保证前面的读写不会被重排到这次写之后 | 低 |
-| `SeqCst` | 所有核心看到相同的全局顺序 | 最高（需要 fence 指令） |
+| 内存序 | 保证范围 |
+|--------|---------|
+| `relaxed` | 保证本次原子访问及该原子对象的修改顺序；不靠这次操作发布其他普通数据 |
+| `acquire` | 与读到的相应 release 发布建立同步时，保证发布前的数据可用于后续访问 |
+| `release` | 发布此前的操作；需要合适的接收操作配合形成同步 |
+| `seq_cst` | 在相应 acquire / release 语义外，顺序一致操作与栅栏还参与规定的单一总序；不是所有普通内存访问都进入一个全局顺序 |
 
-游戏开发中最常用的模式是 **Release/Acquire 配对**：
+细节见 [C++ 原子排序规则](https://eel.is/c++draft/atomics.order)；C# 例如 [Volatile.Read](https://learn.microsoft.com/en-us/dotnet/api/system.threading.volatile.read?view=netframework-4.8.1) 有自己的可见性和排序契约。
+
+**Release / Acquire 配对**可以用于一次性发布：
 
 ```cpp
-// Producer（Job 写入数据）
+#include <atomic>
+
+// 在线程启动前初始化；整个交接期间对象保持存活
 std::atomic<bool> ready{false};
 int data = 0;
 
-// 写数据，然后用 release 写 ready
-data = compute();
-ready.store(true, std::memory_order_release);  // 保证 data 的写先于 ready 的写
+void producer() { // 一个生产者，只发布一次
+    data = 42;
+    ready.store(true, std::memory_order_release);
+}
 
-// Consumer（下一个 Job 读取数据）
-while (!ready.load(std::memory_order_acquire)) {}  // acquire 保证之后的读能看到 release 之前的写
-process(data);  // 安全
+int consumer() { // 一个消费者
+    while (!ready.load(std::memory_order_acquire)) {}
+    return data;
+}
 ```
 
-`SeqCst` 提供最强保证但最昂贵，在 x86 上需要 `MFENCE` 指令，在 ARM 上需要 `DMB` 指令，这两条指令会**强制冲刷 store buffer**，阻塞流水线，代价是几十个 cycle。
+消费者的 acquire 读到生产者 release 写入的 `true` 后，这次发布之前的 `data` 写入 happens-before 随后的读取。这里要求发布后不再并发修改 `data`，也不重置 `ready` 复用协议；实际任务还需负责线程启动、退出和对象生命周期。示例说明可见性，不是推荐用忙等处理长时间任务。
 
-**游戏开发建议**：除非你在写无锁队列或消息总线，否则不要手动管理内存序。使用 Job System 和 NativeContainer，让引擎替你处理这些细节。
+`seq_cst` 如何实现取决于目标、操作类型和编译器，并非每次都生成 `MFENCE` 或 `DMB`。也不能给各内存序排一个跨平台固定周期表。先证明协议正确，再检查目标汇编与竞争负载。
+
+游戏业务通常应优先使用已有任务依赖或同步 API；如果自行实现并发容器，需要独立证明数据访问、发布和回收协议，而不是只把变量改成 atomic。
 
 ---
 
 ## 原子操作的真实代价
 
-`Interlocked.Increment`、`atomic<int>::fetch_add`——这些看起来只是"线程安全的加法"，但它们的代价远高于普通加法。
+`Interlocked.Increment`、`atomic<int>::fetch_add` 是原子读改写（RMW），不能与寄存器中的普通加法按一张固定延迟表比较。也要区别原子 load、store 和 RMW：它们的实现与所有权需求不相同。
 
-| 操作 | 大致延迟 |
-|------|----------|
-| 普通整数加法 | ~1 cycle |
-| 同 core 的 atomic add（cache hit） | ~5 cycle |
-| 跨 core 的 atomic add（需要 cache coherence） | ~40~200 cycle |
-| 有竞争的 atomic add（多核同时操作同一变量） | ~100~500 cycle（视竞争程度） |
+| 对照条件 | 可能影响成本的因素 |
+|---------|------------------|
+| 单线程更新一个缓存中的原子对象 | 指令实现、内存序与本地依赖链 |
+| 多线程更新同一对象 | 真实共享、所有权竞争、硬件重试或序列化 |
+| 多线程更新同一行的不同对象 | 伪共享带来的行级竞争 |
+| 多线程更新隔离的对象 | 竞争减少，但仍有各自的原子与访存成本 |
 
-代价来源有两个：
+原子 RMW 需要实现不可分割的更新；即使使用 `relaxed`，也不会消除同一地址或同一缓存行的竞争。而原子读取并不一概要求独占缓存行。
 
-1. **Cache Coherence 参与**：atomic 操作需要独占 cache line 所有权，触发 Invalidate 流程
-2. **内存序语义**：默认的 SeqCst atomic 需要 memory fence
+**Lock-free 不等于无代价，也不等于每个线程都能及时完成。** 它描述进展保证，不以“绝不进入内核态”定义；某个原子类型是否 lock-free 还依赖实现。反过来，mutex 的无竞争路径也不必然发生内核切换。相关定义可查 [C++ 原子 lock-free 规则](https://eel.is/c++draft/atomics.lockfree)。
 
-**Lock-free 不等于无代价**。Lock-free 的意义是避免内核态切换（`mutex.lock()` 在竞争时会调用操作系统的 futex，代价是微秒级），但原子操作本身在硬件层面仍然昂贵。
+如果每处理一个实体都更新同一共享计数器，应考虑把高频共享写入改为归约：
 
-实际案例：游戏帧内如果有**百万次**跨线程原子操作（例如每个 Entity 的处理都更新一个共享计数器），这个共享计数器会成为性能瓶颈，即使没有任何锁。
-
-**正确做法**：让每个线程维护自己的局部计数器，最后合并：
-
-```csharp
-// Bad：每个 Entity 都原子递增共享计数器
-// IJobParallelFor.Execute(int index) { Interlocked.Increment(ref sharedCount); }
-
-// Good：用 NativeArray 每个线程写自己的槽，最后汇总
-// 或者使用 Unity 的 NativeCounter / NativeStream
+```text
+每个任务处理自己的一块输入
+  → 在局部变量中累计
+  → 每块完成时写入该块独占的结果槽
+  → 依赖所有块完成后，再汇总结果槽
 ```
+
+这减少了发布次数，不是只把同样多的原子加法挪到旁边。分块槽与任务编号要明确对应；`IJobParallelFor` 的元素下标不是 Worker 线程编号。具体容器或并行写接口需按项目的 Collections 版本选择，并确认它表达的是归约、计数还是分段输出。
 
 ---
 
-## DOTS Job Safety System：硬件约束的直接映射
+## Job Safety System：访问约定与依赖检查
 
-现在可以回答最初的问题：DOTS Job Safety System 为什么要求每个 Job 必须明确声明读或写？
+Unity 的读写声明和 Job 依赖首先服务于**访问正确性与生命周期管理**，并不直接控制 MESI，也不保证消除 False Sharing。
 
-Job System 的依赖图基于这张简单的规则表：
+先看作用于**同一或重叠数据**的普通访问冲突：
 
-| Job A \ Job B | B 读同一数据 | B 写同一数据 |
-|---------------|-------------|-------------|
-| **A 读** | 并行 OK | A 必须等 B 写完（或 B 等 A） |
-| **A 写** | B 必须等 A 写完 | 串行执行 |
+| Job A / Job B | B 读 | B 写 |
+|--------------|------|------|
+| A 读 | 数据访问本身可并行 | 冲突访问需要按算法要求排序或采用受支持的并发协议 |
+| A 写 | 冲突访问需要排序或同步 | 冲突写入需要排序或受支持的并发协议 |
 
-这不是 API 设计的任意规定，而是 **Read-Write Hazard** 的完整枚举：
+RAW 是读依赖前面的写，WAR 是反依赖，WAW 是输出依赖，不能都称为真依赖。读读之间没有这种数据冲突，但仍可能竞争缓存容量和带宽，并不意味着无性能成本。
 
-- **RAR（Read After Read）**：没有依赖，安全并行。多个核心同时读同一 cache line，MESI 协议让它们都进入 Shared 状态，无 Invalidate，无性能损耗。
-- **WAR（Write After Read）** 和 **RAW（Read After Write）**：存在真依赖，必须串行化，否则后者读到脏数据。
-- **WAW（Write After Write）**：两个 Job 都写同一块内存，结果取决于执行顺序，必须串行。
+对于普通 `NativeContainer` Job，**调用方要传入正确的 `JobHandle` 依赖**。开启安全检查时，冲突的调度可以报错；不能依赖调度器发现两个写者后自动替你串行。`[ReadOnly]` 使容器按只读用途参与检查，并允许多个读者，但它不是“禁止缓存失效”的硬件指令。参见 [NativeContainer 安全检查](https://docs.unity3d.com/2022.3/Documentation/Manual/JobSystemNativeContainer.html) 与 [Job 依赖](https://docs.unity3d.com/2022.3/Documentation/Manual/JobSystemJobDependencies.html)。
 
-如果放开限制，允许两个 Job 同时写同一 `NativeArray`：
-
-1. **数据竞争**：最终值取决于 CPU 的执行调度，结果不可预测
-2. **False Sharing**：如果两个 Job 写的是相邻元素，触发跨核 cache line invalidation
-3. **内存序问题**：没有 fence 保护，写操作对其他核心的可见顺序不确定
-
-这三个问题叠加，轻则产生脏数据，重则崩溃。JobScheduler 的 `[ReadOnly]` 标注实际上是在告诉调度器：**这个 Job 不会触发 Invalidate，可以与其他读者并行**。
+下面是一个 Job 定义，要求两个数组覆盖相同范围、互不重叠；示例系数只用于说明读写关系：
 
 ```csharp
-// Unity DOTS 示例
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
+
 [BurstCompile]
 public struct ProcessJob : IJobParallelFor {
-    [ReadOnly] public NativeArray<float3> positions;  // 并行读，无 Invalidation
-    public NativeArray<float3> velocities;            // 独占写，需要调度保证串行
+    [ReadOnly] public NativeArray<float3> positions;
+    public NativeArray<float3> velocities;
+    public float coefficient;
 
     public void Execute(int index) {
-        velocities[index] += ComputeForce(positions[index]);
+        velocities[index] += positions[index] * coefficient;
     }
 }
 ```
 
-调度器保证：
-- 两个 `ProcessJob` 实例不会同时运行（写 `velocities`，WAW 依赖）
-- `ProcessJob` 和只读 `positions` 的其他 Job 可以并行（RAR，安全）
-- `ProcessJob` 和写 `positions` 的 Job 必须有序（RAW 或 WAR 依赖）
+若先后两次更新同一份速度数据，调度关系应明确写出。以下是调用方片段，假设容器已创建并初始化，`count` 合法、`batchSize` 为经测试选定的正整数，且没有其他未纳入依赖的访问：
+
+```csharp
+var job = new ProcessJob {
+    positions = positions,
+    velocities = velocities,
+    coefficient = coefficient
+};
+JobHandle first = job.Schedule(count, batchSize);
+JobHandle second = job.Schedule(count, batchSize, first);
+second.Complete();
+// 此后调用方才能读取结果，或在不再使用时释放这些容器
+```
+
+同一 Job 内的不同 `Execute(index)` 可以处理不同元素，程序必须保证迭代独立。两个独立 Job 即使逻辑上处理不相交区间，容器级安全检查也可能保守地拒绝其并行写；应使用受支持的范围约定、并发写接口或拆分设计，不能把关闭检查当作正确性证明。
+
+依赖传递与检查也不保证相邻输出不会发生伪共享。Entities 系统对组件依赖的管理还有额外规则，不能把它和这里的普通 `NativeArray.Schedule` 行为混为一谈。
 
 ---
 
 ## Job 粒度与调度开销
 
-正确处理了 False Sharing 和内存序，还有最后一个陷阱：**Job 粒度太细**。
+正确处理了数据访问和同步，仍可能因为**任务粒度太细**而得不偿失。线程池减少了逐任务创建线程的需要，但任务入队、分配、依赖处理与结果收尾都不是零成本。
 
-线程（Worker Thread）的开销：
+`JobHandle.Complete()` 表示需要等待相关工作完成并恢复相应访问权限；调用线程也可能参与执行任务，不能统一描述成“只做 spinning wait”。相关行为见 [Unity 创建与运行 Job 的说明](https://docs.unity3d.com/cn/2022.3/Manual/JobSystemCreatingJobs.html)。这里不提供脱离 Unity 版本、平台和负载的微秒 / 纳秒常数。
 
-- 线程创建/销毁：~1~10 μs（操作系统调度）
-- Job 调度（入队/出队）：~100~500 ns
-- JobHandle.Complete() 的 spinning wait：~几 μs 到几十 μs
+实际需要权衡两个方向：
 
-Unity Job System 用 **Worker Thread Pool + Spinning Wait** 设计避免了线程创建开销，但调度本身仍有成本。
+- 批次太小，调度和领取工作的成本可能占比较高。
+- 批次太大，独立批次不够或各批耗时不均，可能造成部分 Worker 空闲、尾部拖长。
 
-`JobHandle.Complete()` 不用 `Thread.Sleep()` 而用 spin wait 的原因：如果 Job 很快完成（< 1ms），Sleep 会让线程进入内核态调度，唤醒延迟不可预测（可能几毫秒）。Spinning 在用户态忙等，延迟更低，代价是短暂占用 CPU——在游戏帧循环里这通常是可接受的。
+因此 `IJobParallelFor` 的 batch size 应根据每个元素的计算量、总元素数和负载差异扫描测试；不是固定设为 64～128，也没有通用的“超过 1000 个元素才划算”门槛。接口对批次与工作窃取的说明见 [IJobParallelFor 文档](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Unity.Jobs.IJobParallelFor.html)。
 
-实际建议：
+测量应同时看任务本身耗时、主线程等待及整帧关键路径。尽可能在结果真正被使用时再完成依赖，但不能在 `Complete` 前越过容器访问或生命周期约束。
 
-- **粒度太细**（每个 Entity 一个独立 Job）：调度开销 > 计算收益，比单线程更慢
-- **DOTS 的建议**：`IJobParallelFor` 的 batch size 通常设 64~128，Job 内部处理 **1000+ 个元素**效果最好
-- **大型 Job + 内部并行** 比 **大量微型 Job** 效率更高
+<!-- DATA-TODO: 补固定设备和编译配置下的相邻/隔离原子计数器对照、lock-free 状态、线程落点、最终计数和一致性流量；另补 Unity Job 的批次扫描、Profiler 关键路径。当前没有伪共享减速倍数或调度成本实测。 -->
 
 ---
 
-## 总结：硬件约束决定软件设计
+## 总结：把正确性与性能证据分开
 
-回到开头的问题：为什么加了线程反而更慢？
+回到开头的问题：为什么加了线程反而更慢？伪共享是一条可能的原因链：
 
-原因链是：
-
-```
-数据布局不当
-    → 多线程操作同一 cache line 的不同字节
-    → 每次写触发 MESI Invalidate
-    → 对方 cache line 失效，重新从 L3/RAM 加载（40+ cycle）
-    → 线程越多，Invalidate 越频繁
-    → 并行代码的实际吞吐量低于单线程
+```text
+不同线程频繁访问同一缓存行中的不同数据，且至少一方写
+    → 一致性协议协调副本与权限
+    → 反复交接或重新取数增加通信与等待
+    → 可能限制并行吞吐
 ```
 
-修复方向：
+但识别它需要布局、访问和测量证据，不能由线程数或耗时变化单独推出。修复方向包括：
 
-1. **数据隔离**：每个线程独占自己的 cache line（`alignas(64)` 或按线程分块）
-2. **减少跨线程写**：用局部变量积累，最后汇总，避免高频原子操作
-3. **显式声明读写**：让调度器（或你的代码）保证正确的依赖顺序
-4. **合理粒度**：Job 足够大才能摊薄调度开销
+1. **数据隔离**：按目标缓存行粒度、实际地址与步长隔离热点，评估 padding 的空间代价。
+2. **减少共享写入**：局部累计后合并，降低高频发布与竞争。
+3. **明确访问依赖**：以语言同步规则或 Job API 契约保证正确性，不能让缓存一致性替代同步。
+4. **选择任务粒度**：在调度成本、可并行工作量和负载均衡之间测量取舍。
 
-**DOTS Job Safety System 的严格性不是过度设计**，它是这四条修复方向在 API 层面的强制实施。每一条 `[ReadOnly]` 标注，每一个 `JobHandle` 依赖声明，都是在告诉硬件：这里不会发生 False Sharing，这里的内存序是安全的。
-
-游戏引擎把硬件约束封装成了规则，规则背后是物理现实。理解这层关系，你就能在遇到并行性能问题时直接定位根因——而不是靠猜测调整线程数。
+`[ReadOnly]` 和 `JobHandle` 表达访问与依赖约定，不是向硬件承诺“这里没有 False Sharing”。先证明程序正确，再用目标设备上的生成代码、计数器与关键路径判断性能，才能把并行问题定位到具体原因。
