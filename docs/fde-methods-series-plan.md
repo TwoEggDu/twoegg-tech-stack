@@ -21,7 +21,7 @@
 | --- | --- | --- | --- |
 | 游戏核心模块 | [技能边界](../content/system-design/skill-system-01-boundaries.md)、[策划数据管线](../content/system-design/skill-system-27-designer-data-pipeline.md) | 模块职责、配置契约、变更与验证范围怎样拆分 | 复用设计讲解，不能据正文存在认领已实现大型战斗系统；下一项业务案例需独立取材 |
 | 引擎设计 | [职责、依赖与资源服务](../content/system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md) | 共享资源、世界实例、设备对象与退出责任怎样安排 | 原文为参考模型与示例，非自研完整引擎成果；Missing／AOT 的就近机制继续由案例连接 |
-| 操作系统 | [资源可用链](../content/performance/game-performance-read-does-not-mean-ready.md) → [OS I/O](../content/engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md) | 按什么边界拆分加载、等待与就绪，下一步需要采集什么 | 机制阅读入口；平台、运行时、缓存状态与实际线程路径仍需核验，不由异步 API 名称推定实现；暂不包装成完整 OS 设计覆盖 |
+| 操作系统 | [线程调度与等待唤醒](../content/performance/game-performance-thread-scheduling-waits.md) → [资源可用链](../content/performance/game-performance-read-does-not-mean-ready.md) → [OS I/O](../content/engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md) | 区分执行、排队与依赖成本，选择并发、限流、异步或分帧，并明确结果寿命与验收 | 2026-10-31 新增调度共同模型，篇级状态归性能系列；官方机制与教学时间线分别说明，无设备 trace 或项目收益实测；不代表完整 OS 设计覆盖 |
 | 硬件与产品范围 | [资产规格与包体分层](../content/performance/device-tier-asset-spec-texture-and-package.md) | 怎样把目标镜头、内容规模与设备验证转成规格和取舍 | 原文有局部 Android 纹理实验，四档参数仍为待校准示例；没有全产品容量或持续性能证明 |
 
 当前可直接使用的是方法正文、两个成熟历史案例，以及上述有明确用途的机制入口。当前缺口是：同次配置变更到验收记录、场景级性能优化对照、核心模块的一项实现与变更验证。前两项沿用 M01／M02；核心模块先登记候选，待已有两项闭合后再按材料选择，不在本轮启动整套开发。代码编译通知样例、Luban 钩子阻断行为与 HybridCLR 实验固定链接继续保留原待办。

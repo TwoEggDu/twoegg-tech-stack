@@ -59,6 +59,10 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
 5. [Unity 里，这些性能问题通常怎么显形]({{< relref "performance/game-performance-unity-symptoms.md" >}}) 或 [Unreal 里，这些性能问题通常怎么显形]({{< relref "performance/game-performance-unreal-symptoms.md" >}})
 6. [从现象到方法：把游戏性能判断连成一套工作流]({{< relref "performance/game-performance-methodology-summary.md" >}})
 
+## OS 基础补读
+
+从 CPU 与内存机制进入系统调度，可以读[线程为什么没有在执行：从进程、调度到等待与唤醒]({{< relref "performance/game-performance-thread-scheduling-waits.md" >}})。它区分线程运行、就绪、阻塞与应用任务排队，再连接现有异步文章，帮助判断应调整计算、依赖、并发还是主线程提交。文中的时间线是教学算例，不是项目优化实测。
+
 ## 按常见问题进入
 
 - 首次进场、首放技能、首开 UI 时卡一下：
