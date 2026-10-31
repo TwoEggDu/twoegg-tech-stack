@@ -15,6 +15,7 @@ description: 'Use when choosing the next TechStackShow article or checking serie
 - 代表专栏的新增写作遵循[中心思想](../../../docs/site-entry-and-audience-plan.md#column-core-principles)的基础补齐顺序；生产管线任务再读[主题问题](../../../docs/game-knowledge/production-pipeline-writing-principles.md#production-questions)与[执行对照表](../../../docs/fde-foundations-and-cases-execution-plan.md)。先核对表中来源和实际正文，区分缺知识、缺解释与缺案例证据；案例取材不阻塞已有依据支持的基础讲解。
 - 篇目、编号、边界以 canonical plan 为准（通常为 `docs/<topic>-series-plan.md`，以根路由的实际目标为准）；执行计划、outline、workorders 只补充任务和证据，不替代系列目录。
 - 实际文章在 `content/`；`docs/` 是规划与执行材料，`kb/` 是知识沉淀。只读本轮相关文件，不默认全文扫描全站或历史归档。归档仅在追溯旧编号时读取，不更新。
+- 准备推荐新增文章时，按单篇流程的[旧文检索与复用判断](../../../docs/article-production-workflow.md#article-reuse-preflight)核对跨系列相似正文。推荐中附实际读过的旧文、复用决定与独立增量；可能优先推荐补旧文而非开新篇。未完成检索就标待核对，不把计划中的空位直接当知识缺口；纯进度查询不额外执行整套检查。
 
 ## 核对状态
 

@@ -13,6 +13,7 @@ description: 'Use when drafting, revising, outlining or reviewing TwoEgg / TechS
 - 讨论“专栏要写清楚什么”时，先给内容判断或落实用户授权的规划修改；不自动启动 col-voice 采访。只有明确需要亲历或个人表达材料时再取材，用户切回规划时随之切换。
 - 为代表专栏盘点基础或安排新增写作时，参考[基础与案例执行对照表](../../../docs/fde-foundations-and-cases-execution-plan.md)，再核对原系列 plan 与实际正文；表中建议不等于已登记新篇，快照不等于当前完成状态。
 - 工作单或正文应说明本篇帮助读者理解什么、支撑哪个工程判断、哪些必要基础已具备。优先复用和补桥；不以完整案例或全部底层课程完成为基础讲解的前提，也不强迫独立基础篇加入个人故事。
+- 开新稿或新 outline 前执行单篇流程的[旧文检索与复用判断](../../../docs/article-production-workflow.md#article-reuse-preflight)，简述已读旧文、复用决定与本次增量。已有有效结论可复用；不能仅因标题不同或计划标待写就直接新建文章。
 
 ## 范围与材料定位
 
