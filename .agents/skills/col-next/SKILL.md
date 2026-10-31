@@ -10,7 +10,9 @@ description: 'Use when choosing the next TechStackShow article or checking serie
 ## 定位与材料读取
 
 - 接受用户指定的系列、文件路径、当前对话材料；已给路径就直接读取，不要求重新粘贴。
+- 讨论专栏方向或基础缺口时先完成规划与覆盖判断，不因作者表达个人观点就转入经历采访。目标尚未落到某篇时，可推荐复用、补桥、修订或验证任务，不硬凑“下一篇新文章”。
 - 全站选题先读[站点定位](../../../docs/site-entry-and-audience-plan.md)的当前优先级，再从[根路由](../../../doc-plan.md)进入相关系列的唯一 canonical plan。用户限定系列时，在该范围内排序，不擅自扩大选题。
+- 代表专栏的新增写作遵循[中心思想](../../../docs/site-entry-and-audience-plan.md#column-core-principles)的基础补齐顺序；生产管线任务再读[主题问题](../../../docs/game-knowledge/production-pipeline-writing-principles.md#production-questions)与[执行对照表](../../../docs/fde-foundations-and-cases-execution-plan.md)。先核对表中来源和实际正文，区分缺知识、缺解释与缺案例证据；案例取材不阻塞已有依据支持的基础讲解。
 - 篇目、编号、边界以 canonical plan 为准（通常为 `docs/<topic>-series-plan.md`，以根路由的实际目标为准）；执行计划、outline、workorders 只补充任务和证据，不替代系列目录。
 - 实际文章在 `content/`；`docs/` 是规划与执行材料，`kb/` 是知识沉淀。只读本轮相关文件，不默认全文扫描全站或历史归档。归档仅在追溯旧编号时读取，不更新。
 
@@ -39,7 +41,7 @@ description: 'Use when choosing the next TechStackShow article or checking serie
 
 1. **本轮范围与依据**：读取的 canonical plan、相关文件及未核实维度。
 2. **状态总览与冲突**：按内容、验证、交付分别说明；没有冲突就省略冲突表。
-3. **推荐下一篇**：默认最多 5 项，候选不足不凑数；每项包含准确编号、标题、系列、推荐理由、前置依赖、证据缺口和下一步产物。
+3. **推荐下一项**：默认最多 5 项，候选不足不凑数；注明复用、补桥、修订、新稿或验证。已登记文章给准确编号、标题与系列，另附推荐理由、前置依赖、证据缺口和下一步产物；未登记任务不编篇号。
 4. **暂缓项**：有实际阻碍才列出，并说明解除条件。
 
 推荐取自当前 canonical plan，新增计划外选题应另标“规划建议”，不冒充已登记篇目。不因本轮给了建议就回写状态。

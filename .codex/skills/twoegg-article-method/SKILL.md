@@ -7,6 +7,13 @@ description: 'Use when drafting, revising, outlining or reviewing TwoEgg / TechS
 
 把写作与维护任务接到仓库当前的唯一规范。先判断任务范围和文章类型，按需读取对应资料；不在技能中复制一整套写作规范。
 
+## 先判断任务与方向
+
+- 定位讨论、选题、基础缺口盘点、完整起草与重写，先读[站点中心思想](../../../docs/site-entry-and-audience-plan.md#column-core-principles)；生产管线、各工种协作、卡点与能力沉淀，再读[本主题要讲清的问题](../../../docs/game-knowledge/production-pipeline-writing-principles.md#production-questions)。局部勘误只补读受影响规则。
+- 讨论“专栏要写清楚什么”时，先给内容判断或落实用户授权的规划修改；不自动启动 col-voice 采访。只有明确需要亲历或个人表达材料时再取材，用户切回规划时随之切换。
+- 为代表专栏盘点基础或安排新增写作时，参考[基础与案例执行对照表](../../../docs/fde-foundations-and-cases-execution-plan.md)，再核对原系列 plan 与实际正文；表中建议不等于已登记新篇，快照不等于当前完成状态。
+- 工作单或正文应说明本篇帮助读者理解什么、支撑哪个工程判断、哪些必要基础已具备。优先复用和补桥；不以完整案例或全部底层课程完成为基础讲解的前提，也不强迫独立基础篇加入个人故事。
+
 ## 范围与材料定位
 
 - 接受正文、路径、工作单、提纲、证据卡、审查记录及当前对话材料；文件路径就是有效输入，不要求重新粘贴或重新生成前置技能产物。

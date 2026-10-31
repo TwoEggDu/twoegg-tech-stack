@@ -1,0 +1,4 @@
+interface:
+  display_name: "聊天取材与作者表达"
+  short_description: "通过聊天整理真实经历、想法与感受，保留作者原话与语气，不编经历"
+  default_prompt: "用 $col-voice 先和我聊聊真实经历、想法和感受，再整理成文章，保留我的表达，不替我编经历。"
