@@ -2,6 +2,7 @@
 title: "03｜构建成功了，为什么设备上仍然跑不起来？"
 slug: "production-build-runtime"
 date: "2026-10-20"
+lastmod: "2026-10-31"
 description: "先按失败阶段排查端服协议、代码与配置、资源节点及必需产物，再展开一次 AOT 元数据漏包的定位、修复与流程沉淀。"
 draft: false
 content_stage: "article"
@@ -158,8 +159,10 @@ flowchart TD
 
 ## 继续深入
 
-补充元数据和生成步骤的具体机制，可以查阅 [HybridCLR 工程化]({{< relref "delivery-engineering/delivery-hot-update-03-hybridclr.md" >}})及官方 [Package 手册](https://www.hybridclr.cn/docs/basic/com.code-philosophy.hybridclr)。官方资料用于解释机制，不替代本次事故记录，也不用于推断历史项目的工具版本。
+从本次事故继续深挖，先看[HybridCLR 工具链到底生成什么]({{< relref "engine-toolchain/hybridclr-toolchain-what-generate-buttons-do.md" >}})。阅读时追踪三件事：某个步骤生成哪类文件，下一阶段从哪里消费，以及这些输入与目标 Player 有什么配套要求。这样才能解释为什么“热更 DLL 编译好了”和“运行需要的输入齐了”是两个判断。
+
+该深读使用独立的固定版本与实验记录，实验仓库的固定提交链接仍有待补项；不能用它推断本文历史项目的版本，也不能将其中的 Player 运行结果当作本次事故的重现。本文链接的官方 [AOT 泛型说明](https://www.hybridclr.cn/docs/7.6.0/basic/aotgeneric)同样只是机制参考。
+
+进一步看热更方法如何进入运行时，可以按需阅读[沿一个热更方法追调用链]({{< relref "engine-toolchain/hybridclr-call-chain-follow-a-hotfix-method.md" >}})。调用链解释执行路径；本案的直接故障发生在必需文件交接，不能跳过文件加载就归因到解释执行或泛型调用。
 
 构建输入、环境与产物的组织见[构建自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-03-build-automation.md" >}})；从文件检查继续走到运行和兼容验证，可以看[热更新验证]({{< relref "delivery-engineering/delivery-hot-update-05-verification.md" >}})。
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：构建环境（提纲）]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})

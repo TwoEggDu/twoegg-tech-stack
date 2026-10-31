@@ -1,9 +1,9 @@
 ---
-title: "FDE 方法与实践：从现场问题到工程落地"
+title: "游戏研发 FDE：从技术机制到产品交付"
 slug: "fde-methods-series-index"
 date: "2026-10-28"
-lastmod: "2026-10-29"
-description: "先理解 FDE 的工作方式，再研究需求发现、热点判断和能力沉淀，最后通过 Missing 工具链案例看现场反馈怎样推动工程改进。"
+lastmod: "2026-10-31"
+description: "从 Missing 与 AOT 真实案例进入 FDE 方法，再沿游戏核心模块、引擎、操作系统与硬件深入，理解技术机制怎样支撑团队生产和产品交付。"
 draft: false
 featured: false
 weight: 3950
@@ -13,40 +13,68 @@ series_id: "fde-methods"
 series_role: "index"
 series_order: 0
 series_nav_order: 23
-series_title: "FDE 方法与实践"
+series_title: "游戏研发 FDE"
 series_entry: true
-series_audience: ["研发工具与生产管线工程师", "交付工程师", "技术负责人"]
-series_level: "基础与实践"
-series_best_for: "希望深入实际工作，发现值得解决的问题，并把有效方案沉淀为团队持续使用的能力。"
-series_summary: "两篇基础与方法文章，加上 Missing 工具链真实案例，连接现场观察、热点判断与工程改进。"
-series_intro: "工程师怎样从现场困难走到可使用、可验证的解决方案？本专栏按基础理论、交付方法与真实案例逐步展开。"
-series_reading_hint: "先读基础篇建立认知，再读方法篇练习需求发现与热点判断，最后读 Missing 案例，观察每次使用反馈怎样改变工具与流程。"
+series_audience: ["客户端工程师与架构师", "研发工具与生产管线工程师", "技术负责人"]
+series_level: "方法与工程实践"
+series_best_for: "从现场问题出发，理解技术依据、组织工程落地，并验证团队是否能够持续使用。"
+series_summary: "两篇 FDE 方法文章、Missing 与 AOT 代表案例，以及核心模块、引擎、OS 和硬件的精选深读。"
+series_intro: "让现场问题得到处理，让技术判断有机制依据，让一次改进成为团队能够持续使用的能力。"
+series_reading_hint: "先读 Missing 与 AOT 看实际判断，回查两篇方法，再按问题选择技术深读。也可从基础篇开始；无需一次读完所有技术系列。"
 type: "reading-series"
 topic_key: "delivery"
-reading_title: "FDE 方法与实践"
-reading_lead: "从使用者受阻的地方，找到工程改进的起点。"
-reading_intro: "工程师怎样深入实际工作，理解需求、选择方案，并把使用反馈变成团队持续可用的能力？先理解 FDE 的工作方式，再进入交付工程中的具体方法。"
-reading_route: ["理解现场与工程的关系", "发现需求与判断热点", "回到 Missing 工具链案例"]
-reading_status: "基础篇与方法篇共 2 篇；另附生产管线实践中的 Missing 工具链案例。"
+reading_title: "游戏研发 FDE：从技术机制到产品交付"
+reading_lead: "把现场问题做成工程能力，用技术纵深支撑产品决策。"
+reading_intro: "从使用者受阻的地方进入，追踪问题怎样定位、方案为什么这样选择，以及工具和流程怎样被团队采用。需要解释技术约束时，再进入游戏模块、引擎、操作系统与硬件。"
+reading_route: ["从真实案例看判断与落地", "用 FDE 方法梳理过程", "沿技术机制回到产品决策"]
+reading_status: "2 篇方法正文；链接 Missing、AOT 历史案例及既有技术文章。生产体系中的性能篇仍为提纲，各篇验证范围分别说明。"
 reading_groups:
-  - title: "从基础认知到交付方法"
-    intro: "先看现场观察如何改变工程方案，再用三条反馈练习热点归类与投入取舍。"
+  - title: "FDE 基础与交付方法"
+    intro: "先理解现场认识与工程实现的关系，再学习问题核实、热点判断、方案选择与使用复验。"
     first: 1
     last: 2
 ---
 
-## 系列目录 {#chapters}
+游戏研发中的一个问题，常常同时牵涉制作方式、系统边界和设备约束。美术本地正常，为什么包里缺内容？构建显示成功，为什么设备启动仍然失败？处理这些问题，需要既能追查技术原因，也能让相关工种完成修正、交接与复验。
+
+本入口把 FDE 方法用于游戏研发，沿着**现场问题 → 技术判断 → 工程实现 → 团队采用 → 结果复验**组织阅读。这是本站连接方法、案例与技术研究的路径；各篇会区分真实经历、参考模型和独立实验。
+
+## 从两个代表案例开始
+
+| 案例 | 看怎样组织生产 | 追问背后的技术依据 |
+| --- | --- | --- |
+| [Missing：本地资源完整，为什么包里缺内容？]({{< relref "engineering-journey/production-resource-completeness.md" >}}) | 从现场对照走到仲裁机、提交后检查与依赖提交，再通过文档、宣讲和跟进让美术能够自行处理 | 本地与共享输入有什么差异？资源身份、对象引用与进包范围怎样影响检查？ |
+| [AOT：构建成功，为什么设备仍然跑不起来？]({{< relref "engineering-journey/production-build-runtime.md" >}}) | 把一次故障转成受控输入、明确失败条件与可交接的操作流程 | 哪个阶段生成文件，哪个阶段消费？热更编译、元数据准备与设备运行各证明什么？ |
+
+两个案例保留历史职责与定性结果，技术深读解释机制。要看它们怎样与配置、并行版本和验收衔接，进入第一组实践[游戏客户端生产体系]({{< relref "engineering-journey/production-pipeline-overview.md" >}})。
+
+日常反馈还包括[Jenkins 编译检查与群提醒]({{< relref "engineering-journey/production-client-compile.md" >}})和[鲁班与 TortoiseSVN 提交前钩子]({{< relref "engineering-journey/production-config-table-format-checks.md" >}})：重点是错误怎样回到能够处理它的人手中，修正后又怎样确认共享输入恢复。
+
+## 用方法理解案例中的判断 {#chapters}
 
 {{< reading-series-chapters >}}
 
-两篇文章用虚构的检查系统串联分析。第一篇解释现场认识怎样进入工程实现；第二篇用三条反馈演示问题核实、热点合并与拆分、优先级取舍和使用复验，完整记录模板放在折叠附录。
+两篇方法文章用虚构的检查系统展开分析。第一篇解释现场认识怎样进入工程实现；第二篇用三条反馈演示问题核实、热点合并与拆分、投入取舍和使用复验。教学推演帮助读者理解方法，个人实践由上面的案例说明。
 
-## 真实案例：Missing 工具链怎样形成
+## 按问题进入技术纵深 {#technical-depth}
 
-[本地资源完整，为什么手机包里仍然缺内容？]({{< relref "engineering-journey/production-resource-completeness.md" >}})记录一次 QA 反馈如何引出美术现场对照，随后逐步补充节点定位、仲裁机、进包范围检查、提交触发与依赖提交。重点看每次改进前出现了什么困难，以及怎样把版本日前的集中排查提前到日常生产。
+技术深读要帮助回答一个具体决策：系统怎样拆、任务怎样安排、内容怎样制作，以及在什么条件下能够交付。四层提供不同的观察位置，可以沿当前问题选择入口。
 
-案例继续归属[生产管线实践]({{< relref "engineering-journey/production-pipeline-overview.md" >}})，结果按历史定性观察说明。
+| 层次 | 从哪里开始 | 读完回到哪个决策 |
+| --- | --- | --- |
+| 游戏核心模块 | [技能、效果、Buff 等职责边界]({{< relref "system-design/skill-system-01-boundaries.md" >}})，再看[策划数据怎样进入技能运行时]({{< relref "system-design/skill-system-27-designer-data-pipeline.md" >}}) | 新增规则时修改谁，哪些数据与行为需要共同验证，程序与策划怎样约定接口 |
+| 引擎设计 | [引擎怎样分层：职责、依赖与资源服务]({{< relref "system-design/game-engine-architecture-00a-layers-dependencies-resource-boundaries.md" >}}) | 哪些能力应该共享，谁持有状态，加载、切换与退出由谁负责 |
+| 操作系统 | 先看[读盘完成与资源可用的区别]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})，再按需要进入[OS I/O、缓存与完成通知]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}}) | 应按什么阶段调查加载与等待，需要哪些平台证据才能选择并发、缓存或预加载方案 |
+| 硬件与产品范围 | [资产规格：贴图、LOD 与包体分层]({{< relref "performance/device-tier-asset-spec-texture-and-package.md" >}}) | 怎样结合目标镜头、内容规模与设备测量制定规格，画质、驻留和交付成本怎样取舍 |
 
-## 与工程实现怎样连接
+这组入口覆盖的是精选问题。引擎篇提供参考设计，OS 篇还需结合实际平台与运行时核对；资产规格篇的档位配置是待校准示例，局部纹理实验不能证明整个产品的容量或持续帧率。各层研究也不自动成为上面历史案例的验证证据。
 
-FDE 方法帮助判断值得解决什么，以及方案怎样进入日常使用。需要深入实现时，可以继续阅读[资源管线]({{< relref "delivery-engineering/delivery-resource-pipeline-series-index.md" >}})与 [CI/CD 流水线]({{< relref "delivery-engineering/delivery-cicd-pipeline-series-index.md" >}})专题。
+例如，准备增加一组技能时，可以先明确技能与效果边界，再确定配置和资源交接；若首次使用出现卡顿，继续按加载阶段调查，最后根据设备结果调整内容规格或调度。这是一条分析路径，实际项目应由观测决定下钻范围，不能预先指定瓶颈。
+
+## 怎样让技术判断成为团队能够使用的能力
+
+一次排障结束后，还要明确：谁会使用改进、入口在哪里、失败如何定位、修正以后怎样复查。适合重复执行的条件进入工具与检查，需要共同理解的约定进入文档和制作规范，需要设备判断的部分进入运行验证。
+
+当前生产体系已有资源交接、构建输入、配置检查和版本验收的文章。下一步重点补足同一次配置变更到验收的对应记录，以及一个同条件性能优化对照；性能篇目前仍是提纲。游戏核心模块的实现与变更验证将按真实材料继续补充。
+
+**技术纵深为方案提供依据，FDE 实践让方案进入团队日常工作，并通过结果检验这些判断。**

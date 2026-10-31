@@ -3,7 +3,7 @@
 > 角色：根入口 / 路由页 / 状态页
 > 目标：让人和 AI 都先定位主题，再跳到唯一的 canonical plan
 > 版本：2026-04-18（v27，结构重构版）
-> 定位更新：2026-10-14；以职业经历中的游戏产品交付为主线，持续补强引擎工具，逐步接入上线运行与数据反馈。当前原则和调整顺序以[站点定位与演进原则](./docs/site-entry-and-audience-plan.md)为准。
+> 定位更新：2026-10-31；代表专栏为“游戏研发 FDE：从技术机制到产品交付”，以组织生产与技术纵深相互支撑。当前原则见[站点定位](./docs/site-entry-and-audience-plan.md)，总入口与连接见[FDE 规划](./docs/fde-methods-series-plan.md#fde-flagship)，第一组案例及补证见[工程实践规划](./docs/engineering-journey-column-plan.md#production-flagship-v1)。
 > 状态同步：2026-10-15；按主提纲与执行记录，P2 网站入口调整已提交发布，并于 2026-10-14 完成线上核验；P3 首批资源阅读路径与旧文修订已完成本地验证，尚未提交发布；P4 待开展。下一步为首个资源规则案例取材，补齐职责、版本、脱敏输入、校验与修复及构建和设备验收证据；详细状态与完成标准统一在主提纲维护。
 
 ---
@@ -125,7 +125,7 @@
 |------|----------------|------|------|
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
 | 版本管理 | [docs/version-management-series-plan.md](./docs/version-management-series-plan.md) | 前六篇已有正文，其余 4 篇为提纲；三种工具模型、Git 任务提交及分支合并已实测 | 工程与交付下的独立专栏；共同模型 → Git / SVN / P4 → 提交、合并、资源、审查与构建基线；引擎待验证，发布节奏与冻结仍归交付 V04 |
-| FDE 方法与实践 | [docs/fde-methods-series-plan.md](./docs/fde-methods-series-plan.md) | 基础与方法篇已发布；Missing 案例已按现场反馈完成修订 | 归入工程与交付，按基础理论 → 交付方法 → 真实案例阅读；案例保留生产管线实践归属，由专栏链接接入 |
+| 游戏研发 FDE | [docs/fde-methods-series-plan.md](./docs/fde-methods-series-plan.md) | 基础与方法篇已发布；总入口已本地接入代表案例与四层技术深读 | 从技术机制到产品交付；案例和技术正文保留原归属，当前入口修订未发布 |
 | 游戏交付 Agent 研究 | [docs/game-delivery-agent-series-plan.md](./docs/game-delivery-agent-series-plan.md) | 5 篇正文、3 篇提纲 | 已接入工程与交付入口；固定流程与候选模型调查设计；项目接口待核对，服务和策略未实现，实验未执行；前 3 篇线上已核验，第 04 篇线上待核验，本轮第 05 篇及同步的线上部署待核验 |
 | 游戏美术生产与客户端协作 | [docs/game-art-production-collaboration-series-plan.md](./docs/game-art-production-collaboration-series-plan.md) | 12 篇正文已成稿，软件实操与素材待补 | 沿原画、角色、绑定、动画、场景资产、地编、特效、TA 与客户端接入组织，综合示例与联合验收收束 |
 | Unity 游戏更新与发布 | [docs/unity-game-update-release-series-plan.md](./docs/unity-game-update-release-series-plan.md) | 首页与七篇提纲已建立，正文待写 | 从首次整包、线上修复与内容更新串联版本绑定、构建、强更热更和发布回退；由 YooAsset 首页交叉进入 |
@@ -138,7 +138,7 @@
 | 工程判断与组织领导力 | [docs/engineering-judgment-series-plan.md](./docs/engineering-judgment-series-plan.md) | 已拆出 | 从个人判断走向组织结果：权责、协作、反馈与能力沉淀 |
 | SEO / AI / 个人品牌执行 | [docs/site-seo-ai-personal-brand-execution-plan.md](./docs/site-seo-ai-personal-brand-execution-plan.md) | 已拆出 | 站点增长执行层 |
 | 角色化选题规划 | [docs/role-based-topic-planning-2026-03.md](./docs/role-based-topic-planning-2026-03.md) | 已拆出 | 角色视角的专题规划 |
-| 工程实践与演进 | [docs/engineering-journey-column-plan.md](./docs/engineering-journey-column-plan.md) | 生产管线实践正文与后续提纲已建立；Missing 案例已按现场反馈完成修订 | 维护真实经历、本人职责与案例证据；FDE 理论与方法归独立系列，Missing 案例保持原归属并供其交叉阅读 |
+| 工程实践与演进 | [docs/engineering-journey-column-plan.md](./docs/engineering-journey-column-plan.md) | FDE 第一组代表案例《游戏客户端生产体系》已完成第一步本地整理；配置到验收与性能对照待补 | 复用生产管线原文与 URL，案例范围及状态在本规划维护；上位阅读入口由 FDE 系列组织 |
 
 ---
 
@@ -205,4 +205,3 @@
 - 早期总体统计和跨系统深挖列表
 
 统一查：[docs/doc-plan-archive-v26.md](./docs/doc-plan-archive-v26.md)
-

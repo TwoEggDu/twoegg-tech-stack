@@ -7,14 +7,15 @@ hero_title: "从引擎工具到产品交付"
 
 我的工作重心正在从游戏引擎与工具，扩展到把策划、美术、客户端与服务端的产物组成产品。这里记录这条变化，也保留还在学习和验证的问题。
 
-## 生产管线：从日常问题到持续交付
+## 游戏客户端生产体系：从内容制作到可验收版本
 
-这组文章从资源、配置与编译问题出发，记录检查、工具、诊断和协作方法怎样进入日常生产，再把经过验证的经验积累到下一轮工作中。
+这组文章从资源、配置与编译问题出发，记录检查、工具、诊断和协作方法怎样进入日常生产，并沿资源身份、运行时产物与加载成本解释背后的技术约束。
 
 先读[生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}})了解问题与整体模型；再按当前问题选择：
 
-- **从资源交接到线上反馈**：[资源完整性案例]({{< relref "engineering-journey/production-resource-completeness.md" >}}) → [配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}}) → [构建成功后的设备故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) → [版本范围与合并协作]({{< relref "engineering-journey/production-parallel-versions.md" >}}) → [平台差异与参数化准备]({{< relref "engineering-journey/production-multiplatform.md" >}}) → [持续维护可发布版本]({{< relref "engineering-journey/production-release-readiness.md" >}}) → [线上反馈与下一轮改进]({{< relref "engineering-journey/production-feedback-loop.md" >}})。
-- **提交后的开发检查**：[客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})、[服务端编译检查]({{< relref "engineering-journey/production-server-compile.md" >}})、[配置表格式检查]({{< relref "engineering-journey/production-config-table-format-checks.md" >}})。
+- **六个主线问题**：[Missing 资源完整性]({{< relref "engineering-journey/production-resource-completeness.md" >}}) → [配置与双端一致性]({{< relref "engineering-journey/production-config-consistency.md" >}}) → [AOT 漏包与构建约束]({{< relref "engineering-journey/production-build-runtime.md" >}}) → [版本范围与合并协作]({{< relref "engineering-journey/production-parallel-versions.md" >}}) → [持续性能（提纲）]({{< relref "engineering-journey/production-continuous-performance.md" >}}) → [持续维护可发布版本]({{< relref "engineering-journey/production-release-readiness.md" >}})。第一次阅读可以先看 Missing 与 AOT 两个成熟案例。
+- **提交前与提交后的开发检查**：[Jenkins 客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})、[服务端编译检查]({{< relref "engineering-journey/production-server-compile.md" >}})、[鲁班与 TortoiseSVN 本地 hook]({{< relref "engineering-journey/production-config-table-format-checks.md" >}})。
+- **按问题选读**：[多平台构建]({{< relref "engineering-journey/production-multiplatform.md" >}})、[线上反馈]({{< relref "engineering-journey/production-feedback-loop.md" >}})。三条精选技术深读在总览中对应到具体案例。
 
 文章分别说明历史实践、分析场景与待验证改进，局部检查通过后仍需相应的运行和交付验收。
 

@@ -2,8 +2,10 @@
 title: "服务端编译检查：让代码问题在开发阶段得到处理"
 slug: "production-server-compile"
 date: "2026-10-20"
+lastmod: "2026-10-31"
 description: "从服务端工程、依赖与编译环境出发，说明提交检查的输入输出，以及它与后续联调验证的边界。"
 draft: false
+content_stage: "article"
 series: "工程实践与演进"
 hide_section_context: true
 weight: 50
@@ -38,9 +40,13 @@ tags:
 
 ## 让反馈接上修正动作
 
+代码检查通过 Jenkins Job 提供及时反馈，失败后在群里提醒。组织客户端和服务端检查时，应分别保留各自的检查目标与结论；这不要求推定项目一定使用两个独立 Job，实际入口以任务配置为准。
+
 从团队协作看，一份有用的反馈至少应说明：检查了哪批代码、在哪一步失败、到哪里查看具体错误。程序据此核对自己的工作副本，分析相关修改，再决定修正代码还是补齐缺少的输入。
 
 错误涉及其他人的接口调整或共同依赖时，还需要相关开发者协作确认。报告找到某个文件或提交者，只是建立处理入口，不能直接把这一条线索当作最终根因。
+
+服务端还应核对对应的项目或解决方案、SDK 与依赖版本，以及协议或配置生成代码是否来自同一组输入。若依赖恢复先失败，应先处理来源、版本或环境；若编译器已经给出类型或成员错误，再追到定义与调用关系。具体的“对齐输入 → 区分失败阶段 → 修正 → 共享版本复检”方法见[客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})，服务端复用处理顺序，并使用自己的编译入口。
 
 服务端代码修正并重新提交后，会再次触发服务端编译检查。新的结果对应修改后的输入，用来确认原来的编译问题是否仍然存在。之后能否启动服务、客户端能否完成交互，需要后续的运行验证回答。
 
@@ -55,7 +61,3 @@ tags:
 ## 继续深入
 
 服务端工程的依赖、环境与产物怎样管理，可以继续看[构建自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-03-build-automation.md" >}})；多项检查怎样组织和呈现，见[质量门自动化]({{< relref "delivery-engineering/delivery-cicd-pipeline-04-quality-gates.md" >}})。两篇补充通用机制，服务启动与端服联调仍有各自的验证步骤。
-
----
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [客户端编译检查]({{< relref "engineering-journey/production-client-compile.md" >}})

@@ -55,16 +55,16 @@ topics:
     directory: "technical-topics.md"
     directory_anchor: "delivery"
     start:
-      page: "engineering-journey/production-resource-completeness.md"
-      value: "从一次资源漏提交的处理过程，理解检查、工具和交接怎样进入日常生产。"
+      page: "delivery-engineering/fde-methods-series-index.md"
+      value: "从 Missing、AOT 真实案例理解 FDE 的判断与落地，再沿核心模块、引擎、OS 和硬件进入技术依据。"
     shortcuts:
       - { page: "engineering-journey/production-build-runtime.md" }
       - { page: "engineering-journey/production-release-readiness.md" }
       - { page: "engine-toolchain/unity-assetbundle-governance-version-hash-cdn-cache-rollback.md" }
       - { page: "delivery-engineering/delivery-version-management-04-environments-and-flags.md" }
     entries:
-      - { label: "生产管线实践", page: "engineering-journey/production-pipeline-overview.md" }
-      - { label: "FDE 方法与实践", page: "delivery-engineering/fde-methods-series-index.md", value: "从基础与交付方法进入 Missing 工具链真实案例，理解需求发现、热点判断，以及现场反馈怎样推动工程改进。" }
+      - { label: "游戏研发 FDE", page: "delivery-engineering/fde-methods-series-index.md", value: "从技术机制到产品交付：连接现场判断、工程实现、团队采用，以及核心模块、引擎、OS 和硬件的精选深读。" }
+      - { label: "客户端生产体系", page: "engineering-journey/production-pipeline-overview.md", value: "FDE 的第一组实践：资源、配置、编译、构建与版本验收；五篇精选正文与一篇性能提纲。" }
       - { label: "版本管理", page: "delivery-engineering/version-management-series-index.md", value: "先理解 Git、SVN、P4，再进入任务提交、合并、资源协作、审查与构建基线。前六篇已有正文，其余 4 篇为提纲；三种工具模型、Git 任务提交及分支合并已实测，引擎待验证。" }
       - { label: "游戏交付 Agent 研究", page: "delivery-engineering/game-delivery-agent-series-index.md", value: "以 Missing 研究定位、补交与复检，以及固定流程和模型判断的分工。第 01～05 篇正文已写，其余 3 篇为提纲；实验未执行。" }
       - { label: "美术生产与客户端协作", page: "delivery-engineering/game-art-production-collaboration-series-index.md", value: "认识美术各岗位的制作过程、交付物和客户端接入；12 篇正文已成稿，软件实操与素材待补。" }
