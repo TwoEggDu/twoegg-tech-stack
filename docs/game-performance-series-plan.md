@@ -23,7 +23,13 @@
 | GP-OS-01：《线程为什么没有在执行：从进程、调度到等待与唤醒》 | [正文](../content/performance/game-performance-thread-scheduling-waits.md)；承接 OS 01.1～01.3 的部分模型，复用 Unity 异步番外 01／03／04 | 正文已写；官方资料已核对，24 ms 时间线为教学算例；无设备 trace、引擎运行或收益实测。本地检查与交付状态见[写作记录](game-performance-thread-scheduling-waits-outline.md) |
 | GP-OS-02：《内存到底占在哪里：从虚拟地址、物理页到游戏内存预算》 | [正文](../content/performance/game-performance-memory-accounting.md)，复用内存行为旧文与 CPU F04；[写作记录](game-performance-memory-accounting-outline.md) | 正文与相关旧文审校已随 `77f4cf1` 发布，Pages #580 与线上路径已核验；官方机制与统计定义已核对，场景为教学算例，无设备内存采样或优化实测 |
 
-GP-OS-01／02 是规划标识，公开标题不强加篇号；使用既有系列名与显式 reading_index 作为无编号补篇接入，避免混入角色入口的章节序列。GP-OS-01 已随 `a55a90f` 发布，Pages #578 与线上阅读路径已核验。2026-10-31 接续原位审校既有 OS I/O 04，补清缓存、异步、DMA、mmap、预读与分层队列的边界；该篇仍归[存储系列 plan](storage-io-foundations-series-plan.md)，修订与本地验证见[审校记录](storage-io-04-review.md)，未提交发布，不登记为性能系列新增篇。
+GP-OS-01／02 是规划标识，公开标题不强加篇号；使用既有系列名与显式 reading_index 作为无编号补篇接入，避免混入角色入口的章节序列。GP-OS-01 已随 `a55a90f` 发布，Pages #578 与线上阅读路径已核验。OS I/O 04 审校已随 `361095b` 发布，Pages #582 与线上路径已核验；该篇仍归[存储系列 plan](storage-io-foundations-series-plan.md)，机制审校范围见[审校记录](storage-io-04-review.md)，不登记为性能系列新增篇。
+
+## 资源可用链审校
+
+2026-10-31 原位修订[《读盘完成，为什么还是不等于资源可用》](../content/performance/game-performance-read-does-not-mean-ready.md)，沿用已发布文章、URL 与性能系列归属。增量为完成条件及阶段责任表、非固定串行的依赖与调度、并发／分帧／驻留预算、部分失败与退出清理，以及明确标注的技能加载教学场景。
+
+复用线程、内存、OS I/O、资源加载与生命周期文章；不新增同义加载总论，不扩写完整资源框架。Unity 6.0、Addressables 1.21.21 与 Epic 页面标注 UE 5.8 的契约分别核对；无设备 trace、引擎运行与优化收益实测。本次修订未提交发布，本地验证与范围见[审校记录](game-performance-resource-ready-review.md)。IO-06 的其他工作仍归原存储计划，不计入本轮。
 
 ## 计划中
 

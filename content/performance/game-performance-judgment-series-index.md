@@ -65,7 +65,7 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
 
 接着读[内存到底占在哪里：从虚拟地址、物理页到游戏内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})，分清地址、提交、驻留与引擎统计，再用切场景的重叠窗口讨论预算。内存算例同样是教学模型，没有设备测量结果。
 
-再读[存储与 IO 04：OS I/O 机制]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}})，区分异步接口与线程等待、DMA 与复制、应用并发与设备队列，结合缓冲预算和后处理积压选择预取与限流。最后接[读盘完成，为什么还是不等于资源可用]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})，把读取结果接到资源真正可用的条件。
+再读[存储与 IO 04：OS I/O 机制]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}})，区分异步接口与线程等待、DMA 与复制、应用并发与设备队列，结合缓冲预算和后处理积压选择预取与限流。最后接[读盘完成，为什么还是不等于资源可用]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})，用阶段与责任表区分资产、实例和用途就绪，再讨论依赖调度、预算与失败退出。技能加载场景为教学推演，没有设备实测；它把基础机制接到交接与验收判断，不把完成回调当成最终可用保证。
 
 ## 按常见问题进入
 
