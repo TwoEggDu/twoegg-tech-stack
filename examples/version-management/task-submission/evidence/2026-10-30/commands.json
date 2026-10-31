@@ -1,0 +1,997 @@
+[
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "--version"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "git version 2.53.0.windows.2\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "init",
+      "--bare",
+      "--initial-branch=main",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\shared.git"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "Initialized empty Git repository in [LAB]/shared.git/\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "init",
+      "--initial-branch=main",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\developer"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "Initialized empty Git repository in [LAB]/developer/.git/\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "config",
+      "--local",
+      "user.name",
+      "Version Management Lab"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "config",
+      "--local",
+      "user.email",
+      "lab@example.invalid"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "config",
+      "--local",
+      "core.eol",
+      "lf"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "config",
+      "--local",
+      "commit.gpgsign",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "config",
+      "--local",
+      "core.hooksPath",
+      "[LAB]\\lab-hooks"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\skill.py",
+    "sha256": "5cc4c8c549abb50b07bd58d7ac1caa05041fdd99b71bba9d83c16232bc3e2924",
+    "size": 226
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\notes.txt",
+    "sha256": "103f4445afae964f1619a2e8d25fd6f56439695d71c681ca0b160fb8b6b45a66",
+    "size": 15
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\texture.bin",
+    "sha256": "eb62819312d226e8d7efa6823ef9aab1d85d39a29459059d9c648865b85a74a5",
+    "size": 11
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\obsolete.txt",
+    "sha256": "40eda80edfc38b36bdcdc408aa6ff2cc40b708e46ece9dfd2b2801a05a18a5fc",
+    "size": 12
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "add",
+      "--",
+      "skill.py",
+      "notes.txt",
+      "texture.bin",
+      "obsolete.txt"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "commit",
+      "-m",
+      "Baseline"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "[main (root-commit) df5b675] Baseline\n 4 files changed, 16 insertions(+)\n create mode 100644 notes.txt\n create mode 100644 obsolete.txt\n create mode 100644 skill.py\n create mode 100644 texture.bin\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "df5b6753921f7163c5f5943cb05ea5e33d21d9bb\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "remote",
+      "add",
+      "origin",
+      "[LAB]\\shared.git"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "push",
+      "origin",
+      "df5b6753921f7163c5f5943cb05ea5e33d21d9bb:refs/heads/main"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "To [LAB]\\shared.git\n * [new branch]      df5b6753921f7163c5f5943cb05ea5e33d21d9bb -> main\n",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\skill.py",
+    "sha256": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+    "size": 295
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\damage.json",
+    "sha256": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+    "size": 15
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\notes.txt",
+    "sha256": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+    "size": 27
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\texture.bin",
+    "sha256": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4",
+    "size": 15
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\developer\\scratch.txt",
+    "sha256": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+    "size": 19
+  },
+  {
+    "action": "delete_own_fixture",
+    "path": "[LAB]\\developer\\obsolete.txt"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": " M notes.txt\n D obsolete.txt\n M skill.py\n M texture.bin\n?? damage.json\n?? scratch.txt\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\developer\\skill.py"
+    ],
+    "directory": "[LAB]\\developer",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "{\"charge\": true, \"damage\": 80}\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "apply",
+      "--cached",
+      "--check",
+      "-"
+    ],
+    "directory": "[LAB]",
+    "stdin": "--- a/skill.py\n+++ b/skill.py\n@@ -3,7 +3,7 @@\n \n \n def damage():\n-    return 100\n+    return json.loads(Path(__file__).with_name(\"damage.json\").read_text())[\"damage\"]\n \n \n def charge_enabled():\n",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "apply",
+      "--cached",
+      "-"
+    ],
+    "directory": "[LAB]",
+    "stdin": "--- a/skill.py\n+++ b/skill.py\n@@ -3,7 +3,7 @@\n \n \n def damage():\n-    return 100\n+    return json.loads(Path(__file__).with_name(\"damage.json\").read_text())[\"damage\"]\n \n \n def charge_enabled():\n",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "show",
+      ":skill.py"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "import json\nfrom pathlib import Path\n\n\ndef damage():\n    return json.loads(Path(__file__).with_name(\"damage.json\").read_text())[\"damage\"]\n\n\ndef charge_enabled():\n    return False\n\n\nif __name__ == \"__main__\":\n    print(json.dumps({\"damage\": damage(), \"charge\": charge_enabled()}, sort_keys=True))\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "write-tree"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "d779b3cca9f2eb9cea9de79c99a3fee6882f0202\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "checkout-index",
+      "--all",
+      "--prefix=[LAB]/candidate-missing-dependency/"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\candidate-missing-dependency\\skill.py"
+    ],
+    "directory": "[LAB]\\candidate-missing-dependency",
+    "stdin": null,
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"[LAB]\\candidate-missing-dependency\\skill.py\", line 14, in <module>\n    print(json.dumps({\"damage\": damage(), \"charge\": charge_enabled()}, sort_keys=True))\n                                ^^^^^^^^\n  File \"[LAB]\\candidate-missing-dependency\\skill.py\", line 6, in damage\n    return json.loads(Path(__file__).with_name(\"damage.json\").read_text())[\"damage\"]\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python312\\Lib\\pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python312\\Lib\\pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\workspace\\\\TechStackShow\\\\.tmp\\\\vm05-task-submission-20261030-run2\\\\candidate-missing-dependency\\\\damage.json'\n",
+    "expected_exit_codes": [
+      1
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": " M notes.txt\n D obsolete.txt\nMM skill.py\n M texture.bin\n?? damage.json\n?? scratch.txt\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "add",
+      "--",
+      "damage.json"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "write-tree"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "6e64749d3ab63e778f07e843d7f403cc0d0660e5\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "diff",
+      "--cached",
+      "--name-only"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "damage.json\nskill.py\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "show",
+      ":skill.py"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "import json\nfrom pathlib import Path\n\n\ndef damage():\n    return json.loads(Path(__file__).with_name(\"damage.json\").read_text())[\"damage\"]\n\n\ndef charge_enabled():\n    return False\n\n\nif __name__ == \"__main__\":\n    print(json.dumps({\"damage\": damage(), \"charge\": charge_enabled()}, sort_keys=True))\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "checkout-index",
+      "--all",
+      "--prefix=[LAB]/candidate-complete/"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\candidate-complete\\skill.py"
+    ],
+    "directory": "[LAB]\\candidate-complete",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "{\"charge\": false, \"damage\": 80}\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "A  damage.json\n M notes.txt\n D obsolete.txt\nMM skill.py\n M texture.bin\n?? scratch.txt\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "action": "write_fixture",
+    "path": "[LAB]\\lab-hooks\\pre-commit",
+    "sha256": "4a050efac5c220edb4ecea94ab8f72bd250bd6de878b1f355938dcd59a6fcf63",
+    "size": 67
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "commit",
+      "-m",
+      "Task A"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "VM-LAB: intentional rejection\n",
+    "expected_exit_codes": [
+      1
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "df5b6753921f7163c5f5943cb05ea5e33d21d9bb\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "write-tree"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "6e64749d3ab63e778f07e843d7f403cc0d0660e5\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "ls-remote",
+      "--heads",
+      "origin",
+      "refs/heads/main"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "df5b6753921f7163c5f5943cb05ea5e33d21d9bb\trefs/heads/main\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "A  damage.json\n M notes.txt\n D obsolete.txt\nMM skill.py\n M texture.bin\n?? scratch.txt\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "action": "disable_own_lab_hook",
+    "path": "[LAB]\\lab-hooks\\pre-commit"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "commit",
+      "-m",
+      "Task A: damage configuration only"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "[main 4bfd9a5] Task A: damage configuration only\n 2 files changed, 2 insertions(+), 1 deletion(-)\n create mode 100644 damage.json\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "4bfd9a509e56aab439d2a6e602723c9df6ba432a\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "rev-parse",
+      "HEAD^"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "df5b6753921f7163c5f5943cb05ea5e33d21d9bb\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "6e64749d3ab63e778f07e843d7f403cc0d0660e5\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "ls-remote",
+      "--heads",
+      "origin",
+      "refs/heads/main"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "df5b6753921f7163c5f5943cb05ea5e33d21d9bb\trefs/heads/main\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": " M notes.txt\n D obsolete.txt\n M skill.py\n M texture.bin\n?? scratch.txt\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "push",
+      "origin",
+      "4bfd9a509e56aab439d2a6e602723c9df6ba432a:refs/heads/main"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "To [LAB]\\shared.git\n   df5b675..4bfd9a5  4bfd9a509e56aab439d2a6e602723c9df6ba432a -> main\n",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "action": "simulate_discard_push_reply",
+    "caller_result": "unknown"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "ls-remote",
+      "--heads",
+      "origin",
+      "refs/heads/main"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "4bfd9a509e56aab439d2a6e602723c9df6ba432a\trefs/heads/main\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\shared.git",
+      "rev-list",
+      "--count",
+      "df5b6753921f7163c5f5943cb05ea5e33d21d9bb..refs/heads/main"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\developer",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": " M notes.txt\n D obsolete.txt\n M skill.py\n M texture.bin\n?? scratch.txt\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "clone",
+      "--no-hardlinks",
+      "--no-checkout",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\shared.git",
+      "[LAB]\\receiver"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "Cloning into '[LAB]\\receiver'...\ndone.\n",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "-c",
+      "advice.detachedHead=false",
+      "switch",
+      "--detach",
+      "4bfd9a509e56aab439d2a6e602723c9df6ba432a"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "HEAD is now at 4bfd9a5 Task A: damage configuration only\n",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\receiver\\skill.py"
+    ],
+    "directory": "[LAB]\\receiver",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "{\"charge\": false, \"damage\": 80}\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "stdin": null,
+    "exit_code": 0,
+    "stdout": "4bfd9a509e56aab439d2a6e602723c9df6ba432a\n",
+    "stderr": "",
+    "expected_exit_codes": [
+      0
+    ]
+  }
+]

@@ -1,0 +1,147 @@
+{
+  "passed": true,
+  "failure": null,
+  "recorded_at_utc": "2026-10-30T14:21:17.066868+00:00",
+  "python_version": "3.12.4",
+  "scope": "Local bare remote; one developer; index exports; one clean receiver. Python teaching behavior only. No engine, real network failure, SVN/P4 end-to-end, binary splitting or production hooks.",
+  "git_version": "git version 2.53.0.windows.2",
+  "baseline_commit": "df5b6753921f7163c5f5943cb05ea5e33d21d9bb",
+  "candidate_commit": "4bfd9a509e56aab439d2a6e602723c9df6ba432a",
+  "candidate_tree": "6e64749d3ab63e778f07e843d7f403cc0d0660e5",
+  "remote_commit": "4bfd9a509e56aab439d2a6e602723c9df6ba432a",
+  "passed_checks": [
+    "baseline starts clean",
+    "developer runs A+B with local dependency",
+    "index script is A-only content",
+    "clean candidate exposes omitted JSON dependency",
+    "incomplete export has no hidden JSON input",
+    "after_partial_selection: developer bytes and path inventory retained",
+    "after_partial_selection: B deletion retained",
+    "candidate changes exactly A script and its dependency",
+    "adding dependency leaves selected script unchanged",
+    "complete candidate runs A without B",
+    "candidate keeps baseline binary rather than B bytes",
+    "candidate excludes B deletion and untracked draft",
+    "after_complete_selection: developer bytes and path inventory retained",
+    "after_complete_selection: B deletion retained",
+    "own pre-commit hook rejects the commit",
+    "rejected commit leaves HEAD at baseline",
+    "rejected commit retains candidate index tree",
+    "remote remains baseline after rejection",
+    "after_rejection: developer bytes and path inventory retained",
+    "after_rejection: B deletion retained",
+    "successful commit has baseline parent",
+    "successful commit records verified candidate tree",
+    "local commit does not move remote ref",
+    "after_commit: developer bytes and path inventory retained",
+    "after_commit: B deletion retained",
+    "independent remote query resolves unknown as delivered",
+    "remote has exactly one new task commit",
+    "only baseline push and task push occurred; no retry after lookup",
+    "after_push_and_lookup: developer bytes and path inventory retained",
+    "after_push_and_lookup: B deletion retained",
+    "receiver runs A without B at exact commit",
+    "receiver remains clean after behavior check",
+    "receiver bytes equal verified index export"
+  ],
+  "snapshots": {
+    "developer_before_selection": {
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+        "scratch.txt": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+        "skill.py": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+        "texture.bin": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4"
+      },
+      "status": " M notes.txt\n D obsolete.txt\n M skill.py\n M texture.bin\n?? damage.json\n?? scratch.txt"
+    },
+    "after_partial_selection": {
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+        "scratch.txt": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+        "skill.py": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+        "texture.bin": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4"
+      },
+      "status": " M notes.txt\n D obsolete.txt\nMM skill.py\n M texture.bin\n?? damage.json\n?? scratch.txt"
+    },
+    "after_complete_selection": {
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+        "scratch.txt": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+        "skill.py": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+        "texture.bin": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4"
+      },
+      "status": "A  damage.json\n M notes.txt\n D obsolete.txt\nMM skill.py\n M texture.bin\n?? scratch.txt"
+    },
+    "candidate": {
+      "incomplete_tree": "d779b3cca9f2eb9cea9de79c99a3fee6882f0202",
+      "tree": "6e64749d3ab63e778f07e843d7f403cc0d0660e5",
+      "changed_paths": [
+        "damage.json",
+        "skill.py"
+      ],
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "103f4445afae964f1619a2e8d25fd6f56439695d71c681ca0b160fb8b6b45a66",
+        "obsolete.txt": "40eda80edfc38b36bdcdc408aa6ff2cc40b708e46ece9dfd2b2801a05a18a5fc",
+        "skill.py": "9c6b25691ba84d99f4eea1a8039f7c1446da5b546e46b925461ae622526a4b2a",
+        "texture.bin": "eb62819312d226e8d7efa6823ef9aab1d85d39a29459059d9c648865b85a74a5"
+      },
+      "behavior": {
+        "charge": false,
+        "damage": 80
+      }
+    },
+    "after_rejection": {
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+        "scratch.txt": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+        "skill.py": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+        "texture.bin": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4"
+      },
+      "status": "A  damage.json\n M notes.txt\n D obsolete.txt\nMM skill.py\n M texture.bin\n?? scratch.txt"
+    },
+    "after_commit": {
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+        "scratch.txt": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+        "skill.py": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+        "texture.bin": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4"
+      },
+      "status": " M notes.txt\n D obsolete.txt\n M skill.py\n M texture.bin\n?? scratch.txt"
+    },
+    "lost_receipt": {
+      "caller_observed": "unknown",
+      "simulation": "wrapper discards successful push reply; not a real network failure",
+      "controller_push_exit": 0
+    },
+    "after_push_and_lookup": {
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "7fcd19011710e4d678d46c583f8ad0b3eafb1f139b95daeb3c883f9a9ac9b2c4",
+        "scratch.txt": "e270c1cf53896e15e7f91b82ff9550a04588ef85482ebc1616e15fcfc3f597db",
+        "skill.py": "08b7346b235ebf712e4b13895c4568a3e3a80f8fabd697a76f4951490f1300db",
+        "texture.bin": "1ad76068cba74837f4c29dbd377a6ef731a10b7318e3c80860714f9d2b2bb9f4"
+      },
+      "status": " M notes.txt\n D obsolete.txt\n M skill.py\n M texture.bin\n?? scratch.txt"
+    },
+    "receiver": {
+      "commit": "4bfd9a509e56aab439d2a6e602723c9df6ba432a",
+      "behavior": {
+        "charge": false,
+        "damage": 80
+      },
+      "files_sha256": {
+        "damage.json": "211fa863eb4d894d4046dc2200bcfe3efeee046f8215ee3ba7c67f0d60b658d1",
+        "notes.txt": "103f4445afae964f1619a2e8d25fd6f56439695d71c681ca0b160fb8b6b45a66",
+        "obsolete.txt": "40eda80edfc38b36bdcdc408aa6ff2cc40b708e46ece9dfd2b2801a05a18a5fc",
+        "skill.py": "9c6b25691ba84d99f4eea1a8039f7c1446da5b546e46b925461ae622526a4b2a",
+        "texture.bin": "eb62819312d226e8d7efa6823ef9aab1d85d39a29459059d9c648865b85a74a5"
+      }
+    }
+  }
+}

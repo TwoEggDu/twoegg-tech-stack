@@ -1,0 +1,11 @@
+--- a/skill.py
++++ b/skill.py
+@@ -3,7 +3,7 @@
+ 
+ 
+ def damage():
+-    return 100
++    return json.loads(Path(__file__).with_name("damage.json").read_text())["damage"]
+ 
+ 
+ def charge_enabled():
