@@ -63,7 +63,9 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
 
 从 CPU 与内存机制进入系统调度，可以读[线程为什么没有在执行：从进程、调度到等待与唤醒]({{< relref "performance/game-performance-thread-scheduling-waits.md" >}})。它区分线程运行、就绪、阻塞与应用任务排队，再连接现有异步文章，帮助判断应调整计算、依赖、并发还是主线程提交。文中的时间线是教学算例，不是项目优化实测。
 
-接着读[内存到底占在哪里：从虚拟地址、物理页到游戏内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})，分清地址、提交、驻留与引擎统计，再用切场景的重叠窗口讨论预算。两篇形成“执行与等待 → 内存与记账”的基础，之后进入既有 OS I/O 与资源加载文章。内存算例同样是教学模型，没有设备测量结果。
+接着读[内存到底占在哪里：从虚拟地址、物理页到游戏内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})，分清地址、提交、驻留与引擎统计，再用切场景的重叠窗口讨论预算。内存算例同样是教学模型，没有设备测量结果。
+
+再读[存储与 IO 04：OS I/O 机制]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}})，区分异步接口与线程等待、DMA 与复制、应用并发与设备队列，结合缓冲预算和后处理积压选择预取与限流。最后接[读盘完成，为什么还是不等于资源可用]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})，把读取结果接到资源真正可用的条件。
 
 ## 按常见问题进入
 

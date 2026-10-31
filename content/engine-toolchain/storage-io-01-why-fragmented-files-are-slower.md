@@ -14,6 +14,7 @@ tags:
   - "Mobile"
   - "PC"
 series: "存储设备与 IO 基础"
+primary_series: "storage-io-foundations"
 series_order: 1
 ---
 

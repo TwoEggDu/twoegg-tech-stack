@@ -1,5 +1,6 @@
 ---
 date: "2026-03-29"
+lastmod: "2026-10-31"
 title: "存储设备与 IO 基础系列索引｜先立住存储硬件、文件系统和 OS I/O，再回到游戏加载链"
 description: "给存储设备与 IO 基础补一个稳定入口：先把 HDD / SSD / UFS、文件系统、页缓存、预读和异步 IO 这些底层机制看清，再回到游戏里的小文件、加载链、首载抖动和资源交付问题。"
 slug: "storage-io-series-index"
@@ -50,7 +51,7 @@ series_reading_hint: "第一次系统读，建议先从桥接文进入，再顺�
 3. [存储与 IO 03｜文件系统基础：路径、目录项、元数据和页缓存为什么会影响游戏加载]({{< relref "engine-toolchain/storage-io-03-filesystem-path-directory-metadata-page-cache.md" >}})
    接着把 `open(path)` 背后的名字查找、元数据和页缓存成本收进来。
 4. [存储与 IO 04｜OS I/O 机制：同步 / 异步 I/O、DMA、mmap、Read-Ahead、队列深度]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}})
-   然后把一次 I/O 请求怎样穿过操作系统、到达设备、再回到内存这条链看清。
+   区分异步接口、线程等待、缓存与设备路径，再判断 DMA、mmap、预读和不同层次队列的边界，以及并发、内存与可用时间的取舍。
 5. [存储与 IO 05｜移动端存储特性：eMMC vs UFS 随机读写差异，碎访问为什么在手机上也照样危险]({{< relref "engine-toolchain/storage-io-05-mobile-storage-emmc-vs-ufs.md" >}})
    最后把视线收回手机现实，理解为什么移动端并没有自动摆脱碎访问问题。
 6. [存储与 IO 06｜IO 性能分析：用 fio / iostat / Perfetto / Instruments 定位 IO 瓶颈]({{< relref "engine-toolchain/storage-io-06-profiling-with-fio-iostat-perfetto-instruments.md" >}})
@@ -61,6 +62,8 @@ series_reading_hint: "第一次系统读，建议先从桥接文进入，再顺�
    最后把视线从存储层继续推到加载链后半段。
 
 ## 如果你是从具体问题进来
+
+从 OS 基础补读的路线进入，可以按[线程调度与等待]({{< relref "performance/game-performance-thread-scheduling-waits.md" >}}) → [虚拟内存与预算]({{< relref "performance/game-performance-memory-accounting.md" >}}) → [本系列 04：OS I/O]({{< relref "engine-toolchain/storage-io-04-os-io-sync-async-dma-mmap-read-ahead-queue-depth.md" >}}) → [资源可用链]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})阅读：先解释线程为何等待、数据占在哪里，再判断读取与后处理怎样安排。
 
 - 你想先搞清楚"小文件为什么慢"，从 [为什么碎文件更慢]({{< relref "engine-toolchain/storage-io-01-why-fragmented-files-are-slower.md" >}}) 开始。
 - 你想先立住不同设备的直觉，看 [存储设备类型：HDD / SSD / NVMe / eMMC / UFS 的读写特性与延迟差异]({{< relref "engine-toolchain/storage-io-02-device-types-hdd-ssd-nvme-emmc-ufs.md" >}})。
@@ -86,7 +89,7 @@ series_reading_hint: "第一次系统读，建议先从桥接文进入，再顺�
 
 如果这组文章后面继续扩张，我更建议下一步补这些题目：
 
-- 从 `File.Open` 到资源可用：一次加载请求到底经过了什么
+- 复用 04 的读取模型与“读盘不等于可用”，补同一加载任务的分阶段观测；不另写一篇同义总论
 - 资源容器与 mmap 友好布局：什么时候适合 packfile，什么时候更适合 archive + index
 - 冷缓存、热缓存与热机测试：怎样设计更接近真实用户的加载验证矩阵
 - Windows 侧 I/O 观测：用 ETW / WPA 看加载链、页缓存和文件活动

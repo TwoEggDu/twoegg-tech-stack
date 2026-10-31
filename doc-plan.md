@@ -72,6 +72,7 @@
 | HybridCLR | [docs/hybridclr-series-plan.md](./docs/hybridclr-series-plan.md) | 已拆出 | 源码起步、执行主线、案例与选读；旧补桥材料保留为执行层 |
 | IL2CPP | [docs/il2cpp-series-plan.md](./docs/il2cpp-series-plan.md) | 已拆出 | 运行时地图、核心机制与产物一致性排查 |
 | Unity 异步 / Task / UniTask | [docs/unity-async-runtime-task-to-unitask-series-plan.md](./docs/unity-async-runtime-task-to-unitask-series-plan.md) | 已拆出 | 线程、任务、continuation 主线 |
+| 存储设备与 IO 基础 | [docs/storage-io-foundations-series-plan.md](./docs/storage-io-foundations-series-plan.md) | 已登记既有正文与审校范围 | 存储设备、文件系统、OS I/O 与游戏加载；复用原系列，审校及验证状态见 plan |
 
 ### 引擎架构、模式与算法
 
