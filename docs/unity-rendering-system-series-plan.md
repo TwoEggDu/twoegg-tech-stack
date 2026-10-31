@@ -121,6 +121,16 @@
 
 ---
 
+## 既有补篇维护
+
+以下登记既有补篇的原位修订，不新增篇号，也不替代上面的主线写作顺序。
+
+| 既有文章 | 本次维护与复用边界 | 状态 |
+| --- | --- | --- |
+| [补I：帧时序与显示技术](../content/rendering/unity-rendering-supp-i-frame-timing.md) | 补清应用帧间隔、CPU／GPU 计时、显示节奏与输入延迟口径；校正同步／缓冲模型、移动端帧率条件及 FrameTimingManager 最近完成帧示例。复用一帧链路与帧预算拆账，不重复展开机制正文 | 2026-10-31 原位修订；官方契约按 Unity 2022.3 LTS、Input System 1.6.3 核对；计时示例未在目标 Player 编译／运行，显示与输入实验待补；检查记录见[审校记录](unity-rendering-supp-i-frame-timing-review.md) |
+
+---
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）
