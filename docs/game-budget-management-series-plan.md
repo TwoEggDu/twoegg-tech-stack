@@ -1,5 +1,11 @@
 # 游戏预算管理系列计划
 
+## 帧预算 06 的关联审校（2026-10-31）
+
+原位修正[《帧预算拆账》](../content/performance/game-budget-06-frame-budget-breakdown.md)，同步[一帧拆解](../content/performance/game-performance-frame-breakdown.md)的指标与关键路径：加载为跨阶段事件维度，CPU／GPU／等待可能重叠，分项不直接求和；补正常节奏等待、记录条件和责任分工。标题中的 06、现有系列顺序及 URL 不变，不扩审其他预算文章。
+
+本轮是机制与工程建议审校，无设备收益实测或持续执行记录，尚未提交发布。范围与本地验证见[审校记录](game-performance-frame-review.md)；主文状态归[性能系列计划](game-performance-series-plan.md)。
+
 ## 这份计划解决什么
 
 这组文章要解决的，不是再补一轮零散的“优化技巧”，而是把 `包体预算`、`内存预算`、`CPU 预算`、`GPU 预算`，再连同 `帧预算拆账`、`场景预算`、`角色预算`、`特效预算`，收成同一种写法和同一套工程语言。

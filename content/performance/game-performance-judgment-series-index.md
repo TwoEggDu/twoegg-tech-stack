@@ -53,7 +53,7 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
 如果你想先建立一套跨角色共用的性能直觉，建议按这条主线走：
 
 1. [为什么某些操作会慢：给游戏开发的性能判断框架]({{< relref "performance/game-performance-judgment-framework.md" >}})
-2. [一帧到底是怎么完成的：游戏里一个 Frame 到底在做什么]({{< relref "performance/game-performance-frame-breakdown.md" >}})
+2. [一帧到底是怎么完成的：游戏里一个 Frame 到底在做什么]({{< relref "performance/game-performance-frame-breakdown.md" >}})：先区分逻辑帧、渲染帧与显示刷新，再用指标表和教学时间线理解重叠、等待与关键路径；需要分工和预算记录时，接[帧预算拆账]({{< relref "performance/game-budget-06-frame-budget-breakdown.md" >}})。时间线不是设备实测。
 3. [什么事不能在什么时候做：游戏开发里最危险的时机管理]({{< relref "performance/game-performance-dangerous-operations-timing.md" >}})
 4. [怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法]({{< relref "performance/game-performance-diagnosis-method.md" >}})
 5. [Unity 里，这些性能问题通常怎么显形]({{< relref "performance/game-performance-unity-symptoms.md" >}}) 或 [Unreal 里，这些性能问题通常怎么显形]({{< relref "performance/game-performance-unreal-symptoms.md" >}})
@@ -69,6 +69,8 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
 
 ## 按常见问题进入
 
+- FPS 看起来稳定，却觉得反馈慢，或团队把不同时间条直接相加：
+  先看[一帧拆解的指标与关键路径]({{< relref "performance/game-performance-frame-breakdown.md" >}})，明确测量对象，再进入后续诊断。
 - 首次进场、首放技能、首开 UI 时卡一下：
   看 [什么事不能在什么时候做]({{< relref "performance/game-performance-dangerous-operations-timing.md" >}})。
 - 读盘结束了，但玩家看到的资源还没准备好：
