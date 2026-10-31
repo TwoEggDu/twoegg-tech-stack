@@ -37,6 +37,12 @@ GP-OS-01／02 是规划标识，公开标题不强加篇号；使用既有系列
 
 Unity 6.0、Android Frame Pacing、Vulkan 与 DXGI 的公开契约用于机制核对；Unreal 仅映射线程职责。教学算例不代表真机 trace 或输入延迟实测。本轮修订尚未提交发布，审校和本地检查见[记录](game-performance-frame-review.md)。下一项优先审校现有诊断方法，把现象、假设、证据和对照分开；持续性能 05 仍需完整优化对照，不据此升级为已验证案例。
 
+## 诊断方法审校
+
+2026-10-31 原位修订[《怎么判断你到底卡在哪》](../content/performance/game-performance-diagnosis-method.md)，沿用原文、URL 与六类排查入口。补现象／假设／证据／结论的区分、CPU／GPU／I/O／内存／同步／热约束的交叉边界、同一任务证据关联，以及最小 A／B／恢复复测与结论限制。
+
+复用一帧链路、帧预算、帧时序、线程与内存、IO 06、功耗与发热及工具选择旧文，不新增同义诊断篇。Unity 2022.3 LTS、UE 5.6 工具入口、Windows WPA 和 Android API 条件分别核对；对照方案未执行，没有设备 trace 或优化收益实测。修订未提交，本地检查与范围见[审校记录](game-performance-diagnosis-review.md)；本条不改变一帧与其他既有修订的交付状态，也不将持续性能 05 提纲升级为已验证案例。
+
 ## 计划中
 
 1. 继续补系列中的案例篇
