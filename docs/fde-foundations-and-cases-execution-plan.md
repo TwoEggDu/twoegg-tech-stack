@@ -33,6 +33,8 @@
 
 2026-10-31 G08 续：一帧与帧预算修订已随 `f8ec017` 发布，Pages #589 及线上回路已核验。现复用[诊断方法](../content/performance/game-performance-diagnosis-method.md)，补现象、假设、证据、同条件对照及六类调查表，状态归[性能 plan](game-performance-series-plan.md#诊断方法审校)，范围见[记录](game-performance-diagnosis-review.md)。本次修订未提交，对照设计未执行；M02 仍待同场景基线、诊断、单项改动及复测，持续性能 05 保持提纲。
 
+2026-10-31 G08 工作流衔接：诊断续审已随 `8f3cf71` 发布，Pages #591 及线上回路已核验。现复用[方法收束篇](../content/performance/game-performance-methodology-summary.md)，将技术取证接到可回退决定、责任交接与首次技能教学分支，并同步[平台直觉](../content/performance/game-performance-mobile-vs-pc-intuition.md)的必要比较边界。篇级状态归[性能 plan](game-performance-series-plan.md#性能工作流与平台关联审校)，范围见[记录](game-performance-workflow-review.md)。本次文稿未提交，教学推演无实测；后续 M02 的最小优化对照与持续性能 05 成稿条件仍保持。
+
 以下是本表的执行建议，不是新篇级目录；不要求九项依次全部完成，既有专业路线保留自己的依赖顺序。
 
 1. **先复用与补阅读桥梁**：G01／G02 将已有交接、问题发现和能力沉淀说明接起来；G03／G04／G05 明确各自机制怎样服务工程判断。先处理一个具体读者问题，再决定原文补节还是只需准确链接，不自动新增同义文章。

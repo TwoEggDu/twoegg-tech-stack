@@ -57,7 +57,7 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
 3. [什么事不能在什么时候做：游戏开发里最危险的时机管理]({{< relref "performance/game-performance-dangerous-operations-timing.md" >}})
 4. [怎么判断你到底卡在哪：CPU / GPU / I/O / Memory / Sync / Thermal 的诊断方法]({{< relref "performance/game-performance-diagnosis-method.md" >}})：把现象、候选假设、关联证据和对照结论分开，再按六类调查表选择下一份证据；固定战斗镜头是未执行的验证设计。
 5. [Unity 里，这些性能问题通常怎么显形]({{< relref "performance/game-performance-unity-symptoms.md" >}}) 或 [Unreal 里，这些性能问题通常怎么显形]({{< relref "performance/game-performance-unreal-symptoms.md" >}})
-6. [从现象到方法：把游戏性能判断连成一套工作流]({{< relref "performance/game-performance-methodology-summary.md" >}})
+6. [从现象到方法：把游戏性能判断连成一套工作流]({{< relref "performance/game-performance-methodology-summary.md" >}})：用可回退的判断流程、决策交接表和首次技能教学推演，连接取证、方案取舍与复测；推演没有实测结果。
 
 ## OS 基础补读
 
@@ -79,6 +79,8 @@ series_reading_hint: "第一次进入这个系列，可以先走判断框架和�
   看 [手机和 PC 为什么要用不同的性能直觉]({{< relref "performance/game-performance-mobile-vs-pc-intuition.md" >}})。
 - 已有时间线，却不知道它支持哪个原因、下一步改什么来验证：
   看[诊断方法]({{< relref "performance/game-performance-diagnosis-method.md" >}})的证据关联与最小对照；数据缺失时保留未确定。
+- 已有诊断，但不知道怎样分工、接受取舍或在结果失败时回退：
+  看[工作流与决策交接]({{< relref "performance/game-performance-methodology-summary.md" >}})，再沿[平台条件]({{< relref "performance/game-performance-mobile-vs-pc-intuition.md" >}})核对比较范围。
 - 你已经抓到现象，但团队总在不同层级上各说各话：
   先回 [判断框架]({{< relref "performance/game-performance-judgment-framework.md" >}})，最后再看 [方法收束]({{< relref "performance/game-performance-methodology-summary.md" >}})。
 
