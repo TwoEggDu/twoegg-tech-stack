@@ -2,7 +2,8 @@
 title: "底层硬件 F02｜Cache 体系全景：为什么数据布局决定了性能上限"
 slug: "hardware-cpu-f02-cache"
 date: "2026-03-28"
-description: "用真实延迟数字（L1 4 cycle / L3 40 cycle / RAM 200+ cycle）解释 CPU cache 层次结构，讲清楚 cache line 的工作原理、空间局部性和时间局部性，以及为什么 AoS 在批量遍历时必然触发 cache miss。"
+lastmod: "2026-10-31"
+description: "解释 Cache 层级、缓存行与局部性，用明确假设下的字节模型比较 AoS 与 SoA，并区分工作集估算、硬件计数和真实耗时。"
 tags:
   - "CPU"
   - "Cache"
@@ -15,80 +16,78 @@ tags:
 series: "底层硬件 · CPU 与内存体系"
 weight: 1320
 ---
-CPU 的运算速度已经快到每个 cycle 只需要约 0.3 ns，但主内存的访问延迟高达 60 ns 以上。这两者之间存在约 200 倍的差距，而这个差距正是现代程序性能优化的核心战场。Cache 的存在就是为了弥合这道鸿沟——但它能不能真正发挥作用，完全取决于你怎么组织数据。
+CPU 执行计算时，数据是否及时到达会影响吞吐量。Cache 利用局部性减少访问更远存储层级的次数；数据布局会影响它的效果，但预取、访问依赖、工作集大小和其他线程的竞争也在起作用。
+
+> **本文的证据边界**：下面的字节数是给定布局假设后的计算，不是性能实测。缓存行、容量和访问延迟要按目标处理器确认；Unity ECS 的说明以 Entities 1.0 文档为基准。
 
 ---
 
-## 延迟数字：你必须记住的几个数字
+## 延迟数字：先区分层级，再看目标机器
 
-讨论 cache 优化之前，先把真实数字摆出来。这些数字来自 "Latency Numbers Every Programmer Should Know" 以及 Anandtech 等基准测试，不同 CPU 世代略有差异，但数量级是稳定的：
+L1、L2、末级缓存和主内存构成常见的数据访问层次，但并非所有 CPU 都有相同的层数、容量与共享方式。不能用一张固定的周期表代表桌面 CPU、手机大核和小核。
 
-| 存储层级 | 容量（典型值） | 延迟（cycles） | 延迟（时间） |
-|---------|-------------|--------------|-----------|
-| L1 Cache | 32 ~ 64 KB | ~4 cycle | ~1 ns |
-| L2 Cache | 256 KB ~ 1 MB | ~12 cycle | ~3 ns |
-| L3 Cache | 8 ~ 64 MB | ~40 cycle | ~10 ns |
-| 主内存（RAM） | GB 级 | ~200 cycle | ~60 ns |
+| 层级 | 在分析中关心什么 | 需要确认的条件 |
+|---|---|---|
+| L1 数据缓存 | 热点数据能否快速复用 | 每核容量、相联度、缓存行大小 |
+| L2 / 末级缓存 | L1 未命中后从哪里得到数据 | 私有或共享、竞争、命中层级 |
+| 主内存 | 数据是否需要离开缓存体系 | 访问延迟、可持续带宽、并发请求数 |
 
-这张表的含义很直接：如果你的数据在 L1，CPU 4 个 cycle 就能拿到；如果在主内存，要等 200 个 cycle。在这 200 个 cycle 里，CPU 的执行单元要么等待，要么依赖乱序执行机制找别的事做——但如果代码有数据依赖链，就只能干等。
+**一次 L1 miss 不等于一次 DRAM 访问，更不等于固定时长的 CPU 停顿。** 请求可能在下一层命中，也可能由其他核心的缓存提供数据；乱序执行和多个并发请求还可能掩盖部分等待。沿指针依赖链逐个取数，和同时发出多个独立读取，即使 miss 数相近，也可能表现不同。
 
-**一次 cache miss 打到主内存，代价等于 L1 命中的 50 倍。** 这不是理论上的损失，是每次循环迭代里实实在在的停顿。
+若引用延迟数字，应同时给出处理器、频率状态、测量方法和访问模式。串行依赖加载测到的延迟，不能直接作为流式扫描的每元素耗时。[Intel 优化手册入口](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)提供了按微架构分析的资料；实际项目仍需在目标设备上测量。
 
 ---
 
-## Cache Line：数据传输的最小单位
+## Cache Line：分析局部性的基本单位
 
-Cache 不是按字节工作的，而是按 **cache line** 工作。在 x86-64 和现代 ARM 上，cache line 大小固定为 **64 bytes**。
+缓存通常以 **cache line** 为单位管理数据。64 bytes 是常见值，**不是 x86-64 与所有现代 ARM 的统一规格**。例如 LLVM 针对 Apple arm64 的[变更说明](https://github.com/llvm/llvm-project/pull/208716)明确讨论了 128-byte cache line。编译器的 interference-size 常量也不能当作所有缓存层级的完整规格表。
 
-规则非常简单：每当 CPU 需要一个字节，如果它不在 cache 里，CPU 会把包含这个字节的整个 64 bytes 的 cache line 从下一级存储（或主内存）加载进来。
+下面仅以 **64-byte 缓存行、普通可缓存内存**为例：
 
-```
-主内存中连续的字节排列：
-地址:  0x00  0x08  0x10  0x18  0x20  0x28  0x30  0x38
-       |--------------------------------------------------| 64 bytes = 1 cache line
-
-访问 0x04 → 整个 0x00 ~ 0x3F 的 cache line 都被加载进 L1
+```text
+地址: 0x00                                      0x3F
+      |------------- 一条 64-byte line -------------|
+访问 0x04：若需要填充该缓存行，会连同周围字节一起取得
 ```
 
-这个机制带来两个重要推论：
+**空间局部性**：假设 `float` 占 4 bytes，数组起始地址按 64 bytes 对齐，`arr[0..15]` 落在同一行。该行被取入且尚未驱逐时，后续访问可利用它；不对齐时，这 16 个数可能跨两行。命中仍有加载指令、执行端口和依赖成本，不能称为免费。
 
-**空间局部性（Spatial Locality）**：访问 `arr[0]` 之后再访问 `arr[1]` 到 `arr[15]`，这 16 个 `float`（每个 4 bytes，共 64 bytes）已经全部在同一个 cache line 里了，后续 15 次访问几乎免费。
+**时间局部性**：近期访问的数据如果仍驻留在缓存，再次使用可以避免重复填充。能否留住取决于工作集、组冲突和期间的其他访问，不是“小于容量”就保证命中。
 
-**时间局部性（Temporal Locality）**：最近访问过的数据还留在 cache 里，短时间内再次访问不需要重新加载。L1 虽然只有 32~64 KB，但对于频繁重用的热点数据，这已经足够。
-
-反过来，如果你的访问模式是随机跳转——比如沿着指针链表遍历，或者随机访问一个大数组——每次访问都可能加载一个新的 cache line，而加载进来的大部分数据又不会被用到。**你用了整个 cache line 64 bytes 的带宽成本，却只用上了其中 4 bytes 的数据。**
+如果一次只用到一行中的少量字节，其余数据又没有机会复用，那么传输和缓存空间的利用率就可能较低。指针遍历是否属于这种情况，要看指向的数据实际怎样分配、是否已在缓存中。
 
 ---
 
 ## Cache Miss 的三种类型
 
-不是所有 cache miss 都一样，理解它们的来源有助于针对性优化。
+常用的 3C 分类帮助解释缺失原因，讨论时先明确是哪一级缓存：
 
-**Cold Miss（冷缺失）**：数据第一次被访问，cache 里什么都没有，必须从内存加载。这类 miss 几乎无法避免，但可以通过预取（Prefetch）来隐藏延迟。游戏中每帧遍历新激活的对象时大量触发这类 miss。
+- **Cold / Compulsory Miss（首次缺失）**：该级缓存尚未拥有所需数据。下一级可能已经有副本，不一定访问主内存；预取可以提前搬运数据，但不会消除首次传输本身。
+- **Capacity Miss（容量缺失）**：复用前访问的工作集过大，数据无法全部保留。数组大于缓存是风险信号，不代表每次访问都缺失；同一行内仍有空间复用。
+- **Conflict Miss（冲突缺失）**：多个地址竞争同一组中的有限位置，即使总容量有余也可能相互驱逐。
 
-**Capacity Miss（容量缺失）**：工作集数据量超过 cache 容量，频繁地将旧数据踢出再重新加载。如果你的 L3 是 16 MB，但每帧要处理 50 MB 的粒子数据，L3 根本装不下，每次遍历都要大量访问主内存。
-
-**Conflict Miss（冲突缺失）**：与 cache 的组相联（Set-Associative）结构有关——即使 cache 总容量够用，多个数据恰好映射到同一个 cache 组，导致互相驱逐。这类 miss 相对较少见，但在特定内存对齐方式下会出现。
-
-对游戏开发来说，**Cold Miss 和 Capacity Miss 是日常性能问题的主要来源**。大量 Entity 每帧只访问一次，它们的数据在两帧之间已经被其他数据踢出 cache；数据总量超过 L3 大小时，带宽直接打到主内存。
+多核还要考虑一致性引起的失效，例如其他核心写入共享行。不能只凭“每帧遍历很多 Entity”，就断定主要是冷缺失或容量缺失。先看访问路径、复用距离与硬件计数，再决定是否拆分数据。
 
 ---
 
 ## AoS vs SoA：最重要的布局决策
 
-现在进入本篇最核心的部分。理解了 cache line 的工作原理，AoS 和 SoA 的性能差异就完全可以从第一原理推导出来。
+现在进入本篇最核心的部分。先用一个可核算的例子分析访问足迹，再讨论它能否转化为性能收益。
 
-### AoS（Array of Structs）：典型 OOP 对象数组
+### AoS（Array of Structs）：结构体数组
+
+AoS 指结构体连续排列，不等同于 OOP，也不等同于对象引用数组。下面是布局示意，假设 `float` 和 `int` 都占 4 bytes：
 
 ```cpp
-struct Entity {
+struct alignas(64) Entity {
     float pos_x, pos_y, pos_z;   // 12 bytes
     float vel_x, vel_y, vel_z;   // 12 bytes
     float health;                 // 4 bytes
     float armor;                  // 4 bytes
     int   flags;                  // 4 bytes
-    // ... 更多字段，假设总计 64 bytes（恰好一个 cache line）
+    unsigned char other[28];     // 其余字段的占位，便于计算
 };
+static_assert(sizeof(Entity) == 64, "example requires 64-byte Entity");
 
 Entity entities[10000];
 ```
@@ -113,11 +112,9 @@ for (int i = 0; i < 10000; i++) {
 }
 ```
 
-每次循环迭代，访问 `entities[i]` 时触发一次 cache line 加载（假设数据不在 cache）。这次加载把整个 64 bytes 拉进来，包括 pos、vel、health、armor、flags……
+在本例的 64-byte 缓存行和对齐假设下，每个 Entity 的 pos、vel 位于它自己的那一行。访问 10000 个对象会触及 10000 条不同的缓存行，覆盖 640000 bytes；本循环实际使用的字段共 240000 bytes，比例为 37.5%。
 
-但你只用到了 pos 和 vel，共 24 bytes。其他 40 bytes 的 health、armor、flags 被加载进 L1，占用宝贵的 cache 空间，却一次都没有被使用。
-
-**10000 个对象 → 10000 次 cache line 加载 → 10000 × 64 bytes = 640 KB 的内存带宽消耗，但实际有效数据只有 10000 × 24 bytes = 240 KB。带宽利用率不到 38%。**
+**这是访问足迹的估算，不是 DRAM 带宽实测。** 只有继续约定初始缓存状态、预取和写入策略等，才能讨论传输量。位置更新还包含写入与最终写回，不能只数读入行就声称得到总内存流量。
 
 ### SoA（Struct of Arrays）：将字段分开存储
 
@@ -157,117 +154,77 @@ for (int i = 0; i < 10000; i++) {
 }
 ```
 
-现在每次加载 `pos_x` 的一个 cache line，得到连续的 16 个 float，接下来 15 次迭代对 `pos_x` 的访问全部命中 cache。`vel_x` 同理。
-
-**10000 个对象的位置更新，只需要访问 pos_x / pos_y / pos_z / vel_x / vel_y / vel_z 六个数组，每个数组 625 个 cache line（10000 floats ÷ 16 floats/line），共约 3750 次 cache line 加载。AoS 是 10000 次，SoA 约是 AoS 的 37.5%。**
-
-health、armor、flags 这次完全没有被加载进 cache，不占用任何带宽，不污染任何 cache 容量。
+若六个数组各自按 64 bytes 对齐，每个数组的 10000 个 float 覆盖 625 条行，六个数组合计 3750 条行，覆盖 240000 bytes。后续迭代可复用同一行中的相邻元素；其他字段不在本循环的直接访问集合中。
 
 ### 对比总结
 
-```
-操作：遍历 10000 个 Entity，只更新 position（用 velocity）
+| 本例的计算项 | AoS | SoA |
+|---|---:|---:|
+| 需要的位置与速度字段 | 240000 bytes | 240000 bytes |
+| 触及的不同缓存行 | 10000 | 3750 |
+| 这些行覆盖的字节数 | 640000 | 240000 |
+| 有效字段 / 覆盖字节 | 37.5% | 100% |
 
-AoS 方案：
-  每次迭代  → 1 cache line 加载（64 bytes）
-  有效数据  → 24 bytes（pos + vel）
-  总加载次数 → 10000 次 cache line
-  带宽利用率 → 37.5%
-
-SoA 方案：
-  每 16 次迭代 → 1 cache line 加载（pos_x 或 vel_x 等）
-  有效数据  → 64 bytes（全部有效）
-  总加载次数 → ~3750 次 cache line（只计 pos + vel 字段）
-  带宽利用率 → ~100%
-
-性能差距（实测）：3x ~ 10x，取决于对象大小和字段使用率
-```
+这些数字依赖本例的字段大小、对齐与访问范围，不能换算成固定加速倍数，也不是实际 cache miss 次数。AoS 若已经拆出紧凑的热数据，差距会变；SoA 也可能增加地址计算或维护多数组的成本。
 
 ---
 
 ## 硬件 Prefetcher：连续访问的隐藏加速器
 
-CPU 内置了 **硬件 Prefetcher**，它持续监测内存访问模式。如果检测到连续的、步长规律的访问模式，就会提前把下一批 cache line 从内存加载进来，在数据被实际访问之前就准备好。
+硬件预取器可以识别部分连续或固定步长的访问，在程序需要数据前发起读取。SoA 的字段扫描往往便于识别，连续 AoS 同样可能形成规律步长；不能把 AoS 与随机指针跳转混为一谈。
 
-SoA 的访问模式对硬件 Prefetcher 非常友好：`pos_x[0], pos_x[1], pos_x[2] ...` 是完全线性的连续访问，Prefetcher 几乎可以做到零延迟（数据在被访问之前就已经到达 L1）。
+如果下一个地址依赖当前加载的指针值，提前发出请求会更困难。不过对象可能来自连续内存池，也可能已经缓存，不能把每次解引用都算成冷缺失或主内存访问。
 
-AoS 的指针跳转场景则完全不同。考虑一个常见的游戏对象设计：
-
-```cpp
-// 用指针存储组件，对象散落在堆的各个角落
-class GameObject {
-    Transform* transform;    // 指针，指向堆上某处
-    Renderer*  renderer;     // 另一个指针，另一个地方
-    Collider*  collider;     // 又一个指针
-};
-```
-
-遍历时，每次解引用指针都跳到内存中一个随机位置，**硬件 Prefetcher 完全无法预测**下一个访问地址，每次都是 cold miss，直接打到主内存，等满 200 cycle。
-
-除了硬件 Prefetcher，还可以使用软件预取提示：
+软件预取只是一种提示，需要验证它是否比硬件预取更有效。下面是 GCC / Clang 的语法示意，假设 `i`、`count` 非负且 `i < count`，数组有 `count` 个元素；距离 16 仅为示例：
 
 ```cpp
-// GCC / Clang
-__builtin_prefetch(&pool.pos_x[i + 16], 0, 1);
-
-// MSVC / Intel
-_mm_prefetch((char*)&pool.pos_x[i + 16], _MM_HINT_T0);
+if (count - i > 16) {
+    __builtin_prefetch(&pool.pos_x[i + 16], 0, 1);
+}
 ```
 
-这条指令告诉 CPU 提前开始加载后续数据，但前提是你能预测访问地址——SoA 天然满足，随机指针链则做不到。
+提示过早可能挤掉有用数据，过晚则来不及，额外指令也有成本。先确认瓶颈，再对比有无预取的真实耗时。
 
 ---
 
-## ECS Chunk 设计：SoA 的工程实现
+## ECS Chunk 设计：按组件组织数据
 
-理解了以上内容，Unity DOTS 的 **Archetype / Chunk** 设计就不再神秘了。
+以 [Unity Entities 1.0 的 Archetype 文档](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/concepts-archetypes.html)为准，相同组件组合的 Entity 属于同一个 Archetype，数据存放在 16 KiB 的 Chunk 中。Chunk 内为组件类型分别安排数组，并有 Entity ID 与管理开销；容量取决于具体组件组合。
 
-Unity DOTS 将具有相同 Component 组合的 Entity 归为同一个 **Archetype**，每个 Archetype 的数据存储在若干个 **Chunk** 里。Chunk 的固定大小是 **16 KB**——这个数字不是随意选的，16 KB 恰好可以装进大多数 CPU 的 L1 Cache（L1 通常是 32~64 KB）。
-
-Chunk 内部的布局是严格的 SoA：
-
-```
-Chunk（16 KB）
-├── Component A（所有 Entity 的 A）: [A0][A1][A2][A3]...[An]
-├── Component B（所有 Entity 的 B）: [B0][B1][B2][B3]...[Bn]
-└── Component C（所有 Entity 的 C）: [C0][C1][C2][C3]...[Cn]
+```text
+Chunk（16 KiB）
+├── Entity ID 数组
+├── Component A：[A0][A1][A2]…
+├── Component B：[B0][B1][B2]…
+└── 其他组件数据与管理开销
 ```
 
-当一个 Job 查询 "所有有 Position 和 Velocity 的 Entity" 时：
+这里的 SoA 是**组件之间**的分离。若 Position 组件内部是 `float3`，连续排列的是各 Entity 的 `float3`，并不自动拆成 x、y、z 三个数组。托管组件和超出内联容量的动态缓冲还涉及 Chunk 外的数据，不能套用全部数据都在块内的模型。
 
-1. 只访问 Position 数组和 Velocity 数组，其他 Component（比如 RenderMesh、AudioSource）完全不碰
-2. 每个 Chunk 的工作集是 16 KB，可以完整放进 L1
-3. 数组是连续的，硬件 Prefetcher 全程有效
-4. 多个 Job 可以并行处理不同 Chunk，CPU 多核同时满载
+只读 Position、Velocity 的循环可以避免直接访问其他组件。但 16 KiB 小于某颗 CPU 的 L1 容量，并不保证整个 Chunk 驻留：还有别的工作集、组冲突及外部访问。Job 并行度也受依赖、任务规模和调度限制。
 
-**这正是 DOTS 在大量 Entity 场景下性能碾压传统 MonoBehaviour 的根本原因——不是因为它"用了 Jobs"，而是因为它从数据布局层面就消灭了 cache miss。**
+因此，Chunk 提供了有利于局部性与批处理的组织方式，**没有消灭 cache miss，也不保证所有核心满载**。
 
 ---
 
 ## 如何验证：实测工具
 
-如果你想亲自验证 AoS vs SoA 的差距：
+在目标设备上先确认热点循环，再测布局变化。Linux 上可用下面的命令收集计数，但 `your_program` 需要替换成自己的基准程序：
 
-**Linux（perf）**：
 ```bash
-perf stat -e cache-misses,cache-references,instructions ./your_program
+perf stat -e cache-misses,cache-references,instructions,cycles ./your_program
 ```
 
-**Intel VTune / AMD uProf**：提供详细的 cache miss 热点分析，可以看到具体哪行代码触发了 LLC（Last Level Cache）miss。
+通用事件的含义与支持情况依 CPU、内核及权限而异，不能把 `cache-misses / cache-references` 一律叫作 L1 miss 率。用 `perf list` 和对应 PMU 文档确认事件；区分采样估计、事件计数以及复用硬件计数器后的缩放值。
 
-**Unity Profiler + Burst Inspector**：在 DOTS 项目里可以直接看到 Job 的 memory throughput 指标；Burst Inspector 可以查看生成的汇编，确认向量化和 prefetch 是否生效。
+Intel VTune / AMD uProf 可以帮助定位内存访问热点，但源代码行归因也受采样和编译优化影响。Unity Profiler 适合先看 Job 耗时与主线程等待；[Burst Inspector](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/editor-burst-inspector.html)用于检查目标平台汇编，不能代替缓存计数或内存带宽测量。
 
-AoS vs SoA 遍历 100 万个 float 的性能差距通常在 **3x ~ 10x**，具体倍数取决于结构体大小（越大 AoS 越吃亏）和字段使用率（使用率越低 AoS 越浪费带宽）。
+至少记录目标 CPU、编译配置、数据规模、访问字段、线程数、缓存冷暖条件、耗时分布和结果校验。更完整的对照方法见 [F06：数据布局实战]({{< relref "performance/hardware-cpu-f06-data-layout.md" >}})。
+
+<!-- DATA-TODO: 补充同一目标设备上 AoS/SoA 的基准源码、编译命令、原始耗时与 PMU 事件定义；在记录齐全前不添加实测倍数。 -->
 
 ---
 
 ## 小结
 
-- **延迟鸿沟是真实的**：L1 命中 4 cycle，主内存 200 cycle，50 倍差距不是纸面数字
-- **Cache line 是传输单位**：每次 miss 加载 64 bytes，不管你用没用到那 64 bytes
-- **空间局部性决定命中率**：连续访问同一数组 → 每个 cache line 物尽其用；随机指针跳转 → 大部分带宽浪费
-- **AoS 的问题不是"慢"，而是带宽利用率低**：你花了加载整个对象的代价，却只用了其中一小部分字段
-- **SoA 解决的是有效带宽**：只加载需要的字段，cache 空间全部用于有效数据，Prefetcher 全程可用
-- **DOTS Archetype/Chunk 是 SoA 的工程实现**：16 KB Chunk 装进 L1，SoA 布局保证带宽利用率，这是 DOTS 性能优势的硬件级根源
-
-下一篇：底层硬件 F03，SIMD 与向量化——当数据布局对齐之后，CPU 如何用一条指令同时处理 4 个或 8 个 float，以及 Burst Compiler 为什么能自动完成这件事。
+Cache 优化首先要回答：循环需要哪些字节、这些字节怎样分布、何时再次使用。布局模型可以帮助提出优化假设，但访问足迹、cache miss、DRAM 流量和总耗时是不同指标，需要分别验证。

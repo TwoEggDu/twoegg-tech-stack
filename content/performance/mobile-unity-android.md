@@ -2,49 +2,45 @@
 title: "Unity on Mobile｜Android 专项：Vulkan vs OpenGL ES、Adaptive Performance 与包体优化"
 slug: "mobile-unity-android"
 date: "2026-03-28"
-description: "Android 是碎片化最严重的移动平台，覆盖从骁龙 8 Gen 3 到 MT6762 的几十种 GPU 架构。本篇覆盖 Android 专项的核心决策：Vulkan vs OpenGL ES 的选择、Adaptive Performance 接入、AAB 包体优化，以及 Android 特有的性能陷阱。"
+lastmod: "2026-10-31"
+description: "区分 Android 图形 API、构建分发、热管理和内存终止的机制与验证边界，说明 Unity 项目应如何建立设备测试与崩溃符号归档。"
 tags: ["Unity", "Android", "Vulkan", "OpenGL ES", "Adaptive Performance", "移动端"]
 series: "移动端硬件与优化"
 weight: 2200
 ---
 
+> 版本说明：Unity 设置与脚本行为以 2022.3 LTS 文档为基准；Adaptive Performance 单独注明包版本。商店政策与插件支持范围以发布时的官方文档为准。本文没有提供本项目的真机 A/B 测量记录，下面的验证方法不代表已经获得性能收益。
+
 ## 1. Vulkan vs OpenGL ES：如何做选择
 
-### 为什么 Vulkan 在高端设备上更好
+### Vulkan 的潜在收益来自哪里
 
-Vulkan 是现代图形 API，相比 OpenGL ES 3.2，它的根本性优势体现在三个维度：
+Vulkan 将较多状态、资源分配与同步责任交给应用或引擎，提供降低驱动 CPU 开销和并行录制命令的机会。但机会能否转化为收益，要看场景是否受 CPU 提交限制、引擎实现与目标驱动，不能按“高端机”直接判定更快。
 
-**CPU 驱动开销更低**。OpenGL ES 是状态机模型，驱动层需要在每次 Draw Call 前做大量状态校验和隐式同步，这部分开销完全落在 CPU 上。Vulkan 的 Pipeline State Object（PSO）把状态提前固化，驱动在运行时做的事情更少。在高通骁龙 865 设备上，实测 Vulkan 的 CPU 帧时间比 OpenGL ES 低约 **15-20%**，在 Draw Call 密集的场景下差距更明显。
+**显式内存管理**允许引擎选择符合资源要求的内存类型。`vkAllocateMemory` 使用的是 `memoryTypeIndex`，不是直接传入 `HOST_VISIBLE` 等标志；还要满足资源的 memory type 要求。CPU 可映射内存主要涉及 CPU 访问与上传策略，不能据此声称 Unity 自动避免了 GPU → CPU 回读。[Vulkan 内存分配规范](https://registry.khronos.org/vulkan/specs/latest/html/vkspec.html#memory-device)说明了这些约束。
 
-**显式内存管理**。OpenGL ES 的内存分配完全由驱动决定，开发者无法控制纹理 / Buffer 放在哪块内存区域。Vulkan 提供了 `vkAllocateMemory`，可以指定内存类型（Device Local、Host Visible、Host Coherent）。Unity 在 Vulkan 后端会利用这一特性，把频繁更新的 Uniform Buffer 放在 Host Visible 区域，避免每帧的 GPU → CPU 回读。
+**多线程 Command Buffer 录制**也有前提：不能无同步地并发使用同一 Command Pool；常见做法是为录制线程安排独立池。图形 API 支持并行，不代表任意 Unity Job 都在录制 GPU 命令。[Vulkan threading 指南](https://docs.vulkan.org/guide/latest/threading.html)可用于区分 API 能力与引擎调度。
 
-**多线程 Command Buffer 录制**。OpenGL ES 的 Context 是线程绑定的，主线程以外录制命令需要共享 Context，有严格限制。Vulkan 的 Command Buffer 可以在任意线程独立录制，Unity 的 Job System 渲染线程能充分利用这一点。
+### 驱动兼容性：记录组合，不贴芯片标签
 
-### Vulkan 的劣势：驱动成熟度问题
+某个 GPU 家族并不只对应一个驱动版本。黑屏、花屏或帧时退化，应至少记录设备、Android 构建、驱动、Unity / SRP 版本、API 与复现场景，再查对应问题记录。
 
-Vulkan 的理论优势在低端设备上经常被驱动 Bug 抵消。几个典型问题：
-
-- **联发科低端 SoC 的 Vulkan 驱动**（MT6762、MT6765 等）在部分 Android 8-9 设备上存在 Render Pass 执行顺序错误，表现为渲染错位或黑屏。
-- **Mali G52/G57 的 Early-Z 优化在 Vulkan 下有时失效**，导致 overdraw 比 OpenGL ES 更严重。
-- Android 7.0（API Level 24）是 Vulkan 1.0 的最低要求，但 API 24 的 Vulkan 驱动普遍质量差；实际上 API 28（Android 9）以下的 Vulkan 驱动建议谨慎使用。
+设备排除列表应关联具体 issue 或复现材料，系统版本只能作为测试条件之一。功能支持、画面正确和持续性能是三项独立检查。
 
 ### Unity 的 Graphics API 配置策略
 
-在 **Player Settings → Other Settings → Graphics APIs** 中：
+在 Android Player Settings 关闭 **Auto Graphics API** 后，可以安排 Vulkan 与 OpenGLES3 的顺序。Unity 按支持情况选择 API；不支持 Vulkan 时可回退到 OpenGL ES，但**这不是检测到花屏、崩溃或性能差后自动切换的保险机制**。具体设置见 [Unity 2022.3 Android Player settings](https://docs.unity3d.com/2022.3/Documentation/Manual/class-PlayerSettingsAndroid.html)。
 
-- 默认情况下 Unity 的列表顺序就是优先级顺序，运行时按顺序找第一个可用的 API。
-- **推荐配置**：Vulkan 放第一位，OpenGL ES 3.2 / 3.1 作为 fallback。
-- 取消勾选 **Auto Graphics API** 后可以手动控制。
+`SystemInfo.graphicsDeviceType` 用于观察当前 API，普通 C# 场景代码不能在图形设备初始化后直接切换后端。若需要按设备选择，应使用目标 Unity 版本支持的启动阶段方案，并单独验证；仅保存一个 PlayerPrefs 键不会改变下一次启动使用的 API。
 
-对于需要按设备型号做精细控制的项目，可以在运行时检查 `SystemInfo.graphicsDeviceType` 并结合设备数据库（比如 GameBench 的 GPU 列表）在 C# 层做策略选择，但这需要通过 Unity 的 `-force-vulkan` / `-force-gles` 启动参数或自定义 Launcher 来实现，主工程内无法在初始化后切换 Graphics API。
+| 检查项 | Vulkan / GLES 对照应保持什么一致 |
+|---|---|
+| 画面正确性 | 场景、相机、质量档、Shader 变体与资源 |
+| 性能 | 分辨率、帧率目标、录制流程、构建优化配置 |
+| 持续负载 | 起始温度、运行时长、电源与系统模式 |
+| 发布决策 | 崩溃、异常设备覆盖及可执行的回退方案 |
 
-**实用建议总结**：
-
-| 设备档次 | 推荐 API | 依据 |
-|---|---|---|
-| 旗舰（骁龙 8 系、天玑 9 系、Xclipse 2 系） | Vulkan | 驱动成熟，CPU 收益明显 |
-| 中端（骁龙 7 系、天玑 8 系、Mali G710+） | Vulkan（谨慎测试） | 驱动质量参差，需覆盖测试 |
-| 低端（骁龙 4 系、天玑 6 系以下、Android < 9） | OpenGL ES 3.2 | Vulkan 驱动 Bug 风险高 |
+<!-- DATA-TODO: 补充至少一组真机 Vulkan/GLES 对照的设备与驱动版本、帧时间分布、热状态和画面结果；记录齐全前不写固定百分比收益。 -->
 
 ---
 
@@ -52,232 +48,101 @@ Vulkan 的理论优势在低端设备上经常被驱动 Bug 抵消。几个典�
 
 ### Target API Level
 
-Google Play 要求 **targetSdkVersion 必须跟随最新要求**。截至 2025 年，新应用 / 更新应用均需 targetSdk = 34（Android 14）。
+`minSdkVersion` 决定安装所需的最低系统版本，`targetSdkVersion` 声明应用针对的系统行为版本。提高 target 后需要验证行为变更和 SDK 兼容性，并不等于同步提高最低安装门槛。
 
-- `targetSdkVersion` 影响系统行为开关（比如 Android 12 的精确闹钟权限、Android 14 的 Photo Picker 强制使用）。
-- `minSdkVersion` 决定安装门槛，建议设 24（Android 7.0），覆盖约 99% 的在用设备。
-- 在 Unity 中：**Player Settings → Other Settings → Minimum / Target API Level**。
+Google Play 的目标 API 政策随时间调整，提交前查[官方目标 API 要求](https://developer.android.com/google/play/requirements/target-sdk)。最低系统版本则依据 Unity 支持范围、依赖 SDK 与实际用户设备决定；不能用未经统计的覆盖率直接推荐某个 API Level。
 
-### Scripting Backend：必须 IL2CPP
+### Scripting Backend 与 Target Architectures
 
-**Google Play 强制要求 64-bit 支持（2019 年起）**，Mono 后端仅输出 ARMv7（32-bit），无法满足要求，因此 Android 发布必须使用 IL2CPP。
+面向 Google Play 的 Unity 2022.3 项目，需要按其[64-bit 要求](https://developer.android.com/google/play/requirements/64-bit)提供对应架构支持；该版本 Unity 的 ARM64 构建需要 IL2CPP。这不等于所有渠道的所有 Android 开发构建都只能用 IL2CPP。
 
-IL2CPP 的副作用：
+是否保留 ARMv7，应依据支持设备和渠道要求。32-bit 设备不能简单等同于 Android 4–5；增加一个 ABI 会增加原生库产物，但用户下载量还受 AAB 按设备拆分影响，没有统一的“包体增加 30%”。
 
-- 构建时间增加（C# → C++ → Native 编译链）。
-- 需要 NDK；Unity 会在安装时提供匹配版本，也可以在 **Preferences → External Tools** 指定自定义 NDK 路径。
-- Strip Engine Code 和 Managed Stripping Level 要谨慎——过激的裁剪会删除反射依赖的类型，导致运行时 `MissingMethodException`。
-
-### Target Architectures
-
-- **ARM64**：必选，Google Play 强制要求。
-- **ARMv7**：可选，仅用于覆盖极少数 32-bit Android 设备（主要是 Android 4-5 时代的遗留机型）。代价是包体增加约 **30%**（因为 IL2CPP 的 libil2cpp.so 需要额外编译一份 ARMv7 版本）。对于面向 2024 年以后的新游戏，直接去掉 ARMv7 即可。
+IL2CPP 的 C# → C++ → Native 编译链需要匹配的工具链。Managed Stripping 与反射、序列化的关系也要在发布配置下验证：Editor 能运行不代表类型或方法在裁剪后仍存在。
 
 ### Internet Access
 
-- `Auto`：仅当项目中有网络 API 调用时才添加 `android.permission.INTERNET`。
-- `Require`：强制添加，无论是否用到网络。
-- 建议设 `Auto`，让权限声明跟随实际需求，减少不必要的权限暴露。
+`Auto` 依赖 Unity 对网络使用的判断，`Require` 明确要求网络权限。若接入 Native / Java SDK，还要检查合并后的 Manifest；不能仅凭 Unity 设置推断最终权限。对实际需要联网的产品，应把权限检查纳入构建产物验证。
 
 ### Minify（R8 混淆）
 
-- 在 **Player Settings → Publishing Settings → Minify** 中，Debug 构建通常不开，**Release 构建建议启用 R8**。
-- R8 会做：代码收缩（删除未用类）、混淆（重命名类 / 方法）、优化（内联、死代码删除）。
-- 陷阱：**反射调用的类会被 R8 误删**。解决方案：
-  1. 在 `proguard-user.txt`（Unity 自动包含进构建）中添加 `-keep` 规则保留反射用到的类。
-  2. 第三方 SDK 通常会提供自己的 `proguard-rules.pro`，确认已合并进去。
-- 打包后用 `bundletool dump resources` 检查 manifest，或用 Android Studio 的 APK Analyzer 验证类是否保留。
+R8 处理 Java / Kotlin 字节码的收缩、优化与混淆，与 C# Managed Stripping 是两条链。启用时核对 SDK 的 keep rules，测试反射、JNI 和组件入口，并归档 mapping 文件。Native 符号不能替代 R8 mapping。
+
+Manifest 可用 `bundletool dump manifest --bundle=myapp.aab --module=base` 检查；类是否保留则需要查看 DEX / APK Analyzer 并验证运行路径。`dump resources` 不能用来代替 Manifest 检查。
 
 ### Split Application Binary（OBB / PAD）
 
-如果 APK 超过 100MB 限制（Google Play 针对 APK；AAB 可到 150MB），可以启用 **Split Application Binary**，Unity Assets 会打进独立的 OBB / Play Asset Delivery 包。现代项目推荐直接用 AAB + Play Asset Delivery，不用老的 OBB 方案。
+拆包结果依 APK / AAB 构建方式及 Unity 版本而异，不能把 OBB 与 PAD 当成同一种文件。先确定目标渠道的分发方式，再验证首包与资源包的归属；不要沿用旧的 100 / 150 MB 限制判断今天的发布要求。
 
 ---
 
 ## 3. AAB 与包体优化
 
-### AAB vs APK：为什么必须切 AAB
+### AAB vs APK：分发产物不同
 
-Google Play 自 2021 年 8 月起**强制要求新应用提交 AAB**（Android App Bundle）。
+AAB 是发布格式，不是直接安装到设备的 APK。Google Play 可按 ABI、密度、语言等生成面向设备的 APK 集合，包括 base 与必要的 split APK。减少多少下载量，取决于原包内容；不能承诺统一比例。
 
-AAB 的核心机制：开发者上传一个包含所有 ABI、语言、屏幕密度资源的 AAB，Google Play 在分发时按照用户设备的具体参数动态裁剪，生成一个只包含该设备所需内容的 APK（称为 Base APK + Configuration Split APKs）。
-
-实际效果：相比提交通用 APK，用户下载的安装包通常减少 **15-30%**。
-
-在 Unity 中启用 AAB：**Player Settings → Publishing Settings → Build → Build App Bundle (Google Play)**。
+Unity 2022.3 在 Android **Build Settings** 中提供 **Build App Bundle (Google Play)**。本地模拟分发后还要在目标渠道测试，特别是原生库、资源包和升级安装。
 
 ### Play Asset Delivery 的三种模式
 
-| 模式 | 触发时机 | 适用场景 |
+| 模式 | 交付时机 | 应用需要处理的边界 |
 |---|---|---|
-| Install Time | 与 App 一起安装 | 启动必须的核心资源（UI、第一关） |
-| Fast Follow | 安装后立即在后台下载 | 游戏加载界面期间下载的资源 |
-| On Demand | 玩家主动触发（进入关卡前） | 后期关卡、DLC 内容 |
+| Install-time | 随应用安装交付 | 初始安装内容与体积 |
+| Fast-follow | 安装后自动开始下载 | 首次启动时可能尚未就绪 |
+| On-demand | 应用发起请求后下载 | 请求、进度、失败重试和资源可用状态 |
 
-Unity Addressables 与 Play Asset Delivery 的集成：使用 **Google Play Plugins for Unity**（com.google.play.assetdelivery）可以在 Addressables 的 Build Script 中直接输出 Asset Pack。
+On-demand 不要求玩家一定点击按钮；Fast-follow 也不保证加载界面结束前完成。PAD 负责交付 Asset Pack，Addressables 负责资源寻址和加载，两者需要匹配的构建与加载集成，不能把安装一个包写成自动打通。[PAD 官方说明](https://developer.android.com/guide/playcore/asset-delivery)列出了交付模式和资源可用性约束。
 
-### 纹理压缩格式分包（Android Texture Compression Targeting）
+### 纹理压缩格式分包
 
-Android 设备的 GPU 对纹理压缩格式的支持不一致：
+ASTC 是否可用应按设备 / 图形 API 的能力确认，不能用芯片系列名称或未经统计的覆盖率代替。ETC2 是 OpenGL ES 3.0 的标准格式之一；ETC1 不直接保存 Alpha。格式选择还要比较具体纹理的质量、块大小与运行时占用，不能笼统认为某一种格式画质总更好。
 
-- **ASTC**：高通骁龙 400+、Mali T760+、PowerVR GT7000+，支持覆盖约 95% 的 2020 年以后设备。
-- **ETC2**：OpenGL ES 3.0 强制要求，几乎所有 Android 设备都支持，但压缩质量低于 ASTC。
-- **ETC1**：最老的格式，不支持 Alpha 通道（需要拆分 RGB + Alpha）。
-
-Unity 2021.2+ 支持 **Texture Compression Targeting**（在 Build Settings 中启用），打包时生成包含多套纹理的 AAB，Google Play 按设备分发对应版本。这样既保证高端设备的画质，又减少低端设备的 VRAM 占用。
-
-配置路径：**Build Settings → Android → Texture Compression → 勾选 Use texture compression targeting**，然后在 Project Settings → Graphics 中设置各 Texture Format 对应的资源。
+Texture Compression Format Targeting 允许按设备能力交付不同纹理版本，但 Unity 内置构建支持与 PAD 插件配置依版本变化。接入前按[Android 官方纹理格式分发文档](https://developer.android.com/guide/playcore/asset-delivery/texture-compression)确认构建链，随后验证设备实际收到并使用的格式；不是在 Graphics 设置中添加几个名称就完成了分包。
 
 ### 包体分析工具
 
-**bundletool**（Google 官方工具，命令行）：
+下面的命令是 `bundletool` 接口示例，需准备对应 AAB 和工具；它们不是本文已执行的测试记录：
 
 ```bash
-# 从 AAB 生成 APKS 集合（用于模拟分发）
 bundletool build-apks --bundle=myapp.aab --output=myapp.apks
-
-# 分析 AAB 内容
-bundletool dump manifest --bundle=myapp.aab
-bundletool dump resources --bundle=myapp.aab --resource=drawable/icon
-
-# 查看 AAB 的实际分发大小估算
+bundletool dump manifest --bundle=myapp.aab --module=base
 bundletool get-size total --apks=myapp.apks
 ```
 
-**Unity Build Report**：构建完成后在 `Library/LastBuild.buildreport`（二进制格式），用 **Build Report Inspector** 包（com.unity.build-report-inspector）可以在 Editor 中可视化查看各资源的包体占用。
+[官方 bundletool 文档](https://developer.android.com/tools/bundletool)还支持设备规格与设备安装测试。大小估算应说明对应设备，不要把整个 APKS 压缩包大小当成用户下载量。
+
+Unity 侧可保存 `BuildPipeline.BuildPlayer` 返回的 BuildReport，结合最终 AAB、APK 集合与 PAD 内容分析占用；不依赖某个临时目录在所有 Unity 版本都存在。
 
 ---
 
 ## 4. Adaptive Performance 接入
 
-### 背景：为什么需要 Adaptive Performance
+### 背景：热状态改变了可持续性能
 
-移动设备没有主动散热，长时间高负载运行会触发 Thermal Throttling（热降频）——CPU / GPU 主动降频以控制温度，帧率因此下跌。Adaptive Performance 的目标是在降频前主动感知热状态，提前降低渲染质量，保持帧率稳定而不是等待系统强制降频。
+移动设备的散热条件有限，持续负载可能触发系统限制频率或功耗。Adaptive Performance 提供状态与调节机制，但它不保证提前预测每次降频，也不能绕过系统热保护。
 
-### 接入路径
+### 接入路径与 Provider 的能力边界
 
-1. 在 Package Manager 中安装 **Adaptive Performance**（com.unity.adaptiveperformance）。
-2. 根据目标平台安装对应的 Provider：
-   - 三星设备：**Adaptive Performance Samsung** (com.unity.adaptiveperformance.samsung.android)，依赖 Samsung GameSDK。
-   - 高通设备（骁龙 7 Gen 2 及以上）：**Adaptive Performance Qualcomm** (com.unity.adaptiveperformance.qualcomm.snapdragon.spaces)。
-3. 在 **Project Settings → Adaptive Performance** 中启用对应 Provider。
+Google 的 [Unity ADPF 接入说明](https://developer.android.com/games/engines/unity/unity-adpf)将 Android Provider 支持对应到 Adaptive Performance 5.0 起的版本。接入时固定 Unity、主包和 Provider 版本，在设备上确认 Provider 激活及所需数据是否有效。
 
-### 核心 API：IThermalStatus 与 IDevicePerformanceControl
+例如 `com.unity.adaptiveperformance.google.android` 1.0 的[包文档](https://docs.unity.cn/Packages/com.unity.adaptiveperformance.google.android@1.0/manual/getting-started.html)明确其为数据 Provider。不能由“安装 Adaptive Performance”推导出它支持手动设定 CPU / GPU 性能等级，更不能把请求等级等同于设置硬件频率。Provider 名称和功能应以项目锁定版本的官方包文档为准。
 
-```csharp
-using UnityEngine.AdaptivePerformance;
+### 热状态如何进入质量策略
 
-public class ThermalManager : MonoBehaviour
-{
-    IAdaptivePerformance ap;
-    IThermalStatus thermalStatus;
-    IDevicePerformanceControl perfControl;
+质量调整应由项目统一管理，下面是策略示意，不是现成插件代码：
 
-    void Start()
-    {
-        ap = Holder.Instance;
-        if (ap == null || !ap.Active)
-        {
-            Debug.LogWarning("Adaptive Performance 不可用，跳过热管理初始化");
-            enabled = false;
-            return;
-        }
-
-        thermalStatus = ap.ThermalStatus;
-        perfControl = ap.DevicePerformanceControl;
-
-        // 订阅热事件
-        thermalStatus.ThermalEvent += OnThermalEvent;
-    }
-
-    void OnDestroy()
-    {
-        if (thermalStatus != null)
-            thermalStatus.ThermalEvent -= OnThermalEvent;
-    }
-
-    void OnThermalEvent(ThermalMetrics metrics)
-    {
-        switch (metrics.WarningLevel)
-        {
-            case WarningLevel.NoWarning:
-                ApplyQualityLevel(QualityLevel.High);
-                break;
-
-            case WarningLevel.ThrottlingImminent:
-                // 热降频即将发生，提前降质
-                ApplyQualityLevel(QualityLevel.Medium);
-                break;
-
-            case WarningLevel.Throttling:
-                // 已在降频，激进降质以稳定帧率
-                ApplyQualityLevel(QualityLevel.Low);
-                break;
-        }
-    }
-
-    void ApplyQualityLevel(QualityLevel level)
-    {
-        switch (level)
-        {
-            case QualityLevel.High:
-                QualitySettings.SetQualityLevel(2);
-                Screen.SetResolution(
-                    (int)(Screen.currentResolution.width),
-                    (int)(Screen.currentResolution.height), true);
-                break;
-
-            case QualityLevel.Medium:
-                QualitySettings.SetQualityLevel(1);
-                // 降低分辨率到 80%
-                Screen.SetResolution(
-                    (int)(Screen.currentResolution.width * 0.8f),
-                    (int)(Screen.currentResolution.height * 0.8f), true);
-                // 关闭阴影
-                QualitySettings.shadows = ShadowQuality.Disable;
-                break;
-
-            case QualityLevel.Low:
-                QualitySettings.SetQualityLevel(0);
-                // 降低分辨率到 65%
-                Screen.SetResolution(
-                    (int)(Screen.currentResolution.width * 0.65f),
-                    (int)(Screen.currentResolution.height * 0.65f), true);
-                QualitySettings.shadows = ShadowQuality.Disable;
-                // 降低目标帧率
-                Application.targetFrameRate = 30;
-                break;
-        }
-    }
-
-    enum QualityLevel { High, Medium, Low }
-}
+```text
+采集：Provider 可用性 + 热状态 + CPU/GPU 帧时 + 当前质量档
+判断：持续超预算或热风险升高 → 降低一档工作量
+恢复：状态稳定一段时间且仍有性能余量 → 尝试恢复一档
+约束：变化冷却时间、上下限、用户选择、设备档位
+验证：帧时分布、画面质量、持续运行与功耗变化
 ```
 
-### 主动性能控制：CPU / GPU 性能等级
+“NoWarning” 只能说明当前告警状态，不能直接恢复最高画质。分辨率应从固定基准计算，避免每次事件在已缩小的值上继续相乘；恢复策略也要同步恢复曾修改的帧率、阴影等参数。
 
-`IDevicePerformanceControl` 提供了 `cpuLevel` 和 `gpuLevel` 两个属性（范围 0 到 MaxCpuPerformanceLevel），直接影响硬件的时钟频率（通过 Samsung GameSDK / 高通 SDK 下发）。
-
-```csharp
-// 在加载界面允许 CPU 满速，进入游戏后适当降低以省电
-void OnEnterGameplay()
-{
-    if (perfControl != null)
-    {
-        perfControl.cpuLevel = perfControl.MaxCpuPerformanceLevel - 1;
-        perfControl.gpuLevel = perfControl.MaxGpuPerformanceLevel - 1;
-    }
-}
-
-void OnEnterLoadingScreen()
-{
-    if (perfControl != null)
-    {
-        perfControl.cpuLevel = perfControl.MaxCpuPerformanceLevel;
-        perfControl.gpuLevel = 0; // 加载期间 GPU 压力小
-    }
-}
-```
+CPU / GPU 受限的场景适合不同调整项。每次只改变可解释的一组工作量，才能确认改善是否来自预期机制。
 
 ---
 
@@ -285,203 +150,82 @@ void OnEnterLoadingScreen()
 
 ### 陷阱一：第三方 SDK 的 ContentProvider 导致启动慢
 
-Android 的 ContentProvider 会在应用进程启动时（早于 `Application.onCreate()`）由系统自动初始化。大量第三方 SDK（广告 SDK、分析 SDK）为了"零配置接入"会注册自己的 ContentProvider，导致启动链变长。
+SDK 可通过 ContentProvider 在早期自动初始化，使启动链变长。日志中出现 Provider 名称只能提示入口，不能单凭日志条数得到初始化耗时。
 
-**问题现象**：游戏冷启动时间超过 3 秒，adb logcat 里能看到大量 ContentProvider 初始化日志。
+先固定冷 / 热启动条件，采集启动时间与系统 trace，再关联到合并 Manifest 中的 Provider。Activity 启动完成也不等于游戏已经可交互，业务首屏需要额外标记。
 
-**排查方法**：
+[App Startup](https://developer.android.com/topic/libraries/app-startup)可以集中声明初始化依赖并支持手动初始化，但不会自动把所有工作移到后台线程。只有在 SDK 明确支持手动初始化、依赖顺序经过验证时，才移除它的自动入口；否则可能破坏登录、广告或统计功能。
 
-```bash
-# 用 adb 启动并抓取启动时间
-adb shell am start-activity -W -n com.your.package/.MainActivity
+### 陷阱二：把 LMK 理解成“超过固定值就 OOM”
 
-# 查看各 ContentProvider 初始化耗时
-adb logcat | grep "ContentProvider"
-```
+Android 的 `lmkd` 根据系统内存压力和进程重要性等信息回收进程；前台应用受较高保护，但也可能被终止。分配失败、运行时抛出 OutOfMemoryError 与系统杀进程需要分别排查。[Android LMK 说明](https://developer.android.com/google/play/vitals/lmk)明确包括用户可感知的前台终止。
 
-**解决方案**：使用 **App Startup 库**（Jetpack）统一管理 ContentProvider 初始化时序，将非关键初始化推迟到主线程空闲后执行。对于无法修改的第三方 SDK，在 `AndroidManifest.xml` 中用 `tools:node="remove"` 移除其 ContentProvider 声明，然后手动在合适时机调用 SDK 初始化。
+同一份游戏包在不同后台负载下，能承受的峰值可能不同。重点检查：
 
-### 陷阱二：把 LMK 理解成"超过某个固定值就 OOM"
+- **切场景双驻留**：旧场景未释放，新场景资源已加载。
+- **解压与上传重叠**：Bundle 缓冲、纹理上传、Shader 预热、RT 分配同时发生。
+- **回前台恢复**：恢复资源时系统也可能处于压力区间。
+- **常驻线过高**：对象池、可读纹理 / Mesh 与 RT 链挤占峰值余量。
 
-Android 的低内存问题，最容易被误解成："游戏一旦超过 1GB / 1.5GB 就会被系统杀掉。"
+`Application.lowMemory` 可以作为响应入口，但回调覆盖受 Unity / Android 版本影响，不能假定每次终止前都能收到。不要在回调里默认执行强制 GC、等待终结器、全局卸载和修改 mip 等一整套昂贵操作；它们不一定释放当前持有的资源，也可能增加卡顿或重载成本。
 
-实际不是这样。Android 的内存回收是**全局系统行为**：`lmkd` 会结合当前可回收内存、Page Cache 回收效果、进程优先级（前台 / 可见 / 后台）来决定先杀谁。前台应用是**最后被杀**，不是**绝对不会被杀**。
+更稳妥的是提前设置资源预算，在压力信号到来时暂停非必要预加载、释放明确可重建的缓存，并由资源生命周期系统安排后续卸载。用 `adb shell dumpsys meminfo com.your.package` 观察进程内存，与场景标记、系统日志和退出原因对齐。
 
-这意味着同样一份游戏包、同样一个场景：
-- 在后台很干净的 8GB 手机上，可能完全安全
-- 在一台 4GB 手机上，如果系统里还挂着微信、输入法、相机、广告 SDK 的独立进程，就可能在切场景时直接回桌面
+预算拆分可继续看 [CPU 性能优化 05：内存预算管理]({{< relref "performance/cpu-opt-05-memory-budget.md" >}})。
 
-最常见的触发时机不是"慢慢涨爆"，而是几类瞬时峰值：
-- **切场景双驻留**：旧场景还没卸载，新场景纹理和 Mesh 已经开始进来
-- **资源解压与上传重叠**：Bundle 解压、纹理上传、Shader WarmUp、RenderTexture 分配同时发生
-- **回前台恢复**：系统本来就在紧张区间，游戏又要恢复自己的常驻资源
-- **常驻线过高**：对象池、可读纹理、可读 Mesh、过大的 RT 链先把稳态线顶高，剩下的峰值空间不够
+### 陷阱三：把 Attachment 生命周期错误归咎于驱动
 
-Unity 能接到的标准信号之一，是 Android 的 `onTrimMemory()` 最终映射到 **`Application.lowMemory`**。
+如果 StoreOp 设为 `DONT_CARE`，就不能依赖该 Attachment 的内容在 Pass 结束后被保留。后续还要读它却没有安排正确的 Store / Resolve，本身就可能违反资源使用约定，不足以证明驱动 Bug。
 
-在 Unity 层最基础的兜底做法是：
+先检查资源依赖、布局转换和同步，再用最小场景、验证层及目标驱动复现。Workaround 应绑定确认过的问题范围和回归用例，不宜按整个 GPU 家族无条件启用。依据见 [Vulkan Render Pass 规范](https://registry.khronos.org/vulkan/specs/latest/html/vkspec.html#renderpass)。
+
+### 陷阱四：把桌面 vSyncCount 方案搬到手机
+
+Unity 2022.3 中，Android 和 iOS **忽略 `QualitySettings.vSyncCount`，通过 `Application.targetFrameRate` 选择目标帧率**：
 
 ```csharp
-void OnEnable()
-{
-    Application.lowMemory += OnLowMemory;
-}
-
-void OnDisable()
-{
-    Application.lowMemory -= OnLowMemory;
-}
-
-void OnLowMemory()
-{
-    // 强制触发 GC
-    System.GC.Collect();
-
-    // 卸载未使用的 Asset（谨慎：会触发重新加载开销）
-    Resources.UnloadUnusedAssets();
-
-    // 降低纹理质量（下移一个 mipmap 级别）
-    QualitySettings.masterTextureLimit = Mathf.Min(
-        QualitySettings.masterTextureLimit + 1, 2);
-}
+// 申请目标帧率，不保证设备在当前负载下能够达到
+Application.targetFrameRate = 60;
 ```
 
-注意两点：
-- `Application.lowMemory` 通常已经比较晚了，它更像最后一道保险，不是舒适的提前预警
-- `TRIM_MEMORY_RUNNING_CRITICAL` 通知意味着系统已经处在非常紧张的区间，此时不及时响应，前台应用也可能被系统强杀
-
-**更稳的观测方式**：
-
-```bash
-# 查看进程内存分布（PSS / Private Dirty / Graphics / Native Heap）
-adb shell dumpsys meminfo com.your.package
-
-# 观察系统是否出现 lmkd / lowmemorykiller 相关日志
-adb logcat | grep -E "lmkd|lowmemorykiller|onTrimMemory"
-```
-
-**工程上真正该做的事**：
-1. 不要把预算定在"Development Build 的高配测试机还能跑"这一档，而要按最低支持机型定常驻线和峰值线。
-2. 不要等 `lowMemory` 才第一次处理，应该提前在切场景、回前台、下载解压前后做分阶段清理。
-3. 不要只盯着托管堆，Texture、RenderTexture、Mesh、对象池、Bundle 解压缓冲往往才是 LMK 的真正推手。
-
-更完整的预算拆分、LMK / jetsam 区别和响应梯子，可继续看：
-[CPU 性能优化 05｜内存预算管理：按系统分配上限、Texture Streaming 与 OOM/LMK 防护]({{< relref "performance/cpu-opt-05-memory-budget.md" >}})
-
-### 陷阱三：Vulkan 驱动 Bug 的常见 Workaround
-
-**问题一：Mali G76 / G77 上的 Render Pass Store Action 错误**
-
-某些版本的 Mali 驱动在 Vulkan Render Pass 的 StoreOp 为 `DONT_CARE` 时会错误地丢弃仍在使用的 Attachment 数据。
-
-Workaround：在 Unity 的 URP 配置中，将 Depth Buffer 的 Store Action 从 `DontCare` 改为 `Store`（在 Universal Renderer Data 的 Rendering 设置中调整）。
-
-**问题二：高通 Adreno 500 系列的 Compute Shader 同步问题**
-
-Adreno 530-540 的 Vulkan 驱动在某些 Compute Shader 之后的 Image Layout Transition 存在顺序错误，表现为 Compute 结果偶发性错误。
-
-Workaround：在 Compute Dispatch 之后插入显式的 Pipeline Barrier，或者在 Player Settings 中对该系列设备强制使用 OpenGL ES。
-
-可以在 C# 运行时检测并切换（需要通过启动参数，不能在运行时动态切换 Graphics API）：
-
-```csharp
-// 在 Application.quitting 前或通过自定义 Launcher 保存偏好
-// 下次启动时读取并决定是否用 -force-gles 参数启动
-string gpuName = SystemInfo.graphicsDeviceName; // e.g., "Adreno (TM) 530"
-if (gpuName.Contains("Adreno") && gpuName.Contains("530"))
-{
-    PlayerPrefs.SetString("ForceGraphicsAPI", "GLES");
-}
-```
-
-### 陷阱四：targetFrameRate 的精度问题
-
-`Application.targetFrameRate = 60` 在 Android 上不能保证精确的 60fps，原因是 Android 的垂直同步由 **Choreographer** 控制，Choreographer 的回调精度受系统调度影响，在高负载时可能出现 ±2ms 的抖动。
-
-**更稳定的方案**：使用 `QualitySettings.vSyncCount`，配合设备的 `Screen.currentResolution.refreshRateRatio`：
-
-```csharp
-// 在支持 120Hz 的设备上实现稳定 60fps
-void SetStableFrameRate(int targetFps)
-{
-    int screenRefreshRate = (int)Screen.currentResolution.refreshRateRatio.value; // e.g., 120
-    int divisor = Mathf.Max(1, screenRefreshRate / targetFps);
-    QualitySettings.vSyncCount = divisor; // 120Hz 屏幕上设 2 = 60fps
-    Application.targetFrameRate = -1; // 禁用 targetFrameRate，完全交给 vSync
-}
-```
+实际帧率还受显示刷新率、整除关系、调度与负载影响。Android 可结合 **Optimized Frame Pacing** 检查呈现节奏，但平均 FPS 正常也不代表帧间隔稳定。用真机时间轴检查长帧与显示间隔；不要写一个固定毫秒抖动值作为所有设备的行为。[Unity targetFrameRate 文档](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Application-targetFrameRate.html)区分了桌面与移动端规则。
 
 ---
 
 ## 6. Android 崩溃分析（IL2CPP 符号化）
 
-### Native Crash：tombstone 文件
+### Native Crash：获取可用的崩溃记录
 
-Android 的 Native Crash（SIGSEGV、SIGABRT 等）会在 `/data/tombstones/` 目录生成 tombstone 文件（需要 root 或 adb 调试权限）。
+Native Crash 的 backtrace 可来自 logcat、bugreport 或平台崩溃服务。`/data/tombstones/` 是受保护的系统目录；普通设备打开 USB 调试或使用应用的 `run-as`，不代表有权读取它。
+
+调试时可先保存 crash 日志：
 
 ```bash
-# 拉取最新的 tombstone
-adb shell run-as com.your.package cat /data/tombstones/tombstone_00 > tombstone.txt
-
-# 或者（需要 root）
-adb root
-adb pull /data/tombstones/tombstone_00
+adb logcat -b crash -d > crash.txt
 ```
 
-tombstone 文件包含崩溃时的寄存器状态和 backtrace，但地址是未符号化的。
+日志可能轮转或不完整，应尽早采集并保留原始记录。没有 Native crash 栈的回桌面，还要检查 LMK、ANR 和其他退出原因。
 
 ### 用 ndk-stack 符号化
 
-IL2CPP 构建会生成带调试信息的 `.so` 文件，位于：
+每次构建归档对应的符号，核对 **Build ID、ABI 与二进制版本**。不要固定依赖旧版 `Temp/StagingArea` 路径；输出位置和符号生成选项应按当前 Unity 构建配置确定。
 
-```
-<ProjectRoot>/Temp/StagingArea/libs/<abi>/libil2cpp.so
-```
-
-（Release 构建时这些符号文件会从最终 APK/AAB 中剥离，但 Unity 会在本地保留一份。建议每次发布时归档对应的符号文件和 Symbols 包。）
+下面假设已将该构建的未剥离库整理到 `symbols/arm64-v8a`，并把 NDK 工具加入 PATH：
 
 ```bash
-# 使用 NDK 自带的 ndk-stack 符号化
-$ANDROID_NDK_HOME/ndk-stack -sym ./Temp/StagingArea/libs/arm64-v8a/ \
-  -dump tombstone.txt > symbolized_crash.txt
-
-# 或者用 addr2line 对单个地址符号化
-$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-addr2line \
-  -C -f -e libil2cpp.so 0x000000000012abcd
+ndk-stack -sym ./symbols/arm64-v8a -dump crash.txt
 ```
 
-### Unity Cloud Diagnostics / Firebase Crashlytics
+[ndk-stack 文档](https://developer.android.com/ndk/guides/ndk-stack)说明了日志格式与符号输入要求。优化和内联会影响行号与调用栈，能解析地址不意味着已经得到完整 C# 语义栈。
 
-对于线上崩溃，手动拉 tombstone 不现实。推荐接入崩溃收集平台：
+### 线上崩溃平台与验证
 
-**Firebase Crashlytics**（推荐，行业主流）：
-1. 在 Firebase Console 创建项目，下载 `google-services.json` 放入 `Assets/StreamingAssets/`（或 Android Plugins 目录）。
-2. 通过 External Dependency Manager 导入 Firebase Unity SDK（firebase_unity_sdk.zip 中的 `FirebaseCrashlytics.unitypackage`）。
-3. 构建时生成 `crashlytics-build.properties`，包含 Build ID；上传 `.so` 符号文件：
+以 Firebase 为例，Unity 接入说明要求把 `google-services.json` 放到项目 **Assets** 中，而不是自行指定 StreamingAssets；随后按所用 SDK 的流程安装 Crashlytics、初始化并上传 Android IL2CPP 符号。分别参考 [Unity 接入说明](https://firebase.google.com/docs/unity/setup)和 [Crashlytics Unity 配置](https://firebase.google.com/docs/crashlytics/unity/get-started)。
 
-```bash
-# Firebase CLI 上传符号
-firebase crashlytics:symbols:upload --app=<APP_ID> \
-  ./Temp/StagingArea/libs/arm64-v8a/libil2cpp.so
-```
-
-4. Crashlytics 控制台会自动符号化，显示 C# 堆栈（IL2CPP 映射）和 Native 堆栈。
-
-**Unity Cloud Diagnostics**（适合已有 Unity Gaming Services 的项目）：
-- 在 **Window → Services → Cloud Diagnostics** 中启用。
-- 自动收集 C# Exception 和 Native Crash，与 Unity Dashboard 集成。
-- IL2CPP 符号文件需要在每次构建后上传到 Dashboard（或通过 CI 自动化）。
+接入完成后，应在测试版本主动触发可控崩溃，确认平台收到记录、符号匹配且能定位到预期位置；同时确认 C# 异常与 Native Crash 的采集边界。上传命令成功不能替代这一步。
 
 ---
 
 ## 总结
 
-Android 平台的优化核心在于**分层决策**：
-
-1. **Graphics API**：高端设备优先 Vulkan，低端设备 fallback OpenGL ES，不要一刀切。
-2. **Build Settings**：IL2CPP + ARM64 是必选项，Minify 要配合 ProGuard 规则，避免 R8 误删反射类。
-3. **包体**：切换到 AAB，使用 Play Asset Delivery 做资源分发，Texture Compression Targeting 处理 GPU 格式差异。
-4. **热管理**：接入 Adaptive Performance，在热降频前主动降质，而不是等系统强制限频。
-5. **崩溃分析**：IL2CPP 符号文件要归档，接入 Firebase Crashlytics 实现线上符号化。
-
-Android 碎片化的本质是：不存在"一套配置打天下"的方案，需要持续的设备测试矩阵和运行时适配逻辑。
+Android 的优化依赖可验证的设备组合：图形 API 要对照画面和持续帧时，分发要检查设备实际得到的产物，热管理要区分状态与控制能力，崩溃分析要保留匹配符号。把这些检查纳入构建与设备回归，才能判断一项设置是否适合自己的产品。

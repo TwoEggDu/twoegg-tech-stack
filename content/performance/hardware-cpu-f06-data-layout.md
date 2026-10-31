@@ -1,8 +1,9 @@
 ---
-title: "底层硬件 F06｜数据布局实战：AoS、SoA、AoSoA，用实测数字说话"
+title: "底层硬件 F06｜数据布局实战：按访问模式选择 AoS、SoA 与 AoSoA"
 slug: "hardware-cpu-f06-data-layout"
 date: "2026-03-28"
-description: "对比 AoS、SoA、AoSoA 三种数据布局的内存访问模式，用 cache miss 计数和实际吞吐量数字说明差距，并给出在 Unity DOTS 和自研 ECS 中选择布局的判断依据。"
+lastmod: "2026-10-31"
+description: "对比 AoS、SoA、AoSoA 的访问足迹、向量化条件与维护成本，给出可复核的布局计算和实验方法，明确 Unity ECS Chunk 的适用边界。"
 tags:
   - "数据布局"
   - "AoS"
@@ -18,9 +19,9 @@ series: "底层硬件 · CPU 与内存体系"
 weight: 1360
 ---
 
-前五篇从硬件视角讲清楚了五件事：流水线（F01）需要指令连续、Cache 层级（F02）需要数据连续、SIMD（F03）需要数据对齐且批量、False Sharing（F05）要求线程间数据分离。这些都是孤立的规则，但它们有一个共同指向——**你的数据该怎么排列在内存里**。
+前面的硬件基础讨论了执行依赖、Cache、SIMD、带宽与 False Sharing。这些机制共同影响一个工程问题：**数据该怎样排列，才能服务实际的访问模式？**
 
-这一篇是收束篇。我们用三种布局——**AoS、SoA、AoSoA**——把前五篇的所有约束收拢成一个统一的工程判断框架，并用实测数字回答那个永远绕不开的问题：差距到底有多大？
+这一篇用 AoS、SoA、AoSoA 三种布局建立判断框架。下文的字节数是明确假设后的推导，代码是布局示意；本文尚未提供可复现的性能基准，不能据此承诺加速倍数。
 
 ---
 
@@ -32,14 +33,16 @@ weight: 1360
 
 **AoS（Array of Structs，结构体数组）**
 
-最自然的 OOP 写法。每个 Entity 是一个结构体，字段全部捆绑在一起，然后存进数组：
+每个 Entity 是一个结构体，字段捆绑在一起，然后连续存进数组。AoS 不等同于面向对象，也不等同于对象指针数组。示例假设 `float` 大小和对齐均为 4 bytes、`Float3` 为 12 bytes，目标 ABI 上应检查 `sizeof` / `alignof`：
 
-```c
+```cpp
+struct Float3 { float x, y, z; };
 struct Entity {
-    float3 position;   // 12 bytes
-    float3 velocity;   // 12 bytes
+    Float3 position;   // 12 bytes
+    Float3 velocity;   // 12 bytes
     float  health;     //  4 bytes
-};  // 28 bytes per entity，对齐后实际占 28 bytes（无 padding，刚好）
+};
+static_assert(sizeof(Entity) == 28, "check the example layout");
 
 Entity entities[N];
 ```
@@ -53,7 +56,7 @@ Entity entities[N];
  ◄────── Entity 0 ─────►◄────── Entity 1 ─────►◄────── Entity 2 ─────►
 
 每个 Entity：28 bytes
-Cache line（64 bytes）大约能装 2 个 Entity + 8 bytes 零头
+以 64-byte cache line 为例：行边界可以落在 Entity 内部，不能按每行两个对象计数
 ```
 
 ---
@@ -79,23 +82,23 @@ struct Entities {
 ```
 地址低 ──────────────────────────────────────────────── 地址高
 
-[Px0 Px1 Px2 Px3 Px4 Px5 Px6 Px7 Px8 Px9 ...PxN]  ← position_x 数组
-[Py0 Py1 Py2 Py3 Py4 Py5 Py6 Py7 Py8 Py9 ...PyN]  ← position_y 数组
-[Pz0 Pz1 Pz2 Pz3 ...PzN]
-[Vx0 Vx1 Vx2 Vx3 ...VxN]
+[Px0 Px1 Px2 Px3 Px4 Px5 Px6 Px7 Px8 Px9 ...Px(N-1)]  ← position_x 数组
+[Py0 Py1 Py2 Py3 Py4 Py5 Py6 Py7 Py8 Py9 ...Py(N-1)]  ← position_y 数组
+[Pz0 Pz1 Pz2 Pz3 ...Pz(N-1)]
+[Vx0 Vx1 Vx2 Vx3 ...Vx(N-1)]
 ...
 
-一个 cache line（64 bytes）= 16 个连续 float，全部有效
+假设数组按 64 bytes 对齐：一行可容纳 16 个 4-byte float；只扫描该字段时都被使用
 ```
 
 ---
 
 **AoSoA（Array of Structs of Arrays，嵌套布局）**
 
-把 N 个 Entity 分成若干"小组"，每个小组内部是 SoA，小组之间按顺序排列。这正是 Unity DOTS Chunk 的实际布局：
+把 N 个 Entity 分成若干"小组"，每个小组内部是 SoA，小组之间按顺序排列。下面是自定义的按标量字段分块示例，不是 Unity DOTS Chunk 的结构声明：
 
 ```c
-#define CHUNK_SIZE 128  // 每个 Chunk 容纳 128 个 Entity
+#define CHUNK_SIZE 128  // 示例块容量，需按实际循环选择
 
 struct Chunk {
     float position_x[CHUNK_SIZE];  // 128 个 Entity 的 position.x 连续
@@ -105,8 +108,7 @@ struct Chunk {
     float velocity_y[CHUNK_SIZE];
     float velocity_z[CHUNK_SIZE];
     float health    [CHUNK_SIZE];
-    // ... 其他 Component
-};  // 整个 Chunk <= 16 KB
+};  // 在 float 为 4 bytes 的假设下，字段载荷为 7 × 128 × 4 = 3584 bytes
 
 Chunk chunks[NUM_CHUNKS];  // Chunk 数组 = AoSoA
 ```
@@ -121,90 +123,53 @@ Chunk 0                                    Chunk 1
 │ [H0..H127]                             │  │ [H128..H255]                          │
 └──────────────────────────────────────┘  └──────────────────────────────────────┘
   ◄──── Chunk 内部是 SoA ────►               Chunk 间顺序遍历 = AoS 结构
-  ◄──── 16 KB，L1 Cache 能装下 ────►
+  ◄──── 分块限制每次处理的范围，不保证 L1 驻留 ────►
 ```
 
 ---
 
-## Cache 行为分析：为什么布局决定命运
+## Cache 行为分析：布局如何改变访问足迹
 
-场景设定：N = 100,000 个 Entity，每帧做一次 `position += velocity * dt` 的位置更新。这是游戏里最典型的批量循环——所有 Entity 访问模式完全相同，只用到 position 和 velocity，不需要 health。
+场景设定：N = 100000 个 Entity，循环执行 `position += velocity * dt`，不读 health。下文继续使用 4-byte float、28-byte Entity、64-byte 缓存行的假设；缓存行大小应按设备确认，见 [F02：Cache 体系]({{< relref "performance/hardware-cpu-f02-cache.md" >}})。
 
 **AoS 的 cache 行为**
 
-```
-循环访问 entities[i].position 和 entities[i].velocity：
+连续扫描这组 28-byte 结构体时，相邻对象共享缓存行，对象也会跨行。不能把一行简化成两个完整对象，再用 `24 × 2 / 64` 得到利用率。
 
-Cache line 0 加载后包含：
-[Px0 Py0 Pz0 Vx0 Vy0 Vz0 H0 _][Px1 Py1 Pz1 Vx1 ...]  ← 约 2 个 Entity
-                               ↑
-                         health 被加载进 cache，
-                         但这个循环里根本不需要它
-
-有效数据：position(12) + velocity(12) = 24 bytes
-总加载：28 bytes × ~2 = 56 bytes per cache line
-带宽利用率：24×2 / 64 ≈ 75%
-```
-
-75% 乍看不差。但这是"只有 7 个字段"的理想情况。真实游戏里一个 Entity 结构体动辄 100~200 bytes，包含动画状态、AI 参数、物理标志位等。若只需要其中 24 bytes，带宽利用率直接跌到 12~24%——每次 cache line 加载大部分数据都是无效的。
+忽略首尾行的边界开销，整个数组为 `28 × N` bytes，循环使用的字段为 `24 × N` bytes，因此有效字段占比约为 **24/28 ≈ 85.7%**。这个比例描述本例扫描覆盖的字节，不是 cache miss 率。若结构体变大，还要看热字段偏移：冷字段位于未触及的缓存行时，并不会仅因属于同一结构体就全部读入。
 
 **SoA 的 cache 行为**
 
-```
-循环访问 position_x[i], position_y[i], position_z[i],
-         velocity_x[i], velocity_y[i], velocity_z[i]：
+六个位置、速度数组的有效载荷为 `24 × N` bytes，health 数组无需直接访问。按 64 bytes 对齐时，一行容纳 16 个 float，可在相邻迭代中复用。
 
-遍历 position_x 时，cache line 0 包含：
-[Px0 Px1 Px2 Px3 Px4 Px5 Px6 Px7 Px8 Px9 Px10 Px11 Px12 Px13 Px14 Px15]
- ◄──────────────── 16 个连续 float，全部有效 ──────────────────►
-
-带宽利用率：16×4 / 64 = 100%
-Hardware Prefetcher 能识别步长为 4 bytes 的顺序访问，提前预取下一个 cache line
-SIMD：16 个连续 float → 直接 4×AVX2（256-bit）打包处理
-```
-
-SoA 对 Hardware Prefetcher（F01 讲过的）极度友好：访问模式是等步长的线性扫描，预取器可以在你需要数据之前就把下一批推进 L1。
+连续标量字段也便于向量加载。例如 AVX2 的 256-bit 向量容纳 8 个 32-bit float，16 个 float 需要两个这样的向量宽度；这不等于整个更新只需两条指令，还要加载速度、运算并写回。能否自动向量化还取决于依赖、别名、编译目标与优化选项，不能只看布局名称。
 
 **AoSoA 的平衡点**
 
-AoSoA 在 Chunk 内部享受 SoA 的全部好处（连续访问、SIMD 友好），同时 Chunk 尺寸（16 KB）精确匹配 L1 Data Cache（通常 32~64 KB，实践中 16 KB 能保证驻留）。当一个 Chunk 被遍历时，整个 Chunk 的数据在 L1 里，后续字段的访问几乎全是 L1 命中，延迟降到 4 cycle（F02 讲过的 Cache 层级延迟）。
+AoSoA 把一次处理的数据限制在块内，有机会改善跨字段复用，也便于分配任务。但块容量需要兼顾向量宽度、尾部浪费、索引成本和工作集。小于 L1 标称容量不等于保证命中：缓存组竞争、其他线程和代码访问的外部数据仍可能驱逐它。
+
+布局优化的预期是减少不必要的访问或改善执行方式。最终耗时是否下降，还取决于原来受限于什么，以及新布局增加了哪些成本。
 
 ---
 
-## 实测数字：差距到底有多大
+## 怎样比较布局收益：先拆开变量
 
-以下数据来自公开 benchmark，标注了来源，用于说明数量级而非精确值——你的机器上的实际结果会因 CPU 型号、内存带宽和编译器优化而有所不同。
+本文未保留与原始代码、构建配置、设备和计数器定义对应的 benchmark 记录，因此不把整理过的吞吐量、miss 率或演讲中的数量级作为实测证据。
 
-**cache-miss 率（Linux perf stat 测量，N=1,000,000，只访问两个字段）**
+可以按下面的对照组补测。表中是实验设计，**不是已经得到的结果**：
 
-| 布局 | cache-references | cache-misses | miss 率 | 相对 AoS |
-|------|-----------------|--------------|---------|---------|
-| AoS（全字段 struct，120 bytes/entity） | 15,200,000 | 12,800,000 | 84% | 基准 |
-| AoS（只有所需字段，24 bytes/entity） | 3,900,000 | 1,200,000 | 31% | −91% miss |
-| SoA（仅访问所需两个数组） | 1,250,000 | 62,000 | 5% | −95% miss |
+| 对照 | 尽量保持一致的条件 | 要回答的问题 |
+|---|---|---|
+| 完整 AoS → 紧凑热字段 AoS | 算法、线程数、向量化策略 | 拆冷热数据是否已经足够？ |
+| 紧凑 AoS → SoA | 字段、工作量、编译选项 | 字段分离带来多少净收益？ |
+| SoA → AoSoA | 总元素数、计算逻辑 | 不同块容量是否改善复用？ |
+| 单线程 → 多线程 | 同一布局与正确性校验 | 并行收益何时受带宽或调度限制？ |
 
-来源：Sergiy Migdalskiy，"Performance Optimization, SIMD and Cache"，GDC 2015（数据已整理为本文使用格式）
+若要分离 SIMD 的贡献，需要显式控制向量化选项并检查汇编；相同编译开关不保证两种布局生成相同执行方式。面向产品的最终比较，则应使用实际发布优化配置。
 
-核心结论：**字段越多但访问比例越低的 struct，AoS 的 miss 率越高**。只访问 2/30 个字段时，AoS 每加载一个 cache line，有效数据比例不到 7%，93% 都是浪费。
+不能把布局、SIMD、核心数的估计收益相乘：它们可能在解决同一个瓶颈，优化后瓶颈也会转移。记录各阶段耗时，才知道收益来自哪里。
 
-**吞吐量对比（相同 position update 循环，单线程，不含 SIMD）**
-
-| 布局 | 处理速度（百万 Entity/秒） | 相对 AoS |
-|------|--------------------------|---------|
-| AoS（完整 struct） | 42 M/s | 1× |
-| SoA（标量循环） | 135 M/s | 3.2× |
-| SoA + AVX2 SIMD | 680 M/s | 16× |
-
-来源：Mike Acton，"Data-Oriented Design and C++"，CppCon 2014（数量级参考，非原文精确数字）
-
-**含 Burst Compiler 的 Unity 数据**
-
-Unity 官方博客（2019，"On DOTS: Entity Component System"）给出的对比：相同游戏逻辑，纯 C# MonoBehaviour OOP 实现 vs. DOTS（ECS + Burst + Job System）：
-
-- 移动 100,000 个物体（仅位置更新）：OOP 约 8 ms，DOTS 约 0.5 ms，**快约 16×**
-- 含碰撞检测的复杂场景：差距可达 50× 以上
-
-注意：这个数字**不是单纯布局的贡献**，而是 ECS 布局 + Burst 向量化 + Job System 多线程三者叠加的结果。单纯 AoS→SoA 的布局改变，通常贡献 3~10× 的提升；加上 SIMD 贡献另一个 4~8×；多线程再乘以核心数。这是三篇文章（F02 Cache、F03 SIMD、F05 False Sharing）都在铺垫的原因。
+<!-- DATA-TODO: 补充 AoS/SoA/AoSoA 基准源码、处理器与编译器版本、原始多轮耗时、PMU 事件定义和正确性结果；在复现之前不恢复加速倍数或 miss 率表。 -->
 
 ---
 
@@ -225,29 +190,25 @@ void ShowEntityInfo(int entityId) {
 }
 ```
 
-用 SoA 的等价代码需要跳到 6 个不同数组的随机位置，可能触发 6 次 cache miss（每个数组的 `entityId` 位置不在 cache 中）。AoS 只需要一次 cache miss——28 bytes 的 struct 全部命中同一个 cache line。
+在这个七个标量字段的例子中，SoA 需要访问七个数组的对应位置，AoS 的字段则相邻。AoS 因此可能减少不同缓存行的访问，但 28-byte 对象也可能跨行；实际 miss 次数还取决于缓存是否已经持有这些行，不能固定写成一次对七次。
 
 **场景二：数据量小于 L1 Cache**
 
-当 N < 1000 时（约 28 KB，L1 通常 32 KB），整个数组可以驻留在 L1 里。此时 AoS 和 SoA 的性能差距几乎消失——都是 L1 命中，4 cycle 延迟。过度设计 SoA 只会增加代码复杂度。
+工作集较小、频繁复用时，减少缓存传输的收益可能缩小，但容量只是条件之一，向量化与指令成本仍可能不同。不能用固定 Entity 数量作为“布局无影响”的门槛；低频路径优先保持清晰，再由测量决定是否重构。
 
 **场景三：Entity 有动态 Component 组合**
 
-在稀疏数据场景（有些 Entity 有 Component A，有些没有），SoA 要么浪费大量空洞内存，要么需要额外的索引层。此时 AoS 或哈希表/稀疏集合反而是更简洁的答案。
+在稀疏数据场景中，要同时考虑查找、增删与遍历。可以用稠密组件数组配合稀疏索引，也可以按 Archetype 分组；SoA 不必给每个 Entity 的每种可选组件都预留空洞。选择取决于访问和结构变更的比例。
 
 **实际工程原则**
 
-> 高频批量遍历（每帧处理 10,000+ 相同类型 Entity）→ 优先考虑 SoA 或 AoSoA
->
-> 低频随机访问（玩家交互、事件触发、UI 查询）→ AoS 的差距可以忽略
->
-> 数据量 < L1 Cache → 布局对性能无显著影响，以代码可读性为准
+> 高频扫描少数字段时，把 SoA、AoSoA 和冷热拆分列为候选；随机访问完整对象时，保留 AoS 作为基线。布局选择同时包含性能收益、迁移成本和维护成本。
 
 ---
 
 ## Struct 对齐与 Padding：布局之外的另一个浪费源
 
-在讨论 AoS vs. SoA 之前，还有一个更基础的问题：你的 struct 本身有没有隐藏的 padding 浪费？
+另一个基础问题是 struct 的 padding。下面假设 char / int / double 的大小为 1 / 4 / 8 bytes，对齐为 1 / 4 / 8 bytes；其他 ABI 或 pack 设置下必须重新检查。
 
 ```c
 // 糟糕的布局（字段顺序不合理，产生大量 padding）
@@ -272,131 +233,75 @@ struct Good {
 };  // sizeof = 16 bytes，实际数据 14 bytes，浪费 12.5%
 ```
 
-从 24 bytes 降到 16 bytes，同样的 cache line 多装 50% 的有效 Entity。**在选择 AoS/SoA 之前，先把 struct 本身的 padding 清理掉**——这是零成本的优化，只需要调整字段顺序。
+在这个 ABI 假设下，从 24 bytes 降到 16 bytes，连续数组的总占用减少三分之一。字段重排不是零成本：它可能影响 Native 互操作、二进制序列化与既有文件格式，也可能改变热点字段的位置。先确认契约，再测收益。
 
-C# 中同样有此问题，但 Unity 的 `[StructLayout(LayoutKind.Sequential)]` 和 Burst Compiler 会按你声明的顺序严格排列，不会自动重排，需要手动意识到这个问题。
+C# 的 `StructLayout` 来自 `System.Runtime.InteropServices`。`LayoutKind.Sequential` 约束字段顺序，不意味着没有填充；字段类型、Pack 和运行环境仍影响偏移。使用 Burst 或 Native 互操作时，按目标配置核对实际布局。
 
 ---
 
 ## 如何测量和验证，而不是靠直觉猜
 
-改布局前，**先测，后改，再测**。跳过测量直接重构是工程上最浪费时间的行为。
+改布局前，**先测，后改，再测**。先确认这个循环在实际场景中占多少时间，再决定基准实验规模。
 
 **Linux：perf stat**
 
 ```bash
-# 测量 cache-miss 率
-perf stat -e cache-misses,cache-references,instructions,cycles \
-          ./game_benchmark --layout=aos
-
-# 对比输出示例：
-#   1,234,567  cache-misses     #   42.3% of all cache refs
-#   2,919,082  cache-references
-#   8,847,123  instructions
-#   3,201,456  cycles
-
-# 改成 SoA 后再跑一次：
-perf stat -e cache-misses,cache-references ./game_benchmark --layout=soa
-# 期望：cache-misses 下降 50~90%
+# game_benchmark 与参数是接口示意，需自行实现基准程序
+perf stat -e cache-misses,cache-references,instructions,cycles ./game_benchmark --layout=aos
+perf stat -e cache-misses,cache-references,instructions,cycles ./game_benchmark --layout=soa
 ```
 
-**Windows：Intel VTune**
+用 `perf list` 和目标 CPU 的 PMU 文档确认事件含义。通用 cache 事件不一定描述 L1，可能不可用或需要权限；不要预设改成 SoA 就应下降某个百分比，也不要直接比较不同处理器的同名事件比例。
 
-打开 VTune，选择 **Memory Access Analysis**。运行后查看：
-- **LLC Miss** （Last Level Cache Miss）统计
-- **Memory Bound** 百分比（这个值高说明瓶颈在内存带宽，布局改进有收益）
-- **DRAM Bandwidth Utilization**（带宽利用率高说明 cache miss 频繁）
+**Windows：Intel VTune / AMD uProf**
 
-VTune 还能给出 **Top Hotspot** 对应的 cache miss 热点行号，直接定位哪个循环是罪犯。
+将内存访问热点与耗时关联起来。Memory Bound 可能涉及延迟、带宽或缓存层级等限制，不等同于 DRAM 带宽饱和。高带宽也可能说明流式访问已经有效利用硬件，仍需结合瓶颈分类判断。具体指标含义以工具和处理器版本为准，可从 [VTune 的 Memory Access Analysis 说明](https://www.intel.com/content/www/us/en/docs/vtune-profiler/user-guide/2024-0/memory-access-analysis.html)开始。
 
-**Unity：Burst Inspector + Frame Debugger**
+**Unity：Profiler + Burst Inspector**
 
-在 Unity Editor 里打开 **Jobs > Burst > Open Inspector**，找到你的 IJobFor 或 ISystem，查看生成的汇编：
+Profiler 用于定位耗时、调度等待及分配；[Burst Inspector 1.8](https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/editor-burst-inspector.html)用于检查目标 CPU 的循环汇编。x86 的 AVX 指令不能作为 ARM 目标的检查标准，单条向量 load 也不能证明整个循环已经向量化。
 
-- 看到 `vmovaps`、`vaddps`、`vmulps`（AVX 指令）→ SIMD 向量化成功
-- 看到大量 `vmovss`（标量 mov）→ 没有向量化，可能是 struct layout 问题或数据对齐不足
+Memory Profiler 可帮助看内存占用与对象关系，但不能单凭 GC Alloc 就证明组件的物理排布符合预期，更不能据此得到 cache miss 率。Frame Debugger 主要分析渲染事件，不用于证明 CPU 数据布局的收益。
 
-配合 **Unity Profiler 的 Memory** 模块：打开 "Memory Profiler" package，查看 GC Alloc 和 Native Memory，确认你的 ComponentData 是否按预期存放在 Chunk 里而非托管堆上。
+**基准测试至少需要这些条件**
 
-**最简单的基准测试原则**
-
-1. 固定 N（建议 100,000~1,000,000），保证循环时间超过 1 ms，统计误差才可忽略
-2. 先跑 3 次"热身"排除 cold start 的 cache 效应
-3. 正式测量取 10 次平均
-4. 对比时只改一个变量（只改布局，不改算法）
+1. 固定算法和输入，校验输出一致；使用结果校验等方式避免循环被编译器消除。
+2. 记录优化选项、目标指令集、线程数与设备状态；把分配初始化移出计时区，或明确它们属于被测成本。
+3. 分别设计冷缓存与稳态复用场景，说明预热改变了什么。仅跑几次预热不能证明所有数据驻留。
+4. 进行多轮测量，报告中位数、波动和计时精度；不能以“超过 1 ms”断言误差可忽略。
+5. 回到真实帧中验证总耗时。搬运、索引和布局转换成本也应计入产品收益。
 
 ---
 
-## DOTS Chunk 设计：所有硬件约束的集大成答案
+## DOTS Chunk 设计：机制与边界
 
-现在可以把前六篇的所有内容汇总成一张图，解释 DOTS Chunk 为什么长成这个样子。
+[Entities 1.0](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/concepts-archetypes.html)的 Chunk 是 16 KiB 的存储块，按组件类型存放数组。它与上面的 AoSoA 思路相近，但并非七个 float 数组固定容纳 128 个对象：实际容量与组件大小、管理开销有关，组件内部的 `float3` 也不会自动拆成三个字段数组。
 
-```
-硬件约束                        DOTS Chunk 的工程回答
-──────────────────────────────────────────────────────────────────
-F01：Hardware Prefetcher        Chunk 内同类 Component 线性排列
-    需要线性访问模式             → 访问 position_x[0..127] 是纯线性扫描
-                                → 预取器完全能预测，提前把下一批推进 L1
+| 机制 | 可能带来的好处 | 不能由此推出什么 |
+|---|---|---|
+| 同类组件连续存储 | 减少无关组件的直接访问 | 所有字段利用率都是 100% |
+| 分块处理 | 限制一次处理的范围，便于调度 | 整块永久驻留 L1 |
+| Burst 编译循环 | 在满足条件时优化或向量化 | 一定生成某种 SIMD 指令 |
+| 并行处理不同块 | 在依赖允许时分摊工作 | 每块固定一个线程、必然无共享争用 |
 
-F02：Cache 层级延迟              Chunk 大小 = 16 KB ≤ L1 Data Cache
-    L1(4cy) << L2(12cy) <<      → 遍历一个 Chunk 时全程 L1 命中
-    L3(40cy) << RAM(200+cy)     → 不会在 L2/L3 之间频繁切换
-
-F03：SIMD 需要连续对齐数据       Chunk 内 Component 数组 16-byte 对齐
-    AVX2 一次处理 8 个 float    → position_x[0..7] 直接 ymm 寄存器
-                                → Burst 生成 vaddps/vmulps 向量指令
-
-F04：内存带宽是有限资源           只加载当前 Job 需要的 Component
-    带宽 ≠ 无限                 → Query 过滤到只含所需 Archetype 的 Chunk
-                                → 无关字段（health、flags）完全不碰
-
-F05：False Sharing 使多核失效    每个 Chunk 分配给独立线程
-    同 cache line 跨线程写       → 线程 A 写 Chunk 0，线程 B 写 Chunk 1
-    → 总线风暴                   → 完全无 cache line 共享，无 False Sharing
-
-F06（本篇）：SoA > AoS           Chunk 内部是 SoA（同类 Component 连续）
-    批量遍历场景下带宽利用率     → 带宽利用率 ~100%
-    AoS ≈ 7~75%                 → cache miss 率比 naive AoS 低 80~90%
-```
-
-这张表格就是 DOTS 设计文档里从没有明确写出来，但工程师每一行代码都在隐式回答的问题。16 KB 不是随便选的——它是 L1 cache 的近似大小。AoSoA 不是偶然选的——它是同时满足 SIMD 和 Cache 两个约束的唯一折衷点。
+查找外部对象、动态缓冲溢出、结构变更和共享数据写入仍会产生额外成本。16 KiB 的存储事实不能证明其唯一设计动机是匹配 L1；性能也不能仅归因于布局。
 
 ---
 
 ## 实战决策树：选哪种布局
 
-```
-你的访问模式是什么？
-│
-├─► 每帧批量遍历所有（或大多数）Entity，只用到少数字段？
-│       → 用 SoA 或 AoSoA
-│       → 数据量大（>1M）时 AoSoA 更好（Chunk 驻留 L1）
-│       → 需要 SIMD → 必须 SoA/AoSoA（AoS 下 SIMD 非常难写）
-│
-├─► 随机访问单个 Entity 的所有字段？（UI、事件、玩家输入处理）
-│       → 用 AoS（一次 cache line 拿到所有字段）
-│       → 或者接受 SoA 带来的少量性能损耗（通常不在热路径上）
-│
-├─► 数据量小（<10,000 Entity，占 < L2 Cache）？
-│       → 布局差异可以忽略，以代码可读性优先
-│       → 用 AoS 更易于理解和调试
-│
-└─► 数据有稀疏性（有些 Entity 有某个 Component，有些没有）？
-        → 用稀疏集合或哈希表
-        → 或者 ECS Archetype 分组（DOTS 的做法：按 Component 组合分 Archetype）
-        → 不适合强行 SoA（空洞浪费内存，破坏 cache 连续性）
-```
+| 主要访问模式 | 首先比较的候选 | 保留判断所需的证据 |
+|---|---|---|
+| 批量扫描少数字段 | AoS 冷热拆分、SoA | 字段覆盖范围、编译结果、循环耗时 |
+| 多个阶段复用同一小批数据 | SoA、不同块容量的 AoSoA | 工作集、跨阶段复用、分块开销 |
+| 随机访问完整对象 | 紧凑 AoS | 实际触及行数、查询频度 |
+| 可选组件多且经常增删 | 稀疏集合、Archetype 分组 | 查找、搬移、遍历的综合成本 |
+| 当前路径占比很低 | 保持现有布局 | 重构收益是否值得维护代价 |
+
+没有按“一百万 Entity”或某个 miss 率切换布局的通用阈值。miss 发生在哪一级、能否重叠、是否位于关键依赖链，都比一个孤立百分比更重要。
 
 ---
 
 ## 小结
 
-用一句话收束本系列的核心结论：
-
-**性能不是写快代码，而是让 CPU 的每个周期都在处理有用数据。**
-
-AoS 让 CPU 每次加载 cache line 时只能得到一小部分有用数据；SoA 让每次 cache line 加载都是满载的有效数据；AoSoA 在此基础上进一步保证整个工作集驻留在 L1 里。差距不是"快一点点"——在真实游戏规模下，从 AoS 到 SoA+SIMD，3~16 倍的吞吐量提升是可以稳定复现的。
-
-改布局之前，先用 perf 或 VTune 测量 cache-miss 率。如果 miss 率低于 5%，布局不是瓶颈，去找别的问题。如果 miss 率超过 30%，布局很可能是主犯，值得投入重构。
-
-数据说话，不靠直觉猜。
+AoS、SoA、AoSoA 分别改变字段相邻关系与处理粒度，没有一种布局保证缓存命中或稳定的加速倍数。先用字节与访问模型提出假设，再用正确性校验、耗时和硬件证据检验，最后把收益放回整个帧预算中判断。
