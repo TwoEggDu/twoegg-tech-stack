@@ -1,0 +1,2796 @@
+[
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "--version"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "git version 2.53.0.windows.2\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "init",
+      "--initial-branch=main",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\fast-forward"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Initialized empty Git repository in [LAB]/fast-forward/.git/\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "user.name",
+      "Version Management Lab"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "user.email",
+      "lab@example.invalid"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "core.eol",
+      "lf"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "commit.gpgsign",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "core.hooksPath",
+      "[LAB]\\empty-hooks"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "rerere.enabled",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "config",
+      "--local",
+      "merge.ff",
+      "true"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\fast-forward\\damage.rules",
+    "sha256": "aaffa498287780bf7adec6653383ef7f28b8110ef8d1954725855c0bfaffd6e4",
+    "size": 11
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "commit",
+      "-m",
+      "Baseline"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main (root-commit) 1e2a7e9] Baseline\n 1 file changed, 1 insertion(+)\n create mode 100644 damage.rules\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1e2a7e927657dfc236cb412ef7cf47a8c7e686d7\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "switch",
+      "-c",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to a new branch 'feature'\n"
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\fast-forward\\damage.rules",
+    "sha256": "8dc5e0238b34421dd0f0fba6c1d071a165b43eae7133e6417ab55231c809f1e7",
+    "size": 10
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "commit",
+      "-m",
+      "Feature damage"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[feature f8a65ef] Feature damage\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "f8a65efa13387f6dfc3731105034797c88af4d06\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "switch",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'main'\n"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "merge-base",
+      "main",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1e2a7e927657dfc236cb412ef7cf47a8c7e686d7\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "rev-list",
+      "--all",
+      "--count"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "2\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "merge",
+      "--ff-only",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Updating 1e2a7e9..f8a65ef\nFast-forward\n damage.rules | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "f8a65efa13387f6dfc3731105034797c88af4d06\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "05e381dcf17b5eb357fc81772b35ab2700210f3f\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1e2a7e927657dfc236cb412ef7cf47a8c7e686d7\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "log",
+      "--graph",
+      "--oneline",
+      "--decorate",
+      "--all"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "* f8a65ef (HEAD -> main, feature) Feature damage\n* 1e2a7e9 Baseline\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\fast-forward",
+      "rev-list",
+      "--all",
+      "--count"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "2\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "init",
+      "--initial-branch=main",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\divergent"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Initialized empty Git repository in [LAB]/divergent/.git/\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "user.name",
+      "Version Management Lab"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "user.email",
+      "lab@example.invalid"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "core.eol",
+      "lf"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "commit.gpgsign",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "core.hooksPath",
+      "[LAB]\\empty-hooks"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "rerere.enabled",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "config",
+      "--local",
+      "merge.ff",
+      "true"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\divergent\\damage.rules",
+    "sha256": "aaffa498287780bf7adec6653383ef7f28b8110ef8d1954725855c0bfaffd6e4",
+    "size": 11
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\divergent\\charge.rules",
+    "sha256": "3857addb8c6b0dbd967788c3829c3002dda0bc3bf1d8e5f07f8e4078bf7d8afa",
+    "size": 11
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "add",
+      "--",
+      "damage.rules",
+      "charge.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "commit",
+      "-m",
+      "Baseline"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main (root-commit) 6d3154e] Baseline\n 2 files changed, 2 insertions(+)\n create mode 100644 charge.rules\n create mode 100644 damage.rules\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "6d3154e8e2526b6b919d10fd0c070c0d51294f7c\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "branch",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\divergent\\damage.rules",
+    "sha256": "8dc5e0238b34421dd0f0fba6c1d071a165b43eae7133e6417ab55231c809f1e7",
+    "size": 10
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "commit",
+      "-m",
+      "Main damage"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main f8679e5] Main damage\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "f8679e505acc48c09a706a02a653b9a81251ad94\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "switch",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'feature'\n"
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\divergent\\charge.rules",
+    "sha256": "dace5986281550748c185eed8965aa52bd2482f15c9925c1f67608302240fcce",
+    "size": 10
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "add",
+      "--",
+      "charge.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "commit",
+      "-m",
+      "Feature charge"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[feature b716e65] Feature charge\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "b716e65b7df1562ef233e5c2df2cdb28cff1c407\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "switch",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'main'\n"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "merge-base",
+      "main",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "6d3154e8e2526b6b919d10fd0c070c0d51294f7c\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "merge",
+      "--no-edit",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Merge made by the 'ort' strategy.\n charge.rules | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "b06707d97cd81ccd3f849b169d11c1b801bf7e5f\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "3e0211842fc82308194e3692d64491281a5636da\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "f8679e505acc48c09a706a02a653b9a81251ad94 b716e65b7df1562ef233e5c2df2cdb28cff1c407\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "log",
+      "--graph",
+      "--oneline",
+      "--decorate",
+      "--all"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "*   b06707d (HEAD -> main) Merge branch 'feature'\n|\\  \n| * b716e65 (feature) Feature charge\n* | f8679e5 Main damage\n|/  \n* 6d3154e Baseline\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "merge-base",
+      "--is-ancestor",
+      "b716e65b7df1562ef233e5c2df2cdb28cff1c407",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\divergent",
+      "rev-parse",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "b716e65b7df1562ef233e5c2df2cdb28cff1c407\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "init",
+      "--initial-branch=main",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\text-conflict"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Initialized empty Git repository in [LAB]/text-conflict/.git/\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "user.name",
+      "Version Management Lab"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "user.email",
+      "lab@example.invalid"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "core.eol",
+      "lf"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "commit.gpgsign",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "core.hooksPath",
+      "[LAB]\\empty-hooks"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "rerere.enabled",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "config",
+      "--local",
+      "merge.ff",
+      "true"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\text-conflict\\damage.rules",
+    "sha256": "aaffa498287780bf7adec6653383ef7f28b8110ef8d1954725855c0bfaffd6e4",
+    "size": 11
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "commit",
+      "-m",
+      "Baseline"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main (root-commit) b5c05e6] Baseline\n 1 file changed, 1 insertion(+)\n create mode 100644 damage.rules\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "b5c05e6d22282b48fb3aa1b87bbeeb5ece757e93\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "branch",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\text-conflict\\damage.rules",
+    "sha256": "8dc5e0238b34421dd0f0fba6c1d071a165b43eae7133e6417ab55231c809f1e7",
+    "size": 10
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "commit",
+      "-m",
+      "Main damage 80"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main fbfd06f] Main damage 80\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "fbfd06f9f7276a0a9dccb515c9a361feaec72036\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "switch",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'feature'\n"
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\text-conflict\\damage.rules",
+    "sha256": "391cf144331338bafa4a48888b43ee67b7b7a668da2dd21eaf375b2301371849",
+    "size": 10
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "commit",
+      "-m",
+      "Feature damage 90"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[feature e52b28d] Feature damage 90\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "e52b28de8e11e84726c2f10ec83e1f5003061f93\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "switch",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'main'\n"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "merge",
+      "--no-edit",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 1,
+    "expected_exit_codes": [
+      1
+    ],
+    "stdout": "Auto-merging damage.rules\nCONFLICT (content): Merge conflict in damage.rules\nAutomatic merge failed; fix conflicts and then commit the result.\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "show",
+      ":1:damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "damage=100\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "show",
+      ":2:damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "damage=80\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "show",
+      ":3:damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "damage=90\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "ls-files",
+      "-u"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "100644 2cfa10a78003ee3a9a35822d5d2880494b771f8f 1\tdamage.rules\n100644 b45920e8b85f287f898534400f22261eba7efcf3 2\tdamage.rules\n100644 0699623d235232ae01c3eb13c750b720e7a7d78b 3\tdamage.rules\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "fbfd06f9f7276a0a9dccb515c9a361feaec72036\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "MERGE_HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "e52b28de8e11e84726c2f10ec83e1f5003061f93\n",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\text-conflict\\damage.rules",
+    "sha256": "8dc5e0238b34421dd0f0fba6c1d071a165b43eae7133e6417ab55231c809f1e7",
+    "size": 10
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "add",
+      "--",
+      "damage.rules"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "commit",
+      "-m",
+      "Resolve according to teaching spec: damage 80"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main 39cc12a] Resolve according to teaching spec: damage 80\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "39cc12aa4650b9b429580ce97c6729f77cca95b5\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "39cc12aa4650b9b429580ce97c6729f77cca95b5\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "05e381dcf17b5eb357fc81772b35ab2700210f3f\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "fbfd06f9f7276a0a9dccb515c9a361feaec72036 e52b28de8e11e84726c2f10ec83e1f5003061f93\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "log",
+      "--graph",
+      "--oneline",
+      "--decorate",
+      "--all"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "*   39cc12a (HEAD -> main) Resolve according to teaching spec: damage 80\n|\\  \n| * e52b28d (feature) Feature damage 90\n* | fbfd06f Main damage 80\n|/  \n* b5c05e6 Baseline\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "ls-files",
+      "-u"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\text-conflict",
+      "rev-parse",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "e52b28de8e11e84726c2f10ec83e1f5003061f93\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "init",
+      "--initial-branch=main",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\semantic"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Initialized empty Git repository in [LAB]/semantic/.git/\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "user.name",
+      "Version Management Lab"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "user.email",
+      "lab@example.invalid"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "core.eol",
+      "lf"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "commit.gpgsign",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "core.hooksPath",
+      "[LAB]\\empty-hooks"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "rerere.enabled",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "config",
+      "--local",
+      "merge.ff",
+      "true"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\base.json",
+    "sha256": "54108090a2836125ab9bd4bf4d59e09283be6ac5d9bdce60c802be8cc59bd711",
+    "size": 16
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\charge.json",
+    "sha256": "92b73fd5383281ccb7f37316809f7dd1f614b067d2af8de43238d6d48c013f33",
+    "size": 17
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\damage.py",
+    "sha256": "22a28d86ec44cf9cb2247b8b3b7a2bfe0a85285cf5ae212deb31ced93fe0a972",
+    "size": 427
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\check_damage.py",
+    "sha256": "9c7144e9b41ee5ac2c1f12ca9630d7de4932fc7a64f06909dfb569694ce3fe6e",
+    "size": 625
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "add",
+      "--",
+      "base.json",
+      "charge.json",
+      "damage.py",
+      "check_damage.py"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "commit",
+      "-m",
+      "Baseline"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main (root-commit) efae89e] Baseline\n 4 files changed, 36 insertions(+)\n create mode 100644 base.json\n create mode 100644 charge.json\n create mode 100644 check_damage.py\n create mode 100644 damage.py\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "efae89e49888b36dd6794f9f607c6bee39dbe929\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\semantic\\check_damage.py"
+    ],
+    "directory": "[LAB]\\semantic",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "{\"base\": 100, \"cap\": 150, \"final\": 100, \"percent\": 100, \"raw\": 100}\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "branch",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\base.json",
+    "sha256": "f83a8c8f1ea25c4a2a6b58d84f39b3198caeaeb043ccc3852fb9537a030343c4",
+    "size": 16
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "add",
+      "--",
+      "base.json"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "commit",
+      "-m",
+      "Main base damage 120"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main e5a95b6] Main base damage 120\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "e5a95b623bf4447d69b83051413a4a3250970fdf\n",
+    "stderr": ""
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\semantic\\check_damage.py"
+    ],
+    "directory": "[LAB]\\semantic",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "{\"base\": 120, \"cap\": 150, \"final\": 120, \"percent\": 100, \"raw\": 120}\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "switch",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'feature'\n"
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\charge.json",
+    "sha256": "ef085762afcd848648aebf13633bfd2d5cc5e2339e633fa3cbb845fc2f20e34c",
+    "size": 17
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "add",
+      "--",
+      "charge.json"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "commit",
+      "-m",
+      "Feature charge 140 percent"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[feature f0a5a66] Feature charge 140 percent\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "f0a5a66f8e7a98cd21bbb21b81f95a10036f23e7\n",
+    "stderr": ""
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\semantic\\check_damage.py"
+    ],
+    "directory": "[LAB]\\semantic",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "{\"base\": 100, \"cap\": 150, \"final\": 140, \"percent\": 140, \"raw\": 140}\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "switch",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Switched to branch 'main'\n"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "merge-base",
+      "main",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "efae89e49888b36dd6794f9f607c6bee39dbe929\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "merge",
+      "--no-edit",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "Merge made by the 'ort' strategy.\n charge.json | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "11343ed7c587b5e9e760c35be3b77d51c0c5593d\n",
+    "stderr": ""
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\semantic\\check_damage.py"
+    ],
+    "directory": "[LAB]\\semantic",
+    "exit_code": 1,
+    "expected_exit_codes": [
+      1
+    ],
+    "stdout": "{\"base\": 120, \"cap\": 150, \"final\": 168, \"percent\": 140, \"raw\": 168}\n",
+    "stderr": "FINAL_DAMAGE_OUT_OF_RANGE,FINAL_DAMAGE_NOT_CAPPED_AS_SPECIFIED\n"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "ls-files",
+      "-u"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "merge-base",
+      "--is-ancestor",
+      "e5a95b623bf4447d69b83051413a4a3250970fdf",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "merge-base",
+      "--is-ancestor",
+      "f0a5a66f8e7a98cd21bbb21b81f95a10036f23e7",
+      "main"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "11343ed7c587b5e9e760c35be3b77d51c0c5593d\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "0127266f9e7c35f2cdda5392f75e501819df016a\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "e5a95b623bf4447d69b83051413a4a3250970fdf f0a5a66f8e7a98cd21bbb21b81f95a10036f23e7\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "log",
+      "--graph",
+      "--oneline",
+      "--decorate",
+      "--all"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "*   11343ed (HEAD -> main) Merge branch 'feature'\n|\\  \n| * f0a5a66 (feature) Feature charge 140 percent\n* | e5a95b6 Main base damage 120\n|/  \n* efae89e Baseline\n",
+    "stderr": ""
+  },
+  {
+    "action": "write_teaching_fixture",
+    "path": "[LAB]\\semantic\\damage.py",
+    "sha256": "bb85da84e551e14fba72fa6e46d0d73790d3671b7356a15067281081902b9e17",
+    "size": 437
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "add",
+      "--",
+      "damage.py"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "commit",
+      "-m",
+      "Apply predeclared cap while preserving both configurations"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "[main 1b0dbf3] Apply predeclared cap while preserving both configurations\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1b0dbf322426a4e1c20bccab1521abce8bed81cd\n",
+    "stderr": ""
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\semantic\\check_damage.py"
+    ],
+    "directory": "[LAB]\\semantic",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "{\"base\": 120, \"cap\": 150, \"final\": 150, \"percent\": 140, \"raw\": 168}\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "show",
+      "--format=",
+      "--name-only",
+      "1b0dbf322426a4e1c20bccab1521abce8bed81cd"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "damage.py\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "show",
+      "-s",
+      "--format=%P",
+      "1b0dbf322426a4e1c20bccab1521abce8bed81cd"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "11343ed7c587b5e9e760c35be3b77d51c0c5593d\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "feature"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "f0a5a66f8e7a98cd21bbb21b81f95a10036f23e7\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1b0dbf322426a4e1c20bccab1521abce8bed81cd\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "8048ba097277d63f1bd898fbf3f381c8b4f7200c\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "11343ed7c587b5e9e760c35be3b77d51c0c5593d\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\semantic",
+      "log",
+      "--graph",
+      "--oneline",
+      "--decorate",
+      "--all"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "* 1b0dbf3 (HEAD -> main) Apply predeclared cap while preserving both configurations\n*   11343ed Merge branch 'feature'\n|\\  \n| * f0a5a66 (feature) Feature charge 140 percent\n* | e5a95b6 Main base damage 120\n|/  \n* efae89e Baseline\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]",
+      "clone",
+      "--no-hardlinks",
+      "--no-checkout",
+      "--template=[LAB]\\empty-template",
+      "[LAB]\\semantic",
+      "[LAB]\\receiver"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "Cloning into '[LAB]\\receiver'...\ndone.\n"
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "config",
+      "--local",
+      "core.autocrlf",
+      "false"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "-c",
+      "advice.detachedHead=false",
+      "switch",
+      "--detach",
+      "1b0dbf322426a4e1c20bccab1521abce8bed81cd"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": "HEAD is now at 1b0dbf3 Apply predeclared cap while preserving both configurations\n"
+  },
+  {
+    "tool": "python",
+    "arguments": [
+      "-B",
+      "[LAB]\\receiver\\check_damage.py"
+    ],
+    "directory": "[LAB]\\receiver",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "{\"base\": 120, \"cap\": 150, \"final\": 150, \"percent\": 140, \"raw\": 168}\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1b0dbf322426a4e1c20bccab1521abce8bed81cd\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "rev-parse",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "1b0dbf322426a4e1c20bccab1521abce8bed81cd\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "8048ba097277d63f1bd898fbf3f381c8b4f7200c\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "11343ed7c587b5e9e760c35be3b77d51c0c5593d\n",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "status",
+      "--short"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "tool": "git",
+    "arguments": [
+      "-C",
+      "[LAB]\\receiver",
+      "log",
+      "--graph",
+      "--oneline",
+      "--decorate",
+      "--all"
+    ],
+    "directory": "[LAB]",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "stdout": "* 1b0dbf3 (HEAD, origin/main, origin/HEAD, main) Apply predeclared cap while preserving both configurations\n*   11343ed Merge branch 'feature'\n|\\  \n| * f0a5a66 (origin/feature) Feature charge 140 percent\n* | e5a95b6 Main base damage 120\n|/  \n* efae89e Baseline\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,193 @@
+{
+  "passed": true,
+  "failure": null,
+  "recorded_at_utc": "2026-10-31T05:35:37.686221+00:00",
+  "python_version": "3.12.4",
+  "scope": "Four fresh local Git repositories and one local clean clone. Ordinary merge, one text conflict, synthetic integer damage contract. No network, production branch policy, engine, binary/rename conflicts, rebase/cherry-pick or SVN/P4 runtime validation.",
+  "git_version": "git version 2.53.0.windows.2",
+  "configuration": {
+    "merge_ff": true,
+    "rerere": false,
+    "global_system_config": "isolated",
+    "hooks": "empty"
+  },
+  "semantic_invalid_merge": "11343ed7c587b5e9e760c35be3b77d51c0c5593d",
+  "semantic_fixed_commit": "1b0dbf322426a4e1c20bccab1521abce8bed81cd",
+  "passed_checks": [
+    "fast-forward: clean baseline",
+    "fast-forward: merge base is original main",
+    "fast-forward: main points to existing feature commit",
+    "fast-forward: no additional commit created",
+    "fast-forward: existing single parent and clean worktree",
+    "fast-forward: target contains feature content",
+    "divergent: clean baseline",
+    "divergent: merge base is shared baseline",
+    "divergent: merge records both exact branch tips as parents",
+    "divergent: merge creates a new commit",
+    "divergent: merged files contain both changes",
+    "divergent: source tip is reachable from target",
+    "divergent: worktree clean and source ref unchanged",
+    "text-conflict: clean baseline",
+    "conflict: HEAD does not advance",
+    "conflict: MERGE_HEAD identifies source",
+    "conflict: index stages retain base, current and source content",
+    "conflict: unmerged entries and working markers present",
+    "conflict: resolved merge has both expected parents",
+    "conflict: resolved index and worktree are clean",
+    "conflict: final content matches predeclared value 80",
+    "conflict: source ref remains unchanged after resolution",
+    "semantic: clean baseline",
+    "semantic: baseline satisfies fixed contract at 100",
+    "semantic: main alone passes at 120",
+    "semantic: feature alone passes at 140",
+    "semantic: both changes start at shared baseline",
+    "semantic: automatic merge has no text conflict and is clean",
+    "semantic: combined behavior is 168 with both configurations retained",
+    "semantic: unchanged behavior checker rejects successful merge",
+    "semantic: original main tip is reachable even though behavior fails",
+    "semantic: source tip is reachable even though behavior fails",
+    "semantic: failing merge still records correct parents",
+    "semantic: adaptation preserves both changes and caps only final damage",
+    "semantic: checker bytes were not relaxed to make test pass",
+    "semantic: adaptation commit changes only calculation program",
+    "semantic: adaptation keeps failing merge visible in history",
+    "semantic: source ref remains at original feature commit",
+    "receiver: fixed exact commit passes same contract",
+    "receiver: exact identity and clean worktree",
+    "receiver: all tracked file bytes match source target"
+  ],
+  "snapshots": {
+    "fast_forward": {
+      "baseline": "1e2a7e927657dfc236cb412ef7cf47a8c7e686d7",
+      "feature": "f8a65efa13387f6dfc3731105034797c88af4d06",
+      "head": "f8a65efa13387f6dfc3731105034797c88af4d06",
+      "tree": "05e381dcf17b5eb357fc81772b35ab2700210f3f",
+      "parents": [
+        "1e2a7e927657dfc236cb412ef7cf47a8c7e686d7"
+      ],
+      "status": "",
+      "graph": "* f8a65ef (HEAD -> main, feature) Feature damage\n* 1e2a7e9 Baseline"
+    },
+    "divergent_merge": {
+      "baseline": "6d3154e8e2526b6b919d10fd0c070c0d51294f7c",
+      "main_before": "f8679e505acc48c09a706a02a653b9a81251ad94",
+      "feature": "b716e65b7df1562ef233e5c2df2cdb28cff1c407",
+      "head": "b06707d97cd81ccd3f849b169d11c1b801bf7e5f",
+      "tree": "3e0211842fc82308194e3692d64491281a5636da",
+      "parents": [
+        "f8679e505acc48c09a706a02a653b9a81251ad94",
+        "b716e65b7df1562ef233e5c2df2cdb28cff1c407"
+      ],
+      "status": "",
+      "graph": "*   b06707d (HEAD -> main) Merge branch 'feature'\n|\\  \n| * b716e65 (feature) Feature charge\n* | f8679e5 Main damage\n|/  \n* 6d3154e Baseline"
+    },
+    "text_conflict_before_resolution": {
+      "baseline": "b5c05e6d22282b48fb3aa1b87bbeeb5ece757e93",
+      "main_before": "fbfd06f9f7276a0a9dccb515c9a361feaec72036",
+      "feature": "e52b28de8e11e84726c2f10ec83e1f5003061f93",
+      "stages": {
+        "1": "damage=100",
+        "2": "damage=80",
+        "3": "damage=90"
+      },
+      "unmerged": "100644 2cfa10a78003ee3a9a35822d5d2880494b771f8f 1\tdamage.rules\n100644 b45920e8b85f287f898534400f22261eba7efcf3 2\tdamage.rules\n100644 0699623d235232ae01c3eb13c750b720e7a7d78b 3\tdamage.rules",
+      "working": "<<<<<<< HEAD\ndamage=80\n=======\ndamage=90\n>>>>>>> feature\n"
+    },
+    "text_conflict_resolved": {
+      "resolved": "39cc12aa4650b9b429580ce97c6729f77cca95b5",
+      "head": "39cc12aa4650b9b429580ce97c6729f77cca95b5",
+      "tree": "05e381dcf17b5eb357fc81772b35ab2700210f3f",
+      "parents": [
+        "fbfd06f9f7276a0a9dccb515c9a361feaec72036",
+        "e52b28de8e11e84726c2f10ec83e1f5003061f93"
+      ],
+      "status": "",
+      "graph": "*   39cc12a (HEAD -> main) Resolve according to teaching spec: damage 80\n|\\  \n| * e52b28d (feature) Feature damage 90\n* | fbfd06f Main damage 80\n|/  \n* b5c05e6 Baseline"
+    },
+    "semantic_merged_invalid": {
+      "baseline": "efae89e49888b36dd6794f9f607c6bee39dbe929",
+      "main_before": "e5a95b623bf4447d69b83051413a4a3250970fdf",
+      "feature": "f0a5a66f8e7a98cd21bbb21b81f95a10036f23e7",
+      "baseline_behavior": {
+        "base": 100,
+        "cap": 150,
+        "final": 100,
+        "percent": 100,
+        "raw": 100
+      },
+      "main_behavior": {
+        "base": 120,
+        "cap": 150,
+        "final": 120,
+        "percent": 100,
+        "raw": 120
+      },
+      "feature_behavior": {
+        "base": 100,
+        "cap": 150,
+        "final": 140,
+        "percent": 140,
+        "raw": 140
+      },
+      "behavior": {
+        "base": 120,
+        "cap": 150,
+        "final": 168,
+        "percent": 140,
+        "raw": 168
+      },
+      "head": "11343ed7c587b5e9e760c35be3b77d51c0c5593d",
+      "tree": "0127266f9e7c35f2cdda5392f75e501819df016a",
+      "parents": [
+        "e5a95b623bf4447d69b83051413a4a3250970fdf",
+        "f0a5a66f8e7a98cd21bbb21b81f95a10036f23e7"
+      ],
+      "status": "",
+      "graph": "*   11343ed (HEAD -> main) Merge branch 'feature'\n|\\  \n| * f0a5a66 (feature) Feature charge 140 percent\n* | e5a95b6 Main base damage 120\n|/  \n* efae89e Baseline"
+    },
+    "semantic_fixed": {
+      "behavior": {
+        "base": 120,
+        "cap": 150,
+        "final": 150,
+        "percent": 140,
+        "raw": 168
+      },
+      "files_sha256": {
+        "base.json": "f83a8c8f1ea25c4a2a6b58d84f39b3198caeaeb043ccc3852fb9537a030343c4",
+        "charge.json": "ef085762afcd848648aebf13633bfd2d5cc5e2339e633fa3cbb845fc2f20e34c",
+        "check_damage.py": "9c7144e9b41ee5ac2c1f12ca9630d7de4932fc7a64f06909dfb569694ce3fe6e",
+        "damage.py": "bb85da84e551e14fba72fa6e46d0d73790d3671b7356a15067281081902b9e17"
+      },
+      "head": "1b0dbf322426a4e1c20bccab1521abce8bed81cd",
+      "tree": "8048ba097277d63f1bd898fbf3f381c8b4f7200c",
+      "parents": [
+        "11343ed7c587b5e9e760c35be3b77d51c0c5593d"
+      ],
+      "status": "",
+      "graph": "* 1b0dbf3 (HEAD -> main) Apply predeclared cap while preserving both configurations\n*   11343ed Merge branch 'feature'\n|\\  \n| * f0a5a66 (feature) Feature charge 140 percent\n* | e5a95b6 Main base damage 120\n|/  \n* efae89e Baseline"
+    },
+    "receiver": {
+      "behavior": {
+        "base": 120,
+        "cap": 150,
+        "final": 150,
+        "percent": 140,
+        "raw": 168
+      },
+      "files_sha256": {
+        "base.json": "f83a8c8f1ea25c4a2a6b58d84f39b3198caeaeb043ccc3852fb9537a030343c4",
+        "charge.json": "ef085762afcd848648aebf13633bfd2d5cc5e2339e633fa3cbb845fc2f20e34c",
+        "check_damage.py": "9c7144e9b41ee5ac2c1f12ca9630d7de4932fc7a64f06909dfb569694ce3fe6e",
+        "damage.py": "bb85da84e551e14fba72fa6e46d0d73790d3671b7356a15067281081902b9e17"
+      },
+      "head": "1b0dbf322426a4e1c20bccab1521abce8bed81cd",
+      "tree": "8048ba097277d63f1bd898fbf3f381c8b4f7200c",
+      "parents": [
+        "11343ed7c587b5e9e760c35be3b77d51c0c5593d"
+      ],
+      "status": "",
+      "graph": "* 1b0dbf3 (HEAD, origin/main, origin/HEAD, main) Apply predeclared cap while preserving both configurations\n*   11343ed Merge branch 'feature'\n|\\  \n| * f0a5a66 (origin/feature) Feature charge 140 percent\n* | e5a95b6 Main base damage 120\n|/  \n* efae89e Baseline"
+    }
+  }
+}

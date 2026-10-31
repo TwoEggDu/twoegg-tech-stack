@@ -11,7 +11,7 @@ hero_title: "交付不是发布。从代码到产品稳定运行在用户设备�
 
 ## 选择阅读入口
 
-- **[版本管理：从 Git、SVN、P4 到团队协作]({{< relref "delivery-engineering/version-management-series-index.md" >}})**：从工作区、修改与历史进入任务提交、分支合并、资源协作、审查和构建基线。前五篇已有正文，其余 5 篇为提纲；三种工具模型与 Git 任务提交闭环已实测，引擎待验证。
+- **[版本管理：从 Git、SVN、P4 到团队协作]({{< relref "delivery-engineering/version-management-series-index.md" >}})**：从工作区、修改与历史进入任务提交、分支合并、资源协作、审查和构建基线。前六篇已有正文，其余 4 篇为提纲；三种工具模型、Git 任务提交及分支合并已实测，引擎待验证。
 
 - **[FDE 方法与实践]({{< relref "delivery-engineering/fde-methods-series-index.md" >}})**：先理解 FDE 的现场工作与工程落地，再讨论需求发现、交付热点判断和能力沉淀，最后回到真实案例。基础篇与交付方法篇已有正文，包含三份实践记录模板；Missing 案例后续补充。
 
