@@ -1,56 +1,50 @@
 ---
 name: twoegg-article-method
-description: Use when drafting, revising, outlining, or reviewing TwoEgg / TechStackShow articles in this repo. Follow the repo article method: start from problem space, then abstract model, then concrete implementation; choose the right article type; avoid API-first writing.
+description: 'Use when drafting, revising, outlining or reviewing TwoEgg / TechStackShow articles, or planning their series; not for unrelated code or generic skill maintenance.'
 ---
 
-# TwoEgg Article Method
+# TwoEgg 文章方法入口
 
-Use this skill when the task is to draft, revise, outline, review, or extend articles for this repository.
+把写作与维护任务接到仓库当前的唯一规范。先判断任务范围和文章类型，按需读取对应资料；不在技能中复制一整套写作规范。
 
-## What to read first
+## 范围与材料定位
 
-Before writing, read these repo documents:
+- 接受正文、路径、工作单、提纲、证据卡、审查记录及当前对话材料；文件路径就是有效输入，不要求重新粘贴或重新生成前置技能产物。
+- 局部修订先读指定内容和必要上下文；完整新稿或重写先确认类型、核心问题、边界与材料。已有有效 outline 时复用，不为走流程重新建一份。
+- 需要系列归属时，从[根路由](../../../doc-plan.md)进入唯一 canonical plan（以实际路由目标为准）。篇目归系列 plan，outline / execution / workorders 属执行层，不反向覆盖目录。
+- `content/` 是站点文章，`docs/` 是规划与准备材料，`kb/` 是知识沉淀，`examples/` 可保存实验和证据。只读本题相关材料；历史归档只供追溯，不更新。
+- 读者、版本基线和前置取自目标系列；不预设所有文章面向 Unity 开发者或必须走源码学习路线。
 
-- [Article Method](../../../docs/article-writing-method.md)
-- [Article Outline Template](../../../docs/article-outline-template.md)
-- [Series Planning Method](../../../docs/series-planning-method.md)
-- [Article Production Workflow](../../../docs/article-production-workflow.md)
+## 按任务读取规范
 
-Treat `docs/article-writing-method.md` as the single source of truth for writing rules.
+| 当前任务 | 读取资料与范围 |
+|---|---|
+| 写作、结构或内容审查 | [文章写法](../../../docs/article-writing-method.md)的相关部分；这是“怎么写”的唯一真相源 |
+| 起草或重新组织 outline | [大纲模板](../../../docs/article-outline-template.md)中对应类型的模板 |
+| 新系列、重构系列或选题定位调整 | [系列规划方法](../../../docs/series-planning-method.md)及[当前站点定位](../../../docs/site-entry-and-audience-plan.md) |
+| 从选题推进到完整文章交付 | [单篇生产流程](../../../docs/article-production-workflow.md)，结合已有材料跳过已完成环节 |
+| 新建页面、frontmatter、系列关系、导航或呈现修改 | [文章呈现与创建约定](../../../docs/article-presentation.md)及仓库验证要求 |
 
-## Workflow
+局部措辞或导航修订不必先全文读取四份规范，也不必重新建 outline；涉及的局部规则仍需核对。不能因材料不在当前聊天，就忽略仓库中已存在的工作单或证据。
 
-1. Identify the article type first:
-   - principle
-   - mapping
-   - case
-   - index
-   - if the task is series-level planning, use `docs/series-planning-method.md`
-2. Build the outline from `docs/article-outline-template.md`.
-3. For most technical articles, use the default progression:
-   - problem space
-   - abstract model
-   - concrete implementation
-   - engineering boundaries / tradeoffs
-4. Lead with the real project problem, not with engine APIs.
-5. When the topic is not inherently engine-specific, write the engine-agnostic model first, then land it in Unity / Unreal / self-built terms.
-6. Keep the article focused on boundary clarity:
-   - what this system is
-   - what it is not
-   - what it should not swallow
-7. End with one short takeaway sentence that compresses the article's main claim.
-8. When the task is a full article push, follow `docs/article-production-workflow.md` rather than jumping straight from idea to final draft.
+## 类型与展开方式
 
-## Hard rules
+以写法规范为准，按类型采用适合的结构：
 
-- Do not start by listing APIs, package names, or Inspector settings unless the article is explicitly a narrow tool/configuration article.
-- Do not skip the abstract model layer.
-- Do not stop at abstract concepts; land the model back into concrete engine or project implementation.
-- Do not duplicate the full repo method inside this skill. If the method changes, update `docs/article-writing-method.md` first.
+- **原理篇**：先立问题空间和抽象模型，再落具体实现；工程边界和取舍按主题补充。
+- **映射篇**：建立共同问题与模型，再比较 Unity / Unreal / 自研或其他实现的对应和代价。
+- **案例篇**：按现象、分层定位、根因证据、修法与预防展开，不硬塞独立的抽象模型章节。
+- **索引篇**：交代系列范围、阅读顺序、按问题跳转和后续内容，不按原理篇重写。
 
-## When to switch article type
+只有明确狭窄的工具或配置文章才以必要操作为主。引擎实现服务于问题和因果；抽象也要落回实际工程，不罗列 API 代替解释。文章节数、代码量和图表按问题决定，不统一套版。
 
-- Use the principle structure for most architecture or system articles.
-- Use the mapping structure when comparing Unity / Unreal / GAS / self-built implementations.
-- Use the case structure for diagnosis, incident review, and root-cause articles.
-- Use the index structure for series map and reading-order articles.
+## 证据与交付边界
+
+- 区分官方资料、公开源码静态核对、实验观察、工程建议及待验证假设。具体机制与版本差异要查证；未运行的实验不能写成实测，角色设定不能充当作者经历。
+- 案例须说明是真实记录、教学示例还是拟验证场景；需要真实数据或经验时沿用 `DATA-TODO` / `EXPERIENCE-TODO`。
+- 按[仓库约定](../../../AGENTS.md)处理源码目标仓库、Unity C++ 许可与公开脱敏，`docs/` 与 `content/` 都不接收私仓受限源码。
+- 正文写完先回写相关系列 plan 和必要索引；只有系列路由、定位或系列级状态变化时再动根 `doc-plan.md`，不回填篇级清单。
+- 涉及文章落盘时运行相应构建、模板回归及生成页检查；样式变化另做桌面和窄屏检查。内容、实验、本地站点检查、提交与线上部署状态分别报告。
+- 只执行用户授权范围内的写作和修改；完整文章交付不等于自动获得提交、推送或发布授权。
+
+例如只审查系列索引的一处导航文字，应核对目标与内容成熟度，不新增抽象模型节，不要求作者先补齐整套七层分析稿。
