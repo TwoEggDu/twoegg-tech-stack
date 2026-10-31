@@ -3,7 +3,7 @@ title: "Unity on Mobile｜Android 专项：Vulkan vs OpenGL ES、Adaptive Perfor
 slug: "mobile-unity-android"
 date: "2026-03-28"
 lastmod: "2026-10-31"
-description: "区分 Android 图形 API、构建分发、热管理和内存终止的机制与验证边界，说明 Unity 项目应如何建立设备测试与崩溃符号归档。"
+description: "区分 Android 图形 API、构建分发、热管理和内存终止，并沿进程、Activity、Surface 与游戏会话说明保存恢复责任及验证证据。"
 tags: ["Unity", "Android", "Vulkan", "OpenGL ES", "Adaptive Performance", "移动端"]
 series: "移动端硬件与优化"
 weight: 2200
@@ -146,6 +146,101 @@ CPU / GPU 受限的场景适合不同调整项。每次只改变可解释的一�
 
 ---
 
+## 切后台再回来：进程、Activity、Surface 与游戏会话
+
+玩家看到的是“离开游戏，再打开游戏”。工程上却可能是同一个进程继续执行、界面组件被重建，或者整个进程已经结束、从头启动。把这些情况都交给一个“恢复回调”，容易出现状态丢失、旧请求覆盖新页面，或逻辑继续了却没有正确画面的情况。
+
+这一节先建立平台模型，再接到 Unity 的保存、资源与业务恢复；下面的流程和验证矩阵是设计建议，没有目标设备上的恢复实测。
+
+### 四种寿命，不能用一个“还活着”概括
+
+| 对象 | 管什么 | 失效后需要确认什么 |
+| --- | --- | --- |
+| 应用进程 | 本次运行的地址空间、线程与内存状态 | 是否进入了新的进程启动；原内存、句柄与在途任务不能当成仍然有效 |
+| Activity | 承载界面与 Android 生命周期交接 | 是否是新的组件实例；界面状态与平台入口是否重新建立 |
+| Surface | 接收渲染输出的目标，以及它的尺寸与有效期 | 旧目标是否停止使用，新目标是否就绪并已接回渲染路径 |
+| 游戏会话 | 项目定义的账号、存档、场景、交互及联网状态 | 哪些业务状态可继续，哪些需读档、重新确认或结束 |
+
+Android 的 `onCreate`、`onStart`、`onResume`、`onPause`、`onStop`、`onDestroy` 描述的是 Activity 的变化。配置变化可能导致旧 Activity 销毁并建立新实例，这不等于进程一定重新启动；反过来，系统终止进程时也不保证调用 `onDestroy`。可见、获得焦点和处于 Resumed 状态需要分别观察，不能把 `onPause` 简化为“已经完全不可见”。依据见 [Activity 生命周期](https://developer.android.com/guide/components/activities/activity-lifecycle)与[进程生命周期](https://developer.android.com/guide/components/activities/process-lifecycle)。
+
+也不能把“旋转一次”固定当成重建测试。是否重建受配置变化类型、合并后的 Manifest 中 `android:configChanges`、系统与窗口模式影响；接管某类配置变化也不等于免除了适配责任。先看本次组件实例和实际事件，见 [Android 配置变化说明](https://developer.android.com/guide/topics/resources/runtime-changes)。
+
+Surface 还有自己的一组 created／changed／destroyed 事件。AOSP 将 SurfaceView 所在 Activity 与 Surface 描述为两组相互关联的状态机；不能只凭 Activity 恢复就认定绘制目标已经可用。[SurfaceHolder.Callback](https://developer.android.com/reference/android/view/SurfaceHolder.Callback)要求直接使用 Surface 的渲染线程在 `surfaceDestroyed` 返回前停止访问该目标。这里限定的是 SurfaceView／SurfaceHolder 模型，不能把它当作 Unity 所有图形后端的固定内部调用顺序，参见 [AOSP 图形说明](https://source.android.com/docs/core/graphics/arch-sv-glsv)。
+
+在 Unity 项目中，应由引擎及相应原生集成管理它们拥有的绘制目标。自有插件也要遵守目标寿命，不能长期缓存旧 Surface 继续提交；但 Surface 变化本身不证明所有纹理、场景对象或 GPU 设备都已失效。恢复黑屏需要继续核对目标、资源、提交与显示证据，不能直接归因于驱动或统一“重载整个游戏”。
+
+游戏会话则是业务约定。进程仍在不证明连接或登录仍有效；重新建立进程也不证明玩家进度应归零。联网状态按服务端结果确认，本地状态按有效存档与产品规则恢复，这些都不是 Android 替游戏决定的事。
+
+### Unity 回调提供入口，恢复责任仍要分开
+
+本篇沿用 **Unity 2022.3 LTS** 基线。[默认 Unity Activity](https://docs.unity3d.com/2022.3/Documentation/Manual/AndroidUnityPlayerActivity.html)承担平台交互；项目有自定义 Activity、SDK 插件或其他版本的入口实现时，先核对合并 Manifest、入口类与事件传递，不照搬一套 Java／C# 回调对应表。
+
+Unity 2022.3 的 [OnApplicationPause](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationPause.html)与 [OnApplicationFocus](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationFocus.html)是引擎层通知。该版本文档明确：Android 软键盘可以触发失焦；键盘打开时再按 Home，通知路径又有区别。初始化也可能收到 `OnApplicationPause(false)`，所以不能把每次 false 都当成一次完成的后台恢复，更不能把失焦直接当成断线或销毁会话的指令。
+
+建议把回调送入同一恢复协调入口，记录当前状态、合并重复请求，再按职责推进：
+
+| 责任位置 | 保存／离开时 | 恢复／重新启动时 |
+| --- | --- | --- |
+| 平台与 SDK 集成 | 正确传递生命周期、焦点和目标变化，保留必要事件 | 核对实际入口与组件实例，避免多个 SDK 各自启动一次恢复 |
+| 玩法与存档 | 定义必须保留的进度，平时形成可确认的检查点 | 校验存档格式与完整性；无有效记录时按明确规则回退，不能装作读档成功 |
+| 网络与会话 | 记录待确认请求及业务身份，不把本地暂停当作服务端也暂停 | 重新确认连接、会话与请求结果，避免重复扣费、重复领取或复用过期结果 |
+| 资源、渲染与异步调用方 | 区分可保留、可重建与已失效内容，撤销不再合法的上下文 | 检查本轮对象与目标有效性，按依赖恢复；旧任务结果不能写入新会话 |
+| 内容负责人及 QA | 约定必须保留的玩法进度、画面和交互预期 | 核对进度、画面、输入、音频与联网结果，不只确认“没闪退” |
+
+这张表描述职责，可以由同一人承担，不要求重建一套团队岗位。
+
+### 保存不是退出瞬间的一次大写盘
+
+先分三类状态：仅在内存里保留的运行对象、用于重建界面的少量标识、必须持久保存的业务数据。Android 的 saved state 可用于系统重建后的界面恢复，但适合少量简单数据；它不是大型存档，也不会自动保存 Unity 对象图、GPU 资源或游戏会话。其恢复条件也不能推广到用户主动结束界面、强制停止或清除数据后的所有启动。见 [Android 保存 UI 状态](https://developer.android.com/topic/libraries/architecture/saving-states)。
+
+不要把全部存档、网络上传和资源释放放到 `onPause` 等最后时机。Android 文档提醒该回调时间短，不适合承担重保存；系统结束进程时也未必给应用补做收尾的机会。Unity 的 [OnApplicationQuit](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationQuit.html)同样说明，移动平台上不能依赖退出通知完成关键保存。
+
+退后台也不承诺一个普通线程或异步任务能持续运行。[进程生命周期文档](https://developer.android.com/guide/components/activities/process-lifecycle)特别说明，Android 13 起缓存进程可能得到很少甚至没有执行时间；这限定的是相应进程状态，不能推广为所有后台组件的统一行为。需要后台传输时另按平台允许的工作方式设计，不把“任务已经启动”当作最终保存或上传完成。
+
+工程上可以在进度形成时增量保存，把“请求保存”“本地提交完成”“服务端确认”分开记账，恢复时读取最后一份有效检查点。若采用临时文件替换、数据库事务或其他提交办法，需按实际存储接口与故障条件验证；函数返回、写进缓冲或启动了异步任务，都不能独自证明突然终止后仍能恢复。这里给出设计约束，不承诺某种写盘方案已经具备崩溃一致性。
+
+### 恢复的是本轮上下文，不是让所有旧任务继续
+
+同一进程内，后台期间发起的请求可能在回来时才交付结果。若账号、场景或 UI 已经变了，即使对象没有销毁，结果也可能不该再应用。项目可给恢复批次与业务上下文独立编号，结果落地前核对归属；哪些任务暂停、取消、保留或重新请求，由其真实所有者决定，不因短暂失焦就一律取消。
+
+对象、页面、场景和任务的收口机制复用[《Unity 异步运行时 06》]({{< relref "engine-toolchain/unity-async-runtime-06-cancellation-destroy-playmode-lifecycle.md" >}})，这里不重复讲 CancellationToken。进程已结束后，旧内存任务不存在可继续的现场；应从持久记录与当前业务状态重新建立工作，不能靠原来的 token 或静态变量跨进程恢复。
+
+可以用下面的职责链检查恢复设计；各步允许重叠，但要满足相应依赖：
+
+```text
+确认本次进程／组件与恢复批次
+  → 取得有效检查点，确认当前业务会话
+  → 核对所需资源及绘制目标，撤销过期结果
+  → 验证首个正确画面与交互，标记本轮 Ready
+```
+
+`OnApplicationPause(false)`、Surface 创建、提交一帧与玩家已能正确操作，是不同终点。Ready 按产品约定选择，比如“进度正确、画面正确且输入可用”；分阶段记录方法复用 [IO 06 的任务证据关联]({{< relref "engine-toolchain/storage-io-06-profiling-with-fio-iostat-perfetto-instruments.md" >}})，不把一个回调耗时称为完整恢复耗时。
+
+### 用事件与身份证明恢复了哪一层
+
+每轮固定构建／资源／存档版本、Android 版本与构建、targetSdk、Unity／图形 API、入口配置和触发动作。记录外部测试轮次、进程启动标识与 PID、Activity 实例、Surface 目标代次、业务会话和恢复批次；这些是建议的关联字段，不是 Android 自动提供的一套统一 ID。PID 可能复用，单独一个 PID 或一条“resume”日志不够。
+
+把原生与 Unity 通知、检查点提交结果、异步任务归属、资源就绪和首个正确显示／交互结果放回可对齐的时间线。仅修改 Surface 尺寸不应误记成创建了新目标，目标代次要来自实际创建／替换记录。拿不到某层事件时标记缺口，不从黑屏或返回首页倒推出发生了哪种重建。
+
+以下是**待执行的验证矩阵**，不是已有通过记录：
+
+| 场景 | 需要保留的证据 | 验收重点 |
+| --- | --- | --- |
+| 正常启动与短暂 Home／回前台 | 初始通知、进程／组件身份、保存与恢复批次、Ready | 初始化不会被误认成恢复；不重复读档、重连或注册事件 |
+| 软键盘、失焦与支持的多窗口操作 | 焦点、暂停、组件可见性及实际操作；记录系统版本／窗口模式 | 按产品规则处理输入与暂停，不因焦点变化错误退出会话 |
+| 受支持的配置变化／受控 Activity 重建 | Manifest 配置、实际实例变化及是否保留同一进程 | 不把旋转当作必然重建；新入口取得正确状态且无重复回调副作用 |
+| 实际发生 Surface 重建的恢复／窗口变化 | 目标创建／销毁／尺寸事件、渲染与显示结果 | 停用旧目标并接回新目标；未发生重建就记“该分支未覆盖” |
+| 后台进程终止后重新启动 | 终止方式、旧／新进程启动身份、最后有效检查点、退出原因证据 | 从记录重建状态，过期结果不回写；未确认的联网操作重新核对 |
+| 保存中断、失败或记录损坏 | 保存提交阶段、失败输入、加载结果与回退路径 | 能回到明确的有效状态或给出失败处理，不把坏数据当成功恢复 |
+
+人为触发和真实系统事件必须分开。[开发选项](https://developer.android.com/studio/debug/dev-options)中的 **Don't keep activities** 用于触发离开后的 Activity 销毁，不能当成进程已死；[ADB 的 force-stop](https://developer.android.com/tools/adb)是强制停止，也不能作为一次真实内存压力回收的证明。测试时写明注入方式、系统和构建条件，完成后恢复测试设置，不能用一条受控路径代替全部恢复行为。
+
+Android 11／API 30 起，可在应用侧使用 [ActivityManager.getHistoricalProcessExitReasons](https://developer.android.com/reference/android/app/ActivityManager#getHistoricalProcessExitReasons(java.lang.String,int,int))读取近期退出原因，关联退出时间、进程与当前复现；这是版本条件，不是仅调整 targetSdk 就能在旧系统使用。记录有保留范围，读取其他 UID 的记录有额外权限要求；没有记录不能反推没有退出。部分设备也不支持明确报告低内存终止，应核对 [ApplicationExitInfo](https://developer.android.com/reference/android/app/ApplicationExitInfo)及 `isLowMemoryKillReportSupported()`，不能把所有 SIGKILL、ANR、崩溃或用户停止都叫作 LMK。
+
+<!-- DATA-TODO: 固定 Android／Unity 2022.3 具体补丁、入口与图形 API，在目标设备执行本节矩阵；归档 Manifest、组件／目标／进程身份、保存提交结果、退出证据和首个正确显示／交互记录。明确人为注入、真实系统事件、未覆盖分支及失败样本，不预填通过或恢复耗时。 -->
+
+---
+
 ## 5. Android 特有的性能陷阱
 
 ### 陷阱一：第三方 SDK 的 ContentProvider 导致启动慢
@@ -228,4 +323,4 @@ ndk-stack -sym ./symbols/arm64-v8a -dump crash.txt
 
 ## 总结
 
-Android 的优化依赖可验证的设备组合：图形 API 要对照画面和持续帧时，分发要检查设备实际得到的产物，热管理要区分状态与控制能力，崩溃分析要保留匹配符号。把这些检查纳入构建与设备回归，才能判断一项设置是否适合自己的产品。
+Android 的优化依赖可验证的设备组合：图形 API 要对照画面和持续帧时，分发要检查设备实际得到的产物，热管理要区分状态与控制能力，恢复要分别确认进程、组件、绘制目标与业务状态，崩溃分析要保留匹配符号。把这些检查纳入构建与设备回归，才能判断一项设置是否适合自己的产品。
