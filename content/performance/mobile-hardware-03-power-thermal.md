@@ -2,7 +2,8 @@
 title: "移动端硬件 03｜功耗与发热：降频模型、帧率稳定性与热管控策略"
 slug: "mobile-hardware-03-power-thermal"
 date: "2026-03-28"
-description: "移动端游戏的核心约束不是峰值性能，而是持续性能。SoC 在散热极限下会触发降频，导致帧率从 60fps 跌到 40fps。理解热管控模型，才能设计出在长时间游戏中保持帧率稳定的策略。"
+lastmod: "2026-10-31"
+description: "区分功耗、热状态与帧时间，解释持续性能怎样影响加载、画质和帧率预算，以及团队如何设计降载、恢复与验证。"
 tags:
   - "Mobile"
   - "Hardware"
@@ -13,269 +14,136 @@ series: "移动端硬件与优化"
 weight: 2025
 ---
 
-移动端游戏的性能不是一个固定值，而是一条随时间下降的曲线。手机没有风扇，散热完全依靠金属中框和导热材料。当 SoC 持续高负载时，温度上升 → 触发降频 → 性能骤降。理解这个机制，才能设计出"跑 30 分钟不掉帧"的游戏。
+> **阅读衔接**：先用[资源可用链]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})明确加载完成条件，再看本篇：资源已经能用，设备能否持续承担同样的工作量？设备差异见[硬件 02b]({{< relref "performance/mobile-hardware-02b-sustained-performance.md" >}})。
+>
+> **范围与证据**：平台契约按 2026-10-31 查阅的 Android、Apple 官方文档核对，Unity 示例语义以 2022.3 文档及明确标出的包版本为参考。本篇的策略、责任表与战斗场景是工程建议和教学推演，没有真机温度、功耗或优化收益实测。
 
----
+同一个战斗场景，刚进入时满足目标帧率，持续运行后却出现长帧。此时需要同时回答两个问题：设备的运行条件是否变了，游戏能否在条件改变后调整工作量？
+
+把原因直接归为“手机热了”，会跳过内容规模变化、后台任务、内存增长和呈现节奏等候选原因。反过来，只优化一次首用卡顿，也不能证明整段游戏过程都能维持体验。持续性能要放在**设备、负载、环境与时间窗口**共同定义的条件里讨论。
 
 ## 功耗与散热的基本模型
 
-```
-功耗 = CPU功耗 + GPU功耗 + 内存功耗 + 显示功耗 + 其他
+功耗是单位时间消耗的能量，温度是热状态的一个物理量，两者不是同一条曲线。把设备视为一个简化整体时，产生的热量超过向环境散出的热量，内部储热就会增加；不同部件、表面与传感器之间还存在传热路径和响应延迟。
 
-骁龙 8 Gen 3 典型场景：
-  峰值功耗（极限压测）：~12W
-  重度游戏（高画质）：~8-10W
-  中度游戏（中画质）：~5-6W
-  手机散热极限（无风扇）：~4-6W（取决于外壳材质和环境温度）
-```
+这个模型能解释为什么负载变化与温度变化不必同步，也能解释为什么降低负载后不应立即恢复最高档。它不能给出所有手机通用的瓦数上限、温度阈值或“几分钟必然降频”的结论。机身设计、环境、供电、初始热状态和系统策略都需要记录。
 
-**结论**：旗舰手机只能在峰值功耗下运行约 3-5 分钟，之后散热跟不上，必须降频。
+CPU、GPU、内存、显示、网络与其他部件共同影响整机能耗。工具给出的 SoC 功率、外部电源输入功率和整机耗电也不是同一口径；未经测量不能把各项估计直接加成一份准确账本。具体测量另沿[耗电专题]({{< relref "performance/mobile-hardware-05-battery-power.md" >}})核对工具与条件，本篇不沿用无来源的机型瓦数表。
 
----
+## 降频模型：持续预算为什么会改变
 
-## 降频（Throttling）模型
+系统可能通过限制频率、功率或其他资源使用控制热风险。应用能做的是减少工作量并响应可用信号，不能把质量设置当成直接控制硬件频率，更不能绕过系统保护。Android 的 [Thermal API 指南](https://developer.android.com/games/optimize/adpf/thermal)将设备热条件与可持续负载联系起来，但这不构成特定游戏的收益保证。
 
-以骁龙 8 Gen 2 为例（实测数据，不同设备有差异）：
+从工程上可以这样理解：
 
-```
-CPU 温度  →  CPU 频率上限
-< 65°C   →  100%（3.2 GHz Prime Core）
-65-70°C  →  90%（~2.8 GHz）
-70-75°C  →  75%（~2.4 GHz）
-75-80°C  →  60%（~1.9 GHz）
-> 80°C   →  50% 或强制迁移到 Gold Core（~1.5 GHz）
-
-GPU 温度  →  GPU 频率上限
-< 65°C   →  100%（680 MHz）
-70-75°C  →  70%（476 MHz）
-> 80°C   →  50%（340 MHz）
+```text
+内容与调度决定工作量 → 工作量产生执行成本与能耗
+设备与环境影响散热 → 系统热策略影响可用执行能力
+应用观察状态与体验 → 选择降载或维持 → 再观察结果
 ```
 
-**实际游戏表现**：
-- 启动后 5 分钟内：60fps 稳定
-- 5-10 分钟：偶发帧率抖动（温度接近阈值）
-- 10-20 分钟：帧率可能跌到 40-50fps（CPU/GPU 轮番降频）
-- 20 分钟后：维持在降频后的稳定帧率（通常 30-45fps）
+这是反馈关系，不是固定时间线。频率降低也可能来自负载下降、省电策略等条件；帧时间上升可能来自更多对象、等待或资源加载。只有把相同任务的执行、等待和平台信号对齐，才能判断热限制在本次问题中扮演什么角色。
 
----
+## 如何观察：信号能证明什么，不能证明什么
 
-## 如何观察降频
+| 观测 | 能帮助判断什么 | 不能直接推导什么 |
+| --- | --- | --- |
+| CPU／GPU 执行与等待时间 | 哪段工作或同步影响当前关键路径 | 单凭利用率或等待标记认定热降频 |
+| 系统热状态与热余量 | 系统报告的热风险及趋势 | 精确芯片温度、剩余性能百分比、所有设备相同阈值 |
+| 频率／功率计数器 | 在工具支持范围内观察资源状态变化 | 频率下降一定由过热导致，活动等级等于瓦数 |
+| 帧时间与呈现间隔 | 游戏推进和显示是否满足各自目标 | 一次长帧证明热限制，平均 FPS 证明交互流畅 |
+| 内存与加载记录 | 驻留增长、阶段重叠和预取积压 | 内存警告就是热警告，释放内存必然改善帧率 |
 
-**Android（Perfetto / adb）**：
-```bash
-# 实时查看 CPU 频率
-adb shell cat /sys/devices/system/cpu/cpu7/cpufreq/scaling_cur_freq
+采集时记录设备、OS／固件、构建、图形 API、质量档、目标帧率、亮度、供电与环境条件，使用同一场景脚本和时间标记。热状态、档位变化、加载批次与帧时间放到同一时间线上；前后对照还要考虑初始热状态与测试顺序，避免第二轮天然比第一轮更热。
 
-# 查看 CPU 温度
-adb shell cat /sys/class/thermal/thermal_zone*/temp | head -20
+Perfetto、Unity Profiler 或平台工具是否能拿到某类计数器，要在目标设备上确认。固定的 `cpu7`、`thermal_zone` 路径和节点含义不跨设备成立，不能把任意温度节点当成 CPU 温度。工具选择接[真机分析入口]({{< relref "performance/mobile-tool-09-performance-diagnosis-tool-selection.md" >}})，本篇没有执行这些采集。
 
-# Perfetto trace（推荐）：
-# 在 Perfetto UI 中录制 cpu_freq + thermal 数据源
-# 可以看到频率随时间的变化曲线
+## 帧率稳定性与峰值帧率：先定义验收对象
+
+“稳定低帧率一定比波动高帧率好”不是通用体验结论。动作节奏、输入响应、显示刷新和玩家选择都会影响取舍。降低目标帧率可能减少每秒工作，也可能增加响应延迟；限帧方式及固定更新等工作是否一起变化，需要具体确认。
+
+60 次／秒对应约 16.67 ms 的周期，30 次／秒对应约 33.33 ms；这只是节奏换算，不等于允许某个 CPU 或 GPU 阶段独占全部周期，也不能据此承诺显示与输入延迟。
+
+P95 应说明采样对象、窗口和计算方法：它描述样本分布的一个分位点，不替代超预算事件次数、最长连续卡顿和画面验收。不能把“60fps 的 P95 小于 18ms”设成通用合格线。Unity 的帧推进间隔也不应被当成纯 CPU 执行时间或屏幕实际呈现间隔。
+
+建议把验收分成三项：**约定窗口内的帧与响应目标、最低可接受表现、达到这些目标的持续运行条件**。没有可比条件，单个分位数很难说明方案更好。
+
+## Android Thermal API：先读对值，再设计动作
+
+`getCurrentThermalStatus` 与热状态监听从 API 29 提供；`getThermalHeadroom` 从 API 30 提供。后者的名称容易误读：数值越大表示已用热包络越多，**1.0 对应 SEVERE 阈值，可超过 1.0；0 不对应固定温度或特定热状态**。它不是剩余电量式百分比。[PowerManager API 契约](https://developer.android.com/reference/android/os/PowerManager#getThermalHeadroom(int))
+
+预测参数为 0～60 秒，表示估计哪个未来时点的值，不是返回“还能安全运行多少秒”。预测需要积累样本，设备不支持或调用过密可能返回 NaN。当前 API 参考与游戏指南的轮询建议有差异；应按目标系统契约和设备验证设置采样间隔，不能每帧读取，也不能把无效值当作安全状态。
+
+因此这里使用决策伪代码，替代一个写死阈值就直接修改分辨率的示例：
+
+```text
+采集：能力是否可用、值是否有效、时间戳、当前质量档、帧与热状态
+无效或过期：标记未知，采用预先定义的保守预算，不据此升档
+风险升高：结合持续超预算证据与平台信号，选择已验收的降载组合
+状态稳定：满足恢复门槛和冷却时间后，尝试恢复一档，再观察
+退出：解除订阅；旧场景的迟到事件不能继续修改新场景档位
 ```
 
-**Snapdragon Profiler**：
-- Realtime Capture → 添加 `CPU Frequency` 和 `GPU Frequency` Counter
-- 可以实时看到频率曲线，温度升高时频率下降的拐点清晰可见
+降载可以预防性触发，不必等设备已经严重受限；但一次信号不自动决定该关闭哪种内容。热信号映射、采样和阈值属于有平台条件的输入，产品策略还需独立制定。
 
-**iOS**：
-- Apple 没有公开频率 API，但 Xcode Instruments 的 Energy 模块可以看到功耗变化
-- 实测 iPhone 15 Pro：长时间游戏约 15 分钟后 GPU 性能降约 20%（A17 Pro 比骁龙更抗降频）
+## Unity Adaptive Performance 与 iOS：复用平台能力，保留业务控制
 
----
+Unity Adaptive Performance 需要 Provider 获取设备信息。Google 文档区分主包和 Android Provider，并将 Android Provider 支持对应到 Adaptive Performance 5.0 起；不能继续把支持范围概括成固定两个品牌，也不能假定安装后所有设备都有同样数据或控制能力。[Unity ADPF 接入说明](https://developer.android.com/games/engines/unity/unity-adpf)
 
-## 帧率稳定性 vs 峰值帧率
+固定项目的 Unity、主包和 Provider 版本，检查激活、功能与无效数据分支。将插件 scalers 与自研质量控制纳入同一套仲裁，避免双方轮流修改参数。已有[Android 专项]({{< relref "performance/mobile-unity-android.md" >}})解释了 Provider、质量策略与恢复职责，本篇不复制整套接入代码。
 
-**错误直觉**：帧率越高越好
-**正确直觉**：帧率越稳定越好
+iOS 11 起，`ProcessInfo.thermalState` 提供 nominal、fair、serious、critical 等系统热状态，并有状态变化通知。这些是系统级分类，不是 CPU 温度计，也没有与 Android 数值一一对应的映射。[Apple 热状态](https://developer.apple.com/documentation/foundation/processinfo/thermalstate-swift.property)、[状态枚举](https://developer.apple.com/documentation/foundation/processinfo/thermalstate-swift.enum)
 
-```
-场景 A：帧率在 60-30fps 之间波动（平均 50fps）
-场景 B：帧率稳定在 35fps
+原生桥接要读取初始状态、管理通知寿命，并在允许的线程交给游戏策略；注册通知前访问 `thermalState` 的要求见 [Apple 通知契约](https://developer.apple.com/documentation/foundation/processinfo/thermalstatedidchangenotification)。恢复前台时重新确认状态，不能继续使用暂停前的判断。
 
-玩家体验：场景 B >> 场景 A
-原因：帧率波动（帧时间抖动）比绝对帧率低更影响体验
-     20ms → 50ms 的帧时间跳变 会让玩家感到明显卡顿
-     30ms → 30ms 的稳定帧时间 虽然只有 33fps，但流畅感更好
-```
+`Application.lowMemory` 表示低内存通知，不是热状态通知。[Unity 2022.3 文档](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Application-lowMemory.html) 两种压力可能同时出现，但需要分别记录、分别处置；只凭帧时间增加也不能确认热限制。内存和 Instruments 的边界继续读[iOS 专项]({{< relref "performance/mobile-unity-ios.md" >}})。
 
-**量化指标**：P95 帧时间（95% 的帧都在这个时间内完成）
-- 60fps 目标：P95 帧时间 ≤ 18ms（允许 5% 的帧超时）
-- 30fps 目标：P95 帧时间 ≤ 36ms
+## 工程取舍：降什么，怎样恢复，代价由谁接受
 
-```csharp
-// Unity 帧时间监控（用于自动降质决策）
-public class FrameTimeMonitor : MonoBehaviour
-{
-    private Queue<float> _frameTimes = new Queue<float>();
-    private const int SampleCount = 60; // 采样 60 帧
+下面是候选策略，不是所有场景统一执行的顺序。
 
-    void Update()
-    {
-        _frameTimes.Enqueue(Time.unscaledDeltaTime * 1000f); // ms
-        if (_frameTimes.Count > SampleCount)
-            _frameTimes.Dequeue();
-    }
+| 动作 | 适合调查的成本 | 必须承担的取舍 |
+| --- | --- | --- |
+| 降低渲染分辨率或部分后处理 | 像素与相关带宽成本 | 清晰度、UI 与可读性需要验收；不能解决所有 CPU 瓶颈 |
+| 减少装饰粒子、阴影或远景细节 | 按具体资源检查模拟、绘制和带宽 | 不能丢失命中提示与必要信息，不能未经设计改变玩法结果 |
+| 限制预取、解压与非紧急后台任务 | 与主循环竞争的计算、I/O 和在途内存 | 资源就绪可能变晚；必要依赖的期限仍要满足 |
+| 调整目标帧率 | 每秒提交和绘制等工作量 | 响应与显示节奏改变；需要重新验证，不能只看平均 FPS |
+| 淘汰可重建缓存 | 内存压力与驻留 | 重载可能增加 I/O、CPU 与长帧，不作为普适降温按钮 |
 
-    public float GetP95FrameTime()
-    {
-        var sorted = _frameTimes.OrderBy(x => x).ToArray();
-        int idx = Mathf.FloorToInt(sorted.Length * 0.95f);
-        return sorted[idx];
-    }
-}
-```
+降载与恢复应使用不同门槛，并保留最短驻留或冷却时间，防止刚降档就升回去。恢复不是每次都跳最高档，而是在稳定窗口后尝试小步恢复；具体窗口和阈值要测量。每个档位应从固定配置生成，避免反复缩小当前分辨率，恢复时也要覆盖曾经修改的全部参数。
 
----
+配置还应限定上下界、用户选择、设备能力与场景规则。必要时给用户明确选择，例如更高响应与更低能耗；不能把技术降载偷偷变成玩法难度变化。日志保留决策原因、旧档、新档与策略版本，才能解释一次体验变化。
 
-## Android Thermal API
+资源已经加载完成，也可能因降载策略选择暂不实例化或显示。任务优先级和内存所有权仍按[资源可用链]({{< relref "performance/game-performance-read-does-not-mean-ready.md" >}})处理；减少并发的代价要同时看就绪时间与[内存预算]({{< relref "performance/game-performance-memory-accounting.md" >}})。
 
-Android 10+ 提供了官方 Thermal API，可以在游戏运行时获取热状态：
+## 团队责任：把机制变成可以交付的策略
 
-```java
-// Android Java 层
-PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+| 责任方 | 交出什么 | 接受条件 |
+| --- | --- | --- |
+| 客户端／平台程序 | 有效性明确的信号、统一质量控制、状态与决策记录 | 无信号、前后台、失败与恢复路径可解释；没有多套系统互相覆盖 |
+| TA／美术 | 每档可用资产与表现组合、切换边界和成本假设 | 轮廓、信息与视觉意图保留；切换不引入异常或额外大峰值 |
+| 策划／产品 | 哪些体验必须保留、哪些可降级，以及用户设置的约束 | 技能语义、命中反馈和玩法一致性有明确底线 |
+| QA | 对应构建、设备、场景、环境和运行窗口的验证矩阵 | 同时检查长帧、画面、正确性、降载与恢复，不只截一张 FPS 图 |
+| 技术负责人 | 预算与接口、策略负责人、变更复验范围及发布条件 | 一次策略变化能追到输入、行为、代价和验收记录 |
 
-// getThermalHeadroom(30) = 预测 30 秒后的热余量（0-1）
-// 1.0 = 完全安全；0.0 = 即将触发降频
-float headroom = powerManager.getThermalHeadroom(30);
+这些是职责，不要求一人对应一行。机制讲清以后，仍需有人协调内容选择与接受标准，否则“接了热 API”只证明拿到了信号。
 
-if (headroom < 0.5f) {
-    // 主动降低画质
-    sendToUnity("THERMAL_WARN");
-}
-```
+## 教学场景：战斗资源已就绪，持续运行后怎么办
 
-```csharp
-// Unity C# 侧接收 Android 的热状态
-public class ThermalManager : MonoBehaviour
-{
-    public enum ThermalLevel { Normal, Warm, Hot, Critical }
-    public ThermalLevel CurrentLevel { get; private set; }
+沿用上一文的技能场景：特效、音效和实例已满足首次使用条件，命中提示必须保留，装饰光效允许减少。下面假设持续战斗后出现帧时间上升，用它推演处理流程；这不是项目事故或已执行实验。
 
-    // Android 回调
-    public void OnThermalStatusChanged(string status)
-    {
-        switch (status)
-        {
-            case "NORMAL":   CurrentLevel = ThermalLevel.Normal;   ApplyQuality(3); break;
-            case "THERMAL_WARN": CurrentLevel = ThermalLevel.Warm; ApplyQuality(2); break;
-            case "HOT":      CurrentLevel = ThermalLevel.Hot;      ApplyQuality(1); break;
-            case "CRITICAL": CurrentLevel = ThermalLevel.Critical; ApplyQuality(0); break;
-        }
-    }
+1. **先关联现象。** 固定战斗输入，记录内容规模、平台热信号、CPU／GPU 路径、预取积压与内存，区分持续超预算和偶发首用成本。若只看到长帧，保留其他原因。
+2. **形成一个候选方案。** 若证据指向渲染负载与热限制共同影响目标体验，先降低约定的装饰效果或渲染成本；若主要是后台解压竞争，则调整非紧急任务。不要同时改所有参数后再猜哪项有效。
+3. **验证代价。** 查看必要技能是否仍能及时使用、命中提示是否清晰，是否增加加载等待、内存或输入延迟。帧率恢复但关键表现丢失，不能算通过。
+4. **验证恢复。** 战斗结束、负载减小后，达到稳定条件才恢复一档；记录恢复是否再次触发超预算。失去信号、切后台再回前台也要走明确分支。
+5. **回到生产。** TA／美术固化可降级组合，程序记录策略版本，QA 把同一场景和失败分支纳入后续回归。只有实际执行并留下证据，才能描述其效果。
 
-    void ApplyQuality(int level)
-    {
-        switch (level)
-        {
-            case 3: // 正常：高画质
-                QualitySettings.SetQualityLevel(3);
-                Screen.SetResolution(1920, 1080, true);
-                break;
-            case 2: // 温热：降分辨率
-                Screen.SetResolution(1440, 810, true);
-                break;
-            case 1: // 热：关阴影 + 降分辨率
-                QualitySettings.shadows = ShadowQuality.Disable;
-                Screen.SetResolution(1280, 720, true);
-                break;
-            case 0: // 危险：极简模式
-                QualitySettings.SetQualityLevel(0);
-                Application.targetFrameRate = 30;
-                break;
-        }
-    }
-}
-```
+比较方案时应固定或记录初始热状态、充电、亮度、目标帧率、缓存及工具开销，并通过重复或交替顺序降低先后顺序的影响。运行窗口由产品会话与风险决定，不把“30 分钟”当成所有产品的安全证书。
 
----
-
-## Unity Adaptive Performance 插件
-
-Unity 官方提供 Adaptive Performance 包（支持三星 Samsung 和 Adreno 设备）：
-
-```csharp
-using UnityEngine.AdaptivePerformance;
-
-public class AdaptiveQualityController : MonoBehaviour
-{
-    IAdaptivePerformance ap;
-
-    void Start()
-    {
-        ap = Holder.Instance;
-        if (ap == null || !ap.Active) return;
-
-        // 订阅热状态变化
-        ap.ThermalStatus.ThermalEvent += OnThermalEvent;
-    }
-
-    void OnThermalEvent(ThermalMetrics metrics)
-    {
-        switch (metrics.WarningLevel)
-        {
-            case WarningLevel.NoWarning:
-                // 可以提升画质
-                break;
-            case WarningLevel.ThrottlingImminent:
-                // 即将降频，主动降低负载
-                ReduceQuality();
-                break;
-            case WarningLevel.Throttling:
-                // 正在降频
-                ReduceQualityMore();
-                break;
-        }
-    }
-}
-```
-
----
-
-## iOS 的热管控差异
-
-Apple 的热管控比 Android 更激进但更透明：
-
-- **没有公开的温度/频率 API**：iOS 不允许 App 读取 CPU 温度
-- **系统自主降频**：iOS 会在用户无感知的情况下降频（A 系列芯片有更大的降频空间）
-- **实测表现**：iPhone 15 Pro 在重度游戏 20 分钟后，GPU 性能约降 15-20%（比骁龙 8 Gen 2 更抗降频，但仍然会降）
-- **可用信号**：`Application.lowMemory`（内存压力）是间接信号；帧时间突增也是降频信号
-
-```csharp
-// iOS 降频检测（间接方法）
-public class PerformanceWatcher : MonoBehaviour
-{
-    float _baselineFrameTime = -1f;
-
-    void Update()
-    {
-        float ft = Time.unscaledDeltaTime;
-
-        // 建立基准（前 5 秒）
-        if (Time.time < 5f)
-        {
-            _baselineFrameTime = Mathf.Lerp(_baselineFrameTime < 0 ? ft : _baselineFrameTime, ft, 0.1f);
-            return;
-        }
-
-        // 帧时间超过基准 50% 持续 3 秒 → 怀疑降频
-        if (ft > _baselineFrameTime * 1.5f)
-        {
-            // 触发降质
-        }
-    }
-}
-```
-
----
+<!-- DATA-TODO: 补充设备/OS/固件、引擎/Provider/构建/策略版本、场景输入、环境与初始热状态，记录帧/呈现、质量切换、热信号、加载和内存的同时间轴对照；覆盖无效信号、持续降载、恢复振荡、前后台及最低表现验收。当前只有设计，没有真机运行或优化收益。 -->
 
 ## 实践建议
 
-| 目标 | 做法 |
-|------|------|
-| 30 分钟不掉帧 | 用 30fps 而不是 60fps 作为稳定目标 |
-| 减少热量产生 | 降低 GPU 负载（优先优化 GPU） |
-| 主动适应降频 | 接入 Thermal API / Adaptive Performance |
-| 测试热稳定性 | 在环境温度 25°C 的房间，连续游戏 30 分钟，记录帧率曲线 |
-| 拒绝"手机抓着热"的优化 | 目标是设备表面温度 ≤ 42°C（用户舒适阈值） |
+先把信号读对，再把工作量、体验底线和恢复规则连接起来。持续性能的交付结果应是：**在明确设备与运行条件下，知道产品能承担什么、何时让步、怎样恢复，以及谁用什么证据接受这次取舍。**
+
+设备差异继续看[硬件 02b]({{< relref "performance/mobile-hardware-02b-sustained-performance.md" >}})，执行与显示的关系接[一帧到底是怎么完成的]({{< relref "performance/game-performance-frame-breakdown.md" >}})；不要把硬件档次、平台信号或一次局部验证，直接当成全产品持续表现的保证。

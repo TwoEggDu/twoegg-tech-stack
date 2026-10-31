@@ -55,7 +55,7 @@ series_reading_hint: "第一次系统读，建议先从入门篇开始，再按�
 ## 按你现在遇到的问题进入
 
 - 同一场景在不同安卓机上差距很大：先看 [设备档次]({{< relref "performance/mobile-hardware-02-device-tiers.md" >}})、[持续性能]({{< relref "performance/mobile-hardware-02b-sustained-performance.md" >}}) 和 [Android 厂商定制]({{< relref "performance/android-oem-customization.md" >}})。
-- 开头满帧，玩 20 分钟后开始掉：先看 [功耗与发热]({{< relref "performance/mobile-hardware-03-power-thermal.md" >}})、[耗电]({{< relref "performance/mobile-hardware-05-battery-power.md" >}}) 和 [持续性能]({{< relref "performance/mobile-hardware-02b-sustained-performance.md" >}})。
+- 首用正常，持续运行后体验变差：先看[功耗与发热]({{< relref "performance/mobile-hardware-03-power-thermal.md" >}})，区分热信号与帧时间，理解降载、恢复、团队责任和教学验证；再用[持续性能]({{< relref "performance/mobile-hardware-02b-sustained-performance.md" >}})确认设备比较的条件。两篇不提供机型留存率实测，不能把运行变慢直接归因于降频。
 - 明显是 GPU bound，但不知道该先砍哪里：先看 [TBDR 架构]({{< relref "rendering/hardware-02-tbdr.md" >}})、[带宽优化]({{< relref "performance/gpu-opt-02-bandwidth.md" >}})、[Shader 优化]({{< relref "performance/gpu-opt-03-shader.md" >}})、[后处理]({{< relref "performance/gpu-opt-05-postprocess-mobile.md" >}})。
 - 帧率抖动更像 CPU / GC / 内存问题：先看 [GC 压力]({{< relref "performance/cpu-opt-01-gc-pressure.md" >}})、[Update 调度]({{< relref "performance/cpu-opt-03-update-scheduling.md" >}})、[CPU Profiler 深度分析]({{< relref "performance/cpu-opt-04-profiler-cpu-deep.md" >}})、[内存预算]({{< relref "performance/cpu-opt-05-memory-budget.md" >}})。
 - 只在部分安卓机上出图形错、花屏或 Vulkan 问题：先看 [Android 版本演进]({{< relref "performance/android-os-version-evolution.md" >}})、[Android 厂商定制]({{< relref "performance/android-oem-customization.md" >}})、[Android Vulkan 驱动架构]({{< relref "performance/android-vulkan-driver.md" >}})。
