@@ -1,11 +1,18 @@
 ---
-title: "07｜单资源合格，为什么游戏运行仍然卡顿？（提纲）"
+title: "05｜单资源合格，为什么游戏运行仍然卡顿？（提纲）"
 slug: "production-continuous-performance"
 date: "2026-10-20"
 description: "提纲，正文待写：将资源规格、场景组合与设备测量接起来，讨论分层预算、持续检查和基线维护。"
 draft: false
 content_stage: "outline"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 5
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "单资源合格，为什么游戏运行仍然卡顿？（提纲）"
 hide_section_context: true
 weight: 110
 tags:
@@ -48,5 +55,3 @@ tags:
 - 将结果回写制作规范、测量说明和回归场景，明确各工种的处理职责。
 
 **成稿前待补**：原始测量样本及完整条件、已有检查的执行频率与负责人。持续门禁方案会与已运行的检查分别说明。
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}}) · [后续：线上反馈]({{< relref "engineering-journey/production-feedback-loop.md" >}})

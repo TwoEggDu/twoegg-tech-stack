@@ -1,12 +1,19 @@
 ---
-title: "本地资源完整，为什么手机包里仍然缺内容？"
+title: "01｜本地资源完整，为什么手机包里仍然缺内容？"
 slug: "production-resource-completeness"
 date: "2026-10-20"
 lastmod: "2026-10-31"
 description: "从 QA 反馈和美术现场对照出发，记录 Missing 工具链怎样逐步形成，让可能影响游戏运行的资源问题提前在日常开发和提交时暴露。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 1
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "本地资源完整，为什么手机包里仍然缺内容？"
 hide_section_context: true
 weight: 20
 tags:

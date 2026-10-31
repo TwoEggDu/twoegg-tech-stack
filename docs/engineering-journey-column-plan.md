@@ -12,9 +12,32 @@
 
 作者希望面向客户端主程／架构岗位，并体现 Tech Lead 能力。作品以组织生产为主线，通过具体案例呈现工作与责任拆分、协作契约、工具反馈、版本控制和验收；技术深读解释这些决策的机制依据。公开表达继续围绕问题、取舍与证据，不增加求职或顾问转化入口。站点级原则见[定位文档](site-entry-and-audience-plan.md#production-flagship-focus)。
 
-首期规模固定为 **1 篇总览、6 篇主线、3 个技术深读入口**：总览已有，主线 5 篇已有正文、1 篇为待补正文的既有提纲；深读复用原技术系列。沿用文章 URL、原编号和归属，下表只规定精选阅读顺序，不新建第二份系列主规划，也不迁移原文。
+首期规模固定为 **1 篇总览、6 篇主线、3 个技术深读入口**：总览已有，主线 5 篇已有正文、1 篇为待补正文的既有提纲；深读复用原技术系列。沿用文章 URL；页面统一归入“客户端生产体系”，按下述 01–12 编号，下表规定精选阅读顺序，不新建第二份系列主规划，也不迁移原文。
 
 技术深度按实际问题与证据向引擎、操作系统和硬件下钻，不要求每个案例覆盖所有层。真实经历、方法建议与独立实验分别表述；不同项目或阶段的记录不能拼成一次已验证交付。大型产品和团队是希望服务的场景，不由本文推定已有团队规模、负责人权限或产品成果。
+
+### 阅读归属与编号（2026-10-31）
+
+生产体系总览是 `client-production` 的唯一阅读索引，上位入口为游戏研发 FDE。全部 12 篇既有文章显式配置系列与顺序，保留原 URL；主线仍为六篇，支撑与选读不扩大首期写作范围。标题元数据统一使用两位篇号，正文标题用 `reading_title` 保留问题表述，篇号由共用页眉和面包屑显示。返回目录统一指向总览的 `#chapters`；前后篇由模板按 01–12 生成，移除旧的手写页尾导航。总览复用现有系列入口外观，正文与 CSS、模板均不修改。
+
+| 篇号 | 文章 | 阅读分组 |
+| --- | --- | --- |
+| 01 | [本地资源完整，为什么手机包里仍然缺内容？](../content/engineering-journey/production-resource-completeness.md) | 主线 |
+| 02 | [配置表导出了，为什么资源与双端仍然对不上？](../content/engineering-journey/production-config-consistency.md) | 主线 |
+| 03 | [构建成功了，为什么设备上仍然跑不起来？](../content/engineering-journey/production-build-runtime.md) | 主线 |
+| 04 | [多个版本同时开发，怎样避免漏合修复和发错内容？](../content/engineering-journey/production-parallel-versions.md) | 主线 |
+| 05 | [单资源合格，为什么游戏运行仍然卡顿？（提纲）](../content/engineering-journey/production-continuous-performance.md) | 主线 |
+| 06 | [包已经准备好了，怎样持续维护一个可发布版本？](../content/engineering-journey/production-release-readiness.md) | 主线 |
+| 07 | [客户端代码提交后，怎样尽早发现编译错误？](../content/engineering-journey/production-client-compile.md) | 开发期检查 |
+| 08 | [服务端编译检查：让代码问题在开发阶段得到处理](../content/engineering-journey/production-server-compile.md) | 开发期检查 |
+| 09 | [策划配置怎样在提交前检查：鲁班与本地 hook](../content/engineering-journey/production-config-table-format-checks.md) | 开发期检查 |
+| 10 | [换台构建机就失败，怎样让管线稳定运行？（提纲）](../content/engineering-journey/production-build-infrastructure.md) | 选读 |
+| 11 | [同一项目交付多个平台，怎样控制构建差异？](../content/engineering-journey/production-multiplatform.md) | 选读 |
+| 12 | [线上有异常、有数据，怎样推动下一轮改进？](../content/engineering-journey/production-feedback-loop.md) | 选读 |
+
+05 与 10 保留“提纲”状态。以下历史登记中的旧编号只表示当时记录，当前页面顺序以本表为准。
+
+本轮验证：19 项阅读布局回归通过；Hugo 构建成功，1,375 个阅读页检查为 0 错误；浏览器逐篇核对 12 篇的篇号、前后篇、返回总览与 FDE 上位入口，桌面及 390px 窄屏预览通过。仅修改本组 13 个内容文件与本规划，其他已有工作区修改保留；尚未提交或发布。
 
 ### 精选主线与复用决定
 

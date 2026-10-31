@@ -1,12 +1,19 @@
 ---
-title: "客户端代码提交后，怎样尽早发现编译错误？"
+title: "07｜客户端代码提交后，怎样尽早发现编译错误？"
 slug: "production-client-compile"
 date: "2026-10-20"
 lastmod: "2026-10-31"
 description: "记录客户端代码提交后的编译检查与通知做法，说明怎样把共享工程的错误接回修正和复查。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 7
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "客户端代码提交后，怎样尽早发现编译错误？"
 hide_section_context: true
 weight: 40
 tags:

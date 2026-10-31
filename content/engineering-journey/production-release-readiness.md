@@ -1,11 +1,18 @@
 ---
-title: "08｜包已经准备好了，怎样持续维护一个可发布版本？"
+title: "06｜包已经准备好了，怎样持续维护一个可发布版本？"
 slug: "production-release-readiness"
 date: "2026-10-20"
 description: "QA 发起构建、群通知取包、测试通过后交给运营发布：从一个打包按钮和一条通知，展开背后的交付体系、版本确认与失败恢复。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 6
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "包已经准备好了，怎样持续维护一个可发布版本？"
 hide_section_context: true
 weight: 120
 tags:
@@ -147,5 +154,3 @@ QA 发起构建后，不需要一直盯着构建机等待。完成通知把下�
 数据对应哪个版本、观察窗口与用户群是什么、变化是否与这次改动有关，需要在分析时继续核对。本篇先确认这项交接，不从数据回传推导买量收益或业务改善；具体处理留到[线上反馈与下一轮改进]({{< relref "engineering-journey/production-feedback-loop.md" >}})继续展开。
 
 **一个版本持续可发布，需要产物、验收与目标环境之间的对应关系持续成立，并由实际生效和使用结果确认。**
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [前篇：构建与运行故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后续：线上反馈]({{< relref "engineering-journey/production-feedback-loop.md" >}})

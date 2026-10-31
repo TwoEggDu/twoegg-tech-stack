@@ -6,7 +6,14 @@ lastmod: "2026-10-31"
 description: "先按失败阶段排查端服协议、代码与配置、资源节点及必需产物，再展开一次 AOT 元数据漏包的定位、修复与流程沉淀。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 3
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "构建成功了，为什么设备上仍然跑不起来？"
 hide_section_context: true
 weight: 70
 tags:

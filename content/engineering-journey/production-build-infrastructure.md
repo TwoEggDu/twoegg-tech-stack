@@ -1,11 +1,18 @@
 ---
-title: "06｜换台构建机就失败，怎样让管线稳定运行？（提纲）"
+title: "10｜换台构建机就失败，怎样让管线稳定运行？（提纲）"
 slug: "production-build-infrastructure"
 date: "2026-10-20"
 description: "提纲，正文待写：识别构建环境的隐含依赖，从首个失败阶段排查差异，并让公共工具维护能够交接。"
 draft: false
 content_stage: "outline"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 10
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "换台构建机就失败，怎样让管线稳定运行？（提纲）"
 hide_section_context: true
 weight: 100
 tags:
@@ -48,5 +55,3 @@ tags:
 - 根据阻塞程度、重复失败和人工负担决定下一步维护重点。
 
 **成稿前待补**：一个有完整操作与复验记录的维护事件。环境重建、升级或灾难恢复若只有方案，会保留其待验证状态。
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [相关：构建与运行故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})

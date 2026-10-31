@@ -1,11 +1,18 @@
 ---
-title: "09｜线上有异常、有数据，怎样推动下一轮改进？"
+title: "12｜线上有异常、有数据，怎样推动下一轮改进？"
 slug: "production-feedback-loop"
 date: "2026-10-20"
 description: "从新版本转化偏低的反馈切入，追查 CatJson 数值读写与区域设置的关系，结合转换工具和格式化修复记录，说明问题怎样交接并进入发布回归。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 12
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "线上有异常、有数据，怎样推动下一轮改进？"
 hide_section_context: true
 weight: 130
 tags:
@@ -156,5 +163,3 @@ JSON 数字的小数部分采用点号格式，见 [RFC 8259 的数字定义](ht
 这些积累会重新进入资源、配置、构建、验证和上线后的观察。发布把一轮成果交出去，反馈则帮助下一轮生产判断应该改变什么。
 
 **线上信息要对应到明确的问题、处理者与验证结果，才能持续转化为下一轮生产能力。**
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [前篇：可发布版本]({{< relref "engineering-journey/production-release-readiness.md" >}}) · [回到：资源完整性]({{< relref "engineering-journey/production-resource-completeness.md" >}}) · [回到：配置一致性]({{< relref "engineering-journey/production-config-consistency.md" >}})

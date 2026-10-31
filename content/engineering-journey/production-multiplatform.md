@@ -1,11 +1,18 @@
 ---
-title: "05｜同一项目交付多个平台，怎样控制构建差异？"
+title: "11｜同一项目交付多个平台，怎样控制构建差异？"
 slug: "production-multiplatform"
 date: "2026-10-20"
 description: "微信与 TikTok 同走 Web 构建，平台库却可能冲突或混入错误的包。将专属材料放在工程外，由参数化构建按目标准备并拷入工程，让平台差异由工具承担。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 11
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "同一项目交付多个平台，怎样控制构建差异？"
 hide_section_context: true
 weight: 90
 tags:
@@ -112,5 +119,3 @@ tags:
 <!-- DATA-TODO: 若写构建耗时、错误率或维护收益，补采样范围与对照；若描述某个平台功能通过，补相应包、设备或宿主、测试操作与结果。本轮仅验证站点文档构建，不运行游戏工程。 -->
 
 **让平台选择决定实际构建输入，把准备细节交给工具，再用目标平台的包验证交付。**
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [前篇：版本范围与合并协作]({{< relref "engineering-journey/production-parallel-versions.md" >}}) · [后续：构建环境（提纲）]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) · [继续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})

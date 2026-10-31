@@ -1,12 +1,19 @@
 ---
-title: "服务端编译检查：让代码问题在开发阶段得到处理"
+title: "08｜服务端编译检查：让代码问题在开发阶段得到处理"
 slug: "production-server-compile"
 date: "2026-10-20"
 lastmod: "2026-10-31"
 description: "从服务端工程、依赖与编译环境出发，说明提交检查的输入输出，以及它与后续联调验证的边界。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 8
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "服务端编译检查：让代码问题在开发阶段得到处理"
 hide_section_context: true
 weight: 50
 tags:

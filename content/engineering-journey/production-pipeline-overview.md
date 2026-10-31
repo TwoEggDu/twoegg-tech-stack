@@ -5,7 +5,24 @@ date: "2026-10-20"
 lastmod: "2026-10-31"
 description: "以资源 Missing、配置交接和 AOT 漏包为起点，说明怎样组织跨工种生产、处理开发期错误，并沿资源身份、运行时产物与加载成本继续深入。"
 draft: false
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+series_id: "client-production"
+series_role: "index"
+series_order: 0
+series_title: "客户端生产体系"
+series_entry: true
+series_audience: ["客户端工程师", "工具与构建工程师", "技术负责人"]
+series_level: "工程实践"
+series_best_for: "沿资源、配置、代码与候选版本的交接，理解检查、反馈和验收怎样进入团队日常生产。"
+series_summary: "六篇主线、三篇开发期检查与三篇选读；性能和构建环境仍为提纲。"
+series_intro: "从内容制作到可验收版本，把现场问题转成团队能够持续使用的生产能力。"
+series_reading_hint: "先看 Missing 与 AOT，再顺读 01–06 主线；07–09 开发检查、10–12 选读按需进入。"
+reading_parent: "delivery-engineering/fde-methods-series-index.md"
+reading_title: "游戏客户端生产体系：从内容制作到可验收版本"
+reading_route: ["01–06：从制作到验收", "07–09：开发期检查", "10–12：按问题选读"]
+reading_status: "共 12 篇：10 篇正文、2 篇提纲。05 性能与 10 构建环境的正文仍待补齐；技术深读保留在原系列。"
 weight: 10
 hide_section_context: true
 tags:
@@ -20,7 +37,7 @@ tags:
 
 推进这些工作的一个主要思路，是**把可能影响游戏运行、又能提前检查的问题，放到日常开发和提交时暴露出来**。让修改者在还清楚改动上下文时定位和修正，减少等到 QA 跑包或版本临近时才集中排查。
 
-「生产管线实践」整理我近几年围绕这些问题的工作：怎样判断原因，怎样与美术、策划、程序和 QA 一起推进处理，以及检查、工具和文档怎样进入日常生产。本篇沿着客户端版本的形成过程，选出六个问题作为阅读主线；沿用原有文章与编号。
+「生产管线实践」整理我近几年围绕这些问题的工作：怎样判断原因，怎样与美术、策划、程序和 QA 一起推进处理，以及检查、工具和文档怎样进入日常生产。本篇沿着客户端版本的形成过程，选出六个问题作为阅读主线，编号为 01–06；07–09 是开发期检查，10–12 按问题选读。
 
 第一次阅读，建议先看 **Missing 资源完整性**和 **AOT 元数据漏包**两个案例：前者看工具怎样进入多人协作，后者看产物与运行时机制怎样影响构建决策。正在处理日常报错，可以直接进入下方的[开发期检查](#development-checks)。
 
@@ -49,9 +66,9 @@ tags:
 
 资源完整性案例会具体展开这条路径。读完实践后，还可以通过文中的机制链接，继续查阅相关设计方法与技术细节。
 
-## 六个问题，串起从制作到验收的主线
+## 六个问题，串起从制作到验收的主线 {#chapters}
 
-下面选出 **5 篇既有正文和 1 篇性能提纲**。排列是当前阅读顺序，标题中的历史编号保持不变。性能案例尚待补齐实测，不以提纲代替完成结果。
+下面选出 **5 篇既有正文和 1 篇性能提纲**。01–06 按当前阅读顺序编号，正文页提供前后篇与返回系列目录入口。性能案例尚待补齐实测，不以提纲代替完成结果。
 
 | 篇目 | 回答的问题 |
 | --- | --- |
@@ -59,8 +76,8 @@ tags:
 | [02｜配置表导出了，为什么资源与双端仍然对不上？]({{< relref "engineering-journey/production-config-consistency.md" >}}) | 梳理配置含义、资源引用、生成物与双端消费之间的配套关系。 |
 | [03｜构建成功了，为什么设备上仍然跑不起来？]({{< relref "engineering-journey/production-build-runtime.md" >}}) | 从 AOT 元数据漏包的定位与修复，展开受控输入、失败条件与流程沉淀。 |
 | [04｜多个版本同时开发，怎样避免漏合修复和发错内容？]({{< relref "engineering-journey/production-parallel-versions.md" >}}) | 将多分支、多 Job 的包与测试范围对应起来，结合单号检查、SVN 日志核对和正式包复测控制交付内容。 |
-| [07｜单资源合格，为什么游戏运行仍然卡顿？（提纲）]({{< relref "engineering-journey/production-continuous-performance.md" >}}) | 待用实际案例连接资源规格、场景组合与设备测量；当前仅说明问题与取材范围。 |
-| [08｜包已经准备好了，怎样持续维护一个可发布版本？]({{< relref "engineering-journey/production-release-readiness.md" >}}) | 将候选产物、检查报告、QA 验收和端服生效结果接到同一个交付对象上。 |
+| [05｜单资源合格，为什么游戏运行仍然卡顿？（提纲）]({{< relref "engineering-journey/production-continuous-performance.md" >}}) | 待用实际案例连接资源规格、场景组合与设备测量；当前仅说明问题与取材范围。 |
+| [06｜包已经准备好了，怎样持续维护一个可发布版本？]({{< relref "engineering-journey/production-release-readiness.md" >}}) | 将候选产物、检查报告、QA 验收和端服生效结果接到同一个交付对象上。 |
 
 ## 开发过程中报错，先让修改者能够处理 {#development-checks}
 
@@ -68,9 +85,9 @@ tags:
 
 | 文章 | 回答的问题 |
 | --- | --- |
-| [客户端代码提交后，怎样尽早发现编译错误？]({{< relref "engineering-journey/production-client-compile.md" >}}) | Jenkins 提交后编译、群提醒，以及从错误日志回到版本、依赖与共享工程复检。 |
-| [服务端编译检查：让代码问题在开发阶段得到处理]({{< relref "engineering-journey/production-server-compile.md" >}}) | 为什么服务端需要独立的编译检查、错误反馈和复检？ |
-| [策划配置怎样在提交前检查：鲁班与本地 hook]({{< relref "engineering-journey/production-config-table-format-checks.md" >}}) | TortoiseSVN 客户端钩子接入导表检查，区分可解析、符合规则和游戏中表现正确。 |
+| [07｜客户端代码提交后，怎样尽早发现编译错误？]({{< relref "engineering-journey/production-client-compile.md" >}}) | Jenkins 提交后编译、群提醒，以及从错误日志回到版本、依赖与共享工程复检。 |
+| [08｜服务端编译检查：让代码问题在开发阶段得到处理]({{< relref "engineering-journey/production-server-compile.md" >}}) | 为什么服务端需要独立的编译检查、错误反馈和复检？ |
+| [09｜策划配置怎样在提交前检查：鲁班与本地 hook]({{< relref "engineering-journey/production-config-table-format-checks.md" >}}) | TortoiseSVN 客户端钩子接入导表检查，区分可解析、符合规则和游戏中表现正确。 |
 
 提交前的本地检查让策划在仍记得修改上下文时处理问题；提交后的编译检查针对共享工程提供反馈。两者检查的时机与输入不同，不能用本地通过替代共享版本的结果。
 
@@ -92,9 +109,9 @@ tags:
 
 | 篇目 | 对应问题 |
 | --- | --- |
-| [06｜换台构建机就失败，怎样让管线稳定运行？（提纲）]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) | 识别环境依赖，定位失败阶段，让维护工作能够交接。 |
-| [05｜多平台构建]({{< relref "engineering-journey/production-multiplatform.md" >}}) | 按平台参数选择材料，准备工程并分别测试。 |
-| [09｜线上反馈]({{< relref "engineering-journey/production-feedback-loop.md" >}}) | 从运行反馈定位问题，把修复条件加入回归。 |
+| [10｜换台构建机就失败，怎样让管线稳定运行？（提纲）]({{< relref "engineering-journey/production-build-infrastructure.md" >}}) | 识别环境依赖，定位失败阶段，让维护工作能够交接。 |
+| [11｜同一项目交付多个平台，怎样控制构建差异？]({{< relref "engineering-journey/production-multiplatform.md" >}}) | 按平台参数选择材料，准备工程并分别测试。 |
+| [12｜线上有异常、有数据，怎样推动下一轮改进？]({{< relref "engineering-journey/production-feedback-loop.md" >}}) | 从运行反馈定位问题，把修复条件加入回归。 |
 | [FDE 交付方法]({{< relref "delivery-engineering/fde-02-delivery-method.md" >}}) | 对照具体实践，理解需求发现、现场诊断与使用复验。 |
 
 ## 这些问题怎样形成生产飞轮

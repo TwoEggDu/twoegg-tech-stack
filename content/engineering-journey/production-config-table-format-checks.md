@@ -1,12 +1,19 @@
 ---
-title: "策划配置怎样在提交前检查：鲁班与本地 hook"
+title: "09｜策划配置怎样在提交前检查：鲁班与本地 hook"
 slug: "production-config-table-format-checks"
 date: "2026-10-20"
 lastmod: "2026-10-31"
 description: "用鲁班与 TortoiseSVN 提交前客户端钩子组织配置检查，说明规则、报错修正、本地与共享输入，以及实际消费的验证边界。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 9
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "策划配置怎样在提交前检查：鲁班与本地 hook"
 hide_section_context: true
 weight: 60
 tags:

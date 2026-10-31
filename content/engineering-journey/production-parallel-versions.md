@@ -5,7 +5,14 @@ date: "2026-10-20"
 description: "新功能验证、测试与发布分支同时出包，多个 Jenkins Job 怎样对应版本范围与 QA 验证？结合分支内分时打包、TB 单号检查和 SVN 日志核对展开实际流程。"
 draft: false
 content_stage: "article"
-series: "工程实践与演进"
+series: "客户端生产体系"
+type: "reading-series"
+topic_key: "delivery"
+primary_series: "client-production"
+series_role: "article"
+series_order: 4
+reading_index: "engineering-journey/production-pipeline-overview.md"
+reading_title: "多个版本同时开发，怎样避免漏合修复和发错内容？"
 hide_section_context: true
 weight: 80
 tags:
@@ -140,5 +147,3 @@ tags:
 <!-- DATA-TODO: 正式 Job 重新打包后重新测试、发布分支谨慎提交及修复后空窗期已经作者确认。若展开冻结能力、构建输入一致性或发布效果，需补起止修订、Job 参数与产物、空窗期执行方式和对应测试记录；不推定已有自动锁定或同产物晋级。 -->
 
 **版本管理要让应当交付的修改进入正确的包，也让负责测试和发布的人知道这个包实际改变了什么。**
-
-[返回生产管线总览]({{< relref "engineering-journey/production-pipeline-overview.md" >}}) · [前篇：构建与运行故障]({{< relref "engineering-journey/production-build-runtime.md" >}}) · [后篇：平台差异与参数化准备]({{< relref "engineering-journey/production-multiplatform.md" >}}) · [继续：发布验收]({{< relref "engineering-journey/production-release-readiness.md" >}})
