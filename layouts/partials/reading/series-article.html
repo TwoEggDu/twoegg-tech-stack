@@ -13,7 +13,7 @@
 {{ end }}
 <article class="reading-article article-reading">
   <header class="reading-article-header">
-    <p class="eyebrow">{{ $backTitle }}{{ if .numbered }} <span aria-hidden="true">·</span> {{ printf "%02d" .chapter }} / {{ printf "%02d" (len $members) }}{{ end }}{{ if eq $page.Params.content_stage "outline" }} <span class="reading-stage">章节提纲 · 正文待写</span>{{ end }}</p>
+    <p class="eyebrow">{{ $backTitle }}{{ if .numbered }} <span aria-hidden="true">·</span> {{ if gt .chapter (len $members) }}第 {{ printf "%02d" .chapter }} 篇 · 当前 {{ len $members }} 篇{{ else }}{{ printf "%02d" .chapter }} / {{ printf "%02d" (len $members) }}{{ end }}{{ end }}{{ if eq $page.Params.content_stage "outline" }} <span class="reading-stage">章节提纲 · 正文待写</span>{{ end }}</p>
     <h1>{{ $page.Params.reading_title | default $page.Title }}</h1>
     {{ with $page.Params.reading_summary | default $page.Description }}<p class="reading-article-dek">{{ . }}</p>{{ end }}
   </header>

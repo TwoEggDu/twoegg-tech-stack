@@ -78,6 +78,11 @@ def fixture(root):
     content(root, 'engine-toolchain/il2cpp-example.md', title='Runtime example')
     content(root, 'engine-toolchain/legacy-module.md', title='Legacy module',
             series_id='module', series='Book')
+    content(root, 'delivery-engineering/sparse-index.md', title='Sparse book',
+            series='Sparse book', series_id='sparse', series_role='index',
+            type='reading-series')
+    content(root, 'delivery-engineering/sparse-two.md', title='Chapter two',
+            primary_series='sparse', series_order=2, type='reading-series')
 
 
 class ReadingLayouts(unittest.TestCase):
@@ -125,6 +130,13 @@ class ReadingLayouts(unittest.TestCase):
         page = self.page('delivery-engineering/book')
         self.assertIn('series-cover', page)
         self.assertIn('id="chapters"', page)
+
+    def test_later_chapter_without_earlier_articles_keeps_number_and_actual_count(self):
+        page = self.page('delivery-engineering/sparse-two')
+        self.assertIn('第 02 篇', page)
+        self.assertIn('当前 1 篇', page)
+        self.assertNotIn('02 / 01', page)
+        self.assertIn('href="/demo/delivery-engineering/sparse-index/"', page)
 
     def test_legacy_name_resolves_index_without_fabricating_anchor(self):
         page = self.page('delivery-engineering/old')

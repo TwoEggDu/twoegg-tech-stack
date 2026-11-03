@@ -5,4 +5,4 @@ description: "先学习通用项目与团队管理，再进入软件研发应用
 topic_key: "management"
 ---
 
-从[项目管理首页]({{< relref "reading/project-management.md" >}})选择阅读方向，或进入[详细阅读提纲]({{< relref "project-management/project-management-series-index.md" >}})。通用基础、研发应用与游戏实践共 32 个主题；首篇[管理到底在管理什么]({{< relref "project-management/project-management-01-management-and-results.md" >}})已有正文，其余主题逐篇展开。
+从[项目管理首页]({{< relref "reading/project-management.md" >}})选择阅读方向，或进入[详细阅读提纲]({{< relref "project-management/project-management-series-index.md" >}})。通用基础、研发应用与游戏实践共 32 个主题；已有正文为[管理到底在管理什么]({{< relref "project-management/project-management-01-management-and-results.md" >}})和[目标、范围与验收]({{< relref "project-management/project-management-04-goals-scope-acceptance.md" >}})，其余主题逐篇展开。

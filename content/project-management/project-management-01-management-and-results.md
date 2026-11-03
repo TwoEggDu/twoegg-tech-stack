@@ -146,7 +146,7 @@ flowchart TD
 
 换成你自己的工作，先选一项多人参与、最近反复卡住的任务。看看它停在目标不清、输入缺失、资源冲突、能力不足，还是完成情况无法判断，再决定下一步。任务清单由此开始帮助你作选择，而不只是记录忙碌。
 
-下一项要解决的是：怎样把这些期望写成各方都能确认的目标、范围和验收约定。相关问题已列在[PM-04 的阅读提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-04)中。
+下一项要解决的是：怎样把这些期望写成各方都能确认的目标、范围和验收约定。继续阅读 [PM-04｜目标、范围与验收]({{< relref "project-management/project-management-04-goals-scope-acceptance.md" >}})。
 
 ## 来源与延伸阅读
 

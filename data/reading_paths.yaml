@@ -79,12 +79,13 @@ topics:
     start_title: "从管理基础开始"
     start:
       page: "project-management/project-management-01-management-and-results.md"
-      value: "从一次培训活动区分活动、产出与实际效果，理解管理怎样影响团队结果。PM-01 已有正文与任务改写练习，其余主题按阅读提纲逐篇补充。"
+      value: "从一次培训活动区分活动、产出与实际效果，理解管理怎样影响团队结果；接着读 PM-04，把目标、范围与验收写成共同约定。其余主题逐篇补充。"
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01 已有正文；分组入口保留详细提纲，并接入已写好的文章。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-04 已有正文；其余主题入口保留详细提纲。"
         entries:
+          - { label: "目标、范围与验收 · PM-04 正文", page: "project-management/project-management-04-goals-scope-acceptance.md", value: "分清目标、需求、交付物与任务，用一页项目说明约定范围、检查证据和确认责任。" }
           - { label: "管理的基本认识 · 01—03", page: "project-management/project-management-series-index.md", anchor: "foundations", value: "理解活动与结果、责任与决策权、项目与日常运营，再选择适合工作的推进方式。" }
           - { label: "把项目组织起来 · 04—10", page: "project-management/project-management-series-index.md", anchor: "projects", value: "从目标与验收进入工作分解、估算、资源与成本、风险、变更和收尾，形成完整项目主线。" }
           - { label: "带领与培养人员 · 11—14", page: "project-management/project-management-series-index.md", anchor: "people", value: "根据具体任务调整支持方式，明确授权与检查，安排培养、激励和有依据的反馈。" }
