@@ -7,7 +7,7 @@
 {{- end -}}
 {{- if and (not $topic) $index }}{{ $topic = $index.Params.topic_key | default "" }}{{ end -}}
 {{- if not $topic -}}
-  {{- $sections := dict "delivery-engineering" "delivery" "engineering-journey" "delivery" "live-ops-engineering" "delivery" "code-quality" "delivery" "problem-solving" "delivery" "ai-empowerment" "delivery" "performance" "performance" "et-framework" "frameworks" "et-framework-prerequisites" "frameworks" "system-design" "frameworks" "engine-toolchain" "engine" "rendering" "engine" "gameplay" "gameplay" -}}
+  {{- $sections := dict "delivery-engineering" "delivery" "engineering-journey" "delivery" "live-ops-engineering" "delivery" "code-quality" "delivery" "problem-solving" "delivery" "ai-empowerment" "delivery" "project-management" "management" "performance" "performance" "et-framework" "frameworks" "et-framework-prerequisites" "frameworks" "system-design" "frameworks" "engine-toolchain" "engine" "rendering" "engine" "gameplay" "gameplay" -}}
   {{- $topic = index $sections $page.Section | default "" -}}
   {{- if eq $page.Params.reading_kind "series" }}{{ $topic = "performance" }}{{ end -}}
   {{- if in (slice "Unity 异步运行时" "HybridCLR" "YooAsset 资源管理与交付" "Addressables 资源管理与交付" "Addressables 与 YooAsset 对比与选型" "技能系统深度" "游戏编程设计模式") $page.Params.series }}{{ $topic = "frameworks" }}{{ end -}}

@@ -32,7 +32,9 @@ hugo new content --kind series-article delivery-engineering/my-series-01.md
 
 三个模板均生成 `draft: true`。先填标题、描述和内容；系列模板还需要替换 `replace-with-series-id`、展示名称、主题与篇目顺序，再用 `hugo server -D` 预览。确认可发布后才改成 `draft: false`。
 
-索引的 `reading_groups` 按 `series_order` 划分章节；0 开始的系列应同步调整 first。章节可以省略 `reading_title`、`reading_summary`，默认沿用标题和描述。`topic_key` 可选 `delivery`、`gameplay`、`frameworks`、`engine`、`performance`。
+索引的 `reading_groups` 按 `series_order` 划分章节；0 开始的系列应同步调整 first。章节可以省略 `reading_title`、`reading_summary`，默认沿用标题和描述。`topic_key` 可选 `delivery`、`management`、`gameplay`、`frameworks`、`engine`、`performance`。
+
+主题首页通过 `data/reading_paths.yaml` 的 `topics` 注册；可选的 `sections` 按顺序呈现分组，每组提供唯一 `id`、`title`、说明 `note` 和链接 `entries`。链接沿用 `page`、`anchor`、`label`、`value`；使用真实页面与锚点。提纲阶段可链接阅读索引内的主题锚点，并在首页明确状态，正文完成后再替换成文章链接。
 
 ## 发布检查
 

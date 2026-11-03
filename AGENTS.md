@@ -50,6 +50,7 @@ doc-plan.md                          ← 系列级路由（不放篇级）
 | `rendering/` | 渲染管线、URP、Shader、变体 |
 | `et-framework/` + `et-framework-prerequisites/` | ET 服务端框架与前置 |
 | `delivery-engineering/` | 多端交付闭环 |
+| `project-management/` | 通用项目与团队管理、软件研发应用及游戏研发管理实践 |
 | `live-ops-engineering/` | 长线运营工程 |
 | `engine-toolchain/` | 引擎工具链 |
 | `performance/` | 游戏性能 |

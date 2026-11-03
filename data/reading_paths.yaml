@@ -71,6 +71,47 @@ topics:
       - { label: "Unity 游戏更新与发布", page: "delivery-engineering/unity-game-update-release-series-index.md", value: "从首次整包、线上修复与新内容上线，进入版本绑定、构建范围、强更热更和发布回退。七篇章节当前均为提纲，正文待写。" }
       - { label: "CI/CD 流水线", page: "delivery-engineering/delivery-cicd-pipeline-series-index.md" }
       - { label: "资源管线", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }
+  - title: "项目管理"
+    description: "先学习通用项目与团队管理，再进入软件研发应用与游戏研发实践；当前已建立详细提纲。"
+    page: "reading/project-management.md"
+    key: "management"
+    eyebrow: "项目、人员与团队协作"
+    start_title: "从管理基础开始"
+    start:
+      page: "project-management/project-management-series-index.md"
+      value: "先看管理究竟在管理什么，再沿目标、项目、人员、沟通与改进展开。23 个通用基础主题、4 个研发应用主题、5 个游戏实践主题已整理为详细提纲，正文待写。"
+    sections:
+      - id: "foundations"
+        title: "先学通用基础"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。各入口当前通向详细提纲，列出核心问题、展开要点与拟安排的练习。"
+        entries:
+          - { label: "管理的基本认识 · 01—03", page: "project-management/project-management-series-index.md", anchor: "foundations", value: "理解活动与结果、责任与决策权、项目与日常运营，再选择适合工作的推进方式。" }
+          - { label: "把项目组织起来 · 04—10", page: "project-management/project-management-series-index.md", anchor: "projects", value: "从目标与验收进入工作分解、估算、资源与成本、风险、变更和收尾，形成完整项目主线。" }
+          - { label: "带领与培养人员 · 11—14", page: "project-management/project-management-series-index.md", anchor: "people", value: "根据具体任务调整支持方式，明确授权与检查，安排培养、激励和有依据的反馈。" }
+          - { label: "沟通、会议与决策 · 15—19", page: "project-management/project-management-series-index.md", anchor: "communication", value: "识别信息需求，组织一对一和会议，处理分歧，让决定接到负责人、期限与完成标准。" }
+          - { label: "发现问题与持续改进 · 20—23", page: "project-management/project-management-series-index.md", anchor: "improvement", value: "从度量与偏差进入原因验证、复盘行动和持续采用，分别观察动作完成与实际效果。" }
+      - id: "tools"
+        title: "按问题查方法与工具"
+        note: "先理解工具回答什么，再看输入、用法和局限。图表样例、可复用模板与软件实操待后续补充。"
+        entries:
+          - { label: "拆解与排期", page: "project-management/project-management-series-index.md", anchor: "tools-planning", value: "WBS、依赖网络、关键路径、甘特图、资源与成本表：把范围和约束转成可讨论的计划。" }
+          - { label: "分工与沟通", page: "project-management/project-management-series-index.md", anchor: "tools-collaboration", value: "RACI、干系人分析、沟通计划、会议议程与决定记录：明确参与方式和后续行动。" }
+          - { label: "风险与诊断", page: "project-management/project-management-series-index.md", anchor: "tools-diagnosis", value: "风险登记表、时间线、鱼骨图、5 Whys 与帕累托图：整理不确定性和候选原因，再用证据核实。" }
+          - { label: "跟踪与软件实操", page: "project-management/project-management-series-index.md", anchor: "tools-tracking", value: "看板、在制品限制、周期时间与行动跟进；再看 Jira、飞书、Excel、Microsoft Project 怎样承载共同模型。" }
+      - id: "applications"
+        title: "再进入研发场景"
+        note: "先把通用知识用到软件研发，再讨论游戏内容生产与版本推进；应用提纲会回指对应基础。"
+        entries:
+          - { label: "软件研发中的应用 · 24—27", page: "project-management/project-management-series-index.md", anchor: "research", value: "探索性工作怎样估算，需求怎样进入迭代，跨团队怎样集成验收，管理软件怎样连接工作记录。" }
+          - { label: "游戏研发管理实践 · 28—32", page: "project-management/project-management-series-index.md", anchor: "game-practice", value: "围绕版本目标、跨工种交接、生产卡点与上线准备，逐步补充有职责和证据边界的实践；目前为提纲。" }
+      - id: "references"
+        title: "参考阅读"
+        note: "围绕问题组织文章，结合书籍建立知识基础。正文将标注实际使用的版本、章节与其他资料。"
+        entries:
+          - { label: "格鲁夫给经理人的第一课", page: "project-management/project-management-series-index.md", anchor: "references", value: "Andrew S. Grove：理解管理产出、管理者的工作、人员培养、授权与会议。" }
+          - { label: "项目管理之美", page: "project-management/project-management-series-index.md", anchor: "references", value: "Scott Berkun：理解项目计划、沟通、决策、信任和实际推进中的困难。" }
+          - { label: "PMBOK 指南", page: "project-management/project-management-series-index.md", anchor: "references", value: "Project Management Institute：核对体系与术语覆盖；引用时说明版本，区分各版结构与侧重点。" }
+    directory: "project-management/project-management-series-index.md"
   - title: "GamePlay"
     description: "理解游戏的可玩性，分析技能、战斗、剧情、角色养成与玩法循环的设计。"
     page: "reading/gameplay.md"

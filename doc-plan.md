@@ -125,6 +125,7 @@
 | 主题 | Canonical 文件 | 状态 | 备注 |
 |------|----------------|------|------|
 | 交付工程旗舰专栏 | [docs/delivery-engineering-column-plan.md](./docs/delivery-engineering-column-plan.md) | 已拆出 | 多端交付闭环 |
+| 项目与团队管理 | [docs/project-management-series-plan.md](./docs/project-management-series-plan.md) | 首页与详细提纲已建立；正文待写 | 独立“项目管理”页签；通用管理基础 → 软件研发应用 → 游戏研发实践，方法与工具按用途交叉索引 |
 | 版本管理 | [docs/version-management-series-plan.md](./docs/version-management-series-plan.md) | 前六篇已有正文，其余 4 篇为提纲；三种工具模型、Git 任务提交及分支合并已实测 | 工程与交付下的独立专栏；共同模型 → Git / SVN / P4 → 提交、合并、资源、审查与构建基线；引擎待验证，发布节奏与冻结仍归交付 V04 |
 | 游戏研发 FDE | [docs/fde-methods-series-plan.md](./docs/fde-methods-series-plan.md) | 基础与方法篇已发布；总入口已本地接入代表案例与四层技术深读 | 从技术机制到产品交付；案例和技术正文保留原归属，当前入口修订未发布 |
 | 游戏交付 Agent 研究 | [docs/game-delivery-agent-series-plan.md](./docs/game-delivery-agent-series-plan.md) | 5 篇正文、3 篇提纲 | 已接入工程与交付入口；固定流程与候选模型调查设计；项目接口待核对，服务和策略未实现，实验未执行；前 3 篇线上已核验，第 04 篇线上待核验，本轮第 05 篇及同步的线上部署待核验 |
