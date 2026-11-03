@@ -72,18 +72,18 @@ topics:
       - { label: "CI/CD 流水线", page: "delivery-engineering/delivery-cicd-pipeline-series-index.md" }
       - { label: "资源管线", page: "delivery-engineering/delivery-resource-pipeline-series-index.md" }
   - title: "项目管理"
-    description: "先学习通用项目与团队管理，再进入软件研发应用与游戏研发实践；当前已建立详细提纲。"
+    description: "先学习通用项目与团队管理，再进入软件研发应用与游戏研发实践；从 PM-01 管理认识开始阅读。"
     page: "reading/project-management.md"
     key: "management"
     eyebrow: "项目、人员与团队协作"
     start_title: "从管理基础开始"
     start:
-      page: "project-management/project-management-series-index.md"
-      value: "先看管理究竟在管理什么，再沿目标、项目、人员、沟通与改进展开。23 个通用基础主题、4 个研发应用主题、5 个游戏实践主题已整理为详细提纲，正文待写。"
+      page: "project-management/project-management-01-management-and-results.md"
+      value: "从一次培训活动区分活动、产出与实际效果，理解管理怎样影响团队结果。PM-01 已有正文与任务改写练习，其余主题按阅读提纲逐篇补充。"
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。各入口当前通向详细提纲，列出核心问题、展开要点与拟安排的练习。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01 已有正文；分组入口保留详细提纲，并接入已写好的文章。"
         entries:
           - { label: "管理的基本认识 · 01—03", page: "project-management/project-management-series-index.md", anchor: "foundations", value: "理解活动与结果、责任与决策权、项目与日常运营，再选择适合工作的推进方式。" }
           - { label: "把项目组织起来 · 04—10", page: "project-management/project-management-series-index.md", anchor: "projects", value: "从目标与验收进入工作分解、估算、资源与成本、风险、变更和收尾，形成完整项目主线。" }
