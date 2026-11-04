@@ -202,7 +202,7 @@ F         ·  ·  ·  ·  ·  ·  █
 
 可以用前面的网络做一个复算练习：C 从 2 天增加到 6 天，其余条件保持最初版本不变。此时 `A → C → F` 为 `1 + 6 + 1 = 8` 天，终点变为 `t=8`，它成为新的关键路径；原材料路径仍为 7 天。接下来应关注 C 的新增困难和输入条件，而不是继续只催原来最长的 B。
 
-一份可用的进度安排，需要能解释活动、依赖、估算、资源与日历怎样共同形成日期。后续的[PM-07 资源、成本与外部协作]({{< relref "project-management/project-management-07-resources-costs-procurement.md" >}})会继续讨论支持条件；[风险与问题提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-08)则接着处理执行中的不确定性。
+一份可用的进度安排，需要能解释活动、依赖、估算、资源与日历怎样共同形成日期。后续的[PM-07 资源、成本与外部协作]({{< relref "project-management/project-management-07-resources-costs-procurement.md" >}})会继续讨论支持条件；[PM-08 风险与问题]({{< relref "project-management/project-management-08-risks-and-issues.md" >}})则接着处理执行中的不确定性。
 
 ## 来源与延伸阅读
 
