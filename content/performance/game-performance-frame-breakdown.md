@@ -502,7 +502,7 @@ Unity 中可以从这些已插桩位置进入调查：
 
 - 资源准备时机不对
 - 生命周期变化太剧烈
-- 一部分后台工作最终同帧收口
+- 后台结果未在消费期限前就绪，主线程收口因此等待
 
 以 Unity 6.0 为例，`Gfx.WaitForPresentOnGfxThread` 需要结合渲染线程和 GPU 观察；`WaitForTargetFPS` 在不同上下文下可能关联限帧、VSync 或 GPU 尚未完成。标记是调查入口，不能仅凭名字认定原因。官方还区分 Editor 与 Player 的观测开销，见 [Profiler markers reference](https://docs.unity.com/en-us/engine/6000.0/manual/analysis/profiler/markers)。
 

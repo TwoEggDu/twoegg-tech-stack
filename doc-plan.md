@@ -87,6 +87,8 @@
 | 游戏编程模式 | [docs/game-programming-patterns-plan.md](./docs/game-programming-patterns-plan.md) | 已拆出 | 对应旧 `系列七·B` |
 | 游戏与引擎算法 | [docs/game-engine-algorithms-plan.md](./docs/game-engine-algorithms-plan.md) | 已拆出 | 对应旧 `系列七·D` |
 | 游戏性能方法论 | [docs/game-performance-series-plan.md](./docs/game-performance-series-plan.md) | 已拆出 | 性能认知与方法论主线 |
+| 游戏客户端性能工程 | [docs/client-performance-engineering-series-plan.md](./docs/client-performance-engineering-series-plan.md) | 首页与首篇通用观测方法已写；数据可比性、校准与监测建设待推进 | 从共同基础、预算与机型分档，连接 UI、场景、角色、动画、特效的观测、测量和持续回归；复用文章保留原归属 |
+| Unity 特效测试 | [docs/unity-vfx-testing-series-plan.md](./docs/unity-vfx-testing-series-plan.md) | 7 篇规划；开源工具首轮静态分析完成，正文与实验待开展 | 从 ParticleEffectProfiler 的指标口径与校准，推进到可重复测试、真机对照和生产验收 |
 | 引擎源码阅读到自研引擎 | [docs/engine-source-reading-to-self-built-engine-series-plan.md](./docs/engine-source-reading-to-self-built-engine-series-plan.md) | 已拆出 | 从源码阅读过渡到自研 |
 
 ### 资产、加载、裁剪与版本升级

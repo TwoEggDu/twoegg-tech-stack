@@ -51,7 +51,15 @@ Unity 6.0、Android Frame Pacing、Vulkan 与 DXGI 的公开契约用于机制�
 
 责任表为工程建议，技能过程为无数据教学推演，未执行设备实验或团队流程验证。本轮未提交发布，范围与本地检查见[记录](game-performance-workflow-review.md)。下一步沿 M02 选择一个可公开的任务或独立实验，取得同场景基线、诊断、单项改动和复测；持续性能 05 仍为提纲，不能用本篇补成已验证案例。
 
+## 客户端观测首篇的关联修订（2026-11-04）
+
+随[客户端性能工程 CPE-01](../content/performance/client-performance-task-observation-model.md)写作，原位修正[一帧拆解](../content/performance/game-performance-frame-breakdown.md)摘要中的“一部分后台工作最终同帧收口”，明确为后台结果未在消费期限前就绪而导致主线程等待。与原文“同帧消费仍可有效并行”的解释一致，不另改机制或引擎映射。R1 经 AI 编辑复审关闭，仍无设备实验或优化收益证据。
+
+CPE-01 是引擎无关的任务观测方法，独立篇级归属在[客户端性能工程主规划](client-performance-engineering-series-plan.md)，本系列继续维护帧、内存、就绪与诊断定义。相关页面检查与本地交付记录见[执行计划](client-performance-budget-tiering-monitoring-execution-plan.md)的 P1 记录；本轮未提交推送。
+
 ## 计划中
+
+2026-11-03 新增[预算、设备分档、观测与监测学习路线](client-performance-budget-tiering-monitoring-outline.md)，并形成[执行计划](client-performance-budget-tiering-monitoring-execution-plan.md)：先补成本模型、观测指标、预算与高中低机型分档，再覆盖 UI、场景、角色、动画和特效，最后推导准确采集与持续监测设计。本系列承接公共指标、测量与诊断；预算、硬件及对象机制沿原系列复用。当前完成范围、缺口和阶段任务整理，首批为最小指标字典与教学任务贯通，尚未新增正文、实测阈值或监测实现；特效作为后续首个专项应用，篇级计划仍单独维护。
 
 1. 继续补系列中的案例篇
 可选方向：

@@ -8,6 +8,12 @@
   <h1>{{ .Title }}</h1>
   <p>{{ .Description }}</p>
 </header>
+{{ with site.GetPage "performance/client-performance-engineering-series-index.md" }}
+<section class="topic-start" aria-labelledby="performance-course-title">
+  <h2 id="performance-course-title">系统学习：游戏客户端性能工程</h2>
+  {{ partial "reading/article.html" (dict "page" .Path "label" "从基础、预算与机型分档，到测试和持续监测" "value" "沿六阶段路线，理解 UI、场景、角色、动画和特效的成本与观测方法。已有文章可读，预算校准和工具建设逐步补齐。") }}
+</section>
+{{ end }}
 <section id="experience" class="section" aria-labelledby="experience-title">
   <h2 id="experience-title">01 · 为什么要优化游戏性能</h2>
   <p class="performance-layer-intro">玩家感受到的是画面是否连贯、操作是否及时，以及能否舒服地持续游玩。优化需要在流畅、响应、画质、稳定和能耗之间找到适合目标设备的平衡。</p>
