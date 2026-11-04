@@ -152,7 +152,7 @@ tags: ["项目管理", "目标管理", "范围管理", "验收"]
 
 这份约定的价值，正体现在它能帮助团队说明选择的理由。范围既不是永远不能改变的边界，也不是任何新想法都能直接加入的清单；它需要让承诺、资源和检查方式一起更新。
 
-目标和范围明确以后，还需要把交付物拆成可安排、可检查的工作。下一步的问题见[PM-05 工作分解提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-05)。
+目标和范围明确以后，还需要把交付物拆成可安排、可检查的工作。下一步的问题见[PM-05 工作分解]({{< relref "project-management/project-management-05-work-breakdown.md" >}})。
 
 ## 来源与延伸阅读
 
