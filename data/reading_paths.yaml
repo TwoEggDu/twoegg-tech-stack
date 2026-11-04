@@ -114,7 +114,7 @@ topics:
           - { label: "发现问题与持续改进 · 20—23", page: "project-management/project-management-series-index.md", anchor: "improvement", value: "从度量与偏差进入原因验证、复盘行动和持续采用，分别观察动作完成与实际效果。" }
       - id: "tools"
         title: "按问题查方法与工具"
-        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、风险登记与概率—影响矩阵、变更记录、验收与收尾清单、培养计划与时间预算、反馈准备与双方行动表、干系人登记与参与矩阵、沟通计划与状态更新、一对一议题及双方约定、会议议程与行动记录、选项比较与决策记录、指标定义与行动看板、复盘行动与复查表、做法维护说明、探索任务与检查点记录、工作流与完成约定、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
+        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、风险登记与概率—影响矩阵、变更记录、验收与收尾清单、培养计划与时间预算、反馈准备与双方行动表、干系人登记与参与矩阵、沟通计划与状态更新、一对一议题及双方约定、会议议程与行动记录、选项比较与决策记录、指标定义与行动看板、复盘行动与复查表、做法维护说明、探索任务与检查点记录、工作流与完成约定、依赖交接与联合验收清单、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
         entries:
           - { label: "拆解与排期", page: "project-management/project-management-series-index.md", anchor: "tools-planning", value: "WBS、依赖网络、关键路径、甘特图、资源与成本表：把范围和约束转成可讨论的计划。" }
           - { label: "分工与沟通", page: "project-management/project-management-series-index.md", anchor: "tools-collaboration", value: "RACI、干系人分析、沟通计划、会议议程与决定记录：明确参与方式和后续行动。" }
@@ -122,10 +122,11 @@ topics:
           - { label: "跟踪与软件实操", page: "project-management/project-management-series-index.md", anchor: "tools-tracking", value: "看板、在制品限制、周期时间与行动跟进；再看 Jira、飞书、Excel、Microsoft Project 怎样承载共同模型。" }
       - id: "applications"
         title: "再进入研发场景"
-        note: "先把通用知识用到软件研发，再讨论游戏内容生产与版本推进。PM-24、PM-25已有正文与教学推演；其余应用保留提纲，软件实操和真实案例另行验证。"
+        note: "先把通用知识用到软件研发，再讨论游戏内容生产与版本推进。PM-24、PM-25、PM-26已有正文与教学推演；其余应用保留提纲，软件实操和真实案例另行验证。"
         entries:
           - { label: "探索性工作的估算与检查点 · PM-24 正文", page: "project-management/project-management-24-exploration-estimates-and-checkpoints.md", value: "限定探索投入，设计能改变选择的原型证据，按检查点决定继续、转向或停止，并更新计划。" }
           - { label: "需求、迭代与流动 · PM-25 正文", page: "project-management/project-management-25-requirements-iterations-and-flow.md", value: "连接需求与验收，选择反馈节奏，明确在制品、阻塞、紧急插入和共同完成标准。" }
+          - { label: "跨团队依赖与集成 · PM-26 正文", page: "project-management/project-management-26-dependencies-and-integration.md", value: "约定交接输入与接收条件，用共同版本和场景检查整体行为，连接问题接手、修正与复验。" }
           - { label: "软件研发中的应用 · 24—27", page: "project-management/project-management-series-index.md", anchor: "research", value: "探索性工作怎样估算，需求怎样进入迭代，跨团队怎样集成验收，管理软件怎样连接工作记录。" }
           - { label: "游戏研发管理实践 · 28—32", page: "project-management/project-management-series-index.md", anchor: "game-practice", value: "围绕版本目标、跨工种交接、生产卡点与上线准备，逐步补充有职责和证据边界的实践；目前为提纲。" }
       - id: "references"
