@@ -51,7 +51,7 @@
 | PM-12 | 人员培养 | [授权与检查：让责任、权限和支持一起交出去](../content/project-management/project-management-12-delegation-and-follow-up.md) | 方法 | 正文；独立审核与本地检查通过 |
 | PM-13 | 人员培养 | [培养与激励：怎样让人逐步具备独立完成工作的能力](../content/project-management/project-management-13-development-and-motivation.md) | 方法 | 正文；独立审核与本地检查通过 |
 | PM-14 | 人员培养 | [反馈与表现讨论：怎样对事、对证据，也对人负责](../content/project-management/project-management-14-feedback-and-performance.md) | 方法 | 正文；独立审核与本地检查通过 |
-| PM-15 | 沟通决策 | 干系人分析：谁的参与会影响项目结果 | 方法 | 提纲 |
+| PM-15 | 沟通决策 | [干系人分析：谁的参与会影响项目结果](../content/project-management/project-management-15-stakeholder-engagement.md) | 方法 | 正文；独立审核与本地检查通过 |
 | PM-16 | 沟通决策 | 信息怎样流动：让进展、风险与决定可被理解 | 方法 | 提纲 |
 | PM-17 | 沟通决策 | 一对一沟通：理解工作、困难与成长 | 方法 | 提纲 |
 | PM-18 | 沟通决策 | [会议怎么组织：从目的到行动的完整过程](../content/project-management/project-management-18-meetings.md) | 方法 | 正文；独立审核与本地检查通过 |
@@ -120,6 +120,6 @@
 
 首版建立：主题页签与首页、公开详细提纲、方法工具索引、本 canonical plan、首页执行提纲，以及原站点定位和相关系列的职责说明。导航目标均为已存在页面或提纲锚点。
 
-当前 PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-08、PM-09、PM-10、PM-11、PM-12、PM-13、PM-14、PM-18、PM-21 的正文、独立审核与本地检查均已完成，共16篇正文，其余16个主题仍为提纲。首批八篇已形成可读内容，现继续补全通用基础。正文、练习样表、软件实操、真实案例和独立审核的状态分别核对；实际 Git 交付与线上发布以对应回执为准。
+当前 PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-08、PM-09、PM-10、PM-11、PM-12、PM-13、PM-14、PM-15、PM-18、PM-21 的正文、独立审核与本地检查均已完成，共17篇正文，其余15个主题仍为提纲。首批八篇已形成可读内容，现继续补全通用基础。正文、练习样表、软件实操、真实案例和独立审核的状态分别核对；实际 Git 交付与线上发布以对应回执为准。
 
 后续新增正文时先回写本表的真实状态，再更新公开索引与首页对应入口。根 `doc-plan.md` 只维护系列级路由，不回填篇级清单。若未来需要把应用组独立成系列，应明确拆分授权、唯一目录与旧链接处理后再迁移。
