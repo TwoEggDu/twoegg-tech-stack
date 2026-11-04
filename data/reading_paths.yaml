@@ -83,7 +83,7 @@ topics:
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-08、PM-09、PM-10、PM-11、PM-12、PM-13、PM-14、PM-15、PM-16、PM-17、PM-18、PM-19、PM-20、PM-21、PM-22 已有正文；其余主题入口保留详细提纲。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-08、PM-09、PM-10、PM-11、PM-12、PM-13、PM-14、PM-15、PM-16、PM-17、PM-18、PM-19、PM-20、PM-21、PM-22、PM-23 已有正文；其余主题入口保留详细提纲。"
         entries:
           - { label: "角色、责任与决策权 · PM-02 正文", page: "project-management/project-management-02-roles-responsibility-authority.md", value: "用局部 RACI 与决定权限表说明谁执行、谁确认、谁能决定，以及资源冲突怎样升级。" }
           - { label: "项目、运营与推进方式 · PM-03 正文", page: "project-management/project-management-03-projects-operations-approaches.md", value: "比较预测、迭代、增量与混合安排，从关键未知、反馈和变化代价说明选择及调整条件。" }
@@ -106,6 +106,7 @@ topics:
           - { label: "度量与偏差 · PM-20 正文", page: "project-management/project-management-20-measurement-and-variance.md", value: "明确指标口径与分母，比较计划、预测和实际，用成对信号与最小看板连接核查和行动。" }
           - { label: "原因分析 · PM-21 正文", page: "project-management/project-management-21-cause-analysis.md", value: "用帕累托图安排调查重点，用鱼骨图与连续追问组织候选原因，再以证据和反例核查。" }
           - { label: "复盘与改进行动 · PM-22 正文", page: "project-management/project-management-22-retrospectives-and-actions.md", value: "还原事实和当时信息，比较少量改进，约定责任与复查，分别观察动作完成、采用和结果。" }
+          - { label: "做法的使用与维护 · PM-23 正文", page: "project-management/project-management-23-practice-adoption-and-maintenance.md", value: "比较持续使用的不同办法，约定入口、维护与学习支持，处理版本变化、采用观察和停用交接。" }
           - { label: "管理的基本认识 · 01—03", page: "project-management/project-management-series-index.md", anchor: "foundations", value: "理解活动与结果、责任与决策权、项目与日常运营，再选择适合工作的推进方式。" }
           - { label: "把项目组织起来 · 04—10", page: "project-management/project-management-series-index.md", anchor: "projects", value: "从目标与验收进入工作分解、估算、资源与成本、风险、变更和收尾，形成完整项目主线。" }
           - { label: "带领与培养人员 · 11—14", page: "project-management/project-management-series-index.md", anchor: "people", value: "根据具体任务调整支持方式，明确授权与检查，安排培养、激励和有依据的反馈。" }
@@ -113,7 +114,7 @@ topics:
           - { label: "发现问题与持续改进 · 20—23", page: "project-management/project-management-series-index.md", anchor: "improvement", value: "从度量与偏差进入原因验证、复盘行动和持续采用，分别观察动作完成与实际效果。" }
       - id: "tools"
         title: "按问题查方法与工具"
-        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、风险登记与概率—影响矩阵、变更记录、验收与收尾清单、培养计划与时间预算、反馈准备与双方行动表、干系人登记与参与矩阵、沟通计划与状态更新、一对一议题及双方约定、会议议程与行动记录、选项比较与决策记录、指标定义与行动看板、复盘行动与复查表、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
+        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、风险登记与概率—影响矩阵、变更记录、验收与收尾清单、培养计划与时间预算、反馈准备与双方行动表、干系人登记与参与矩阵、沟通计划与状态更新、一对一议题及双方约定、会议议程与行动记录、选项比较与决策记录、指标定义与行动看板、复盘行动与复查表、做法维护说明、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
         entries:
           - { label: "拆解与排期", page: "project-management/project-management-series-index.md", anchor: "tools-planning", value: "WBS、依赖网络、关键路径、甘特图、资源与成本表：把范围和约束转成可讨论的计划。" }
           - { label: "分工与沟通", page: "project-management/project-management-series-index.md", anchor: "tools-collaboration", value: "RACI、干系人分析、沟通计划、会议议程与决定记录：明确参与方式和后续行动。" }
