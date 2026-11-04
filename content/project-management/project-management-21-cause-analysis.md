@@ -168,7 +168,7 @@ Grove 在第 2 章借“黑箱”说明观察生产过程的必要，第 1 章�
 
 本例的 20 条审阅问题没有“所有被检查字段数量”这个分母，因此只能描述缺陷构成，不能直接算缺陷率。后续若要比较两次材料质量，应补被检查对象数量与范围，并留意检查力度改变；查得更细也可能让发现数上升。不能用前后两个总数，就把变化全部归给一次管理动作。
 
-用于持续跟进的指标在 [PM-20 度量与偏差提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-20)继续展开；如何把调查接成少量改进行动，见 [PM-22 复盘与行动提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-22)。
+用于持续跟进的指标在 [PM-20 度量与偏差]({{< relref "project-management/project-management-20-measurement-and-variance.md" >}})继续展开；如何把调查接成少量改进行动，见 [PM-22 复盘与行动提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-22)。
 
 ## 练习：给自己的解释找一个可能的反例
 
