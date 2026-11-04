@@ -134,7 +134,7 @@ Berkun 第16章提醒读者，组织中的影响并不只由头衔决定，不�
 
 这张表完成后，可以检查是否有人被漏掉，以及每个参与动作是否有用。它不能证明培训已成功，也不能代替12人的学习检查；即使只剩2人未达到要求，10/12仍不满足原整体验收条件。
 
-干系人分析与[PM-11]({{< relref "project-management/project-management-11-task-relevant-maturity.md" >}})的任务相关成熟度各有用途：前者决定需要谁参与、提供什么信息和判断，后者帮助安排成员完成具体任务所需的支持。两者都不能决定谁值得尊重。下一步可接着看[信息流与沟通提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-16)，把已经识别的需求变成可理解、可回应、可追踪的信息安排；需要共同讨论时，再使用[PM-18 会议组织]({{< relref "project-management/project-management-18-meetings.md" >}})。
+干系人分析与[PM-11]({{< relref "project-management/project-management-11-task-relevant-maturity.md" >}})的任务相关成熟度各有用途：前者决定需要谁参与、提供什么信息和判断，后者帮助安排成员完成具体任务所需的支持。两者都不能决定谁值得尊重。下一步可接着看[PM-16 信息流与沟通]({{< relref "project-management/project-management-16-information-and-communication.md" >}})，把已经识别的需求变成可理解、可回应、可追踪的信息安排；需要共同讨论时，再使用[PM-18 会议组织]({{< relref "project-management/project-management-18-meetings.md" >}})。
 
 ## 来源与延伸阅读
 
