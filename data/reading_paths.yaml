@@ -83,7 +83,7 @@ topics:
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-04、PM-05、PM-06、PM-11、PM-12、PM-18 已有正文；其余主题入口保留详细提纲。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-04、PM-05、PM-06、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
         entries:
           - { label: "目标、范围与验收 · PM-04 正文", page: "project-management/project-management-04-goals-scope-acceptance.md", value: "分清目标、需求、交付物与任务，用一页项目说明约定范围、检查证据和确认责任。" }
           - { label: "工作分解 · PM-05 正文", page: "project-management/project-management-05-work-breakdown.md", value: "用 WBS 覆盖范围，明确工作包的输入、完成证据与交接，再连接活动和排期。" }
@@ -91,6 +91,7 @@ topics:
           - { label: "任务相关成熟度 · PM-11 正文", page: "project-management/project-management-11-task-relevant-maturity.md", value: "根据具体任务和已有证据调整指导、自主空间与检查，分清能力、信息和资源障碍。" }
           - { label: "授权与检查 · PM-12 正文", page: "project-management/project-management-12-delegation-and-follow-up.md", value: "把结果、决定权限、资源、检查和升级写成一页约定，交接任务时也交代协作入口。" }
           - { label: "会议组织 · PM-18 正文", page: "project-management/project-management-18-meetings.md", value: "从是否开会到参与者、决定权限、议程与行动记录，让一次讨论接到可跟进的工作。" }
+          - { label: "原因分析 · PM-21 正文", page: "project-management/project-management-21-cause-analysis.md", value: "用帕累托图安排调查重点，用鱼骨图与连续追问组织候选原因，再以证据和反例核查。" }
           - { label: "管理的基本认识 · 01—03", page: "project-management/project-management-series-index.md", anchor: "foundations", value: "理解活动与结果、责任与决策权、项目与日常运营，再选择适合工作的推进方式。" }
           - { label: "把项目组织起来 · 04—10", page: "project-management/project-management-series-index.md", anchor: "projects", value: "从目标与验收进入工作分解、估算、资源与成本、风险、变更和收尾，形成完整项目主线。" }
           - { label: "带领与培养人员 · 11—14", page: "project-management/project-management-series-index.md", anchor: "people", value: "根据具体任务调整支持方式，明确授权与检查，安排培养、激励和有依据的反馈。" }
@@ -98,7 +99,7 @@ topics:
           - { label: "发现问题与持续改进 · 20—23", page: "project-management/project-management-series-index.md", anchor: "improvement", value: "从度量与偏差进入原因验证、复盘行动和持续采用，分别观察动作完成与实际效果。" }
       - id: "tools"
         title: "按问题查方法与工具"
-        note: "先理解工具回答什么，再看输入、用法和局限。已提供项目说明、WBS、工作包样表、依赖网络与排期算例、会议议程与行动记录；其他工具和软件实操逐篇补充。"
+        note: "先理解工具回答什么，再看输入、用法和局限。已提供项目说明、WBS、工作包样表、依赖网络与排期算例、会议议程与行动记录、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
         entries:
           - { label: "拆解与排期", page: "project-management/project-management-series-index.md", anchor: "tools-planning", value: "WBS、依赖网络、关键路径、甘特图、资源与成本表：把范围和约束转成可讨论的计划。" }
           - { label: "分工与沟通", page: "project-management/project-management-series-index.md", anchor: "tools-collaboration", value: "RACI、干系人分析、沟通计划、会议议程与决定记录：明确参与方式和后续行动。" }
