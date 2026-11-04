@@ -83,11 +83,12 @@ topics:
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-04、PM-05、PM-06 已有正文；其余主题入口保留详细提纲。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-04、PM-05、PM-06、PM-11 已有正文；其余主题入口保留详细提纲。"
         entries:
           - { label: "目标、范围与验收 · PM-04 正文", page: "project-management/project-management-04-goals-scope-acceptance.md", value: "分清目标、需求、交付物与任务，用一页项目说明约定范围、检查证据和确认责任。" }
           - { label: "工作分解 · PM-05 正文", page: "project-management/project-management-05-work-breakdown.md", value: "用 WBS 覆盖范围，明确工作包的输入、完成证据与交接，再连接活动和排期。" }
           - { label: "依赖、估算与进度 · PM-06 正文", page: "project-management/project-management-06-dependencies-estimation-schedule.md", value: "区分工时与工期，复算关键路径和总时差，再用人员冲突与等待检查安排是否可执行。" }
+          - { label: "任务相关成熟度 · PM-11 正文", page: "project-management/project-management-11-task-relevant-maturity.md", value: "根据具体任务和已有证据调整指导、自主空间与检查，分清能力、信息和资源障碍。" }
           - { label: "管理的基本认识 · 01—03", page: "project-management/project-management-series-index.md", anchor: "foundations", value: "理解活动与结果、责任与决策权、项目与日常运营，再选择适合工作的推进方式。" }
           - { label: "把项目组织起来 · 04—10", page: "project-management/project-management-series-index.md", anchor: "projects", value: "从目标与验收进入工作分解、估算、资源与成本、风险、变更和收尾，形成完整项目主线。" }
           - { label: "带领与培养人员 · 11—14", page: "project-management/project-management-series-index.md", anchor: "people", value: "根据具体任务调整支持方式，明确授权与检查，安排培养、激励和有依据的反馈。" }
