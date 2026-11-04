@@ -83,7 +83,7 @@ topics:
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-08、PM-09、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-08、PM-09、PM-10、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
         entries:
           - { label: "角色、责任与决策权 · PM-02 正文", page: "project-management/project-management-02-roles-responsibility-authority.md", value: "用局部 RACI 与决定权限表说明谁执行、谁确认、谁能决定，以及资源冲突怎样升级。" }
           - { label: "项目、运营与推进方式 · PM-03 正文", page: "project-management/project-management-03-projects-operations-approaches.md", value: "比较预测、迭代、增量与混合安排，从关键未知、反馈和变化代价说明选择及调整条件。" }
@@ -93,6 +93,7 @@ topics:
           - { label: "资源、成本与外部协作 · PM-07 正文", page: "project-management/project-management-07-resources-costs-procurement.md", value: "核对可用能力与时间，复算直接支出和未付承诺，用交付约定把外部工作接进计划。" }
           - { label: "风险与问题 · PM-08 正文", page: "project-management/project-management-08-risks-and-issues.md", value: "用原因、事件与影响描述风险，明确应对、触发与责任，再把已发生的障碍接到问题处理。" }
           - { label: "需求与范围变化 · PM-09 正文", page: "project-management/project-management-09-change-control.md", value: "核对原约定、变更影响与决定权限，再把批准结果落实到计划、通知和实施检查。" }
+          - { label: "质量、验收与收尾 · PM-10 正文", page: "project-management/project-management-10-quality-acceptance-closure.md", value: "用对象、标准和证据判断交付，明确接收决定、遗留责任、资料移交与后续收益观察。" }
           - { label: "任务相关成熟度 · PM-11 正文", page: "project-management/project-management-11-task-relevant-maturity.md", value: "根据具体任务和已有证据调整指导、自主空间与检查，分清能力、信息和资源障碍。" }
           - { label: "授权与检查 · PM-12 正文", page: "project-management/project-management-12-delegation-and-follow-up.md", value: "把结果、决定权限、资源、检查和升级写成一页约定，交接任务时也交代协作入口。" }
           - { label: "会议组织 · PM-18 正文", page: "project-management/project-management-18-meetings.md", value: "从是否开会到参与者、决定权限、议程与行动记录，让一次讨论接到可跟进的工作。" }
@@ -104,7 +105,7 @@ topics:
           - { label: "发现问题与持续改进 · 20—23", page: "project-management/project-management-series-index.md", anchor: "improvement", value: "从度量与偏差进入原因验证、复盘行动和持续采用，分别观察动作完成与实际效果。" }
       - id: "tools"
         title: "按问题查方法与工具"
-        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、风险登记与概率—影响矩阵、变更记录、会议议程与行动记录、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
+        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、风险登记与概率—影响矩阵、变更记录、验收与收尾清单、会议议程与行动记录、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
         entries:
           - { label: "拆解与排期", page: "project-management/project-management-series-index.md", anchor: "tools-planning", value: "WBS、依赖网络、关键路径、甘特图、资源与成本表：把范围和约束转成可讨论的计划。" }
           - { label: "分工与沟通", page: "project-management/project-management-series-index.md", anchor: "tools-collaboration", value: "RACI、干系人分析、沟通计划、会议议程与决定记录：明确参与方式和后续行动。" }
