@@ -137,7 +137,7 @@ APM 的生命周期资料介绍线性、迭代、增量与混合方式。[2] 为
 
 《The Kanban Guide》2025 年 5 月版将定义并呈现工作流、主动管理工作项、改进工作流共同列入其方法，并要求控制已开始而未完成的工作。[7] 因而，看板的关键问题不止是卡片放在哪一列，还包括什么时候开始、什么算完成、阻塞怎样处理、怎样限制同时进行的工作。
 
-具体如何安排迭代和流动，留给 [PM-25 需求、迭代与流动提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-25)；软件怎样承载这些约定，留给 [PM-27 管理软件提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-27)。本篇不把概念对照当作已经配置或运行了某种软件。
+具体如何安排迭代和流动，接到 [PM-25 需求、迭代与流动]({{< relref "project-management/project-management-25-requirements-iterations-and-flow.md" >}})；软件怎样承载这些约定，留给 [PM-27 管理软件提纲]({{< relref "project-management/project-management-series-index.md" >}}#pm-27)。本篇不把概念对照当作已经配置或运行了某种软件。
 
 ## 练习：写出选择与改变选择的条件
 
