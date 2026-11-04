@@ -79,17 +79,18 @@ topics:
     start_title: "从管理基础开始"
     start:
       page: "project-management/project-management-01-management-and-results.md"
-      value: "从一次培训活动区分活动、产出与实际效果，理解管理怎样影响团队结果；接着读 PM-04—06，把目标、范围与验收接到工作分解、依赖和进度安排。其余主题逐篇补充。"
+      value: "从一次培训活动区分活动、产出与实际效果，理解管理怎样影响团队结果；接着读 PM-04—07，把目标、范围与验收接到工作分解、依赖、进度及资源成本安排。其余主题逐篇补充。"
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-07、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
         entries:
           - { label: "角色、责任与决策权 · PM-02 正文", page: "project-management/project-management-02-roles-responsibility-authority.md", value: "用局部 RACI 与决定权限表说明谁执行、谁确认、谁能决定，以及资源冲突怎样升级。" }
           - { label: "项目、运营与推进方式 · PM-03 正文", page: "project-management/project-management-03-projects-operations-approaches.md", value: "比较预测、迭代、增量与混合安排，从关键未知、反馈和变化代价说明选择及调整条件。" }
           - { label: "目标、范围与验收 · PM-04 正文", page: "project-management/project-management-04-goals-scope-acceptance.md", value: "分清目标、需求、交付物与任务，用一页项目说明约定范围、检查证据和确认责任。" }
           - { label: "工作分解 · PM-05 正文", page: "project-management/project-management-05-work-breakdown.md", value: "用 WBS 覆盖范围，明确工作包的输入、完成证据与交接，再连接活动和排期。" }
           - { label: "依赖、估算与进度 · PM-06 正文", page: "project-management/project-management-06-dependencies-estimation-schedule.md", value: "区分工时与工期，复算关键路径和总时差，再用人员冲突与等待检查安排是否可执行。" }
+          - { label: "资源、成本与外部协作 · PM-07 正文", page: "project-management/project-management-07-resources-costs-procurement.md", value: "核对可用能力与时间，复算直接支出和未付承诺，用交付约定把外部工作接进计划。" }
           - { label: "任务相关成熟度 · PM-11 正文", page: "project-management/project-management-11-task-relevant-maturity.md", value: "根据具体任务和已有证据调整指导、自主空间与检查，分清能力、信息和资源障碍。" }
           - { label: "授权与检查 · PM-12 正文", page: "project-management/project-management-12-delegation-and-follow-up.md", value: "把结果、决定权限、资源、检查和升级写成一页约定，交接任务时也交代协作入口。" }
           - { label: "会议组织 · PM-18 正文", page: "project-management/project-management-18-meetings.md", value: "从是否开会到参与者、决定权限、议程与行动记录，让一次讨论接到可跟进的工作。" }
@@ -101,7 +102,7 @@ topics:
           - { label: "发现问题与持续改进 · 20—23", page: "project-management/project-management-series-index.md", anchor: "improvement", value: "从度量与偏差进入原因验证、复盘行动和持续采用，分别观察动作完成与实际效果。" }
       - id: "tools"
         title: "按问题查方法与工具"
-        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、会议议程与行动记录、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
+        note: "先理解工具回答什么，再看输入、用法和局限。已提供职责与决定权限表、项目说明、WBS、工作包样表、依赖网络与排期算例、资源成本表与外部交付草案、会议议程与行动记录、鱼骨图与帕累托图；其他工具和软件实操逐篇补充。"
         entries:
           - { label: "拆解与排期", page: "project-management/project-management-series-index.md", anchor: "tools-planning", value: "WBS、依赖网络、关键路径、甘特图、资源与成本表：把范围和约束转成可讨论的计划。" }
           - { label: "分工与沟通", page: "project-management/project-management-series-index.md", anchor: "tools-collaboration", value: "RACI、干系人分析、沟通计划、会议议程与决定记录：明确参与方式和后续行动。" }
