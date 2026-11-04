@@ -83,9 +83,10 @@ topics:
     sections:
       - id: "foundations"
         title: "先学通用基础"
-        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-04、PM-05、PM-06、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
+        note: "五组知识可以独立学习，不要求游戏或引擎背景。PM-01、PM-02、PM-03、PM-04、PM-05、PM-06、PM-11、PM-12、PM-18、PM-21 已有正文；其余主题入口保留详细提纲。"
         entries:
           - { label: "角色、责任与决策权 · PM-02 正文", page: "project-management/project-management-02-roles-responsibility-authority.md", value: "用局部 RACI 与决定权限表说明谁执行、谁确认、谁能决定，以及资源冲突怎样升级。" }
+          - { label: "项目、运营与推进方式 · PM-03 正文", page: "project-management/project-management-03-projects-operations-approaches.md", value: "比较预测、迭代、增量与混合安排，从关键未知、反馈和变化代价说明选择及调整条件。" }
           - { label: "目标、范围与验收 · PM-04 正文", page: "project-management/project-management-04-goals-scope-acceptance.md", value: "分清目标、需求、交付物与任务，用一页项目说明约定范围、检查证据和确认责任。" }
           - { label: "工作分解 · PM-05 正文", page: "project-management/project-management-05-work-breakdown.md", value: "用 WBS 覆盖范围，明确工作包的输入、完成证据与交接，再连接活动和排期。" }
           - { label: "依赖、估算与进度 · PM-06 正文", page: "project-management/project-management-06-dependencies-estimation-schedule.md", value: "区分工时与工期，复算关键路径和总时差，再用人员冲突与等待检查安排是否可执行。" }
