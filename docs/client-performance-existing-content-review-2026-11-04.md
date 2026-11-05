@@ -10,7 +10,7 @@
 
 已有“一帧拆解”已经说明指标范围、统计窗口、分位数与事件；内存、就绪链和诊断文章也有完整模型。A1 的指标字典应引用这些定义，增加内容对象、事件身份、采集来源及有效性关系；A4 应增加适用任务的统计算例，不另写一套同义概念课。
 
-首次审查只修订规划和审查记录。后续 P1 已在一帧正文完成 R1 的最小修订并复审关闭；2026-11-05 B 批次完成 R2 的模板绑定修订，C1 局部批次完成能力指纹 R3/R4 的修订与 AI 编辑复审，见各项接续记录。R5–R8 的 4 处调整仍待执行；各批次文稿、检查及 Git 状态分别回原执行计划，没有新增 Unity／设备实验或线上验收。
+首次审查只修订规划和审查记录。后续 P1 已在一帧正文完成 R1 的最小修订并复审关闭；2026-11-05 B 批次完成 R2 的模板绑定修订，C 阶段局部批次完成能力指纹 R3/R4 及分档验证 R5 的修订与 AI 编辑复审，见各项接续记录。R6–R8 的 3 处调整仍待执行；各批次文稿、检查及 Git 状态分别回原执行计划，没有新增 Unity／设备实验或线上验收。
 
 ## 逐篇复用判断
 
@@ -29,7 +29,7 @@
 | [持续性能 02b](../content/performance/mobile-hardware-02b-sustained-performance.md) | 复用峰值／持续表现、设备状态、比较条件和恢复边界 | 实际设备与控制策略仍需独立校准，不另写同义热性能入门 |
 | [体验一致性](../content/performance/device-tier-experience-consistency.md) | 复用性能与视觉／声音／动作的共同接受条件 | 补设备能力档、画质配置档和实际生效配置之间的阅读连接 |
 | [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md) | 复用能力信号、风险修正与规则回溯；R3/R4 已按局部职责修订并复审 | 已分开兼容性、能力、用户目标和会话状态；映射、阈值及动态策略仍待实际校准 |
-| [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证 | R5；补指标定义、实际配置和持续窗口依据 |
+| [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证；R5 已局部修订并复审 | 已补指标对象、来源/缺失、实际配置及首用/持续窗口；验证协议未实跑，选样数量建议待后续复核 |
 | [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | 补指标分母、首放事件窗口、制作预警和性能验收的关系 |
 | [UI 首开与叠层](../content/performance/game-performance-ui-first-open-layering.md) | 复用面向 UI 美术的阶段与风险直觉 | 补请求到反馈、重建／渲染／驻留口径；保持原文的美术桥接职责 |
 | [角色预算 08](../content/performance/game-budget-08-character-budget.md) | 复用几何、材质、动画、同屏规模与识别信息取舍；局部修订 | R6、R7；补共享／实例增量和角色／动画归因关系 |
@@ -73,6 +73,7 @@
 - 位置：[分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md)，L186–199；已固定设备、场景和窗口，但指标仍是 `avg / p95 / p99 frame time`。
 - 应用更新间隔、CPU 墙钟、GPU 范围和呈现间隔不能互换。原文已有“首载到可交互”，应保留并进一步记录首用事件，不能仅靠总体分位数验收低频尖峰。
 - 最小调整：复用帧预算的指标定义，补来源、单位、样本数与缺失状态；未测呈现就写“呈现未测”。持续运行窗口的示例也应结合[持续性能](../content/performance/mobile-hardware-02b-sustained-performance.md)的负载和状态条件说明，不能把固定时长视为普遍充分条件。
+- 2026-11-05 C 阶段：已原位加入六类口径及来源/时钟/帧关联、样本与缺失要求，以 19 个 32 ms 和 1 个 96 ms 的合成间隔说明 P95/首用规则分别判定、跨窗保留完整间隔和边界缺失。持续运行小节补会话/负载依据、分段实际配置、恢复与不完整窗口处理，能力指纹的待补导读同步更新。复审核对“GPU 不支持不能填 0”“呈现未测不能由应用间隔顶替”“分钟数不能代替覆盖条件”，R5 文稿问题关闭；记录见[本批执行](client-performance-budget-tiering-monitoring-execution-plan.md#device-tier-metric-protocol-20261105)。局部方法通过不代表完整设备矩阵或真实采集已校准，选样建议、动态策略与其余专题仍按后续范围处理。
 
 ### R6｜角色预算的乘法表达容易被当成成本公式
 

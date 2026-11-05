@@ -326,7 +326,7 @@ public static TierDecision Decide(
 
 理解检查：若同一台 120 Hz 设备请求 60 FPS，热机后实际运行在一套限载配置，哪些字段属于能力、请求和实际状态？能否把这一条记录用于证明“设备永久为低档”或“60 FPS 配置通过”？分别指出还缺的证据。
 
-真正校准映射时，要按 CPU/GPU/内存等差异选代表设备，再选配置可行边界附近、路径/驱动风险及未知组合做复核。绑定构建、规则、实际配置和任务阶段，分别检查首用、重复与持续运行，同时验收必要视觉/玩法信息。改目标、内容规模、驱动/API 或策略后重查受影响范围。这里交付的是校准设计，详细指标和窗口协议接[分档验证矩阵]({{< relref "code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md" >}})；该文的指标口径补强仍待后续处理。
+真正校准映射时，要按 CPU/GPU/内存等差异选代表设备，再选配置可行边界附近、路径/驱动风险及未知组合做复核。绑定构建、规则、实际配置和任务阶段，分别检查首用、重复与持续运行，同时验收必要视觉/玩法信息。改目标、内容规模、驱动/API 或策略后重查受影响范围。这里交付的是校准设计，详细指标、缺失处理及首用/持续窗口接[分档验证矩阵]({{< relref "code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md" >}})；实际采集与设备校准仍待开展。
 
 这种分离也能对应到引擎：Epic 的 [Android Device Profiles 文档（UE 5.8）](https://dev.epicgames.com/documentation/en-us/unreal-engine/customizing-device-profiles-and-scalability-in-unreal-engine-projects-for-android?application_version=5.8)区分设备规则匹配与运行时 Scalability 设置。它支持我们分别记录默认选择和实际生效配置，不证明本篇候选表已经校准。
 

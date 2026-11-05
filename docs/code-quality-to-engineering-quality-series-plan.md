@@ -183,3 +183,9 @@
 - 每补一篇新文，优先回写这份计划和相关子计划
 - 不单独再开一个松散的 “QA 栏目”，优先继续把现有 `code-quality` 收束成更完整的工程质量主线
 - 与资源交付、Crash、CI、Shader Variant、HybridCLR 相关的工程实践，优先作为这条主线的案例和证据来复用
+
+## 既有分档验证文的关联修订（2026-11-05）
+
+随客户端性能工程 C 阶段知识补强，原位修订[分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md)的判定日志、性能 baseline 和持续运行小节。补应用间隔、CPU/GPU 范围、呈现/反馈与用途就绪的独立口径，明确来源、时钟/帧关联、统计、样本和缺失状态；以 21 个合成更新起点演示 P95 通过仍漏首用长间隔，以及边界缺事件时不能放行。持续窗口按会话、负载和状态覆盖设计，保留实际配置变化与限载/恢复，不把固定分钟数当作充分条件。
+
+R5 在相关方法职责内通过局部 AI 编辑复审；来源、教学复算、本地站点检查与交付接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-tier-metric-protocol-20261105)。保留文章的 Code Quality 归属、标题和 URL，不新增篇号，也不把本批审核扩大为整篇或本系列通过。没有真实采集、分档校准、门禁运行或团队采用证据；设备选样的固定数量建议仍待后续 C1 样本覆盖设计复核。
