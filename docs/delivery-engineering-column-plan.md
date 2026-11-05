@@ -629,6 +629,8 @@ Part IX  组织篇        V18 组织治理  ·  V19 案例与模板
 
 2026-11-05，14.2 续补预算推导：沿首开奖励界面给出必要反馈、背景负载、CPU 26 ms 候选分配、共享提交增加后的 29 ms 教学反例及组合/持续状态校准设计；同步修正篇首、检查单和复用声明。局部审校与页面检查见[本批执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#budget-derivation-20261105)。跨资源规则记录与整篇复审待续；没有设备测量、实际分档或预算接受结论。
 
+2026-11-05，14.2 补齐跨资源 R0 记录与方案取舍，区分规则依据、检查事实和接受决定，纠正跨窗口长间隔的漏计条件；与预算总表的指标/配置引用衔接。全文按基础/预算框架职责通过 AI 编辑复审，来源复用、算例复核与页面检查见[收口记录](client-performance-budget-tiering-monitoring-execution-plan.md#budget-rule-record-20261105)。通过不代表本项目阈值已获准、设备已校准或全预算系列已审完，实际测量仍待开展。
+
 **已有内容**：
 - [改写] `performance/game-budget-*` 系列（21 篇）→ 核心 5 篇拆原理层
 - [改写] `performance/device-tier-*` 系列（10 篇）→ 核心 3 篇拆原理层

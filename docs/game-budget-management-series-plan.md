@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 既有总表模板的关联审校（2026-11-05）
+
+原位补[《总预算总表模板》](../content/performance/game-budget-16-budget-master-sheet-template.md)表前的规则 ID/版本、指标规格及测试配置引用，说明候选、缺证据与接受状态及规则修订的复验责任，回链已有交付预算篇的教学记录。关闭客户端旧文审查 R2 的模板绑定缺口，不新增篇目或调整旧目录；未对本系列其他文章作整体认证。审校、页面检查及后续交付归[客户端执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#budget-rule-record-20261105)，实际预算校准与团队使用仍待验证。
+
 ## 帧预算 06 的关联审校（2026-10-31）
 
 原位修正[《帧预算拆账》](../content/performance/game-budget-06-frame-budget-breakdown.md)，同步[一帧拆解](../content/performance/game-performance-frame-breakdown.md)的指标与关键路径：加载为跨阶段事件维度，CPU／GPU／等待可能重叠，分项不直接求和；补正常节奏等待、记录条件和责任分工。标题中的 06、现有系列顺序及 URL 不变，不扩审其他预算文章。
