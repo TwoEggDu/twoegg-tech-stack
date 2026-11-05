@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 角色预算 08 的动画执行位置措辞（2026-11-06）
+
+按已登记 R7，仅将[角色预算 08](../content/performance/game-budget-08-character-budget.md)开篇的“CPU 动画和蒙皮账”改为“动画求值与蒙皮计算账”，注明执行位置和统计范围须按引擎版本、平台与配置核对，避免与下文“CPU 或 GPU 蒙皮”冲突。不预设另一条无条件 GPU 路径，不改 D3 账本、用途教学或观测表，不据此认证全文。局部 AI 编辑自审和页面检查见[性能执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-entry-corrections-20261106)；D4 的求值/蒙皮职责与实际来源仍待接续，原篇号、URL 与归属不变。
+
 ## 角色阶段观测与模板 19 绑定（2026-11-06）
 
 在[角色预算 08](../content/performance/game-budget-08-character-budget.md#character-task-observation-record)汇合八字段和创建、换装、远近/过渡、同屏峰值、退出复用五阶段，复用 C0–C3/P0–P1 区分资源、用途输入与接受证据，不新增数字模型。[模板 19](../content/performance/game-budget-19-character-budget-template.md#character-template-bindings)保留原规格矩阵，补指标、实际配置/组合、阶段、来源/有效性及规则/处理引用，并撤回结尾乘法。CPE-01、预算规则和分档验证沿用原定义；Unity 引用/LOD 等契约只复核既有来源，不承诺采集支持或校准结果。局部 AI 编辑自审、D3 覆盖及本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#character-observation-record-20261106)。原标题、URL、归属与篇数不变；D3 当前资源/用途/阶段知识已有衔接，可进入 D4 求值与蒙皮，R7/R8 仍待处理。不认证角色全文、作者掌握、真实预算、采集实现或线上部署。

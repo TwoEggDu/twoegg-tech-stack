@@ -372,8 +372,8 @@ Unity 在这里还提供 Interruption Source 与 Ordered Interruption。前者�
 这里建立了动作意图、Maya / Max 制作、骨架曲线导出与 Unity 运行组合的路径。完整表演训练、动捕清理、脚步求解、运动匹配与网络动画不是这份最小练习能够完成的内容；后续应以具体素材和运行记录继续补证据。
 
 - [04｜绑定与蒙皮]({{< relref "delivery-engineering/game-art-production-04-rigging-skinning.md" >}})：控制系统、变形骨架、蒙皮与输出前提。
-- [08｜特效]({{< relref "delivery-engineering/game-art-production-08-vfx.md" >}})：后续展开蓄力、释放与受击效果的制作和交接，当前为提纲。
-- [10｜客户端接入]({{< relref "delivery-engineering/game-art-production-10-client-integration.md" >}})：后续串联运行驱动、引用与生命周期，当前为提纲。
+- [08｜特效]({{< relref "delivery-engineering/game-art-production-08-vfx.md" >}})：蓄力、释放与受击效果的制作和交接；正文已写，素材与运行验证按原篇记录。
+- [10｜客户端接入]({{< relref "delivery-engineering/game-art-production-10-client-integration.md" >}})：运行驱动、引用与生命周期；正文已写，素材与运行验证按原篇记录。
 - [技能表现的交付标准]({{< relref "system-design/skill-system-28-artist-vfx-delivery-standard.md" >}})：按需延伸动作时点、挂点及效果生命周期；其中示例约定仍须按项目选择。
 
 **动作进入游戏，需要让姿势、时间、位移与取消规则共同成立。**
