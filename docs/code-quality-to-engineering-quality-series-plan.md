@@ -188,4 +188,6 @@
 
 随客户端性能工程 C 阶段知识补强，原位修订[分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md)的判定日志、性能 baseline 和持续运行小节。补应用间隔、CPU/GPU 范围、呈现/反馈与用途就绪的独立口径，明确来源、时钟/帧关联、统计、样本和缺失状态；以 21 个合成更新起点演示 P95 通过仍漏首用长间隔，以及边界缺事件时不能放行。持续窗口按会话、负载和状态覆盖设计，保留实际配置变化与限载/恢复，不把固定分钟数当作充分条件。
 
-R5 在相关方法职责内通过局部 AI 编辑复审；来源、教学复算、本地站点检查与交付接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-tier-metric-protocol-20261105)。保留文章的 Code Quality 归属、标题和 URL，不新增篇号，也不把本批审核扩大为整篇或本系列通过。没有真实采集、分档校准、门禁运行或团队采用证据；设备选样的固定数量建议仍待后续 C1 样本覆盖设计复核。
+R5 在相关方法职责内通过局部 AI 编辑复审；来源、教学复算、本地站点检查与交付接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-tier-metric-protocol-20261105)。保留文章的 Code Quality 归属、标题和 URL，不新增篇号，也不把本批审核扩大为整篇或本系列通过。没有真实采集、分档校准、门禁运行或团队采用证据；设备选样建议的接续修订见下段。
+
+同日 C1 接续：原位将“每档一两台、边界两三台、三条 smoke”的固定数量建议改为按能力、路径、任务阶段与未覆盖问题选样，四类样本按职责理解，可由同一设备承担多项。分辨率/帧率请求与面板刷新率分开，回链能力指纹的教学矩阵。局部 AI 编辑复审、集合复算与本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-capability-matrix-20261105)；未宣称完成实际设备覆盖或整篇验收。
