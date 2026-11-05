@@ -43,7 +43,7 @@
 | 内存与加载为什么要分层计量？ | [内存记账](../content/performance/game-performance-memory-accounting.md)、[资源就绪](../content/performance/game-performance-read-does-not-mean-ready.md) | 复用资源/实例、持有、用途就绪与不同统计口径；新篇只补任务到观测的映射 |
 | 怎样从现象走到可验证的改动？ | [诊断方法](../content/performance/game-performance-diagnosis-method.md)、[性能工作流](../content/performance/game-performance-methodology-summary.md) | 复用竞争解释、对照、正确性与取舍；不另写通用优化流程总论 |
 | 预算怎样拆、怎样形成规则？ | [帧预算](../content/performance/game-budget-06-frame-budget-breakdown.md)、[预算总表](../content/performance/game-budget-16-budget-master-sheet-template.md)、[交付预算体系](../content/delivery-engineering/delivery-performance-stability-02-budget-system.md) | 交付预算篇已补同任务推导、跨资源 R0 记录并通过基础/预算方法职责的全文 AI 编辑复审；总表的指标/配置绑定缺口 R2 已关闭。实际阈值与设备校准待开展，不把本篇通过扩大为预算系列全部通过 |
-| 设备能力、配置和持续状态怎样分开？ | [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md)、[持续性能](../content/performance/mobile-hardware-02b-sustained-performance.md)、[分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 原位落实 R3–R5 及能力/配置/状态分离、边界设备校准，不新增同义分档总论 |
+| 设备能力、配置和持续状态怎样分开？ | [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md)、[持续性能](../content/performance/mobile-hardware-02b-sustained-performance.md)、[分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | R3/R4 已原位修订并通过局部 AI 编辑复审：分开兼容路径、能力、目标配置和会话状态，候选映射未标定；R5、具体画质/设备矩阵及边界校准待续，不新增同义分档总论 |
 
 预算各分项仍由[预算规划](game-budget-management-series-plan.md)维护；交付预算篇保留交付框架职责，在其原位提供完整推导样例并链接分项。资产身份、跨导入/构建/运行的采集、存储查询和告警处理由资产性能工程方向承接，其本地规划 `docs/game-asset-performance-engineering-series-plan.md` 尚待独立交付，此处不建立仓库链接；不另做一套同义资产平台规划。相关旧文的局部调整随 B/C 等批次执行，不扩成 P1 的前置。
 
@@ -75,7 +75,7 @@
 
 首页明确已有文章可读与专项补强、校准实验和工具待建设的区别。各阶段只显示真实页面链接；待写内容用正文说明，不生成空文章或占位链接。站点性能主题页提供专栏入口，文章布局沿用现有阅读模板，无新增 CSS。
 
-2026-11-04 按作者要求补做[已有正文复用与调整审查](client-performance-existing-content-review-2026-11-04.md)：完整审读首页 16 篇推荐正文及能力指纹 1 篇。基础定义已较充分，优先复用和连接；6 篇登记 8 处局部调整，R1 已随 P1 关闭，R2–R8 待执行。后续每批开稿均按[旧文检索与复用判断](article-production-workflow.md#article-reuse-preflight)，先说明已有覆盖、需要调整的位置、复用方式与真正增量；不以篇名或旧计划状态代替正文审阅。
+2026-11-04 按作者要求补做[已有正文复用与调整审查](client-performance-existing-content-review-2026-11-04.md)：完整审读首页 16 篇推荐正文及能力指纹 1 篇。基础定义已较充分，优先复用和连接；6 篇登记 8 处局部调整，R1 随 P1、R2 随 B、R3/R4 随 C1 局部批次修订并复审关闭，R5–R8 待执行。后续每批开稿均按[旧文检索与复用判断](article-production-workflow.md#article-reuse-preflight)，先说明已有覆盖、需要调整的位置、复用方式与真正增量；不以篇名或旧计划状态代替正文审阅。
 
 ## 当前交付记录
 
@@ -100,3 +100,4 @@
 - 2026-11-05 B3 局部补桥：原位修订交付预算文章的 CI 小节与检查项，区分静态合规、有效观测和性能接受，补三轮教学判定并复用质量门协议。审校、复算和本地站点检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#budget-ci-revision-20261105)。下一批回到完整预算教学推导；归属与篇数不变，整篇尚未复审通过，作者理解待反馈，实际测量、CI 实现与发布未新增完成项。
 - 2026-11-05 B1/B2 贯通小节：原位补同任务的体验目标、代表负载、26 ms CPU 候选配额、29 ms 组合反例及复验设计，修正篇首、检查单与复用声明；局部 AI 编辑审核和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#budget-derivation-20261105)。上一批 15 文件候选已随 `b9bb7a2` 提交推送，本批增量仅本地；跨资源规则记录与整篇复审待续，不新增篇号。作者理解待反馈，实际测量、工具与线上验收未开展。
 - 2026-11-05 预算框架收口：交付预算篇新增同任务 R0 规则记录，区分目标、候选、缺证据、检查事实和接受决定；修正跨首次窗口的长间隔漏计条件，并原位补总表的指标/配置引用，关闭 R2。交付预算篇基础/预算方法职责的全文 AI 编辑复审通过；检查、分层结论与 C1 接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#budget-rule-record-20261105)。上一批推导及交付策略已随 `d8af7f2` 推送，线上未核验；本批按持续授权交付。不新增篇目，作者理解待反馈，实际校准、工具和团队采用仍未验证。
+- 2026-11-05 C1 局部补桥：能力指纹原位补四类记录、兼容异常分支、候选映射教学伪代码与同任务条件变化，关闭 R3/R4；分档入口仅同步相关介绍。局部 AI 编辑复审、来源和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-capability-boundaries-20261105)。预算上一批已随 `1fadcc6` 推送；本批按持续授权交付，不改变原分档专题身份，不新增篇目。C1 详细能力矩阵、C2/C3 与 R5 尚待推进，作者理解待反馈，实际标定、实现和线上部署未核验。

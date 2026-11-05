@@ -24,7 +24,7 @@ series_audience:
 series_level: "进阶"
 series_best_for: "当你想把机型分档从几张配置表，接成一套可维护、可上线、可验证的工程系统"
 series_summary: "把设备分档从硬件认知、能力指纹和初始判档，一路接到动态降档、内容预算、线上治理和验证回归。"
-series_intro: '这组文章关心的不是"高 / 中 / 低档怎么抄一张表"，而是机型分档为什么会做歪、怎样设计分档依据、什么时候该用三档还是四档，以及如何把这件事真正接到内容、线上和质量体系里。机型分档做得稳，本质上不是多几条 if，而是把设备能力、热状态、内容预算和验证链路收成同一套规则。'
+series_intro: '这组文章关心的不是"高 / 中 / 低档怎么抄一张表"，而是机型分档为什么会做歪、怎样设计分档依据、什么时候该用三档还是四档，以及如何把这件事真正接到内容、线上和质量体系里。先分清兼容路径、设备能力、目标配置与当前运行状态，再把候选方案、内容预算和验证链路连接起来。'
 series_reading_hint: "第一次系统读，建议先看前置认知，再走分档规则和工程落地主线；如果你已经在项目里做分档，可以直接从线上治理、热机降档和验证回归开始。"
 last_reviewed: "2026-04-17"
 ---
@@ -44,7 +44,7 @@ last_reviewed: "2026-04-17"
 ### 1. 先定分档依据
 
 1. [从型号表到能力指纹：Android 与 PC 的分档判断怎么设计]({{< relref "performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md" >}})
-   规则模型层：型号表为什么会失效，硬门槛 + 能力评分 + 黑白名单 + 玩家覆盖怎么组合。
+   规则模型层：分开兼容路径、设备能力、目标配置与会话状态，解释风险规则、玩家请求和实际生效配置；候选映射仍需校准。
 2. [Unity 分档判断的工程实现：可用信号、Android 碎片化与本地+云端双层架构]({{< relref "performance/game-performance-tier-detection-design.md" >}})
    工程实现层：Unity SystemInfo 能读什么、哪些信号可信、本地兜底 + 云端特例表怎么分工。
 3. [主流芯片档位参考表：四档判断依据与代码]({{< relref "performance/device-tier-chip-reference-four-tiers.md" >}})

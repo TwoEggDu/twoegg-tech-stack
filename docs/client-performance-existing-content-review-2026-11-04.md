@@ -10,7 +10,7 @@
 
 已有“一帧拆解”已经说明指标范围、统计窗口、分位数与事件；内存、就绪链和诊断文章也有完整模型。A1 的指标字典应引用这些定义，增加内容对象、事件身份、采集来源及有效性关系；A4 应增加适用任务的统计算例，不另写一套同义概念课。
 
-首次审查只修订规划和审查记录。后续 P1 已在一帧正文完成 R1 的最小修订并复审关闭；2026-11-05 B 批次完成 R2 的模板绑定修订，见该项接续记录。R3–R8 的 6 处调整仍待执行；各批次文稿、检查及 Git 状态分别回原执行计划，没有新增 Unity／设备实验或线上验收。
+首次审查只修订规划和审查记录。后续 P1 已在一帧正文完成 R1 的最小修订并复审关闭；2026-11-05 B 批次完成 R2 的模板绑定修订，C1 局部批次完成能力指纹 R3/R4 的修订与 AI 编辑复审，见各项接续记录。R5–R8 的 4 处调整仍待执行；各批次文稿、检查及 Git 状态分别回原执行计划，没有新增 Unity／设备实验或线上验收。
 
 ## 逐篇复用判断
 
@@ -28,7 +28,7 @@
 | [预算总表 16](../content/performance/game-budget-16-budget-master-sheet-template.md) | 复用规则等级、负责人、超线和例外动作；需补模板绑定关系 | R2；总表保持简短，通过指标规格和测试配置引用记录条件 |
 | [持续性能 02b](../content/performance/mobile-hardware-02b-sustained-performance.md) | 复用峰值／持续表现、设备状态、比较条件和恢复边界 | 实际设备与控制策略仍需独立校准，不另写同义热性能入门 |
 | [体验一致性](../content/performance/device-tier-experience-consistency.md) | 复用性能与视觉／声音／动作的共同接受条件 | 补设备能力档、画质配置档和实际生效配置之间的阅读连接 |
-| [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md) | 复用能力信号、风险修正与规则回溯；使用伪代码前先修条件 | R3、R4；兼容性、能力、用户目标和会话状态分别表达 |
+| [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md) | 复用能力信号、风险修正与规则回溯；R3/R4 已按局部职责修订并复审 | 已分开兼容性、能力、用户目标和会话状态；映射、阈值及动态策略仍待实际校准 |
 | [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证 | R5；补指标定义、实际配置和持续窗口依据 |
 | [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | 补指标分母、首放事件窗口、制作预警和性能验收的关系 |
 | [UI 首开与叠层](../content/performance/game-performance-ui-first-open-layering.md) | 复用面向 UI 美术的阶段与风险直觉 | 补请求到反馈、重建／渲染／驻留口径；保持原文的美术桥接职责 |
@@ -59,12 +59,14 @@
 - 位置：[能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md)，L297–301；`!fp.SupportsRequiredApi` 和 `RiskTable.IsHardBlocked(fp)` 都返回 `TierDecision.Low(...)`。
 - 不支持必需 API 或被硬阻断，并不说明降低画质即可运行；兼容性判断和性能档位被混在同一返回结果里。
 - 最小调整：分别表达“不支持／阻断”和“可运行后的性能档位”。只有已存在且验证过兼容替代路径时，才选择该路径和适用配置；同步收紧正文中的“更保守路径”说明。
+- 2026-11-05 C1：正文和教学伪代码已分开 `Unsupported`、`Blocked`、`NeedsValidation` 与 `Candidate`，移除硬失败返回 Low 的分支，限定替代路径及切换时机。审稿推演核对“无必需 API 且无替代路径”和“路径未知”均不生成可运行低档，R3 文稿问题关闭；未运行引擎或代码，局部审核与交付见[本批记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-capability-boundaries-20261105)。
 
 ### R4｜分档评分须交代占位身份及校准边界
 
 - 位置：同篇 L292、L303–311；正文已标“伪代码”，使用 `score >= 80`、`score >= 50`，并把刷新率和热状态放入评分。
 - 这不是冒充实测，但尺度、权重及 80／50 的教学身份未说明，容易被当成可用推荐阈值；屏幕刷新率也不等于实际渲染负载。
 - 最小调整：紧邻代码标明数值未校准；区分兼容门槛、设备能力、用户目标和当前热状态，并说明映射要用代表场景与边界设备标定。
+- 2026-11-05 C1：移除无依据的 80/50 及可相互抵消的总分示意，改为明确标注未实现的候选映射伪代码；四类记录表、30/60 FPS 教学算例及同任务条件变化表区分面板刷新、目标、生效配置和会话热限。复审确认候选不等于验收通过、未知不等于 Low、临时热限不永久改写能力，并说明代表/边界设备与首用/持续验证设计，R4 文稿问题关闭。详细画质矩阵、R5 协议和真实标定仍待后续，未据本次局部审核认证整篇或整个分档专题。
 
 ### R5｜分档验证的 frame time 需要明确测量对象
 
