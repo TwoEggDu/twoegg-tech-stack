@@ -128,6 +128,7 @@
 | 既有文章 | 本次维护与复用边界 | 状态 |
 | --- | --- | --- |
 | [补I：帧时序与显示技术](../content/rendering/unity-rendering-supp-i-frame-timing.md) | 补清应用帧间隔、CPU／GPU 计时、显示节奏与输入延迟口径；校正同步／缓冲模型、移动端帧率条件及 FrameTimingManager 最近完成帧示例。复用一帧链路与帧预算拆账，不重复展开机制正文 | 2026-10-31 原位修订；官方契约按 Unity 2022.3 LTS、Input System 1.6.3 核对；计时示例未在目标 Player 编译／运行，显示与输入实验待补；检查记录见[审校记录](unity-rendering-supp-i-frame-timing-review.md) |
+| [既有补D：UI 渲染](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-dirty-queue-teaching) | 原位区分属性写入、直接脏请求、布局根/Graphic 队列去重与 Canvas 批处理；新增三组纸面调度记录及候选观测，纠正同色赋值、标记归因、Canvas 布局隔离和默认换 TMP 的推断，移除无依据统一数字线/提升比例 | 2026-11-06 D2 局部修订；公开 uGUI 2.5.0、提交 e51e520 的静态语义核对，旧版 Text 题设不外推到 TMP/UI Toolkit；局部 AI 编辑自审与本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-rebuild-foundations-20261106)。合批/图集/覆盖和生命周期其余内容待续，未认证全篇或取得运行收益；保留原 URL/归属，不新增篇号 |
 
 ---
 

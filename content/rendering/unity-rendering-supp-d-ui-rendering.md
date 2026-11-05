@@ -2,7 +2,7 @@
 title: "Unity 渲染系统补D｜UI 渲染：Canvas 合批、Rebuild、Overdraw、Atlas"
 slug: "unity-rendering-supp-d-ui-rendering"
 date: "2026-03-26"
-description: "Unity 的 UI 渲染（uGUI/UI Toolkit）有自己独立的合批逻辑。Canvas 合批依赖几何排序和材质一致性；Rebuild 是 CPU 性能的主要杀手；Overdraw 是 GPU 性能的主要杀手。这篇系统讲清楚这三个问题的原因和解法。"
+description: "从 Canvas 合批、布局与图形更新、透明叠层理解 UI 成本；以版本明确的 uGUI 公开实现，区分属性变化、脏标记、队列处理与实际耗时。"
 weight: 1530
 tags:
   - "Unity"
@@ -90,39 +90,75 @@ Late Binding 与 AssetBundle 配合使用时，可以做到分包加载，避免
 
 ---
 
-## Rebuild 机制：CPU 性能的主要杀手
+<a id="ui-dirty-queue-teaching"></a>
 
-### 什么是 Rebuild
+## Rebuild 机制：从数据变化到布局、图形与批次
 
-每当 Canvas 内某个 UI 元素发生变化，Canvas 需要**重新生成 Mesh**，这个过程叫 **Rebuild**。Rebuild 分两种：
+血量在一次结算中扣了三次，界面就完整重建三次吗？要回答这个问题，先区分业务写入、更新请求和实际处理。减少其中一种次数，不自动代表另两种也按相同比例下降。
 
-#### Layout Rebuild（布局重建）
+> 本节实现核对限定为 Unity 官方 uGUI 仓库的 `e51e5200261043c95f5b761c4740abf238e22f38` 快照，[包声明为 uGUI 2.5.0 / Unity 6000.5](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/package.json)。下面使用旧版组件 `UnityEngine.UI.Text`，不外推到 TextMeshPro 或 UI Toolkit。来源是公开 C# 包；没有运行 Unity、Profiler 或设备实验，也没有由此核验原生 Canvas 合批实现。其他小节的合批、图集和工具结论仍需按使用版本逐项核对。
 
-触发条件：元素的层级结构、尺寸、位置、RectTransform 变化。
+### 先分清三个处理职责
 
-Layout Rebuild 会重新计算所有 `LayoutGroup`（`HorizontalLayoutGroup`、`VerticalLayoutGroup`、`GridLayoutGroup`）和 `ContentSizeFitter`。如果层级很深，一个子元素改变尺寸会触发整条链路的重算。
+| 职责 | 在回答什么问题 | 不能直接换算成什么 |
+| --- | --- | --- |
+| Layout（布局） | 输入的布局需求怎样决定受影响层级的尺寸和位置 | 每个元素都重算、整个 Canvas 的 Mesh 都重建 |
+| Graphic（图形） | 某个 Graphic 的顶点或材质数据是否需要更新 | 每次入队都生成 Mesh、每个 Graphic 都是一条 DrawCall |
+| Canvas 批处理 | UI 渲染数据怎样组织成可提交的批次 | 等同于前两类队列项数，或等同于 GPU 耗时 |
 
-#### Graphic Rebuild（图形重建）
+在这个包中，`Text.text` 从一个非空字符串改为另一个不同的非空字符串，会调用 `SetVerticesDirty()` 和 `SetLayoutDirty()`；相同的非空值会跳过这两次请求。空串/空值有另一条分支，不能套用这个规则。`Graphic.color` 也先比较 RGBA，四分量相同就不会由这个 setter 再次标脏；但构造字符串、业务判断和其他回调仍可能有成本。
 
-触发条件：颜色、文字内容、UV 坐标变化。
+Layout 请求通过 `LayoutRebuilder` 查找有效布局根，沿活跃的布局组祖先关系决定候选范围；没有有效控制器时可能不注册。它不是无条件重算全场景所有布局组。布局处理还分水平/垂直的输入计算和控制，树的依赖与参与组件会改变遍历量。Graphic 请求则登记相应 Graphic，并记录顶点或材质是否脏。非活跃、被剔除、销毁等状态也会影响后续处理。
 
-`Text` 组件改变文字内容时触发 Graphic Rebuild，需要重新生成文字 Mesh（逐字符生成四边形，计算字形 UV）。**频繁更新的 Text（如帧率显示、血量数字）每帧都在触发 Rebuild**，是最常见的 CPU 热点。
+```text
+业务写属性 → setter 判断值 → 直接发出布局/顶点等脏请求
+                            ├─ 找布局根 R → 布局队列去重 → 布局阶段处理
+                            └─ Graphic G → 图形队列去重 → 图形阶段处理
 
-### WillRenderCanvases 回调
-
-Rebuild 发生在 Unity 的 `WillRenderCanvases` 事件中（渲染前的最后一步）。可以通过 Profiler 的 `Canvas.BuildBatch` 和 `Canvas.SendWillRenderCanvases` 条目来定位 Rebuild 开销：
-
+后续还需分别观察：Canvas 批处理 → 渲染提交 → 像素工作与最终反馈
 ```
-Canvas.BuildBatch        → Mesh 重建耗时
-Canvas.SendWillRenderCanvases → Layout/Graphic Rebuild 耗时
-```
 
-### 减少 Rebuild 的核心策略
+这里的队列由 `CanvasUpdateRegistry` 管理，不能把它理解为每个 Canvas 各有一份完全隔离的布局队列。它订阅 `Canvas.willRenderCanvases`，在一次 `PerformUpdate` 中先处理布局，再剔除和处理图形。布局根与 Graphic 的注册会去重；队列处理完会清空，后续再次改变可以进入下一轮。布局阶段也可能引出新的尺寸或图形变化，因此请求、处理与后续影响应分别观察。
 
-1. **分离 Dynamic Canvas**：把频繁变化的元素（血量条、计时器）放在独立的小 Canvas 上，避免污染整个大 Canvas 的 Rebuild
-2. **避免频繁改 Text.text**：改用 `TextMeshPro`，其 Mesh 生成更高效；或者用数字图片替换纯文字
-3. **禁用不可见元素的 Canvas**：用 `canvas.enabled = false` 而不是 `gameObject.SetActive(false)`（后者会触发完整的 OnDisable/OnEnable）
-4. **避免在 Update 里每帧改 color**：即使颜色相同也会标脏触发 Rebuild
+### 教学记录：三次变化，何时才是三轮处理
+
+以下是**纸面调度题设，不是引擎采样**。一个活跃的旧版 `Text` 记为 G，初值为非空的 `"100"`，其有效布局根固定为 R。各组从同一初态独立推演，开始时两个队列均无待处理项。题设只登记这个 setter 直接发出的请求；不发生字体/图集变化、尺寸改变、额外脏回调、剔除或重建期间再入队。实际布局若产生额外请求，应另行记录，不能继续照抄本表。
+
+“处理窗口”指题设中安排的一次完整队列处理，不等同于一个显示帧；强制更新等行为可能改变实际调用边界。“队列项·轮”指某对象参加一轮完整队列处理，**不是 `Rebuild` 函数的调用次数**，因为一轮内还有多个阶段。
+
+| 组 | 按顺序写入 | 完整处理窗口数 | setter 调用 / 实际值变化 | 直接布局请求 / 顶点请求 | 窗口内 R / G 唯一待处理项 | 累计布局 / 图形队列项·轮 |
+| --- | --- | --- | --- | --- | --- | --- |
+| A | `99 → 98 → 97 → 97`，均在处理前 | 1 | 4 / 3 | 3 / 3 | 1 / 1 | 1 / 1 |
+| B | 只提交最终的 `97` | 1 | 1 / 1 | 1 / 1 | 1 / 1 | 1 / 1 |
+| C | `99`、`98`、`97`，每次写后都完整处理 | 3 | 3 / 3 | 3 / 3 | 每窗 1 / 1 | 3 / 3 |
+
+A 的前三次写入改变了值，但 R 和 G 已在队列里时不会重复追加；最后一次 `97` 连直接脏请求也没有。B 减少了业务写入和直接请求，表内的队列项·轮与 A 相同。因此，不能宣称 A→B 把“三次完整重建优化为一次”，更不能宣称节省了三分之二耗时；找布局根和请求回调等工作也不能因去重而算作免费。
+
+A 与 C 的差别来自处理边界。C 在三个窗口分别处理更新，有机会支持分阶段反馈；是否真的呈现仍须显示证据。若 `99`、`98` 是必须及时传达的战斗信息，直接合并为 `97` 就改变了任务。只有允许在同一提交点展示最终值，才比较 A/B 这种合并策略。
+
+同样，表中 `1 / 1` 不证明只遍历一次层级、只生成一个 Mesh、只提交一个批次，也不能推算毫秒。`Graphic.Rebuild` 还会依据剔除和脏状态决定是否更新几何/材质；这正是需要把队列工作与后续执行分开的原因。
+
+### 下一步该观察什么
+
+| 观察层 | 候选记录及边界 | 用于区分的解释 |
+| --- | --- | --- |
+| 业务更新 | 同一次界面/任务的写入次数、实际值变化、允许反馈的时点 | 重复赋值，还是必须显示多个中间状态 |
+| 布局与图形 | 布局根/Graphic 身份、直接与派生脏请求、处理窗口及覆盖的阶段 | 请求多但队列去重，还是跨窗反复处理、依赖范围扩大 |
+| 批次与提交 | 对应 Canvas、目标/Pass、批次及材质/纹理/裁剪条件 | CPU 布局变化，还是渲染状态/排序引起提交变化 |
+| 时间与体验 | 同条件 CPU 事件区间、GPU 支持范围、请求到必要反馈；缺测保留未知 | 哪段执行/等待变长，必要反馈是否迟到 |
+
+这是一份观测设计。未来采集时须固定项目/包版本、实际层级与配置、首开或稳定更新阶段，并确认来源能否提供这些字段。若使用 Profiler 中的 `Canvas.SendWillRenderCanvases`、`Canvas.BuildBatch` 等标记，先在所用版本确认含义及父子区间；不能仅凭名称就把前者当成某个 Text 的独占时间，或把后者等同于 C# Graphic 的 Mesh 生成时间。避免把父区间与子区间重复相加。队列数、DrawCall 和 GC Alloc 都只能回答各自的问题，不能互相替代。
+
+在这些边界明确后，再考虑改法：允许合并时只提交最终值；布局依赖造成热点时缩小依赖范围；批处理范围受频繁更新影响时尝试拆分 Canvas，同时复查新增批次、布局依赖和维护成本。换成 TextMeshPro 需要对齐显示效果、字体资源和更新路径后比较，不能消除“变化怎样传播”的问题。仅隐藏渲染、停止脚本更新、移出布局与释放资源也不是同一动作，生命周期策略另验。
+
+**理解检查**：为什么 A/B 的请求数不同而队列项·轮相同？若在每次赋值后插入完整更新，哪项数字会改变？若两个 G 共享 R，布局项与图形项怎样分别数？若 Text 被剔除或换成 TextMeshPro，哪些前提与观测需要重新核对？
+
+本节直接来源均来自上述同一快照：
+
+- [Text 的非空赋值分支](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Text.cs#L201-L223)；[Graphic 的颜色判断](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Graphic.cs#L156)及 [RGBA 比较](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/SetPropertyUtility.cs#L9-L16)。
+- [脏请求入口](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Graphic.cs#L276-L309)、[布局根查找与注册](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Layout/LayoutRebuilder.cs#L170-L258)，后者含 Editor 非播放分支，本题不覆盖该模式。
+- [队列分阶段处理](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/CanvasUpdateRegistry.cs#L162-L230)、[注册去重](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/CanvasUpdateRegistry.cs#L279-L325)与 [AddUnique](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/SpecializedCollections/IndexedSet.cs#L41-L54)。
+- [布局阶段的四步计算/控制](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Layout/LayoutRebuilder.cs#L76-L90)与 [Graphic 的实际更新条件](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Graphic.cs#L644-L663)。
 
 ---
 
@@ -165,9 +201,9 @@ RootCanvas（不动的大背景）
 └── DynamicCanvas（血量、计时器、弹幕）—— 频繁 Rebuild
 ```
 
-这样 DynamicCanvas 频繁 Rebuild 时，StaticCanvas 的 Mesh 不会受影响。
+这样分层是在尝试缩小频繁变化所影响的批处理范围。布局依赖仍需单独核对：`LayoutRebuilder` 按布局组祖先关系找根，不能仅凭多了一个 Canvas 就认定布局传播也被隔离。
 
-每个 Canvas 是一个独立的 Rebuild 单元，也是一个独立的合批单元。拆分过细（几十个 Canvas）会增加 Draw Call 和 Rebuild 管理开销，拆分原则是**按更新频率分层，而不是按功能分层**。
+Canvas 拆分须同时考虑更新频率、布局依赖、排序和新增批次；不能给每个功能都套一个 Canvas 后就视为优化完成。实际隔离范围和时间收益须在目标层级与版本中验证。
 
 ### World Space Canvas 的注意事项
 
@@ -188,11 +224,11 @@ Unity 6 起，**UI Toolkit** 已成为编辑器 UI 的标准，运行时 UI 也�
 | 结构模型 | Hierarchy（GameObject 树） | Visual Tree（VisualElement 树，不是 GameObject） |
 | 样式系统 | Inspector 属性 | USS（类 CSS）样式表 |
 | 合批机制 | Canvas 内 Mesh 合并 | 内部 Render Chain，自动管理批次 |
-| Rebuild | Canvas.BuildBatch | UIR（UI Renderer）增量更新 |
-| 动态 UI 性能 | 频繁 Rebuild 开销大 | 增量更新，理论上更高效 |
+| 更新路径 | 布局/Graphic 更新与 Canvas 批处理分别观察 | UIR（UI Renderer）路径需按版本核对 |
+| 动态 UI 性能 | 取决于变化范围、布局依赖与渲染工作 | 须用相同任务和反馈要求作对照 |
 | 运行时成熟度 | 成熟，生态完整 | Unity 2022~2023 逐步完善 |
 
-UI Toolkit 的 `UIR（UI Renderer）` 采用增量更新模型：只有发生变化的 VisualElement 子树才重新生成几何，理论上比 uGUI 的整 Canvas Rebuild 更高效。但当前版本（Unity 6）在某些复杂布局场景下仍存在性能问题，迁移决策需要实测对比。
+不能由“增量更新”推导 UI Toolkit 一定更快，也不能把 uGUI 简化成每次重建整个 Canvas。本节的 uGUI 队列模型不适用于 UI Toolkit；迁移时需另核版本、布局/样式传播、文本与渲染路径，再在同任务条件下比较。
 
 ---
 
@@ -200,12 +236,12 @@ UI Toolkit 的 `UIR（UI Renderer）` 采用增量更新模型：只有发生变
 
 | 检查项 | 工具 | 目标 |
 |-------|-----|-----|
-| Draw Call 数量 | Frame Debugger | UI Draw Call < 10（简单 HUD） |
-| Canvas.BuildBatch 耗时 | Profiler | < 0.5ms/帧 |
+| Draw Call 数量 | Frame Debugger | 先解释批次变化；接受线绑定任务、设备和必要画面 |
+| Canvas.BuildBatch 等 CPU 区间 | Profiler | 核对版本、对象范围及父子区间，再按候选预算复验 |
 | 全屏半透明遮罩 | Scene View Overdraw | 消除或改为不透明 |
-| 频繁更新的 Text | Profiler → GC Alloc | 换用 TextMeshPro |
-| Sprite Atlas 覆盖率 | Sprite Atlas Inspector | 主 UI 图集 >90% 覆盖 |
-| Dynamic Canvas 隔离 | 人工审查 | 血量/计时器独立 Canvas |
+| 频繁更新的 Text | 更新记录、Profiler | 分开写入/脏请求/处理与分配，不能用 GC Alloc 代替重建工作 |
+| Sprite Atlas 使用 | Sprite Atlas Inspector、实际引用 | 对齐图集身份与驻留/切换条件，另行核验收益 |
+| Dynamic Canvas 隔离 | 层级/布局依赖检查、Profiler | 检查频繁变化的影响范围与拆分代价 |
 | Mask 数量 | Frame Debugger | 尽量用 RectMask2D 替代 Mask |
 | World Space Canvas 数量 | Profiler | 按需 Enable/Disable |
 
@@ -216,7 +252,7 @@ UI Toolkit 的 `UIR（UI Renderer）` 采用增量更新模型：只有发生变
 uGUI 的性能问题高度集中：
 
 - **合批被打断** 的根本原因是纹理不一致（用 Sprite Atlas 解决）和 Depth 顺序交叉（用调整层级解决）
-- **Rebuild** 的根本原因是频繁更新内容与静态内容共享同一 Canvas（用 Canvas 分层解决）
+- **更新成本** 要分清写入、脏请求、布局/Graphic 队列处理和 Canvas 批处理，按实际依赖选择合并更新或缩小影响范围
 - **Overdraw** 的根本原因是不必要的透明层叠（全屏半透明背景是首要目标）
 
-解决这三个问题，UI 渲染性能通常可以提升 50% 以上。UI Toolkit 代表未来方向，但 uGUI 在运行时场景仍然是当前主流。
+这些是排查与候选改法，收益须由目标任务的可比记录和必要反馈验证。本文没有设备对照数据，不能给出统一提升比例或据此选择 UI 框架。

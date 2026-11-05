@@ -104,6 +104,10 @@
 
 复读预算 09 与旧粒子渲染文，旧文已有 Billboard/Mesh/Trail 的解释入口，但“单系统一次 DrawCall”、Early Z、固定纹理规格、VFX Graph 状态访问等概括不能充当本批已验证机制；未全面改写或认证旧文。在预算 09 原位补 A/B/C 三配置计数及候选观测，以 Unity 6.0 Noise、Renderer、Main、Built-in 实例化和两方案说明作直接依据，分开模拟、几何、覆盖与时间。实例化文限定 Built-in Render Pipeline，不推广为 URP/HDRP 兼容结论；离屏与恢复也不继承“不可见即零成本”。来源、自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-simulation-geometry-20261106)，原归属/篇数及 R6–R8 不变。五条工作线已回接生命周期/资源，当前 D1 知识职责有对应材料，可转 D2；具体工具来源/校准和作者理解仍待后续，不提前执行采集。
 
+### D2｜数据变化与重建队列的复用修订（2026-11-06）
+
+完整复读 UI 首开/叠层与 UI 渲染补D；前者负责美术的时机/风险桥接，已有渲染文入口，本批保留不改。后者把 Layout、Graphic 与 Canvas 批处理混写，并声称同色赋值仍标脏、换 TMP 可解决频繁更新，足以影响当前判断；按公开 uGUI 2.5.0 的固定快照核对后原位修订。新增同一 Text 的 A/B/C 纸面调度记录，分别数 setter、值变化、直接请求、唯一待处理项与队列项·轮；不推算实际 Mesh、DrawCall、帧数或毫秒。同步修正直接关联的 Canvas 布局隔离/标记归因和比较表，移除无依据统一数字线与“50%以上”收益，保留其余文章结构。来源、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-rebuild-foundations-20261106)；原归属回写 Unity 渲染 plan，不新增篇号或 R，R6–R8 仍待处理。合批排序、图集/覆盖、文本与首开/重开/关闭驻留尚未完成版本审校，本批不能作为全篇或 D2 通过依据，也未执行实际采集。
+
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
 - 位置：[角色预算](../content/performance/game-budget-08-character-budget.md)，L39 的“单体规格 x 同屏数量 x 目标档位 x 使用时机”，以及 L67 的“动画、蒙皮、阴影、材质分支都是按数量放大的”。
