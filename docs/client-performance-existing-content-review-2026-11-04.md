@@ -30,7 +30,7 @@
 | [体验一致性](../content/performance/device-tier-experience-consistency.md) | 复用性能与视觉／声音／动作的共同接受条件 | C2 已原位补能力、候选配置、用户请求与实际配置的连接，以及首开教学矩阵/必要体验检查；候选未实现或实测，原引擎映射未重新认证 |
 | [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md) | 复用能力信号、风险修正与规则回溯；R3/R4 已按局部职责修订并复审 | 已分开兼容性、能力、用户目标和会话状态；映射、阈值及动态策略仍待实际校准 |
 | [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证；R5 已局部修订并复审 | 已补指标/缺失与首用/持续窗口，选样数量已按 C1 改为问题覆盖依据；验证协议与真实矩阵未实跑 |
-| [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | D1 已补覆盖、生命周期、共享/实例/池及组合增量教学；关联修订模板 20 的范围与条件，模拟/几何成本桥接仍待续 |
+| [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | D1 已补覆盖、生命周期、共享/实例/池、组合增量及模拟/几何教学；五条工作线连接已有阶段/资源表，模板 20 已补口径，可接续 D2 知识，实测仍待开展 |
 | [UI 首开与叠层](../content/performance/game-performance-ui-first-open-layering.md) | 复用面向 UI 美术的阶段与风险直觉 | 补请求到反馈、重建／渲染／驻留口径；保持原文的美术桥接职责 |
 | [角色预算 08](../content/performance/game-budget-08-character-budget.md) | 复用几何、材质、动画、同屏规模与识别信息取舍；局部修订 | R6、R7；补共享／实例增量和角色／动画归因关系 |
 | [场景预算 07](../content/performance/game-budget-07-scene-budget.md) | 复用典型／高峰视角、流式边界、双驻留与组合预算 | 补可复现路线、事件和版本配置记录，无需另写场景预算总论 |
@@ -99,6 +99,10 @@
 #### D1 资源与组合接续（2026-11-06）
 
 复读预算 09、模板 20、内存记账的共享与同时峰值，按本次直接依赖局部核对内存/CPU/GPU 预算；旧定义足够，原位新增六个同任务教学快照及时间净增反例，不另写内存总论。共享/实例分配、池容量与保留数、引用/卸载分别定义；Addressables 1.21 来源只支撑包的引用与卸载边界，不把其行为推广到所有引擎。模板仅补关联身份、字段范围及候选/验证状态，不构建采集器。来源、局部 AI 编辑自审、算术与页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-resource-ledger-20261106)，原归属回写预算 plan；R6–R8 不变，不宣称全篇、D1 或 VFX-T 已完成。模拟模块/几何路径与工作量到执行位置的桥接待下一批，实际测量仍后置。
+
+#### D1 模拟/几何接续（2026-11-06）
+
+复读预算 09 与旧粒子渲染文，旧文已有 Billboard/Mesh/Trail 的解释入口，但“单系统一次 DrawCall”、Early Z、固定纹理规格、VFX Graph 状态访问等概括不能充当本批已验证机制；未全面改写或认证旧文。在预算 09 原位补 A/B/C 三配置计数及候选观测，以 Unity 6.0 Noise、Renderer、Main、Built-in 实例化和两方案说明作直接依据，分开模拟、几何、覆盖与时间。实例化文限定 Built-in Render Pipeline，不推广为 URP/HDRP 兼容结论；离屏与恢复也不继承“不可见即零成本”。来源、自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-simulation-geometry-20261106)，原归属/篇数及 R6–R8 不变。五条工作线已回接生命周期/资源，当前 D1 知识职责有对应材料，可转 D2；具体工具来源/校准和作者理解仍待后续，不提前执行采集。
 
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
