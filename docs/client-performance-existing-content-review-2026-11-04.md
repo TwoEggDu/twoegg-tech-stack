@@ -112,6 +112,10 @@
 
 复读渲染补D 的原合批/Atlas 段与首开桥接，保留桥接文的美术职责。本批修正“同材质/图集必一批”“ABAB 必四批并应按纹理重排”和裁剪每项固定加批的推断；用纸面纹理段与 Alpha 合成反例，说明有效状态、必要顺序、实际批次和覆盖不能互换。Image/Text/Graphic 公开实现及 Profiler/Mask 文档按同一 uGUI 2.5.0 快照核对；特别记录 UI Profiler 模块 Editor-only，不能套为 Player 数据。Atlas Master/Variant 与手动准备另按 Unity 6.0 手册，移除未运行且缺生命周期的加载代码，补字体纹理与 Sprite 图集的区别。来源、自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-batching-atlas-20261106)，不新设 R 或增篇，R6–R8 仍待执行。没有测试原生重排、Mask 成本或加载器；原覆盖亮度标尺、World Space、UI Toolkit 与完整生命周期协议仍待续，不能据此认证全篇。
 
+#### D2 覆盖、诊断图与 Image 几何接续（2026-11-06）
+
+复读补D Overdraw 段与已有状态/覆盖边界，保留更新链和甲/乙/丙模型，不重做 D1 覆盖算术。原段把透明与无深度测试/每层写回画等号，未给来源就将灰白亮度换成固定次数，并把 Tight 导入选项和换 TMP 当作直接解法；本批原位修订，补覆盖/着色/写回/时间四口径、假设映射的饱和反例及候选改法条件。Image Simple 的 useSpriteMesh 分支和 Sliced/Tiled/Filled 路径、Shadow/Outline 的顶点流修改按 uGUI 2.5.0 固定快照核对；ZTest/ZWrite/Blend 与 HLSL clip 只说明契约，不据此推定实际 Shader 状态或硬件调用。来源、自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-coverage-diagnostics-20261106)，原归属回写渲染 plan，不增篇或新设 R，R6–R8 不变。未核验工具实际色阶、性能收益、TMP 或 World Space/UI Toolkit；UI 生命周期与完整阶段观测待接续，全篇和 D2 尚未通过。
+
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
 - 位置：[角色预算](../content/performance/game-budget-08-character-budget.md)，L39 的“单体规格 x 同屏数量 x 目标档位 x 使用时机”，以及 L67 的“动画、蒙皮、阴影、材质分支都是按数量放大的”。

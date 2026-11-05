@@ -167,30 +167,59 @@ A 与 C 的差别来自处理边界。C 在三个窗口分别处理更新，有�
 
 ---
 
-## Overdraw：GPU 性能的主要杀手
+<a id="ui-coverage-diagnostics"></a>
 
-### 什么是 Overdraw
+## Overdraw：覆盖、执行、写回与诊断图分开看
 
-UI 是透明层叠渲染的——每个 UI 元素从下到上依次绘制，同一屏幕像素被绘制多次，叫 **Overdraw**。3D 场景有深度测试可以跳过遮挡像素，但 UI 是透明的，没有办法用深度测试剔除，每层都必须写入。
+前面的丙只统一纹理，仍保留四层覆盖。它提示我们：批次减少后，像素相关工作未必减少。反过来，画面看起来透明，也不能据此判断没有工作，或每一层必定写回。
 
-### 查看 Overdraw
+### 先说清所数的是哪一层
 
-在 Scene View 工具栏，切换到 **Overdraw 模式**（Shading Mode → Overdraw），越亮的区域 Overdraw 越严重：
+| 口径 | 在回答什么 | 为什么不能换成另一项 |
+| --- | --- | --- |
+| 几何覆盖与重叠 | 在指定目标、采样点与 Pass 下，哪些图形覆盖该位置 | 可能随后被剔除、裁剪、测试或丢弃，不等于全部执行/写回 |
+| 片元着色工作 | 哪些片元着色器工作实际发生 | 测试、丢弃、硬件执行方式和工具定义影响计数，不能仅数 UI 节点推定 |
+| 颜色/深度写回 | 哪些结果进入对应附件，是否经过混合 | 不写深度不代表不做深度测试；不改变最终颜色也不证明前面没有工作 |
+| GPU 时间 | 在确定支持范围、窗口与条件下执行花了多久 | 材质、分辨率、带宽等会改变代价，覆盖层数不能直接换毫秒 |
 
-- 灰色：绘制 1 次
-- 较亮：绘制 3~5 次
-- 白色/极亮：绘制 10 次以上
+Unity 6.0 的 [ZTest](https://docs.unity.com/en-us/engine/6000.0/manual/materials-and-shaders/shaders/reference/sl-reference/sl-commands/sl-ztest)、[ZWrite](https://docs.unity.com/en-us/engine/6000.0/manual/materials-and-shaders/shaders/reference/sl-reference/sl-commands/sl-zwrite) 与 [Blend](https://docs.unity.com/en-us/engine/6000.0/manual/materials-and-shaders/shaders/reference/sl-reference/sl-commands/sl-blend) 分别控制深度测试、深度写入与混合。透明混合不能直接推出“没有深度测试”；是否有效剔除要看实际 Pass 状态、目标和已有深度，混合也可能影响 GPU 的优化机会。本节没有核验项目的实际 Shader，不指定一套适用于所有 Canvas 的深度状态。
 
-### 常见 Overdraw 来源
+同样，在普通 Alpha 合成的题设下，输出 Alpha 为零可以不改变目标颜色，但它不等于命令、几何或着色工作已被跳过。[HLSL `clip`](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-clip) 是按条件丢弃当前像素的另一种语义；用了它也不能推出整个着色过程没有代价。实际执行与写回需匹配状态和工具证据，不能凭最终透明像素反推。这里只说明边界，没有运行 Shader 或硬件计数器。
 
-| 来源 | 说明 | 解法 |
-|-----|-----|-----|
-| 全屏半透明背景 | 一张覆盖全屏的半透明 Image | 改用不透明背景，或直接清屏颜色 |
-| 多层面板叠加 | 打开新面板时旧面板仍在渲染 | 关闭被遮挡的面板的 Canvas 或 GameObject |
-| 文字底部阴影 | Shadow/Outline 组件生成额外 Mesh | 改用 TextMeshPro 的内置描边（单次渲染） |
-| 不规则 Sprite 填充 | 矩形碰撞区内大量透明像素 | 使用 Tight Mesh（Sprite 的 Mesh Type = Tight） |
+### 为什么白色诊断图不能固定换算层数
 
-**全屏半透明背景是最大的杀手**，一张 `alpha = 0.5` 的全屏黑色背景意味着所有屏幕像素都被额外绘制一次。
+先区分观察的工具。上述固定 uGUI 快照的 [UI Profiler 文档](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Documentation~/ProfilerUI.md)列出 Standard、Overdraw、Composite Overdraw 预览模式，但没有提供旧文所称“灰色一次、白色十次”的通用标尺。Scene View、这个 Editor 预览以及自制计数 Pass 也不能只因名称相似就共用数值含义；该 UI Profiler 的 Editor-only 限制仍沿用前节。
+
+用一个**纯教学映射，非 Unity 模式实现**说明问题。假定单通道诊断值从零开始，每覆盖一层累加固定值 d，最后在 1 饱和：`D(L) = min(1, d × L)`。L 是给定的纸面层数，不是本轮实测；题设不引入色彩转换和其他处理。
+
+| 给定层数 L | d = 0.25 时的 D | 改用 d = 0.125 时的 D |
+| --- | --- | --- |
+| 0 | 0 | 0 |
+| 1 | 0.25 | 0.125 |
+| 2 | 0.5 | 0.25 |
+| 4 | 1 | 0.5 |
+| 8 | 1 | 1 |
+
+第一种映射中，4 层和 8 层都是 1，已经不能区分；换 d 后，同为 4 层的数值也改变了。这个反例不规定实际工具的色阶，更不建议直接修改工具参数。它说明读图前应确认：所数对象、计层条件、映射和饱和范围。未知映射或已经饱和时，保留定量层数未知；即使计层已校准，也不能把诊断 Pass 的时间当作原 UI 渲染时间。
+
+### 改几何和叠层时，先守住哪些条件
+
+以下 uGUI 实现继续限定为 2.5.0 的同一公开快照。[Image.useSpriteMesh 的说明](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Image.cs#L646-L659)要求同时检查导入的 Sprite 几何；[OnPopulateMesh](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Image.cs#L883-L908)中，Simple 根据该开关选择简单四边形或 Sprite 几何，Sliced、Tiled、Filled 则进入各自生成路径。因此，单改导入设置为 Tight 不能证明当前 Image 已采用紧贴轮廓的网格；这个开关也不能直接套到所有 Image Type。
+
+`GenerateSimpleSprite` 构造四边形，而 `GenerateSprite` 读取 Sprite 的顶点和三角形，具体见[两条生成路径](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Image.cs#L1071-L1121)。紧贴轮廓可能减少无用覆盖，同时改变顶点量和生成工作；轮廓、缩放、边缘与显示要求必须保留，不能把几何更复杂就一律判为更快。
+
+| 候选来源 | 先查什么 | 改选条件与待验证项 |
+| --- | --- | --- |
+| 全屏半透明底图 | 必须透露哪些下层信息，实际覆盖和混合状态是什么 | 需要透景就保留合成语义；仅改 Alpha 为 1 不证明下层提交已停止或材质路径已改变 |
+| 多层面板 | 下层是否仍提交，是否完全被遮挡且允许暂停呈现 | 可考虑停止不需要的提交；输入、更新和驻留另核，不能把隐藏当释放 |
+| 文字阴影/描边 | 顶点扩增、覆盖、材质与必要可读性 | 该包 Shadow/Outline 修改顶点流，不等同于额外独立 Mesh 或固定新增 DrawCall；换 TMP 另作同效果比较 |
+| 不规则 Sprite 的透明区域 | 当前 Image Type、useSpriteMesh、实际导入几何及 Shader 条件 | 同画面比较几何/覆盖和处理代价，不能由矩形碰撞区或 Tight 选项直接推渲染结果 |
+
+顶点修改的直接依据见 [Shadow](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/VertexModifiers/Shadow.cs#L91-L142) 与 [Outline](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/VertexModifiers/Outline.cs#L15-L45)。这里没有取得 TMP、实际提交或性能收益证据，也不能预先认定全屏底图一定是最大热点。
+
+未来观察保留同一任务/帧、Canvas/目标/Pass、分辨率、实际几何/材质/状态、诊断模式及其计数定义。诊断图帮助提出“大覆盖、必要/多余叠层、几何路径”等候选解释；原渲染的时间、正确性与采集支持另查，不支持或映射未知时不填零。
+
+**理解检查**：教学图值为 1 时为什么分不清 4 层和 8 层？Alpha 为零能否证明不做着色？Simple 与 Sliced 设置相同 useSpriteMesh 后为何不能直接认定几何相同？减少叠层或修改轮廓时，应保留什么画面证据？
 
 ---
 
@@ -243,7 +272,7 @@ Unity 6 起，**UI Toolkit** 已成为编辑器 UI 的标准，运行时 UI 也�
 |-------|-----|-----|
 | Draw Call 数量 | Frame Debugger | 先解释批次变化；接受线绑定任务、设备和必要画面 |
 | Canvas.BuildBatch 等 CPU 区间 | Profiler | 核对版本、对象范围及父子区间，再按候选预算复验 |
-| 全屏半透明遮罩 | Scene View Overdraw | 消除或改为不透明 |
+| 全屏半透明底图 | 定义明确的覆盖诊断、原渲染记录 | 保留必要透景，核对下层实际提交及同效果代价 |
 | 频繁更新的 Text | 更新记录、Profiler | 分开写入/脏请求/处理与分配，不能用 GC Alloc 代替重建工作 |
 | Sprite Atlas 使用 | Sprite Atlas Inspector、实际引用 | 对齐图集身份与驻留/切换条件，另行核验收益 |
 | Dynamic Canvas 隔离 | 层级/布局依赖检查、Profiler | 检查频繁变化的影响范围与拆分代价 |
@@ -258,6 +287,6 @@ uGUI 的性能问题高度集中：
 
 - **合批** 要对齐有效材质/纹理、裁剪和提交范围，并保留必要顺序；图集只解决其中一部分条件
 - **更新成本** 要分清写入、脏请求、布局/Graphic 队列处理和 Canvas 批处理，按实际依赖选择合并更新或缩小影响范围
-- **Overdraw** 的根本原因是不必要的透明层叠（全屏半透明背景是首要目标）
+- **像素相关成本** 要分开覆盖、着色、写回与时间；诊断图先查计数和映射，叠层改动保留必要画面
 
 这些是排查与候选改法，收益须由目标任务的可比记录和必要反馈验证。本文没有设备对照数据，不能给出统一提升比例或据此选择 UI 框架。
