@@ -32,7 +32,7 @@
 | [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证；R5 已局部修订并复审 | 已补指标/缺失与首用/持续窗口，选样数量已按 C1 改为问题覆盖依据；验证协议与真实矩阵未实跑 |
 | [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | D1 已补覆盖、生命周期、共享/实例/池、组合增量及模拟/几何教学；五条工作线连接已有阶段/资源表，模板 20 已补口径，可接续 D2 知识，实测仍待开展 |
 | [UI 首开与叠层](../content/performance/game-performance-ui-first-open-layering.md) | 复用面向 UI 美术的阶段与风险直觉 | 补请求到反馈、重建／渲染／驻留口径；保持原文的美术桥接职责 |
-| [角色预算 08](../content/performance/game-budget-08-character-budget.md) | 复用几何、材质、动画、同屏规模与识别信息取舍；局部修订 | R6 已关闭，共享/实例与换装/池教学已补；R7、具体执行归因及 D3 余项待续 |
+| [角色预算 08](../content/performance/game-budget-08-character-budget.md) | 复用几何、材质、动画、同屏规模与识别信息取舍；局部修订 | R6 已关闭，资源/实例与绘制范围教学已补；R7、完整观测及 D3 覆盖汇合待续 |
 | [场景预算 07](../content/performance/game-budget-07-scene-budget.md) | 复用典型／高峰视角、流式边界、双驻留与组合预算 | 补可复现路线、事件和版本配置记录，无需另写场景预算总论 |
 | [动画制作与接入 05](../content/delivery-engineering/game-art-production-05-animation.md) | 复用动作／片段／状态、采样与运行帧率、混合／打断／事件正确性 | R8；动画性能测量放在对应专题，不改写制作主线 |
 
@@ -135,6 +135,10 @@
 - 最小调整：改成共同约束维度，并要求在目标组合负载下复测，避免读者用单体成本乘人数承诺整场景达标。
 
 **2026-11-06 修订与局部复审关闭**：复读角色预算 08 全文、美术优先级、模板 19 及几何/内存直接依赖；旧文已给规格与组合意识，真实缺口是约束维度被写成算式，以及资源身份、外观种类与保留实例没有接上。原位修摘要/正文/结尾的乘法概括，补[四快照教学账本](../content/performance/game-budget-08-character-budget.md#character-resource-ledger-teaching)和局部资源观测；不重复内存总论或 VFX 组合时间算例。Unity 6.0 三个公开 API 契约只支持共享/身份及材质实例化边界，MiB 均为题设。来源、追问与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#character-resource-ledger-20261106)。R6 对应误读已关闭，不代表全篇、D3 或模板 19 认证；R7/R8 与几何/材质/LOD/阴影余项仍待续，未测引擎/设备或实现采集器。
+
+#### D3 绘制范围与 LOD 过渡接续（2026-11-06）
+
+复读预算 08 已有资源账本及规格段，局部回读几何文的子网格/用途/LOD、Shader 文的精度与编译/设备边界。旧文机制足够，缺口是角色同屏组合怎样对应实际参与集合。本批只在预算 08 补一节用途表，分开 Mesh/子网格/材质、稳定与两级过渡、主画面与单个阴影用途；P0/P1 合计 14500/22500 均为纸面逻辑输入，不是 GPU 计数或成本倍数。按 Unity 6.0 三份公开资料核对 subMeshCount、LODGroup 和 ShadowsOnly，不把阴影级别选择当作引擎自动保证；“切换距离”改为选择依据与过渡条件。来源、自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#character-draw-scope-20261106)，先回写预算原 plan。前批教学和 R6 关闭依据保留；D3 八字段/模板 19 待汇合，R7/R8 留 D4，没有新增运行、采集或预算校准，也未认证依赖旧文全篇。
 
 ### R7｜同文对蒙皮执行位置表述不一致
 

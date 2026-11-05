@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 角色预算 08 的绘制范围与 LOD 过渡补桥（2026-11-06）
+
+在[角色预算 08](../content/performance/game-budget-08-character-budget.md#character-draw-scope-teaching)接续资源账本，补 Renderer/LOD→子网格/材质→用途/Pass/目标的对应，以及 P0/P1 的纸面参与集合。用 10000/4500 与 18000/4500 个逻辑三角形输入解释稳定、两级过渡、仅阴影参与和槽位重复乘算；不将 14500/22500 的合计换成 DrawCall、硬件执行量或毫秒。Unity 6.0 LODGroup、subMeshCount、ShadowsOnly 仅支持对应契约，原有“切换距离”收窄为选择与过渡条件；复用几何、Shader 旧文，不新增原理总论或篇号。来源、局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#character-draw-scope-20261106)。前批四快照与 R6 关闭依据保留；D3 八字段观测/模板 19 适用性待汇合，R7/R8 留 D4，不认证全篇、采集器或设备结果。
+
 ## 角色预算 08 的共同约束与资源账本（2026-11-06）
 
 原位修订[角色预算 08](../content/performance/game-budget-08-character-budget.md#character-resource-ledger-teaching)：把摘要、正文和结尾的乘法/线性放大表述改为单体规格、同屏组合、实际配置和使用阶段的共同约束，按目标组合复验，关闭 R6。增加四个虚构快照，复算共享基础/外观及保留实例的 28/48/48/36 MiB，区分人数、外观多样性、缓存与池；用 Unity 6.0 的 sharedMesh、sharedMaterials 和 material 契约解释身份、共享数组与材质实例化的观测边界。来源、局部 AI 编辑自审和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#character-resource-ledger-20261106)。标题、URL、编号与归属不变，不新增篇目；R7 的蒙皮位置及 R8 留后续动画单元，D3 的几何/材质/LOD/阴影与完整观测尚待续，模板 19 未在本批认证。没有真实采集、预算标定、工具实现或全篇通过结论。
