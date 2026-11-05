@@ -191,3 +191,5 @@
 R5 在相关方法职责内通过局部 AI 编辑复审；来源、教学复算、本地站点检查与交付接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-tier-metric-protocol-20261105)。保留文章的 Code Quality 归属、标题和 URL，不新增篇号，也不把本批审核扩大为整篇或本系列通过。没有真实采集、分档校准、门禁运行或团队采用证据；设备选样建议的接续修订见下段。
 
 同日 C1 接续：原位将“每档一两台、边界两三台、三条 smoke”的固定数量建议改为按能力、路径、任务阶段与未覆盖问题选样，四类样本按职责理解，可由同一设备承担多项。分辨率/帧率请求与面板刷新率分开，回链能力指纹的教学矩阵。局部 AI 编辑复审、集合复算与本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-capability-matrix-20261105)；未宣称完成实际设备覆盖或整篇验收。
+
+2026-11-06 C3 接续：同一验证文原位补[四维校准教学矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md#device-calibration-matrix-teaching)，把设备、固定/动态方案、场景和阶段连接为 72 个名义组合、24 个不适用格和 48 个适用问题格；只安排 A/B 的教学范围为 32 格，C 的 16 格仍缺。格数不等于运行次数或通过证据，动态未触发不能填不适用，U 单独补兼容证据。记录分项判定、异常路径、配置分段、规则版本及重新标定触发。来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-calibration-matrix-20261106)；保留原归属、标题和 URL，不新增篇号，不重开 R5，不认证全篇或实际设备校准。
