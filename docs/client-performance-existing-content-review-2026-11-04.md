@@ -30,7 +30,7 @@
 | [体验一致性](../content/performance/device-tier-experience-consistency.md) | 复用性能与视觉／声音／动作的共同接受条件 | C2 已原位补能力、候选配置、用户请求与实际配置的连接，以及首开教学矩阵/必要体验检查；候选未实现或实测，原引擎映射未重新认证 |
 | [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md) | 复用能力信号、风险修正与规则回溯；R3/R4 已按局部职责修订并复审 | 已分开兼容性、能力、用户目标和会话状态；映射、阈值及动态策略仍待实际校准 |
 | [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证；R5 已局部修订并复审 | 已补指标/缺失与首用/持续窗口，选样数量已按 C1 改为问题覆盖依据；验证协议与真实矩阵未实跑 |
-| [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | 补指标分母、首放事件窗口、制作预警和性能验收的关系 |
+| [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | D1 已补覆盖/重叠分母及制作预警/验收边界；发射/模拟、首放/生命周期观测及共享资源账本待续 |
 | [UI 首开与叠层](../content/performance/game-performance-ui-first-open-layering.md) | 复用面向 UI 美术的阶段与风险直觉 | 补请求到反馈、重建／渲染／驻留口径；保持原文的美术桥接职责 |
 | [角色预算 08](../content/performance/game-budget-08-character-budget.md) | 复用几何、材质、动画、同屏规模与识别信息取舍；局部修订 | R6、R7；补共享／实例增量和角色／动画归因关系 |
 | [场景预算 07](../content/performance/game-budget-07-scene-budget.md) | 复用典型／高峰视角、流式边界、双驻留与组合预算 | 补可复现路线、事件和版本配置记录，无需另写场景预算总论 |
@@ -87,6 +87,10 @@
 #### C3 校准矩阵接续（2026-11-06）
 
 复读分档验证文，复用其六类口径、首用/持续窗口及代表设备设计，原位补设备×配置×场景×阶段的教学适用矩阵。增量是固定 N/L 与动态 D 的适用边界、问题格与运行证据的区别、未触发/缺证据/失败处理，以及规则版本和重新标定触发；不再复制 C1/C2 或动态状态演算。Epic UE 5.8 的可复现场景与多维硬件验证建议为来源，具体 72/24/48/32/16 格是本文教学题设。局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-calibration-matrix-20261106)；原归属回写 Code Quality plan，不新增审查编号，R6–R8 仍待处理，没有实际矩阵运行或采集准确性证明。
+
+### D1｜特效覆盖口径的复用补桥（2026-11-06）
+
+完整复读预算 09、模板 20、美术桥接的特效叠加/首放文与粒子渲染文。预算 09 已有四类账本，缺口是覆盖、重叠和分母仍停留在名词；本批在原文补同粒子数三布局的纸面计数与边界，不新写同义预算总论。模板 20、首放桥接继续承担样表和美术直觉；粒子渲染文的 Early Z、单系统单 DrawCall、工具模式及固定纹理规格仍需版本复核，本轮没有把它们当作模型依据或修成已验证结论。来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-coverage-foundations-20261106)；原归属回写预算 plan，不新增 R 编号，R6–R8 状态不变。D1 生命周期和完整观测表待续，VFX-T 仍为后续专项，不把本节计成其新成稿或实验。
 
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
