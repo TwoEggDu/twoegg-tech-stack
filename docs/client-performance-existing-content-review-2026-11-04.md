@@ -120,6 +120,10 @@
 
 复读 UI 首开美术桥接、补D、资源就绪链的退出/迟到结果和内存记账的池/释放说明。保留桥接文的美术职责和三批已有机制，在补D 原位新增首开/重开/切页/滚动/关闭与再开的观测协议，区分透明度、绘制、生产者、布局、输入和持有；用 P1–P4 虚构请求说明必要画面/输入共同满足、超时与采集缺失，复用既有资源持有模型而不重复内存算术。uGUI 固定快照的 CanvasGroup/LayoutGroup、Unity 6.0 SetActive、Addressables 1.21 与未绑定版本的官方优化建议分别限用；不把关闭 Canvas 写成子项全停或重开免准备。来源、自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-lifecycle-protocol-20261106)，不增篇或新设 R，R6–R8 不变。World Space/UI Toolkit 旧概括待核，D2 与全篇仍未认证；未实现或实测启停、输入、布局、加载/取消和资源释放。
 
+#### D2 World Space 与 UI Toolkit 概括核查（2026-11-06）
+
+复读补D 的两段旧概括及前四批边界，按固定 uGUI Canvas 文档、GraphicRaycaster 方法和 Unity 6.0 路径的 UI Toolkit 机制文档原位修订。去掉每 Canvas 固定批数、把它当独立 Renderer 的逐帧视锥测试和笼统启停建议；区分坐标投影、输入查询、实际提交与恢复。框架比较改为结构/样式、更新、图集和目标的观察入口，不沿用 uGUI 队列计数、成熟度排名或自动合批保证。6000.0 比较页实际表头标 Unity 6.6，保留原件但不作 6.0 支持证据；旧 renderer URL 的 404 也不作后端依据。来源、自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-render-mode-boundaries-20261106)，不增篇或新设 R，R6–R8 不变。前四批教学原文保留；D2 观测字段/知识覆盖仍待汇合核对，不据局部修订认证全篇或真实路径。
+
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
 - 位置：[角色预算](../content/performance/game-budget-08-character-budget.md)，L39 的“单体规格 x 同屏数量 x 目标档位 x 使用时机”，以及 L67 的“动画、蒙皮、阴影、材质分支都是按数量放大的”。

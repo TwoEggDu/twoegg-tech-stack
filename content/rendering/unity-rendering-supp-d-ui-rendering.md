@@ -302,30 +302,34 @@ RootCanvas（不动的大背景）
 
 Canvas 拆分须同时考虑更新频率、布局依赖、排序和新增批次；不能给每个功能都套一个 Canvas 后就视为优化完成。实际隔离范围和时间收益须在目标层级与版本中验证。
 
-### World Space Canvas 的注意事项
+<a id="ui-render-mode-boundaries"></a>
 
-World Space Canvas（`Render Mode = World Space`）挂在 3D 场景中的血条、名字牌等：
+### World Space Canvas：坐标模式不等于成本模型
 
-- **不参与 Screen Space Canvas 的合批**，每个 World Space Canvas 至少 1 个 Draw Call
-- 每帧都会触发摄像机视锥体测试（每个 Canvas 是一个独立的 Renderer）
-- 尽量减少 World Space Canvas 的数量，考虑用 `Canvas.enabled` 在不可见时关闭
+World Space Canvas 常用于场景中的血条、名字牌。该快照的 [Canvas 文档](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Documentation~/class-Canvas.md)说明：它可以像场景平面一样任意朝向，屏幕大小受相机距离和角度影响；嵌套 Canvas 沿用父级 Render Mode。Render Mode 回答 UI 怎样投影，不能直接给出工作量或时间。
+
+- **记录实际绘制范围。** 固定相机、目标、排序、必要画面和实际 Graphic/材质；前面的状态/顺序模型仍用于提出候选解释。Canvas 数量不能直接换成 Draw Call，是否有提交、怎样分批以对应渲染事件为准，不给每个 Canvas 指定固定下界。
+- **分开输入查询与渲染可见性。** Canvas 文档将 Event Camera 定义为处理 UI 事件的相机；公开 [GraphicRaycaster](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/GraphicRaycaster.cs#L297-L339)按事件相机、射线目标、裁剪标记与矩形范围筛选输入候选。这不是“每个 Canvas 是一个独立 Renderer，且每帧必做一次摄像机视锥测试”的渲染证据，本节不据此规定原生剔除频率或费用。
+- **启停按必要反馈判断。** 离屏、被场景遮挡、主动隐藏和层级非激活是不同条件；若选择关闭 Canvas，仍逐项核对自身/子项绘制、输入、业务更新和持有，按前节协议验证恢复。不能只减 Canvas 数就认定更快，也不能由血条不可见推定它的所有更新已停。
 
 ---
 
 ## UI Toolkit vs uGUI
 
-Unity 6 起，**UI Toolkit** 已成为编辑器 UI 的标准，运行时 UI 也在逐渐推广。与 uGUI 的本质差异：
+比较两套 UI 时，先对齐任务和实际工作范围。以下是观察入口，不是通用性能排名或功能支持矩阵：
 
-| 维度 | uGUI | UI Toolkit |
-|-----|------|-----------|
-| 结构模型 | Hierarchy（GameObject 树） | Visual Tree（VisualElement 树，不是 GameObject） |
-| 样式系统 | Inspector 属性 | USS（类 CSS）样式表 |
-| 合批机制 | Canvas 内 Mesh 合并 | 内部 Render Chain，自动管理批次 |
-| 更新路径 | 布局/Graphic 更新与 Canvas 批处理分别观察 | UIR（UI Renderer）路径需按版本核对 |
-| 动态 UI 性能 | 取决于变化范围、布局依赖与渲染工作 | 须用相同任务和反馈要求作对照 |
-| 运行时成熟度 | 成熟，生态完整 | Unity 2022~2023 逐步完善 |
+| 比较对象 | uGUI 的观察入口 | UI Toolkit 需另核的入口 |
+| --- | --- | --- |
+| 结构与样式 | GameObject/RectTransform 与组件关系 | 可视树、UXML 结构及 USS 样式/布局规则；不按 UI 节点数直接等价换算 |
+| 更新工作 | 布局/Graphic 队列与 Canvas 批处理分别观察 | 样式、布局及几何更新按版本和实际依赖观察；不沿用本文队列项·轮定义 |
+| 纹理与绘制目标 | 实际 Sprite/字体纹理、材质、Canvas/目标/Pass | Panel、动态图集的实际收录/过滤、目标与排序；不同目标路径不能只比调用数 |
+| 隐藏与复用 | 前节分别检查绘制、生产者、布局、输入与持有 | 在实际 Panel/元素及业务管理范围重定这些条件；不把 uGUI 的启停接口照搬成同样结果 |
 
-不能由“增量更新”推导 UI Toolkit 一定更快，也不能把 uGUI 简化成每次重建整个 Canvas。本节的 uGUI 队列模型不适用于 UI Toolkit；迁移时需另核版本、布局/样式传播、文本与渲染路径，再在同任务条件下比较。
+Unity [UI Toolkit 介绍](https://docs.unity.com/en-us/engine/6000.0/manual/uitoolkits/uielements/introduction-ui-toolkit)以可视树、UXML 和 USS 说明结构与样式。运行时性能资料分别讨论 [usage hints 与几何再生成](https://docs.unity.com/en-us/engine/6000.0/manual/uitoolkits/uielements/uie-support-for-runtime-ui/uie-performance-consideration-runtime/uie-use-usage-hints-to-reduce-draw-calls-and-geometry-regeneration)、[动态图集及过滤](https://docs.unity.com/en-us/engine/6000.0/manual/uitoolkits/uielements/uie-support-for-runtime-ui/uie-performance-consideration-runtime/uie-control-textures-of-the-dynamic-atlas)。这些说明支持寻找候选解释，不证明总成本更低、所有纹理自动入图集或每次更新都免重建；本节没有运行这些路径。
+
+还要核对输出边界。[Panel Settings 的 Target Texture](https://docs.unity.com/en-us/engine/6000.0/manual/uitoolkits/uielements/uie-support-for-runtime-ui/uie-render-runtime-ui/uie-runtime-panel-settings)可将 Panel 输出到渲染纹理；把该纹理用于场景几何时，需要连同目标分辨率、持有、后续采样和最终呈现一起比较，不能仅凭“画在场景里”就认定与某种原生世界空间模式等价。功能支持须对照实际 Editor/包版本；以上引用沿 Unity 6.0 文档路径，不据网页版本标签推定其他版本的支持状态，也不提供迁移收益结论。
+
+**理解检查**：把同一页面从 Overlay 改成 World Space 后，为什么仍需重新固定相机、屏占比、输入和恢复条件？动态图集未收录某纹理时，应先核对什么，而不是认定合批已完成？若一条路径直接叠加、另一条经 Target Texture 进入场景，只比较 Panel 内的绘制记录会漏掉哪些边界？
 
 ---
 
@@ -340,7 +344,7 @@ Unity 6 起，**UI Toolkit** 已成为编辑器 UI 的标准，运行时 UI 也�
 | Sprite Atlas 使用 | Sprite Atlas Inspector、实际引用 | 对齐图集身份与驻留/切换条件，另行核验收益 |
 | Dynamic Canvas 隔离 | 层级/布局依赖检查、Profiler | 检查频繁变化的影响范围与拆分代价 |
 | Mask 与裁剪状态 | 对象/状态记录、渲染事件检查 | 先保证形状语义；矩形共平面需求再比较 RectMask2D |
-| World Space Canvas 数量 | Profiler | 按需 Enable/Disable |
+| World Space Canvas 的绘制/输入范围 | 渲染事件、对象/相机与输入记录 | 核对实际提交、必要反馈和启停范围，不设每 Canvas 固定批数 |
 
 ---
 
