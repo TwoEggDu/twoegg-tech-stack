@@ -116,6 +116,10 @@
 
 复读补D Overdraw 段与已有状态/覆盖边界，保留更新链和甲/乙/丙模型，不重做 D1 覆盖算术。原段把透明与无深度测试/每层写回画等号，未给来源就将灰白亮度换成固定次数，并把 Tight 导入选项和换 TMP 当作直接解法；本批原位修订，补覆盖/着色/写回/时间四口径、假设映射的饱和反例及候选改法条件。Image Simple 的 useSpriteMesh 分支和 Sliced/Tiled/Filled 路径、Shadow/Outline 的顶点流修改按 uGUI 2.5.0 固定快照核对；ZTest/ZWrite/Blend 与 HLSL clip 只说明契约，不据此推定实际 Shader 状态或硬件调用。来源、自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-coverage-diagnostics-20261106)，原归属回写渲染 plan，不增篇或新设 R，R6–R8 不变。未核验工具实际色阶、性能收益、TMP 或 World Space/UI Toolkit；UI 生命周期与完整阶段观测待接续，全篇和 D2 尚未通过。
 
+#### D2 生命周期与阶段观测接续（2026-11-06）
+
+复读 UI 首开美术桥接、补D、资源就绪链的退出/迟到结果和内存记账的池/释放说明。保留桥接文的美术职责和三批已有机制，在补D 原位新增首开/重开/切页/滚动/关闭与再开的观测协议，区分透明度、绘制、生产者、布局、输入和持有；用 P1–P4 虚构请求说明必要画面/输入共同满足、超时与采集缺失，复用既有资源持有模型而不重复内存算术。uGUI 固定快照的 CanvasGroup/LayoutGroup、Unity 6.0 SetActive、Addressables 1.21 与未绑定版本的官方优化建议分别限用；不把关闭 Canvas 写成子项全停或重开免准备。来源、自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-lifecycle-protocol-20261106)，不增篇或新设 R，R6–R8 不变。World Space/UI Toolkit 旧概括待核，D2 与全篇仍未认证；未实现或实测启停、输入、布局、加载/取消和资源释放。
+
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
 - 位置：[角色预算](../content/performance/game-budget-08-character-budget.md)，L39 的“单体规格 x 同屏数量 x 目标档位 x 使用时机”，以及 L67 的“动画、蒙皮、阴影、材质分支都是按数量放大的”。
