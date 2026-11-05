@@ -27,7 +27,7 @@
 | [帧预算拆账 06](../content/performance/game-budget-06-frame-budget-breakdown.md) | 复用 CPU／GPU／等待不直接相加、时间域和统计窗口 | 后续补项目目标到预算的推导；这不构成本篇缺陷 |
 | [预算总表 16](../content/performance/game-budget-16-budget-master-sheet-template.md) | 复用规则等级、负责人、超线和例外动作；需补模板绑定关系 | R2；总表保持简短，通过指标规格和测试配置引用记录条件 |
 | [持续性能 02b](../content/performance/mobile-hardware-02b-sustained-performance.md) | 复用峰值／持续表现、设备状态、比较条件和恢复边界 | 实际设备与控制策略仍需独立校准，不另写同义热性能入门 |
-| [体验一致性](../content/performance/device-tier-experience-consistency.md) | 复用性能与视觉／声音／动作的共同接受条件 | 补设备能力档、画质配置档和实际生效配置之间的阅读连接 |
+| [体验一致性](../content/performance/device-tier-experience-consistency.md) | 复用性能与视觉／声音／动作的共同接受条件 | C2 已原位补能力、候选配置、用户请求与实际配置的连接，以及首开教学矩阵/必要体验检查；候选未实现或实测，原引擎映射未重新认证 |
 | [能力指纹](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md) | 复用能力信号、风险修正与规则回溯；R3/R4 已按局部职责修订并复审 | 已分开兼容性、能力、用户目标和会话状态；映射、阈值及动态策略仍待实际校准 |
 | [分档验证矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md) | 复用代表／边界设备及性能、视觉、资源和兜底验证；R5 已局部修订并复审 | 已补指标/缺失与首用/持续窗口，选样数量已按 C1 改为问题覆盖依据；验证协议与真实矩阵未实跑 |
 | [特效预算 09](../content/performance/game-budget-09-vfx-budget.md) | 复用结构、渲染、资源、时机四类账本及组合场景意识 | 补指标分母、首放事件窗口、制作预警和性能验收的关系 |
@@ -75,6 +75,10 @@
 - 最小调整：复用帧预算的指标定义，补来源、单位、样本数与缺失状态；未测呈现就写“呈现未测”。持续运行窗口的示例也应结合[持续性能](../content/performance/mobile-hardware-02b-sustained-performance.md)的负载和状态条件说明，不能把固定时长视为普遍充分条件。
 - 2026-11-05 C 阶段：已原位加入六类口径及来源/时钟/帧关联、样本与缺失要求，以 19 个 32 ms 和 1 个 96 ms 的合成间隔说明 P95/首用规则分别判定、跨窗保留完整间隔和边界缺失。持续运行小节补会话/负载依据、分段实际配置、恢复与不完整窗口处理，能力指纹的待补导读同步更新。复审核对“GPU 不支持不能填 0”“呈现未测不能由应用间隔顶替”“分钟数不能代替覆盖条件”，R5 文稿问题关闭；记录见[本批执行](client-performance-budget-tiering-monitoring-execution-plan.md#device-tier-metric-protocol-20261105)。局部方法通过不代表完整设备矩阵或真实采集已校准，选样建议、动态策略与其余专题仍按后续范围处理。
 - 同日 C1 选样接续：复核固定数量建议后，改为能力/路径/任务与缺口驱动的样本选择，回链新增的教学能力矩阵。依据及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#device-capability-matrix-20261105)；这是必要的关联修订，不重复关闭 R3–R5，也不新增审查编号或把矩阵规划当作实测覆盖。
+
+### C2｜体验一致性的复用补桥（2026-11-05）
+
+复读体验一致性全文及能力矩阵的直接依赖，保留按视觉/声音/动作列保护目标、ARPG 候选对比和截图检查的既有职责。新增首开界面/特效并带角色预览和背景场景的教学配置矩阵，比较 K0 参照、Kp 内部目标、Ku 非关键更新与资源时机；补 UI 独立合成的题设、名义像素反例、用户请求/实际配置及维护取舍。来源、局部 AI 编辑复审和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#candidate-quality-matrix-20261105)。这是已可复用旧文的知识补桥，不新增 R 编号、不改变 R6–R8 状态，不把新配置继承为原 Q0 已支持，也不把原文所有 Unity/ARPG 参数重新认定有效。
 
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
