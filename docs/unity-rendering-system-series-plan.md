@@ -60,7 +60,7 @@
 | `unity-rendering-01e-renderdoc-basics` | RenderDoc 入门：捕获第一帧并读懂它 | 安装配置、从 RenderDoc 启动 Unity、捕获帧、Event List 导航、Texture Viewer 查看 RT 内容，与 Frame Debugger 的定位差异 |
 | `unity-rendering-01f-renderdoc-advanced` | RenderDoc 进阶：顶点数据、贴图采样、Pipeline State | Mesh Viewer 读顶点缓冲（验证 Position/UV/Normal 数据）、Texture Viewer 查 mip 层级和采样结果、Pipeline State 各项含义（Blend/Depth/Stencil State）、Shader Debugger 逐像素追踪 |
 | `unity-rendering-02-lighting-assets` | 光照资产：实时光、Lightmap、Light Probe、Reflection Probe | 四条光照路径（直接光/烘焙间接光/动态间接光/环境反射）怎么在 Fragment Shader 里合并成最终颜色 |
-| `unity-rendering-03-skeletal-animation` | 动画变形：骨骼蒙皮与 Blend Shape | 骨骼权重如何在顶点阶段驱动 Skinning，Blend Shape 的顶点偏移原理，两者如何改变最终覆盖像素的范围和法线朝向 |
+| `unity-rendering-03-skeletal-animation` | 动画变形：骨骼蒙皮与 Blend Shape | 求值/写回与蒙皮的职责，绑定变换和权重怎样决定位置，实际执行路径及变形对画面的影响 |
 | `unity-rendering-04-particles-vfx` | 粒子与特效 | Particle System 的几何生成机制（Billboard/Mesh/Trail），批量渲染与普通 Mesh 的路径异同，VFX Graph 和 Particle System 的架构差异 |
 | `unity-rendering-05-postprocessing` | 后处理资产 | Volume 系统的覆盖机制，全屏 Pass 对帧缓冲区的操作原理，Bloom/Tonemapping/SSAO/DOF 的像素级逻辑 |
 
@@ -121,9 +121,9 @@
 
 ---
 
-## 既有补篇维护
+## 既有文章维护
 
-以下登记既有补篇的原位修订，不新增篇号，也不替代上面的主线写作顺序。
+以下登记既有文章的原位修订，不新增篇号，也不替代上面的主线写作顺序。
 
 | 既有文章 | 本次维护与复用边界 | 状态 |
 | --- | --- | --- |
@@ -131,6 +131,10 @@
 | [既有补D：UI 渲染](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-dirty-queue-teaching) | 分开属性/脏请求/队列与批处理，补[状态/顺序/图集](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-state-order-atlas-teaching)、[覆盖诊断](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-coverage-diagnostics)、[生命周期](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-lifecycle-observation)及[模式/框架边界](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-render-mode-boundaries)；移除 Canvas 固定批数/逐帧裁剪和框架成熟度概括，比较实际目标、输入及更新范围；[八字段记录](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-task-observation-record)接预算、有效性与处理决定 | 2026-11-06 D2 六批局部维护；uGUI 2.5.0 固定提交、Unity 6.0 路径文档和 Addressables 1.21 分别限用。[更新链](client-performance-budget-tiering-monitoring-execution-plan.md#ui-rebuild-foundations-20261106)、[状态/图集](client-performance-budget-tiering-monitoring-execution-plan.md#ui-batching-atlas-20261106)、[覆盖诊断](client-performance-budget-tiering-monitoring-execution-plan.md#ui-coverage-diagnostics-20261106)、[生命周期](client-performance-budget-tiering-monitoring-execution-plan.md#ui-lifecycle-protocol-20261106)、[模式/框架](client-performance-budget-tiering-monitoring-execution-plan.md#ui-render-mode-boundaries-20261106)及[字段汇合](client-performance-budget-tiering-monitoring-execution-plan.md#ui-observation-record-20261106)保存局部 AI 编辑自审/检查。D2 当前知识职责已有对应材料，作者理解待反馈，未认证全篇；未运行引擎/设备、输入/渲染路径、资源管理或校准。原 URL/归属不变，不增篇 |
 
 ---
+
+### 03 动画职责与蒙皮位置维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-evaluation-boundaries)原位区分状态、曲线、混合/IK、写回与蒙皮消费；以对象空间位置模型和纯平移例修正重复对象变换，撤回 1–4 影响数/75 骨骼的通用上限、GPU 必在顶点阶段和固定缓冲路径的概括。按 Unity 6.0 七份公开文档核对，开关映射、捕获设计和父子计时分别限用；关联修正 Blend Shape 教学权重/数据规模与未经支持的内存比例，不据此认证完整形态键实现。版本、教学身份、来源、局部 AI 编辑自审和检查见[性能执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-evaluation-skinning-20261106)。原 URL、归属和篇号保留；作者理解待反馈，未执行引擎/设备、捕获、校准或工具，全文与 D4 尚未认证。
 
 ## 写作规范（延续现有系列风格）
 
