@@ -128,7 +128,7 @@
 | 既有文章 | 本次维护与复用边界 | 状态 |
 | --- | --- | --- |
 | [补I：帧时序与显示技术](../content/rendering/unity-rendering-supp-i-frame-timing.md) | 补清应用帧间隔、CPU／GPU 计时、显示节奏与输入延迟口径；校正同步／缓冲模型、移动端帧率条件及 FrameTimingManager 最近完成帧示例。复用一帧链路与帧预算拆账，不重复展开机制正文 | 2026-10-31 原位修订；官方契约按 Unity 2022.3 LTS、Input System 1.6.3 核对；计时示例未在目标 Player 编译／运行，显示与输入实验待补；检查记录见[审校记录](unity-rendering-supp-i-frame-timing-review.md) |
-| [既有补D：UI 渲染](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-dirty-queue-teaching) | 原位区分属性写入、直接脏请求、布局根/Graphic 队列去重与 Canvas 批处理；新增三组纸面调度记录及候选观测，纠正同色赋值、标记归因、Canvas 布局隔离和默认换 TMP 的推断，移除无依据统一数字线/提升比例 | 2026-11-06 D2 局部修订；公开 uGUI 2.5.0、提交 e51e520 的静态语义核对，旧版 Text 题设不外推到 TMP/UI Toolkit；局部 AI 编辑自审与本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-rebuild-foundations-20261106)。合批/图集/覆盖和生命周期其余内容待续，未认证全篇或取得运行收益；保留原 URL/归属，不新增篇号 |
+| [既有补D：UI 渲染](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-dirty-queue-teaching) | 原位分开属性/脏请求/队列与批处理，纠正同色、TMP 与布局隔离推断；接续[有效状态、顺序及图集教学](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-state-order-atlas-teaching)，区分纸面纹理段、原生批次与覆盖，补 Image/Text 实际纹理和 Editor 模块支持边界，移除统一数字线/收益及不完整加载例 | 2026-11-06 D2 两批局部修订；公开 uGUI 2.5.0、提交 e51e520 的实现/文档与 Unity 6.0 Atlas 配置分开核对；[更新链记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-rebuild-foundations-20261106)及[状态/图集记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-batching-atlas-20261106)保存 AI 编辑自审与检查。未运行原生批处理、设备或加载实现；覆盖诊断/World Space/UI Toolkit 与生命周期其余内容待续，未认证全篇；保留 URL/原归属，不新增篇号 |
 
 ---
 

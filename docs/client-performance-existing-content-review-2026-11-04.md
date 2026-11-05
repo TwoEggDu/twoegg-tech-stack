@@ -108,6 +108,10 @@
 
 完整复读 UI 首开/叠层与 UI 渲染补D；前者负责美术的时机/风险桥接，已有渲染文入口，本批保留不改。后者把 Layout、Graphic 与 Canvas 批处理混写，并声称同色赋值仍标脏、换 TMP 可解决频繁更新，足以影响当前判断；按公开 uGUI 2.5.0 的固定快照核对后原位修订。新增同一 Text 的 A/B/C 纸面调度记录，分别数 setter、值变化、直接请求、唯一待处理项与队列项·轮；不推算实际 Mesh、DrawCall、帧数或毫秒。同步修正直接关联的 Canvas 布局隔离/标记归因和比较表，移除无依据统一数字线与“50%以上”收益，保留其余文章结构。来源、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-rebuild-foundations-20261106)；原归属回写 Unity 渲染 plan，不新增篇号或 R，R6–R8 仍待处理。合批排序、图集/覆盖、文本与首开/重开/关闭驻留尚未完成版本审校，本批不能作为全篇或 D2 通过依据，也未执行实际采集。
 
+#### D2 有效状态、顺序与图集接续（2026-11-06）
+
+复读渲染补D 的原合批/Atlas 段与首开桥接，保留桥接文的美术职责。本批修正“同材质/图集必一批”“ABAB 必四批并应按纹理重排”和裁剪每项固定加批的推断；用纸面纹理段与 Alpha 合成反例，说明有效状态、必要顺序、实际批次和覆盖不能互换。Image/Text/Graphic 公开实现及 Profiler/Mask 文档按同一 uGUI 2.5.0 快照核对；特别记录 UI Profiler 模块 Editor-only，不能套为 Player 数据。Atlas Master/Variant 与手动准备另按 Unity 6.0 手册，移除未运行且缺生命周期的加载代码，补字体纹理与 Sprite 图集的区别。来源、自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#ui-batching-atlas-20261106)，不新设 R 或增篇，R6–R8 仍待执行。没有测试原生重排、Mask 成本或加载器；原覆盖亮度标尺、World Space、UI Toolkit 与完整生命周期协议仍待续，不能据此认证全篇。
+
 ### R6｜角色预算的乘法表达容易被当成成本公式
 
 - 位置：[角色预算](../content/performance/game-budget-08-character-budget.md)，L39 的“单体规格 x 同屏数量 x 目标档位 x 使用时机”，以及 L67 的“动画、蒙皮、阴影、材质分支都是按数量放大的”。

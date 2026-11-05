@@ -18,75 +18,80 @@ UI 渲染是很多项目里性能问题最密集的地方，却也是最容易�
 
 ---
 
-## Canvas 合批原理
+<a id="ui-state-order-atlas-teaching"></a>
 
-### 合批的基本条件
+## Canvas 合批：先对齐状态，再检查顺序约束
 
-uGUI 的合批发生在 **Canvas 内部**。同一个 Canvas 下，相邻的 UI 元素如果满足以下条件，会合并为一个 Draw Call（一个 Mesh）：
+把二十个图标放进同一图集，为什么批次仍然不止一个？图集解决的是纹理组织的一部分问题，不能消除材质、裁剪、Canvas 和画面顺序的约束。应先判断哪些元素允许一起提交，再核对实际引擎产生了什么。
 
-1. **相同材质**（Material）
-2. **相同纹理**（Texture）
-3. **几何深度顺序连续**（Depth 排序中没有其他不同材质的元素插在中间）
+> 本节 uGUI 映射沿用公开包 2.5.0、固定快照 `e51e5200261043c95f5b761c4740abf238e22f38`；包声明与源码范围见下文 Rebuild 节。批处理字段取该快照的 [UI Profiler 文档](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Documentation~/ProfilerUI.md)。Sprite Atlas 配置另按 Unity 6.0 手册核对，不视为同一运行环境已验证；以下没有运行原生合批器、帧捕获或设备计时。
 
-uGUI 内部按层级顺序给每个元素分配 Depth 值，然后对相邻相同材质/纹理的元素合批。
+### 材质名和图集名为什么不够
 
-### 打断合批的条件
+| 候选检查 | 它在区分什么 | 不能直接下的结论 |
+| --- | --- | --- |
+| Canvas、渲染目标/Pass 与共平面条件 | 是否属于同一待比较的提交范围 | 视觉上挨着就能合批，或跨 Canvas 自动合并 |
+| 实际材质、纹理及 Alpha 使用 | 提交给渲染器的状态是否相容 | Inspector 材质名相同、同一图集资源名就必然一批 |
+| 裁剪矩形、Stencil 与层级约束 | 可见区域及绘制顺序能否保持 | 每加一个 Mask 或 RectMask2D 就固定增加一批 |
 
-以下情况会打断合批，每个打断点产生一个新的 Draw Call：
+公开实现给了两个可核对的入口：`Graphic.materialForRendering` 会经过 `IMaterialModifier`，实际使用的材质未必就是 Inspector 中原始的那份；有 Sprite 的 `Image.mainTexture` 返回实际 Sprite 的纹理。应比较有效状态及对象身份，不能只比较资源名称。
 
-| 打断原因 | 说明 |
-|---------|-----|
-| 不同材质 | 默认材质 vs 自定义材质，哪怕只差一个参数 |
-| 不同纹理 | Image A 用纹理 A，Image B 用纹理 B，中间无法合批 |
-| Mask 组件 | `Mask` 用 Stencil Buffer 实现，强制产生额外 Draw Call |
-| `RectMask2D` 插入 | 虽比 Mask 轻量，但仍会在切割边界打断合批 |
-| Depth 排序交叉 | 不同材质的元素在 Z 序上交替出现（ABAB 排列） |
+包文档把 Different Material Instance、Rect clipping、Texture、A8TextureUsage 和非共平面等列为可能的 Batch Breaking Reason。这个列表帮助提出解释，不是“每个条件必多一次 DrawCall”的算式。`Mask` 使用 Stencil；`RectMask2D` 在其适用条件下不使用 Stencil，也不自行增加遮罩绘制调用，但它的裁剪状态仍需与其他元素对齐。后者限定 2D/共平面矩形裁剪，不能为了批次替换任意形状遮罩。
 
-**Depth 交叉是最隐蔽的合批杀手。** 假设 Canvas 里有：
+### 教学反例：ABAB 不是实际批次数公式
 
+以下是**纸面模型，不是 Unity 的批处理算法或采样结果**。四个 UI 四边形依次记为 A1、B1、A2、B2；A 采样纯红纹理，B 采样纯蓝纹理，输出 Alpha 均为 0.5，背景为不透明黑色。颜色按抽象线性数值作普通 Alpha 合成，不引入 sRGB 转换或其他混合方式。固定一个 Canvas、一个目标和一个 Pass，共平面、同一材质，其他状态一致，无裁剪和额外绘制。目标只有 2×2 共四个格点，每个四边形在覆盖的格点上恰好计一层。
+
+模型把**连续使用同一纹理的序列段**记为一段。例如 ABAB 为 4 段，AABB 为 2 段；这不是 Batch Count 或 Mesh 数。只在保持画面所需顺序的排列中，寻找最少的序列段，检验“按纹理分组”是否可行。
+
+| 题设 | 覆盖与必须保持的关系 | 纸面纹理序列及最少段数 | 覆盖格点·层 |
+| --- | --- | --- | --- |
+| 甲：四个四边形都覆盖全目标 | 每格都需保留 A1→B1→A2→B2 的顺序 | ABAB；4 段 | 16 |
+| 乙：四个四边形各占不同一格 | 四者没有共同覆盖格点，题设无其他顺序依赖 | ABAB 可排为 AABB；2 段 | 4 |
+| 丙：甲的两个纹理区域放入同一纹理 T | 仍按原顺序绘制，UV 保留原色与 Alpha，其他状态不变 | TTTT；1 段 | 16 |
+
+甲为何不能直接排成 AABB？按 `新色 × 0.5 + 旧色 × 0.5` 逐层合成，任一格的红/蓝分量为：
+
+```text
+ABAB： (R,B) = (0,0) → (0.5,0) → (0.25,0.5)
+                    → (0.625,0.25) → (0.3125,0.625)
+AABB： (R,B) = (0,0) → (0.5,0) → (0.75,0)
+                    → (0.375,0.5) → (0.1875,0.75)
 ```
-深度 0: Image（纹理A）
-深度 1: Image（纹理B）
-深度 2: Image（纹理A）
-深度 3: Image（纹理B）
-```
 
-纹理 A 和纹理 B 的元素交替出现，无法合批，产生 4 个 Draw Call。正确做法是把同纹理的元素调整为相邻顺序（00BB），只产生 2 个 Draw Call。
+两种结果不同。减少纸面纹理段数却改变叠层画面，不是通过优化。乙说明没有重叠时，层级列表的 ABAB 本身不能证明四段都不可合并；**本模型不保证 Unity 会选择这个重排或得到两批**。甲/乙覆盖和画面任务不同，也不能当作同条件性能 A/B。
+
+丙保留甲的显示顺序，同时减少模型中的纹理切换；覆盖仍为 16 格点·层。因而“纹理段更少”不证明透明像素工作减少或 GPU 时间下降。这些格点·层只是教学覆盖计数，实际光栅化、Shader、缓存、带宽、额外 Pass 和提交结果仍需观察。同理，统一纹理不能据此推导业务更新、布局请求或下文定义的队列项·轮减少。
+
+### 从纸面模型回到实际观测
+
+未来对比时，记录同一帧/任务、Canvas、实际纹理和材质身份、裁剪状态、参与对象、必要画面顺序及对应提交。先定位批次变化由哪项状态或约束造成，再分别检查 CPU 处理、GPU 工作与必要反馈；只缩短层级列表或降低一个总计数不能完成归因。
+
+一个重要支持边界是：**上述快照文档明确说明 UI (Canvas)/UI Details (Canvas) Profiler 模块只收集 Editor 数据，不适用于 Development Build。** 其中 Self Batch Count 与包含嵌套 Canvas 的 Cumulative Batch Count 口径不同，不能把父累计数再加子数。可以把该模块用作 Editor 内的解释线索，不能把这些字段预设成已可采集的真机数据。Player 平台的证据来源和支持范围在测量阶段另定，缺失保留未知。
+
+**理解检查**：甲减少到 AABB 为什么不被接受？乙能否据此承诺两批？丙为何保留 16 而不是变成 4？若保持图集名却改变裁剪状态，原先的推断哪部分失效？拿不到 Player 字段时怎样表达，而不是填零？
+
+本节直接实现依据：[最终材质入口](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Graphic.cs#L506-L534)、[Image 实际纹理](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Image.cs#L687-L702)、[Mask](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Documentation~/script-Mask.md) 与 [RectMask2D](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Documentation~/script-RectMask2D.md) 文档；它们不提供本教学表的原生批次数或收益证明。
 
 ---
 
-## Sprite Atlas：合并纹理避免切换
+## Sprite Atlas 与文本：状态统一和资源准备是两件事
 
-### 为什么需要 Sprite Atlas
+### 图集能统一纹理，不能保证整页一批
 
-每张不同的纹理都会打断合批。如果 UI 上有 20 个 Icon，每个 Icon 是一张独立的 512×512 纹理，就会产生至少 20 个 Draw Call（每张纹理一个）。Sprite Atlas 把多张小图打包进一张大纹理，让这 20 个 Icon 共享同一张纹理，合批成 1 个 Draw Call。
+把多个 Sprite 图像区域组织进同一实际纹理，可以减少纹理状态差异，丙就是这种候选变化。要获得可比较结果，还需确认材质、裁剪、Canvas/Pass、顺序、实际绑定纹理及最终画面。不能由“二十个图标在同一图集”直接宣布二十批变一批。
 
-### Packed Atlas vs Variant Atlas
+Unity 6.0 的 [Sprite Atlas 说明](https://docs.unity.com/en-us/engine/6000.0/manual/unity2d/sprite/atlas/atlas-introduction)建议按同时使用、压缩要求以及使用频率组织资源，避免加载不用的 Sprite，或因数量过大产生多个组合纹理。因此，不能为了统一图集名就把不同时使用的所有界面塞进一张大图；首开准备、驻留和使用期间的提交应一起比较。
 
-| 类型 | 说明 | 适用场景 |
-|-----|-----|---------|
-| **Packed Atlas** | 直接包含所有 Sprite 的像素数据 | 大多数情况 |
-| **Variant Atlas** | 引用另一个 Master Atlas，可指定缩放比例（如 0.5x） | 低画质变体、移动端低分辨率版本 |
+### Master、Variant 与加载边界
 
-### Late Binding
+按 Unity 6.0 的 [Inspector 参考](https://docs.unity.com/en-us/engine/6000.0/manual/unity2d/sprite/atlas/sprite-atlas-reference)，Type 字段是 Master 或 Variant，不能把 Packed 当作该字段的选项。Variant 引用 Master 并设置缩放比例；它是资源候选，不证明低档设备的必要文字/图标可读性已经接受。
 
-默认情况下，引用了 Atlas 中 Sprite 的 UI 会在 Atlas 加载时自动关联。`Late Binding` 模式下，Atlas 不会在引用时立刻加载，而是在运行时通过 `SpriteAtlasManager.atlasRequested` 回调按需加载：
+同一参考的 `Include in Build` 与官方[运行时手动加载说明](https://docs.unity.com/en-us/engine/6000.0/manual/unity2d/sprite/atlas/load-sprite-atlas-spriteatlasmanageratlasrequested)需要一起读：关闭自动包含后，必须另有实际交付与加载路径；`SpriteAtlasManager.atlasRequested` 是请求未加载图集时的绑定入口，不负责下载、缓存、失败恢复或释放。Resources 和 AssetBundle 的准备方式也不能混写成同一种路径。完整生命周期与缺失处理另接首开/重开/关闭协议，这里不提供未经运行的通用加载器。
 
-```csharp
-void OnEnable()
-{
-    SpriteAtlasManager.atlasRequested += OnAtlasRequested;
-}
+### 字体纹理不等于 Sprite 图集
 
-void OnAtlasRequested(string tag, System.Action<SpriteAtlas> callback)
-{
-    // 从 AssetBundle 或 Addressables 加载后回调
-    var atlas = Resources.Load<SpriteAtlas>(tag);
-    callback(atlas);
-}
-```
-
-Late Binding 与 AssetBundle 配合使用时，可以做到分包加载，避免启动时把所有图集加载进内存。
+在同一 uGUI 快照中，旧版 [Text.mainTexture](https://github.com/Unity-Technologies/uGUI/blob/e51e5200261043c95f5b761c4740abf238e22f38/com.unity.ugui/Runtime/UGUI/UI/Core/Text.cs#L56-L97)优先取字体材质纹理，字体纹理改变又可能使几何更新或标脏。把相邻图标放进 Sprite Atlas，不能据此声称文字也绑定了同一纹理，或字体准备不再影响首开/后续更新。应另记文本组件类型、字体/材质/实际纹理和需要的字符集合；字体缺字、纹理变化或配置切换后重查。TMP 的字体资产、回退与多材质路径没有在本节核对，不继承旧版 Text 的具体分支。
 
 ---
 
@@ -242,7 +247,7 @@ Unity 6 起，**UI Toolkit** 已成为编辑器 UI 的标准，运行时 UI 也�
 | 频繁更新的 Text | 更新记录、Profiler | 分开写入/脏请求/处理与分配，不能用 GC Alloc 代替重建工作 |
 | Sprite Atlas 使用 | Sprite Atlas Inspector、实际引用 | 对齐图集身份与驻留/切换条件，另行核验收益 |
 | Dynamic Canvas 隔离 | 层级/布局依赖检查、Profiler | 检查频繁变化的影响范围与拆分代价 |
-| Mask 数量 | Frame Debugger | 尽量用 RectMask2D 替代 Mask |
+| Mask 与裁剪状态 | 对象/状态记录、渲染事件检查 | 先保证形状语义；矩形共平面需求再比较 RectMask2D |
 | World Space Canvas 数量 | Profiler | 按需 Enable/Disable |
 
 ---
@@ -251,7 +256,7 @@ Unity 6 起，**UI Toolkit** 已成为编辑器 UI 的标准，运行时 UI 也�
 
 uGUI 的性能问题高度集中：
 
-- **合批被打断** 的根本原因是纹理不一致（用 Sprite Atlas 解决）和 Depth 顺序交叉（用调整层级解决）
+- **合批** 要对齐有效材质/纹理、裁剪和提交范围，并保留必要顺序；图集只解决其中一部分条件
 - **更新成本** 要分清写入、脏请求、布局/Graphic 队列处理和 Canvas 批处理，按实际依赖选择合并更新或缩小影响范围
 - **Overdraw** 的根本原因是不必要的透明层叠（全屏半透明背景是首要目标）
 
