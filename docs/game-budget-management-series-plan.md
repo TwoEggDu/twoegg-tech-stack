@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 角色预算 08 的共同约束与资源账本（2026-11-06）
+
+原位修订[角色预算 08](../content/performance/game-budget-08-character-budget.md#character-resource-ledger-teaching)：把摘要、正文和结尾的乘法/线性放大表述改为单体规格、同屏组合、实际配置和使用阶段的共同约束，按目标组合复验，关闭 R6。增加四个虚构快照，复算共享基础/外观及保留实例的 28/48/48/36 MiB，区分人数、外观多样性、缓存与池；用 Unity 6.0 的 sharedMesh、sharedMaterials 和 material 契约解释身份、共享数组与材质实例化的观测边界。来源、局部 AI 编辑自审和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#character-resource-ledger-20261106)。标题、URL、编号与归属不变，不新增篇目；R7 的蒙皮位置及 R8 留后续动画单元，D3 的几何/材质/LOD/阴影与完整观测尚待续，模板 19 未在本批认证。没有真实采集、预算标定、工具实现或全篇通过结论。
+
 ## 特效预算 09 的覆盖口径补桥（2026-11-06）
 
 原位补[特效预算 09](../content/performance/game-budget-09-vfx-budget.md#vfx-coverage-teaching)，用三组相同粒子数的 4×4 纸面布局区分覆盖率、累计覆盖、全目标平均层数与覆盖区平均层数，给出零覆盖分母、材质/Pass、目标尺寸和实际 GPU 耗时的边界。修正“最大乘数”的无条件措辞，保留四类账本、标题、URL、编号和原系列身份；这是 D1 渲染规模的知识小批次，不新增篇目或给出通用阈值。来源、局部 AI 编辑自审、复算及页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-coverage-foundations-20261106)。发射/模拟、生命周期观测表和首放窗口待接续；整篇、模板 20、实际设备校准和工具准确性没有因此验收通过。
