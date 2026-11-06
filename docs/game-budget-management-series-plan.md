@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算 07/模板 18 的阶段与规则绑定（2026-11-06）
+
+[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-task-observation-record)新增场景八字段与准备/交接/稳定组合/退出/折返观察范围；阶段可以重叠，不作为互斥成本桶。[模板 18](../content/performance/game-budget-18-scene-budget-template.md#scene-rule-binding)保留原空表，补任务、指标/来源、实际配置及规则/决定的关联记录，并沿既有 Streaming 早晚结果说明请求到就绪同为 5 s、路线原点到就绪为 6/10 s 的口径区别。原篇号、URL、归属和篇数不变；旧文复用、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-observation-binding-20261106)。规则 ID/数值均为纸面示意，未实现采集或标定预算；作者理解、实际测量、工具及线上部署无新增验收。
+
 ## 场景预算 07 的组合账本补桥（2026-11-06）
 
 [预算 07](../content/performance/game-budget-07-scene-budget.md#scene-combination-ledger-teaching)新增五领域汇合时的原始记录与关系索引。虚构单线程树中，含子值误加为 18 ms，完整 Self 合计为 8 ms，仅重建选定父范围；区间包含、生产/消费和资源持有分开保存，同一记录被多表引用不产生新成本。复用一帧关键路径、特效共享账本及 UI/角色/动画观测表，不把它们的独立教学拼成实测。Unity 6.0 CPU Profiler 只映射相应视图契约，来源、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-combination-ledger-20261106)。原归属、篇号、URL 和篇数不变；场景路线阶段观测及模板 18 的指标/配置/规则绑定待续。作者理解、实际测量、工具与线上部署未新增验收。

@@ -213,6 +213,10 @@
 
 复读预算 07、通用任务观测与一帧关键路径教学，及特效共享/组合账本、UI 八字段、角色阶段记录和动画八字段。已有事件身份、关键路径与共享分配解释直接复用；不另造总时间线，也不把五篇不同教学参数合成同次运行。本批在预算 07 新增[组合账本短桥](../content/performance/game-budget-07-scene-budget.md#scene-combination-ledger-teaching)，只补跨领域条目如何引用原始记录，以及包含、生产/消费、持有三种关系怎样分别保存。虚构完整单线程树复算含子误加 18 ms 与 Self 重建 8 ms；限定其父范围，缺子记录、跨线程或同名调用须重查，不能据此归整帧/单体 CPU 或 GPU 成本。Unity 6.0 CPU Usage Profiler 的 Time/Self、线程、Hierarchy/Raw Hierarchy 及 Flow events 分别限用，未执行捕获；局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-combination-ledger-20261106)。不新增 R/篇号、不认证所读全文；场景路线阶段观测与模板 18 绑定待续，作者理解、实际测量、校准及工具仍后置。
 
+### D5｜场景阶段观测与模板 18 的绑定（2026-11-06）
+
+复读预算 07 的阶段相关段落、模板 18 全文，以及通用任务身份/事件/时间域、UI/角色/动画观测字段和总表 16 的指标配置绑定。预算 07 前几批的机制、三类组合关系与 Streaming 结果继续复用；模板 18 已有空表、机位/路线、owner 和超线动作，真实缺口是阶段边界及摘要到指标/配置/规则/证据的可追溯关系。本批只补[场景八字段/阶段表](../content/performance/game-budget-07-scene-budget.md#scene-task-observation-record)与[模板关联记录](../content/performance/game-budget-18-scene-budget-template.md#scene-rule-binding)，并将 Streaming 段原“后续汇合”改为实际锚点。不重做已完成集合、阴影、时序或组合算例；沿既有早晚结果辨别准备 5/5 s 与路线就绪 6/10 s，8 s 仍为教学用途要求。局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-observation-binding-20261106)。只复读本地保存的 Unity 6.0 激活/卸载原件及其限用，没有新联网或执行采集。原 R、未审全文及作者掌握状态不因表格写完而关闭；D5 剩余知识覆盖核对与 E 测量设计接续，实际测量、校准和工具仍后置。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
