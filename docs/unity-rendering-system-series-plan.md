@@ -156,6 +156,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-compression-error)在曲线输入到变形输出之间补误差定义：固定参考/候选、时间与运行条件，分别记录局部姿态、世界挂点/接触、必要反馈和成本。按五份 Unity 6.0 文档核对旋转度数、位置/缩放百分比、减帧条件及模式/Rig 范围，不把参数当输出容差或收益。虚构杆长 0.2/1 m、同为 1° 得约 3.49/17.45 mm，以题设 10 mm 区分当前样本；首尾零、中点非零的反例说明样本覆盖限制。制作 05 的操作与对照入口复用，原五批教学/观测保留；来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-compression-error-20261106)。只新增本节，原篇号/URL/归属不变；未执行导入/真实压缩/设备成本或全篇认证。后续接更新频率/时序，作者理解和第 2.2 节仍待反馈，实际测量/工具/线上部署未验证。
 
+### 03 更新频率与时序维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-update-frequency)接续源采样与五职责，新增动作时间、姿态求值、写回/重建和消费的边界；用虚构 30/60 Hz 匀速位置例比较保持与延迟一周期插值，分开当前目标偏差和延迟目标的重建误差。四份 Unity 6.0 文档仅用于更新模式、固定步长与实际执行、动画循环和管线限用；不将教学策略当 Unity 内建行为。补未来样本不可用、三角峰值遗漏和必要反馈/成本的判断，不重做前六批。来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-update-frequency-20261106)。原篇号/URL/归属不变；作者理解与第 2.2 节仍待反馈，实际调度、分离更新、采集/校准、工具和线上部署未验证，不认证全文或 D4。后续先汇合 D4 当前覆盖和剩余限用，再接 D5 场景知识。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）
