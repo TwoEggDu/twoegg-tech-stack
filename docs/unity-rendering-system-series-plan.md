@@ -136,6 +136,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-evaluation-boundaries)原位区分状态、曲线、混合/IK、写回与蒙皮消费；以对象空间位置模型和纯平移例修正重复对象变换，撤回 1–4 影响数/75 骨骼的通用上限、GPU 必在顶点阶段和固定缓冲路径的概括。按 Unity 6.0 七份公开文档核对，开关映射、捕获设计和父子计时分别限用；关联修正 Blend Shape 教学权重/数据规模与未经支持的内存比例，不据此认证完整形态键实现。版本、教学身份、来源、局部 AI 编辑自审和检查见[性能执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-evaluation-skinning-20261106)。原 URL、归属和篇号保留；作者理解待反馈，未执行引擎/设备、捕获、校准或工具，全文与 D4 尚未认证。
 
+### 03 离屏更新与动作恢复维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-visibility-lifecycle)接续更新条件：分开主镜头、任意相机/阴影与 Editor 可见性、Animator 裁剪和 Renderer 离屏配置；保留 CullCompletely 的 API 概述与 Profiler 阶段描述差异，不据此承诺五项全停。四轮虚构职责清单复算 5/2/0/5 与合计 12，对照可见轮的 10 和全更新的 20，不作为引擎调度或耗时结论。补返回时状态/时间/姿态/挂点/反馈及资源持有边界，复用制作 05 和角色阶段记录。来源、局部 AI 编辑自审及检查见[性能执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-update-gates-20261106)；原职责/位置教学不变，不增篇。确切停更/恢复、作者理解与全篇/D4 认证仍待后续，未运行引擎/设备或工具。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）

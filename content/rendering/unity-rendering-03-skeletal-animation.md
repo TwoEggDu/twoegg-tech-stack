@@ -47,6 +47,47 @@ Unity 6.0 的[动画更新顺序](https://docs.unity.com/en-us/engine/6000.0/man
 
 同一页还区分调度/等待标记与工作任务，并说明某些状态机回调会限制主线程执行、写回任务按变换根分组，以及后续阶段受裁剪模式和可见性影响。因此不能把某个父标记、回调或单一线程条带叫作“这个角色全部动画耗时”，也不能从离屏直接推出全部状态与动画工作停止。后续应关联动作实例、Animator、变换根、运行/帧、实际配置和各层区间，再按[任务观测方法]({{< relref "performance/client-performance-task-observation-model.md" >}})处理包含、重叠和缺失。
 
+<a id="animation-visibility-lifecycle"></a>
+
+### 离屏、停更和重新入镜要分开判断
+
+要减少镜头外角色的工作，先问：哪些使用者还需要它的状态、姿态或变形结果？主相机看不到角色，不代表挂点、根运动、事件或阴影都不再需要更新。把五种职责一起关掉是一项行为选择，必须先约定动作连续性与必要反馈。
+
+```text
+角色/动作实例 ─→ 状态、事件与根运动的必要输出
+相机/阴影用途 ─→ 需要哪份姿态、变形与绘制结果
+更新配置     ─→ 分别核对求值、姿态处理、写回和蒙皮是否参与
+退出或返回   ─→ 核对状态/时间、姿态、挂点、变形与反馈是否符合约定
+```
+
+Unity 6.0 的几个入口控制或报告的范围不同：
+
+| 入口 | 文档给出的范围 | 不能据此填写的结论 |
+| --- | --- | --- |
+| [Renderer.isVisible](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/renderer/isvisible) | 可见性涉及任意相机；阴影需求可能使其为真，Editor 的 Scene 视图相机也会影响它 | 不能直接当成主相机可见、玩家已看见或整条动画链已执行 |
+| [Animator.cullingMode](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/animator/cullingmode) 与 [AnimatorCullingMode](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/animatorcullingmode) | Animator 的裁剪策略；枚举页明确 CullUpdateTransforms 在 Renderer 不可见时停止重定向、IK 和 Transform 写回，AlwaysAnimate 则描述离屏仍动画 | 不能用“画面不动”判断状态、曲线、事件和蒙皮各自是否执行 |
+| [SkinnedMeshRenderer.updateWhenOffscreen](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/skinnedmeshrenderer/updatewhenoffscreen) | Renderer 的离屏更新设置；API 概述同时提及动画更新会受关闭影响 | 不能把它当成只省去绘制、完全不影响动画的开关，也不能代替 Animator 配置与实际阶段记录 |
+
+这些文档还有需要保留的差异：枚举页把 CullCompletely 概括为不可见时完全禁用动画，前述 Profiler 标记页却描述 active/enabled Animator 会参与 Begin 阶段，后续阶段再按裁剪与可见性筛选。这里不把两种表述合成“五项必定全零”的保证。进入实测时，应固定具体补丁、Player、配置和可见用途，用阶段证据确认；当前保留为待核验项。
+
+### 教学清单：看不见不等于所有项都为零
+
+下面是**虚构调度模型**，不对应某个 Unity 枚举、开关或真实捕获。只跟踪一个角色的四个更新轮；1 表示题设要求该职责参与，0 表示题设明确不参与，每个选中项记一次“职责项·轮”。它不计片段、Job、顶点、dispatch 或 Draw，也不模拟引擎内部调度。
+
+| 教学轮与条件 | 状态推进 | 曲线求值 | 混合/IK 等姿态处理 | 写回 | 蒙皮 | 清单项数 |
+| --- | --- | --- | --- | --- | --- | --- |
+| J0 入镜，题设全更新 | 1 | 1 | 1 | 1 | 1 | 5 |
+| J1 离开主镜头，题设仍推进状态与曲线 | 1 | 1 | 0 | 0 | 0 | 2 |
+| J2 题设显式停更 | 0 | 0 | 0 | 0 | 0 | 0 |
+| J3 返回，题设恢复全更新 | 1 | 1 | 1 | 1 | 1 | 5 |
+| 各职责合计 | 3 | 3 | 2 | 2 | 2 | 12 |
+
+只统计主镜头可见的 J0/J3 会记到 10 项，漏掉 J1 的两项；直接按五种职责乘四轮又会记成 20 项。12 只是核对选中集合的清单数，不是成本单位，不能说节省了 40% 的动画耗时。真实采集不知道 J1 做了什么时应记“未知”，不能用本表补零或补一。
+
+J3 也不能只验“Renderer 又可见”。先按任务约定检查：当前状态和播放时间是继续、暂停还是重置，混合/打断及事件是否符合动作要求，写回姿态和挂点是否匹配，再看变形、阴影与必要反馈。继续、暂停或重置分别改变动作连续性，不能由开关名称替项目作选择；离屏也不代表实例回池或资源释放，持有关系沿[角色阶段记录]({{< relref "performance/game-budget-08-character-budget.md#character-task-observation-record" >}})另记。
+
+**理解检查**：为什么主镜头看不见时 isVisible 仍可能为真？题设 J1 的两项能否当作 CullCompletely 的实测行为？若把 J1 的根运动或阴影改为必要输出，哪些选择与证据需要重查？J3 可见却缺状态/姿态记录时，哪些恢复结论仍不能给出？
+
 ---
 
 ## 静态 Mesh 和蒙皮 Mesh 的区别
