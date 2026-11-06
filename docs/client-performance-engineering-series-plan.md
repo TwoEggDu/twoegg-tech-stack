@@ -155,3 +155,5 @@
 - 2026-11-06 E3 内存设计：VFX-T04 原准备材料补单位/口径、采时/归属及可用性/扰动三块，复用 RM 与已有对照方法，不增篇。来源与局部 AI 编辑自审/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-memory-calibration-design-20261106)；上一批 `efb3334` 已推送且远端回读一致。下一项接 F1 旧文复用与职责数据流知识补桥；作者反馈、知识出口、实际采集/校准、工具及线上部署无新增验收。
 
 - 2026-11-06 F1 数据流首批：原位补[性能工作流的报告追溯节](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)，复用旧调查与预算绑定，新增六环节职责、三轴状态和 J-A/J-B/J-C 合成覆盖算例。正文保留原性能系列身份，不增 CPE/VFX 篇号；原 plan 先登记，本批审校与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f1-report-dataflow-20261106)。上一批 `9b6004b` 已推送且远端回读一致；下一项 F4 基线/规则变更的重算与复测方法，作者理解、真实工具/采集和线上部署无新增验收。
+
+- 2026-11-06 F4 规则/基线方法：在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-rule-baseline-changes)补五种变更的覆盖判据、均值/P95 信息不足反例与更换基线的分母教学；不新增篇号，不重做 F1/E 教学。原性能 plan 先登记，局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f4-rule-baseline-teaching-20261106)。上一批 `4d4e101` 已推送且远端回读一致；下一项按已有告警/豁免复用情况补例外到期与复验恢复的最小教学链。作者理解、实际采集/校准、F2–F4 工具实现及线上部署无新增验收。

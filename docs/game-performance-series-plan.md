@@ -78,3 +78,9 @@ CPE-01 是引擎无关的任务观测方法，独立篇级归属在[客户端性
 按客户端性能工程 F1 的接续，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)新增报告追溯节，保留本系列标题、URL 与身份。复用调查/人员交接和预算绑定，增量为配置到领域执行/采集、原始保存、有效性/规则报告及复验的职责与产物；J-A/B/C 和 T0 为虚构教学输入，不是运行系统、设备结果或团队采用。
 
 只登记本批正文修订，不改变既有 M02、OS 补篇或其他工作状态。局部 AI 编辑自审、候选检查和 Git 接续见[客户端执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f1-report-dataflow-20261106)；下一项为 F4 基线/规则变化时的重算与复测方法，知识出口与作者反馈仍待通过。
+
+## 规则与基线变更的方法补桥（2026-11-06）
+
+按客户端性能工程 F4 的接续，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-rule-baseline-changes)补原始覆盖、重算与复测的判据，保留原标题、URL 和归属。复用预算及质量门的规则/基线责任；五种变更、K 的均值/P95 反例及 B0/B1 的差值均为教学推演，不是实际回归、基线批准或优化收益。
+
+仅登记本批局部知识增量，不改变 M02、OS 补篇及其他状态。局部 AI 编辑自审、候选检查和 Git 接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f4-rule-baseline-teaching-20261106)；下一项先复读已有告警/豁免处理，再补必要的例外到期与复验恢复教学，知识出口和作者理解待反馈。
