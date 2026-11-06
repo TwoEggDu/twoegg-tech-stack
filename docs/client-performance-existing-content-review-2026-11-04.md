@@ -297,6 +297,16 @@ E 的原理/设计可以在上述最小桥后接续，实际测量继续受第 2
 
 按 twoegg-article-method、col-expert-review、主标准五项与性能 S1–S8 作局部 AI 编辑自审：问题/范围、机制与反例、定向与细采样取舍、四份直接契约及原始记录交接在本题解释范围内满足。自审将 W 的 Running 补为独立题设，避免由标记暗推；图按显式端点而非字符宽度读。真实关联、调度时间域、构建/开关、开销和 CPU 校准仍待实践，S6 设备标定及 S8 团队采用不属本批已验证结论。不称独立同行评审、CPU 采集已准确、E2/全文完成或作者掌握；检查与下一项见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-cpu-source-design-20261106)。
 
+<a id="e3-cpu-calibration-review"></a>
+
+### E3｜CPU 范围校准设计的局部审核（2026-11-06）
+
+复用现有 CPU 来源节、事件校准三块及 CPE-01/02 的范围/缺失/可比定义；不重做 RCPU 完整拆账、九事件和通用扰动协议。只在 VFX-T04 [原准备材料](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-calibration-design)补三块：以原树测试错误跨线程父项、漏子和缺端点；六条新合成异步事件区别阶段与代理；配置清单区别丢记录和关闭子采样。四份 Unity 6.0 CPU Usage、ProfilerMarker、Auto、Deep Profiling 的已存原件/契约/SHA 复核，不新联网或扩接口能力，合成答案由本站设计。
+
+关键追问是“Self 同为 5 是否同一种记录”：块一应有 B 却丢失，按完整性报无效；块三配置明确不采 B，按其口径保留 5，不能据开启后的 3 报工作减少。X 假作 P 子项的算术 0 也须判关系失败，P 缺结束点不补帧末。异步 Q01–Q06 的提交/后台/续体区间为 2/7/2，18 ms 代理不能用提交的 2 或区间合计 11 替代；后台经过时间不作 Running，Q06 丢失时续体结束与代理均缺失。旧代次对照沿既有 E04 复用。
+
+按 col-verify、twoegg-article-method、col-expert-review、主标准五项及性能 S1–S8 作局部 AI 编辑自审：问题/机制、已知输入和故障判据、配置/扰动取舍、来源限用与交接在本题设计范围内满足。明确配置应有集合须由实际生效设置和独立确认支持，不能从合成端点固定推真实开销为零；模拟处理与实际标记/时钟验证分开。结论限新增设计可审阅，不称独立同行评审、CPU 采集已校准、E3/全文完成或作者掌握；真实参考/调度关联/开销、设备标定和团队采用未新增验证。检查与接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-cpu-calibration-design-20261106)。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
