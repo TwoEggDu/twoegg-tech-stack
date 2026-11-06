@@ -84,3 +84,5 @@
 2026-11-06 E2 GPU 接续：同一材料补[GPU 来源与结果身份](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-gpu-source-design)，核对 Unity 6.0 的高层/详细入口、完成帧返回顺序、来源特定支持与报告范围；四次合成读取用于核对重复、数量和归属，不是 API 实测或自动业务字段。VFX-T04 与其余六篇仍待写；局部 AI 编辑自审/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-gpu-source-design-20261106)。下一项为本来源的最小校准设计，实际 GPU/参考/采集器未执行。
 
 2026-11-06 E3 GPU 接续：同一材料新增[GPU 校准三块设计](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-gpu-calibration-design)，复用 R1–R4，补返回范围/源身份、逐字段状态及开关/参考恢复的负对照，区分记录处理与真实计时准确。新残留槽及 CPU/GPU 状态均为合成输入，七篇正文仍待写；局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-gpu-calibration-design-20261106)。下一项回 E2 内存来源，实际采集/校准、参考与工具未执行。
+
+2026-11-06 E2 内存接续：同一材料补[内存来源与采时](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-memory-source-design)，复用分配/驻留和 D1 共享/池账本，核 Unity 6.0 三份 API 与 Memory 模块的口径、零值及栏目支持；RM 四时点和另给参考点只作稀疏采样教学。VFX-T04 与其余六篇仍待写；局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-memory-source-design-20261106)。下一项补本来源最小校准设计，未做快照、内存采集或工具实现。
