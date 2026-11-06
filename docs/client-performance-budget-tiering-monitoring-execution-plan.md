@@ -1943,3 +1943,32 @@ E 的原理、工具能力与限制、测试协议和校准设计属于知识阶
 - **共享现场与 Git**：四份完整目标起始干净，index 为空；冻结共享 plan 原字节及两组无关 patch，另冻结 315 项无关状态/内容哈希。共享文件仅暂存本批追加；审核与必要检查通过后按持续授权 Commit → Fetch → 冻结远端/核完整范围 → 按需 Rebase → Push/回读，关闭 autoStash/updateRefs。最终 SHA/远端结果留聊天及下一批，不为自身 SHA 再提交。
 - **分层状态与待补**：公开工作流本批知识增量已写，局部 AI 编辑自审及本地检查通过；批次映射解释缺项已补，作者本题及既有理解题仍待反馈，第 2.2 节未通过。实际采集/校准、批量/取消/故障演练、F2–F4 工具和团队采用未新增执行；Git 待按持续授权交付，线上部署未核验。实际必需集合、身份/来源、退出隔离、补验条件与接受权限仍须真实任务确定并验证。
 - **下一步**：在本执行计划既有批次记录中汇总第 2.2 节五项对应的正文/教学与待作者反馈位置，核清材料覆盖和仍有的卡点；已有有效教学与审校直接复用，不重写、不另建一套状态表，不以材料齐备或本批通过替代作者掌握。发现真实知识缺项再原位补桥，实际测量和工具仍待知识出口与条件具备。
+
+<a id="knowledge-feedback-map-20261107"></a>
+
+### 知识出口：五项理解反馈的现有入口（2026-11-07）
+
+- **接续与范围**：上一批 `d36d60d5c8cb4e5f5d6ae72a97b2a8b2bf14ef08` 已提交推送，远端回读一致。依最新下一步，把第 2.2 节五项条件接到现有正文、教学和理解题，供作者分次作答；本表就在原批次记录中作定位，不接管篇级状态或另设完成标准。只核所列入口、题意与材料身份，沿各批有效审校复用，不重算旧例、不重审旧文全文，也不据入口齐全宣称全部知识材料已验收。
+
+| 第 2.2 节条件 | 现有解释与教学入口 | 待作者反馈的位置与问题线索 |
+| --- | --- | --- |
+| 1. 成本与依赖 | [任务观测模型](../content/performance/client-performance-task-observation-model.md)的事件/依赖图及末尾条件变化；[五领域组合账本](../content/performance/game-budget-07-scene-budget.md#scene-combination-ledger-teaching)的包含、依赖与持有关系 | 任务观测模型末尾“资产与依赖输入已就绪、仍被持有，首开为何仍卡、下一步查什么”；组合账本节末“角色表和动画表同时引用 A，应保留几份原始记录与关系”。五领域的各自成本/生命周期题继续按下方原节反馈，不能用一题回答替代五类覆盖 |
+| 2. 观测与比较口径 | [任务观测表](../content/performance/client-performance-task-observation-model.md)区分对象/事件与代理；[CPE-02 草稿](../content/performance/client-performance-test-comparability.md)两组教学记录及“最后交出可比性判断和下一份证据” | CPE-02 末尾现成题：汇总从 100 个间隔扩到 1000 个，均值差距缩小，为何不能说首次收益消失？同时回其超时/缺失段说明成功子集为何不能代表全部请求。该稿已作全文 AI 编辑复审，仍为 `draft: true`，不称公开成稿或理解通过 |
+| 3. 候选预算与分档 | [同任务预算推导](../content/delivery-engineering/delivery-performance-stability-02-budget-system.md)、[能力选样](../content/performance/from-model-table-to-capability-fingerprint-android-and-pc-tiering.md#capability-matrix-teaching)、[候选画质](../content/performance/device-tier-experience-consistency.md#candidate-quality-matrix-teaching)及[校准教学矩阵](../content/code-quality/device-tier-validation-matrix-baseline-and-visual-regression.md#device-calibration-matrix-teaching) | 分别沿原节理解题回答：组合统一提交改成 9 ms、预加载增加驻留，应退回哪些预算与证据；只保留 A+B 能否称高中低覆盖；72/48/32 分别统计什么、动态未切换应怎样记。保留题设身份，实际额度/设备边界仍待校准；不把这些线索变成新标准答案 |
+| 4. 测量与校准设计 | VFX-T04 [请求与退出协议](unity-vfx-repeatable-playback-protocol-teaching.md)、[事件校准](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-event-calibration-design)、[CPU 校准](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-calibration-design)、[GPU 校准](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-gpu-calibration-design)、[内存校准](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-memory-calibration-design) | 各节末已有题：九条记录为何仍可能漏整组结束；Self 同为 5 怎样区分漏记录与关闭子采样；CPU 有效而 GPU 为 NaN 应留哪些状态；关闭唯一内存来源后能认证哪类扰动。这里只要求说明可判错的输入、参考和结论边界，不要求先做真实采集；这些均是准备材料/设计 |
+| 5. 迁移与后续处理 | [动态降载/恢复](../content/performance/mobile-hardware-03-power-thermal.md#dynamic-load-recovery-teaching)、[F1 报告追溯](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)、[规则/基线变更](../content/performance/game-performance-methodology-summary.md#performance-rule-baseline-changes)、[例外/恢复](../content/performance/game-performance-methodology-summary.md#performance-exception-recovery-teaching)与[批次补验](../content/performance/game-performance-methodology-summary.md#performance-batch-ledger-teaching) | 沿各节现成题区分条件变化、旧数据重算与补测、接受范围/到期；批次题中 U2 的迟到和 H0 应归何处、B2 齐备后原 B1 快照与后续视图各保留什么、谁补剩余缺项。需要回到同一任务/配置和原始引用，不以通知消失、单项满足或补跑成功代替整批接受 |
+
+**五领域回读位置。** 第 1 项还需按领域解释各自机制和生命周期，直接回[特效生命周期/资源账本](../content/performance/game-budget-09-vfx-budget.md#vfx-lifecycle-teaching)、[UI 生命周期](../content/rendering/unity-rendering-supp-d-ui-rendering.md#ui-lifecycle-observation)、[角色资源账本](../content/performance/game-budget-08-character-budget.md#character-resource-ledger-teaching)、[动画观测与求值边界](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-task-observation-record)、[场景阶段观测](../content/performance/game-budget-07-scene-budget.md#scene-task-observation-record)的原节及理解题。它们保留原系列身份，场景组合账本不替代五篇各自的成本解释；本批只核回读定位，沿既有局部审核，不把原文其余未审部分或旧固定数值认证为通用标准。
+
+**反馈怎样记录。** 本轮尚未收到上述问题的作者作答，不填写掌握/通过。已通过本聊天提出第 1 项的首开问题及准备前移代价，作为一条具体反馈请求；作者可分次回答；答复到达后在本节后续批次记录其原意、对应题目/条件、能支持的判断和仍有卡点，再决定是否局部补桥。不把“收到”“文章已读”、AI 给出的解答或构建通过当作理解检查完成，也不要求作者一次回答五组。
+
+| 精确文件 | 用途与原因 | 本批边界 |
+| --- | --- | --- |
+| 本执行计划 | 汇总五项入口、现成题与反馈接续 | 只追加本批；第 2.2 节条件不改，不另建状态表 |
+| [客户端主规划](client-performance-engineering-series-plan.md) | 加入反馈定位索引与前批交付 | 不增篇、不更新作者掌握或实验成熟度 |
+| [原审查记录](client-performance-existing-content-review-2026-11-04.md#knowledge-feedback-map-review) | 留索引身份、导航/口径及局部编辑复核 | 不重审旧算例或认证全文/整套知识 |
+
+- **本地检查**：从 `d36d60d` 导出 3246 份 HEAD 文件，只叠加三份 docs 建独立候选；19 项模板回归通过，Hugo 0.157.0 独立构建 1473 页，生成页检查 1404 页、0 错误。核五项原文与所列现成题的实际文字、五领域回读身份、三文档表格列数、578 处本地 Markdown 路径及本批 21 处锚点目标；按生成 HTML 核 12 个公开材料目标及所引锚点，确认 CPE-02 草稿未发布。逐份比较只有三 docs 有差异，1473 份 content 全部未改；原性能 plan 在候选中保持 HEAD 的 Git 归一化 blob，工作区原字节及 316 项无关状态/内容哈希保留，index 为空。VFX-T 七篇仍待写，第 2.2 节条件未改；未重新计算旧教学、重审全文或联网核来源。最后只回填检查记录并同步候选作局部复核，Git 阶段复用有效站点检查。产物目录 `.tmp/knowledge-feedback-map-20261107/`；无公开正文/导航/样式变化，未做浏览器视觉、引擎/设备实测、校准/批量/取消演练或工具实现。
+- **共享现场与 Git**：三目标起始干净、index 为空；冻结其外 316 项无关状态/内容哈希及原性能 plan 原字节，本批不改不暂存该共享文件。检查通过后依持续授权 Commit → Fetch → 冻结远端/核完整范围 → 按需 Rebase → Push/回读，关闭 autoStash/updateRefs；最终 SHA/远端核验留聊天和下一批，不为记录自身 SHA 再提交。
+- **分层状态与待补**：公开正文未改，五项反馈导航与材料身份已汇总，局部 AI 编辑/一致性复核及本地检查结果分别见审查记录和本条检查；未将全部知识材料或作者理解改为通过，第 2.2 节仍待反馈。实际采集/校准、批量/取消/故障演练、F2–F4 工具和团队采用无新增执行；Git 待本批交付，线上部署未核验。真实工程/来源支持、独立参考、误差/扰动接受依据及责任权限仍待实践准备时确定。
+- **下一步**：优先接收第 1 项首开问题的作者反馈，按回答暴露的具体卡点回原位置补桥，再分次接其余问题。若没有新反馈，且未发现影响上述判断的真实知识缺项，后续只读核对并等待，不重复本次导航、旧教学或已完成审校，不为轮次制造空提交。若独立发现真实缺项，可继续一个明确知识批次；实际测量与工具仍须知识出口和条件具备后开展。
