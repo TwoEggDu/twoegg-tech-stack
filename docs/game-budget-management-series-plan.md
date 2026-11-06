@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算 07 的逻辑工作与反馈短桥（2026-11-06）
+
+[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-logic-work-feedback-teaching)原位补候选对象、检查次数/范围、业务事件与必要反馈；虚构 12 对象在同一窗口得到 2880/480/960 项次，短暂条件说明少检查可能漏检，六组错峰保持总量但改变分布和采样相位。仅关闭前批定位的这一处解释缺项，不认证 D5/全文或作者掌握。两份 Unity 6.0 入口契约限用，未继承 Update 旧文的固定耗时、内部机制和实现收益；不增篇、不实现调度器。来源、局部 AI 编辑自审及本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-logic-budget-20261106)，下一步接 E1 纸面协议设计，实际采集/校准、工具和线上部署无新增验收。
+
 ## 场景预算知识覆盖核对（2026-11-06）
 
 本轮仅核对预算 07/模板 18 的已交付补桥与剩余解释，不修改正文或篇级状态。机位/用途、可见集合、灯光/阴影、Streaming/双驻留、跨领域账本和观测/模板绑定已有可复用位置；“场景逻辑预算”仍是两段概述，下一批只补候选对象、检查频率/工作量、事件结果与反馈之间的短桥。Update 调度旧文仅作复用线索，所读段落的固定耗时、内部实现概括和管理器收益尚未核验，不直接移入场景正文。具体覆盖与最小关闭判据见[审查记录](client-performance-existing-content-review-2026-11-04.md#d5-knowledge-coverage)，检查和交付见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-knowledge-coverage-20261106)。不增篇，不据材料覆盖代作者掌握或宣告 D5/实验/工具/线上验收完成。
