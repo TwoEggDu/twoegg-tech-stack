@@ -80,3 +80,5 @@
 2026-11-06 E2 CPU 接续：同一材料补[CPU 区间来源与边界](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-source-design)，连接请求/原始采样、含子/Self、独立调度状态和异步提交/执行/续体；虚构 8/3 ms 采样与 4/3/1 ms 状态不作 Unity 实测。复核两份既存及两份新 Unity 6.0 直接契约，开关/扰动沿 E3 限用；VFX-T04 与其余六篇仍待写。审校/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-cpu-source-design-20261106)；下一项设计 CPU 范围校准，不执行采集器或调度追踪。
 
 2026-11-06 E3 CPU 接续：同一材料补[CPU 范围校准设计](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-calibration-design)，只含父子/跨线程与缺项、异步阶段终点、配置改变 Self 三块；复用原采样与事件扰动设计，新增六事件和配置对照均为合成输入。VFX-T04 与其余六篇仍待写，真实参考、采集/异步适配与校准未执行；局部 AI 自审/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-cpu-calibration-design-20261106)。下一项按需核 GPU 来源，不扩展工具实现。
+
+2026-11-06 E2 GPU 接续：同一材料补[GPU 来源与结果身份](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-gpu-source-design)，核对 Unity 6.0 的高层/详细入口、完成帧返回顺序、来源特定支持与报告范围；四次合成读取用于核对重复、数量和归属，不是 API 实测或自动业务字段。VFX-T04 与其余六篇仍待写；局部 AI 编辑自审/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-gpu-source-design-20261106)。下一项为本来源的最小校准设计，实际 GPU/参考/采集器未执行。
