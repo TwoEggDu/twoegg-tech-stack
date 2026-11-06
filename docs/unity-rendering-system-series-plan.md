@@ -152,6 +152,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#blendshape-frame-boundaries)原位修订形态键小节：按六份 Unity 6.0 公开资料区分形态/帧/运行权重、0/100 用法与教学系数、可选属性流；撤回单份 delta、统一法线公式和逐顶点必更精确的概括。虚构两帧在 75 处求得偏移 (0,2.5)，并用旋转后 (7.5,1) 与错加偏移的 (10,3.5) 解释空间边界；插值/组合顺序是本题约定，不升级为所有 Unity 路径的调度保证。仅同步性能段的一句引用，其余四批基础保留。来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#blendshape-frame-boundaries-20261106)；原篇号/URL/归属不变，不新增篇目或认证全文。实际多帧/法线/切线、变形顺序、导入字节与设备成本尚未验证，作者理解待反馈；后续接压缩/误差与更新频率的实际知识缺口。
 
+### 03 曲线压缩误差与输出边界维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-compression-error)在曲线输入到变形输出之间补误差定义：固定参考/候选、时间与运行条件，分别记录局部姿态、世界挂点/接触、必要反馈和成本。按五份 Unity 6.0 文档核对旋转度数、位置/缩放百分比、减帧条件及模式/Rig 范围，不把参数当输出容差或收益。虚构杆长 0.2/1 m、同为 1° 得约 3.49/17.45 mm，以题设 10 mm 区分当前样本；首尾零、中点非零的反例说明样本覆盖限制。制作 05 的操作与对照入口复用，原五批教学/观测保留；来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-compression-error-20261106)。只新增本节，原篇号/URL/归属不变；未执行导入/真实压缩/设备成本或全篇认证。后续接更新频率/时序，作者理解和第 2.2 节仍待反馈，实际测量/工具/线上部署未验证。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）
