@@ -84,3 +84,9 @@ CPE-01 是引擎无关的任务观测方法，独立篇级归属在[客户端性
 按客户端性能工程 F4 的接续，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-rule-baseline-changes)补原始覆盖、重算与复测的判据，保留原标题、URL 和归属。复用预算及质量门的规则/基线责任；五种变更、K 的均值/P95 反例及 B0/B1 的差值均为教学推演，不是实际回归、基线批准或优化收益。
 
 仅登记本批局部知识增量，不改变 M02、OS 补篇及其他状态。局部 AI 编辑自审、候选检查和 Git 接续见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f4-rule-baseline-teaching-20261106)；下一项先复读已有告警/豁免处理，再补必要的例外到期与复验恢复教学，知识出口和作者理解待反馈。
+
+## 告警例外到期与复验恢复的知识补桥（2026-11-07）
+
+按客户端性能工程 F4 的接续，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-exception-recovery-teaching)补独立教学时间线，区分报告事实、通知处理、接单和接受；覆盖例外范围/到期、异常补验、恢复依据及重新打开。复用既有质量门豁免职责，不新增篇号或更改本篇身份；时间、报告与接受事件均为假设，不是生产响应、放行或团队采用。
+
+本批仅追加此修订登记，保留 M02、OS 补篇及其他状态。来源、局部 AI 编辑自审和候选检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f4-exception-recovery-20261107)；下一步核对批量、取消/超时及旧候选结果隔离的方法覆盖，优先复用已完成材料，作者反馈与知识出口仍待通过。
