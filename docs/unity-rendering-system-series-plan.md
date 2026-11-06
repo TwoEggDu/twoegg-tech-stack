@@ -164,6 +164,10 @@
 
 对[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-evaluation-boundaries)七组基础材料作覆盖与系列一致性核对：职责/位置、离屏/恢复、层/过渡、观测、形态帧、压缩和更新频率均有正文、教学或记录入口，本批不重写或重算。制作 05 的事件/取消、根运动职责继续复用。当前仍缺 IK/约束输入怎样连接求解工作、姿态写回与必要输出的短桥，不能因五职责表已有名称就登记 D4 完成；[制作 04](../content/delivery-engineering/game-art-production-04-rigging-skinning.md)的控制入口与[算法 10](../content/system-design/algorithms/algo-10-inverse-kinematics.md)的目标/误差原理是复用候选，不继承后者的未核验实现、复杂度概括、耗时或旧版本支持。覆盖表、局部 AI 编辑自审和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-knowledge-coverage-20261106)。本批只改规划/审校记录，原文、篇号和 URL 不变；下一批先补这处短桥，再接 D5。作者理解、第 2.2 节、实际调度/裁剪/形态顺序/反馈、工具、设备校准与线上部署均无新增验收，不认证全文。
 
+### 03 IK/约束到输出的短桥（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-ik-output-contract)原位补目标/参考空间/时刻、输入姿态、受影响链、求解方式/权重与停止条件到写回/消费的关系；复用制作 04 与算法 10 的目标原理，不继承其实现或耗时。按 Unity 6.0 包目录及 Animation Rigging 1.4.1 文档区分 Two Bone/Chain IK 和 Mecanim 人形路径，以虚构两节骨长模型复算可达解与 0.10 m 残差下界，连接动画八字段与接收职责。来源、局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-ik-constraint-20261106)。本批关闭上批定位的解释缺项，下一批接 D5；原归属、篇号、URL 及七组教学保留。作者理解仍待反馈，实际求解/时序/成本、工具、校准及线上部署未新增验收，不认证全文或知识阶段。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）

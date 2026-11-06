@@ -193,6 +193,10 @@
 
 七组对应位置、待核验边界及局部 AI 编辑自审见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-knowledge-coverage-20261106)。裁剪文档差异、实际形态组合顺序、调度与反馈继续留待固定环境验证；本批没有重新联网，不把原件历史 HTTP 200 写成新获取。D5 先读场景预算 07/模板 18：已有机位/路线、可见物、灯光/阴影、Streaming 和双驻留入口；缺的是领域计数/观测的展开，不应另开同义场景总论。下一批先补动画短桥，随后在预算 07 原位补可见集合与用途边界，再按实际覆盖接灯光/Streaming/组合与模板绑定；本轮未审核或改写场景全文。
 
+### D4｜IK/约束成本与输出短桥（2026-11-06）
+
+沿上批已定位缺项，复读制作 04 的 FK/IK 控制、算法 10 的位置目标与约束原理，以及渲染 03 五职责/层混合/动画八字段；它们继续复用，只在渲染 03 新增[输入到写回与消费的短桥](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-ik-output-contract)。Unity 6.0 包目录、Animation Rigging 1.4.1 Two Bone/Chain IK 及人形 IK 文档分别支撑版本、属性、停止条件与路径边界，不据配置证明执行次数或收益。虚构几何例显示可达解与不可突破的骨长残差，接受线不作项目标定；上批解释缺项据此关闭，不重做七组教学、不新增 R/篇号。局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-ik-constraint-20261106)。下一批按既有预读接 D5 可见集合/用途；作者理解、实际调度/反馈/采集/校准、工具与线上均未新增验收，不认证算法、场景或动画全文。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
