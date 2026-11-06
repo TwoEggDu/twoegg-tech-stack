@@ -265,6 +265,16 @@ E 的原理/设计可以在上述最小桥后接续，实际测量继续受第 2
 
 按 col-expert-review、本站主标准和性能 S1–S8 作局部 AI 编辑自审：问题/约束、机制/反例、等待与允许重叠的取舍、来源/推演和复核交接在本批准备材料职责内满足；结论限于解释与纸面设计，不是独立同行评审、VFX-T04 全文通过或 E1 完成。自审修正“输入已就绪却补造加载区间”的歧义，补播放开始事件，明确已取得代理时长而组结束超时时分别记状态。工程验证和团队采用无新增证据；预算/设备校准不是本准备材料的验收主张，仍待实践。作者四题暂无反馈，不代认掌握。后续关闭来源/校准设计缺项的判据和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-playback-protocol-20261106)。
 
+<a id="e2-event-source-review"></a>
+
+### E2｜事件来源与观察时刻的局部审核（2026-11-06）
+
+复读上批纸面协议、CPE-01 的时间域/发生与读取、CPE-02 的应用代理/间隔定义及 VFX-T04 职责后，本轮不再重讲身份和可比性。原位补[来源小节](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-event-source-design)：具体业务函数仍待定义，循环标记、组查询和退出清单各自留来源/线程/时间/缺项；ProfilerMarker 名称不是业务成功证据。已知 N/C/T/M 时刻不改成真实 API 结果。
+
+本轮获取 Unity 6.0 realtimeSinceStartupAsDouble、deltaTime、frameCount、ProfilerMarker 四份公开契约：分别核秒时钟/同值/暂停休眠/OnDestroy 问题提示、FixedUpdate/最大间隔/OnGUI、Update 编号/Awake 未定义，以及 CPU 代码标记和 Begin/End 的构建条件；没有把特定方法的编译说明扩到全部接口。IsAlive 范围沿上批已核契约复用。新教学分开发生点 1.060 与读到 1.120；在明确无重启/清空且忽略读时误差的题设下，由 true 1.104 与 false 1.120 得自然结束位于 `(1.104,1.120]`，不是一个精确结束时间或实测开销。
+
+局部 AI 编辑自审按 twoegg-article-method、col-expert-review、主标准五项与性能 S1–S8：问题/因果、量化边界、通知与轮询取舍、四份直接契约和复核问题在本题设计范围内满足；真实时钟精度/线程可用性、事件完整性及扰动未验证。自审明确理想区间需按真实查询前后时间与计时误差放宽，不给每帧或 16 ms 的通用保证；OnDestroy 的限制是页面提示，实际补丁/修复状态保留待查。结论不是独立同行评审、E2 全部完成、采集器准确或作者掌握；工程验证/团队采用无新增证据，预算标定不属于本来源小节主张。下一步最小校准设计的关闭判据及本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-event-source-design-20261106)。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
