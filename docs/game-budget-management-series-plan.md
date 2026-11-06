@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算 07 的可见集合与用途补桥（2026-11-06）
+
+[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-visible-purpose-teaching)原位补对象清单、按相机/用途筛选、参与集合、渲染事件与执行/反馈的边界；用虚构路线 Q0/Q1 复算主画面 3/3、跨用途去重 5/6 和参与关系 9/11，说明相同主画面数量不保证整场景工作相同。复用角色 08 的几何/Pass 映射，不重算旧教学；四份 Unity 6.0 文档仅支持掩码、视锥/遮挡、isVisible 和帧事件调查入口，内建遮挡的 CPU/驻留代价不推广到所有 GPU 路径。来源、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-visible-purpose-20261106)。原篇号、URL、归属与旧总论不变；D5 灯光/阴影、Streaming/双驻留和观测/模板 18 后续分批，不认证全文、作者掌握、实测、工具或线上部署。
+
 ## 角色预算 08 的动画执行位置措辞（2026-11-06）
 
 按已登记 R7，仅将[角色预算 08](../content/performance/game-budget-08-character-budget.md)开篇的“CPU 动画和蒙皮账”改为“动画求值与蒙皮计算账”，注明执行位置和统计范围须按引擎版本、平台与配置核对，避免与下文“CPU 或 GPU 蒙皮”冲突。不预设另一条无条件 GPU 路径，不改 D3 账本、用途教学或观测表，不据此认证全文。局部 AI 编辑自审和页面检查见[性能执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-entry-corrections-20261106)；D4 的求值/蒙皮职责与实际来源仍待接续，原篇号、URL 与归属不变。

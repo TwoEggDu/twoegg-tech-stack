@@ -197,6 +197,10 @@
 
 沿上批已定位缺项，复读制作 04 的 FK/IK 控制、算法 10 的位置目标与约束原理，以及渲染 03 五职责/层混合/动画八字段；它们继续复用，只在渲染 03 新增[输入到写回与消费的短桥](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-ik-output-contract)。Unity 6.0 包目录、Animation Rigging 1.4.1 Two Bone/Chain IK 及人形 IK 文档分别支撑版本、属性、停止条件与路径边界，不据配置证明执行次数或收益。虚构几何例显示可达解与不可突破的骨长残差，接受线不作项目标定；上批解释缺项据此关闭，不重做七组教学、不新增 R/篇号。局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-ik-constraint-20261106)。下一批按既有预读接 D5 可见集合/用途；作者理解、实际调度/反馈/采集/校准、工具与线上均未新增验收，不认证算法、场景或动画全文。
 
+### D5｜场景的可见集合与绘制用途（2026-11-06）
+
+复读预算 07 和模板 18：机位/路线、场景预算桶、灯光/阴影与流式边界总论继续复用；角色 08 已有 Renderer/LOD/子网格/用途映射，几何旧文已有主画面与其他用途边界，不重复其公式或数量教学。本批只在预算 07 新增[跨用途集合短桥](../content/performance/game-budget-07-scene-budget.md#scene-visible-purpose-teaching)，以两份虚构路线清单区分对象并集与参与关系，分别接渲染事件、实际工作及反馈；四份 Unity 6.0 原文限定相机掩码、视锥/遮挡、可见性布尔量与 Frame Debugger。裁剪旧补篇仅定点检索，不继承其 Umbra/PVS/HZB、深度约定或支持结论。局部 AI 编辑自审、集合复算及页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-visible-purpose-20261106)。不新增 R/篇目、不认证场景全文；灯光/阴影、Streaming/双驻留、完整观测与模板 18 绑定待后批，实际采集、校准与工具仍后置。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
