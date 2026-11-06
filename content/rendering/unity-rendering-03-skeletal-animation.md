@@ -270,57 +270,60 @@ positionWorld = M_current * positionMesh
 
 ---
 
-## Blend Shape（形态键）
+<a id="blendshape-frame-boundaries"></a>
 
-### 什么是 Blend Shape
+## Blend Shape：先区分形态、形态帧和运行权重
 
-Blend Shape 是另一种顶点变形机制，原理比骨骼蒙皮更直接：
+同一个“微笑”可以只给一个目标，也可以在不同权重处给出不同目标形态。排查嘴角不对时，先确认当前用了哪个形态、它包含哪些帧、运行权重是多少，再检查对应位置；不能只按名称取一份 delta 乘一个数。
 
-**直接存储顶点的目标偏移量**——对于每个顶点，记录"从默认形态变换到目标形态时，这个顶点需要移动多少"（deltaPosition、deltaNormal、deltaTangent）。
+Unity 6.0 的 [AddBlendShapeFrame](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/mesh/addblendshapeframe) 区分形态名称、帧权重和顶点/法线/切线偏移，允许同一形态按递增权重添加多帧；法线或切线偏移可以为空。[GetBlendShapeFrameVertices](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/mesh/getblendshapeframevertices) 说明将帧偏移与 Mesh 对应属性相加可还原完整向量。它们约定的是数据接口，不能据数组长度推出运行内存布局或执行次数。
 
-为解释偏移，下面只用单目标、归一化为 0～1 的权重作教学插值；这不是 Unity API 权重单位或支持范围的定义，实际形态帧和属性处理须另核：
+| 要分清的量 | 含义与核对入口 | 容易混淆的判断 |
+| --- | --- | --- |
+| 形态 | Mesh 中某个具名 Blend Shape，以形态索引定位 | 形态数不是形态帧总数，也不是当前执行数 |
+| 形态帧 | 该形态在某个帧权重处的目标偏移；读取帧数、逐帧权重和属性流 | 这里的帧不是播放帧或渲染帧；同形态多帧不能按多份独立表情相加 |
+| 运行权重 | Renderer 本次对该形态设置的值，关联动作、时间与写入者 | 不是顶点的骨骼影响权重；不同形态的值也不必按骨骼权重归一化 |
 
-```
-最终顶点位置 = 默认位置 + weight × deltaPosition
-最终法线方向 = 默认法线 + weight × deltaNormal（归一化后）
-```
+帧数和帧权重分别可由 [GetBlendShapeFrameCount](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/mesh/getblendshapeframecount) 与 [GetBlendShapeFrameWeight](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/mesh/getblendshapeframeweight) 核对。[手册的用法](https://docs.unity.com/en-us/engine/6000.0/manual/animation-section/animation-mecanim/animation-clips/animation-editor-guide/blend-shapes)中 0 表示无影响、100 表示完整影响；[SetBlendShapeWeight](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/skinnedmeshrenderer/setblendshapeweight) 则要求结合模型定义的最小/最大权重理解范围。因此对手册展示的 0/100 用法，归一化教学系数 `a=0.8` 对应值 80，不能把 0.8 原样当作 80；实际模型的帧权重及区间仍须读取，不能统一假定只有一帧或规定通用外推行为。
 
-weight = 0：完全是默认形态
-weight = 1：完全是目标形态
-weight = 0.5：两个形态各占一半（嘴巴半张）
+### 单目标公式在哪个条件下够用
 
-### 多个 Blend Shape 的叠加
+只在**本题约定**的单目标、线性位置插值中，才用 `p_shape = p_base + a × delta`，其中 a 在 0～1。若有多个形态，本题先分别求出各自当前的位置偏移，再在同一网格空间相加；形态内部怎样求当前偏移与形态之间怎样组合是两步。这不是任意多帧、外推、修正形态或 Unity 内部算法的通用公式。
 
-一个 Mesh 可以有几十个 Blend Shape，分别对应不同的表情或变形：
-
-```
-BlendShape_Smile      weight = 0.8   ← 微笑 80%
-BlendShape_BrowRaise  weight = 0.3   ← 眉毛上扬 30%
-BlendShape_EyeBlink_L weight = 1.0   ← 左眼完全闭合
-BlendShape_EyeBlink_R weight = 0.0   ← 右眼完全睁开
+```text
+Mesh：形态索引 → 该形态的帧权重/位置偏移
+Renderer：本次运行权重 ──────┘
+             ↓ 按已声明的规则求各形态当前偏移
+       同一网格空间的位置 → 指定的蒙皮位置模型 → 绘制用途
 ```
 
-多个 Blend Shape 的 delta 相加，再叠加到默认位置上：
+下面是**虚构的二维位置教学**，不是导入或 Player 结果。仅一形态 S、一个顶点，忽略法线/切线；两帧偏移都相对同一基准位置 `p_base=(1,0)`。题设运行值位于两帧之间时，对两份偏移线性插值，帧权重不是播放时间。
 
+| 输入或中间量 | 本题数值 | 解释 |
+| --- | --- | --- |
+| S 的两帧 | 帧权重 50、100；偏移分别为 (0,2)、(0,3) | 两份目标都相对基准，不是后一帧相对前一帧的增量 |
+| 运行权重 | 75 | 只在本题给定的 50～100 区间内推演 |
+| 区间系数 | (75−50)/(100−50)=0.5 | 用于本题两份帧偏移间的插值 |
+| 当前偏移与位置 | (0,2.5)；p_shape=(1,2.5) | 0.5×(0,2)+0.5×(0,3)，再加基准 |
+| 错套单目标的结果 | 0.75×(0,3)=(0,2.25) | 丢掉 50 处的帧，不能还原本题的分段规则 |
+
+### 接到蒙皮时，位置和偏移不能混空间
+
+沿用前文列向量约定，本题指定先在绑定网格空间得到 p_shape，再把它作为蒙皮位置模型的输入。单骨骼、影响权重为 1，绑定关系和当前变换的合成结果在本题取“逆时针旋转 90°，再沿世界 x 平移 10”，对象到世界变换取单位矩阵：
+
+```text
+T(x,y) = (10-y, x)
+正确：T(p_base + delta) = T(1,2.5) = (7.5,1)
+错误：T(p_base) + delta = (10,1) + (0,2.5) = (10,3.5)
 ```
-最终位置 = 默认位置
-         + 0.8 × deltaPos_Smile
-         + 0.3 × deltaPos_BrowRaise
-         + 1.0 × deltaPos_EyeBlink_L
-         + 0.0 × deltaPos_EyeBlink_R
-```
 
-### Blend Shape 和骨骼动画的对比
+偏移作为方向需要经过相关线性变换，不能把绑定网格空间的偏移原样加到已变换位置上。本例只证明空间/顺序的区别，**不证明每种 Unity 路径都按这张图调度或复用缓冲**；实际组合需追踪本次形态权重、帧数据、骨骼/绑定输入、变形结果与消费用途。上面六份接口/用法资料没有定义所有路径的组合顺序，确切路径留待固定版本与配置后捕获核验。
 
-| | 骨骼动画 | Blend Shape |
-|---|---|---|
-| **数据** | 骨骼变换矩阵 + 权重 | 顶点偏移量 |
-| **适合** | 四肢运动、身体动作 | 面部表情、肌肉细节 |
-| **精度** | 受骨骼数量和权重分配影响 | 每个顶点独立控制，精度高 |
-| **数据规模观察入口** | 姿态曲线、绑定/权重与运行数据分开 | 形态/帧、受影响顶点、属性流与运行数据分开 |
-| **动态混合** | AnimationClip 驱动 | 任意权重随时可调 |
+法线、切线也不能由这个位置例推出：要分别核对是否有对应偏移流、导入处理、方向变换及后续归一化。移除它们可能改变着色与表面细节，不能用“位置一样”接受全部形变质量；本节不提供通用误差阈值或字节公式。
 
-面部动画通常**同时使用两者**：骨骼控制大范围的颌骨、眼球运动，Blend Shape 精细控制嘴角、眉毛、眼皮的微表情——骨骼提供运动框架，Blend Shape 提供细节精度。
+骨骼与形态键可以共同表达角色：前者通过骨骼/影响项组织变形，后者以形态帧描述顶点属性变化。动作或脚本怎样驱动它们另记；数量、质量和成本要按实际输入与输出判断，不由“逐顶点”直接断定更精确或更便宜。
+
+**理解检查**：为什么一个形态的两帧不能当两份表情直接相加？若运行值改成 110，现有题设能否给出答案？把 0.8 写入采用 0/100 用法的接口，为什么不同于教学的 80%？本例错得 (10,3.5) 是哪次空间混用，哪些位置关系可复用、哪些 Unity 执行证据仍需取得？
 
 ---
 
@@ -330,7 +333,7 @@ BlendShape_EyeBlink_R weight = 0.0   ← 右眼完全睁开
 
 **骨骼与姿态**：骨架节点数、网格绑定骨骼数与每顶点影响数是不同输入。状态、混合/IK、写回、矩阵准备与蒙皮各有工作边界；这里不给跨平台通用骨骼上限，也不以一份矩阵数组大小代替整条链的成本。
 
-**Blend Shape 内存**：要区分形态/帧、受影响顶点、属性流、导入设置与运行分配。不能从 `Legacy Blend Shape Normals` 名称推出只存 Position，或承诺节省 2/3。后续须核对实际版本与产物；前面的简化插值与对比表不作为实际字节公式。
+**Blend Shape 内存**：要区分形态/帧、受影响顶点、属性流、导入设置与运行分配。不能从 `Legacy Blend Shape Normals` 名称推出只存 Position，或承诺节省 2/3。前面的帧数据接口与位置教学不作为实际字节公式；实际导入产物及运行分配仍须另核对。
 
 **绘制用途**：蒙皮方式不代替 Renderer、材质及主画面/阴影等用途的核对。变形处理合批也不等于绘制自动合并；可复用结果、实际绘制次数及数据传输，需在选定管线和环境中分别观察。
 

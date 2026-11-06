@@ -148,6 +148,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-task-observation-record)接上动画领域八字段、五阶段与规则适用性：关联动作/代次、Animator、片段使用实例、写回、变形与消费用途，保留父子/跨线程归因和逐指标有效性。复用 CPE-01、角色记录及原 J3/K3，另用两条虚构条件区分任务成功、证据有效、规则适用与接受；未添加实测数字。前三批职责/位置、离屏和组合教学及原篇号/URL/归属不变，未新增采集实现或阈值。局部 AI 编辑自审与本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-observation-record-20261106)。本节汇合完成不代表 D4 或全文通过；下一批先核对形态键帧/权重单位与蒙皮关系的直接依赖，再处理压缩/误差及更新频率的实际知识缺口。作者理解、确切裁剪行为、设备校准和线上部署仍未验证。
 
+### 03 形态帧与权重边界维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#blendshape-frame-boundaries)原位修订形态键小节：按六份 Unity 6.0 公开资料区分形态/帧/运行权重、0/100 用法与教学系数、可选属性流；撤回单份 delta、统一法线公式和逐顶点必更精确的概括。虚构两帧在 75 处求得偏移 (0,2.5)，并用旋转后 (7.5,1) 与错加偏移的 (10,3.5) 解释空间边界；插值/组合顺序是本题约定，不升级为所有 Unity 路径的调度保证。仅同步性能段的一句引用，其余四批基础保留。来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#blendshape-frame-boundaries-20261106)；原篇号/URL/归属不变，不新增篇目或认证全文。实际多帧/法线/切线、变形顺序、导入字节与设备成本尚未验证，作者理解待反馈；后续接压缩/误差与更新频率的实际知识缺口。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）
