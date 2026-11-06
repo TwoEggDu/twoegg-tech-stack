@@ -144,6 +144,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-layer-transition-scope)复用制作 05 的混合/打断正确性，新增层/状态/片段实例、属性/遮罩贡献与最终输出的计数边界。K0–K3 虚构模型复算 4/8/7/11 个贡献对，输出仍四项；单标量分步混合 5→8 与展开权重 0.1/0.3/0.6 只作教学，不推出实际采样次数、蒙皮/绘制或耗时。Unity 6.0 三份公开文档限用于层/遮罩、过渡和 1D 权重职责；来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-layer-transition-20261106)。前两批职责/位置与离屏材料保留，原篇号/URL/归属不变；D4 八字段仍待汇合，形态键直接依赖、作者理解、实际运行与全篇认证未完成。
 
+### 03 动画阶段观测维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-task-observation-record)接上动画领域八字段、五阶段与规则适用性：关联动作/代次、Animator、片段使用实例、写回、变形与消费用途，保留父子/跨线程归因和逐指标有效性。复用 CPE-01、角色记录及原 J3/K3，另用两条虚构条件区分任务成功、证据有效、规则适用与接受；未添加实测数字。前三批职责/位置、离屏和组合教学及原篇号/URL/归属不变，未新增采集实现或阈值。局部 AI 编辑自审与本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-observation-record-20261106)。本节汇合完成不代表 D4 或全文通过；下一批先核对形态键帧/权重单位与蒙皮关系的直接依赖，再处理压缩/误差及更新频率的实际知识缺口。作者理解、确切裁剪行为、设备校准和线上部署仍未验证。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）
