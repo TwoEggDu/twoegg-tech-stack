@@ -147,3 +147,5 @@
 
 - 2026-11-06 E3 CPU 范围设计：在 VFX-T04 [原准备材料](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-calibration-design)补三块判错输入，区分漏 B 与明确关闭 B、错误跨线程父关系、缺端点及提交/后台/续体终点；合成六事件给 2/7/2 ms 阶段与 18 ms 代理，配置 5/3/5 不作收益。原归属先登记，审校/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-cpu-calibration-design-20261106)。上一批 `7e98e32` 已推送且远端回读一致，316 项无关修改保留；本批五份 docs、不增篇。下一项按需核 GPU 来源及边界；作者理解、真实校准/测量、工具和线上部署无新增验收。
 - 2026-11-06 E2 GPU 来源：在 VFX-T04 原准备材料接高层帧计时与详细 GPU 来源、返回数量/顺序、源工作与读取身份以及支持/缺失边界；四次合成读取只支撑账本教学，不作性能或接口实测。原归属回写特效规划，局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-gpu-source-design-20261106)。上一批 CPU 校准设计已随 `e4fe3b9` 推送，本批按持续授权交付；不新增篇号，下一项补 GPU 最小校准设计。作者理解待反馈，实际采集/校准、工具与线上部署未新增通过项。
+
+- 2026-11-06 E3 GPU 设计：VFX-T04 原准备材料补返回范围/身份、字段有效性与开关/参考三块，原归属先回写；R1 残留槽误取会得 7 ms，合成逐字段状态与两项开关负对照不作 GPU 实测。局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-gpu-calibration-design-20261106)。上一批 `01e1671` 已提交推送且远端回读一致；本批不增篇，下一项为本任务内存来源。作者理解待反馈，实际采集/校准、工具与线上部署无新增验收。
