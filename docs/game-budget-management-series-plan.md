@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算 07 的照明、投射与接收补桥（2026-11-06）
+
+在[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-light-shadow-teaching)原位区分直接光照、投射深度生成、接收比较与对应光贡献；复用光照资产和移动阴影旧文，不重写 PBR、配置教程或上一批集合计数。虚构单正交视图三配置复算网格间距 3.125/6.25/3.125 cm 与逻辑深度载荷 4/4/16 MiB，明确覆盖边长不是 Shadow Distance、图集不是每视图分辨率、载荷不是实测显存或耗时。五份 Unity 6.0 文档只支持各自职责与配置限制，局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-light-shadow-20261106)。原篇号、URL、归属和篇数不变；D5 的 Streaming/双驻留、组合账本与完整观测/模板 18 后续分批，作者掌握、设备校准、工具和线上部署未新增验收。
+
 ## 场景预算 07 的可见集合与用途补桥（2026-11-06）
 
 [预算 07](../content/performance/game-budget-07-scene-budget.md#scene-visible-purpose-teaching)原位补对象清单、按相机/用途筛选、参与集合、渲染事件与执行/反馈的边界；用虚构路线 Q0/Q1 复算主画面 3/3、跨用途去重 5/6 和参与关系 9/11，说明相同主画面数量不保证整场景工作相同。复用角色 08 的几何/Pass 映射，不重算旧教学；四份 Unity 6.0 文档仅支持掩码、视锥/遮挡、isVisible 和帧事件调查入口，内建遮挡的 CPU/驻留代价不推广到所有 GPU 路径。来源、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-visible-purpose-20261106)。原篇号、URL、归属与旧总论不变；D5 灯光/阴影、Streaming/双驻留和观测/模板 18 后续分批，不认证全文、作者掌握、实测、工具或线上部署。

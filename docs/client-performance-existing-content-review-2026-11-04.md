@@ -201,6 +201,10 @@
 
 复读预算 07 和模板 18：机位/路线、场景预算桶、灯光/阴影与流式边界总论继续复用；角色 08 已有 Renderer/LOD/子网格/用途映射，几何旧文已有主画面与其他用途边界，不重复其公式或数量教学。本批只在预算 07 新增[跨用途集合短桥](../content/performance/game-budget-07-scene-budget.md#scene-visible-purpose-teaching)，以两份虚构路线清单区分对象并集与参与关系，分别接渲染事件、实际工作及反馈；四份 Unity 6.0 原文限定相机掩码、视锥/遮挡、可见性布尔量与 Frame Debugger。裁剪旧补篇仅定点检索，不继承其 Umbra/PVS/HZB、深度约定或支持结论。局部 AI 编辑自审、集合复算及页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-visible-purpose-20261106)。不新增 R/篇目、不认证场景全文；灯光/阴影、Streaming/双驻留、完整观测与模板 18 绑定待后批，实际采集、校准与工具仍后置。
 
+### D5｜照明、阴影生成与接收的短桥（2026-11-06）
+
+复读预算 07、模板 18 及移动端阴影全文，定点复读光照资产的直接光/烘焙分工、Shadow Map 旧文的生成/接收原理。已有配置取舍与对照设计可复用；不继承 Shadow Map 旧文的“所有投射者一次 Draw”、深度约定、伪代码或后续过滤/性能结论，不据此次阅读认证全文，也不因此扩大修订范围。本批仅在预算 07 新增[照明、投射和接收短桥](../content/performance/game-budget-07-scene-budget.md#scene-light-shadow-teaching)，以虚构单正交视图解释覆盖、网格和逻辑深度载荷的取舍，避免重复上一批集合及角色几何教学。五份 Unity 6.0 来源分别限用；局部 AI 编辑自审、复算和页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-light-shadow-20261106)。不新增 R/篇号；Streaming/双驻留、组合账本和完整观测/模板 18 继续待补，作者掌握、实际测量、工具与线上未新增验收。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
