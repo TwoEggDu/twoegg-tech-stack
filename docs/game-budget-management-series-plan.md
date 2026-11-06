@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算 07 的 Streaming 时序与重叠补桥（2026-11-06）
+
+[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-streaming-overlap-teaching)原位补用途就绪、旧消费者退出、持有撤销与实际回收的不同边界。沿用内存记账的四类数字，仅增加虚构连续时间调度：早/晚请求的重叠持续 6/2 s，模型最高值同为 760 MiB，晚方案仍迟到 2 s；不重做通用内存模型或把教学时序当引擎保证。Unity 6.0 Additive/激活/卸载和 Addressables 1.21.21 内存管理各自限用，来源、局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-streaming-overlap-20261106)。原篇号、归属、URL和篇数不变；组合账本及完整阶段观测/模板 18 绑定待汇合，作者理解、实测、工具与线上部署未新增验收。
+
 ## 场景预算 07 的照明、投射与接收补桥（2026-11-06）
 
 在[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-light-shadow-teaching)原位区分直接光照、投射深度生成、接收比较与对应光贡献；复用光照资产和移动阴影旧文，不重写 PBR、配置教程或上一批集合计数。虚构单正交视图三配置复算网格间距 3.125/6.25/3.125 cm 与逻辑深度载荷 4/4/16 MiB，明确覆盖边长不是 Shadow Distance、图集不是每视图分辨率、载荷不是实测显存或耗时。五份 Unity 6.0 文档只支持各自职责与配置限制，局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-light-shadow-20261106)。原篇号、URL、归属和篇数不变；D5 的 Streaming/双驻留、组合账本与完整观测/模板 18 后续分批，作者掌握、设备校准、工具和线上部署未新增验收。

@@ -205,6 +205,10 @@
 
 复读预算 07、模板 18 及移动端阴影全文，定点复读光照资产的直接光/烘焙分工、Shadow Map 旧文的生成/接收原理。已有配置取舍与对照设计可复用；不继承 Shadow Map 旧文的“所有投射者一次 Draw”、深度约定、伪代码或后续过滤/性能结论，不据此次阅读认证全文，也不因此扩大修订范围。本批仅在预算 07 新增[照明、投射和接收短桥](../content/performance/game-budget-07-scene-budget.md#scene-light-shadow-teaching)，以虚构单正交视图解释覆盖、网格和逻辑深度载荷的取舍，避免重复上一批集合及角色几何教学。五份 Unity 6.0 来源分别限用；局部 AI 编辑自审、复算和页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-light-shadow-20261106)。不新增 R/篇号；Streaming/双驻留、组合账本和完整观测/模板 18 继续待补，作者掌握、实际测量、工具与线上未新增验收。
 
+### D5｜Streaming 的用途与重叠时序（2026-11-06）
+
+复读预算 07/模板 18、内存记账的切场景模型与预算窗口，以及资源就绪链的提前/并行/分帧和失败/释放段。四类原数字、就绪与持有权原则继续复用；本批只在预算 07 补[请求时刻变化的连续时间教学](../content/performance/game-budget-07-scene-budget.md#scene-streaming-overlap-teaching)，不重做旧三快照或同义加载总论。流式旧文仅采用分块/触发/加载卸载问题定位；其中可用内存概括、每帧预算封顶、0.9 与激活轻量、sharedassets 等机制未纳入依据；场景加载优化旧文只读准备与激活选段，不继承其固定等待帧数、InstantiateAsync 版本或平台耗时。未认证或改写两篇全文，本批以官方 Additive/激活/卸载及 Addressables 内存契约明确当前判断的限用，不据旧文直接设计采集或阈值。局部 AI 编辑自审、复算与页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-streaming-overlap-20261106)。不新增 R/篇号；场景组合及完整观测/模板绑定待续，实际测量、校准和工具仍后置。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
