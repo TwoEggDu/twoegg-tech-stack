@@ -160,6 +160,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-update-frequency)接续源采样与五职责，新增动作时间、姿态求值、写回/重建和消费的边界；用虚构 30/60 Hz 匀速位置例比较保持与延迟一周期插值，分开当前目标偏差和延迟目标的重建误差。四份 Unity 6.0 文档仅用于更新模式、固定步长与实际执行、动画循环和管线限用；不将教学策略当 Unity 内建行为。补未来样本不可用、三角峰值遗漏和必要反馈/成本的判断，不重做前六批。来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-update-frequency-20261106)。原篇号/URL/归属不变；作者理解与第 2.2 节仍待反馈，实际调度、分离更新、采集/校准、工具和线上部署未验证，不认证全文或 D4。后续先汇合 D4 当前覆盖和剩余限用，再接 D5 场景知识。
 
+### 03 动画知识覆盖审校（2026-11-06）
+
+对[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-evaluation-boundaries)七组基础材料作覆盖与系列一致性核对：职责/位置、离屏/恢复、层/过渡、观测、形态帧、压缩和更新频率均有正文、教学或记录入口，本批不重写或重算。制作 05 的事件/取消、根运动职责继续复用。当前仍缺 IK/约束输入怎样连接求解工作、姿态写回与必要输出的短桥，不能因五职责表已有名称就登记 D4 完成；[制作 04](../content/delivery-engineering/game-art-production-04-rigging-skinning.md)的控制入口与[算法 10](../content/system-design/algorithms/algo-10-inverse-kinematics.md)的目标/误差原理是复用候选，不继承后者的未核验实现、复杂度概括、耗时或旧版本支持。覆盖表、局部 AI 编辑自审和本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-knowledge-coverage-20261106)。本批只改规划/审校记录，原文、篇号和 URL 不变；下一批先补这处短桥，再接 D5。作者理解、第 2.2 节、实际调度/裁剪/形态顺序/反馈、工具、设备校准与线上部署均无新增验收，不认证全文。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）
