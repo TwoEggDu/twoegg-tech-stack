@@ -140,6 +140,10 @@
 
 [渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-visibility-lifecycle)接续更新条件：分开主镜头、任意相机/阴影与 Editor 可见性、Animator 裁剪和 Renderer 离屏配置；保留 CullCompletely 的 API 概述与 Profiler 阶段描述差异，不据此承诺五项全停。四轮虚构职责清单复算 5/2/0/5 与合计 12，对照可见轮的 10 和全更新的 20，不作为引擎调度或耗时结论。补返回时状态/时间/姿态/挂点/反馈及资源持有边界，复用制作 05 和角色阶段记录。来源、局部 AI 编辑自审及检查见[性能执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-update-gates-20261106)；原职责/位置教学不变，不增篇。确切停更/恢复、作者理解与全篇/D4 认证仍待后续，未运行引擎/设备或工具。
 
+### 03 层与过渡组合维护（2026-11-06）
+
+[渲染 03](../content/rendering/unity-rendering-03-skeletal-animation.md#animation-layer-transition-scope)复用制作 05 的混合/打断正确性，新增层/状态/片段实例、属性/遮罩贡献与最终输出的计数边界。K0–K3 虚构模型复算 4/8/7/11 个贡献对，输出仍四项；单标量分步混合 5→8 与展开权重 0.1/0.3/0.6 只作教学，不推出实际采样次数、蒙皮/绘制或耗时。Unity 6.0 三份公开文档限用于层/遮罩、过渡和 1D 权重职责；来源、局部 AI 编辑自审与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#animation-layer-transition-20261106)。前两批职责/位置与离屏材料保留，原篇号/URL/归属不变；D4 八字段仍待汇合，形态键直接依赖、作者理解、实际运行与全篇认证未完成。
+
 ## 写作规范（延续现有系列风格）
 
 - Front matter 使用 TOML 格式（`+++`）

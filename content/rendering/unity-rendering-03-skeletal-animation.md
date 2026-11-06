@@ -90,6 +90,47 @@ J3 也不能只验“Renderer 又可见”。先按任务约定检查：当前�
 
 ---
 
+<a id="animation-layer-transition-scope"></a>
+
+## 层数、过渡输入和最终输出要分别计数
+
+同一个角色从走路切到跑步，同时用上身层施法，究竟多了什么工作？先分清配置里有哪些 Motion、这次有哪些实例参与、哪些属性受其影响，以及最后由谁消费姿态。不能把“两层”直接翻成“两倍动画耗时”。
+
+```text
+层/状态及过渡实例 → Motion/片段实例与时间、权重 → 属性与遮罩的贡献关系
+                                                   ↓
+                                             合成姿态/属性
+                                                   ↓
+                                           写回、蒙皮及绘制用途
+```
+
+Unity 6.0 的[Animation Layers](https://docs.unity.com/en-us/engine/6000.0/manual/animation-section/animation-mecanim/animation-animator-controller/animation-state-machines/animation-layers)将遮罩定义为动画应用到哪些身体部位，区分 Override 覆盖和 Additive 叠加；[Transitions](https://docs.unity.com/en-us/engine/6000.0/manual/animation-section/animation-mecanim/animation-animator-controller/animation-state-machines/class-transition)分别定义过渡持续时间、目标状态时间偏移和打断规则；[1D Blending](https://docs.unity.com/en-us/engine/6000.0/manual/animation-section/animation-mecanim/animation-animator-controller/animation-state-machines/animation-blend-trees/blend-tree-1dblending)展示参数如何改变子 Motion 的影响权重。因此状态名或 Motion 资产数不能代替本次参与实例和贡献范围，过渡时间也不是曲线求值的 CPU 时间。
+
+### 教学例：过渡叠加一个上身层
+
+下面是**虚构的标量贡献模型**，不复现 Unity 的曲线采样、旋转混合或调度。只选髋、胸、左手、右手各一个属性，组成集合 P；上身遮罩 U 只取胸和双手三项。W、R、C 分别代表走、跑、施法的直接片段，题设每份片段都给 P 四项提供值。无 Blend Tree、打断、根运动、事件、IK 或同步层；所有列出的参与权重为正。
+
+定义一个贡献对为“层/状态中的片段实例 × 输出属性”，只数题设经遮罩保留的非零贡献；同资产的不同使用实例不能仅按文件名合并。它不是已经执行的采样次数、Job 或硬件工作量。
+
+| 教学快照 | 基础层输入 | 上身 Override 层 | 保留的贡献对 | 最终属性项数 |
+| --- | --- | --- | --- | --- |
+| K0 稳定走路 | W 对 P 的 4 项 | 本题不参与 | 4 | 4 |
+| K1 走到跑的过渡中 | W、R 各对 P 的 4 项 | 本题不参与 | 8 | 4 |
+| K2 走路并施法 | W 对 P 的 4 项 | C 对 U 的 3 项，层权重 0.6 | 7 | 4 |
+| K3 过渡中施法 | W、R 各对 P 的 4 项 | C 对 U 的 3 项，层权重 0.6 | 11 | 4 |
+
+K3 的 11 来自 2×4+3，不能按三份片段乘四项记为 12，也不能按两个层乘四项记为 8。它描述了本模型的输出贡献；不证明引擎只采了这些曲线，也不意味着生成 11 份姿态、执行 11 次蒙皮或提交 11 次绘制。
+
+再选胸部的一个可线性混合标量：题设 W=2、R=6、C=10，基础过渡权重为 0.25/0.75，则基础结果为 5；Override 层权重为 0.6，题设结果是 `0.4×5+0.6×10=8`，等价于 `0.1×2+0.3×6+0.6×10=8`。髋不在 U 内，仍用它自身的基础层结果。这里的权重、数值和线性规则全是教学约定，不是对任意旋转、Additive、根运动或 Unity 内部算法的保证。
+
+分层让上下身表达可以分别控制，也增加了组合、属性兼容和过渡检查。遮罩收窄输出范围，是否减少实际求值、缓存或传输仍需阶段证据；缩短过渡可能减少共同参与窗口，也可能损失动作连续性，不能只看单帧贡献数接受方案。
+
+新增 Blend Tree、Additive 或打断时，先重新列实例、时间/权重、属性和参考关系，不照套 K3 的 11 或标量 8。采集时关联角色/Animator、层/状态/过渡及动作实例，分别观察求值、混合、写回与蒙皮；只拿到全局父区间时，不能反推每份片段的独立成本。
+
+**理解检查**：K3 为什么有 11 个贡献对，却仍只有四个输出属性？同一片段资产在两个状态使用时能否按资产名去重？把上身层改为 Additive 或在过渡中受击，哪些教学输入和实际证据需要重查？减少共同参与窗口后，还需什么动作反馈才能接受？
+
+---
+
 ## 静态 Mesh 和蒙皮 Mesh 的区别
 
 在本例中，**MeshRenderer + MeshFilter** 使用的网格对象坐标保持不变，对象仍可通过 Transform 移动；对象矩阵把这些坐标变到世界空间。它不要求每帧重写资产中的顶点。
