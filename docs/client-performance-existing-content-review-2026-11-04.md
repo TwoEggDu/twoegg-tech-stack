@@ -209,6 +209,10 @@
 
 复读预算 07/模板 18、内存记账的切场景模型与预算窗口，以及资源就绪链的提前/并行/分帧和失败/释放段。四类原数字、就绪与持有权原则继续复用；本批只在预算 07 补[请求时刻变化的连续时间教学](../content/performance/game-budget-07-scene-budget.md#scene-streaming-overlap-teaching)，不重做旧三快照或同义加载总论。流式旧文仅采用分块/触发/加载卸载问题定位；其中可用内存概括、每帧预算封顶、0.9 与激活轻量、sharedassets 等机制未纳入依据；场景加载优化旧文只读准备与激活选段，不继承其固定等待帧数、InstantiateAsync 版本或平台耗时。未认证或改写两篇全文，本批以官方 Additive/激活/卸载及 Addressables 内存契约明确当前判断的限用，不据旧文直接设计采集或阈值。局部 AI 编辑自审、复算与页面检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-streaming-overlap-20261106)。不新增 R/篇号；场景组合及完整观测/模板绑定待续，实际测量、校准和工具仍后置。
 
+### D5｜五领域组合账本与原始记录关系（2026-11-06）
+
+复读预算 07、通用任务观测与一帧关键路径教学，及特效共享/组合账本、UI 八字段、角色阶段记录和动画八字段。已有事件身份、关键路径与共享分配解释直接复用；不另造总时间线，也不把五篇不同教学参数合成同次运行。本批在预算 07 新增[组合账本短桥](../content/performance/game-budget-07-scene-budget.md#scene-combination-ledger-teaching)，只补跨领域条目如何引用原始记录，以及包含、生产/消费、持有三种关系怎样分别保存。虚构完整单线程树复算含子误加 18 ms 与 Self 重建 8 ms；限定其父范围，缺子记录、跨线程或同名调用须重查，不能据此归整帧/单体 CPU 或 GPU 成本。Unity 6.0 CPU Usage Profiler 的 Time/Self、线程、Hierarchy/Raw Hierarchy 及 Flow events 分别限用，未执行捕获；局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-combination-ledger-20261106)。不新增 R/篇号、不认证所读全文；场景路线阶段观测与模板 18 绑定待续，作者理解、实际测量、校准及工具仍后置。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。

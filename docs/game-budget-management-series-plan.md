@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算 07 的组合账本补桥（2026-11-06）
+
+[预算 07](../content/performance/game-budget-07-scene-budget.md#scene-combination-ledger-teaching)新增五领域汇合时的原始记录与关系索引。虚构单线程树中，含子值误加为 18 ms，完整 Self 合计为 8 ms，仅重建选定父范围；区间包含、生产/消费和资源持有分开保存，同一记录被多表引用不产生新成本。复用一帧关键路径、特效共享账本及 UI/角色/动画观测表，不把它们的独立教学拼成实测。Unity 6.0 CPU Profiler 只映射相应视图契约，来源、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-combination-ledger-20261106)。原归属、篇号、URL 和篇数不变；场景路线阶段观测及模板 18 的指标/配置/规则绑定待续。作者理解、实际测量、工具与线上部署未新增验收。
+
 ## 场景预算 07 的 Streaming 时序与重叠补桥（2026-11-06）
 
 [预算 07](../content/performance/game-budget-07-scene-budget.md#scene-streaming-overlap-teaching)原位补用途就绪、旧消费者退出、持有撤销与实际回收的不同边界。沿用内存记账的四类数字，仅增加虚构连续时间调度：早/晚请求的重叠持续 6/2 s，模型最高值同为 760 MiB，晚方案仍迟到 2 s；不重做通用内存模型或把教学时序当引擎保证。Unity 6.0 Additive/激活/卸载和 Addressables 1.21.21 内存管理各自限用，来源、局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-streaming-overlap-20261106)。原篇号、归属、URL和篇数不变；组合账本及完整阶段观测/模板 18 绑定待汇合，作者理解、实测、工具与线上部署未新增验收。
