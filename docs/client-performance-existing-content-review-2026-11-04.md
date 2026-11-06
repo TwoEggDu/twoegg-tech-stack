@@ -285,6 +285,18 @@ E 的原理/设计可以在上述最小桥后接续，实际测量继续受第 2
 
 按 col-verify 输出设计、twoegg-article-method 与 col-expert-review/主标准/性能 S1–S8 作局部 AI 编辑自审：问题、可证伪输入、三态判据、备选与限制、来源/交接在本题准备范围内满足；自审明确真实参考也有误差/开销，查询区间假设一致读点及无重触发，扰动接受标准仍待校准。复核上一批四份 Unity 6.0 及 IsAlive 的原件/契约，不新联网或扩 API 行为。结论限设计可审阅，不称独立同行评审、采集器准确、E3/全文完成或作者掌握；实际工程/设备验证和团队采用无新增证据。检查与剩余入口见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-event-calibration-design-20261106)。
 
+<a id="e2-cpu-source-review"></a>
+
+### E2｜CPU 区间来源与作用域的局部审核（2026-11-06）
+
+复读 CPE-01 的 CPU/时间域、诊断的执行/调度/依赖、组合账本的采样树，以及 CPU 深析旧文的视图、Self、Marker 相关段。前述通用解释和 18/8 ms 旧算例复用，不重写；CPU 旧文的“Self 最大必为真正热点”、仅凭等待名判 GPU 等结论不继承，本批按新版公开契约与已修订诊断限用，不认证旧文全文或其代码。只在 VFX-T04 [现有准备材料](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-source-design)补采样身份与来源、一组状态对照及异步范围。
+
+本批核对已有 CPU Usage/ProfilerMarker 原件和新 Auto/Deep Profiling 的 Unity 6.0 直接契约：视图合并/线程选择、Time/Self、有限 Flow、自动作用域、线程安全及细插桩扰动分别限用，不把线程安全扩大为跨 await 生命周期追踪。旧式 Manual 候选地址返回 404 后，从已保存官方页面链接找到当前入口；两份导航页只用于定位，直接依据为 Auto/Deep Profiling，HTTP/版本/原件 SHA 留本批目录。没有运行 Editor/Player 或 CPU/调度采集。
+
+合成 Publish `[10,18)` 含子 8 ms，扣 Build 2、Wait 3 后 Self 为 3；另给完整调度状态才知道 M 运行 4/阻塞 3/就绪未运行 1，Self 内运行 2。W 的运行 3 亦由独立状态给定，不能从采样推出。两线程 7 线程毫秒不是 7 ms 延迟，M/W 采样相加的 11 也不是目标延迟。删状态只保留范围/Self；异步提交、后台与续体按身份和事件连接，不能跨线程扣子或用提交替代完成。
+
+按 twoegg-article-method、col-expert-review、主标准五项与性能 S1–S8 作局部 AI 编辑自审：问题/范围、机制与反例、定向与细采样取舍、四份直接契约及原始记录交接在本题解释范围内满足。自审将 W 的 Running 补为独立题设，避免由标记暗推；图按显式端点而非字符宽度读。真实关联、调度时间域、构建/开关、开销和 CPU 校准仍待实践，S6 设备标定及 S8 团队采用不属本批已验证结论。不称独立同行评审、CPU 采集已准确、E2/全文完成或作者掌握；检查与下一项见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-cpu-source-design-20261106)。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
