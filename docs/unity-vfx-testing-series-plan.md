@@ -45,7 +45,7 @@
 | VFX-T01 | **特效测试究竟要测什么：从单个 Prefab 到场景预算** | 复用成本直觉；区分资源合法性、表现正确性、隔离成本和场景预算，定义对象、条件、时间窗口与报告契约 | 待写；可先写方法，实验结果留空 |
 | VFX-T02 | **ParticleEffectProfiler 源码分析：面板里的数字从哪里来** | 沿入口→采集→聚合→显示解释；重点是主贴图范围、全局批次、替换渲染与累计曲线 | 待写；[首轮源码分析](particle-effect-profiler-analysis-2026-11-03.md)已具备 |
 | VFX-T03 | **Overdraw 怎么测才有意义：屏占比、重叠、深度与采样误差** | 单层 / 多层、透明轮廓、遮挡、颜色编码和时间窗口校准；区分覆盖诊断与真实 GPU 成本 | 待写；实验待执行 |
-| VFX-T04 | **搭建可重复的特效测试场景：相机、随机性与测量扰动** | 固定版本、镜头、种子、播放协议、对象隔离和失败退出；校准采集开销及数据有效性 | 待写；[首个任务的纸面协议及事件来源准备](unity-vfx-repeatable-playback-protocol-teaching.md)已补，场景/采集/现代管线适配仍待验证 |
+| VFX-T04 | **搭建可重复的特效测试场景：相机、随机性与测量扰动** | 固定版本、镜头、种子、播放协议、对象隔离和失败退出；校准采集开销及数据有效性 | 待写；[首个任务的协议、事件来源及校准设计准备](unity-vfx-repeatable-playback-protocol-teaching.md)已补，场景/采集/现代管线适配仍待验证 |
 | VFX-T05 | **首放、稳态与同屏叠加：怎样在目标设备验证特效成本** | 复用 CPU / GPU 诊断；比较同条件 Player 原渲染，定义冷启动状态、稳态窗口、峰值与重复运行 | 待写；设备和运行证据待补 |
 | VFX-T06 | **从测试报告到修改决定：做一次完整的特效优化对照** | 固定视觉职责，基线→假设→单项改动→复测→恢复；检查视觉信息与目标成本是否同时满足 | 待写；独立教学实验，尚无收益结论 |
 | VFX-T07 | **把特效测试接进生产：预算、分工、回归与例外处理** | 美术自检、TA / 程序复核、QA 场景验收；报告身份、规则版本、误报、豁免及持续维护 | 待写；方法可先成稿，流程采用与效果另取证 |
@@ -74,3 +74,5 @@
 2026-11-06 E1 接续：复读 CPE-01/02、预算 09 生命周期与制作 08 退出职责后，将首开奖励界面/特效的[纸面播放协议](unity-vfx-repeatable-playback-protocol-teaching.md)放在 VFX-T04 准备层。增量为初始条件、开始/必要事件、正常/取消/超时/缺失分支及退出确认，不重写公共身份、统计或控制器。四条合成轨迹与 Unity 6.0 四份接口契约仅支撑设计和教学，没有新增正文篇数或工程/设备/校准执行。局部 AI 编辑自审及本地检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-playback-protocol-20261106)。下一项核对具体指标来源与最小校准设计；作者反馈和知识阶段出口仍待通过。
 
 2026-11-06 E2 首批：在同一准备材料[增补来源候选与观察时刻](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-event-source-design)，将业务接受/代理、应用循环、组状态查询和退出清单分开；四份 Unity 6.0 时钟/帧/Marker 契约与新合成读取/轮询例子只支撑设计，不重做 E1 四轨迹。精确业务事件、线程、版本平台与校准仍待确定，VFX-T04 和其余六篇仍待写；审校/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-event-source-design-20261106)。
+
+2026-11-06 E3 首批：同一材料新增[事件最小校准设计](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-event-calibration-design)，限记录完整性/归属、时间/查询范围和开关扰动三块；九条合成参考及失败对照不代表真实采集已校准。覆盖/原渲染与 CPU/GPU/内存仍按原专项后续展开。VFX-T04 与七篇正文状态保持待写，场景/工具/实际校准未执行；局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-event-calibration-design-20261106)。
