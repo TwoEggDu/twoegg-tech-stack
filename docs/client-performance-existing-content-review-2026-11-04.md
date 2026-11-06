@@ -438,3 +438,24 @@ E 的原理/设计可以在上述最小桥后接续，实际测量继续受第 2
 | t=18/20 与恢复；S4/S5/S8 方法 | 单绿或告警消失能关闭吗？题设另给完整复验/必要表现与代价、异常处置补验，接受人再按范围批准；缺其中任一就停待补 | 应用/复用满足；单次正常退出不能替代完整覆盖，真实恢复、工具可靠性及团队采用待验证 |
 
 **五项与分层结论。** 按 twoegg-article-method、col-rewrite、col-expert-review、主标准五项与性能 S1–S8 作局部 AI 编辑自审：对象/范围、主张与条件、来源/合成身份、专家追问和最小下一项齐备；问题/约束、机制、取舍、证据、应用/复用在本节知识设计范围内满足。解释/判断有官方概念、原治理规定和可复算事件输入；实际采集/告警闭环、工程工具及团队采用无新增证据。S6 的真实预算/设备校准与 S8 的组织效果不属本批交付。非独立同行评审、旧文全文或 F4 整体验收；作者理解待反馈，第 2.2 节未通过。最小接续是核批量、取消/超时和旧候选结果隔离的既有方法覆盖，先复用 E1/F1/F4，再补仍影响判断的缺口，不启动实际测量或工具实现。
+
+<a id="f4-batch-coverage-review"></a>
+
+## F1/F4 批量、取消与旧结果隔离的覆盖核对（2026-11-07）
+
+**本批范围与决定。** 面向准备把单任务结果汇成一批报告的程序/TA、QA，核对当前材料能否解释取消/超时、迟到和旧候选结果的去向；不是重审 E1–E3、F1/F4 全文或执行测试。复读 VFX-T04 准备材料 L35–75 的动作/退出和合成轨迹、L158–180 的旧代次校准设计，CPE-01 的身份段、CPE-02 草稿的缺失/超时段，性能工作流 L114–247 的 F1/F4 及质量门 L33–45、L194–211、L307–324 的身份/判定/聚合。沿已有有效局部审查复用，不重算旧 N/C/T/M、九事件、J-A/B/C、均值/P95 或例外时间线。CPE-02 仍是草稿；质量门记载的教学判定器验证不算本批重新执行或性能链验证。
+
+| 要回答的判断 | 已有位置与覆盖 | 复用决定／真实缺口 |
+| --- | --- | --- |
+| 取消请求是否等于工作停止、何时能隔离重开 | [播放协议](unity-vfx-repeatable-playback-protocol-teaching.md#一次请求的动作与退出判据)区分请求、生效、旧代次拥有者和退出确认；未知残留不接成隔离重复 | 直接复用单任务协议，不新增控制器或再写一套取消教学 |
+| 观察超时后迟到结果怎样保存 | 同协议观察超时段与[合成轨迹](unity-vfx-repeatable-playback-protocol-teaching.md#用四条合成轨迹复核而不是先写控制器)保留最后阶段、迟到和计时缺失；[CPE-02 草稿](../content/performance/client-performance-test-comparability.md)区分成功子集与全部尝试 | 直接复用；迟到不回改为截止前成功，也不把取消/超时填作成功时长 |
+| 旧请求能否结束新请求 | [任务身份](../content/performance/client-performance-task-observation-model.md)与[事件校准设计](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-event-calibration-design)已给 q/g、对象及独立参考，E04 旧返回不能写入新请求 | 单任务/事件归属设计已有；不重造相同负对照，不称实现已验证 |
+| 旧候选/规则报告能否当本轮有效证据 | [质量门](../content/delivery-engineering/delivery-cicd-pipeline-04-quality-gates.md)核候选、运行、规则与完整性；[规则变更方法](../content/performance/game-performance-methodology-summary.md#performance-rule-baseline-changes)限定旧数据重算/比较 | 原则和旧教学验证可复用；保留历史不等于填当前必需证据，不能仅凭名称/到达顺序认领 |
+| 重投、复跑、接受和恢复是否可互换 | [报告追溯](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)另立复跑身份；[例外/恢复](../content/performance/game-performance-methodology-summary.md#performance-exception-recovery-teaching)不把重复送达当独立样本，保留异常及接受范围 | 直接复用既有关系，不再扩写通知/例外时间线 |
+| 整批被取消后，未启动项与错配结果怎样进入同一份清单 | F1 的必需位置覆盖与质量门聚合原则能说明缺失不算通过，但尚未在一个固定批次/目标清单中贯通未启动取消、已启动超时、迟到/旧候选报告和复跑 | **待补一组批次教学**；缺的是预期集合与逐项结果的对应，不是调度平台或新的通用指标定义 |
+
+**最小补强与关闭判据。** 下一批沿原性能工作流补一份冻结的教学批次计划，明确目标、候选/配置/规则及必需证据集合；给未启动取消、已启动异常、迟到/旧候选错配和新身份复跑的记录。能逐项清点计划与实际状态，说明哪些报告只能归历史/异常、哪些证据仍缺，以及复跑如何关联原记录而不覆盖，才关闭这一教学缺口。旧候选报告仍可保存，并按已有 F4 的适用依据重算；隔离只是不把它误填当前目标，不是删除旧数据。实际批量执行、底层取消、进程树清理和自动失效均待后续实现/验证，不因教学清单设计而升级状态。
+
+**作者反馈与出口。** 本批沿用既有理解检查，待反馈位置为[CPU 来源节末尾的旧代次/终点问题](unity-vfx-repeatable-playback-protocol-teaching.md#vfx-cpu-source-design)、[F1 交接/缺失问题](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)、[F4 重算及例外/恢复问题](../content/performance/game-performance-methodology-summary.md#performance-rule-baseline-changes)。它们对应第 2.2 节第 4/5 项的部分判断，作者反馈仍未到；新批次教学题待实际写出后再记录。未据本次核对认定其他出口条件齐备、作者掌握或知识阶段通过。
+
+**局部 AI 编辑复核。** 按 twoegg-article-method、col-expert-review、主标准五项与性能 S1–S8 核本份覆盖审查：问题/约束有明确范围，机制指向身份/有效性与退出的现成解释，取舍为复用已有单任务材料、只补批次映射，证据是当前段落及清楚限用的既有设计，应用有下一项与关闭判据。作为覆盖审查产物可交付；不是独立同行评审、既有正文全文或 F1/F4 整体通过。解释/判断有材料定位，实际工程验证与团队采用无新增证据，S6 真实设备/预算和 S8 组织效果不属本批。批次教学缺口仍开放，下一批关闭后再决定知识材料/作者反馈的接续，不提前实现 F2–F4。
