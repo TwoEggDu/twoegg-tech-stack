@@ -153,3 +153,5 @@
 - 2026-11-06 E2 内存来源：VFX-T04 原准备材料新增全局/对象/分配活动来源、采时与缺失限用，原归属先回写；RM 四点净差与另给参考点解释稀疏记录，不当作真实峰值或泄漏结论。来源、局部 AI 编辑自审和检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-memory-source-design-20261106)。上一批 GPU 设计已随 `e8a4a78` 推送且远端回读一致；本批不增篇，下一项内存最小校准设计。作者理解待反馈，实际采集/校准、工具及线上部署无新增验收。
 
 - 2026-11-06 E3 内存设计：VFX-T04 原准备材料补单位/口径、采时/归属及可用性/扰动三块，复用 RM 与已有对照方法，不增篇。来源与局部 AI 编辑自审/检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#vfx-memory-calibration-design-20261106)；上一批 `efb3334` 已推送且远端回读一致。下一项接 F1 旧文复用与职责数据流知识补桥；作者反馈、知识出口、实际采集/校准、工具及线上部署无新增验收。
+
+- 2026-11-06 F1 数据流首批：原位补[性能工作流的报告追溯节](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)，复用旧调查与预算绑定，新增六环节职责、三轴状态和 J-A/J-B/J-C 合成覆盖算例。正文保留原性能系列身份，不增 CPE/VFX 篇号；原 plan 先登记，本批审校与检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f1-report-dataflow-20261106)。上一批 `9b6004b` 已推送且远端回读一致；下一项 F4 基线/规则变更的重算与复测方法，作者理解、真实工具/采集和线上部署无新增验收。

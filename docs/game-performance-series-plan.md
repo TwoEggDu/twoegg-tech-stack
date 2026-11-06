@@ -72,3 +72,9 @@ CPE-01 是引擎无关的任务观测方法，独立篇级归属在[客户端性
 - 不把“计算机基础”单独写成教材，而是嵌进游戏运行时问题里解释。
 - 优先回答：为什么会慢、慢在哪、什么事不能在什么时候做、该先怀疑哪一层。
 - Unity / Unreal 只做原理映射，不先掉进 API 细节。
+
+## 客户端监测职责的数据流补桥（2026-11-06）
+
+按客户端性能工程 F1 的接续，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-report-dataflow-teaching)新增报告追溯节，保留本系列标题、URL 与身份。复用调查/人员交接和预算绑定，增量为配置到领域执行/采集、原始保存、有效性/规则报告及复验的职责与产物；J-A/B/C 和 T0 为虚构教学输入，不是运行系统、设备结果或团队采用。
+
+只登记本批正文修订，不改变既有 M02、OS 补篇或其他工作状态。局部 AI 编辑自审、候选检查和 Git 接续见[客户端执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f1-report-dataflow-20261106)；下一项为 F4 基线/规则变化时的重算与复测方法，知识出口与作者反馈仍待通过。
