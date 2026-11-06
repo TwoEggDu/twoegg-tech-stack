@@ -1,5 +1,9 @@
 # 游戏预算管理系列计划
 
+## 场景预算知识覆盖核对（2026-11-06）
+
+本轮仅核对预算 07/模板 18 的已交付补桥与剩余解释，不修改正文或篇级状态。机位/用途、可见集合、灯光/阴影、Streaming/双驻留、跨领域账本和观测/模板绑定已有可复用位置；“场景逻辑预算”仍是两段概述，下一批只补候选对象、检查频率/工作量、事件结果与反馈之间的短桥。Update 调度旧文仅作复用线索，所读段落的固定耗时、内部实现概括和管理器收益尚未核验，不直接移入场景正文。具体覆盖与最小关闭判据见[审查记录](client-performance-existing-content-review-2026-11-04.md#d5-knowledge-coverage)，检查和交付见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-knowledge-coverage-20261106)。不增篇，不据材料覆盖代作者掌握或宣告 D5/实验/工具/线上验收完成。
+
 ## 场景预算 07/模板 18 的阶段与规则绑定（2026-11-06）
 
 [预算 07](../content/performance/game-budget-07-scene-budget.md#scene-task-observation-record)新增场景八字段与准备/交接/稳定组合/退出/折返观察范围；阶段可以重叠，不作为互斥成本桶。[模板 18](../content/performance/game-budget-18-scene-budget-template.md#scene-rule-binding)保留原空表，补任务、指标/来源、实际配置及规则/决定的关联记录，并沿既有 Streaming 早晚结果说明请求到就绪同为 5 s、路线原点到就绪为 6/10 s 的口径区别。原篇号、URL、归属和篇数不变；旧文复用、局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-observation-binding-20261106)。规则 ID/数值均为纸面示意，未实现采集或标定预算；作者理解、实际测量、工具及线上部署无新增验收。

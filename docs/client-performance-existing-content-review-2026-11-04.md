@@ -217,6 +217,34 @@
 
 复读预算 07 的阶段相关段落、模板 18 全文，以及通用任务身份/事件/时间域、UI/角色/动画观测字段和总表 16 的指标配置绑定。预算 07 前几批的机制、三类组合关系与 Streaming 结果继续复用；模板 18 已有空表、机位/路线、owner 和超线动作，真实缺口是阶段边界及摘要到指标/配置/规则/证据的可追溯关系。本批只补[场景八字段/阶段表](../content/performance/game-budget-07-scene-budget.md#scene-task-observation-record)与[模板关联记录](../content/performance/game-budget-18-scene-budget-template.md#scene-rule-binding)，并将 Streaming 段原“后续汇合”改为实际锚点。不重做已完成集合、阴影、时序或组合算例；沿既有早晚结果辨别准备 5/5 s 与路线就绪 6/10 s，8 s 仍为教学用途要求。局部 AI 编辑自审及检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#scene-observation-binding-20261106)。只复读本地保存的 Unity 6.0 激活/卸载原件及其限用，没有新联网或执行采集。原 R、未审全文及作者掌握状态不因表格写完而关闭；D5 剩余知识覆盖核对与 E 测量设计接续，实际测量、校准和工具仍后置。
 
+<a id="d5-knowledge-coverage"></a>
+
+### D5 知识覆盖核对与 E 的复用入口（2026-11-06）
+
+本轮是覆盖/接续审查，不重做前批已经通过的算例和局部审校，也不新增正文。按执行计划 D5 和预算 07 原有承诺核对下面七组问题；分组只服务本轮判断，不是全专栏完成率。判为“复用”表示找到了本题所需的解释、教学或观测位置，不能推出全文无误、作者已掌握或工具已验证。
+
+| 本轮知识问题 | 已读位置与复用依据 | 剩余项与处理决定 |
+| --- | --- | --- |
+| 机位/路线与代表组合 | [预算 07](../content/performance/game-budget-07-scene-budget.md)的“判断依据”和阶段表：位置/玩法密度、路线方向、必要反馈与配置共同界定任务 | 复用；单机位不代完整路线，真实代表负载仍待实践，不新写场景总论 |
+| 可见集合与用途 | [集合短桥](../content/performance/game-budget-07-scene-budget.md#scene-visible-purpose-teaching)：Q0/Q1 区分主画面、实例并集、用途参与及实际事件，附条件变化题 | 复用既有教学和限用，不重算 3/5/9 或由集合推出耗时 |
+| 灯光/投射/接收 | [阴影短桥](../content/performance/game-budget-07-scene-budget.md#scene-light-shadow-teaching)：三职责、覆盖/网格/载荷及配置边界 | 复用既有图示/教学，不重复质量与显存限制，不认证全部渲染路径 |
+| Streaming/双驻留 | [时序短桥](../content/performance/game-budget-07-scene-budget.md#scene-streaming-overlap-teaching)：用途就绪、重叠时长/最高值、消费者退出与回收分开 | 复用；原时序、峰值和折返理解题保持，不把假设当设备或卸载保证 |
+| 五领域组合 | [组合账本](../content/performance/game-budget-07-scene-budget.md#scene-combination-ledger-teaching)：原始记录、包含/Self、生产消费和持有关系 | 复用；不重做 18/8 ms，不将共享 GPU 或父子范围平分/累加 |
+| 阶段观测与规则引用 | [八字段/阶段](../content/performance/game-budget-07-scene-budget.md#scene-task-observation-record)和[模板 18](../content/performance/game-budget-18-scene-budget-template.md#scene-rule-binding)：任务/指标/配置/规则/原始证据与分别判定 | 复用；字段齐备不是采集准确性、规则标定或工程接入通过 |
+| 场景逻辑的检查/触发与反馈 | 07“D. 场景逻辑预算”只有两段概述；组合树解释归账，却不解释候选对象、检查次数、每次工作和结果反馈 | **原位补桥**；在同一窗口区分次数/频率/工作量/耗时与必要反馈，说明减少检查或改事件/错峰时应复验什么；不实现调度器 |
+
+为最后一行定点读了 [Update 调度旧文](../content/performance/cpu-opt-03-update-scheduling.md)的开篇、错峰示例、事件/轮询对照及管理器思路。它已有相似问题，可作复用线索；所读“实测数据”表段未附本次可核对的原始记录/完整环境，内部注册/桥接机制、固定 ns 成本、收益概括及代码正确性本轮未核验，不能作为下一桥的事实或数值来源。这不等于已判其全文错误；下一批先核可靠公开契约，只映射必要职责/条件，优先用明确题设的工作量与反馈推演，不搬管理器实现或扩大到物理、AI 全专题。
+
+E 的原理/设计可以在上述最小桥后接续，实际测量继续受第 2.2 节限制。以下只核对直接入口，不认证 E 已完成：
+
+| 单元 | 本轮实际读取的已有材料 | 可复用与仍待处理的边界 |
+| --- | --- | --- |
+| E1 条件与播放协议 | [通用请求记录](../content/performance/client-performance-task-observation-model.md)、[诊断最小对照](../content/performance/game-performance-diagnosis-method.md)、[工作流](../content/performance/game-performance-methodology-summary.md)的条件/观察/对照段；执行计划 T1–T4；[CPE-02 初稿](../content/performance/client-performance-test-comparability.md)的失败/缺失/扰动段 | 身份、初始状态、窗口、重复和失败保留已有定义，先复用；后续只补首个具体任务的协议示范和停止/退出判据。CPE-02 仍 draft，不当作公开入口；不再造通用流程 |
+| E2 指标到来源 | 诊断方法的 Unity/Unreal 工具职责映射，场景及其他领域观测表；定点读[真机连接旧文](../content/performance/mobile-tool-01-unity-profiler-device.md)前 65 行定位操作入口 | 具体版本/平台/来源、启用条件、时间域、延迟与扰动仍需按指标核对；不继承所读旧文的 Editor/平台概括、固定 Deep Profile 倍数或强制 IL2CPP 表述，不据此修/认证全文 |
+| E3 校准与对照 | 诊断方法的假设/反证与可比条件、CPE-02 的合成记录和采集扰动；[特效规划](unity-vfx-testing-series-plan.md) VFX-T03/04/05 | 对照设计与记录可比性可复用，但不是采集器准确性实证；后续设计已知答案/漏计/重计/背景/时钟与扰动的最小校准集，再按知识出口决定何时实际运行。VFX 仍是规划，不填已实现或已测 |
+
+**本轮结论与最小关闭判据**：接续判断在本次已读范围内成立；场景逻辑短桥完成后，应能让读者在对象数相同但检查频率/单次范围不同的教学输入下，分别判断工作量、反馈与尚缺的时间证据，并关联现有阶段/规则字段。该判据只关闭解释缺项，不关闭作者理解、实际采集、D5 整体或全文审校。已有理解题继续等待作者反馈，本轮没有代答或重复发布一组已完成教学。没有新联网、重跑引擎或工具实验，官方事实与原算例的审核沿各批既有边界保留。
+
 ## 不应误判为旧文缺陷的部分
 
 - 角色文的“3 万面／1 万面”是被讨论的例表，不是作者给出的通用验收线；动画的 24 fps、过渡时间及 Blend Tree 示例也有教学身份。
