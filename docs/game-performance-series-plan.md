@@ -90,3 +90,9 @@ CPE-01 是引擎无关的任务观测方法，独立篇级归属在[客户端性
 按客户端性能工程 F4 的接续，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-exception-recovery-teaching)补独立教学时间线，区分报告事实、通知处理、接单和接受；覆盖例外范围/到期、异常补验、恢复依据及重新打开。复用既有质量门豁免职责，不新增篇号或更改本篇身份；时间、报告与接受事件均为假设，不是生产响应、放行或团队采用。
 
 本批仅追加此修订登记，保留 M02、OS 补篇及其他状态。来源、局部 AI 编辑自审和候选检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f4-exception-recovery-20261107)；下一步核对批量、取消/超时及旧候选结果隔离的方法覆盖，优先复用已完成材料，作者反馈与知识出口仍待通过。
+
+## 批次取消、历史结果与补验关联的知识补桥（2026-11-07）
+
+按客户端性能工程 F1/F4 最新覆盖核对，在[原性能工作流](../content/performance/game-performance-methodology-summary.md#performance-batch-ledger-teaching)补固定四目标的教学清单，贯通未启动取消、已启动超时、迟到/旧候选错配及新身份补跑。B1 原截止快照与 B2 后续补证视图区分；八个必需证据位置的清点、18/19 ms 及 20 ms 线均为题设，不是实测、通用阈值或实际系统能力。
+
+仅登记这一局部增量，不改原标题、URL、篇目或其他工作状态。局部 AI 编辑自审及独立候选检查见[执行记录](client-performance-budget-tiering-monitoring-execution-plan.md#f4-batch-ledger-teaching-20261107)；下一步在原执行记录汇总第 2.2 节待反馈位置，已有教学和审校直接复用，作者理解、实际测量、工具及线上部署无新增验收。
