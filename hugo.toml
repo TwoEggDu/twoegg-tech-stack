@@ -10,9 +10,9 @@ disableKinds = ["taxonomy", "term"]
   home = ["HTML", "RSS", "JSON"]
 
 [params]
-  description = "从引擎工具到游戏产品交付，连接内容生产、研发协作、上线反馈与技术深度。"
+  description = "围绕游戏交付质量，连接功能研发、内容生产与跨工种协作，让运行问题尽早在生产中暴露、修正和复验。"
   author = "TwoEgg"
-  tagline = "从引擎工具到游戏产品交付。"
+  tagline = "从设计到交付，让质量贯穿生产。"
 
 [[params.externalSites]]
   title = "个人首页"

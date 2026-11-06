@@ -91,8 +91,10 @@ topic_groups:
       - { title: "服务端版本与热更新", page: "delivery-engineering/delivery-server-versioning-series-index.md" }
   - id: "delivery"
     title: "交付与线上运营"
-    hint: "内容、构建、CI、发布与反馈"
+    hint: "生产协作、质量验证、构建发布与反馈"
     entries:
+      - { title: "游戏研发 FDE", page: "delivery-engineering/fde-methods-series-index.md" }
+      - { title: "客户端生产体系", page: "engineering-journey/production-pipeline-overview.md" }
       - { title: "版本管理：Git、SVN、P4 与团队协作", page: "delivery-engineering/version-management-series-index.md" }
       - { title: "美术生产与客户端协作", page: "delivery-engineering/game-art-production-collaboration-series-index.md" }
       - { title: "交付总论", page: "delivery-engineering/delivery-overview-series-index.md" }

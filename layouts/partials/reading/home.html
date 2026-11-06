@@ -1,21 +1,40 @@
-{{ $data := site.Data.reading_paths }}
 <section class="atlas-cover" aria-labelledby="atlas-title">
-  <div class="atlas-intro"><p class="eyebrow">TwoEgg Tech Stack</p><h1 id="atlas-title">游戏开发笔记</h1><p>围绕游戏版本的持续交付，从内容制作、构建发布到客户端运行，深入玩法、框架、引擎和性能。</p><div class="actions">{{ partial "reading/link.html" (dict "page" "reading/delivery.md" "label" "从工程与交付开始" "class" "text-action" "arrow" true) }}</div></div>
-  <aside class="atlas-first" aria-labelledby="first-read-title"><p class="eyebrow">先读一篇</p><h2 id="first-read-title">{{ partial "reading/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "arrow" true) }}</h2><p>本地资源完整，为什么包里仍然缺内容？从资源、配置与构建中的实际问题，理解一个版本怎样交接完成。</p></aside>
+  <div class="atlas-intro">
+    <p class="eyebrow">TwoEgg Tech Stack</p>
+    <h1 id="atlas-title">游戏研发与交付</h1>
+    <p>我深入生产一线，连接美术、策划与程序，<br class="atlas-wide-break">对最终交付的游戏质量负责。</p>
+    <p>从设计到交付，尽可能让每一步产出都符合上线要求。</p>
+    <div class="actions"><a class="text-action" href="#approach">了解工作方式 ↓</a>{{ partial "reading/link.html" (dict "page" "about.md" "label" "关于作者" "class" "text-action" "arrow" true) }}</div>
+  </div>
+  <aside class="atlas-note" aria-labelledby="philosophy-title">
+    <p class="eyebrow">工作理念</p>
+    <h2 id="philosophy-title">让各工种专注自己的工作，<br>把复杂留给生产交付管线。</h2>
+    <p>把能够提前发现的运行问题，放到生产中暴露和修正。让检查与反馈持续发生，让有效的改进留下来。</p>
+  </aside>
 </section>
-<section class="variant-section delivery-section" aria-labelledby="delivery-title">
-  <div class="delivery-context"><p class="eyebrow">按问题进入</p><h2 id="delivery-title">内容做好以后，<br>还有哪些事要接着做？</h2><p>资源要进包，功能要联调，设备上要跑得稳，更新出了问题还要能恢复。</p>{{ partial "reading/link.html" (dict "page" "reading/delivery.md" "anchor" "collaboration" "label" "查看多工种协作" "class" "read-link" "arrow" true) }}</div>
-  <div class="delivery-map" aria-label="游戏交付的四个目标">
-    <div class="map-center"><p>共同交付</p><strong>玩家可体验的<br>游戏版本</strong><span>内容 · 功能 · 体验 · 迭代</span></div>
-    {{ range $i, $entry := $data.delivery_route }}
-      {{ $target := site.GetPage .page }}
-      {{ if not $target }}{{ errorf "Reading goal not found: %s" .page }}{{ end }}
-      <a class="map-goal map-goal-{{ $i }}" href="{{ $target.RelPermalink }}" aria-labelledby="map-title-{{ $i }}">
-        <span class="map-goal-title" id="map-title-{{ $i }}">{{ .title }}</span>
-        <span class="map-goal-description">{{ index (slice "资源怎样进包、更新和加载" "技能的规则、逻辑与表现怎样接起来" "卡顿、加载慢和内存峰值怎样查" "发布前查什么，出问题怎样处理") $i }}</span>
-        <span class="map-goal-action">进入阅读 <span aria-hidden="true">→</span></span>
-      </a>
-    {{ end }}
+
+<section id="approach" class="atlas-section atlas-approach" aria-labelledby="approach-title">
+  <div class="atlas-context">
+    <p class="eyebrow">从设计到交付 · D2D</p>
+    <h2 id="approach-title">深入现场解决堵点，<br>让质量贯穿生产。</h2>
+    <p>观察真实的制作与交接，理解问题的原因，再把解决办法变成团队日常可用的能力。</p>
+    <p>日常变更及时检查，功能与性能定期验证；问题反馈到人，修正后再次确认。</p>
+    {{ partial "reading/link.html" (dict "page" "delivery-engineering/fde-methods-series-index.md" "label" "阅读现场工作方法" "class" "read-link" "arrow" true) }}
+  </div>
+  <div class="quality-map" aria-label="围绕游戏交付质量的四个阅读方向">
+    <div class="quality-center"><p>共同的目标</p><strong>最终交付的<br>游戏质量</strong><span>每一步产出，都面向上线要求</span></div>
+    <a class="quality-goal quality-goal-0" href="{{ (site.GetPage `reading/project-management.md`).RelPermalink }}"><span class="quality-goal-title">目标与协作</span><span class="quality-goal-description">对齐需求、分工与验收标准</span><span class="quality-goal-action">项目与团队管理 <span aria-hidden="true">→</span></span></a>
+    <a class="quality-goal quality-goal-1" href="{{ (site.GetPage `delivery-engineering/game-art-production-collaboration-series-index.md`).RelPermalink }}"><span class="quality-goal-title">内容与生产</span><span class="quality-goal-description">让各工种的产出顺利衔接</span><span class="quality-goal-action">制作与跨工种协作 <span aria-hidden="true">→</span></span></a>
+    <a class="quality-goal quality-goal-2" href="{{ (site.GetPage `reading/performance.md`).RelPermalink }}"><span class="quality-goal-title">性能与体验</span><span class="quality-goal-description">持续测量、反馈与回归</span><span class="quality-goal-action">持续性能工程 <span aria-hidden="true">→</span></span></a>
+    <a class="quality-goal quality-goal-3" href="{{ (site.GetPage `engineering-journey/production-pipeline-overview.md`).RelPermalink }}"><span class="quality-goal-title">检查与交付</span><span class="quality-goal-description">提前发现问题，修正后复验</span><span class="quality-goal-action">生产管线实践 <span aria-hidden="true">→</span></span></a>
+  </div>
+</section>
+
+<section id="reading" class="atlas-section atlas-reading" aria-labelledby="reading-title">
+  <div class="atlas-reading-heading"><p class="eyebrow">先读一篇</p><h2 id="reading-title">从具体问题开始</h2><p>沿着现场、判断与验证，<br>看看这些想法怎样落地。</p></div>
+  <div class="atlas-reading-list">
+    <article><p class="eyebrow">问题怎样提前发现</p><h3>{{ partial "reading/link.html" (dict "page" "engineering-journey/production-resource-completeness.md" "label" "本地内容完整，为什么交付后仍有缺失？" "arrow" true) }}</h3><p>从制作现场追到交接过程，看一次排查怎样逐步变成日常检查。</p></article>
+    <article><p class="eyebrow">从局部改进到共同交付</p><h3>{{ partial "reading/link.html" (dict "page" "engineering-journey/production-pipeline-overview.md" "label" "各环节的产出，怎样成为可验收的版本？" "arrow" true) }}</h3><p>沿着已有实践，理解检查、反馈、修正与最终验收怎样衔接。</p></article>
   </div>
 </section>
 

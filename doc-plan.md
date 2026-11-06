@@ -3,7 +3,7 @@
 > 角色：根入口 / 路由页 / 状态页
 > 目标：让人和 AI 都先定位主题，再跳到唯一的 canonical plan
 > 版本：2026-04-18（v27，结构重构版）
-> 定位更新：2026-10-31；代表专栏为“游戏研发 FDE：从技术机制到产品交付”，以组织生产与技术纵深相互支撑。当前原则见[站点定位](./docs/site-entry-and-audience-plan.md)，总入口与连接见[FDE 规划](./docs/fde-methods-series-plan.md#fde-flagship)，第一组案例及补证见[工程实践规划](./docs/engineering-journey-column-plan.md#production-flagship-v1)。
+> 定位更新：2026-11-06；以最终游戏质量与 D2D（Design to Delivery）生产管线为主线，尽量让运行问题在生产中提前暴露、修正与复验。“游戏研发 FDE：从技术机制到产品交付”承接深入一线解决堵点的方法与案例。当前原则见[站点定位](./docs/site-entry-and-audience-plan.md)，方法与案例连接见[FDE 规划](./docs/fde-methods-series-plan.md#fde-flagship)，第一组案例及补证见[工程实践规划](./docs/engineering-journey-column-plan.md#production-flagship-v1)。
 > 状态同步：2026-10-15；按主提纲与执行记录，P2 网站入口调整已提交发布，并于 2026-10-14 完成线上核验；P3 首批资源阅读路径与旧文修订已完成本地验证，尚未提交发布；P4 待开展。下一步为首个资源规则案例取材，补齐职责、版本、脱敏输入、校验与修复及构建和设备验收证据；详细状态与完成标准统一在主提纲维护。
 
 ---

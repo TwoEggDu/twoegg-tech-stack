@@ -1,6 +1,6 @@
 ---
 title: "工程与交付"
-description: "从资源制作与跨工种交接，走到构建、验收、版本发布和问题回流。"
+description: "从设计到交付，将功能研发、内容制作、检查与反馈接成生产管线，让质量要求贯穿每次交接。"
 reading_kind: topic
 topic_key: delivery
 ---
